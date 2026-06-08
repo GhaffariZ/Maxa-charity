@@ -63,16 +63,18 @@
   width:100%;
   padding:80px 0 70px;
   text-align:center;
+  font-family:'Vazirmatn', Tahoma, sans-serif;
 }
 
 /* عنوان */
 .macsa-hero-header{
   max-width:780px;
   margin:0 auto 60px;
+  padding:0 16px;
 }
 
 .macsa-hero-header h1{
-  font-size:2.2 rem;
+  font-size:2.2rem;
   font-weight:800;
   line-height:1.4;
   margin-bottom:18px;
@@ -82,16 +84,13 @@
   color: teal;      /* سبز teal */
   font-size:0.7em;  /* کمی کوچکتر از متن اصلی */
   font-weight:500;  /* کمی سبک‌تر */
-  white-space: nowrap; /* جلوگیری از رفتن به خط بعد */
-
+  display:inline-block;
 }
 
 .macsa-hero-header p{
   font-size:1.05rem;
   color:#666;
   line-height:1.9;
-  white-space: nowrap; /* جلوگیری از رفتن به خط بعد */
-
 }
 
 /* گالری */
@@ -198,6 +197,15 @@
 }
 
 /* نسخه دسکتاپ دست نخورده بماند... */
+
+/* تبلت: کارت‌ها را کوچک‌تر کن تا ردیف ۵تایی جا شود */
+@media (max-width:1024px) and (min-width:701px){
+  .macsa-gallery{ gap:14px; flex-wrap:wrap; }
+  .card-lg{ width:170px; height:300px; }
+  .card-md{ width:160px; height:260px; }
+  .card-sm{ width:150px; height:220px; }
+  .macsa-hero-header h1{ font-size:1.9rem; }
+}
 
 @media (max-width:700px){
 

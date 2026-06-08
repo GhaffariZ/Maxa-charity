@@ -1,4 +1,4 @@
-<section class="pro-stories">
+<section class="pro-stories" dir="rtl">
 
   <div class="ps-container">
 
@@ -142,7 +142,7 @@
 .pro-stories {
   background:#fff;
   padding:60px 0;
-  font-family:inherit;
+  font-family:'Vazirmatn', Tahoma, sans-serif;
 }
 
 .ps-container {

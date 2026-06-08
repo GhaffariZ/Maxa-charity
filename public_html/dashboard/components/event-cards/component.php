@@ -216,6 +216,16 @@
         font-size: 20px;
     }
 }
+
+@media (max-width: 380px) {
+    .creative-section {
+        padding: 24px 14px;
+        margin: 24px auto;
+    }
+    .cards-subgrid {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
 <div class="creative-section">

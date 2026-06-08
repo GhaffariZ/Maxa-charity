@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>صفحه مقاله استاندارد</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    
+    <style>
+        /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+                 url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+
     <style>
         :root {
             --primary-teal: #00a8a8;
@@ -91,10 +101,48 @@
             text-align: justify;
         }
 
+        .article-content ul {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            padding-right: 24px;
+            margin-bottom: 24px;
+        }
+        .article-content li { margin-bottom: 10px; }
+
+        /* ---------------- entrance animations (CSS-only) ---------------- */
+        @keyframes maxaFadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .wow, .fadeInUp {
+            opacity: 0;
+            animation: maxaFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        [data-wow-delay="0.6s"] { animation-delay: 0.6s; }
+        [data-wow-delay="0.8s"] { animation-delay: 0.8s; }
+        [data-wow-delay="1.2s"] { animation-delay: 1.2s; }
+        [data-wow-delay="1.4s"] { animation-delay: 1.4s; }
+        @media (prefers-reduced-motion: reduce) {
+            .wow, .fadeInUp { opacity: 1 !important; animation: none !important; }
+        }
+
+        /* ---------------- responsive ---------------- */
+        @media (max-width: 992px) {
+            .header-capsule h1 { font-size: 2rem; }
+            .hero-image-container { height: 360px; }
+        }
         @media (max-width: 768px) {
             .page-container { margin: 20px auto; }
             .hero-image-container { height: 250px; border-radius: 20px; }
             .header-capsule { border-radius: 30px; padding: 30px 15px; }
+            .header-capsule h1 { font-size: 1.6rem; }
+            .article-content h2 { font-size: 1.4rem; }
+            .article-content p, .article-content ul { font-size: 1rem; }
+        }
+        @media (max-width: 380px) {
+            .header-capsule h1 { font-size: 1.35rem; }
+            .hero-image-container { height: 200px; border-radius: 16px; }
+            .article-content h2 { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -115,7 +163,7 @@
         <article class="article-content">
                             <p class="wow fadeInUp">سرطان، یکی از بزرگ‌ترین چالش‌های نظام سلامت در سراسر دنیاست؛ بیماری‌ای که تنها به جسم بیمار محدود نمی‌شود، بلکه خانواده و جامعه را نیز تحت تأثیر قرار می‌دهد. در چنین شرایطی، مراقبت‌های حمایتی و تسکینی جایگاهی حیاتی دارند؛ مراقبت‌هایی که نه‌تنها به بهبود کیفیت زندگی بیماران کمک می‌کنند، بلکه بار سنگین درمان را از دوش خانواده‌ها و نظام سلامت کاهش می‌دهند. </p>
 
-                            <p class="wow fadeInUp"در ایران، تا سال‌های پایانی دهه ۱۳۸۰، خدمات حمایتی و تسکینی به‌صورت پراکنده و محدود ارائه می‌شد و خلأ یک نهاد سازمان‌یافته و تخصصی در این زمینه به‌وضوح احساس می‌شد. همین دغدغه باعث شد که در سال ۱۳۸۷، جمعی از متخصصان حوزه سلامت و مدیران باتجربه با حمایت خیرین و علاقه‌مندان به حوزه سرطان گرد هم آیند تا پاسخی برای این نیاز بیابند.</p>
+                            <p class="wow fadeInUp">در ایران، تا سال‌های پایانی دهه ۱۳۸۰، خدمات حمایتی و تسکینی به‌صورت پراکنده و محدود ارائه می‌شد و خلأ یک نهاد سازمان‌یافته و تخصصی در این زمینه به‌وضوح احساس می‌شد. همین دغدغه باعث شد که در سال ۱۳۸۷، جمعی از متخصصان حوزه سلامت و مدیران باتجربه با حمایت خیرین و علاقه‌مندان به حوزه سرطان گرد هم آیند تا پاسخی برای این نیاز بیابند.</p>
 
                             <h2 class="wow fadeInUp" data-wow-delay="0.8s">آغاز یک مسیر تازه</h2>
 

@@ -6,6 +6,15 @@
 <title>Pure Menu</title>
 
 <style>
+/* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 :root{
   --gold:#FFBF00;
   --gold-dark:#DAA520;
@@ -718,11 +727,6 @@ a{text-decoration:none;color:inherit}
 
 <nav class="mobile-menu-sidebar" id="mobileMenu"></nav>
 <div class="mobile-backdrop" id="mobileBackdrop"></div>
-    <!-- Vazirmatn Variable Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
  <script>
  (function(){
     const track = document.getElementById("ctaTrack");

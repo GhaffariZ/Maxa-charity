@@ -1,7 +1,6 @@
-<body>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div class="map-wrapper" dir="rtl">
 <svg
-   version="1.1"west
+   version="1.1"
    id="Iran"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="IranClickableMap.svg"
@@ -700,11 +699,11 @@
      id="tspan348"
      x="216.15797"
      y="85.139275"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a;
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a;
 stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"eastazerbayejan"),",")[0] }}</tspan></text><text
    xml:space="preserve"
    id="text349"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a"
    transform="translate(-9.9620406,-23.004344)"><tspan
      x="340"
      y="82.079025"
@@ -713,7 +712,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan3">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"ardebil"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text382"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect382);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect382);fill:#1a1a1a"
    transform="translate(-12.918851,-9.6987115)"><tspan
      x="380.55562"
      y="201.83098"
@@ -722,7 +721,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan5">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"gilan"),",")[0] | raw}}</tspan></tspan></text><text
    xml:space="preserve"
    id="text383"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect383);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect383);fill:#1a1a1a"
    transform="translate(-12.918851,-17.090729)"><tspan
      x="500.52013"
      y="175.21965"
@@ -731,7 +730,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan7">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"alborz"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text384"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect384);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect384);fill:#1a1a1a"
    transform="translate(-11.440448,-20.047537)"><tspan
      x="530.20042"
      y="263.92277"
@@ -740,7 +739,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan9">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"mazandaran"),",")[0] | raw}}</tspan></tspan></text><text
    xml:space="preserve"
    id="text385"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect385);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect385);fill:#1a1a1a"
    transform="translate(-11.440448,-11.177115)"><tspan
      x="700.59888"
      y="197.39543"
@@ -749,7 +748,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan11">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"golestan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text386"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect386);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect386);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="850.47391"
      y="181.13371"
@@ -761,7 +760,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
      id="tspan16"></tspan></text><text
    xml:space="preserve"
    id="text387"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect387);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect387);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="940.9289"
      y="297.92668"
@@ -770,7 +769,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan17">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"khorasanrazavi"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text388"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect388);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect388);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="700.75709"
      y="334.88762"
@@ -779,7 +778,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan19">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"semnan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text389"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect389);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect389);fill:#1a1a1a"
    transform="translate(-17.354062,-23.004344)"><tspan
      x="500.58816"
      y="315.66692"
@@ -788,7 +787,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan21">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"tehran"),",")[0] | raw}}</tspan></tspan></text><text
    xml:space="preserve"
    id="text390"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect390);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect390);fill:#1a1a1a"
    transform="translate(-4.0484299,-24.482747)"><tspan
      x="390.97195"
      y="283.14348"
@@ -797,7 +796,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan23">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"qazvin"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text391"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect391);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect391);fill:#1a1a1a"
    transform="translate(-12.918851,-21.52594)"><tspan
      x="300.40814"
      y="244.70402"
@@ -806,7 +805,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan25">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"zanjan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text392"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect392);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect392);fill:#1a1a1a"
    transform="translate(-12.918851,-20.047537)"><tspan
      x="160.176717"
      y="240.31926"
@@ -818,7 +817,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
      id="tspan30"></tspan></text><text
    xml:space="preserve"
    id="text393"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect393);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect393);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="230.81372"
      y="308.27629"
@@ -827,7 +826,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan31">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"kurdestan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text394"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect394);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect394);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="240.58811"
      y="389.58879"
@@ -836,7 +835,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan33">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"kermanshah"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text395"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect395);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect395);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="210.10706"
      y="485.68449"
@@ -845,7 +844,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan35">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"ilam"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text396"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect396);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect396);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="330.91985"
      y="361.49895"
@@ -854,7 +853,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan37">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"hamedan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text397"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect397);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect397);fill:#1a1a1a"
    transform="translate(-9.9620442,-24.482747)"><tspan
      x="445.90979"
      y="377.76067"
@@ -863,7 +862,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan39">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"qom"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text398"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect398);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect398);fill:#1a1a1a"
    transform="translate(-4.0484299,5.0853235)"><tspan
      x="370.37852"
      y="350.54387"
@@ -872,7 +871,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan41">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"markazi"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text399"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect399);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect399);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="300.22551"
      y="464.98723"
@@ -881,7 +880,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan43">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"lorestan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text400"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect400);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect400);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="520.38861"
      y="479.77043"
@@ -890,7 +889,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan45">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"isfahan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text401"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect401);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect401);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="350.42179"
      y="595.08684"
@@ -899,7 +898,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan47">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"khuzestan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text402"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect402);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect402);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="200.90287"
      y="734.05559"
@@ -911,7 +910,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
      id="tspan52"></tspan></text><text
    xml:space="preserve"
    id="text403"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect403);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect403);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="340.32639"
      y="794.67082"
@@ -920,7 +919,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan53">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"kohgiloie"),",")[0] }}</tspan></tspan></tspan></text><text
    xml:space="preserve"
    id="text404"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect404);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect404);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="450.30234"
      y="884.85246"
@@ -929,7 +928,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan57">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"bushehr"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text405"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect405);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect405);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="580.61032"
      y="754.75285"
@@ -938,7 +937,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan59">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"fars"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text406"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect406);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect406);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="780.04938"
      y="877.46184"
@@ -947,7 +946,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan61">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"hormozgan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text407"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect407);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect407);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="637.00908"
      y="556.64738"
@@ -956,7 +955,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan63">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"yazd"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text408"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect408);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect408);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="790.86159"
      y="704.48723"
@@ -965,7 +964,7 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan65">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"kerman"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text409"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect409);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect409);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="900.73554"
      y="496.03215"
@@ -974,26 +973,15 @@ stroke-width:1.19434">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0
        id="tspan67">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"southkhorasan"),",")[0] }}</tspan></tspan></text><text
    xml:space="preserve"
    id="text410"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'w_Nian',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect410);fill:#1a1a1a"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect410);fill:#1a1a1a"
    transform="translate(-14.397255,-27.439554)"><tspan
      x="1070.71378"
      y="824.23918"
      id="tspan70"><tspan
        style="font-size:18.6667px;line-height:1.25"
        id="tspan69">{{ split(GET_VALUE(API_GET("/pidi","noc.html","A1").data[0].data,"sistan"),",")[0] }}</tspan></tspan></text></svg>
-</body>
-
-
-<body>
-    <div class="map-wrapper"></div>
-
+</div>
     <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
 /* والد برای مرکز افقی و فاصله منطقی بالا/پایین */
 .map-wrapper {
   display: flex;
@@ -1016,16 +1004,22 @@ html, body {
   vertical-align: top;
 }
 
-/* فونت */
-#Iran text { font-family: 'B Nazanin', sans-serif; }
-
+/* فونت — Self-hosted Vazirmatn (reliable on the Iran network, no external CDN) */
 @font-face {
-  font-family: 'B Nazanin';
-  src: url('fonts/BNazanin.woff2') format('woff2'),
-       url('fonts/BNazanin.woff') format('woff');
-  font-weight: normal;
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
+}
+
+#Iran text { font-family: 'Vazirmatn', sans-serif; }
+
+/* responsive: keep the map readable on small screens */
+@media (max-width: 768px) {
+  #Iran { width: 92%; }
+  .map-wrapper { margin: 16px 0; }
 }
 
     </style>
-</body>

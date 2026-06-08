@@ -1,51 +1,33 @@
 /* ---------------------------
-
-Font: Vazirmatn Variable
-
-Path: /webfont/Vazirmatn[wght].woff2
-
+   Font: Vazirmatn Variable
+   Path: /webfont/Vazirmatn[wght].woff2
+   Self-hosted for reliability on the Iran network
+   (no external CDN dependency).
 ---------------------------- */
 
 @font-face {
-
-font-family: ‘Vazirmatn’;
-
-src: url(‘/webfont/Vazirmatn[wght].woff2’) format(‘woff2’);
-
-font-weight: 100 900;
-
-font-style: normal;
-
-font-display: swap;
-
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
 /* ---------------------------
-
-Apply globally
-
+   Apply globally
 ---------------------------- */
 
 html, body {
-
-margin: 0;
-
-padding: 0;
-
-font-family: ‘Vazirmatn’, sans-serif;
-
-direction: rtl; /* اگر سایت فارسی است */
-
+  margin: 0;
+  padding: 0;
+  font-family: 'Vazirmatn', sans-serif;
+  direction: rtl; /* اگر سایت فارسی است */
 }
 
 /* Optional default text sizes */
-
 h1 { font-weight: 800; }
-
 h2 { font-weight: 700; }
-
 h3 { font-weight: 600; }
-
-p { font-weight: 400; }
-
+p  { font-weight: 400; }
 small { font-weight: 300; }

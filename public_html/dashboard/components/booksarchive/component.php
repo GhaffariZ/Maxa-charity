@@ -1,5 +1,5 @@
 <!-- Books Archive Section Start -->
-<section class="books-archive-section">
+<section class="books-archive-section" dir="rtl">
   <div class="container">
     <h2 class="archive-title">کتاب‌های آموزشی</h2>
     <p class="archive-subtitle">در این بخش می‌توانید کتاب‌های آموزشی، علمی و تخصصی را مشاهده و دانلود کنید.</p>
@@ -203,6 +203,7 @@
   padding: 80px 20px;
   background: transparent; /* حذف رنگ پس‌زمینه */
   text-align: center;
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
 }
 
 .archive-title {
@@ -260,5 +261,13 @@
 .book-info span {
   font-size: 14px;
   color: #777;
+}
+
+@media (max-width: 600px) {
+  .books-archive-section { padding: 50px 14px; }
+  .archive-title { font-size: 23px; }
+  .books-grid { gap: 18px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .book-item img { height: 240px; }
+  .book-info h3 { font-size: 15px; }
 }
 </style>

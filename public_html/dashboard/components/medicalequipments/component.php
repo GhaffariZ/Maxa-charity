@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>صفحه مقاله استاندارد</title>
 
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+  <style>
+    /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+    @font-face {
+      font-family: 'Vazirmatn';
+      src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+           url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
   <style>
     :root {
       --primary-teal: #00a8a8;
@@ -1055,6 +1065,40 @@
   line-height: 2.05;
   text-align: center;
 }
+
+
+    /* ---------------- ultra-small phones & large screens ---------------- */
+    @media (max-width: 380px) {
+      .header-capsule h1 { font-size: 1.4rem; }
+      .article-content h2 { font-size: 1.2rem; }
+      .article-content p, .article-content ul { font-size: 0.95rem; }
+      .hero-image-container { height: 200px; border-radius: 18px; }
+      .contact-card, .related-card { border-radius: 18px; padding: 18px 14px; }
+      .popup-box { border-radius: 24px; padding: 26px 18px 20px; }
+    }
+    @media (min-width: 1600px) {
+      .article-content p { font-size: 1.22rem; }
+    }
+
+    /* ---------------- entrance animations (CSS-only, no external JS) ---------------- */
+    @keyframes maxaFadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .wow,
+    .fadeInUp {
+      opacity: 0;
+      animation: maxaFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    /* stagger via data-wow-delay values already present in the markup */
+    [data-wow-delay="0.2s"] { animation-delay: 0.2s; }
+    [data-wow-delay="0.6s"] { animation-delay: 0.6s; }
+    [data-wow-delay="0.8s"] { animation-delay: 0.8s; }
+    [data-wow-delay="1.2s"] { animation-delay: 1.2s; }
+    [data-wow-delay="1.4s"] { animation-delay: 1.4s; }
+    @media (prefers-reduced-motion: reduce) {
+      .wow, .fadeInUp { opacity: 1 !important; animation: none !important; }
+    }
 
   </style>
 

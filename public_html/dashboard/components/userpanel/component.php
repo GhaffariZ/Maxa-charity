@@ -6,15 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>پنل حامیان موسسه نیکوکاری مکسا</title>
 
-  <!-- فونت -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-
   <!-- آیکون -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+    @font-face {
+      font-family: 'Vazirmatn';
+      src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+           url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
     :root{
       --primary:#0ea5a4;
       --primary-dark:#0b7f7e;
@@ -44,7 +48,7 @@
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family:'W-nian', sans-serif;
+      font-family:'Vazirmatn', sans-serif;
     }
 
     body{
@@ -991,6 +995,13 @@
       .slide{padding:24px;}
       .slide-content h2{font-size:24px;}
       .hero-slider{height:340px;}
+    }
+
+    @media(max-width:480px){
+      .main{padding:12px;}
+      .slide{padding:18px;}
+      .slide-content h2{font-size:20px;}
+      .hero-slider{height:280px;}
     }
 
     /* Animations */
