@@ -1,4 +1,5 @@
+---
 deployment:
-tasks:
-- export DEPLOYPATH=/home/YOUR_CPANEL_USERNAME/public_html/
-- /bin/cp -R * $DEPLOYPATH
+  tasks:
+    - export DEPLOYPATH=/home/erfantey/public_html/
+    - /bin/cp -R public_html/. $DEPLOYPATH
