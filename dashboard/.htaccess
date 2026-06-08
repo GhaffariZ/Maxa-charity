@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# ----------------------------------
+# Security
+# ----------------------------------
+Options -Indexes
+
+# ---------------------------------------------------------
+# Prevent direct access to news-view.php
+# (must be accessed only from root URL)
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/dashboard/news-view\.php [NC]
+RewriteRule ^news-view\.php$ / [R=301,L]
+# ارجاع آدرس تمیز به فایل PHP
+RewriteRule ^personal-resume-detail/(.*)$ personal-resume-detail.php?name=$1 [L,QSA]

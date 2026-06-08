@@ -1,0 +1,48 @@
+# =============================================================================
+#  API rewrite + hardening  (place at public_html/api/.htaccess)
+# =============================================================================
+
+# Route every request that isn't a real file/dir to the front controller.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /api/
+
+    # Force HTTPS (belt-and-suspenders; the SPA root also redirects).
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# The Authorization header is sometimes stripped by CGI/FastCGI — re-expose it.
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Block direct access to PHP source, config, and logs under /api.
+<FilesMatch "\.(env|ini|log|sql|md|lock|json)$">
+    Require all denied
+</FilesMatch>
+
+# Deny access to source directories outright (only index.php should be reachable).
+RedirectMatch 403 ^/api/(src|vendor)/.*\.php$
+
+# Don't list directories.
+Options -Indexes
+
+# Defensive headers (PHP also sets these; harmless to repeat).
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always unset X-Powered-By
+</IfModule>
+
+# Do not expose PHP version.
+<IfModule mod_php.c>
+    php_flag expose_php Off
+</IfModule>

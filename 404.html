@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>خطای 404 - صفحه پیدا نشد</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* تعریف متغیرهای رنگی بر اساس پالت دقیق لوگوی شما */
+        :root {
+            --primary-teal: #007A78;
+            --primary-dark: #0A4D4C;
+            --accent-gold: #F2A104;
+            --bg-gradient-start: #063837;
+            --bg-gradient-end: #0B5C5A;
+            --text-white: #FFFFFF;
+            --text-muted: #D1ECEB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            /* قفل کردن کامل صفحه و جلوگیری از هرگونه اسکرول افقی و عمودی */
+            overflow: hidden; 
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif !important;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* المان‌های تزیینی پس‌زمینه */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            z-index: 1;
+            pointer-events: none;
+        }
+        body::before {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+        }
+        body::after {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            background: rgba(242, 161, 4, 0.02);
+        }
+
+        /* کارت اصلی شیشه‌ای */
+        .error-container {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            margin: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* بخش بصری ارور و لوگو */
+        .visual-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .error-code {
+            font-size: clamp(4.5rem, 12vw, 7.5rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -2px;
+            color: var(--text-white);
+            text-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تنظیمات اختصاصی فایل لوگوی ارسالی شما */
+        .brand-logo-img {
+            width: clamp(80px, 18vw, 120px);
+            height: auto;
+            object-fit: contain;
+            animation: floatBalloon 4s ease-in-out infinite;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+        }
+
+        /* محتوای متنی */
+        h1 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-white);
+        }
+
+        p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 35px;
+            font-weight: 300;
+        }
+
+        /* دکمه‌های هدایت‌گر */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-gold);
+            color: var(--primary-dark);
+            box-shadow: 0 6px 20px rgba(242, 161, 4, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(242, 161, 4, 0.5);
+            background-color: #ffb41a;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-4px);
+        }
+
+        /* انیمیشن‌ها */
+        @keyframes floatBalloon {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* بهینه‌سازی دقیق‌تر برای موبایل */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .error-container {
+                padding: 30px 20px;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                padding: 14px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-container">
+        <div class="visual-wrapper">
+            <span class="error-code">4</span>
+            
+<img class="brand-logo-img" src="/error%20pages/LOGO-MAXA.png" alt="لوگو" />
+
+
+            <span class="error-code">4</span>
+        </div>
+
+        <h1>صفحه مورد نظر پیدا نشد!</h1>
+        <p>متأسفانه صفحه‌ای که به دنبال آن هستید وجود ندارد یا جابه‌جا شده است. شاید این بادکنک از دست ما رها شده و به هوا رفته باشد!</p>
+
+        <div class="button-group">
+            <a href="/" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">صفحه قبلی</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+body {
+    background: #f3f4f6;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.app-sidebar {
+    width: 260px;
+    background: #0f172a;
+    color: #fff;
+    padding: 18px 14px;
+}
+
+.sidebar-brand {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.sidebar-link {
+    color: rgba(255, 255, 255, .85);
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    display: block;
+    font-size: 14px;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+
+.sidebar-link.active {
+    background: rgba(59, 130, 246, .25);
+    color: #fff;
+}
+
+/* Main */
+.app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-topbar {
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topbar-title {
+    font-weight: 700;
+}
+
+/* Cards */
+.card {
+    border-radius: 16px;
+}

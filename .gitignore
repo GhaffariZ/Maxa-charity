@@ -1,0 +1,13 @@
+# Sensitive — never commit these
+config.php
+.env
+wp-config.php
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+# Dependencies (if you use them)
+/vendor/
+/node_modules/
