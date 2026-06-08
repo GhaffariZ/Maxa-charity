@@ -1,8 +1,3 @@
-<!-- Vazirmatn Variable Font فقط برای همین کامپوننت استفاده می‌شود -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
 <section class="charity-doc-component" dir="rtl">
@@ -138,6 +133,15 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <style>
+/* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+         url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
 .page-header-capsule {
     background: linear-gradient(180deg, #f8f9fa 0%, #eef3f6 100%);
     border-radius: 50px;

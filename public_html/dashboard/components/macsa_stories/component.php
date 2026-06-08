@@ -72,13 +72,17 @@
 </section>
 <div class="skill-divider"></div>
 
-    <!-- Vazirmatn Variable Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
 <style>
+/* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 .maxsa-global-bg{
 position:fixed;
 top:0;
@@ -97,7 +101,7 @@ linear-gradient(180deg,#fffdf9 0%, #f6fbfb 100%);
 
 .maxsa-glass{
 padding:100px 0;
-font-family:inherit;
+font-family:'Vazirmatn', Tahoma, sans-serif;
 position:relative;
 }
 

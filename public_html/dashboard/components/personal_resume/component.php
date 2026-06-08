@@ -5,10 +5,16 @@
     <title>پروفایل کادر درمان | مکسا</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- فونت (می‌توانید با فونت دلخواه خود در سایت جایگزین کنید) -->
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
+    /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+    @font-face {
+        font-family: 'Vazirmatn';
+        src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+             url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+    }
 :root{
   --primary: #0f766e;          /* teal */
   --primary-700:#0b5f59;

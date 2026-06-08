@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سرطان پستان – نسخه عمومی</title>
 
 <style>
-
+  /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
+  @font-face {
+    font-family: 'Vazirmatn';
+    src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
+         url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
   body {
     font-family: 'Vazirmatn', sans-serif !important;
   }
@@ -140,13 +148,32 @@
 .support    { background: #0dcaf0; color: #00323a; } /* Support */
 .research   { background: #0b3c5d; } /* Research */
 
+/* ===== CARD HOVER ANIMATION ===== */
+.leukemia-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+@media (hover: hover) {
+    .leukemia-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+    }
+}
+
 /* =============================
-   MOBILE
+   RESPONSIVE
 ============================= */
+@media (max-width: 1024px) {
+    .leukemia-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .leukemia-grid {
         grid-template-columns: 1fr;
     }
+
+    .leukemia-title { font-size: 22px; }
 
     .leukemia-header {
         cursor: pointer;
@@ -172,6 +199,12 @@
         width: 100%;
         justify-content: center;
     }
+}
+
+@media (max-width: 380px) {
+    .leukemia-container { padding: 14px; }
+    .leukemia-title { font-size: 19px; }
+    .section-title { font-size: 16px; }
 }
 </style>
 </head>
@@ -297,12 +330,6 @@
 </div>
 </div>
 </div>
-    <!-- Vazirmatn Variable Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
 <script>
 document.querySelectorAll(".leukemia-header").forEach(header => {
     header.addEventListener("click", () => {

@@ -56,6 +56,7 @@
   padding:90px 0;
   direction:rtl;
   position:relative;
+  font-family:'Vazirmatn', Tahoma, sans-serif;
 }
 
 .skill-hero-container{
@@ -310,6 +311,16 @@
     align-items:center;
   }
 
+}
+
+@media(max-width:560px){
+  .skill-hero{ padding:50px 0; }
+  .skill-hero-title{ font-size:28px; }
+  .skill-hero-features{ grid-template-columns:1fr; }
+  .skill-hero-right{ flex-direction:column !important; align-items:center; }
+  .skill-main-image,
+  .skill-video-box{ width:100%; max-width:300px; height:auto; aspect-ratio:3/4; }
+  .skill-exp-box{ width:100%; max-width:300px; }
 }
 
 </style>
