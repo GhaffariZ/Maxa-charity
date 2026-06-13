@@ -958,8 +958,8 @@ body.spa-active .content{display:none}
       {label:'مدیریت کمپین‌ها',icon:'list',href:'campaign-status.php'},
       {label:'صفحه کمپین‌ها',icon:'eye',href:'empty-link2.php'}]},
     {label:'دوره‌ها',icon:'book',children:[
-      {label:'ساخت دوره جدید',icon:'plus',href:'Courses-create.php'},
-      {label:'مدیریت دوره‌ها',icon:'list',href:'Courses-manage.php'},
+      {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
+      {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'},
       {label:'صفحه دوره‌ها',icon:'eye',href:'courses.php'}]},
     {label:'کامپوننت‌ها و صفحات',icon:'box',children:[
       {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
