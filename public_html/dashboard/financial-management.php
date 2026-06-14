@@ -4,6 +4,8 @@
  * این فایل به صورت یکپارچه بدون سایدبار و متمرکز بر گزارش مبالغ موفق پیاده‌سازی شده است.
  * ========================================================================== */
 declare(strict_types=1);
+require_once __DIR__ . '/_guard.php';
+dash_require('financial');
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 

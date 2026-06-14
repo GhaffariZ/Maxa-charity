@@ -51,7 +51,17 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^page/([a-zA-Z0-9-_]+)/?$ dashboard/page-view.php?slug=$1 [L,QSA]
 
 # ---------------------------------------------------------
-# 4) Root Pages
+# 3b) Branch internal routes  /{branch-slug}/{sub-path}
+#     مثال: /tabriz-branch/news/12  یا  /tabriz-branch/about
+#     page-view.php ابتدا بررسی می‌کند که آیا {slug} یک شعبه است یا نه.
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9-]+)/(.+?)/?$ dashboard/page-view.php?slug=$1&sub=$2 [L,QSA]
+
+# ---------------------------------------------------------
+# 4) Root Pages  /{slug}
+#     page-view.php ترتیب resolve را اعمال می‌کند: ابتدا branches.slug سپس صفحه‌ی مرکزی.
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -5,6 +5,7 @@
  *  نمی‌کند، کافیست نام فایل را به maxa-dashboard.php تغییر دهید.
  * ========================================================================== */
 declare(strict_types=1);
+require_once __DIR__ . '/_guard.php';
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
@@ -75,19 +76,28 @@ function money_compact($v): string {
   return fa_digits(number_format($v));
 }
 
-/* ---------- آمار کلی ---------- */
+/* ---------- محدوده‌ی شعبه‌ی فعال (ایزولاسیون چندمستأجری) ---------- */
+$BRANCH_ID = dash_active_branch_id();
+$IS_HQ_VIEW = false;
+$ACTIVE_BRANCH_ROW = dash_load_branch($BRANCH_ID);
+if ($ACTIVE_BRANCH_ROW) { $IS_HQ_VIEW = ((int)$ACTIVE_BRANCH_ROW['is_hq'] === 1); }
+
+/* ---------- آمار کلی (محدودشده به شعبه‌ی فعال) ----------
+ *  قواعد کمک‌ها:
+ *   - مجموع کمک‌های یک شعبه = فقط کمک‌هایی که branch_id آن‌ها برابر شعبه است.
+ *   - کمک‌های عمومی (آنلاین بدون کمپین) فقط در دفتر مرکزی شمرده می‌شوند و در branch_id=HQ هستند.
+ *  چون panel_donations.branch_id مستقیماً مقداردهی شده، کافی است بر آن فیلتر بزنیم.
+ */
 $totalDonors = 0; $activeDonors = 0; $totalCollected = 0.0; $activeCampaigns = 0; $newThisWeek = 0;
 if ($pdo) { try {
-  // تعداد کل خیرین (یوزرهای ثبت‌شده)
+  // خیرین معیارهای سراسری‌اند (پنل خیرین مشترک است)؛ فقط در نمای مرکزی نمایش کامل دارند.
   $totalDonors    = (int)q($pdo, "SELECT COUNT(*) c FROM panel_users")->fetch()['c'];
-  // خیرین فعال: کسانی که در یک هفته‌ی اخیر آخرین ورودشان بوده است
   $activeDonors   = (int)q($pdo, "SELECT COUNT(*) c FROM panel_users WHERE last_login_at >= (NOW() - INTERVAL 7 DAY)")->fetch()['c'];
-  // خیرین تازه‌واردِ این هفته (برای نشانگر رشد)
   $newThisWeek    = (int)q($pdo, "SELECT COUNT(*) c FROM panel_users WHERE created_at >= (NOW() - INTERVAL 7 DAY)")->fetch()['c'];
-  // مجموع کمک‌های موفق
-  $totalCollected = (float)q($pdo, "SELECT COALESCE(SUM(amount),0) s FROM panel_donations WHERE status='success'")->fetch()['s'];
-  // کمپین‌های فعال
-  $activeCampaigns= (int)q($pdo, "SELECT COUNT(*) c FROM campaigns WHERE is_active=1")->fetch()['c'];
+  // مجموع کمک‌های موفقِ این شعبه
+  $totalCollected = (float)q($pdo, "SELECT COALESCE(SUM(amount),0) s FROM panel_donations WHERE status='success' AND branch_id = ?", [$BRANCH_ID])->fetch()['s'];
+  // کمپین‌های فعالِ این شعبه
+  $activeCampaigns= (int)q($pdo, "SELECT COUNT(*) c FROM campaigns WHERE is_active=1 AND branch_id = ?", [$BRANCH_ID])->fetch()['c'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 
 /* ---------- هدف ماهانه (حلقه‌ی پیشرفت) ---------- */
@@ -96,9 +106,9 @@ $goalCollected = 0.0;
 if ($pdo) { try {
   $goalCollected = (float)q($pdo,
     "SELECT COALESCE(SUM(amount),0) s FROM panel_donations
-     WHERE status='success'
+     WHERE status='success' AND branch_id = ?
        AND YEAR(COALESCE(paid_at,created_at))=YEAR(NOW())
-       AND MONTH(COALESCE(paid_at,created_at))=MONTH(NOW())")->fetch()['s'];
+       AND MONTH(COALESCE(paid_at,created_at))=MONTH(NOW())", [$BRANCH_ID])->fetch()['s'];
   $row = q($pdo, "SELECT value FROM settings WHERE name='monthly_goal_irt' LIMIT 1")->fetch();
   if ($row && is_numeric($row['value'])) $goalTarget = (float)$row['value'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
@@ -116,10 +126,10 @@ if ($pdo) { try {
        FROM panel_donations pd
        JOIN panel_users pu        ON pu.id = pd.user_id
        LEFT JOIN user_profiles up ON up.user_id = pd.user_id
-      WHERE pd.status='success'
+      WHERE pd.status='success' AND pd.branch_id = ?
       GROUP BY pd.user_id, pu.email
       ORDER BY total DESC, cnt DESC
-      LIMIT 5")->fetchAll();
+      LIMIT 5", [$BRANCH_ID])->fetchAll();
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 $donorsOut = [];
 foreach ($donorsRaw as $d) {
@@ -140,8 +150,9 @@ if ($pdo) { try {
        LEFT JOIN panel_users pu   ON pu.id = pd.user_id
        LEFT JOIN user_profiles up ON up.user_id = pd.user_id
        LEFT JOIN campaigns c      ON c.id = pd.campaign_id
+      WHERE pd.branch_id = ?
       ORDER BY COALESCE(pd.paid_at, pd.created_at) DESC, pd.id DESC
-      LIMIT 60")->fetchAll();
+      LIMIT 60", [$BRANCH_ID])->fetchAll();
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 $stMap = [
   'success'  => ['ok',  'موفق'],
@@ -174,7 +185,7 @@ if ($pdo) { try {
   $don = q($pdo,
     "SELECT amount, campaign_id, COALESCE(paid_at, created_at) AS ts
        FROM panel_donations
-      WHERE status='success'")->fetchAll();
+      WHERE status='success' AND branch_id = ?", [$BRANCH_ID])->fetchAll();
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 
 /* ---------- داده‌ی خیرین برای سری زمانی «تعداد کل» و «خیرین فعال» ---------- */
@@ -270,6 +281,52 @@ $SERVER = [
   'tx'      => $tx,
   'dbError' => $dbError,
 ];
+
+/* ============================================================================
+ *  بسته‌ی چندشعبه‌ای برای منو و انتخابگر شعبه (Box 1 و Box 2)
+ * ========================================================================== */
+$U = dash_user();
+$isSuper = dash_is_super();
+
+// قابلیت‌های فعالِ شعبه‌ی فعلی
+$activeFeatures = [];
+foreach (DASH_FEATURES as $f) {
+  if (dash_branch_feature_enabled($BRANCH_ID, $f)) $activeFeatures[] = $f;
+}
+// آیتم‌های منو فقط وقتی نمایش داده می‌شوند که هم برای شعبه فعال باشند و هم کاربر دسترسی داشته باشد
+$visible = static function (string $feature) use ($U, $BRANCH_ID): bool {
+  return in_array($feature, $U['permissions'], true) && dash_branch_feature_enabled($BRANCH_ID, $feature);
+};
+
+// فهرست شعبه‌ها برای dropdown (فقط سوپرادمین همه را می‌بیند)
+$branchList = $isSuper ? dash_all_branches() : [array_filter($ACTIVE_BRANCH_ROW ?? [], static fn($k)=>in_array($k,['id','name','slug','is_hq','status'],true), ARRAY_FILTER_USE_KEY)];
+
+$MENU = [
+  'features'      => $activeFeatures,
+  'can'           => [
+    'hero'      => $visible('hero'),
+    'news'      => $visible('news'),
+    'campaigns' => $visible('campaigns'),
+    'partners'  => $visible('partners'),
+    'courses'   => $visible('courses'),
+    'pages'     => $visible('pages'),
+    'financial' => $visible('financial'),
+    'feedback'  => $visible('feedback'),
+    'medical'   => $visible('medical'),
+  ],
+  'isSuper'       => $isSuper,
+  'isBranchAdmin' => dash_is_branch_admin(),
+  'isHqView'      => $IS_HQ_VIEW,
+  'activeBranch'  => $BRANCH_ID,
+  'activeBranchName' => $ACTIVE_BRANCH_ROW['name'] ?? '',
+  'branches'      => array_map(static fn($b)=>[
+                       'id'=>(int)$b['id'],'name'=>$b['name'],'slug'=>$b['slug'],
+                       'is_hq'=>(int)($b['is_hq']??0),'status'=>$b['status']??'active',
+                     ], $branchList),
+  'user'          => ['name'=>$U['full_name'] ?: $U['username'],
+                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : 'کاربر شعبه')],
+  'csrf'          => csrf_token(),
+];
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -361,6 +418,9 @@ svg.ic{display:block}
 .user-name{font-weight:700;font-size:13px}
 .user-role{font-size:11px;color:var(--color-muted)}
 .user-card .ic{width:17px;height:17px;color:var(--color-muted)}
+.logout-link{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-top:4px;border-radius:12px;font-size:12.5px;font-weight:700;color:var(--danger);transition:background .2s}
+.logout-link:hover{background:rgba(224,85,107,.10)}
+.logout-link .ic{width:18px;height:18px}
 
 /* ============ MAIN / TOPBAR ============ */
 .main{margin-right:var(--sb-w);transition:margin-right .42s var(--ease);min-height:100vh;display:flex;flex-direction:column}
@@ -617,6 +677,35 @@ body.spa-active .content{display:none}
 .dash-btn>span:last-child{flex:1;text-align:start;position:relative;z-index:1}
 .dash-btn.active{box-shadow:0 0 0 2px var(--color-surface),0 0 0 4px var(--color-primary-light),0 12px 24px -12px rgba(0,102,101,.85)}
 
+/* ============ Box 1: انتخابگر شعبه ============ */
+.branch-pick{position:relative;margin:8px 12px 2px}
+.branch-btn{width:100%;display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:14px;
+  background:var(--color-bg);border:1px solid var(--color-border);font-family:inherit;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s,background .2s}
+.branch-btn:hover:not(:disabled){border-color:var(--color-primary-light)}
+.branch-btn:disabled{cursor:default;opacity:.95}
+.branch-ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--secondary-12);color:#b9760a}
+.branch-ic .ic{width:18px;height:18px}
+.branch-meta{flex:1;min-width:0;text-align:start}
+.branch-label{display:block;font-size:10.5px;color:var(--color-muted);font-weight:600}
+.branch-name{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.branch-btn .chev{width:16px;height:16px;color:var(--color-muted);transition:transform .3s var(--ease);flex-shrink:0}
+.branch-pick.open .branch-btn .chev{transform:rotate(180deg)}
+.branch-pick.open .branch-btn{border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:#fff}
+.branch-menu{position:absolute;top:calc(100% + 6px);inset-inline:0;background:#fff;border:1px solid var(--color-border);
+  border-radius:14px;box-shadow:var(--shadow-lg);padding:6px;z-index:50;max-height:320px;overflow-y:auto;
+  opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top;transition:opacity .2s,transform .22s var(--ease),visibility .2s}
+.branch-pick.open .branch-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.branch-menu li{padding:10px 12px;border-radius:11px;font-size:12.5px;font-weight:600;color:#5b6469;cursor:pointer;
+  display:flex;align-items:center;gap:9px;transition:background .15s,color .15s}
+.branch-menu li:hover{background:var(--primary-08);color:var(--color-primary-dark)}
+.branch-menu li.sel{background:var(--primary-08);color:var(--color-primary-dark)}
+.branch-menu li .bdot{width:7px;height:7px;border-radius:50%;background:var(--color-primary);flex-shrink:0;margin-inline-start:auto}
+.branch-menu li.disabled{opacity:.5}
+.branch-menu li .hq-tag{font-size:9.5px;font-weight:800;color:#b9760a;background:var(--secondary-12);padding:2px 7px;border-radius:99px}
+[data-theme="dark"] .branch-pick.open .branch-btn,[data-theme="dark"] .branch-menu{background:var(--color-surface)}
+
 /* ============ دکمه‌ی تغییر تم (روشن/تاریک) ============ */
 .theme-toggle{position:relative;overflow:hidden}
 .theme-toggle .ic{position:absolute;inset:0;margin:auto;width:21px;height:21px;transition:transform .45s var(--ease),opacity .35s var(--ease)}
@@ -707,14 +796,35 @@ body.spa-active .content{display:none}
       <span class="dash-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/></svg></span>
       <span>داشبورد مدیریت</span>
     </button>
+
+    <!-- ============ Box 1: انتخابگر شعبه ============ -->
+    <div class="branch-pick" id="branchPick" data-super="<?= $isSuper ? '1':'0' ?>">
+      <button class="branch-btn" id="branchBtn" type="button" <?= $isSuper ? 'aria-haspopup="listbox"' : 'disabled' ?>>
+        <span class="branch-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg></span>
+        <span class="branch-meta">
+          <span class="branch-label">شعبه‌ی فعال</span>
+          <span class="branch-name" id="branchName"><?= e($ACTIVE_BRANCH_ROW['name'] ?? '—') ?></span>
+        </span>
+        <?php if ($isSuper): ?>
+        <svg class="ic chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <?php endif; ?>
+      </button>
+      <?php if ($isSuper): ?>
+      <ul class="branch-menu" id="branchMenu" role="listbox"></ul>
+      <?php endif; ?>
+    </div>
     <nav class="sb-nav"><div class="nav-list" id="navList"></div></nav>
     <div class="sb-footer">
       <a href="account.php" class="user-card">
-        <div class="user-av">م‌ا</div>
+        <div class="user-av"><?= e(mb_substr($U['full_name'] ?: $U['username'], 0, 2, 'UTF-8')) ?></div>
         <div class="user-meta">
-          <div class="user-name">مدیر اصلی</div>
-          <div class="user-role">مدیر سیستم</div>
+          <div class="user-name"><?= e($U['full_name'] ?: $U['username']) ?></div>
+          <div class="user-role"><?= e($isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : 'کاربر شعبه')) ?></div>
         </div>
+      </a>
+      <a href="logout.php" class="logout-link">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>خروج از حساب</span>
       </a>
     </div>
   </aside>
@@ -877,7 +987,7 @@ body.spa-active .content{display:none}
 (function(){
   "use strict";
   /* ---------- داده‌های دریافت‌شده از سرور (PHP) ---------- */
-  const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+  const SERVER = <?= json_encode($SERVER + ['menu' => $MENU], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
   if (SERVER && SERVER.dbError) { try{ console.warn('DB:', SERVER.dbError); }catch(e){} }
 
   /* ---------- helpers ---------- */
@@ -933,37 +1043,60 @@ body.spa-active .content{display:none}
     document.getElementById('welcomeDate').textContent='امروز '+d+' — نگاهی سریع به وضعیت کمک‌ها، خیرین و فعالیت‌های اخیر خیریه مکسا.';
   }catch(e){}
 
-  /* ---------- sidebar nav ---------- */
-  const NAV=[
-    {title:'مدیریت محتوا'},
-    {label:'هیروها',icon:'award',children:[
-      {label:'ساخت هیرو جدید',icon:'plus',href:'hero-create.php'},
-      {label:'مدیریت هیروها',icon:'list',href:'hero-management.php'}]},
-    {label:'خبرها',icon:'news',children:[
-      {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
-      {label:'صفحه اخبار',icon:'eye',href:'empty-link.php'},
-      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}]},
-    {label:'همکاران',icon:'users',children:[
-      {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
-      {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'},
-      {label:'شبکه همکاران مکسا',icon:'network',href:'personal-resume-list.php'}]},
-    {label:'کمپین‌ها',icon:'flag',children:[
-      {label:'ساخت کمپین جدید',icon:'plus',href:'campaign-create.php'},
-      {label:'مدیریت کمپین‌ها',icon:'list',href:'campaign-status.php'},
-      {label:'صفحه کمپین‌ها',icon:'eye',href:'empty-link2.php'}]},
-    {label:'دوره‌ها',icon:'book',children:[
-      {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
-      {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]},
-    {label:'کامپوننت‌ها و صفحات',icon:'box',children:[
-      {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
-      {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
-      {label:'مدیریت صفحات',icon:'list',href:'page-list.php'}]},
-    {title:'مالی'},
-    {single:true,label:'مشاهده گزارش',icon:'wallet',href:'financial-management.php'},
-    {title:'ارتباط با مردم'},
-    {single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'},
-    {single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'}
-  ];
+  /* ---------- sidebar nav (سرور-محور: محدود به شعبه و دسترسی‌ها) ---------- */
+  const MENU = SERVER.menu || {can:{},isSuper:false,isBranchAdmin:false};
+  const CAN  = MENU.can || {};
+  const NAV  = [];
+
+  // --- مدیریت محتوا ---
+  const content = [];
+  if (CAN.hero)      content.push({label:'هیروها',icon:'award',children:[
+                       {label:'ساخت هیرو جدید',icon:'plus',href:'hero-create.php'},
+                       {label:'مدیریت هیروها',icon:'list',href:'hero-management.php'}]});
+  if (CAN.news)      content.push({label:'خبرها',icon:'news',children:[
+                       {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
+                       {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}]});
+  if (CAN.partners)  content.push({label:'همکاران',icon:'users',children:[
+                       {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
+                       {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'},
+                       {label:'شبکه همکاران مکسا',icon:'network',href:'personal-resume-list.php'}]});
+  if (CAN.campaigns) content.push({label:'کمپین‌ها',icon:'flag',children:[
+                       {label:'ساخت کمپین جدید',icon:'plus',href:'campaign-create.php'},
+                       {label:'مدیریت کمپین‌ها',icon:'list',href:'campaign-status.php'}]});
+  if (CAN.courses)   content.push({label:'دوره‌ها',icon:'book',children:[
+                       {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
+                       {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]});
+  if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
+                       {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
+                       {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
+                       {label:'مدیریت صفحات',icon:'list',href:'page-list.php'}]});
+  if (content.length){ NAV.push({title:'مدیریت محتوا'}); content.forEach(c=>NAV.push(c)); }
+
+  // --- مالی ---
+  if (CAN.financial){ NAV.push({title:'مالی'});
+    NAV.push({single:true,label:'مشاهده گزارش',icon:'wallet',href:'financial-management.php'}); }
+
+  // --- ارتباط با مردم ---
+  const people=[];
+  if (CAN.feedback) people.push({single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'});
+  if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
+  if (people.length){ NAV.push({title:'ارتباط با مردم'}); people.forEach(p=>NAV.push(p)); }
+
+  // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
+  if (MENU.isBranchAdmin || MENU.isSuper){
+    NAV.push({title:'کاربران شعبه'});
+    NAV.push({label:'مدیریت کاربران',icon:'users',children:[
+      {label:'افزودن کاربر',icon:'plus',href:'user-add.php'},
+      {label:'مدیریت کاربران',icon:'list',href:'user-manage.php'}]});
+  }
+
+  // --- شعب (فقط سوپرادمین) ---
+  if (MENU.isSuper){
+    NAV.push({title:'شعب'});
+    NAV.push({label:'شعبه‌ها',icon:'network',children:[
+      {label:'تعریف شعبه‌ی جدید',icon:'plus',href:'branch-create.php'},
+      {label:'مدیریت شعبه‌ها',icon:'list',href:'branch-list.php'}]});
+  }
   const navEl=document.getElementById('navList');
   let delay=0;
   NAV.forEach(item=>{
@@ -989,6 +1122,38 @@ body.spa-active .content{display:none}
       else { group.classList.add('open'); sub.style.maxHeight=(sub.scrollHeight+8)+'px'; }
     });
   });
+
+  /* ---------- Box 1: انتخابگر شعبه (فقط سوپرادمین) ---------- */
+  (function(){
+    const pick=document.getElementById('branchPick');
+    if(!pick || pick.dataset.super!=='1') return;
+    const btn=document.getElementById('branchBtn');
+    const menu=document.getElementById('branchMenu');
+    const branches=(MENU.branches||[]);
+    const active=MENU.activeBranch;
+    branches.forEach(b=>{
+      const li=document.createElement('li');
+      li.setAttribute('role','option');
+      li.dataset.id=b.id;
+      if(b.id===active) li.classList.add('sel');
+      if(b.status==='disabled') li.classList.add('disabled');
+      li.innerHTML='<span>'+ (b.name||'') +'</span>'+
+        (b.is_hq?'<span class="hq-tag">مرکزی</span>':'')+
+        (b.id===active?'<span class="bdot"></span>':'');
+      li.addEventListener('click',function(){
+        if(b.id===active) return;
+        // ارسالِ امن: POST با CSRF به switch-branch.php سپس رفرش
+        const f=document.createElement('form');
+        f.method='POST'; f.action='switch-branch.php';
+        f.innerHTML='<input type="hidden" name="csrf_token" value="'+(MENU.csrf||'')+'">'+
+                    '<input type="hidden" name="branch_id" value="'+b.id+'">';
+        document.body.appendChild(f); f.submit();
+      });
+      menu.appendChild(li);
+    });
+    btn.addEventListener('click',function(e){ e.stopPropagation(); pick.classList.toggle('open'); });
+    document.addEventListener('click',function(){ pick.classList.remove('open'); });
+  })();
 
   /* ---------- sidebar toggle ---------- */
   const app=document.getElementById('app');

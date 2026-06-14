@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/_guard.php';
+dash_require('hero');
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -101,11 +103,13 @@ try {
     }
 
     // ذخیره در دیتابیس
+    // ایزولاسیون: هیرو در شعبه‌ی فعال ثبت می‌شود
+    $__branch = dash_active_branch_id();
     $stmt = $pdo->prepare("
-        INSERT INTO hero_slides 
-        (title, description, image, button_link, category, publish_date, status, sort_order)
-        VALUES 
-        (:title, :description, :image, :button_link, :category, :publish_date, 1, 0)
+        INSERT INTO hero_slides
+        (title, description, image, button_link, category, publish_date, status, sort_order, branch_id)
+        VALUES
+        (:title, :description, :image, :button_link, :category, :publish_date, 1, 0, :branch_id)
     ");
 
     $stmt->execute([
@@ -114,7 +118,8 @@ try {
         ':image'        => $dbImagePath,
         ':button_link'  => $button_link,
         ':category'     => $category,
-        ':publish_date' => $publish_date
+        ':publish_date' => $publish_date,
+        ':branch_id'    => $__branch
     ]);
 
     echo json_encode([

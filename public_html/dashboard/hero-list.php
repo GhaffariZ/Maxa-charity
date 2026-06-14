@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('hero');
 // فعال‌سازی نمایش خطاها برای دیباگ (بعد از تست نهایی اینها را پاک کنید)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

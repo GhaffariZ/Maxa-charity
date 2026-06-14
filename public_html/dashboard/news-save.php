@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('news');
 // news-save.php
 header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php"; 
@@ -60,20 +62,25 @@ try {
     $record_id = 0; 
     $news_code = '';
 
+    // ایزولاسیون چندمستأجری
+    $__branch = dash_active_branch_id();
+
     if ($id > 0) {
         // ======================== حالت ویرایش (UPDATE) ========================
-        $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ?");
-        $stmt_check->execute([$id]);
+        // IDOR: خبر باید متعلق به همین شعبه باشد
+        $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ? AND branch_id = ?");
+        $stmt_check->execute([$id, $__branch]);
         $existing = $stmt_check->fetch(PDO::FETCH_ASSOC);
-        
+
         if (!$existing) throw new Exception("خبر مورد نظر برای ویرایش یافت نشد.");
         $news_code = $existing['news_code'];
 
-        $sql = "UPDATE news SET 
-                title = ?, content = ?, author = ?, publish_date = ?, 
-                category_id = ?, keywords = ?, tags = ?, read_time = ? WHERE id = ?";
+        // قید branch_id در WHERE برای ایمنی مضاعف
+        $sql = "UPDATE news SET
+                title = ?, content = ?, author = ?, publish_date = ?,
+                category_id = ?, keywords = ?, tags = ?, read_time = ? WHERE id = ? AND branch_id = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id]);
+        $stmt->execute([$title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id, $__branch]);
         
         $message = "تغییرات با موفقیت به‌روزرسانی شد.";
         $record_id = $id;
@@ -82,11 +89,11 @@ try {
         // ======================== حالت ایجاد جدید (INSERT) ========================
         $news_code = 'NEWS-' . date('Ymd') . '-' . str_pad(mt_rand(1000, 9999), 4, '0', STR_PAD_LEFT);
         
-        $sql = "INSERT INTO news 
-                (news_code, title, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?)";
+        $sql = "INSERT INTO news
+                (news_code, title, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$news_code, $title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time]);
+        $stmt->execute([$news_code, $title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
         
         $record_id = (int)$pdo->lastInsertId();
         $message = "خبر جدید با موفقیت ثبت شد.";

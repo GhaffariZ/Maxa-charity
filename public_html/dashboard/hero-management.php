@@ -1,7 +1,13 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('hero');
 require_once __DIR__ . "/../../config/database.php";
 
-$slides = $pdo->query("SELECT * FROM hero_slides ORDER BY sort_order ASC")->fetchAll(PDO::FETCH_ASSOC);
+// ایزولاسیون چندمستأجری: فقط هیروهای شعبه‌ی فعال
+$__branch = dash_active_branch_id();
+$__hstmt = $pdo->prepare("SELECT * FROM hero_slides WHERE branch_id = ? ORDER BY sort_order ASC");
+$__hstmt->execute([$__branch]);
+$slides = $__hstmt->fetchAll(PDO::FETCH_ASSOC);
 
 if(count($slides) == 0){
 $slides = [

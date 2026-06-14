@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('pages');
 header('Content-Type: application/json');
 $dir = $_SERVER['DOCUMENT_ROOT'].'/uploads/editor/';
 if(!is_dir($dir)) mkdir($dir,0755,true);

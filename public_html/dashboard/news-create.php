@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('news');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
