@@ -327,6 +327,37 @@ function dash_is_branch_admin(): bool
     return !empty($_SESSION['dash_user']['is_branch_admin']);
 }
 
+/**
+ * آیا شعبه‌ی فعال «ستاد مرکزی» (HQ) است؟
+ * برخی بخش‌ها (مثل مکساپدیا) فقط از ستاد مرکزی در دسترس‌اند و در شعب نمایش/اجرا نمی‌شوند.
+ * توجه: ملاک، شعبه‌ی *فعال* است نه فقط پرچم سوپرادمین؛ پس سوپرادمینی که شعبه‌ی دیگری را
+ * انتخاب کرده باشد هم به این بخش‌ها دسترسی ندارد.
+ */
+function dash_is_hq_view(): bool
+{
+    static $cache = [];
+    $bid = dash_active_branch_id();
+    if ($bid <= 0) {
+        return false;
+    }
+    if (!array_key_exists($bid, $cache)) {
+        $b = dash_load_branch($bid);
+        $cache[$bid] = $b ? ((int)$b['is_hq'] === 1) : false;
+    }
+    return $cache[$bid];
+}
+
+/**
+ * گاردِ بخش‌های ویژه‌ی ستاد مرکزی؛ اگر شعبه‌ی فعال HQ نباشد، 403.
+ */
+function dash_require_hq(): void
+{
+    if (!dash_is_hq_view()) {
+        http_response_code(403);
+        exit('۴۰۳ | این بخش فقط از «ستاد مرکزی» در دسترس است.');
+    }
+}
+
 /* ---------- شعبه‌ی فعال (با ایزولاسیون) ----------
  * سوپرادمین می‌تواند شعبه‌ی فعال را عوض کند؛ دیگران همیشه به شعبه‌ی خودشان قفل‌اند.
  */
