@@ -51,6 +51,25 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^page/([a-zA-Z0-9-_]+)/?$ dashboard/page-view.php?slug=$1 [L,QSA]
 
 # ---------------------------------------------------------
+# 3.6) Courses (academy) — public flow
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/?$ dashboard/courses.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/([0-9]+)/?$ dashboard/course-details.php?id=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^course-checkout/?$ dashboard/course-checkout.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^my-courses/?$ dashboard/course-my.php [L,QSA]
+
+# ---------------------------------------------------------
 # 4) Root Pages
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f

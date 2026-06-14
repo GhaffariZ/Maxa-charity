@@ -574,6 +574,64 @@ a{text-decoration:none;color:inherit}
     gap: 4px;
   }
 }
+
+/* ===== ویجت حساب کاربری (وضعیت ورود مشترک در همه‌ی صفحات) ===== */
+.cta-auth-slot{position:relative;display:inline-flex;align-items:center}
+.cta-auth{
+  height:38px;border-radius:10px;border:1px solid rgba(8,153,169,.4);
+  background:linear-gradient(135deg,#0899A9,#067d8a);color:#fff !important;
+  padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  white-space:nowrap;font-weight:700;text-decoration:none;font-size:14px;
+  box-shadow:0 0 12px rgba(8,153,169,.3);transition:all .3s cubic-bezier(.16,1,.3,1);
+}
+.cta-auth:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(8,153,169,.6);background:linear-gradient(135deg,#0ab2c5,#0899A9)}
+.cta-account{position:relative}
+.cta-account-btn{
+  height:38px;border-radius:10px;border:1px solid rgba(8,153,169,.4);
+  background:linear-gradient(135deg,#0899A9,#067d8a);color:#fff;
+  padding:0 12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  white-space:nowrap;font-weight:700;box-shadow:0 0 12px rgba(8,153,169,.3);
+  transition:all .3s cubic-bezier(.16,1,.3,1);font-family:inherit;
+}
+.cta-account-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(8,153,169,.6);background:linear-gradient(135deg,#0ab2c5,#0899A9)}
+.cta-account-avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);
+  display:grid;place-items:center;font-weight:800;font-size:13px;overflow:hidden;flex-shrink:0;color:#fff}
+.cta-account-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cta-account-avatar svg{width:16px;height:16px}
+.cta-account-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.cta-account-caret{width:14px;height:14px;transition:transform .25s ease;opacity:.85;flex-shrink:0}
+.cta-account.open .cta-account-caret{transform:rotate(180deg)}
+.cta-account-menu{
+  position:absolute;top:calc(100% + 10px);left:0;min-width:236px;
+  background:rgba(15,23,42,.96);backdrop-filter:blur(16px) saturate(160%);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);
+  border:1px solid rgba(255,255,255,.12);border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.45);padding:8px;
+  opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top left;
+  transition:opacity .2s,transform .22s cubic-bezier(.16,1,.3,1),visibility .2s;
+  z-index:100001;direction:rtl;text-align:right;max-width:calc(100vw - 20px);
+}
+.cta-account.open .cta-account-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.cta-account-head{display:flex;align-items:center;gap:10px;padding:8px 8px 12px;
+  border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:6px}
+.cta-account-head .cta-account-avatar{width:42px;height:42px;font-size:16px}
+.cta-account-head strong{display:block;color:#fff;font-size:13.5px;font-weight:800;
+  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cta-account-head span{display:block;color:rgba(255,255,255,.6);font-size:11.5px;
+  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+.cta-account-menu a,.cta-account-menu button{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+  padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.9);font-size:13px;font-weight:600;
+  background:none;border:none;cursor:pointer;transition:background .18s,color .18s;font-family:inherit;text-decoration:none;
+}
+.cta-account-menu a:hover,.cta-account-menu button:hover{background:rgba(255,255,255,.1);color:#fff}
+.cta-account-menu svg{width:17px;height:17px;opacity:.85;flex-shrink:0}
+.cta-account-logout{color:#ffb4b4 !important;margin-top:6px;border-top:1px solid rgba(255,255,255,.1) !important;border-radius:0 0 8px 8px !important}
+.cta-account-logout:hover{background:rgba(229,57,53,.28) !important;color:#fff !important}
+@media (max-width:480px){
+  .cta-account-menu{min-width:auto;right:10px;left:auto;transform-origin:top right}
+}
+[hidden]{display:none !important}
 </style>
 </head>
 
@@ -709,7 +767,7 @@ a{text-decoration:none;color:inherit}
                 <li><a class="mega-toggle" href="/branches.html">شعب</a></li>
                 <li><a class="mega-toggle" href="/news.php">اخبار</a></li>
                 <li><a class="mega-toggle" href="/macsapedia.html">مکساپدیا</a></li>
-                <li><a class="mega-toggle" href="/dashboard/courses.php">دوره‌ها</a></li>
+                <li><a class="mega-toggle" href="/courses">دوره‌ها</a></li>
                 <li><a class="mega-toggle" href="contactus.html">تماس با ما</a></li>
               </ul>
           </div>
@@ -717,6 +775,52 @@ a{text-decoration:none;color:inherit}
     <div class="cta-left">
       <a class="btn btn-primary" href="/onlinedonation">کمک آنلاین</a>
       <a class="btn btn-outline" href="/macsa.phealth.ir/index.html">شرایط بحران</a>
+
+      <div class="cta-auth-slot">
+        <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
+          ورود / ثبت‌نام
+        </a>
+
+        <div class="cta-account js-cta-account" hidden>
+          <button class="cta-account-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="حساب کاربری">
+            <span class="cta-account-avatar js-acc-avatar">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span class="cta-account-name js-acc-name">حساب کاربری</span>
+            <svg class="cta-account-caret" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="cta-account-menu" role="menu">
+            <div class="cta-account-head">
+              <span class="cta-account-avatar js-acc-avatar-lg">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+              <div>
+                <strong class="js-acc-fullname">کاربر مکسا</strong>
+                <span class="js-acc-email"></span>
+              </div>
+            </div>
+
+            <a role="menuitem" href="/benefactor-dashboard/">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+              داشبورد من
+            </a>
+            <a role="menuitem" href="/my-courses">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="2"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" stroke="currentColor" stroke-width="2"/></svg>
+              دوره‌های من
+            </a>
+            <a role="menuitem" href="/benefactor-dashboard/profile">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              پروفایل کاربری
+            </a>
+
+            <button type="button" class="cta-account-logout js-cta-logout" role="menuitem">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17l-5-5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              خروج از حساب
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div class="menu-icon" id="menuToggle">
         <div></div><div></div><div></div>
@@ -959,6 +1063,113 @@ document.addEventListener("DOMContentLoaded", function(){
 
 });
 })();
+  </script>
+
+  <!-- ===== وضعیت ورود کاربر: تبدیل دکمه «ورود/ثبت‌نام» به منوی حساب کاربری ===== -->
+  <script>
+  (function(){
+    if (window.__ctaAuthWidget__) return;   // فقط یک‌بار اجرا شود
+    window.__ctaAuthWidget__ = true;
+
+    function ready(fn){
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+      else fn();
+    }
+    function initials(u){
+      var f=(u.first_name||'').trim(), l=(u.last_name||'').trim();
+      if(f||l) return ((f[0]||'')+(l[0]||'')) || (f[0]||l[0]||'');
+      var e=(u.email||'').trim();
+      return e ? e[0].toUpperCase() : '؟';
+    }
+    function displayName(u){
+      var n=((u.first_name||'')+' '+(u.last_name||'')).trim();
+      if(n) return n;
+      return u.email ? u.email.split('@')[0] : 'حساب کاربری';
+    }
+    function setAvatar(el, u){
+      if(!el) return;
+      if(u.avatar_url){
+        el.innerHTML='';
+        var img=document.createElement('img'); img.src=u.avatar_url; img.alt=''; el.appendChild(img);
+      } else {
+        el.textContent = initials(u);
+      }
+    }
+    function renderLoggedIn(slot, u){
+      var login = slot.querySelector('.js-cta-login');
+      var account = slot.querySelector('.js-cta-account');
+      if(login) login.setAttribute('hidden','');
+      if(!account) return;
+      account.removeAttribute('hidden');
+
+      var name = displayName(u);
+      var nameEl = slot.querySelector('.js-acc-name'); if(nameEl) nameEl.textContent = name;
+      var fullEl = slot.querySelector('.js-acc-fullname'); if(fullEl) fullEl.textContent = name;
+      var emailEl = slot.querySelector('.js-acc-email'); if(emailEl) emailEl.textContent = u.email || '';
+      setAvatar(slot.querySelector('.js-acc-avatar'), u);
+      setAvatar(slot.querySelector('.js-acc-avatar-lg'), u);
+
+      var btn = slot.querySelector('.cta-account-btn');
+      if(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var open = account.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+      var menu = slot.querySelector('.cta-account-menu');
+      if(menu){ menu.addEventListener('click', function(e){ e.stopPropagation(); }); }
+
+      var logout = slot.querySelector('.js-cta-logout');
+      if(logout){
+        logout.addEventListener('click', function(){
+          logout.disabled = true;
+          fetch('/api/auth/logout', { method:'POST', credentials:'include' })
+            .catch(function(){})
+            .then(function(){ window.location.reload(); });
+        });
+      }
+    }
+
+    document.addEventListener('click', function(){
+      document.querySelectorAll('.cta-account.open').forEach(function(a){
+        a.classList.remove('open');
+        var b=a.querySelector('.cta-account-btn'); if(b) b.setAttribute('aria-expanded','false');
+      });
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        document.querySelectorAll('.cta-account.open').forEach(function(a){
+          a.classList.remove('open');
+          var b=a.querySelector('.cta-account-btn'); if(b) b.setAttribute('aria-expanded','false');
+        });
+      }
+    });
+
+    ready(function(){
+      var slots = Array.prototype.slice.call(document.querySelectorAll('.cta-auth-slot'));
+      if(!slots.length) return;
+
+      // با کوکی رفرش (httpOnly) یک access_token تازه می‌گیریم؛ نشست را هم تمدید می‌کند.
+      fetch('/api/auth/refresh', { method:'POST', credentials:'include', headers:{ 'Accept':'application/json' } })
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(j){
+          var token = j && j.data && j.data.access_token;
+          if(!token) return null;
+          return fetch('/api/user/me', {
+            headers:{ 'Authorization':'Bearer '+token, 'Accept':'application/json' },
+            credentials:'include'
+          })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(me){ return (me && me.data && me.data.user) ? me.data.user : null; });
+        })
+        .then(function(user){
+          if(!user) return;   // وارد نشده: دکمه ورود/ثبت‌نام بماند
+          slots.forEach(function(slot){ renderLoggedIn(slot, user); });
+        })
+        .catch(function(){ /* وارد نشده */ });
+    });
+  })();
   </script>
 
 </body>

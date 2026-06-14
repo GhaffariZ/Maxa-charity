@@ -4,19 +4,11 @@
  *  course_html_head(عنوان, استایلِ اختصاصیِ صفحه) را صدا بزنید تا <head> کامل
  *  به‌همراه توکن‌های طراحی، تم تاریک و فونت وزیر چاپ شود.
  * ========================================================================== */
-if (!function_exists('course_html_head')):
-function course_html_head(string $title, string $pageStyles = ''): void { ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($title) ?> | آکادمی مکسا</title>
-<script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
+/* استایل پایه‌ی سیستم طراحی دوره‌ها (توکن‌ها + اجزای مشترک) — هم در پوسته‌ی مستقل
+   و هم در پوسته‌ی سایت استفاده می‌شود. */
+if (!function_exists('course_base_css')):
+function course_base_css(): string {
+  return <<<'CSS'
 :root{
   --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
   --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
@@ -131,10 +123,83 @@ svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .reveal{opacity:0;animation:fadeUp .55s var(--ease) forwards}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
+CSS;
+}
+endif;
+
+/* پوسته‌ی مستقل (برای صفحات مدیریتی دوره‌ها) — <head> کامل به‌همراه تم تاریک */
+if (!function_exists('course_html_head')):
+function course_html_head(string $title, string $pageStyles = ''): void { ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($title) ?> | آکادمی مکسا</title>
+<script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+<?= course_base_css() ?>
 <?= $pageStyles ?>
 </style>
 </head>
 <?php }
+endif;
+
+/* ---------- پوسته‌ی سایت: ادغام صفحات عمومی دوره‌ها با هدر/فوتر اصلی ---------- */
+
+/* یک کامپوننت مشترک سایت را با جایگزینی جای‌گیرهای {{imageN}} (همانند page-view.php) رندر
+   می‌کند تا لوگو/تصاویر هنگام include مستقیم هم درست نمایش داده شوند. */
+if (!function_exists('maxa_render_site_component')):
+function maxa_render_site_component(string $name, ?string $title = null, bool $keepOpen = false): void {
+  $root = $_SERVER['DOCUMENT_ROOT'] ?: dirname(__DIR__);
+  $path = $root . "/dashboard/components/$name/component.php";
+  if (!is_file($path)) { $path = dirname(__DIR__) . "/dashboard/components/$name/component.php"; }
+  if (!is_file($path)) return;
+  $code = (string)file_get_contents($path);
+  $code = preg_replace_callback('/{{image(\d+)}}/', function ($m) use ($name) {
+    return "/dashboard/components/$name/images/{$m[1]}.png";
+  }, $code);
+  if ($title !== null) {
+    $code = preg_replace('/<title>.*?<\/title>/s',
+      '<title>' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . ' | آکادمی مکسا</title>', $code, 1);
+  }
+  // برای هدر: تگ‌های بستن سند را حذف می‌کنیم تا محتوای صفحه داخل بدنه قرار گیرد
+  if ($keepOpen) {
+    $code = preg_replace('/<\/body\s*>\s*<\/html\s*>\s*$/i', '', $code);
+  }
+  echo $code;
+}
+endif;
+
+/* <head> + نوار اصلی سایت + توکن‌های طراحی دوره (نسخه‌ی روشن) */
+if (!function_exists('course_site_head')):
+function course_site_head(string $title, string $pageStyles = ''): void {
+  // هدر اصلی سایت: doctype/head/body و نوار + ویجت ورود/حساب کاربری را فراهم می‌کند
+  maxa_render_site_component('header', $title, true);
+  ?>
+<style>
+<?= course_base_css() ?>
+<?= $pageStyles ?>
+/* محافظت از دکمه‌ها و چیدمان صفحه‌ی دوره در برابر استایل سراسری نوار سایت */
+.mx .btn{display:inline-flex !important}
+.mx .btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark)) !important;color:#fff !important;box-shadow:0 10px 22px -10px rgba(0,123,122,.7) !important}
+.mx .btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary)) !important;color:#5c3d00 !important}
+.mx .btn-ghost{background:var(--color-surface) !important;color:var(--color-text) !important;border:1px solid var(--color-border) !important;box-shadow:none !important}
+</style>
+<div class="mx">
+<?php }
+endif;
+
+/* بستن پوسته‌ی سایت: فوتر اصلی + بسته‌شدن سند */
+if (!function_exists('course_site_footer')):
+function course_site_footer(): void {
+  echo '</div>'; // پایان .mx
+  maxa_render_site_component('footer');
+  echo "\n</body>\n</html>";
+}
 endif;
 
 /* مجموعه‌ی آیکن‌های مشترک (همان زبان تصویری index) */
@@ -249,7 +314,7 @@ function course_card(array $c): void {
   $lessons = (int)($c['lessons'] ?? 0);
   $dur = (int)($c['duration'] ?? 0);
   ?>
-  <a class="ccard" href="course-details.php?id=<?= $id ?>" target="_top">
+  <a class="ccard" href="/courses/<?= $id ?>" target="_top">
     <div class="ccard-thumb" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>cc)">
       <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><span class="ph"><?= cic('grad') ?></span><?php endif; ?>
       <?php if ($hasDisc): $off = round((1-$disc/$price)*100); ?><span class="ccard-off"><?= fa_digits($off) ?>٪ تخفیف</span><?php endif; ?>

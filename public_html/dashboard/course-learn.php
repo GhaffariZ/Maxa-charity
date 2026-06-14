@@ -10,7 +10,7 @@ $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 if (!$course) {
   course_html_head('دوره یافت نشد');
-  echo '<body style="display:grid;place-items:center;min-height:100vh"><div style="text-align:center"><h1>دوره پیدا نشد</h1><a href="courses.php" class="btn btn-primary" target="_top" style="margin-top:14px">بازگشت به دوره‌ها</a></div></body></html>';
+  echo '<body style="display:grid;place-items:center;min-height:100vh"><div style="text-align:center"><h1>دوره پیدا نشد</h1><a href="/courses" class="btn btn-primary" target="_top" style="margin-top:14px">بازگشت به دوره‌ها</a></div></body></html>';
   exit;
 }
 $curr = $course['curriculum'] ?? [];
@@ -85,7 +85,7 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
 <div class="learn">
   <!-- نوار بالا -->
   <div class="lbar">
-    <a href="course-details.php?id=<?= $id ?>" class="back" target="_top" title="بازگشت"><?= cic('arrow') ?></a>
+    <a href="/courses/<?= $id ?>" class="back" target="_top" title="بازگشت"><?= cic('arrow') ?></a>
     <div class="ttl"><?= e($course['title'] ?? '') ?><small><?= e($course['instructor'] ?? 'آکادمی مکسا') ?></small></div>
     <div class="sp"></div>
     <div class="lprog">
