@@ -709,6 +709,7 @@ a{text-decoration:none;color:inherit}
                 <li><a class="mega-toggle" href="/branches.html">شعب</a></li>
                 <li><a class="mega-toggle" href="/news.php">اخبار</a></li>
                 <li><a class="mega-toggle" href="/macsapedia.html">مکساپدیا</a></li>
+                <li><a class="mega-toggle" href="/dashboard/courses.php">دوره‌ها</a></li>
                 <li><a class="mega-toggle" href="contactus.html">تماس با ما</a></li>
               </ul>
           </div>
