@@ -1,0 +1,12 @@
+# Database credentials for the deploy import script.
+#
+# 1. Copy this file to `db.conf` ON THE SERVER (next to import.sh).
+# 2. Fill in the real values from cPanel → MySQL Databases.
+# 3. db.conf is gitignored, so it never gets committed.
+#
+# These must match the database the website actually uses.
+
+DB_HOST=localhost
+DB_NAME=erfantey_macsacharity
+DB_USER=erfantey_fantasticfour
+DB_PASS=your-password-here

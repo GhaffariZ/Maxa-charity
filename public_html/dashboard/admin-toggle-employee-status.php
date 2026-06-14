@@ -1,9 +1,10 @@
 <?php
-// --- Database Configuration ---
-$servername = "localhost";
-$username   = "erfantey_fantasticfour";
-$password   = "Diamond19971376@macsa";
-$dbname     = "erfantey_macsacharity";
+// --- Database Configuration (from config file outside git) ---
+$DB         = require __DIR__ . '/../core/db-config.php';
+$servername = $DB['host'];
+$username   = $DB['user'];
+$password   = $DB['pass'];
+$dbname     = $DB['name'];
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {

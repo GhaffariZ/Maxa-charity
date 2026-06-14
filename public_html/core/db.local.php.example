@@ -1,0 +1,21 @@
+<?php
+/**
+ * Database credentials — DEV / LOCAL fallback.
+ *
+ * SETUP:
+ *   1. Copy this file to `db.local.php` (same folder).
+ *   2. Fill in your local database values.
+ *   3. db.local.php is gitignored, so it is never committed.
+ *
+ * On PRODUCTION, prefer the file outside the web root:
+ *   <home>/maksa-private/db.php   (same array shape as below)
+ * or environment variables DB_HOST / DB_NAME / DB_USER / DB_PASS.
+ */
+
+return [
+    'host'    => 'localhost',
+    'name'    => 'erfantey_macsacharity',
+    'user'    => 'erfantey_fantasticfour',
+    'pass'    => 'your-password-here',
+    'charset' => 'utf8mb4',
+];

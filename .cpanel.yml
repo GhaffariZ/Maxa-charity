@@ -1,5 +1,10 @@
 ---
 deployment:
   tasks:
+    # 1) Copy the website files into the public web root.
     - export DEPLOYPATH=/home/erfantey/public_html/
     - /bin/cp -R public_html/. $DEPLOYPATH
+    # 2) Import the database schema/dump into MySQL.
+    #    Reads credentials from database/db.conf (created once on the server,
+    #    never committed). Safe no-op if schema.sql or db.conf is missing.
+    - /bin/bash database/import.sh
