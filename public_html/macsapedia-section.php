@@ -1,46 +1,17 @@
 <?php
-$mpSectionsData = [
-    'videos' => [
-        'title' => 'ویدیوهای آموزشی',
-        'desc'  => 'مجموعه ویدیوهای آموزشی مکسا برای آشنایی با بیماری‌های نادر و مراقبت از بیماران.',
-        'icon'  => '🎬',
-    ],
-    'brochures' => [
-        'title' => 'بروشورها',
-        'desc'  => 'بروشورهای اطلاع‌رسانی و آموزشی قابل دانلود و چاپ.',
-        'icon'  => '📄',
-    ],
-    'books' => [
-        'title' => 'کتاب‌های آموزشی',
-        'desc'  => 'کتاب‌ها و جستارهای تخصصی در حوزه بیماری‌های نادر.',
-        'icon'  => '📚',
-    ],
-    'podcasts' => [
-        'title' => 'پادکست‌ها',
-        'desc'  => 'گفت‌وگوها و برنامه‌های صوتی مکسا.',
-        'icon'  => '🎙️',
-    ],
-    'clips' => [
-        'title' => 'کلیپ‌های مکسی',
-        'desc'  => 'کلیپ‌های کوتاه و انگیزشی مکسی.',
-        'icon'  => '🎞️',
-    ],
-    'gallery' => [
-        'title' => 'گالری مکسی',
-        'desc'  => 'تصاویر و خاطرات تصویری از فعالیت‌های مکسا.',
-        'icon'  => '🖼️',
-    ],
-];
+/* صفحه‌ی عمومیِ یک بخش از مکساپدیا — محتوای منتشرشده‌ی همان بخش را نمایش می‌دهد. */
+require __DIR__ . '/dashboard/maxapedia-db.php';
 
 $mpSlug = $_GET['section'] ?? '';
 
-if (!isset($mpSectionsData[$mpSlug])) {
+if (!maxapedia_is_section($mpSlug)) {
     http_response_code(404);
     include __DIR__ . '/404.html';
     exit;
 }
 
-$mpSection = $mpSectionsData[$mpSlug];
+$mpSection = maxapedia_section_meta($mpSlug);
+$mpItems   = ($pdo) ? maxapedia_items($pdo, $mpSlug, true) : [];
 
 require __DIR__ . '/dashboard/components/header/component.php';
 ?>
@@ -91,6 +62,48 @@ require __DIR__ . '/dashboard/components/header/component.php';
     color: #8b8f96;
     font-size: 15px;
   }
+  .mp-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
+  .mp-item {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #ecedf0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,.04);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .mp-item:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,.08); }
+  .mp-item-thumb {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    object-fit: cover;
+    background: #f1f3f5;
+    display: grid;
+    place-items: center;
+    font-size: 44px;
+  }
+  .mp-item-body { padding: 18px 18px 20px; display: flex; flex-direction: column; flex: 1; }
+  .mp-item-body h3 { font-size: 16.5px; font-weight: 800; color: #2f3437; margin: 0 0 8px; }
+  .mp-item-body p { font-size: 13.5px; color: #8b8f96; line-height: 1.9; margin: 0 0 16px; }
+  .mp-item-link {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: var(--cta-orange, #f5a623);
+    padding: 9px 16px;
+    border-radius: 10px;
+  }
 </style>
 
 <div class="mp-wrap">
@@ -104,9 +117,30 @@ require __DIR__ . '/dashboard/components/header/component.php';
     <p><?= htmlspecialchars($mpSection['desc'], ENT_QUOTES, 'UTF-8') ?></p>
   </div>
 
-  <div class="mp-empty">
-    به‌زودی محتوای این بخش اضافه می‌شود.
-  </div>
+  <?php if (empty($mpItems)): ?>
+    <div class="mp-empty">به‌زودی محتوای این بخش اضافه می‌شود.</div>
+  <?php else: ?>
+    <div class="mp-items">
+      <?php foreach ($mpItems as $it): ?>
+        <article class="mp-item">
+          <?php if (!empty($it['thumbnail'])): ?>
+            <img class="mp-item-thumb" src="<?= htmlspecialchars($it['thumbnail'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+          <?php else: ?>
+            <div class="mp-item-thumb"><?= $mpSection['icon'] ?></div>
+          <?php endif; ?>
+          <div class="mp-item-body">
+            <h3><?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+            <?php if (!empty($it['description'])): ?>
+              <p><?= nl2br(htmlspecialchars($it['description'], ENT_QUOTES, 'UTF-8')) ?></p>
+            <?php endif; ?>
+            <?php if (!empty($it['url'])): ?>
+              <a class="mp-item-link" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+            <?php endif; ?>
+          </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
 </div>
 
 <?php
