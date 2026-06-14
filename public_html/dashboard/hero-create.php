@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . '/_guard.php';
+dash_require('hero'); ?>
 <!DOCTYPE html>
 
 <html lang="fa" dir="rtl">

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('news');
 // news-status-update.php
 header('Content-Type: application/json');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";

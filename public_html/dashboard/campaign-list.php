@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('campaigns');
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // جلوگیری از خراب شدن خروجی JSON
