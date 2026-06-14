@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Navbar</title>
+  <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') : 'مکسا' ?></title>
 
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -756,7 +756,7 @@
 
         <div class="cta-right">
           <a class="cta-brand" href="/home">
-            <img src="{{image1}}">
+            <img src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
         </div>
 

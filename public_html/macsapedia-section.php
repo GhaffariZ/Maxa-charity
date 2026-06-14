@@ -13,6 +13,7 @@ if (!maxapedia_is_section($mpSlug)) {
 $mpSection = maxapedia_section_meta($mpSlug);
 $mpItems   = ($pdo) ? maxapedia_items($pdo, $mpSlug, true) : [];
 
+$pageTitle = $mpSection['title'] . ' — مکساپدیا';
 require __DIR__ . '/dashboard/components/header/component.php';
 ?>
 
