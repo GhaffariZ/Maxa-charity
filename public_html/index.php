@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/config/database.php";
-
+ 
 $slug = trim($_GET['page'] ?? 'home');
 
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug=? AND status='published'");
