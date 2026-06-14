@@ -1,6 +1,9 @@
 <?php
 // --- START OF BACKEND LOGIC (API MODE) ---
 
+// اطلاعات اتصال به دیتابیس از فایل کانفیگ خارج از گیت
+$DB = require __DIR__ . '/../core/db-config.php';
+
 // ==========================================
 // حالت ویرایش: بارگذاری داده‌های فعلی از دیتابیس
 // ==========================================
@@ -10,7 +13,7 @@ $edit_data    = null;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['id']) && is_numeric($_GET['id'])) {
     $eid = (int)$_GET['id'];
     if ($eid > 0) {
-        $c_get = new mysqli('localhost', 'erfantey_fantasticfour', 'Diamond19971376@macsa', 'erfantey_macsacharity');
+        $c_get = new mysqli($DB['host'], $DB['user'], $DB['pass'], $DB['name']);
         if (!$c_get->connect_error) {
             $c_get->set_charset('utf8mb4');
             $s_get = $c_get->prepare('SELECT * FROM employee_profiles WHERE id = ? LIMIT 1');
@@ -33,11 +36,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // تنظیم هدر برای پاسخ به صورت JSON
     header('Content-Type: application/json');
 
-    // Database Configuration
-    $servername = "localhost";
-    $username = "erfantey_fantasticfour"; 
-    $password = "Diamond19971376@macsa"; 
-    $dbname = "erfantey_macsacharity"; 
+    // Database Configuration (from config file outside git)
+    $servername = $DB['host'];
+    $username = $DB['user'];
+    $password = $DB['pass'];
+    $dbname = $DB['name'];
 
     $conn = new mysqli($servername, $username, $password, $dbname);
 

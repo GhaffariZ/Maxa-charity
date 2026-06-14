@@ -4,10 +4,16 @@ config.php
 wp-config.php
 # Database credentials used by the deploy import script (keep on server only)
 database/db.conf
+# Database credentials read by the app (keep on server only, never commit)
+public_html/core/db.local.php
+maksa-private/
 # OS / editor junk
 .DS_Store
 Thumbs.db
 *.log
+# Server-generated PHP error logs (never commit)
+error_log
+**/error_log
 .vscode/
 .idea/
 # Dependencies (if you use them)
