@@ -959,8 +959,7 @@ body.spa-active .content{display:none}
       {label:'صفحه کمپین‌ها',icon:'eye',href:'empty-link2.php'}]},
     {label:'دوره‌ها',icon:'book',children:[
       {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
-      {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'},
-      {label:'صفحه دوره‌ها',icon:'eye',href:'courses.php'}]},
+      {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]},
     {label:'کامپوننت‌ها و صفحات',icon:'box',children:[
       {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
       {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
