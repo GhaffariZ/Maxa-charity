@@ -1286,6 +1286,7 @@
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
               <li><a href="/macsapedia">مکساپدیا</a></li>
+              <li><a class="mega-toggle" href="/courses">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
