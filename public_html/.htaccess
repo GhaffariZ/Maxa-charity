@@ -51,6 +51,17 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^page/([a-zA-Z0-9-_]+)/?$ dashboard/page-view.php?slug=$1 [L,QSA]
 
 # ---------------------------------------------------------
+# 3.5) Macsapedia
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^macsapedia/([a-zA-Z0-9-_]+)/?$ macsapedia-section.php?section=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^macsapedia/?$ macsapedia.php [L,QSA]
+
+# ---------------------------------------------------------
 # 4) Root Pages
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f

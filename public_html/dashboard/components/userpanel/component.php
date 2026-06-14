@@ -1,4 +1,18 @@
+<?php
+/* ---------- لایه‌ی داده‌ی پنل حامیان ---------- */
+require_once __DIR__ . '/../../ticket-db.php';   // اتصال + توابع تیکت ($pdo)
 
+$panelUser = ticket_current_user($pdo);          // کاربرِ واردشده (webusers) یا null
+$myTickets = ($panelUser && $pdo) ? ticket_for_user($pdo, (int)$panelUser['id']) : [];
+$myReplies = ($myTickets && $pdo) ? ticket_replies_for($pdo, array_column($myTickets, 'id')) : [];
+
+// نامِ نمایشی و راهِ ارتباطیِ پیش‌فرض برای فرمِ تیکت
+$tkName    = $panelUser ? (string)($panelUser['full_name'] ?: $panelUser['username']) : '';
+$tkContact = $panelUser ? (string)($panelUser['phone'] ?? '') : '';
+
+// مجموع کمک‌ها (مقدار پیش‌فرض تا زمانِ اتصالِ کاملِ بخشِ مالی)
+$totalDonationValue = $totalDonationValue ?? 12500000;
+?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -1097,6 +1111,14 @@
           </div>
         </div>
 
+        <div class="nav-item" onclick="openModal('ticketsModal')">
+          <div class="right">
+            <i class="fa-solid fa-headset"></i>
+            <span>پشتیبانی و تیکت‌ها</span>
+          </div>
+          <?php if (!empty($myTickets)): ?><span class="nav-badge"><?= fa_digits(count($myTickets)) ?></span><?php endif; ?>
+        </div>
+
         <div class="nav-item" onclick="openModal('medalGuideModal')">
           <div class="right">
             <i class="fa-solid fa-medal"></i>
@@ -1586,6 +1608,176 @@
       </div>
     </div>
   </div>
+
+  <!-- Tickets Modal -->
+  <div class="modal" id="ticketsModal">
+    <div class="modal-content modal-lg">
+      <button class="close-btn" onclick="closeModal('ticketsModal')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h2 class="modal-title">پشتیبانی و تیکت‌ها</h2>
+      <p class="modal-sub">سؤال، درخواست یا مشکل خود را در قالب یک تیکت ثبت کنید؛ کارشناسان مکسا در اسرع وقت پاسخ می‌دهند.</p>
+
+      <form id="ticketForm" class="form-grid" onsubmit="return submitTicket(event)">
+        <div class="form-group full">
+          <label>موضوع تیکت</label>
+          <input type="text" name="subject" placeholder="مثلاً: مشکل در ثبت پرداخت" required maxlength="200" />
+        </div>
+
+        <div class="form-group">
+          <label>دسته‌بندی</label>
+          <select name="category">
+            <option value="general">عمومی</option>
+            <option value="donation">کمک‌ها و پرداخت</option>
+            <option value="technical">مشکل فنی</option>
+            <option value="campaign">کمپین‌ها</option>
+            <option value="other">سایر</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>اولویت</label>
+          <select name="priority">
+            <option value="normal">عادی</option>
+            <option value="low">کم</option>
+            <option value="high">فوری</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>نام شما</label>
+          <input type="text" name="name" value="<?= htmlspecialchars($tkName, ENT_QUOTES, 'UTF-8') ?>" placeholder="نام و نام خانوادگی" required maxlength="120" />
+        </div>
+
+        <div class="form-group">
+          <label>راه ارتباطی (ایمیل یا تلفن)</label>
+          <input type="text" name="contact" value="<?= htmlspecialchars($tkContact, ENT_QUOTES, 'UTF-8') ?>" placeholder="برای پیگیری پاسخ" maxlength="255" />
+        </div>
+
+        <div class="form-group full">
+          <label>متن پیام</label>
+          <textarea name="message" placeholder="توضیح کامل درخواست یا مشکل خود را بنویسید..." required maxlength="5000"></textarea>
+        </div>
+
+        <div id="ticketFormMsg" class="form-group full" style="display:none;"></div>
+
+        <div class="form-group full" style="display:flex;flex-direction:row;gap:12px;justify-content:flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('ticketsModal')">انصراف</button>
+          <button type="submit" class="btn btn-primary" id="ticketSubmitBtn">
+            <i class="fa-solid fa-paper-plane" style="margin-left:6px;"></i> ثبت تیکت
+          </button>
+        </div>
+      </form>
+
+      <div style="margin-top:8px;">
+        <h3 style="font-size:16px;font-weight:800;margin:18px 0 12px;">تیکت‌های من</h3>
+        <div id="myTicketsList" class="my-tickets">
+          <?php if (!$panelUser): ?>
+            <div class="ticket-empty">برای مشاهده‌ی تیکت‌های خود ابتدا وارد حساب کاربری شوید.</div>
+          <?php elseif (empty($myTickets)): ?>
+            <div class="ticket-empty">هنوز تیکتی ثبت نکرده‌اید.</div>
+          <?php else: foreach ($myTickets as $t):
+            $reps = $myReplies[(int)$t['id']] ?? [];
+            $stClass = 'st-'.$t['status'];
+          ?>
+            <div class="ticket-item">
+              <div class="ticket-item-head">
+                <span class="ticket-subj"><?= htmlspecialchars($t['subject'], ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="ticket-status <?= $stClass ?>"><?= htmlspecialchars(TICKET_STATUS_FA[$t['status']] ?? $t['status'], ENT_QUOTES, 'UTF-8') ?></span>
+              </div>
+              <div class="ticket-item-meta">
+                <span><?= htmlspecialchars(TICKET_CATEGORY_FA[$t['category']] ?? $t['category'], ENT_QUOTES, 'UTF-8') ?></span>
+                <span>•</span>
+                <span><?= jalali_datetime($t['created_at']) ?></span>
+              </div>
+              <p class="ticket-item-msg"><?= htmlspecialchars($t['message'], ENT_QUOTES, 'UTF-8') ?></p>
+              <?php foreach ($reps as $r): ?>
+                <div class="ticket-reply <?= $r['author']==='admin' ? 'from-admin' : 'from-user' ?>">
+                  <strong><?= $r['author']==='admin' ? 'پاسخ پشتیبانی' : 'پیام شما' ?>:</strong>
+                  <?= htmlspecialchars($r['message'], ENT_QUOTES, 'UTF-8') ?>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          <?php endforeach; endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .my-tickets{display:flex;flex-direction:column;gap:14px;}
+    .ticket-empty{color:var(--muted);font-size:14px;background:#f8fbfc;border:1px dashed #cbd5e1;border-radius:16px;padding:18px;text-align:center;}
+    .ticket-item{background:#f8fbfc;border:1px solid var(--border);border-radius:18px;padding:16px;}
+    .ticket-item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+    .ticket-subj{font-weight:800;font-size:15px;}
+    .ticket-status{font-size:12px;font-weight:700;padding:4px 12px;border-radius:30px;white-space:nowrap;}
+    .ticket-status.st-open{background:rgba(244,166,30,.16);color:#b9760a;}
+    .ticket-status.st-answered{background:rgba(124,77,219,.14);color:#7c4ddb;}
+    .ticket-status.st-closed{background:rgba(16,185,129,.14);color:#10b981;}
+    .ticket-item-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:10px;}
+    .ticket-item-msg{font-size:13.5px;line-height:1.9;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+    .ticket-reply{margin-top:10px;font-size:13px;line-height:1.85;border-radius:12px;padding:10px 13px;white-space:pre-wrap;word-break:break-word;}
+    .ticket-reply.from-admin{background:rgba(14,165,164,.08);border-inline-start:3px solid var(--primary);}
+    .ticket-reply.from-user{background:rgba(244,166,30,.12);border-inline-start:3px solid var(--warning);}
+    .ticket-reply strong{color:var(--primary-dark);}
+    #ticketFormMsg.ok{display:block !important;background:rgba(16,185,129,.12);color:#10b981;border-radius:14px;padding:12px 14px;font-weight:700;}
+    #ticketFormMsg.err{display:block !important;background:rgba(239,68,68,.12);color:#ef4444;border-radius:14px;padding:12px 14px;font-weight:700;}
+  </style>
+
+  <script>
+  /* ---------- ثبت تیکت ---------- */
+  function submitTicket(ev){
+    ev.preventDefault();
+    var form = document.getElementById('ticketForm');
+    var btn  = document.getElementById('ticketSubmitBtn');
+    var msg  = document.getElementById('ticketFormMsg');
+    msg.className = ''; msg.style.display = 'none';
+    btn.disabled = true;
+
+    fetch('/dashboard/ticket-submit.php', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:new URLSearchParams(new FormData(form)),
+      credentials:'same-origin'
+    })
+    .then(function(r){ return r.json().catch(function(){ return {status:'error', message:'پاسخ نامعتبر از سرور.'}; }); })
+    .then(function(res){
+      btn.disabled = false;
+      if(res.status==='success'){
+        msg.textContent = res.message || 'تیکت شما ثبت شد.';
+        msg.className = 'ok';
+        prependMyTicket(form, res.id);
+        form.reset();
+      } else {
+        msg.textContent = res.message || 'ثبت تیکت با خطا مواجه شد.';
+        msg.className = 'err';
+      }
+    })
+    .catch(function(){
+      btn.disabled = false;
+      msg.textContent = 'خطا در ارتباط با سرور.';
+      msg.className = 'err';
+    });
+    return false;
+  }
+
+  function prependMyTicket(form, id){
+    var list = document.getElementById('myTicketsList');
+    if(!list) return;
+    var empty = list.querySelector('.ticket-empty'); if(empty) empty.remove();
+    var subject = (form.subject.value||'').trim();
+    var message = (form.message.value||'').trim();
+    var item = document.createElement('div');
+    item.className = 'ticket-item';
+    var h = document.createElement('div'); h.className='ticket-item-head';
+    var s = document.createElement('span'); s.className='ticket-subj'; s.textContent = subject;
+    var st = document.createElement('span'); st.className='ticket-status st-open'; st.textContent = 'باز';
+    h.appendChild(s); h.appendChild(st);
+    var p = document.createElement('p'); p.className='ticket-item-msg'; p.textContent = message;
+    item.appendChild(h); item.appendChild(p);
+    list.insertBefore(item, list.firstChild);
+  }
+  </script>
 
   <script>
   
