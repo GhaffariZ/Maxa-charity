@@ -4,6 +4,7 @@
 require __DIR__ . '/dashboard/maxapedia-db.php';
 $mpCounts = ($pdo) ? maxapedia_counts($pdo) : [];
 
+$pageTitle = 'مکساپدیا';
 require __DIR__ . '/dashboard/components/header/component.php';
 ?>
 
