@@ -2,6 +2,8 @@
 config.php
 .env
 wp-config.php
+# Database credentials used by the deploy import script (keep on server only)
+database/db.conf
 # OS / editor junk
 .DS_Store
 Thumbs.db
