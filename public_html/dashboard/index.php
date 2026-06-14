@@ -923,7 +923,8 @@ body.spa-active .content{display:none}
     chat:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/>',
     ticket:'<path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1a2 2 0 0 0 0-4Z"/><path d="M13 7v10"/>',
     medical:'<path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>',
-    book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>'
+    book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>',
+    pedia:'<path d="M12 7c-1.5-1-3.5-1.5-5.5-1.5S3.5 6 3 6.5v12c.5-.5 2.5-1 4.5-1S11 18 12 19c1-1 3-1.5 4.5-1.5s4 .5 4.5 1v-12c-.5-.5-2.5-1-4.5-1S13.5 6 12 7Z"/><path d="M12 7v12"/>'
   };
   function icon(name,cls){ return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 
@@ -955,6 +956,7 @@ body.spa-active .content{display:none}
     {label:'دوره‌ها',icon:'book',children:[
       {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
       {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]},
+    {single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'},
     {label:'کامپوننت‌ها و صفحات',icon:'box',children:[
       {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
       {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
