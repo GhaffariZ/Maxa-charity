@@ -11,3 +11,5 @@ Thumbs.db
 # Dependencies (if you use them)
 /vendor/
 /node_modules/
+# Untracked app folder
+/public_html/eo/
