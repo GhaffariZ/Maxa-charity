@@ -112,7 +112,7 @@ final class RefreshTokenService
     private function insert(int $userId, string $familyId, string $ip, string $userAgent): string
     {
         $plain = Str::randomToken(32); // 256-bit
-        $ttl   = Config::int('REFRESH_TTL', 2592000);
+        $ttl   = Config::int('REFRESH_TTL', 31536000);
 
         $this->db->prepare(
             'INSERT INTO refresh_tokens (user_id, token_hash, family_id, expires_at, user_agent, ip)

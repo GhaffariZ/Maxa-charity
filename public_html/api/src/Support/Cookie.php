@@ -12,7 +12,7 @@ final class Cookie
 {
     public static function setRefreshToken(string $token): void
     {
-        self::write($token, Config::int('REFRESH_TTL', 2592000));
+        self::write($token, Config::int('REFRESH_TTL', 31536000));
     }
 
     public static function clearRefreshToken(): void
