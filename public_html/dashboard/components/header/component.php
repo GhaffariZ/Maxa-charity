@@ -262,9 +262,8 @@
         visibility 0.25s;
       position: fixed;
       top: calc(var(--cta-nav-h) + 10px);
-      right: 0;
-      left: 0;
-      width: calc(100% - 32px);
+      right: 16px;
+      left: 16px;
       max-width: var(--cta-container);
       margin-inline: auto;
       background: rgba(8, 153, 169, 0.88); /* Translucent premium teal glass */
@@ -330,11 +329,6 @@
       padding-right: 5px;
     }
 
-    @media (max-width: 1024px){
-      .mega-menu-content{
-        width: calc(100vw - 32px); /* هم‌چنان با حاشیه‌ها هم‌خوانی داشته باشه */
-      }
-    }
     @media (max-width: 1200px){
       .mega-menu-content .mega-row{
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -347,20 +341,30 @@
       }
     }
 
-    @media (max-width: 640px){
+    @media (max-width: 768px){
+      .mega-menu .mega-menu-content{
+        padding: 20px;
+      }
       .mega-menu-content .mega-row{
         grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .mega-menu-content .mega-col{
+        border-left: none;
+        padding: 0;
       }
     }
 
-    @media (max-width:768px){
-      .mega-menu .mega-menu-content{
-        right:0;
-        left:0;
-        width:100%;
-        max-width:100%;
-        padding:20px;
-        box-sizing:border-box;
+    @media (max-width: 480px){
+      .mega-menu-content{
+        right: 12px;
+        left: 12px;
+      }
+      .mega-menu-content .mega-col h6{
+        font-size: 13px;
+      }
+      .mega-menu-content a{
+        font-size: 13px;
       }
     }
 
@@ -390,9 +394,8 @@
     .mobile-menu-sidebar{
       position: fixed;
       top: 0;
-      right: -320px;
-      width: 100%;
-      max-width: 320px;
+      right: -100%;
+      width: min(320px, 85vw);
       height: 100vh;
       background: rgba(15, 23, 42, 0.75); /* Dark translucent slate glass */
       border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -414,6 +417,7 @@
       box-shadow:
         -10px 0 30px rgba(0, 0, 0, 0.5),
         inset 1px 0 0 rgba(255, 255, 255, 0.1);
+      width: min(320px, 85vw);
     }
 
     .mobile-menu{
@@ -594,14 +598,11 @@
         max-width: 100%;
         flex: 1 1 auto;
         justify-content: flex-end;
-        gap: 12px;
+        gap: 10px;
       }
 
       .cta-donate {
-        order: 1;
-        font-size: 13px;
-        padding: 0 12px;
-        height: 36px;
+        display: none;
       }
 
       .cta-auth {
@@ -630,12 +631,59 @@
       }
     }
 
-    /* گوشی‌های بسیار باریک */
-    @media (max-width: 420px) {
-      .cta-auth,
-      .cta-donate {
+    /* تبلت های کوچک */
+    @media (max-width: 600px) {
+      .cta-header {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .cta-right {
+        flex-shrink: 0;
+      }
+
+      .cta-brand img {
+        height: 28px;
+      }
+
+      .cta-left {
+        gap: 8px;
+      }
+
+      .cta-donate,
+      .cta-auth {
         padding: 0 10px;
         font-size: 12px;
+        height: 34px;
+      }
+    }
+
+    /* گوشی‌های بسیار باریک */
+    @media (max-width: 420px) {
+      .cta-header {
+        padding: 6px 10px;
+        gap: 6px;
+      }
+
+      .cta-brand img {
+        height: 24px;
+      }
+
+      .cta-donate,
+      .cta-auth {
+        padding: 0 8px;
+        font-size: 11px;
+        height: 32px;
+        gap: 4px;
+      }
+
+      .menu-icon {
+        width: 24px;
+        height: 18px;
+      }
+
+      .menu-icon div {
+        height: 2px;
       }
     }
 
@@ -667,6 +715,16 @@
       opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top left;
       transition:opacity .2s,transform .22s cubic-bezier(.16,1,.3,1),visibility .2s;
       z-index:100001;direction:rtl;text-align:right;
+      max-width: calc(100vw - 20px);
+    }
+
+    @media (max-width: 480px) {
+      .cta-account-menu {
+        min-width: auto;
+        right: 10px;
+        left: auto;
+        transform-origin: top right;
+      }
     }
     .cta-account.open .cta-account-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
     .cta-account-head{display:flex;align-items:center;gap:10px;padding:8px 8px 12px;
