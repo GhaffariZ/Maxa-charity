@@ -45,8 +45,10 @@ $pageCss = <<<CSS
 .mc-stat .sv{font-size:21px;font-weight:800}.mc-stat .sl{font-size:12px;color:var(--color-muted);font-weight:600}
 CSS;
 
-course_site_head('دوره‌های من', $pageCss);
+course_html_head('دوره‌های من', $pageCss);
 ?>
+<body>
+<?php course_public_nav('mine'); ?>
 
 <div class="page">
   <div class="page-head">
@@ -63,6 +65,7 @@ course_site_head('دوره‌های من', $pageCss);
   <div id="mcArea"></div>
 </div>
 
+<?php course_theme_fab(); ?>
 <script>
 (function(){
   "use strict";
@@ -87,7 +90,7 @@ course_site_head('دوره‌های من', $pageCss);
       '<div class="ei">'+BOOK+'</div>'+
       '<h2 style="font-size:20px;font-weight:800">هنوز در دوره‌ای ثبت‌نام نکرده‌اید</h2>'+
       '<p style="color:var(--color-muted);margin:8px 0 22px">از فروشگاه ما یک دوره انتخاب کنید و یادگیری را شروع کنید.</p>'+
-      '<a href="/courses" class="btn btn-primary" target="_top">مشاهده‌ی دوره‌ها</a></div>';
+      '<a href="courses.php" class="btn btn-primary" target="_top">مشاهده‌ی دوره‌ها</a></div>';
     return;
   }
 
@@ -106,7 +109,7 @@ course_site_head('دوره‌های من', $pageCss);
         '<div class="mc-inst">'+c.instructor+'</div>'+
         '<div class="mc-prog"><div class="pb"><i style="width:'+pct+'%"></i></div>'+
           '<div class="pm"><span>پیشرفت شما</span><b>'+toFa(pct)+'٪</b></div></div>'+
-        '<a href="/dashboard/course-learn.php?id='+id+'" class="btn btn-primary mc-btn" target="_top" style="justify-content:center"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 20 12 6 20 6 4"/></svg> '+cta+'</a>'+
+        '<a href="course-learn.php?id='+id+'" class="btn btn-primary mc-btn" target="_top" style="justify-content:center"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 20 12 6 20 6 4"/></svg> '+cta+'</a>'+
       '</div></div>';
   });
   html+='</div>';
@@ -117,4 +120,5 @@ course_site_head('دوره‌های من', $pageCss);
   $('stAvg').textContent=toFa(ids.length?Math.round(sumPct/ids.length):0)+'٪';
 })();
 </script>
-<?php course_site_footer(); ?>
+</body>
+</html>
