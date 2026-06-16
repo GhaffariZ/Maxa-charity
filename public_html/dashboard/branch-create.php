@@ -14,9 +14,12 @@ if (!dash_is_super()) {
     http_response_code(403);
     exit('۴۰۳ | فقط مدیر مرکزی به این بخش دسترسی دارد.');
 }
+// بخش «شعب» فقط از «ستاد مرکزی» در دسترس است (نه وقتی سوپرادمین شعبه‌ی دیگری را انتخاب کرده)
+dash_require_hq();
 
 $err = '';
 $ok  = '';
+$created = null;  // پس از ساختِ موفق پر می‌شود تا مودالِ اعتبارنامه نمایش داده شود
 $old = ['name' => '', 'slug' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,7 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             dash_audit('branch_created', ['branch_id' => $branchId, 'slug' => $slug, 'admin' => $adminUser]);
-            $ok = 'شعبه «' . $name . '» با موفقیت ساخته شد. آدرس عمومی: /' . $slug;
+            // اطلاعاتِ نمایش در مودالِ پروفایل (رمز فقط همین یک‌بار به سوپرادمینِ سازنده نشان داده می‌شود)
+            $created = ['name' => $name, 'slug' => $slug, 'admin_user' => $adminUser, 'admin_pass' => $adminPass];
             $old = ['name' => '', 'slug' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
 
         } catch (Throwable $ex) {
@@ -153,7 +157,14 @@ require __DIR__ . '/_panel_head.php';
         </div>
         <div class="field">
           <label>رمز عبور مدیر شعبه</label>
-          <input type="password" name="admin_pass" placeholder="حداقل ۸ کاراکتر" required dir="ltr">
+          <div class="pass-row">
+            <input type="text" id="adminPass" name="admin_pass" placeholder="حداقل ۸ کاراکتر" required dir="ltr" autocomplete="new-password">
+            <button type="button" class="btn-gen" id="genPass">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              تولید رمز
+            </button>
+          </div>
+          <div class="sub">دکمه‌ی «تولید رمز» یک رمز قوی می‌سازد. آن را یادداشت کنید.</div>
         </div>
       </div>
     </div>
@@ -181,10 +192,79 @@ require __DIR__ . '/_panel_head.php';
     </div>
   </form>
 
+  <!-- مودالِ پروفایلِ شعبه‌ی ساخته‌شده -->
+  <?php if ($created): ?>
+  <div class="modal-overlay show" id="createdModal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div class="m-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>شعبه با موفقیت ساخته شد</h3>
+        <p>این اطلاعات را برای مدیر شعبه ذخیره کنید.</p>
+      </div>
+      <div class="modal-body">
+        <div class="profile-row"><span class="pk">نام شعبه</span><span class="pv"><?= e($created['name']) ?></span></div>
+        <div class="profile-row"><span class="pk">تگ / آدرس</span><span class="pv ltr">/<?= e($created['slug']) ?></span></div>
+        <div class="profile-row"><span class="pk">نام کاربری مدیر</span><span class="pv ltr" id="cUser"><?= e($created['admin_user']) ?></span></div>
+        <div class="profile-row"><span class="pk">رمز عبور مدیر</span><span class="pv ltr" id="cPass"><?= e($created['admin_pass']) ?></span></div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-primary" id="copyCreds">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            کپی نام کاربری و رمز عبور مدیر شعبه
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
+
+  <!-- توست -->
+  <div class="toast" id="toast">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <span id="toastMsg"></span>
+  </div>
+
 <script>
   // تعاملِ تیک‌ها (هماهنگ با ظاهر داشبورد)
   document.querySelectorAll('.check input').forEach(function(cb){
     cb.addEventListener('change',function(){ cb.closest('.check').classList.toggle('on',cb.checked); });
   });
+
+  // تولید رمز قوی
+  (function(){
+    var btn=document.getElementById('genPass'); if(!btn) return;
+    var chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%*';
+    btn.addEventListener('click',function(){
+      var n=14, out='', arr=new Uint32Array(n);
+      (window.crypto||window.msCrypto).getRandomValues(arr);
+      for(var i=0;i<n;i++){ out+=chars[arr[i]%chars.length]; }
+      var f=document.getElementById('adminPass'); f.value=out; f.focus();
+    });
+  })();
+
+  // توست
+  function showToast(msg){
+    var t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg;
+    t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2200);
+  }
+
+  // کپیِ اعتبارنامه و بازگشت به فهرست شعبه‌ها
+  (function(){
+    var btn=document.getElementById('copyCreds'); if(!btn) return;
+    btn.addEventListener('click',function(){
+      var u=document.getElementById('cUser').textContent.trim();
+      var p=document.getElementById('cPass').textContent.trim();
+      var text='username: "'+u+'"\npassword: "'+p+'"';
+      function done(){ showToast('نام کاربری و رمز عبور کپی شد!'); setTimeout(function(){ window.location.href='branch-list.php'; },1200); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done,function(){ fallback(); });
+      } else { fallback(); }
+      function fallback(){
+        var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta); done();
+      }
+    });
+  })();
 </script>
 </div></body></html>
