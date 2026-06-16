@@ -136,7 +136,8 @@ $groups[$tag][]=[
   outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
 .create-form label{display:block;font-size:12.5px;font-weight:700;margin-bottom:7px;color:var(--color-muted)}
 .create-form textarea,.editor-panel textarea{
-  min-height:360px;direction:ltr;resize:vertical;line-height:1.95;font-size:13px;
+  min-height:360px;direction:ltr;resize:vertical;line-height:1.95;font-size:13px;color:var(--color-text);
+  border:1px solid var(--color-border);border-radius:12px;
   padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 #searchBox{margin:0 0 22px}
 
@@ -184,7 +185,8 @@ $groups[$tag][]=[
 .editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px;align-items:start;direction:ltr}
 .editor-panel,.preview-panel{background:var(--color-bg);padding:16px;border-radius:16px;border:1px solid var(--color-border);min-width:0}
 .panel-title{font-size:13px;font-weight:800;margin-bottom:12px;color:var(--color-muted);direction:rtl;display:flex;align-items:center;gap:8px}
-.editor-panel textarea{margin:0;border-radius:12px}
+.editor-panel textarea{width:100%;height:360px;min-height:360px;margin:0;border-radius:12px;background:var(--color-surface);display:block}
+.editor-panel textarea:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08)}
 .preview-frame{width:100%;height:360px;display:block;border:1px solid var(--color-border);border-radius:12px;background:#fff}
 
 /* ویرایشگرِ تصاویرِ کامپوننت */
