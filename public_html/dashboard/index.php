@@ -410,17 +410,18 @@ svg.ic{display:block}
 .nav-sub-link:hover{background:var(--primary-08);color:var(--color-primary-dark);transform:translateX(-2px)}
 .nav-sub-link:hover .ic{opacity:1}
 
-.sb-footer{padding:12px;border-top:1px solid var(--color-border);flex-shrink:0}
-.user-card{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:14px;transition:background .2s}
+.sb-footer{padding:12px;border-top:1px solid var(--color-border);flex-shrink:0;display:flex;align-items:center;gap:8px}
+.user-card{order:1;flex:1;min-width:0;display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:14px;transition:background .2s}
 .user-card:hover{background:var(--primary-08)}
 .user-av{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
 .user-meta{flex:1;min-width:0}
 .user-name{font-weight:700;font-size:13px}
 .user-role{font-size:11px;color:var(--color-muted)}
 .user-card .ic{width:17px;height:17px;color:var(--color-muted)}
-.logout-link{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-top:4px;border-radius:12px;font-size:12.5px;font-weight:700;color:var(--danger);transition:background .2s}
+.logout-link{order:2;flex-shrink:0;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;color:var(--danger);transition:background .2s,transform .14s}
 .logout-link:hover{background:rgba(224,85,107,.10)}
-.logout-link .ic{width:18px;height:18px}
+.logout-link:active{transform:scale(.93)}
+.logout-link .ic{width:20px;height:20px}
 
 /* ============ MAIN / TOPBAR ============ */
 .main{margin-right:var(--sb-w);transition:margin-right .42s var(--ease);min-height:100vh;display:flex;flex-direction:column}
@@ -815,16 +816,15 @@ body.spa-active .content{display:none}
     </div>
     <nav class="sb-nav"><div class="nav-list" id="navList"></div></nav>
     <div class="sb-footer">
+      <a href="logout.php" id="logoutLink" class="logout-link" target="_top" title="خروج از حساب" aria-label="خروج از حساب">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
       <a href="account.php" class="user-card">
         <div class="user-av"><?= e(mb_substr($U['full_name'] ?: $U['username'], 0, 2, 'UTF-8')) ?></div>
         <div class="user-meta">
           <div class="user-name"><?= e($U['full_name'] ?: $U['username']) ?></div>
           <div class="user-role"><?= e($isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : 'کاربر شعبه')) ?></div>
         </div>
-      </a>
-      <a href="logout.php" class="logout-link">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>خروج از حساب</span>
       </a>
     </div>
   </aside>
@@ -1093,8 +1093,8 @@ body.spa-active .content{display:none}
       {label:'مدیریت کاربران',icon:'list',href:'user-manage.php'}]});
   }
 
-  // --- شعب (فقط سوپرادمین) ---
-  if (MENU.isSuper){
+  // --- شعب (فقط سوپرادمین، و فقط وقتی «ستاد مرکزی» شعبه‌ی فعال است) ---
+  if (MENU.isSuper && MENU.isHqView){
     NAV.push({title:'شعب'});
     NAV.push({label:'شعبه‌ها',icon:'network',children:[
       {label:'تعریف شعبه‌ی جدید',icon:'plus',href:'branch-create.php'},
@@ -1200,7 +1200,8 @@ body.spa-active .content{display:none}
     function isInternal(a){
       const href=a.getAttribute('href')||'';
       if(!href || href.charAt(0)==='#' || /^(https?:|mailto:|tel:|javascript:)/i.test(href)) return false;
-      if(a.target && a.target!=='_self') return false;
+      if(a.target && a.target!=='_self') return false;   // target=_top/_blank → ناوبریِ عادیِ مرورگر (مثلِ خروج)
+      if(a.id==='logoutLink' || /(^|\/)logout\.php(\?|#|$)/i.test(href)) return false; // خروج هرگز داخل آی‌فریم باز نشود
       return /\.php(\?|#|$)/i.test(href);   // فقط صفحات داخلیِ .php را داخل آی‌فریم باز کن
     }
 

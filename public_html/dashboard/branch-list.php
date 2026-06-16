@@ -10,6 +10,8 @@ if (!dash_is_super()) {
     http_response_code(403);
     exit('۴۰۳ | فقط مدیر مرکزی به این بخش دسترسی دارد.');
 }
+// بخش «شعب» فقط از «ستاد مرکزی» در دسترس است
+dash_require_hq();
 
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,9 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($b && (int)$b['is_hq'] !== 1 && in_array($action, ['enable', 'disable'], true)) {
         $newStatus = $action === 'enable' ? 'active' : 'disabled';
         $pdo->prepare('UPDATE branches SET status = ? WHERE id = ? AND is_hq = 0')->execute([$newStatus, $bid]);
-        // غیرفعال‌کردن شعبه، کاربران آن را نیز از ورود بازمی‌دارد (همگام‌سازی)
+        // وضعیتِ کاربرانِ شعبه را با شعبه همگام می‌کنیم.
+        // نکته: مدلِ ساده‌ی status تفکیکی بین «غیرفعالِ شعبه» و «غیرفعالِ دستیِ ادمین» ندارد؛
+        // پس فعال‌سازیِ مجددِ شعبه، همه‌ی کاربرانِ غیرسوپرِ آن را هم فعال می‌کند (رفعِ باگِ
+        // قبلی که کاربران پس از فعال‌سازیِ شعبه برای همیشه غیرفعال می‌ماندند).
         if ($newStatus === 'disabled') {
             $pdo->prepare("UPDATE dashboard_users SET status='disabled' WHERE branch_id = ? AND is_super = 0")->execute([$bid]);
+        } else {
+            $pdo->prepare("UPDATE dashboard_users SET status='active', failed_attempts=0, locked_until=NULL WHERE branch_id = ? AND is_super = 0")->execute([$bid]);
         }
         dash_audit('branch_status_changed', ['branch_id' => $bid, 'status' => $newStatus]);
         $msg = 'وضعیت شعبه به‌روزرسانی شد.';
@@ -57,27 +64,31 @@ require __DIR__ . '/_panel_head.php';
         $isHq = (int)$r['is_hq'] === 1;
         $active = $r['status'] === 'active'; ?>
         <tr>
-          <td style="font-weight:700"><?= e($r['name']) ?> <?php if ($isHq): ?><span class="badge hq">مرکزی</span><?php endif; ?></td>
-          <td dir="ltr" style="text-align:right"><span class="badge tag">/<?= e($r['slug']) ?></span></td>
-          <td><?= (int)$r['users_cnt'] ?></td>
-          <td><?= (int)$r['camp_cnt'] ?></td>
-          <td>
+          <td data-label="نام شعبه" style="font-weight:700"><?= e($r['name']) ?> <?php if ($isHq): ?><span class="badge hq">مرکزی</span><?php endif; ?></td>
+          <td data-label="تگ / آدرس" dir="ltr" style="text-align:right"><span class="badge tag">/<?= e($r['slug']) ?></span></td>
+          <td data-label="کاربران"><?= (int)$r['users_cnt'] ?></td>
+          <td data-label="کمپین‌ها"><?= (int)$r['camp_cnt'] ?></td>
+          <td data-label="وضعیت">
             <?php if ($active): ?><span class="badge ok">فعال</span>
             <?php else: ?><span class="badge off">غیرفعال</span><?php endif; ?>
           </td>
-          <td style="text-align:left">
-            <?php if (!$isHq): ?>
-              <form method="POST" style="display:inline">
-                <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                <input type="hidden" name="branch_id" value="<?= (int)$r['id'] ?>">
-                <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
-                <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit">
-                  <?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?>
-                </button>
-              </form>
-            <?php else: ?>
-              <span style="color:var(--color-muted);font-size:12px">—</span>
-            <?php endif; ?>
+          <td data-label="عملیات" style="text-align:left">
+            <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+              <a class="tbtn" href="branch-edit.php?id=<?= (int)$r['id'] ?>">
+                <svg class="ic" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+                ویرایش
+              </a>
+              <?php if (!$isHq): ?>
+                <form method="POST" style="display:inline">
+                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                  <input type="hidden" name="branch_id" value="<?= (int)$r['id'] ?>">
+                  <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
+                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit">
+                    <?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?>
+                  </button>
+                </form>
+              <?php endif; ?>
+            </div>
           </td>
         </tr>
       <?php endforeach; ?>
