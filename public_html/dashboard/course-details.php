@@ -10,14 +10,14 @@ $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 
 if (!$course) {
-  course_site_head('دوره یافت نشد');
+  course_html_head('دوره یافت نشد');
+  echo '<body>'; course_public_nav('catalog');
   echo '<div class="page" style="text-align:center;padding:80px 20px">'
      . '<div style="width:80px;height:80px;border-radius:22px;display:grid;place-items:center;margin:0 auto 18px;background:var(--primary-08);color:var(--color-primary)">'.cic('search').'</div>'
      . '<h1 style="font-size:22px;font-weight:800">دوره‌ای با این شناسه پیدا نشد</h1>'
      . '<p style="color:var(--color-muted);margin:8px 0 22px">شاید حذف شده باشد یا هنوز منتشر نشده است.</p>'
-     . '<a href="/courses" class="btn btn-primary" target="_top">'.cic('arrow').' بازگشت به فروشگاه دوره‌ها</a>'
-     . '</div>';
-  course_site_footer();
+     . '<a href="courses.php" class="btn btn-primary" target="_top">'.cic('arrow').' بازگشت به فروشگاه دوره‌ها</a>'
+     . '</div></body></html>';
   exit;
 }
 
@@ -112,13 +112,15 @@ $pageCss = course_card_styles() . <<<CSS
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
 CSS;
 
-course_site_head($course['title'] ?? 'دوره', $pageCss);
+course_html_head($course['title'] ?? 'دوره', $pageCss);
 ?>
+<body>
+<?php course_public_nav('catalog'); ?>
 
 <!-- قهرمان -->
 <section class="cd-hero">
   <div class="cd-hero-in">
-    <div class="crumb"><a href="/courses" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
+    <div class="crumb"><a href="courses.php" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
     <span class="cd-cat"><?= e($course['category'] ?? 'عمومی') ?> · <?= level_label((string)($course['level'] ?? 'all')) ?></span>
     <h1><?= e($course['title'] ?? '') ?></h1>
     <?php if (!empty($course['subtitle'])): ?><p class="cd-sub"><?= e($course['subtitle']) ?></p><?php endif; ?>
@@ -179,7 +181,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
               <div class="acc-lesson">
                 <span class="lt lt-<?= e($type) ?>"><?= cic($type==='video'?'play':$type) ?></span>
                 <span class="l-name"><?= e($l['title'] ?? 'درس') ?></span>
-                <?php if ($isPrev): ?><a class="l-prev" href="/dashboard/course-learn.php?id=<?= $id ?>&preview=1" target="_top">پیش‌نمایش</a>
+                <?php if ($isPrev): ?><a class="l-prev" href="course-learn.php?id=<?= $id ?>&preview=1" target="_top">پیش‌نمایش</a>
                 <?php else: ?><span class="l-lock"><?= cic('lock') ?></span><?php endif; ?>
                 <?php if ((int)($l['duration'] ?? 0)>0): ?><span class="l-dur"><?= fa_digits((int)$l['duration']) ?>:۰۰</span><?php endif; ?>
               </div>
@@ -227,7 +229,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
         <div class="buy-actions">
           <?php if ($isFree): ?>
-            <a href="/dashboard/course-learn.php?id=<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> شروع رایگان دوره</a>
+            <a href="course-learn.php?id=<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> شروع رایگان دوره</a>
           <?php else: ?>
             <button class="btn btn-primary btn-block btn-lg" id="buyNow"><?= cic('cart') ?> خرید و ثبت‌نام</button>
             <button class="btn btn-ghost btn-block" id="addCart"><?= cic('plus') ?> افزودن به سبد خرید</button>
@@ -267,6 +269,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 </div>
 
 <div class="toast" id="toast"><div class="ti"><?= cic('check') ?></div><span id="toastMsg"></span></div>
+<?php course_theme_fab(); ?>
 
 <script>
 (function(){
@@ -311,7 +314,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   if(buyBtn){
     buyBtn.addEventListener('click', function(){
       var c=getCart(); if(!inCart()){ c.push(COURSE); setCart(c); }
-      window.top.location.href='/course-checkout?id='+COURSE.id;
+      window.top.location.href='course-checkout.php?id='+COURSE.id;
     });
   }
 
@@ -331,4 +334,5 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   modal.addEventListener('click', function(e){ if(e.target===modal) closeP(); });
 })();
 </script>
-<?php course_site_footer(); ?>
+</body>
+</html>
