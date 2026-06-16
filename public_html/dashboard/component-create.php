@@ -102,7 +102,7 @@ $groups[$tag][]=[
 ?>
 
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 
 <head>
 
@@ -110,811 +110,112 @@ $groups[$tag][]=[
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>مدیریت کامپوننت</title>
+<title>مدیریت کامپوننت | پنل مکسا</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
-<script>
-(function(){
-  function applyMaxaTheme(){
-    var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
-    if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme');
-  }
-  applyMaxaTheme();
-  window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
-})();
-</script>
+<!-- اعمالِ تم پیش از رنگ‌آمیزی تا از پرشِ نور→تاریک جلوگیری شود (کلید مشترک: maxa-theme) -->
+<script>(function(){try{if(localStorage.getItem('maxa-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 
 <style>
+/* استایل‌های ویژه‌ی این صفحه (توکن‌ها و کامپوننت‌های مشترک از panel.css می‌آیند) */
+.container{max-width:1320px}
 
-:root{
---bg:#f4f7fb;
---bg-soft:#eef3f8;
---card:#ffffff;
---card-2:#f8fbff;
---border:#e2e8f0;
---border-strong:#cbd5e1;
---text:#0f172a;
---text-soft:#475569;
---muted:#64748b;
---shadow-sm:0 4px 14px rgba(15,23,42,.04);
---shadow-md:0 12px 30px rgba(15,23,42,.07);
---shadow-lg:0 18px 45px rgba(15,23,42,.10);
-
---primary:#4f46e5;
---primary-hover:#4338ca;
---primary-soft:#eef2ff;
-
---success:#16a34a;
---success-soft:#f0fdf4;
-
---danger:#dc2626;
---danger-soft:#fef2f2;
-
---warning:#d97706;
---warning-soft:#fff7ed;
-
---info:#0284c7;
---info-soft:#f0f9ff;
-
---gray:#64748b;
---radius:22px;
---radius-lg:20px;
---radius-md:16px;
---radius-sm:12px;
-}
-
-
-*{
-box-sizing:border-box;
-}
-
-body{
-font-family:"Vazirmatn","IRANSans","Tahoma",sans-serif;
-background:
-radial-gradient(circle at top right, #ffffff 0%, #f7fbff 28%, #f4f7fb 65%);
-direction:rtl;
-padding:36px;
-margin:0;
-color:var(--text);
-font-size:15px;
-line-height:1.9;
--webkit-font-smoothing:antialiased;
-}
-
-.container{
-max-width:1500px;
-margin:auto;
-}
-
-.card{
-background:var(--card);
-padding:32px;
-border-radius:28px;
-margin-bottom:36px;
-box-shadow:var(--shadow-md);
-border:1px solid var(--border);
-}
-
-
-h2{
-margin:0 0 26px;
-font-size:30px;
-font-weight:900;
-letter-spacing:-.6px;
-color:var(--text);
-}
-
-.group-title{
-font-size:24px;
-font-weight:900;
-margin-top:50px;
-margin-bottom:18px;
-color:var(--text);
-padding-right:14px;
-border-right:5px solid var(--primary);
-letter-spacing:-.4px;
-}
-
-
-input,
-textarea,
-select{
-width:100%;
-padding:14px 16px;
-border-radius:14px;
-border:1px solid var(--border);
-margin-top:10px;
-margin-bottom:20px;
-font-size:14px;
-background:#fff;
-transition:.22s ease;
-font-family:inherit;
-color:var(--text);
-box-shadow:none;
-}
-
-input::placeholder,
-textarea::placeholder{
-color:#94a3b8;
-}
-
-input:hover,
-textarea:hover,
-select:hover{
-border-color:var(--border-strong);
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-outline:none;
-border-color:var(--primary);
-box-shadow:0 0 0 4px rgba(79,70,229,.10);
-}
-
-textarea{
-height:520px;
-direction:ltr;
-resize:vertical;
-line-height:1.95;
-font-size:13px;
-font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-background:#fcfdff;
-}
-
-
-button{
-border:none;
-padding:12px 18px;
-border-radius:12px;
-cursor:pointer;
-font-family:inherit;
-font-size:13px;
-font-weight:800;
-transition:.2s ease;
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:8px;
-box-shadow:var(--shadow-sm);
-}
-
-button:hover{
-transform:translateY(-1px);
-}
-
-button:active{
-transform:translateY(0);
-}
-
-.btn_main{
-background:linear-gradient(135deg,var(--primary),#6366f1);
-color:#fff;
-}
-
-.edit-btn{
-background:linear-gradient(135deg,#0ea5e9,#0284c7);
-color:#fff;
-}
-
-.save-btn{
-background:linear-gradient(135deg,#16a34a,#15803d);
-color:#fff;
-}
-
-.copy-btn{
-background:linear-gradient(135deg,#64748b,#475569);
-color:#fff;
-}
-
-.delete-btn{
-background:linear-gradient(135deg,#ef4444,#dc2626);
-color:#fff;
-}
-
-
-.edit-btn{
-background:#0ea5e9;
-color:white;
-}
-
-.save-btn{
-background:var(--success);
-color:white;
-}
-
-.delete-btn{
-background:var(--danger);
-color:white;
-}
-
-.copy-btn{
-background:var(--gray);
-color:white;
-}
-
-.component-box{
-background:var(--card);
-border-radius:24px;
-margin-bottom:22px;
-box-shadow:var(--shadow-sm);
-border:1px solid var(--border);
-overflow:hidden;
-transition:.25s ease;
-}
-
-.component-box:hover{
-transform:translateY(-2px);
-box-shadow:var(--shadow-lg);
-}
-
-.component-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:22px 26px;
-cursor:pointer;
-background:linear-gradient(to left,#ffffff,#f8fbff);
-border-bottom:1px solid rgba(226,232,240,.6);
-}
-
-.component-name{
-font-size:18px;
-font-weight:900;
-letter-spacing:-.3px;
-color:var(--text);
-}
-
-.tag{
-color:white;
-padding:7px 14px;
-border-radius:999px;
-font-size:12px;
-margin-right:12px;
-font-weight:800;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.component-content{
-padding:24px 26px 28px;
-display:none;
-animation:fade .25s ease;
-}
-
-.component-box.active .component-content{
-display:block;
-}
-
-.toggle-icon{
-font-size:22px;
-transition:.25s;
-color:var(--muted);
-font-weight:bold;
-}
-
-.component-box.active .toggle-icon{
-transform:rotate(180deg);
-}
-
-
-#imageList{
-margin-top:10px;
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.image-item{
-background:#f1f5f9;
-padding:8px 12px;
-border-radius:10px;
-font-size:13px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.image-item span{
-color:#334155;
-}
-
-.image-remove{
-cursor:pointer;
-color:#dc2626;
-font-weight:bold;
-}
- 
-/* ظرف اصلی ویرایشگر */
-.editor-layout{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:24px;
-margin-top:20px;
-align-items:start;
-direction:ltr;
-}
-
-.editor-panel,
-.preview-panel{
-background:linear-gradient(to bottom,#fbfdff,#f8fbff);
-padding:18px;
-border-radius:20px;
-border:1px solid var(--border);
-box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
-min-width:0;
-}
-
-.panel-title{
-font-size:14px;
-font-weight:900;
-margin-bottom:14px;
-color:var(--text-soft);
-direction:rtl;
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.editor-panel textarea{
-width:100%;
-height:520px;
-margin:0;
-border-radius:16px;
-border:1px solid var(--border);
-background:#fcfdff;
-}
-
-
-.actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:24px;
-justify-content:flex-end;
-padding-top:8px;
-}
-
-.group-title{
-font-size:27px;
-font-weight:900;
-margin-top:50px;
-margin-bottom:22px;
-color:#0f172a;
-padding-right:14px;
-border-right:6px solid var(--primary);
-letter-spacing:-.5px;
-}
-
+/* فرمِ ساختِ کامپوننت: ورودی‌های خام را با پوسته‌ی فیلدها هماهنگ می‌کنیم */
+.create-form input[type=text],
+.create-form select,
+.create-form textarea,
 #searchBox{
-margin-bottom:34px;
-background:#fff;
-font-size:15px;
-box-shadow:var(--shadow-sm);
-}
+  width:100%;border:1px solid var(--color-border);background:var(--color-bg);border-radius:12px;
+  padding:0 14px;font-family:inherit;font-size:14px;color:var(--color-text);margin-bottom:16px;
+  transition:border-color .2s,box-shadow .2s,background .2s}
+.create-form input[type=text],.create-form select,#searchBox{height:46px}
+.create-form input:focus,.create-form select:focus,.create-form textarea:focus,#searchBox:focus{
+  outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
+.create-form label{display:block;font-size:12.5px;font-weight:700;margin-bottom:7px;color:var(--color-muted)}
+.create-form textarea,.editor-panel textarea{
+  min-height:360px;direction:ltr;resize:vertical;line-height:1.95;font-size:13px;
+  padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+#searchBox{margin:0 0 22px}
 
-.toggle-icon{
-font-size:22px;
-transition:.25s;
-color:var(--muted);
-font-weight:bold;
-}
+/* عنوانِ گروه (تگ‌ها) */
+.group-title{font-size:16px;font-weight:800;margin:36px 0 16px;color:var(--color-text);
+  padding-right:12px;border-right:4px solid var(--color-primary)}
 
-.component-box.active .toggle-icon{
-transform:rotate(180deg);
-}
+/* جعبه‌ی آپلودِ کشیدنی */
+#uploadBox{border:2px dashed var(--color-border);border-radius:16px;padding:30px;text-align:center;
+  cursor:pointer;background:var(--color-bg);transition:.22s ease;position:relative}
+#uploadBox:hover{border-color:var(--color-primary-light);background:var(--primary-08)}
+#uploadBox input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-text{font-size:14px;font-weight:700;color:var(--color-text)}
+.upload-help{font-size:12.5px;color:var(--color-muted);margin:6px 0 18px;line-height:2}
 
-#uploadBox{
-border:2px dashed #cfd8e3;
-border-radius:18px;
-padding:34px;
-text-align:center;
-cursor:pointer;
-background:linear-gradient(to bottom,#fbfdff,#f8fbff);
-transition:.22s ease;
-position:relative;
-}
+#imagePreview{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+.preview-item{position:relative;background:var(--color-surface);border:1px solid var(--color-border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.preview-item img{width:100%;height:100px;object-fit:cover;display:block}
+.preview-label{font-size:12px;padding:6px;text-align:center;background:var(--color-bg);color:var(--color-muted)}
+.preview-remove{position:absolute;top:6px;left:6px;background:var(--danger);color:#fff;width:22px;height:22px;
+  border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
 
-#uploadBox:hover{
-border-color:var(--primary);
-background:var(--primary-soft);
-}
+#imageList{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.image-item{background:var(--color-bg);padding:8px 12px;border-radius:10px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.image-item span{color:var(--color-text)}
+.image-remove{cursor:pointer;color:var(--danger);font-weight:bold}
 
-#uploadBox input{
-position:absolute;
-inset:0;
-opacity:0;
-cursor:pointer;
-}
+/* آکاردئونِ کامپوننت‌های موجود */
+.component-box{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);
+  margin-bottom:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .25s,transform .25s}
+.component-box:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.component-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;
+  cursor:pointer;background:var(--color-surface);border-bottom:1px solid transparent;transition:background .2s}
+.component-header:hover{background:var(--color-bg)}
+.component-box.active .component-header{border-bottom-color:var(--color-border)}
+.component-name{font-size:15px;font-weight:800;color:var(--color-text)}
+.component-header .tag{color:#fff;padding:6px 13px;border-radius:999px;font-size:11.5px;margin-right:10px;font-weight:800}
+.toggle-icon{font-size:20px;line-height:1;transition:transform .25s;color:var(--color-muted);font-weight:bold}
+.component-box.active .toggle-icon{transform:rotate(180deg)}
+.component-content{padding:22px;display:none;animation:ccfade .25s ease}
+.component-box.active .component-content{display:block}
+@keyframes ccfade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 
-.upload-text{
-font-size:14px;
-font-weight:700;
-color:var(--text-soft);
-}
+/* ویرایشگرِ دو‌ستونه (کد + پیش‌نمایش) */
+.editor-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px;align-items:start;direction:ltr}
+.editor-panel,.preview-panel{background:var(--color-bg);padding:16px;border-radius:16px;border:1px solid var(--color-border);min-width:0}
+.panel-title{font-size:13px;font-weight:800;margin-bottom:12px;color:var(--color-muted);direction:rtl;display:flex;align-items:center;gap:8px}
+.editor-panel textarea{margin:0;border-radius:12px}
+.preview-frame{width:100%;height:360px;display:block;border:1px solid var(--color-border);border-radius:12px;background:#fff}
 
-.upload-help{
-font-size:13px;
-color:var(--muted);
-margin-top:-8px;
-margin-bottom:20px;
-line-height:2;
-}
+/* ویرایشگرِ تصاویرِ کامپوننت */
+.component-images-editor{margin-top:20px;background:var(--secondary-12);border:1px solid rgba(244,166,30,.3);border-radius:16px;padding:18px}
+.existing-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:18px}
+.existing-image-item{background:var(--color-surface);border:1px solid var(--color-border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:.2s ease}
+.existing-image-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.existing-image-item img{width:100%;height:120px;object-fit:cover;display:block;background:var(--color-bg)}
+.existing-image-info{padding:11px;display:flex;flex-direction:column;gap:4px;direction:ltr;text-align:left}
+.existing-image-info span{font-size:12.5px;font-weight:800;color:var(--color-secondary-dark)}
+.existing-image-info small{font-size:11px;color:var(--color-muted);word-break:break-all;line-height:1.8}
+.delete-image-label{display:flex;align-items:center;gap:8px;padding:9px 11px;background:rgba(224,85,107,.10);color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer;border-top:1px solid var(--color-border)}
+.delete-image-label input{width:auto;margin:0;accent-color:var(--danger)}
+.add-images-box{border-top:1px dashed rgba(244,166,30,.4);padding-top:16px;margin-top:4px}
+.add-images-box label{display:block;font-size:13px;font-weight:800;margin-bottom:8px;color:var(--color-secondary-dark)}
+.add-images-box input[type=file]{width:100%;padding:11px 14px;border:1px dashed var(--color-border);background:var(--color-bg);border-radius:12px;font-family:inherit;font-size:13px;color:var(--color-text);cursor:pointer}
+.no-image{background:var(--color-surface);color:var(--color-muted);padding:16px;border-radius:12px;font-size:13.5px;grid-column:1/-1;border:1px dashed var(--color-border);text-align:center}
 
-#imagePreview{
-margin-top:20px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-gap:15px;
-}
-
-.preview-item{
-position:relative;
-background:white;
-border-radius:14px;
-overflow:hidden;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.preview-item img{
-width:100%;
-height:100px;
-object-fit:cover;
-display:block;
-}
-
-.preview-label{
-font-size:12px;
-padding:6px;
-text-align:center;
-background:#f1f5f9;
-}
-
-.preview-remove{
-position:absolute;
-top:6px;
-left:6px;
-background:#dc2626;
-color:white;
-width:20px;
-height:20px;
-border-radius:50%;
-font-size:12px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
-@keyframes fade{
-from{
-opacity:0;
-transform:translateY(-6px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
-@media(max-width:1100px){
-.editor-layout{
-grid-template-columns:1fr;
-}
-}
-
-@media(max-width:768px){
-body{
-padding:18px;
-}
-
-.card{
-padding:22px;
-border-radius:20px;
-}
-
-.component-header{
-flex-direction:column;
-align-items:flex-start;
-gap:12px;
-}
-
-.actions{
-justify-content:center;
-}
-
-h2{
-font-size:24px;
-}
-
-.group-title{
-font-size:21px;
-}
-
-.editor-panel textarea,
-.preview-frame{
-height:400px;
-}
-
-.existing-images{
-grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-}
-}
-    .upload-help{
-        font-size:13px;
-        color:#64748b;
-        margin-top:-10px;
-        margin-bottom:20px;
-        line-height:2;
-    }
-}
-
-.component-header{
-flex-direction:column;
-align-items:flex-start;
-gap:15px;
-}
-
-
-h2{
-font-size:24px;
-}
-
-.group-title{
-font-size:22px;
-}
-
-
-.editor-layout{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:24px;
-    margin-top:20px;
-    align-items:start;
-    direction:ltr;
-}
-
-.editor-panel,
-.preview-panel{
-    background:#f9fbff;
-    padding:18px;
-    border-radius:18px;
-    border:1px solid #e5eaf3;
-    min-width:0;
-}
-
-.panel-title{
-    font-size:15px;
-    font-weight:800;
-    margin-bottom:15px;
-    color:#334155;
-    direction:rtl;
-}
-
-/* باکس کد */
-.editor-panel textarea{
-    width:100%;
-    height:520px;
-    margin:0;
-    direction:ltr;
-    resize:vertical;
-    line-height:2;
-    font-size:13px;
-    font-family:Consolas,monospace;
-    background:#fbfcfe;
-    border:1px solid #dbe3ef;
-    border-radius:14px;
-}
-
-/* باکس نمایش - دقیقاً هم‌ارتفاع با textarea */
-.preview-frame{
-width:100%;
-height:520px;
-display:block;
-border:none;
-border-radius:16px;
-background:white;
-box-shadow:inset 0 0 0 1px var(--border);
-}
-
-.upload-help{
-font-size:13px;
-color:#64748b;
-margin-top:-10px;
-margin-bottom:20px;
-line-height:2;
-}
-
-}
-
-.component-images-editor{
-margin-top:24px;
-background:linear-gradient(to bottom,#fffdf7,#fffaf0);
-border:1px solid #f3e8c7;
-border-radius:20px;
-padding:20px;
-box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
-}
-
-.existing-images{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
-gap:16px;
-margin-bottom:22px;
-}
-
-.existing-image-item{
-background:#fff;
-border:1px solid #efe2bd;
-border-radius:18px;
-overflow:hidden;
-box-shadow:0 6px 18px rgba(15,23,42,.05);
-transition:.2s ease;
-}
-
-.existing-image-item:hover{
-transform:translateY(-2px);
-box-shadow:0 10px 24px rgba(15,23,42,.08);
-}
-
-.existing-image-item img{
-width:100%;
-height:130px;
-object-fit:cover;
-display:block;
-background:#f8fafc;
-}
-
-.existing-image-info{
-padding:12px;
-display:flex;
-flex-direction:column;
-gap:5px;
-direction:ltr;
-text-align:left;
-}
-
-.existing-image-info span{
-font-size:13px;
-font-weight:900;
-color:#b45309;
-}
-
-.existing-image-info small{
-font-size:11px;
-color:#78716c;
-word-break:break-all;
-line-height:1.8;
-}
-
-.delete-image-label{
-display:flex;
-align-items:center;
-gap:8px;
-padding:10px 12px;
-background:#fff1f2;
-color:#dc2626;
-font-size:13px;
-font-weight:800;
-cursor:pointer;
-border-top:1px solid #ffe4e6;
-}
-
-.delete-image-label input{
-width:auto;
-margin:0;
-accent-color:#dc2626;
-}
-
-.add-images-box{
-border-top:1px dashed #e7c88b;
-padding-top:18px;
-margin-top:6px;
-}
-
-.add-images-box label{
-display:block;
-font-size:14px;
-font-weight:900;
-margin-bottom:8px;
-color:#92400e;
-}
-
-.no-image{
-background:#fff;
-color:#78716c;
-padding:18px;
-border-radius:14px;
-font-size:14px;
-grid-column:1/-1;
-border:1px dashed #f5d48d;
-text-align:center;
-}
-
+/* ردیفِ دکمه‌ها */
+.component-content .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;justify-content:flex-end}
 
 @media(max-width:900px){
-
-.editor-layout{
-    flex-direction:column;
-    align-items:center;
+  .editor-layout{grid-template-columns:1fr}
+  .component-header{flex-wrap:wrap}
+  .component-content .actions{justify-content:center}
+  .component-content .actions .tbtn{flex:1}
 }
 
-.editor-panel,
-.preview-panel{
-    width:100%;
-}
-
-/* هماهنگ کردن ارتفاع Textarea و Iframe */
-.editor-panel textarea,
-.preview-frame {
-    width: 100%;
-    height: 650px; /* ارتفاع هر دو باکس دقیقاً یکسان */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: block;
-}
-
-}
-/* حذف استایل‌های اضافی iframe */
-.preview-frame {
-    background: #fff;
-    box-shadow: none; /* حذف سایه‌های قبلی گوشی */
-}
-
-/* ===== دارک‌مود: تبعیت از «داشبورد مدیریت» (کلید مشترک maxa-theme) — افزوده‌شده، استایل‌های روشن دست‌نخورده ===== */
-:root[data-theme="dark"]{
-  --bg:#0f1518;
-  --card:#19232a;
-  --border:#2a343a;
-  --text:#e7ecee;
-  --muted:#8e989d;
-  --shadow:0 14px 38px rgba(0,0,0,.5);
-  color-scheme:dark;
-}
-[data-theme="dark"] body{background:#0f1518}
-[data-theme="dark"] h2,
-[data-theme="dark"] .component-name,
-[data-theme="dark"] .group-title{color:var(--text)}
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select,
-[data-theme="dark"] #searchBox{background:#0f1518;border-color:var(--border);color:var(--text)}
-[data-theme="dark"] textarea{background:#11181d}
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder{color:#7c8589}
-[data-theme="dark"] .component-box{background:var(--card)}
-[data-theme="dark"] .component-header{background:linear-gradient(to left,#1d2932,#19232a)}
-[data-theme="dark"] .component-box:hover{box-shadow:0 18px 40px rgba(0,0,0,.55)}
-[data-theme="dark"] .image-item{background:#0f1518}
-[data-theme="dark"] .image-item span{color:#cfd6da}
-[data-theme="dark"] .editor-panel,
-[data-theme="dark"] .preview-panel{background:#0f1518;border-color:var(--border)}
-[data-theme="dark"] .panel-title{color:#cfd6da}
-[data-theme="dark"] #uploadBox{border-color:#39454c;background:#0f1518}
-[data-theme="dark"] #uploadBox:hover{border-color:var(--primary);background:#141d22}
-[data-theme="dark"] .upload-text,
-[data-theme="dark"] .upload-help{color:var(--muted)}
-[data-theme="dark"] .preview-item{background:var(--card)}
-[data-theme="dark"] .preview-label{background:#0f1518;color:#cfd6da}
-[data-theme="dark"] .toggle-icon{color:var(--muted)}
-[data-theme="dark"] .component-images-editor{background:#0f1518;border-color:var(--border);}
-[data-theme="dark"] .existing-image-item{background:var(--card);border-color:var(--border);}
-[data-theme="dark"] .existing-image-info small{color:var(--muted);}
-[data-theme="dark"] .delete-image-label{background:#2a1114;color:#f87171;}
-[data-theme="dark"] .add-images-box{border-top-color:#39454c;}
-[data-theme="dark"] .add-images-box label{color:#cfd6da;}
-[data-theme="dark"] .no-image{background:#11181d;color:var(--muted);}
-[data-theme="dark"] .editor-panel,
-[data-theme="dark"] .preview-panel {background: #1e293b;border-color: #334155;}
-[data-theme="dark"] .editor-panel textarea,
-[data-theme="dark"] .preview-frame {border-color: #475569;}
-[data-theme="dark"] .component-images-editor{background:#2a2116;border-color:#5b4630;}
-[data-theme="dark"] .existing-image-item{background:var(--card);border-color:#4b5563;}
-[data-theme="dark"] .existing-image-info span{color:#fbbf24;}
-[data-theme="dark"] .existing-image-info small{color:var(--muted);}
-[data-theme="dark"] .add-images-box{border-top-color:#5b4630;}
-[data-theme="dark"] .add-images-box label{color:#fcd34d;}
-[data-theme="dark"] .no-image{background:#11181d;color:var(--muted);border-color:#5b4630;}
+/* تک‌خط دارک‌مود فقط برای مواردی که توکن‌ها پوشش نمی‌دهند */
+[data-theme="dark"] .preview-frame{background:#0f1518}
+[data-theme="dark"] .component-images-editor{background:rgba(244,166,30,.06);border-color:rgba(244,166,30,.18)}
 </style>
 
 </head>
@@ -923,14 +224,27 @@ text-align:center;
 
 <div class="container">
 
+<div class="page-head">
+  <div class="ph-ic">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </div>
+  <div class="ph-tx">
+    <h1>کامپوننت‌ها</h1>
+    <p>قطعه‌های آماده‌ی صفحه را بسازید، ویرایش کنید و کد آن‌ها را مدیریت کنید.</p>
+  </div>
+</div>
+
 <div class="card">
 
 <h2>ایجاد کامپوننت</h2>
+<p class="hint">یک نام و تگ انتخاب کنید، کد کامپوننت را بنویسید و در صورت نیاز تصویر اضافه کنید.</p>
 
-<form action="components-save.php" method="POST" enctype="multipart/form-data">
+<form class="create-form" action="components-save.php" method="POST" enctype="multipart/form-data">
 
+<label>نام کامپوننت</label>
 <input type="text" name="component_name" placeholder="نام کامپوننت" required>
 
+<label>تگ</label>
 <select name="component_tag" required>
 
 <option value="">انتخاب تگ</option>
@@ -943,6 +257,7 @@ text-align:center;
 
 </select>
 
+<label>کد کامپوننت</label>
 <textarea name="component_code" placeholder="کد کامپوننت"></textarea>
 
 <label>تصاویر کامپوننت</label>
@@ -963,13 +278,15 @@ text-align:center;
 </div>
 
 
-<button class="btn_main">ثبت</button>
+<button class="btn btn-primary">ثبت کامپوننت</button>
 
 </form>
 
 </div>
 
 <input type="text" id="searchBox" placeholder="جستجوی کامپوننت">
+
+<div class="group-title" style="margin-top:8px">کامپوننت‌های موجود</div>
 
 <?php foreach($tags as $tag){ ?>
 
@@ -1108,22 +425,22 @@ text-align:center;
 
 <div class="actions">
 
-<button type="button" class="edit-btn" onclick="enableEdit(this)">
+<button type="button" class="tbtn edit-btn" onclick="enableEdit(this)">
 ویرایش
 </button>
 
-<button class="save-btn">
+<button class="tbtn primary save-btn">
 ذخیره
 </button>
 
-<button type="button" class="copy-btn" onclick="copyCode(this)">
+<button type="button" class="tbtn copy-btn" onclick="copyCode(this)">
 کپی
 </button>
 
 <button
 type="submit"
 formaction="component-delete.php"
-class="delete-btn"
+class="tbtn danger delete-btn"
 onclick="return confirm('حذف شود؟')">
 
 حذف

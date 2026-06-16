@@ -17,20 +17,22 @@ $stmt->execute([$id]);
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if(!$logs){
-    echo "هیچ سابقه‌ای ثبت نشده";
+    echo '<div class="hist-empty">هیچ سابقه‌ای ثبت نشده است.</div>';
     exit;
 }
 
-echo "<ul>";
+echo '<div class="hist-list">';
 
 foreach($logs as $log){
+    $action = htmlspecialchars($log["action"], ENT_QUOTES, "UTF-8");
+    $user   = htmlspecialchars($log["user_name"], ENT_QUOTES, "UTF-8");
+    $date   = htmlspecialchars($log["created_at"], ENT_QUOTES, "UTF-8");
 
-echo "<li>";
-echo $log["created_at"]." - ";
-echo $log["user_name"]." : ";
-echo $log["action"];
-echo "</li>";
-
+    echo '<div class="hist-item">';
+    echo   '<div class="hist-main"><span class="hist-action">'.$action.'</span>';
+    echo     '<span class="hist-user">'.$user.'</span></div>';
+    echo   '<time class="hist-date">'.$date.'</time>';
+    echo '</div>';
 }
 
-echo "</ul>";
+echo '</div>';

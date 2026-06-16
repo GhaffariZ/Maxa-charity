@@ -31,106 +31,10 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 
 <style>
-:root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
-  --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
-  --success:#16a37a; --danger:#e0556b; --violet:#7c4ddb;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
-  --radius-sm:12px; --radius:18px;
-  --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
-  --shadow-md:0 4px 14px rgba(16,40,40,.06),0 2px 6px rgba(16,40,40,.04);
-  --shadow-lg:0 20px 44px -14px rgba(0,102,101,.20),0 8px 20px -10px rgba(16,40,40,.12);
-  --ease:cubic-bezier(.4,0,.2,1);
-}
-:root[data-theme="dark"]{
-  --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
-  --color-bg:#0f1518; --color-surface:#19232a;
-  --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
-  --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
-  --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
-  color-scheme:dark; background-color:var(--color-bg);
-}
-*{box-sizing:border-box}
-body{
-    font-family:'Vazirmatn',sans-serif;
-    background:var(--color-bg);
-    color:var(--color-text);
-    margin:0;
-    font-size:14px;
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-    transition:background .3s,color .3s;
-}
-*::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
-[data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
-.container{
-    max-width:1100px;
-    margin:0 auto;
-    padding:28px 22px;
-}
-.card{
-    background:var(--color-surface);
-    border:1px solid var(--color-border);
-    padding:24px;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow-sm);
-}
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
-}
-.topbar h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
-.new-btn{
-    display:inline-flex;align-items:center;gap:6px;
-    background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-    color:#fff;
-    text-decoration:none;
-    padding:11px 18px;
-    border-radius:13px;
-    font-size:13.5px;
-    font-weight:800;
-    box-shadow:0 10px 22px -10px rgba(0,123,122,.7);
-    transition:transform .15s var(--ease),box-shadow .25s;
-}
-.new-btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.8)}
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    font-size:13px;
-}
-th,td{
-    padding:13px 14px;
-    border-bottom:1px solid var(--color-border);
-    text-align:center;
-}
-th{
-    background:transparent;
-    font-size:11.5px;
-    font-weight:700;
-    color:var(--color-muted);
-    white-space:nowrap;
-}
-tr:hover td{background:var(--color-bg)}
-.badge{
-    padding:6px 14px;
-    border-radius:99px;
-    font-size:11.5px;
-    font-weight:700;
-    display:inline-block;
-}
-.draft{ background:rgba(244,166,30,.16); color:#b9760a; }
-.published{ background:rgba(22,163,122,.14); color:var(--success); }
-.suspended{ background:rgba(224,85,107,.14); color:var(--danger); }
-
+/* استایل‌های ویژه‌ی این صفحه (توکن‌ها و کامپوننت‌های مشترک از panel.css می‌آیند) */
 .status-select{
     font-family:inherit;
     padding:8px 12px;
@@ -196,31 +100,21 @@ td button:active{transform:scale(.95)}
     color:#fff;
 }
 
-/* مودال سابقه (بازنویسی استایل‌های inline) */
-#historyModal{background:rgba(16,40,40,.5)!important;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:1000}
-#historyModal > div{
-    background:var(--color-surface)!important;
-    color:var(--color-text);
-    border:1px solid var(--color-border);
-    border-radius:18px!important;
-    box-shadow:var(--shadow-lg);
-    padding:24px!important;
-    width:520px!important;
-    max-width:92vw;
-}
-#historyModal h3{font-size:16px;font-weight:800;margin:0 0 14px}
+/* محتوای مودال سابقه (پوسته‌ی مودال از panel.css می‌آید) */
 #historyContent{font-size:13px;line-height:1.9;color:var(--color-text)}
-#historyModal button{
-    font-family:inherit;font-weight:700;font-size:13px;color:#fff;
-    background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-    border:none;padding:10px 20px;border-radius:11px;cursor:pointer;margin-top:16px;
-}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+.hist-item{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:11px 13px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-bg)}
+.hist-main{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.hist-action{font-weight:800;font-size:13px;color:var(--color-text)}
+.hist-user{font-size:12px;color:var(--color-muted);background:var(--primary-08);padding:3px 9px;border-radius:99px;font-weight:700}
+.hist-date{font-size:11.5px;color:var(--color-muted);direction:ltr;white-space:nowrap;flex-shrink:0}
+.hist-empty{text-align:center;padding:24px;color:var(--color-muted);font-weight:600}
 
-@media (max-width:768px){
-  .container{padding:18px 12px}
-  .card{padding:16px}
-  table{display:block;overflow-x:auto;white-space:nowrap}
-  th,td{padding:10px 10px}
+@media (max-width:640px){
+  /* روی موبایل سلولِ «عملیات» نباید زیرِ هم بشکند */
+  table.tbl td.actions{flex-wrap:wrap;justify-content:flex-end}
+  table.tbl td.actions a{margin:0 0 0 10px}
 }
 
 </style>
@@ -228,11 +122,24 @@ td button:active{transform:scale(.95)}
 <body>
 
 <div class="container">
-  <div class="card">
-    <div class="topbar">
-      <h2 style="margin:0;">📄 لیست صفحات</h2>
-      <a class="new-btn" href="template-create.php">+ ساخت صفحه جدید</a>
+
+  <div class="page-head">
+    <div class="ph-ic">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8.5 12 3 3 8.5 12 14l9-5.5Z"/><path d="M3 8.5v7L12 21l9-5.5v-7"/><line x1="12" y1="14" x2="12" y2="21"/></svg>
     </div>
+    <div class="ph-tx">
+      <h1>مدیریت صفحات</h1>
+      <p>صفحه‌های ساخته‌شده‌ی این شعبه را مشاهده، ویرایش و منتشر کنید.</p>
+    </div>
+    <div class="ph-actions">
+      <a class="btn btn-primary" href="template-create.php">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        ساخت صفحه جدید
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
 
     <?php if ($errorMsg): ?>
       <div class="error">خطا در خواندن دیتابیس: <?= htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8') ?></div>
@@ -241,7 +148,8 @@ td button:active{transform:scale(.95)}
       <div class="empty">هیچ صفحه‌ای ساخته نشده است.</div>
 
     <?php else: ?>
-      <table>
+      <table class="tbl">
+        <thead>
         <tr>
           <th>#</th>
           <th>عنوان</th>
@@ -251,8 +159,9 @@ td button:active{transform:scale(.95)}
           <th>تاریخ</th>
           <th>عملیات</th>
           <th>سابقه</th>
-
         </tr>
+        </thead>
+        <tbody>
 
 <?php foreach ($pages as $i => $p): ?>
 <?php
@@ -263,19 +172,17 @@ td button:active{transform:scale(.95)}
 ?>
 <tr class="<?= $rowClass ?>">
 
-          <td><?= $i + 1 ?></td>
+          <td data-label="#"><?= $i + 1 ?></td>
 
-          <td><?= htmlspecialchars($p["title"], ENT_QUOTES, "UTF-8") ?></td>
+          <td data-label="عنوان"><?= htmlspecialchars($p["title"], ENT_QUOTES, "UTF-8") ?></td>
 
-          <td><?= htmlspecialchars($p["slug"], ENT_QUOTES, "UTF-8") ?></td>
+          <td data-label="Slug" style="direction:ltr;text-align:left"><?= htmlspecialchars($p["slug"], ENT_QUOTES, "UTF-8") ?></td>
 
-          <td>
-<a href="/<?= urlencode($p['slug']) ?>" target="_blank" class="view">
-                مشاهده
-            </a>
+          <td data-label="لینک صفحه">
+            <a href="/<?= urlencode($p['slug']) ?>" target="_blank" class="view">مشاهده</a>
           </td>
 
-<td>
+<td data-label="وضعیت">
     <select class="status-select"
             onchange="changeStatus(<?= $p['id'] ?>, this.value)"
             <?= $p['status'] === 'deleted' ? 'disabled' : '' ?>>
@@ -288,35 +195,37 @@ td button:active{transform:scale(.95)}
     </select>
 </td>
 
+          <td data-label="تاریخ" style="white-space:nowrap"><?= htmlspecialchars($p["created_at"], ENT_QUOTES, "UTF-8") ?></td>
 
-          <td><?= htmlspecialchars($p["created_at"], ENT_QUOTES, "UTF-8") ?></td>
-
-<td class="actions">
+<td class="actions" data-label="عملیات">
     <?php if ($p['status'] === 'deleted'): ?>
-        <span style="color:#c62828;font-weight:bold;">حذف شده</span>
+        <span class="badge off">حذف شده</span>
     <?php else: ?>
         <a class="edit" href="template-create.php?id=<?= (int)$p["id"] ?>">ویرایش</a>
         <a class="delete" href="page-delete.php?id=<?= (int)$p["id"] ?>" onclick="return confirm('آیا از حذف مطمئن هستید؟')">حذف</a>
     <?php endif; ?>
 </td>
 
-
-          <td>
+          <td data-label="سابقه">
             <button onclick="showHistory(<?= $p['id'] ?>)">مشاهده</button>
           </td>
 
         </tr>
         <?php endforeach; ?>
+        </tbody>
       </table>
     <?php endif; ?>
   </div>
 </div>
-<div id="historyModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
-<div style="background:white;padding:20px;border-radius:10px;width:500px;max-height:400px;overflow:auto;">
-<h3>سابقه اقدامات</h3>
-<div id="historyContent">در حال بارگذاری...</div>
-<button onclick="closeHistory()">بستن</button>
-</div>
+
+<div id="historyModal" class="modal" role="dialog" aria-modal="true">
+  <div class="modal-content" style="max-width:min(520px,94vw)">
+    <h3>سابقه اقدامات</h3>
+    <div id="historyContent">در حال بارگذاری...</div>
+    <div style="margin-top:16px;display:flex;justify-content:flex-end">
+      <button class="btn btn-primary" onclick="closeHistory()">بستن</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -338,19 +247,24 @@ function changeStatus(id, status) {
 }
 
 function showHistory(id){
-
-fetch("page-history.php?id="+id)
-.then(res=>res.text())
-.then(html=>{
-document.getElementById("historyContent").innerHTML=html;
-document.getElementById("historyModal").style.display="flex";
-});
-
+  document.getElementById("historyContent").innerHTML = "در حال بارگذاری...";
+  document.getElementById("historyModal").classList.add("show");
+  fetch("page-history.php?id="+id)
+    .then(res=>res.text())
+    .then(html=>{ document.getElementById("historyContent").innerHTML = html; });
 }
 
 function closeHistory(){
-document.getElementById("historyModal").style.display="none";
+  document.getElementById("historyModal").classList.remove("show");
 }
+
+/* بستن مودال با کلیک روی پس‌زمینه یا کلید Escape */
+document.getElementById("historyModal").addEventListener("click", function(e){
+  if(e.target === this) closeHistory();
+});
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape") closeHistory();
+});
 
 /* تم (دارک/لایت) از «داشبورد مدیریت» کنترل می‌شود — کلید مشترک: maxa-theme */
 window.addEventListener('storage', function(e){

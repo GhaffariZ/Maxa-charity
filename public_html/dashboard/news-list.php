@@ -111,64 +111,48 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" data-theme="light">
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
-<style>
-  body {
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-</style>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مدیریت محتوا</title>
+<title>لیست اخبار | پنل مکسا</title>
+<!-- اعمالِ تم پیش از رنگ‌آمیزی تا از پرشِ نور→تاریک جلوگیری شود (کلید مشترک: maxa-theme) -->
+<script>(function(){try{if(localStorage.getItem('maxa-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 <style>
-  /* تعریف متغیرهای رنگی بر اساس پالت تصویر مکسا و حالت دارک/لایت */
+  /* پالت و توکن‌های این صفحه به رنگ‌بندیِ رسمیِ داشبورد (panel.css) هم‌تراز شده‌اند */
   :root {
-      --bg-color: #f4f6f9;
-      --card-bg: #ffffff;
-      --text-main: #333333;
-      --text-muted: #858796;
-      --border-color: #e3e6f0;
-      --row-hover: #f1f3f9;
-      --header-bg: #f8f9fc;
-      --detail-bg: #fafbfc;
-      
-      /* پالت مکسا */
-      --primary-color: #008075; /* سبزآبی مکسا */
-      --primary-hover: #00665d;
-      --secondary-color: #f8a227; /* نارنجی مکسا */
-      
+      --bg-color: var(--color-bg);
+      --card-bg: var(--color-surface);
+      --text-main: var(--color-text);
+      --text-muted: var(--color-muted);
+      --border-color: var(--color-border);
+      --row-hover: var(--color-bg);
+      --header-bg: var(--color-bg);
+      --detail-bg: var(--color-bg);
+
+      /* پالت مکسا (هم‌تراز با داشبورد) */
+      --primary-color: var(--color-primary);
+      --primary-hover: var(--color-primary-dark);
+      --secondary-color: var(--color-secondary);
+
       /* رنگ‌های وضعیت */
-      --st-draft-bg: #eaecf4; --st-draft-text: #5a5c69;
-      --st-review-bg: #fff3cd; --st-review-text: #856404; --st-review-border: #ffeeba;
-      --st-rejected-bg: #f8d7da; --st-rejected-text: #721c24; --st-rejected-border: #f5c6cb;
-      --st-published-bg: #d4edda; --st-published-text: #155724; --st-published-border: #c3e6cb;
-      --st-scheduled-bg: #e0f2f1; --st-scheduled-text: #00695c; --st-scheduled-border: #b2dfdb;
-  }
-
-  [data-theme="dark"] {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --text-main: #e0e0e0;
-      --text-muted: #aaaaaa;
-      --border-color: #333333;
-      --row-hover: #2a2a2a;
-      --header-bg: #2c2c2c;
-      --detail-bg: #1a1a1a;
-
-      --st-draft-bg: #333; --st-draft-text: #ddd;
-      --st-review-bg: #4d4013; --st-review-text: #ffdd57; --st-review-border: #665518;
-      --st-rejected-bg: #52181d; --st-rejected-text: #ff8a95; --st-rejected-border: #6b1f26;
-      --st-published-bg: #173e22; --st-published-text: #8cd69f; --st-published-border: #1f542e;
-      --st-scheduled-bg: #003631; --st-scheduled-text: #4db6ac; --st-scheduled-border: #004d40;
+      --st-draft-bg: var(--secondary-12); --st-draft-text: #b9760a;
+      --st-review-bg: var(--primary-08); --st-review-text: var(--color-primary-dark);
+      --st-rejected-bg: rgba(224,85,107,.12); --st-rejected-text: var(--danger); --st-rejected-border: rgba(224,85,107,.22);
+      --st-published-bg: rgba(22,163,122,.14); --st-published-text: var(--success); --st-published-border: rgba(22,163,122,.24);
+      --st-scheduled-bg: var(--violet-12); --st-scheduled-text: var(--violet); --st-scheduled-border: rgba(124,77,219,.24);
+      --st-review-border: var(--primary-12);
+      --rej-accent: var(--danger);
   }
 
   * { box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
-  body { direction: rtl; background: var(--bg-color); padding: 20px; color: var(--text-main); margin: 0; transition: background 0.3s, color 0.3s; }
+  body { direction: rtl; background: var(--color-bg); padding: 26px; color: var(--color-text); margin: 0; transition: background 0.3s, color 0.3s; }
+
+  /* سربرگِ صفحه و نوار هم‌عرضِ جدول (۱۱۰۰px) */
+  .news-head-wrap { max-width: 1100px; margin: 0 auto; }
+  @media (max-width: 640px){ body{ padding:16px } }
   
   .header-actions { max-width: 1100px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
   
@@ -211,14 +195,14 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .status-review .step.active .step-circle { border-color: var(--secondary-color); background: var(--secondary-color); color: #fff; box-shadow: 0 0 0 4px rgba(248,162,39,0.2); }
   .status-review .step.active .step-label { color: var(--secondary-color); font-weight: 800; }
 
-  .status-rejected .step.active .step-circle { border-color: #e74a3b; background: #e74a3b; color: #fff; box-shadow: 0 0 0 4px rgba(231,74,59,0.2); }
-  .status-rejected .step.active .step-label { color: #e74a3b; font-weight: 800; }
+  .status-rejected .step.active .step-circle { border-color: var(--danger); background: var(--danger); color: #fff; box-shadow: 0 0 0 4px rgba(224,85,107,0.2); }
+  .status-rejected .step.active .step-label { color: var(--danger); font-weight: 800; }
 
   .status-published .step.active .step-circle { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
   .status-published .step.active .step-label { color: var(--primary-color); font-weight: 800; }
 
-  .status-scheduled .step.active .step-circle { border-color: #00897b; background: #00897b; color: #fff; box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.2); }
-  .status-scheduled .step.active .step-label { color: #00897b; font-weight: 800; }
+  .status-scheduled .step.active .step-circle { border-color: var(--violet); background: var(--violet); color: #fff; box-shadow: 0 0 0 4px var(--violet-12); }
+  .status-scheduled .step.active .step-label { color: var(--violet); font-weight: 800; }
 
   .step.completed .step-circle { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
 
@@ -226,7 +210,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .btn-min { padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); font-size: 13px; font-weight: 600; color: var(--primary-color); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; text-decoration: none; }
   .btn-min:hover { background: var(--row-hover); border-color: var(--primary-color); }
   
-  .reject-box { background: var(--st-rejected-bg); border-right: 4px solid #e74a3b; padding: 15px; border-radius: 6px; font-size: 13px; line-height: 1.6; color: var(--text-main); border: 1px solid var(--st-rejected-border); border-right-width: 4px; }
+  .reject-box { background: var(--st-rejected-bg); border-right: 4px solid var(--danger); padding: 15px; border-radius: 10px; font-size: 13px; line-height: 1.6; color: var(--text-main); border: 1px solid var(--st-rejected-border); border-right-width: 4px; }
 
   /* Modal */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: 0.3s; }
@@ -351,7 +335,7 @@ body.select-mode .select-col {
 }
 
 .btn-bulk-delete {
-    background: #e74a3b;
+    background: var(--danger);
 }
 
 .btn-bulk-cancel {
@@ -367,15 +351,15 @@ body.select-mode .main-row:hover {
 }
 
 .main-row.selected {
-    background: rgba(0, 128, 117, 0.08) !important;
+    background: var(--primary-08) !important;
 }
 
 [data-theme="dark"] .main-row.selected {
-    background: rgba(0, 128, 117, 0.18) !important;
+    background: var(--primary-12) !important;
 }
 
 body.select-mode .main-row.selected:hover {
-    background: rgba(0, 128, 117, 0.12) !important;
+    background: var(--primary-12) !important;
 }
 
 @media (max-width: 768px) {
@@ -397,19 +381,23 @@ body.select-mode .main-row.selected:hover {
 </head>
 <body>
 
-<div class="header-actions">
-    <div class="title-area">
-        <h2 style="font-size: 20px; margin: 0;">لیست اخبار</h2>
-
-        <button id="selectModeBtn" class="btn-select-mode" onclick="enterSelectMode()">
-        انتخاب اخبار
-        </button>
+<div class="news-head-wrap">
+  <div class="page-head">
+    <div class="ph-ic">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/><path d="M18 8h1.5A1.5 1.5 0 0 1 21 9.5V18a2 2 0 0 1-2 2"/><line x1="8" y1="8" x2="14" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
     </div>
-
-    <div class="action-buttons">
-        <!-- دکمه‌ی تغییر تم حذف شد — تم از «داشبورد مدیریت» کنترل می‌شود -->
-        <a href="news-create.php" class="btn-new">ساخت خبر جدید</a>
+    <div class="ph-tx">
+      <h1>لیست اخبار</h1>
+      <p>اخبار را مدیریت کنید، وضعیت‌شان را تغییر دهید و منتشر کنید.</p>
     </div>
+    <div class="ph-actions">
+      <button id="selectModeBtn" class="btn btn-ghost" onclick="enterSelectMode()">انتخاب اخبار</button>
+      <a href="news-create.php" class="btn btn-primary">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        ساخت خبر جدید
+      </a>
+    </div>
+  </div>
 </div>
 
 <div id="bulkActionsBar" class="bulk-actions-bar">

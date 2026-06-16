@@ -33,136 +33,13 @@ foreach ($component_dirs as $dir) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 <style>
-body {
-  margin: 0;
-  font-family: tahoma;
-  background: #f1f3f9;
-  min-height: 100vh;
-}
-.page-builder-wrapper{
-    margin-right:280px;
-    padding:30px 40px;
-    box-sizing:border-box;
-    min-height:100vh;
-}
-@media (max-width:1200px){
-  .page-builder-wrapper{ margin-right:240px }
-}
-@media (max-width:768px){
-  .page-builder-wrapper{ margin-right:0; padding:10px }
-}
-.container{
-  max-width:1000px;
-  margin:0 auto;
-}
-.card{
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0,0,0,.05);
-  margin-bottom:40px;
-}
-.input-group { margin-bottom: 25px; }
-.input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-.builder-area { margin-top: 10px; }
-.builder-toolbar {
-  display: flex;
-  gap: 12px;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px dashed #eee;
-}
-.btn {
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.btn-add { background: #6c5ce7; color: white; }
-.btn-preview { background: #0984e3; color: white; }
-.btn-save { background: #00b894; color: white; }
-.btn:hover { opacity: .9; transform:translateY(-2px);}
-.component-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f8f9fe;
-  border: 1px solid #e2e6f0;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  cursor: grab;
-}
-.comp-left { display: flex; align-items: center; gap: 15px; }
-.order {
-  width: 30px; height: 30px;
-  background: #6c5ce7; color: white;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-size: 13px;
-}
-.remove {
-  background: #ff7675; color: white; border: none;
-  padding: 6px 12px; border-radius: 6px; cursor: pointer;
-}
-.modal {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal-content{
-    background: white;
-    width: 90%;
-    max-width: 600px;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: 25px;
-    border-radius: 14px;
-}
-.tag-group { margin-bottom: 25px; }
-.tag-title {
-  font-weight: bold;
-  color: #636e72;
-  border-bottom: 2px solid #f1f3f9;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
-}
-.comp-item {
-  display: inline-block;
-  padding: 10px 20px;
-  background: #f1f3f9;
-  border-radius: 8px;
-  margin: 5px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.comp-item:hover { background: #6c5ce7; color: white; }
-.preview-frame { width: 100%; height: 500px; border: 1px solid #eee; border-radius: 8px; }
-#blockCount {
-  background:#6c5ce7;
-  color:white;
-  padding:5px 15px;
-  border-radius:20px;
-  font-size:13px;
-  display:inline-block;
-}
-
 /* ============================================================
    بازطراحیِ UI مطابق تمِ داشبورد مکسا (همان نام کلاس‌ها — منطق دست‌نخورده)
+   پوسته‌ی این صفحه «page-builder-wrapper» است، پس padding پیش‌فرضِ body را صفر می‌کنیم.
    ============================================================ */
+body{padding:0}
 :root{
   --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
   --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
@@ -245,11 +122,21 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 <div class="page-builder-wrapper">
   <div class="container">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:30px;">
-        <h2>ساخت صفحه جدید</h2>
+
+    <div class="page-head">
+      <div class="ph-ic">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="ph-tx">
+        <h1>ساخت صفحه جدید</h1>
+        <p>کامپوننت‌ها را کنار هم بچینید و یک صفحه‌ی کامل بسازید.</p>
+      </div>
+      <div class="ph-actions">
         <div id="blockCount">0 بلوک</div>
       </div>
+    </div>
+
+    <div class="card">
 
       <div class="input-group">
         <label style="display:block; margin-bottom:8px; font-weight:bold;">نام نمایشی صفحه</label>

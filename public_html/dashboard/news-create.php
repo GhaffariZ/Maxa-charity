@@ -40,53 +40,40 @@ if ($news_data && !empty($news_data['publish_date'])) {
 
 ?>
 <!DOCTYPE html>
-<link rel="stylesheet" href="/font.css">
 <html lang="fa" dir="rtl">
 <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
-<style>
-  body {
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-</style>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ایجاد خبر</title>
+<title>ایجاد خبر | پنل مکسا</title>
+<!-- اعمالِ تم پیش از رنگ‌آمیزی تا از پرشِ نور→تاریک جلوگیری شود (کلید مشترک: maxa-theme) -->
+<script>(function(){try{if(localStorage.getItem('maxa-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 
 <style>
 :root {
-    /* پالت رنگی لایت مود (برگرفته از لوگو مکسا) */
-    --primary-color: #007D75; /* سبز-آبی مکسا */
-    --secondary-color: #F79F1F; /* نارنجی مکسا */
-    --bg-color: #f4f7f6;
-    --text-color: #333333;
-    --panel-bg: #ffffff;
-    --border-color: #dddddd;
-    --input-bg: #ffffff;
-    --header-text: #007D75;
+    /* پالت این صفحه به رنگ‌بندیِ رسمیِ داشبورد (panel.css) هم‌تراز شده است */
+    --primary-color: var(--color-primary);
+    --secondary-color: var(--color-secondary);
+    --bg-color: var(--color-bg);
+    --text-color: var(--color-text);
+    --panel-bg: var(--color-surface);
+    --border-color: var(--color-border);
+    --input-bg: var(--color-bg);
+    --header-text: var(--color-primary);
     --btn-hover-opacity: 0.9;
-    --modal-overlay: rgba(0,0,0,0.6);
+    --modal-overlay: rgba(16,40,40,0.55);
     --anim-fast: 220ms;
     --anim-mid: 420ms;
     --anim-slow: 700ms;
 }
 
+/* رنگ‌های مخصوص دارک‌مود که توکن‌های پایه پوشش نمی‌دهند، از panel.css می‌آیند.
+   فقط چند override جزئی برای این صفحه: */
 [data-theme="dark"] {
-    /* پالت رنگی دارک مود */
-    --primary-color: #00a89d;
-    --secondary-color: #ffb142;
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --panel-bg: #1e1e1e;
-    --border-color: #444444;
-    --input-bg: #2d2d2d;
-    --header-text: #00a89d;
-    --modal-overlay: rgba(0,0,0,0.8);
+    --header-text: var(--color-primary-light);
 }
 
 * {
@@ -686,12 +673,18 @@ input[type="file"] {
 <body>
 
 <div class="container">
-<div class="card">
 
-<div class="panel-heading">
-    <h3 class="panel-title">ایجاد خبر جدید</h3>
-    <!-- دکمه‌ی تغییر تم حذف شد — تم از «داشبورد مدیریت» کنترل می‌شود -->
+<div class="page-head">
+  <div class="ph-ic">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/><path d="M18 8h1.5A1.5 1.5 0 0 1 21 9.5V18a2 2 0 0 1-2 2"/><line x1="8" y1="8" x2="14" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+  </div>
+  <div class="ph-tx">
+    <h1><?= $news_data ? 'ویرایش خبر' : 'ایجاد خبر جدید' ?></h1>
+    <p>عنوان، متن، تصویر شاخص و اطلاعات سئوی خبر را وارد کنید.</p>
+  </div>
 </div>
+
+<div class="card">
 
 <div class="panel-body">
     <div class="input-group">

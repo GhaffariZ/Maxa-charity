@@ -6,147 +6,120 @@ dash_require('campaigns'); ?>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ایجاد کمپین حمایتی</title>
-<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
-<script>
-(function(){
-  function applyMaxaTheme(){
-    var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
-    if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme');
-  }
-  applyMaxaTheme();
-  window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
-})();
-</script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<title>ایجاد کمپین حمایتی | پنل مکسا</title>
+<!-- اعمالِ تم پیش از رنگ‌آمیزی تا از پرشِ نور→تاریک جلوگیری شود (کلید مشترک: maxa-theme) -->
+<script>(function(){try{if(localStorage.getItem('maxa-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/panel.css">
 <style>
-    :root {
-        --primary-color: #008075;
-        --secondary-color: #F79F1F;
-        --bg-color: #f4f7f6;
-        --panel-bg: #ffffff;
-        --text-color: #333;
-        --border-color: #e0e0e0;
-    }
-    [data-theme="dark"] {
-        --bg-color: #121212;
-        --panel-bg: #1e1e1e;
-        --text-color: #eee;
-        --border-color: #333;
-    }
+    /* استایل‌های ویژه‌ی این صفحه (توکن‌ها و کامپوننت‌های مشترک از panel.css می‌آیند) */
+    .panel-body { display: grid; grid-template-columns: 1fr 320px; gap: 36px; }
+    .form-side { min-width: 0; }
+    .preview-side { min-width: 0; }
+    .preview-sticky { position: sticky; top: 26px; }
+    .preview-label { text-align: center; display: block; margin-bottom: 14px; font-weight: 800; font-size: 12.5px; color: var(--color-muted); }
 
-    body { background-color: var(--bg-color); color: var(--text-color); font-family: Tahoma, sans-serif; margin: 0; padding: 20px; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    
-    .main-card { background: var(--panel-bg); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-    .panel-header { background: var(--primary-color); color: white; padding: 20px; font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 10px; }
-
-    /* چیدمان دو ستونه */
-    .panel-body { display: flex; gap: 40px; padding: 30px; }
-    
-    .form-side { flex: 1; } /* ستون سمت راست (فرم) */
-    .preview-side { width: 320px; flex-shrink: 0; } /* ستون سمت چپ (پیش‌نمایش) */
-
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary-color); font-size: 14px; }
-    .input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-color); color: var(--text-color); box-sizing: border-box; transition: 0.3s; }
-    .input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.1); }
-
-    /* استایل کارت پیش‌نمایش زنده */
-    .preview-sticky { position: sticky; top: 20px; }
-    .live-card {
-        background: var(--panel-bg); border: 1px solid var(--border-color);
-        border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-    .live-img-wrapper { width: 100%; height: 180px; background: #eee; overflow: hidden; position: relative; }
+    .live-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); }
+    .live-img-wrapper { width: 100%; height: 180px; background: var(--primary-08); overflow: hidden; position: relative; }
     .live-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .live-content { padding: 15px; }
-    .live-title { margin: 0 0 10px 0; color: var(--primary-color); font-size: 16px; font-weight: bold; height: 45px; overflow: hidden; }
-    .live-progress { height: 6px; background: #eee; border-radius: 10px; margin-bottom: 15px; }
-    .live-bar { height: 100%; background: var(--secondary-color); border-radius: 10px; width: 35%; }
+    .live-content { padding: 16px; }
+    .live-title { margin: 0 0 12px; color: var(--color-primary); font-size: 16px; font-weight: 800; height: 45px; overflow: hidden; line-height: 1.4; }
+    [data-theme="dark"] .live-title { color: var(--color-primary-light); }
+    .live-card .progress { margin-bottom: 14px; }
+    .live-support { width: 100%; background: none; border: 1.5px solid var(--color-secondary); color: var(--color-secondary-dark); padding: 8px; border-radius: 9px; font-weight: 800; font-family: inherit; cursor: default; }
 
-    .btn-submit { background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-    .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+    /* توستِ این صفحه: کارت‌های روی‌هم‌چیده با ورود از سمت چپ */
+    .toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .ctoast {
+        background: var(--color-surface); color: var(--color-text); padding: 13px 18px; border-radius: 12px;
+        box-shadow: var(--shadow-lg); border: 1px solid var(--color-border); border-right: 4px solid var(--success);
+        display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700;
+        transform: translateX(-150%); transition: transform .5s cubic-bezier(.175,.885,.32,1.275);
+    }
+    .ctoast.active { transform: translateX(0); }
+    .ctoast .ic { width: 18px; height: 18px; color: var(--success); flex-shrink: 0; }
 
-    /* Toast Notification */
-    .toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; }
-    .toast { background: var(--panel-bg); color: var(--text-color); padding: 15px 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 10px; transform: translateX(-150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-right: 5px solid var(--primary-color); display: flex; align-items: center; gap: 12px; }
-    .toast.active { transform: translateX(0); }
-
-    /* بهینه‌سازی موبایل */
     @media (max-width: 900px) {
-        .panel-body { flex-direction: column-reverse; padding: 20px; }
-        .preview-side { width: 100%; }
-        .preview-sticky { position: static; margin-bottom: 30px; }
+        .panel-body { grid-template-columns: 1fr; }
+        .preview-side { order: -1; }
+        .preview-sticky { position: static; margin-bottom: 8px; }
     }
 </style>
 </head>
 <body>
-<?php include "./components/back/back.php" ?> 
-<div class="container">
-    <div class="main-card">
-        <div class="panel-header">
-            <i class="fas fa-plus-circle"></i> طراحی و ایجاد کمپین جدید
+<div class="container wrap">
+    <div class="page-head">
+        <div class="ph-ic">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
-        
-        <div class="panel-body">
-            <div class="preview-side">
-                <div class="preview-sticky">
-                    <label style="text-align: center; display: block; margin-bottom: 15px;">پیش‌نمایش زنده کارت</label>
-                    <div class="live-card">
-                        <div class="live-img-wrapper">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+" id="imgPreview" class="live-img" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+'">
-                        </div>
-                        <div class="live-content">
-                            <h4 class="live-title" id="titlePreview">عنوان کمپین شما در این قسمت...</h4>
-                            <div class="live-progress"><div class="live-bar"></div></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 10px;">
-                                <span>هدف: ۵۰,۰۰۰,۰۰۰</span>
-                                <span style="color: var(--secondary-color);">۳۵٪</span>
-                            </div>
-                            <button style="width: 100%; background: none; border: 1.5px solid var(--secondary-color); color: var(--secondary-color); padding: 8px; border-radius: 8px; font-weight: bold; cursor: default;" disabled>حمایت مالی</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="ph-tx">
+            <h1>ایجاد کمپین جدید</h1>
+            <p>اطلاعات کمپین را وارد کنید و پیش‌نمایش زنده‌ی کارت آن را ببینید.</p>
+        </div>
+    </div>
 
+    <div class="card">
+        <div class="panel-body">
             <div class="form-side">
                 <form id="campForm">
-                    <div class="form-group">
-                        <label><i class="fas fa-camera"></i> تصویر شاخص کمپین</label>
+                    <div class="field">
+                        <label>تصویر شاخص کمپین</label>
                         <input type="file" name="featured_image" id="imageInput" class="input" accept="image/*" required>
-                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">تصویر به صورت خودکار برای کارت کراپ می‌شود.</small>
+                        <div class="sub">تصویر به صورت خودکار برای کارت کراپ می‌شود.</div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="field">
                         <label>عنوان کمپین</label>
                         <input type="text" name="title" id="titleInput" class="input" placeholder="یک عنوان جذاب بنویسید..." required maxlength="70">
                     </div>
 
-                    <div class="form-group">
+                    <div class="field">
                         <label>دسته‌بندی کمپین</label>
                         <select name="category" id="categoryInput" class="input" required>
                             <option value="food">غذا</option>
                             <option value="drug">دارو</option>
                             <option value="education">مهارت آموزی</option>
                         </select>
-                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">این دسته در صفحه کاربران برای فیلتر کردن کمپین‌ها استفاده می‌شود.</small>
+                        <div class="sub">این دسته در صفحه کاربران برای فیلتر کردن کمپین‌ها استفاده می‌شود.</div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="field">
                         <label>توضیحات تکمیلی</label>
                         <textarea name="description" class="input" rows="6" placeholder="داستان کمپین و چرخه حمایت را شرح دهید..."></textarea>
                     </div>
 
-                    <div class="form-group">
+                    <div class="field">
                         <label>مبلغ مورد نیاز (تومان)</label>
                         <input type="number" name="target_amount" class="input" placeholder="مثلا 10000000" required>
                     </div>
 
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        <i class="fas fa-rocket"></i> انتشار نهایی کمپین
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%">
+                        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5 3 21l4.5-1.5"/><path d="M15 5s4 1 6 3-1 6-3 6c0 0-1.5-3-4.5-6S12 5 15 5Z"/><path d="M9 12s-3 .5-4 2 1 4 1 4 .5-2.5 2-4"/></svg>
+                        انتشار نهایی کمپین
                     </button>
                 </form>
+            </div>
+
+            <div class="preview-side">
+                <div class="preview-sticky">
+                    <span class="preview-label">پیش‌نمایش زنده کارت</span>
+                    <div class="live-card">
+                        <div class="live-img-wrapper">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+" id="imgPreview" class="live-img" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+'">
+                        </div>
+                        <div class="live-content">
+                            <h4 class="live-title" id="titlePreview">عنوان کمپین شما در این قسمت...</h4>
+                            <div class="progress"><i style="width:35%"></i></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 12px;">
+                                <span>هدف: ۵۰,۰۰۰,۰۰۰</span>
+                                <span style="color: var(--color-secondary-dark);">۳۵٪</span>
+                            </div>
+                            <button class="live-support" disabled>حمایت مالی</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -154,7 +127,7 @@ dash_require('campaigns'); ?>
 
 <div class="toast-container" id="toastBox"></div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="assets/vendor/libs/jquery/jquery.js"></script>
 <script>
 // پیش‌نمایش تصویر بلافاصله پس از انتخاب
 $('#imageInput').on('change', function() {
@@ -174,19 +147,23 @@ $('#titleInput').on('input', function() {
 });
 
 // نوتیفیکیشن اختصاصی
+var CHECK_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 function notify(msg) {
-    const id = Date.now();
-    $('#toastBox').append(`<div class="toast active" id="${id}"><i class="fas fa-check-circle"></i> ${msg}</div>`);
-    setTimeout(() => { 
-        $(`#${id}`).removeClass('active'); 
-        setTimeout(() => $(`#${id}`).remove(), 500); 
+    const id = 't' + Date.now();
+    $('#toastBox').append(`<div class="ctoast active" id="${id}">${CHECK_SVG}<span>${msg}</span></div>`);
+    setTimeout(() => {
+        $(`#${id}`).removeClass('active');
+        setTimeout(() => $(`#${id}`).remove(), 500);
     }, 4000);
 }
 
+var ROCKET_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5 3 21l4.5-1.5"/><path d="M15 5s4 1 6 3-1 6-3 6c0 0-1.5-3-4.5-6S12 5 15 5Z"/><path d="M9 12s-3 .5-4 2 1 4 1 4 .5-2.5 2-4"/></svg>';
+var SPIN_SVG = '<svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>';
+
 $('#campForm').on('submit', function(e) {
     e.preventDefault();
-    $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> در حال ثبت...');
-    
+    $('#submitBtn').prop('disabled', true).html(SPIN_SVG + ' در حال ثبت...');
+
     $.ajax({
         url: 'campaign-save.php',
         type: 'POST',
@@ -198,7 +175,7 @@ $('#campForm').on('submit', function(e) {
         },
         error: function() {
             notify('خطا در ثبت اطلاعات.');
-            $('#submitBtn').prop('disabled', false).html('<i class="fas fa-rocket"></i> تلاش مجدد');
+            $('#submitBtn').prop('disabled', false).html(ROCKET_SVG + ' تلاش مجدد');
         }
     });
 });
