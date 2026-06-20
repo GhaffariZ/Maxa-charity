@@ -195,19 +195,14 @@ $readTimeValue = isset($news['read_time']) ? (int)$news['read_time'] : 1;
 if ($readTimeValue < 1) { $readTimeValue = 1; }
 $readTimeFa = faNumbers($readTimeValue);
 
+$pageTitle = $news['title'];
+require __DIR__ . '/components/header/component.php';
 ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($news['title']) ?></title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
 
-    <style>
+<style>
         :root {
             --primary-color: #008276; /* سبز مکسا */
             --accent-color: #f9a825;  /* زرد مکسا */
@@ -242,7 +237,7 @@ $readTimeFa = faNumbers($readTimeValue);
         /* دکمه شناور دارک مود */
         .theme-switch {
             position: fixed;
-            top: 20px;
+            top: calc(var(--cta-nav-h, 78px) + 20px);
             left: 20px;
             width: 50px;
             height: 50px;
@@ -394,8 +389,6 @@ $readTimeFa = faNumbers($readTimeValue);
             .theme-switch { width: 40px; height: 40px; top: 15px; left: 15px; }
         }
     </style>
-</head>
-<body>
 
     <button class="theme-switch" id="themeBtn" aria-label="تغییر حالت شب و روز">
         <span id="themeIcon">🌙</span>
@@ -477,5 +470,6 @@ $readTimeFa = faNumbers($readTimeValue);
             }
         });
     </script>
-</body>
-</html>
+
+<?php
+require __DIR__ . '/components/footer/component.php';
