@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('partners');
 // --- START OF BACKEND LOGIC (API MODE) ---
 
 // اطلاعات اتصال به دیتابیس از فایل کانفیگ خارج از گیت

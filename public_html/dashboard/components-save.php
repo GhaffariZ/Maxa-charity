@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('pages');
 
 $name = trim($_POST['component_name']);
 $tag  = $_POST['component_tag'];

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('campaigns');
 header('Content-Type: application/json; charset=utf-8');
 // استفاده از همان مسیری که در فایل news-save جواب داده است
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
@@ -27,9 +29,11 @@ try {
 
     // حذف status از کوئری چون در دیتابیس ندارید
     // دقت کنید: اگر فیلد collected_amount در دیتابیس هست، آن را 0 قرار می‌دهیم
-    $sql = "INSERT INTO campaigns (campaign_code, title, description, category, target_amount, collected_amount) VALUES (?, ?, ?, ?, ?, 0)";
+    // ایزولاسیون: کمپین در شعبه‌ی فعال ساخته می‌شود
+    $__branch = dash_active_branch_id();
+    $sql = "INSERT INTO campaigns (campaign_code, title, description, category, target_amount, collected_amount, branch_id) VALUES (?, ?, ?, ?, ?, 0, ?)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$campaign_code, $title, $description, $category, $target_amount]);
+    $stmt->execute([$campaign_code, $title, $description, $category, $target_amount, $__branch]);
     $id = $pdo->lastInsertId();
 
     // مدیریت آپلود تصویر شاخص

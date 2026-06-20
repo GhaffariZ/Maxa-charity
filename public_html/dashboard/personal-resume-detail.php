@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('partners');
 // --- Database Configuration (from config file outside git) ---
 $DB = require __DIR__ . '/../core/db-config.php';
 $servername = $DB['host'];
