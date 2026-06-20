@@ -76,7 +76,7 @@
       gap:10px;
       position: relative;
       z-index: 60;
-      background: rgba(15, 23, 42, 0.6); /* Translucent dark slate glass */
+      background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       backdrop-filter: blur(16px) saturate(180%);
