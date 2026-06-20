@@ -115,19 +115,16 @@ $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''))
 if ($basePath === '.' || $basePath === '/') {
     $basePath = '';
 }
+
+$pageTitle = 'آخرین اخبار';
+require __DIR__ . '/dashboard/components/header/component.php';
 ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آخرین اخبار</title>
-    <!-- استایل محلی (جایگزین Tailwind CDN) -->
-    <link rel="stylesheet" href="/tailwind-news.css">
-    <!-- لود کردن FontAwesome برای آیکون‌ها -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
+<!-- استایل محلی (جایگزین Tailwind CDN) -->
+<link rel="stylesheet" href="/tailwind-news.css">
+<!-- لود کردن FontAwesome برای آیکون‌ها -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
         /* تنظیم فونت فارسی دلخواه (مثلا وزیرمتن) */
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
         body { font-family: 'Vazirmatn', sans-serif; }
@@ -176,9 +173,7 @@ if ($basePath === '.' || $basePath === '/') {
             0% { background-position: 100% 50%; }
             100% { background-position: 0 50%; }
         }
-    </style>
-</head>
-<body class="bg-gray-50">
+</style>
 
 <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     
@@ -297,5 +292,5 @@ window.addEventListener('load', () => {
 });
 </script>
 
-</body>
-</html>
+<?php
+require __DIR__ . '/dashboard/components/footer/component.php';

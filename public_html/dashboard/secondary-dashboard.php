@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 session_start();
 
 

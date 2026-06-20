@@ -39,13 +39,10 @@ $keywords = $news['keywords'];
 
 // مسیر فولدر تصاویر
 $folder = "uploads/news/" . $news_code . "/";
-?>
 
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title><?php echo htmlspecialchars($title); ?></title>
+$pageTitle = $title;
+require __DIR__ . '/components/header/component.php';
+?>
 <meta name="description" content="<?php echo htmlspecialchars(mb_substr(strip_tags($content),0,150)); ?>">
 <meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>">
 <meta name="author" content="<?php echo htmlspecialchars($author); ?>">
@@ -62,9 +59,6 @@ h1 { font-size:28px; margin-bottom:15px; }
 .video-container video { max-width:100%; border-radius:5px; }
 .tag {display:inline-block; background:#007bff; color:#fff; padding:5px 12px; border-radius:3px; font-size:13px; margin-bottom:15px;}
 </style>
-
-</head>
-<body>
 
 <article>
     <h1><?php echo htmlspecialchars($title); ?></h1>
@@ -104,5 +98,5 @@ h1 { font-size:28px; margin-bottom:15px; }
 
 </article>
 
-</body>
-</html>
+<?php
+require __DIR__ . '/components/footer/component.php';
