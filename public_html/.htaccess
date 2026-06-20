@@ -62,6 +62,25 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^macsapedia/?$ macsapedia.php [L,QSA]
 
 # ---------------------------------------------------------
+# 3.6) Courses (آکادمی مکسا)
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/([0-9]+)/?$ dashboard/course-details.php?id=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/?$ dashboard/courses.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^my-courses/?$ dashboard/course-my.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^course-checkout/?$ dashboard/course-checkout.php [L,QSA]
+
+# ---------------------------------------------------------
 # 4) Root Pages
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
