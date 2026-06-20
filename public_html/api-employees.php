@@ -8,11 +8,12 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
-// --- تنظیمات دیتابیس ---
-$servername = "localhost";
-$username   = "erfantey_fantasticfour";
-$password   = "Diamond19971376@macsa";
-$dbname     = "erfantey_macsacharity";
+// --- تنظیمات دیتابیس (از فایل کانفیگ خارج از گیت) ---
+$DB         = require __DIR__ . '/core/db-config.php';
+$servername = $DB['host'];
+$username   = $DB['user'];
+$password   = $DB['pass'];
+$dbname     = $DB['name'];
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

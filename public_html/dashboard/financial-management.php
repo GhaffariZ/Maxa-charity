@@ -4,17 +4,13 @@
  * این فایل به صورت یکپارچه بدون سایدبار و متمرکز بر گزارش مبالغ موفق پیاده‌سازی شده است.
  * ========================================================================== */
 declare(strict_types=1);
+require_once __DIR__ . '/_guard.php';
+dash_require('financial');
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
-/* ---------- تنظیمات اتصال به دیتابیس ---------- */
-$DB = [
-  'host'    => 'localhost',
-  'name'    => 'erfantey_macsacharity',
-  'user'    => 'erfantey_fantasticfour',
-  'pass'    => 'Diamond19971376@macsa',
-  'charset' => 'utf8mb4',
-];
+/* ---------- تنظیمات اتصال به دیتابیس (از فایل کانفیگ خارج از گیت) ---------- */
+$DB = require __DIR__ . '/../core/db-config.php';
 
 /* ---------- اتصال ---------- */
 $pdo = null; $dbError = null;

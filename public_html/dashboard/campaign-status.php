@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once __DIR__ . '/_guard.php';
+dash_require('campaigns'); 
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
 // عملیات تغییر وضعیت کمپین (فعال / غیرفعال سازی) بدون نیاز به alert
@@ -7,15 +9,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
     $current_status = (int)$_POST['current_status'];
     $new_status = $current_status === 1 ? 0 : 1;
     
-    $stmt = $pdo->prepare("UPDATE campaigns SET is_active = ? WHERE id = ?");
-    $stmt->execute([$new_status, $campaign_id]);
-    
+    // IDOR: فقط کمپین‌های شعبه‌ی فعال (سوپرادمین هر شعبه‌ای که فعال کرده باشد)
+    $__branch = dash_active_branch_id();
+    $stmt = $pdo->prepare("UPDATE campaigns SET is_active = ? WHERE id = ? AND branch_id = ?");
+    $stmt->execute([$new_status, $campaign_id, $__branch]);
+
     // رفرش صفحه برای اعمال تغییرات
     header("Location: campaign-status.php");
     exit;
 }
 
-$campaigns = $pdo->query("SELECT * FROM campaigns ORDER BY id DESC")->fetchAll();
+// نمای مرکزی: همه‌ی کمپین‌های همه‌ی شعب با برچسبِ شعبه. سایر شعب: فقط کمپین‌های خودشان.
+$__branch = dash_active_branch_id();
+$__row = dash_load_branch($__branch);
+if ($__row && (int)$__row['is_hq'] === 1) {
+    $campaigns = $pdo->query(
+        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
+           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
+          ORDER BY c.id DESC"
+    )->fetchAll();
+} else {
+    $stmt = $pdo->prepare(
+        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
+           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
+          WHERE c.branch_id = ? ORDER BY c.id DESC"
+    );
+    $stmt->execute([$__branch]);
+    $campaigns = $stmt->fetchAll();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('news');
 function slugify($text) {
 
     $text = trim($text);
@@ -100,7 +102,10 @@ function faNumbers($text) {
 // news-list.php
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
-$stmt = $pdo->query("SELECT * FROM news ORDER BY id DESC");
+// ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
+$__branch = dash_active_branch_id();
+$stmt = $pdo->prepare("SELECT * FROM news WHERE branch_id = ? ORDER BY id DESC");
+$stmt->execute([$__branch]);
 $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>

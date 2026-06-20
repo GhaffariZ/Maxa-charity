@@ -15,13 +15,7 @@ if (!defined('MAXA_COURSES_BOOT')) {
 }
 
 /* ---------- تنظیمات اتصال (همانند index) ---------- */
-$DB = [
-  'host'    => 'localhost',
-  'name'    => 'erfantey_macsacharity',
-  'user'    => 'erfantey_fantasticfour',
-  'pass'    => 'Diamond19971376@macsa',
-  'charset' => 'utf8mb4',
-];
+$DB = require __DIR__ . '/../core/db-config.php';
 
 $pdo = null; $dbError = null;
 try {

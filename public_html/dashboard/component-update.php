@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('pages');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: component-create.php");

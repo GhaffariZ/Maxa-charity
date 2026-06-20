@@ -16,8 +16,9 @@ if ($data) {
     $message     = $data['message'];
     $address     = $data['address'];
 
-    // اتصال به دیتابیس - مشخصات خودت را اینجا وارد کن
-    $conn = new mysqli("localhost", "erfantey_fantasticfour", "Diamond19971376@macsa", "erfantey_macsacharity");
+    // اتصال به دیتابیس (اطلاعات از فایل کانفیگ خارج از گیت)
+    $DB   = require __DIR__ . '/../../core/db-config.php';
+    $conn = new mysqli($DB['host'], $DB['user'], $DB['pass'], $DB['name']);
     
     if ($conn->connect_error) {
         echo json_encode(["success" => false, "message" => "خطا در اتصال به دیتابیس"]);

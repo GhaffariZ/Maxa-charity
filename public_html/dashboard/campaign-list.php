@@ -1,12 +1,15 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('campaigns');
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // جلوگیری از خراب شدن خروجی JSON
 
-$host = "localhost";
-$dbname = "erfantey_macsacharity";
-$user = "erfantey_fantasticfour";
-$pass = "Diamond19971376@macsa";
+$DB = require __DIR__ . '/../core/db-config.php';
+$host = $DB['host'];
+$dbname = $DB['name'];
+$user = $DB['user'];
+$pass = $DB['pass'];
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);

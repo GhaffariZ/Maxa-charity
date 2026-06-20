@@ -1,15 +1,21 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('pages');
 require_once __DIR__ . "/../../config/database.php";
 
 $pages = [];
 $errorMsg = null;
 
 try {
-    $stmt = $pdo->query("
+    // ایزولاسیون چندمستأجری: فقط صفحات شعبه‌ی فعال
+    $__branch = dash_active_branch_id();
+    $stmt = $pdo->prepare("
         SELECT id, title, slug, status, created_at
         FROM pages
+        WHERE branch_id = ?
         ORDER BY id DESC
     ");
+    $stmt->execute([$__branch]);
     $pages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $errorMsg = $e->getMessage();

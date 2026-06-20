@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/_guard.php';
+dash_require('pages');
 $components_path = __DIR__ . "/components/";
 $component_dirs = array_filter(glob($components_path . "*"), function($v){ return is_dir($v); });
 $components = [];
