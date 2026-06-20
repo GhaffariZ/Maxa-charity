@@ -15,6 +15,7 @@ use Maksa\Controllers\DonationController;
 use Maksa\Controllers\EngagementController;
 use Maksa\Controllers\HealthController;
 use Maksa\Controllers\NotificationController;
+use Maksa\Controllers\TicketController;
 use Maksa\Controllers\UserController;
 use Maksa\Core\Router;
 
@@ -67,4 +68,12 @@ return static function (Router $r): void {
 
     // ---- Engagement ---------------------------------------------------------
     $r->post('/tax-certificate',          [EngagementController::class, 'requestTaxCertificate'], $auth);
+
+    // ---- Support Tickets (authenticated) ------------------------------------
+    $r->get('/tickets',                   [TicketController::class, 'index'],  $auth);
+    $r->post('/tickets',                  [TicketController::class, 'create'], $auth);
+    // NOTE: /tickets/{id}/reply must be registered before /tickets/{id} so the
+    // router matches the more-specific path first.
+    $r->post('/tickets/{id}/reply',       [TicketController::class, 'reply'],  $auth);
+    $r->get('/tickets/{id}',              [TicketController::class, 'show'],   $auth);
 };
