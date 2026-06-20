@@ -76,14 +76,14 @@
       gap:10px;
       position: relative;
       z-index: 60;
-      background: rgba(15, 23, 42, 0.6); /* Translucent dark slate glass */
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.13) 0%, rgba(15, 23, 42, 0.68) 55%);
+      border: 1px solid rgba(245, 166, 35, 0.20);
       border-radius: 16px;
       backdrop-filter: blur(16px) saturate(180%);
       -webkit-backdrop-filter: blur(16px) saturate(180%);
       box-shadow:
         0 4px 30px rgba(0, 0, 0, 0.3),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        inset 0 1px 1px rgba(245, 166, 35, 0.14);
       padding: 8px 16px;
     }
 
@@ -881,7 +881,7 @@
 
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
-              <li><a href="/macsapedia">مکساپدیا</a></li>
+              <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
