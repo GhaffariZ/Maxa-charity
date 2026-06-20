@@ -3,14 +3,18 @@
  *  محیط یادگیری / پخش‌کننده‌ی دوره — آکادمی مکسا
  *  نمایش درس‌ها (ویدئو/متن/تصویر/PDF/آزمون) + پیشرفت فراگیر
  * ========================================================================== */
-require __DIR__ . '/course-db.php';
-require __DIR__ . '/course-ui.php';
+require __DIR__ . '/../dashboard/course-db.php';
+require __DIR__ . '/../dashboard/course-ui.php';
 
 $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 if (!$course) {
   course_html_head('دوره یافت نشد');
+<<<<<<< Updated upstream:public_html/dashboard/course-learn.php
   echo '<body style="display:grid;place-items:center;min-height:100vh"><div style="text-align:center"><h1>دوره پیدا نشد</h1><a href="/courses" class="btn btn-primary" target="_top" style="margin-top:14px">بازگشت به دوره‌ها</a></div></body></html>';
+=======
+  echo '<body style="display:grid;place-items:center;min-height:100vh"><div style="text-align:center"><h1>دوره پیدا نشد</h1><a href="index.php" class="btn btn-primary" target="_top" style="margin-top:14px">بازگشت به دوره‌ها</a></div></body></html>';
+>>>>>>> Stashed changes:public_html/courses/course-learn.php
   exit;
 }
 $curr = $course['curriculum'] ?? [];

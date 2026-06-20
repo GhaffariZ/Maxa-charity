@@ -3,8 +3,8 @@
  *  جزئیات دوره (بخش کاربری) — آکادمی مکسا
  *  صفحه‌ی فروش/معرفی یک دوره؛ سرفصل‌ها، مدرس و خرید
  * ========================================================================== */
-require __DIR__ . '/course-db.php';
-require __DIR__ . '/course-ui.php';
+require __DIR__ . '/../dashboard/course-db.php';
+require __DIR__ . '/../dashboard/course-ui.php';
 
 $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
@@ -15,9 +15,15 @@ if (!$course) {
      . '<div style="width:80px;height:80px;border-radius:22px;display:grid;place-items:center;margin:0 auto 18px;background:var(--primary-08);color:var(--color-primary)">'.cic('search').'</div>'
      . '<h1 style="font-size:22px;font-weight:800">دوره‌ای با این شناسه پیدا نشد</h1>'
      . '<p style="color:var(--color-muted);margin:8px 0 22px">شاید حذف شده باشد یا هنوز منتشر نشده است.</p>'
+<<<<<<< Updated upstream:public_html/dashboard/course-details.php
      . '<a href="/courses" class="btn btn-primary" target="_top">'.cic('arrow').' بازگشت به فروشگاه دوره‌ها</a>'
      . '</div>';
   course_site_footer();
+=======
+     . '<a href="index.php" class="btn btn-primary" target="_top">'.cic('arrow').' بازگشت به فروشگاه دوره‌ها</a>'
+     . '</div>';
+  course_site_foot();
+>>>>>>> Stashed changes:public_html/courses/course-details.php
   exit;
 }
 
@@ -118,7 +124,11 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 <!-- قهرمان -->
 <section class="cd-hero">
   <div class="cd-hero-in">
+<<<<<<< Updated upstream:public_html/dashboard/course-details.php
     <div class="crumb"><a href="/courses" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
+=======
+    <div class="crumb"><a href="index.php" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
+>>>>>>> Stashed changes:public_html/courses/course-details.php
     <span class="cd-cat"><?= e($course['category'] ?? 'عمومی') ?> · <?= level_label((string)($course['level'] ?? 'all')) ?></span>
     <h1><?= e($course['title'] ?? '') ?></h1>
     <?php if (!empty($course['subtitle'])): ?><p class="cd-sub"><?= e($course['subtitle']) ?></p><?php endif; ?>
@@ -331,4 +341,9 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   modal.addEventListener('click', function(e){ if(e.target===modal) closeP(); });
 })();
 </script>
+<<<<<<< Updated upstream:public_html/dashboard/course-details.php
 <?php course_site_footer(); ?>
+=======
+
+<?php course_site_foot(); ?>
+>>>>>>> Stashed changes:public_html/courses/course-details.php

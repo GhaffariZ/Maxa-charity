@@ -3,8 +3,8 @@
  *  تسویه‌حساب و خرید دوره — آکادمی مکسا
  *  سبد خرید (localStorage) + خلاصه‌ی پرداخت + ثبت‌نام
  * ========================================================================== */
-require __DIR__ . '/course-db.php';
-require __DIR__ . '/course-ui.php';
+require __DIR__ . '/../dashboard/course-db.php';
+require __DIR__ . '/../dashboard/course-ui.php';
 
 /* همه‌ی دوره‌های منتشرشده برای غنی‌سازی اقلام سبد در سمت کلاینت */
 $all = load_courses($pdo, $coursesSchemaReady, 'published');
@@ -79,7 +79,11 @@ course_site_head('تسویه‌حساب', $pageCss);
       <div>
         <div style="font-weight:800;font-size:15px;margin-bottom:14px"><span id="itemCount">۰</span> دوره در سبد شما</div>
         <div id="items"></div>
+<<<<<<< Updated upstream:public_html/dashboard/course-checkout.php
         <a href="/courses" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> افزودن دوره‌ی بیشتر</a>
+=======
+        <a href="index.php" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> افزودن دوره‌ی بیشتر</a>
+>>>>>>> Stashed changes:public_html/courses/course-checkout.php
       </div>
       <!-- خلاصه -->
       <aside class="summary card card-pad">
@@ -106,7 +110,11 @@ course_site_head('تسویه‌حساب', $pageCss);
       <div class="ei"><?= cic('cart') ?></div>
       <h2 style="font-size:19px;font-weight:800">سبد خرید شما خالی است</h2>
       <p style="color:var(--color-muted);margin:8px 0 20px">هنوز دوره‌ای انتخاب نکرده‌اید. از فروشگاه ما دیدن کنید!</p>
+<<<<<<< Updated upstream:public_html/dashboard/course-checkout.php
       <a href="/courses" class="btn btn-primary" target="_top"><?= cic('grad') ?> مشاهده‌ی دوره‌ها</a>
+=======
+      <a href="index.php" class="btn btn-primary" target="_top"><?= cic('grad') ?> مشاهده‌ی دوره‌ها</a>
+>>>>>>> Stashed changes:public_html/courses/course-checkout.php
     </div>
   </div>
 </div>
@@ -117,8 +125,13 @@ course_site_head('تسویه‌حساب', $pageCss);
     <div class="oic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
     <h2>ثبت‌نام موفق! 🎉</h2>
     <p>دوره‌های شما با موفقیت ثبت شد. هم‌اکنون می‌توانید یادگیری را شروع کنید.</p>
+<<<<<<< Updated upstream:public_html/dashboard/course-checkout.php
     <a href="/my-courses" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
     <a href="/courses" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>
+=======
+    <a href="my-courses.php" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
+    <a href="index.php" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>
+>>>>>>> Stashed changes:public_html/courses/course-checkout.php
   </div>
 </div>
 
@@ -196,4 +209,9 @@ course_site_head('تسویه‌حساب', $pageCss);
   render(); updateNavCart();
 })();
 </script>
+<<<<<<< Updated upstream:public_html/dashboard/course-checkout.php
 <?php course_site_footer(); ?>
+=======
+
+<?php course_site_foot(); ?>
+>>>>>>> Stashed changes:public_html/courses/course-checkout.php

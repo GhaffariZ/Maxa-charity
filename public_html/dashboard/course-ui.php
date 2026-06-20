@@ -4,11 +4,16 @@
  *  course_html_head(عنوان, استایلِ اختصاصیِ صفحه) را صدا بزنید تا <head> کامل
  *  به‌همراه توکن‌های طراحی، تم تاریک و فونت وزیر چاپ شود.
  * ========================================================================== */
+<<<<<<< Updated upstream
 /* استایل پایه‌ی سیستم طراحی دوره‌ها (توکن‌ها + اجزای مشترک) — هم در پوسته‌ی مستقل
    و هم در پوسته‌ی سایت استفاده می‌شود. */
 if (!function_exists('course_base_css')):
 function course_base_css(): string {
   return <<<'CSS'
+=======
+if (!function_exists('course_base_css')):
+function course_base_css(): string { return <<<'MAXACSS'
+>>>>>>> Stashed changes
 :root{
   --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
   --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
@@ -123,11 +128,19 @@ svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .reveal{opacity:0;animation:fadeUp .55s var(--ease) forwards}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
+<<<<<<< Updated upstream
 CSS;
 }
 endif;
 
 /* پوسته‌ی مستقل (برای صفحات مدیریتی دوره‌ها) — <head> کامل به‌همراه تم تاریک */
+=======
+MAXACSS;
+}
+endif;
+
+/* پوسته‌ی مستقل (برای صفحات مدیریتی داخل پنل) — سند کامل با توکن‌های طراحی */
+>>>>>>> Stashed changes
 if (!function_exists('course_html_head')):
 function course_html_head(string $title, string $pageStyles = ''): void { ?>
 <!DOCTYPE html>
@@ -142,12 +155,17 @@ function course_html_head(string $title, string $pageStyles = ''): void { ?>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 <?= course_base_css() ?>
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 <?= $pageStyles ?>
 </style>
 </head>
 <?php }
 endif;
 
+<<<<<<< Updated upstream
 /* ---------- پوسته‌ی سایت: ادغام صفحات عمومی دوره‌ها با هدر/فوتر اصلی ---------- */
 
 /* یک کامپوننت مشترک سایت را با جایگزینی جای‌گیرهای {{imageN}} (همانند page-view.php) رندر
@@ -170,10 +188,33 @@ function maxa_render_site_component(string $name, ?string $title = null, bool $k
   if ($keepOpen) {
     $code = preg_replace('/<\/body\s*>\s*<\/html\s*>\s*$/i', '', $code);
   }
+=======
+/* پوسته‌ی یکپارچه با سایت — هدر و فوتر مشترکِ بقیه‌ی صفحات کاربری را می‌چیند.
+   course_site_head() سرصفحه و نوار اصلی سایت را چاپ می‌کند و استایل‌های دوره را تزریق می‌کند؛
+   در پایان صفحه course_site_foot() فوتر مشترک را اضافه می‌کند. */
+if (!function_exists('course_site_head')):
+function course_site_head(string $title, string $pageStyles = ''): void {
+  $pageTitle = $title;
+  require __DIR__ . '/components/header/component.php';
+  echo "<style>\n" . course_base_css() . "\n" . $pageStyles . "\n</style>\n";
+}
+endif;
+
+if (!function_exists('course_site_foot')):
+function course_site_foot(): void {
+  $file = __DIR__ . '/components/footer/component.php';
+  if (!is_file($file)) return;
+  $code = file_get_contents($file);
+  // هم‌سان با page-view: نشانه‌های {{imageN}} به مسیر تصویر کامپوننت تبدیل می‌شوند
+  $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) {
+    return '/dashboard/components/footer/images/' . $m[1] . '.png';
+  }, $code);
+>>>>>>> Stashed changes
   echo $code;
 }
 endif;
 
+<<<<<<< Updated upstream
 /* <head> + نوار اصلی سایت + توکن‌های طراحی دوره (نسخه‌ی روشن) */
 if (!function_exists('course_site_head')):
 function course_site_head(string $title, string $pageStyles = ''): void {
@@ -202,6 +243,8 @@ function course_site_footer(): void {
 }
 endif;
 
+=======
+>>>>>>> Stashed changes
 /* مجموعه‌ی آیکن‌های مشترک (همان زبان تصویری index) */
 if (!function_exists('cic')):
 function cic(string $name, string $cls = ''): string {

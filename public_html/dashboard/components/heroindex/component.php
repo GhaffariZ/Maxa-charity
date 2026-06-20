@@ -1285,7 +1285,12 @@
 
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
+<<<<<<< Updated upstream
               <li><a href="/macsapedia">مکساپدیا</a></li>
+=======
+              <li><a href="/macsapedia.php">مکساپدیا</a></li>
+              <li><a href="/courses/">دوره‌ها</a></li>
+>>>>>>> Stashed changes
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
