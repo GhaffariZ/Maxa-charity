@@ -3,8 +3,8 @@
  *  دوره‌های من (بخش کاربری) — آکادمی مکسا
  *  دوره‌های خریداری/ثبت‌نام‌شده + میزان پیشرفت (localStorage)
  * ========================================================================== */
-require __DIR__ . '/../dashboard/course-db.php';
-require __DIR__ . '/../dashboard/course-ui.php';
+require __DIR__ . '/course-db.php';
+require __DIR__ . '/course-ui.php';
 
 $all = load_courses($pdo, $coursesSchemaReady, 'published');
 $map = [];
@@ -87,11 +87,7 @@ course_site_head('دوره‌های من', $pageCss);
       '<div class="ei">'+BOOK+'</div>'+
       '<h2 style="font-size:20px;font-weight:800">هنوز در دوره‌ای ثبت‌نام نکرده‌اید</h2>'+
       '<p style="color:var(--color-muted);margin:8px 0 22px">از فروشگاه ما یک دوره انتخاب کنید و یادگیری را شروع کنید.</p>'+
-<<<<<<< Updated upstream:public_html/dashboard/course-my.php
       '<a href="/courses" class="btn btn-primary" target="_top">مشاهده‌ی دوره‌ها</a></div>';
-=======
-      '<a href="index.php" class="btn btn-primary" target="_top">مشاهده‌ی دوره‌ها</a></div>';
->>>>>>> Stashed changes:public_html/courses/my-courses.php
     return;
   }
 
@@ -121,9 +117,4 @@ course_site_head('دوره‌های من', $pageCss);
   $('stAvg').textContent=toFa(ids.length?Math.round(sumPct/ids.length):0)+'٪';
 })();
 </script>
-<<<<<<< Updated upstream:public_html/dashboard/course-my.php
 <?php course_site_footer(); ?>
-=======
-
-<?php course_site_foot(); ?>
->>>>>>> Stashed changes:public_html/courses/my-courses.php

@@ -3,8 +3,8 @@
  *  فروشگاه دوره‌ها (بخش کاربری) — آکادمی مکسا
  *  مرور، جست‌وجو، فیلتر دسته‌بندی/سطح و مرتب‌سازی دوره‌ها
  * ========================================================================== */
-require __DIR__ . '/../dashboard/course-db.php';
-require __DIR__ . '/../dashboard/course-ui.php';
+require __DIR__ . '/course-db.php';
+require __DIR__ . '/course-ui.php';
 
 $courses = load_courses($pdo, $coursesSchemaReady, 'published');
 
@@ -45,18 +45,9 @@ $pageCss = course_card_styles() . <<<CSS
 .empty .ei{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;margin:0 auto 14px;background:var(--primary-08);color:var(--color-primary)}
 .empty .ei .ic{width:30px;height:30px}
 .hide{display:none!important}
-.hero-links{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap}
-.hero-links a{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:12px;font-weight:700;font-size:13px;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.22);transition:background .2s,transform .15s}
-.hero-links a:hover{background:rgba(255,255,255,.26);transform:translateY(-1px)}
-.hero-links a .ic{width:17px;height:17px}
 @media(max-width:760px){.hero{padding:32px 22px}.hero h1{font-size:24px}}
 CSS;
 
-<<<<<<< Updated upstream:public_html/dashboard/courses.php
-=======
-course_site_head('دوره‌های آموزشی', $pageCss);
-
->>>>>>> Stashed changes:public_html/courses/index.php
 $totalStudents = 0; foreach ($courses as $c) { $totalStudents += (int)($c['students'] ?? 0); }
 
 course_site_head('دوره‌های آموزشی', $pageCss);
@@ -77,10 +68,6 @@ course_site_head('دوره‌های آموزشی', $pageCss);
         <div><b><?= fa_digits(number_format(count($courses))) ?>+</b> دوره</div>
         <div><b><?= fa_digits(number_format($totalStudents)) ?>+</b> فراگیر</div>
         <div><b><?= fa_digits(count($cats)) ?></b> دسته‌بندی</div>
-      </div>
-      <div class="hero-links">
-        <a href="my-courses.php"><?= cic('grad') ?> دوره‌های من</a>
-        <a href="course-checkout.php"><?= cic('cart') ?> سبد خرید</a>
       </div>
     </div>
   </section>
@@ -179,9 +166,4 @@ course_site_head('دوره‌های آموزشی', $pageCss);
   $('sortSel').addEventListener('change', function(){ sortBy(this.value); });
 })();
 </script>
-<<<<<<< Updated upstream:public_html/dashboard/courses.php
 <?php course_site_footer(); ?>
-=======
-
-<?php course_site_foot(); ?>
->>>>>>> Stashed changes:public_html/courses/index.php

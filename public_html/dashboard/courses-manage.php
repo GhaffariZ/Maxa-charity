@@ -202,14 +202,14 @@ course_html_head('مدیریت دوره‌ها', $pageCss);
             </td>
             <td>
               <div class="row-actions">
-                <a href="/courses/course-details.php?id=<?= $id ?>" class="icon-btn-sm" title="مشاهده" target="_top"><?= cic('eye') ?></a>
+                <a href="course-details.php?id=<?= $id ?>" class="icon-btn-sm" title="مشاهده" target="_top"><?= cic('eye') ?></a>
                 <div class="menu-wrap">
                   <button type="button" class="icon-btn-sm menu-btn" title="عملیات بیشتر">
                     <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
                   </button>
                   <div class="menu-pop">
                     <a href="Courses-create.php?edit=<?= $id ?>"><?= cic('edit') ?> ویرایش دوره</a>
-                    <a href="/courses/course-learn.php?id=<?= $id ?>" target="_top"><?= cic('play') ?> پیش‌نمایش محتوا</a>
+                    <a href="course-learn.php?id=<?= $id ?>" target="_top"><?= cic('play') ?> پیش‌نمایش محتوا</a>
                     <div class="menu-sep"></div>
                     <?php if ($isPub): ?>
                       <form method="post" style="margin:0"><input type="hidden" name="id" value="<?= $id ?>"><input type="hidden" name="do" value="draft"><button type="submit"><?= cic('eyeoff') ?> انتقال به پیش‌نویس</button></form>
