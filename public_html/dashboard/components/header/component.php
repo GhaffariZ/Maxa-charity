@@ -14,7 +14,7 @@
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
-  }
+  } 
   body {
     font-family: 'Vazirmatn', sans-serif !important;
   }
