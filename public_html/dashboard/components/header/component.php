@@ -83,7 +83,7 @@
       -webkit-backdrop-filter: blur(16px) saturate(180%);
       box-shadow:
         0 4px 30px rgba(0, 0, 0, 0.3),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        inset 0 1px 1px rgba(245, 166, 35, 0.14);
       padding: 8px 16px;
     }
 
@@ -370,20 +370,36 @@
 
     /* ===== HAMBURGER ICON ===== */
     .menu-icon{
-      width: 28px;
-      height: 20px;
+      width: 38px;
+      height: 38px;
       display: none;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
       cursor: pointer;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .menu-icon:hover{
+      background: rgba(255,255,255,.14);
+      border-color: rgba(255,255,255,.22);
     }
 
     .menu-icon div{
-      height: 3px;
+      width: 17px;
+      height: 2px;
       background: #fff;
-      border-radius: 3px;
-      transition: .3s ease;
+      border-radius: 2px;
+      transition: transform .3s ease, opacity .3s ease;
     }
+
+    .menu-icon.active div:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+    .menu-icon.active div:nth-child(2){ opacity: 0; }
+    .menu-icon.active div:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
 
     /* فقط موبایل و تبلت */
     @media (max-width: 1024px){
@@ -580,7 +596,7 @@
     /* نقطه شکست موبایل و تبلت برای سایدبار همبرگری */
     @media (max-width: 1024px) {
       :root {
-        --cta-nav-h: 64px;
+        --cta-nav-h: 56px;
       }
 
       .cta-center {
@@ -634,7 +650,7 @@
     /* تبلت های کوچک */
     @media (max-width: 600px) {
       .cta-header {
-        padding: 8px 12px;
+        padding: 6px 12px;
         gap: 8px;
       }
 
@@ -643,7 +659,7 @@
       }
 
       .cta-brand img {
-        height: 28px;
+        height: 26px;
       }
 
       .cta-left {
@@ -654,6 +670,11 @@
       .cta-auth {
         padding: 0 10px;
         font-size: 12px;
+        height: 32px;
+      }
+
+      .menu-icon {
+        width: 34px;
         height: 34px;
       }
     }
@@ -661,29 +682,29 @@
     /* گوشی‌های بسیار باریک */
     @media (max-width: 420px) {
       .cta-header {
-        padding: 6px 10px;
+        padding: 5px 10px;
         gap: 6px;
       }
 
       .cta-brand img {
-        height: 24px;
+        height: 22px;
       }
 
       .cta-donate,
       .cta-auth {
         padding: 0 8px;
         font-size: 11px;
-        height: 32px;
+        height: 30px;
         gap: 4px;
       }
 
       .menu-icon {
-        width: 24px;
-        height: 18px;
+        width: 32px;
+        height: 32px;
       }
 
       .menu-icon div {
-        height: 2px;
+        width: 15px;
       }
     }
 
@@ -881,7 +902,7 @@
 
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
-              <li><a href="/macsapedia">مکساپدیا</a></li>
+              <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
@@ -973,12 +994,14 @@
     function openMenu(){
       menu.classList.add("open");
       backdrop.classList.add("show");
+      toggleBtn.classList.add("active");
       document.body.style.overflow = "hidden";
     }
 
     function closeMenu(){
       menu.classList.remove("open");
       backdrop.classList.remove("show");
+      toggleBtn.classList.remove("active");
       document.body.style.overflow = "";
     }
 
