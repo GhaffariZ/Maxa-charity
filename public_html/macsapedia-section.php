@@ -162,6 +162,50 @@ require __DIR__ . '/dashboard/components/header/component.php';
 
   .mp-others-title { font-size: 19px; font-weight: 800; color: #2f3437; margin: 0 0 20px; }
 
+  /* ---------- چیدمان مدرنِ پادکست‌ها ---------- */
+  .mp-pod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 24px; }
+  @media (max-width: 540px) { .mp-pod-grid { grid-template-columns: 1fr; } }
+  .mp-pod-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    background: #fff;
+    border: 1px solid #eef0f2;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(20,20,40,.05);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  /* نوار رنگیِ نازک در لبه‌ی کارت (لهجه‌ی مدرن) */
+  .mp-pod-card::before {
+    content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 4px;
+    background: linear-gradient(180deg, #f5a623, #e0556b);
+  }
+  .mp-pod-card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(20,20,40,.11); }
+  .mp-pod-head { display: flex; gap: 14px; align-items: center; padding: 20px 22px 14px; }
+  .mp-pod-cover {
+    flex: 0 0 64px; width: 64px; height: 64px; border-radius: 16px; overflow: hidden;
+    display: grid; place-items: center; font-size: 30px; color: #fff;
+    background: linear-gradient(135deg, #f5a623, #e0556b);
+    box-shadow: 0 10px 22px -8px rgba(224,85,107,.55);
+  }
+  .mp-pod-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .mp-pod-meta { min-width: 0; flex: 1; }
+  .mp-pod-title {
+    font-size: 16.5px; font-weight: 800; color: #2f3437; margin: 0 0 8px; line-height: 1.55;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .mp-pod-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mp-pod-provider { font-size: 11.5px; font-weight: 700; color: #c2410c; background: rgba(245,166,35,.14); padding: 3px 10px; border-radius: 99px; }
+  .mp-pod-cat { font-size: 11.5px; font-weight: 700; color: #6b7280; background: #f1f3f5; padding: 3px 10px; border-radius: 99px; }
+  .mp-pod-desc {
+    font-size: 13.5px; color: #8b8f96; line-height: 1.95; margin: 0; padding: 0 22px 16px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .mp-pod-player { margin-top: auto; padding: 0 16px 16px; }
+  .mp-pod-player .mxp-embed { border-radius: 14px; overflow: hidden; }
+  .mp-pod-player .mxp-embed--audio { background: #f6f7f9; padding: 10px 12px; }
+  .mp-pod-foot { padding: 0 22px 20px; margin-top: auto; }
+
   /* ---------- شبکه‌ی سایر محتوا (صوت / فایل / گالری) ---------- */
   .mp-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 26px; }
   @media (max-width: 460px) { .mp-items { grid-template-columns: 1fr; } }
@@ -312,32 +356,72 @@ require __DIR__ . '/dashboard/components/header/component.php';
       <?php if (!empty($mpVideos)): ?>
         <h2 class="mp-others-title">سایر محتوا</h2>
       <?php endif; ?>
-      <div class="mp-items">
-        <?php foreach ($mpOthers as $it): $em = $it['_em']; ?>
-          <article class="mp-item">
-            <?php if ($em && $em['kind'] === 'audio'): ?>
-              <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
-            <?php elseif (!empty($it['thumbnail'])): ?>
-              <img class="mp-item-thumb" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
-            <?php else: ?>
-              <div class="mp-item-thumb"><?= $mpSection['icon'] ?></div>
-            <?php endif; ?>
-            <div class="mp-item-body">
-              <h3><?= e($it['title']) ?></h3>
+
+      <?php if ($mpSlug === 'podcasts'): ?>
+        <!-- چیدمان مدرنِ پادکست‌ها -->
+        <div class="mp-pod-grid">
+          <?php foreach ($mpOthers as $it): $em = $it['_em']; ?>
+            <article class="mp-pod-card">
+              <div class="mp-pod-head">
+                <div class="mp-pod-cover">
+                  <?php if (!empty($it['thumbnail'])): ?>
+                    <img src="<?= e($it['thumbnail']) ?>" alt="" loading="lazy">
+                  <?php else: ?>
+                    <span>🎙️</span>
+                  <?php endif; ?>
+                </div>
+                <div class="mp-pod-meta">
+                  <h3 class="mp-pod-title"><?= e($it['title']) ?></h3>
+                  <div class="mp-pod-tags">
+                    <?php if ($em): ?><span class="mp-pod-provider">🎧 <?= e($em['provider']) ?></span><?php endif; ?>
+                    <?php if (!empty($it['category'])): ?><span class="mp-pod-cat"><?= e($it['category']) ?></span><?php endif; ?>
+                  </div>
+                </div>
+              </div>
+
               <?php if (!empty($it['description'])): ?>
-                <p><?= nl2br(e($it['description'])) ?></p>
+                <p class="mp-pod-desc"><?= nl2br(e($it['description'])) ?></p>
               <?php endif; ?>
-              <?php if (!empty($it['url'])): ?>
-                <?php if ($em): ?>
-                  <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
-                <?php else: ?>
-                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+
+              <?php if ($em): ?>
+                <div class="mp-pod-player"><?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?></div>
+              <?php elseif (!empty($it['url'])): ?>
+                <div class="mp-pod-foot">
+                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">شنیدن ↗</a>
+                </div>
+              <?php endif; ?>
+            </article>
+          <?php endforeach; ?>
+        </div>
+
+      <?php else: ?>
+        <div class="mp-items">
+          <?php foreach ($mpOthers as $it): $em = $it['_em']; ?>
+            <article class="mp-item">
+              <?php if ($em && $em['kind'] === 'audio'): ?>
+                <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
+              <?php elseif (!empty($it['thumbnail'])): ?>
+                <img class="mp-item-thumb" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
+              <?php else: ?>
+                <div class="mp-item-thumb"><?= $mpSection['icon'] ?></div>
+              <?php endif; ?>
+              <div class="mp-item-body">
+                <h3><?= e($it['title']) ?></h3>
+                <?php if (!empty($it['description'])): ?>
+                  <p><?= nl2br(e($it['description'])) ?></p>
                 <?php endif; ?>
-              <?php endif; ?>
-            </div>
-          </article>
-        <?php endforeach; ?>
-      </div>
+                <?php if (!empty($it['url'])): ?>
+                  <?php if ($em): ?>
+                    <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
+                  <?php else: ?>
+                    <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+                  <?php endif; ?>
+                <?php endif; ?>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
 
   <?php endif; ?>
