@@ -11,7 +11,23 @@ if (!maxapedia_is_section($mpSlug)) {
 }
 
 $mpSection = maxapedia_section_meta($mpSlug);
-$mpItems   = ($pdo) ? maxapedia_items($pdo, $mpSlug, true) : [];
+
+/* فیلترها: جستجو + دسته‌بندی (از طریق query string روی URL تمیز) */
+$mpQ   = trim((string)($_GET['q'] ?? ''));
+$mpCat = trim((string)($_GET['cat'] ?? ''));
+
+$mpCats  = ($pdo) ? maxapedia_categories($pdo, $mpSlug, true) : [];
+$mpItems = ($pdo) ? maxapedia_items($pdo, $mpSlug, true, ['category' => $mpCat, 'q' => $mpQ]) : [];
+
+$mpBase = '/macsapedia/' . rawurlencode($mpSlug);
+/* ساخت آدرسِ چیپ دسته‌بندی با حفظ عبارت جستجو */
+$mpChipUrl = static function (string $cat) use ($mpBase, $mpQ): string {
+    $params = [];
+    if ($cat  !== '') { $params['cat'] = $cat; }
+    if ($mpQ  !== '') { $params['q']   = $mpQ; }
+    return $mpBase . ($params ? '?' . http_build_query($params) : '');
+};
+$mpFiltered = ($mpQ !== '' || $mpCat !== '');
 
 /* جداسازی ویدیوها از سایر محتوا برای چیدمانِ «تماشا» (پلیر بزرگ + فهرست کناری) */
 $mpVideos = [];
@@ -45,6 +61,33 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #fafbfc; border: 1px dashed #e1e4e8; border-radius: 18px;
     color: #8b8f96; font-size: 15px;
   }
+
+  /* ---------- نوار فیلتر: جستجو + دسته‌بندی ---------- */
+  .mp-filters {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+  }
+  .mp-search { display: flex; align-items: center; flex: 0 0 auto; }
+  .mp-search input[type="search"] {
+    width: 260px; max-width: 60vw; font-family: inherit; font-size: 14px; color: #2f3437;
+    background: #fff; border: 1.5px solid #e1e4e8; border-radius: 10px 0 0 10px; padding: 10px 14px;
+  }
+  .mp-search input[type="search"]:focus { outline: none; border-color: var(--cta-orange, #f5a623); }
+  .mp-search button {
+    border: 1.5px solid var(--cta-orange, #f5a623); background: var(--cta-orange, #f5a623);
+    color: #fff; font-size: 16px; cursor: pointer; padding: 10px 14px; border-radius: 0 10px 10px 0;
+  }
+  .mp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mp-chip {
+    font-size: 13px; font-weight: 700; color: #4b5563; text-decoration: none;
+    background: #fff; border: 1.5px solid #e6e8ea; border-radius: 99px; padding: 7px 16px;
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .mp-chip:hover { border-color: var(--cta-orange, #f5a623); color: #2f3437; }
+  .mp-chip.active { background: var(--cta-orange, #f5a623); border-color: var(--cta-orange, #f5a623); color: #fff; }
+  .mp-result-note { font-size: 13.5px; color: #6b7280; margin-bottom: 22px; }
+  .mp-result-clear { color: var(--cta-orange, #f5a623); font-weight: 700; text-decoration: none; margin-right: 8px; }
+  .mp-result-clear:hover { text-decoration: underline; }
 
   /* ---------- چیدمان تماشا: پلیر بزرگ + فهرست ویدیوها ---------- */
   .mp-watch {
@@ -161,8 +204,44 @@ require __DIR__ . '/dashboard/components/header/component.php';
     <p><?= e($mpSection['desc']) ?></p>
   </div>
 
+  <!-- نوار فیلتر: جستجو + دسته‌بندی‌ها -->
+  <div class="mp-filters">
+    <form class="mp-search" method="get" action="<?= e($mpBase) ?>" role="search">
+      <?php if ($mpCat !== ''): ?>
+        <input type="hidden" name="cat" value="<?= e($mpCat) ?>">
+      <?php endif; ?>
+      <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="جستجو در این بخش…" aria-label="جستجو">
+      <button type="submit" aria-label="جستجو">🔍</button>
+    </form>
+
+    <?php if (!empty($mpCats)): ?>
+      <div class="mp-chips">
+        <a class="mp-chip<?= $mpCat === '' ? ' active' : '' ?>" href="<?= e($mpChipUrl('')) ?>">همه</a>
+        <?php foreach ($mpCats as $c): ?>
+          <a class="mp-chip<?= $c === $mpCat ? ' active' : '' ?>" href="<?= e($mpChipUrl($c)) ?>"><?= e($c) ?></a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </div>
+
+  <?php if ($mpFiltered): ?>
+    <div class="mp-result-note">
+      نتایج
+      <?php if ($mpQ !== ''): ?> برای «<?= e($mpQ) ?>»<?php endif; ?>
+      <?php if ($mpCat !== ''): ?> در دسته‌ی «<?= e($mpCat) ?>»<?php endif; ?>
+      — <?= fa_digits(count($mpItems)) ?> مورد
+      <a class="mp-result-clear" href="<?= e($mpBase) ?>">پاک کردن فیلتر</a>
+    </div>
+  <?php endif; ?>
+
   <?php if (empty($mpItems)): ?>
-    <div class="mp-empty">به‌زودی محتوای این بخش اضافه می‌شود.</div>
+    <div class="mp-empty">
+      <?php if ($mpFiltered): ?>
+        موردی با این جستجو/دسته‌بندی پیدا نشد.
+      <?php else: ?>
+        به‌زودی محتوای این بخش اضافه می‌شود.
+      <?php endif; ?>
+    </div>
   <?php else: ?>
 
     <?php if (!empty($mpVideos)): $first = $mpVideos[0]; $fem = $first['_em']; ?>
