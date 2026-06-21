@@ -105,6 +105,23 @@ require __DIR__ . '/dashboard/components/header/component.php';
     padding: 9px 16px;
     border-radius: 10px;
   }
+  /* پخش‌کننده‌ی امبد (ویدیو/صوت) */
+  .mxp-embed { width: 100%; background: #000; }
+  .mxp-embed--video { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+  .mxp-embed--video > iframe,
+  .mxp-embed--video > video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .mxp-embed--audio { background: #f1f3f5; padding: 14px 16px; }
+  .mxp-embed--audio > audio { width: 100%; display: block; }
+  .mxp-embed--audio > iframe { width: 100%; height: 180px; border: 0; display: block; }
+  .mp-item-source {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #8b8f96;
+    text-decoration: none;
+  }
+  .mp-item-source:hover { color: var(--cta-orange, #f5a623); }
 </style>
 
 <div class="mp-wrap">
@@ -123,8 +140,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
   <?php else: ?>
     <div class="mp-items">
       <?php foreach ($mpItems as $it): ?>
+        <?php $mpEmbed = maxapedia_embed_html((string)($it['url'] ?? ''), (string)$it['title']); ?>
         <article class="mp-item">
-          <?php if (!empty($it['thumbnail'])): ?>
+          <?php if ($mpEmbed): ?>
+            <?= $mpEmbed ?>
+          <?php elseif (!empty($it['thumbnail'])): ?>
             <img class="mp-item-thumb" src="<?= htmlspecialchars($it['thumbnail'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
           <?php else: ?>
             <div class="mp-item-thumb"><?= $mpSection['icon'] ?></div>
@@ -135,7 +155,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
               <p><?= nl2br(htmlspecialchars($it['description'], ENT_QUOTES, 'UTF-8')) ?></p>
             <?php endif; ?>
             <?php if (!empty($it['url'])): ?>
-              <a class="mp-item-link" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+              <?php if ($mpEmbed): ?>
+                <a class="mp-item-source" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
+              <?php else: ?>
+                <a class="mp-item-link" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+              <?php endif; ?>
             <?php endif; ?>
           </div>
         </article>

@@ -148,6 +148,18 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   color:var(--danger);border-radius:10px;padding:7px 12px;transition:background .2s,border-color .2s}
 .mx-del:hover{background:var(--danger-12);border-color:var(--danger)}
 
+.mx-hint{font-size:11.5px;color:var(--color-muted);margin-top:6px;line-height:1.7}
+.mx-embed-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-weight:700;background:var(--primary-12);color:var(--color-primary)}
+
+/* پیش‌نمایش امبد در داشبورد (هم‌کلاس با صفحه‌ی عمومی) */
+.mx-embed{margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--color-border)}
+.mxp-embed{width:100%;background:#000}
+.mxp-embed--video{position:relative;width:100%;max-width:360px;aspect-ratio:16/9}
+.mxp-embed--video>iframe,.mxp-embed--video>video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.mxp-embed--audio{background:var(--color-bg);padding:12px 14px}
+.mxp-embed--audio>audio{width:100%;display:block}
+.mxp-embed--audio>iframe{width:100%;height:160px;border:0;display:block}
+
 .mx-notice{border-radius:12px;padding:11px 16px;margin-bottom:18px;font-size:13px;font-weight:700}
 .mx-notice.ok{background:var(--success-12);color:var(--success)}
 .mx-notice.err{background:var(--danger-12);color:var(--danger)}
@@ -207,8 +219,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
 
       <div class="mx-field">
-        <label>لینک محتوا (ویدیو / فایل / صوت)</label>
-        <input type="url" name="url" maxlength="1024" placeholder="https://…">
+        <label>لینک محتوا (امبد ویدیو / صوت / فایل)</label>
+        <input type="url" name="url" maxlength="1024" placeholder="https://… (یوتیوب، آپارات، کست‌باکس، اسپاتیفای…)">
+        <p class="mx-hint">لینکِ معمولیِ یوتیوب، آپارات، نماشا، کست‌باکس، اسپاتیفای، ساندکلاد یا فایل مستقیم (mp4/mp3) را بگذارید؛ به‌صورت پخش‌کننده در صفحه‌ی عمومی نمایش داده می‌شود.</p>
       </div>
 
       <div class="mx-field">
@@ -241,7 +254,10 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       <?php if (empty($items)): ?>
         <div class="mx-empty">هنوز محتوایی برای این بخش ثبت نشده است. از فرمِ کنار صفحه اولین مورد را اضافه کنید.</div>
       <?php else: ?>
-        <?php foreach ($items as $it): ?>
+        <?php foreach ($items as $it):
+          $emInfo = maxapedia_embed((string)($it['url'] ?? ''));
+          $emHtml = $emInfo ? maxapedia_embed_html((string)($it['url'] ?? ''), (string)$it['title']) : null;
+        ?>
           <div class="mx-item">
             <?php if (!empty($it['thumbnail'])): ?>
               <img class="mx-item-thumb" src="<?= e($it['thumbnail']) ?>" alt="">
@@ -257,11 +273,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                 <span class="mx-badge <?= $it['status']==='published'?'pub':'draft' ?>">
                   <?= $it['status']==='published'?'منتشرشده':'پیش‌نویس' ?>
                 </span>
+                <?php if ($emInfo): ?>
+                  <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
+                <?php endif; ?>
                 <span style="color:var(--color-muted)"><?= jalali_date($it['created_at']) ?></span>
                 <?php if (!empty($it['url'])): ?>
                   <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن لینک ↗</a>
                 <?php endif; ?>
               </div>
+              <?php if ($emHtml): ?>
+                <div class="mx-embed"><?= $emHtml ?></div>
+              <?php endif; ?>
             </div>
             <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">
               <input type="hidden" name="action" value="delete">
