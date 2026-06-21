@@ -67,15 +67,20 @@ require __DIR__ . '/dashboard/components/header/component.php';
     display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
     margin-bottom: 28px;
   }
-  .mp-search { display: flex; align-items: center; flex: 0 0 auto; }
+  /* پیلِ یکپارچه‌ی جستجو — مستقل از جهت (RTL/LTR) */
+  .mp-search {
+    display: flex; align-items: center; flex: 0 0 auto;
+    background: #fff; border: 1.5px solid #e1e4e8; border-radius: 12px; overflow: hidden;
+    transition: border-color .2s ease;
+  }
+  .mp-search:focus-within { border-color: var(--cta-orange, #f5a623); }
   .mp-search input[type="search"] {
     width: 260px; max-width: 60vw; font-family: inherit; font-size: 14px; color: #2f3437;
-    background: #fff; border: 1.5px solid #e1e4e8; border-radius: 10px 0 0 10px; padding: 10px 14px;
+    background: transparent; border: 0; outline: none; padding: 10px 14px;
   }
-  .mp-search input[type="search"]:focus { outline: none; border-color: var(--cta-orange, #f5a623); }
   .mp-search button {
-    border: 1.5px solid var(--cta-orange, #f5a623); background: var(--cta-orange, #f5a623);
-    color: #fff; font-size: 16px; cursor: pointer; padding: 10px 14px; border-radius: 0 10px 10px 0;
+    border: 0; cursor: pointer; flex-shrink: 0;
+    background: var(--cta-orange, #f5a623); color: #fff; font-size: 16px; padding: 10px 16px;
   }
   .mp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .mp-chip {
@@ -175,18 +180,18 @@ require __DIR__ . '/dashboard/components/header/component.php';
     box-shadow: 0 6px 22px rgba(20,20,40,.05);
     transition: transform .25s ease, box-shadow .25s ease;
   }
-  /* نوار رنگیِ نازک در لبه‌ی کارت (لهجه‌ی مدرن) */
+  /* نوار رنگیِ نازک در لبه‌ی کارت (لهجه‌ی مدرن، هم‌رنگِ برندِ سایت) */
   .mp-pod-card::before {
     content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 4px;
-    background: linear-gradient(180deg, #f5a623, #e0556b);
+    background: linear-gradient(180deg, #0ab2c5, #067d8a);
   }
   .mp-pod-card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(20,20,40,.11); }
   .mp-pod-head { display: flex; gap: 14px; align-items: center; padding: 20px 22px 14px; }
   .mp-pod-cover {
     flex: 0 0 64px; width: 64px; height: 64px; border-radius: 16px; overflow: hidden;
     display: grid; place-items: center; font-size: 30px; color: #fff;
-    background: linear-gradient(135deg, #f5a623, #e0556b);
-    box-shadow: 0 10px 22px -8px rgba(224,85,107,.55);
+    background: linear-gradient(135deg, #0ab2c5, #0899A9);
+    box-shadow: 0 10px 22px -8px rgba(8,153,169,.55);
   }
   .mp-pod-cover img { width: 100%; height: 100%; object-fit: cover; }
   .mp-pod-meta { min-width: 0; flex: 1; }
@@ -195,7 +200,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .mp-pod-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .mp-pod-provider { font-size: 11.5px; font-weight: 700; color: #c2410c; background: rgba(245,166,35,.14); padding: 3px 10px; border-radius: 99px; }
+  .mp-pod-provider { font-size: 11.5px; font-weight: 700; color: #067d8a; background: rgba(8,153,169,.12); padding: 3px 10px; border-radius: 99px; }
   .mp-pod-cat { font-size: 11.5px; font-weight: 700; color: #6b7280; background: #f1f3f5; padding: 3px 10px; border-radius: 99px; }
   .mp-pod-desc {
     font-size: 13.5px; color: #8b8f96; line-height: 1.95; margin: 0; padding: 0 22px 16px;
