@@ -190,6 +190,7 @@ if ($pdo) {
     $pdo->exec("CREATE TABLE IF NOT EXISTS maxapedia_items (
       id          INT AUTO_INCREMENT PRIMARY KEY,
       section     VARCHAR(40)  NOT NULL,
+      category    VARCHAR(120) DEFAULT NULL,
       title       VARCHAR(255) NOT NULL,
       description MEDIUMTEXT,
       url         VARCHAR(1024) DEFAULT NULL,
@@ -198,8 +199,15 @@ if ($pdo) {
       sort_order  INT DEFAULT 0,
       created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      INDEX(section), INDEX(status)
+      INDEX(section), INDEX(status), INDEX(category)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    /* مهاجرت: افزودن ستون «دسته‌بندی» به جدول‌های قدیمی که این ستون را ندارند */
+    $hasCat = $pdo->query("SHOW COLUMNS FROM maxapedia_items LIKE 'category'")->fetch();
+    if (!$hasCat) {
+      $pdo->exec("ALTER TABLE maxapedia_items ADD COLUMN category VARCHAR(120) DEFAULT NULL AFTER section, ADD INDEX(category)");
+    }
+
     $maxapediaSchemaReady = true;
   } catch (Throwable $e) {
     $dbError = $dbError ?? $e->getMessage();
@@ -208,13 +216,35 @@ if ($pdo) {
 
 /* ---------- CRUD ---------- */
 
-/* همه‌ی آیتم‌های یک بخش (اختیاری: فقط منتشرشده‌ها) */
-function maxapedia_items(PDO $pdo, string $section, bool $onlyPublished = false): array {
+/* همه‌ی آیتم‌های یک بخش (اختیاری: فقط منتشرشده‌ها)
+ * $filters: ['category' => string, 'q' => string] — فیلتر دسته‌بندی و جستجو */
+function maxapedia_items(PDO $pdo, string $section, bool $onlyPublished = false, array $filters = []): array {
   $sql = "SELECT * FROM maxapedia_items WHERE section = ?";
   $p = [$section];
   if ($onlyPublished) { $sql .= " AND status = 'published'"; }
+
+  $category = trim((string)($filters['category'] ?? ''));
+  if ($category !== '') { $sql .= " AND category = ?"; $p[] = $category; }
+
+  $qstr = trim((string)($filters['q'] ?? ''));
+  if ($qstr !== '') {
+    $sql .= " AND (title LIKE ? OR description LIKE ? OR category LIKE ?)";
+    $like = '%' . $qstr . '%';
+    array_push($p, $like, $like, $like);
+  }
+
   $sql .= " ORDER BY sort_order ASC, created_at DESC, id DESC";
   return q($pdo, $sql, $p)->fetchAll();
+}
+
+/* فهرست دسته‌بندی‌های موجود در یک بخش (برای انتخاب/فیلتر) */
+function maxapedia_categories(PDO $pdo, string $section, bool $onlyPublished = false): array {
+  $sql = "SELECT DISTINCT category FROM maxapedia_items
+           WHERE section = ? AND category IS NOT NULL AND category <> ''";
+  $p = [$section];
+  if ($onlyPublished) { $sql .= " AND status = 'published'"; }
+  $sql .= " ORDER BY category ASC";
+  return array_map(static fn($r) => (string)$r['category'], q($pdo, $sql, $p)->fetchAll());
 }
 
 /* شمارش آیتم‌های هر بخش — برای نمایش در داشبورد (map: section => count) */
@@ -235,10 +265,11 @@ function maxapedia_create(PDO $pdo, array $d): int {
   if (!maxapedia_is_section($section)) { $section = 'videos'; }
   $status = in_array(($d['status'] ?? ''), ['published','draft'], true) ? $d['status'] : 'published';
   q($pdo,
-    "INSERT INTO maxapedia_items (section, title, description, url, thumbnail, status, sort_order)
-     VALUES (?,?,?,?,?,?,?)",
+    "INSERT INTO maxapedia_items (section, category, title, description, url, thumbnail, status, sort_order)
+     VALUES (?,?,?,?,?,?,?,?)",
     [
       $section,
+      (string)($d['category'] ?? ''),
       (string)($d['title'] ?? ''),
       (string)($d['description'] ?? ''),
       (string)($d['url'] ?? ''),
@@ -254,9 +285,10 @@ function maxapedia_update(PDO $pdo, int $id, array $d): bool {
   $status = in_array(($d['status'] ?? ''), ['published','draft'], true) ? $d['status'] : 'published';
   return q($pdo,
     "UPDATE maxapedia_items
-        SET title=?, description=?, url=?, thumbnail=?, status=?, sort_order=?
+        SET category=?, title=?, description=?, url=?, thumbnail=?, status=?, sort_order=?
       WHERE id=?",
     [
+      (string)($d['category'] ?? ''),
       (string)($d['title'] ?? ''),
       (string)($d['description'] ?? ''),
       (string)($d['url'] ?? ''),

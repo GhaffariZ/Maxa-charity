@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     if ($action === 'create') {
       maxapedia_create($pdo, [
         'section'     => $section,
+        'category'    => trim((string)($_POST['category'] ?? '')),
         'title'       => trim((string)($_POST['title'] ?? '')),
         'description' => trim((string)($_POST['description'] ?? '')),
         'url'         => trim((string)($_POST['url'] ?? '')),
@@ -48,10 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
   exit;
 }
 
+/* ---------- فیلترها (جستجو + دسته‌بندی) ---------- */
+$q         = trim((string)($_GET['q'] ?? ''));
+$catFilter = trim((string)($_GET['cat'] ?? ''));
+
 /* ---------- داده‌ها برای نمایش ---------- */
-$items  = ($pdo) ? maxapedia_items($pdo, $section) : [];
+$allCategories = ($pdo) ? maxapedia_categories($pdo, $section) : [];
+$items  = ($pdo) ? maxapedia_items($pdo, $section, false, ['category' => $catFilter, 'q' => $q]) : [];
 $counts = ($pdo) ? maxapedia_counts($pdo) : [];
 $meta   = maxapedia_section_meta($section);
+$isFiltered = ($q !== '' || $catFilter !== '');
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -129,9 +136,37 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-btn:hover{transform:translateY(-2px)}
 
 /* لیست محتوا */
-.mx-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mx-list-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .mx-list-head h2{font-size:15px;font-weight:800}
+.mx-count-pill{font-size:11.5px;font-weight:700;color:var(--color-primary);background:var(--primary-12);padding:3px 10px;border-radius:99px}
 .mx-empty{background:var(--color-surface);border:1px dashed var(--color-border);border-radius:18px;padding:48px 24px;text-align:center;color:var(--color-muted)}
+
+/* نوار ابزار جستجو/فیلتر */
+.mx-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.mx-toolbar input[type="search"]{flex:1;min-width:160px;font-family:inherit;font-size:13px;color:var(--color-text);
+  background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:10px;padding:9px 12px}
+.mx-toolbar select{font-family:inherit;font-size:13px;color:var(--color-text);
+  background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:10px;padding:9px 12px;cursor:pointer}
+.mx-toolbar input:focus,.mx-toolbar select:focus{outline:none;border-color:var(--color-primary)}
+.mx-toolbar-btn{font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:none;border-radius:10px;padding:9px 16px;
+  color:#fff;background:var(--color-primary)}
+.mx-toolbar-clear{font-size:12.5px;font-weight:700;color:var(--danger);text-decoration:none;padding:0 6px}
+.mx-toolbar-clear:hover{text-decoration:underline}
+
+/* ردیف‌های فشرده‌ی فهرست (به‌جای کارت‌های بزرگ) */
+.mx-list{background:var(--color-surface);border:1px solid var(--color-border);border-radius:14px;box-shadow:var(--shadow-sm);overflow:hidden}
+.mx-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--color-border)}
+.mx-row:last-child{border-bottom:none}
+.mx-row:hover{background:var(--primary-08)}
+.mx-row-thumb{width:72px;height:42px;border-radius:8px;flex-shrink:0;object-fit:cover;background:var(--primary-08)}
+.mx-row-thumb--icon{display:grid;place-items:center;font-size:20px}
+.mx-row-main{flex:1;min-width:0}
+.mx-row-title{font-size:13.5px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx-row-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px}
+.mx-chip{padding:2px 8px;border-radius:99px;font-weight:700;background:var(--color-bg);border:1px solid var(--color-border);color:var(--color-text)}
+.mx-row-date{color:var(--color-muted)}
+.mx-row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mx-row-actions .mx-item-link{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--primary-08);font-size:15px}
 .mx-item{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;box-shadow:var(--shadow-sm);
   padding:16px 18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
 .mx-item-thumb{width:64px;height:64px;border-radius:12px;flex-shrink:0;object-fit:cover;background:var(--primary-08);display:grid;place-items:center;font-size:26px}
@@ -214,6 +249,18 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
 
       <div class="mx-field">
+        <label>دسته‌بندی</label>
+        <input type="text" name="category" maxlength="120" list="mx-cat-list"
+               value="<?= e($catFilter) ?>" placeholder="انتخاب از فهرست یا تعریف دسته‌ی جدید…">
+        <datalist id="mx-cat-list">
+          <?php foreach ($allCategories as $c): ?>
+            <option value="<?= e($c) ?>"></option>
+          <?php endforeach; ?>
+        </datalist>
+        <p class="mx-hint">یک دسته‌ی موجود را انتخاب کنید یا برای ساخت دسته‌ی جدید، نام آن را تایپ کنید.</p>
+      </div>
+
+      <div class="mx-field">
         <label>توضیح کوتاه</label>
         <textarea name="description" maxlength="2000" placeholder="توضیح مختصر درباره این محتوا…"></textarea>
       </div>
@@ -249,50 +296,77 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <div>
       <div class="mx-list-head">
         <h2>محتوای «<?= e($meta['title']) ?>»</h2>
+        <span class="mx-count-pill"><?= fa_digits(count($items)) ?> مورد</span>
       </div>
 
+      <!-- نوار ابزار: جستجو + فیلتر دسته‌بندی -->
+      <form class="mx-toolbar" method="get" action="maxapedia.php">
+        <input type="hidden" name="section" value="<?= e($section) ?>">
+        <input type="search" name="q" value="<?= e($q) ?>" placeholder="جستجو در عنوان، توضیح یا دسته…">
+        <select name="cat" onchange="this.form.submit()">
+          <option value="">همه‌ی دسته‌ها</option>
+          <?php foreach ($allCategories as $c): ?>
+            <option value="<?= e($c) ?>"<?= $c === $catFilter ? ' selected' : '' ?>><?= e($c) ?></option>
+          <?php endforeach; ?>
+        </select>
+        <button type="submit" class="mx-toolbar-btn">جستجو</button>
+        <?php if ($isFiltered): ?>
+          <a class="mx-toolbar-clear" href="maxapedia.php?section=<?= e($section) ?>">پاک کردن</a>
+        <?php endif; ?>
+      </form>
+
       <?php if (empty($items)): ?>
-        <div class="mx-empty">هنوز محتوایی برای این بخش ثبت نشده است. از فرمِ کنار صفحه اولین مورد را اضافه کنید.</div>
+        <div class="mx-empty">
+          <?php if ($isFiltered): ?>
+            موردی با این فیلتر/جستجو پیدا نشد.
+          <?php else: ?>
+            هنوز محتوایی برای این بخش ثبت نشده است. از فرمِ کنار صفحه اولین مورد را اضافه کنید.
+          <?php endif; ?>
+        </div>
       <?php else: ?>
-        <?php foreach ($items as $it):
-          $emInfo = maxapedia_embed((string)($it['url'] ?? ''));
-          $emHtml = $emInfo ? maxapedia_embed_html((string)($it['url'] ?? ''), (string)$it['title']) : null;
-        ?>
-          <div class="mx-item">
-            <?php if (!empty($it['thumbnail'])): ?>
-              <img class="mx-item-thumb" src="<?= e($it['thumbnail']) ?>" alt="">
-            <?php else: ?>
-              <div class="mx-item-thumb"><?= $meta['icon'] ?></div>
-            <?php endif; ?>
-            <div class="mx-item-body">
-              <div class="mx-item-title"><?= e($it['title']) ?></div>
-              <?php if (!empty($it['description'])): ?>
-                <div class="mx-item-desc"><?= e($it['description']) ?></div>
+        <div class="mx-list">
+          <?php foreach ($items as $it):
+            $emInfo = maxapedia_embed((string)($it['url'] ?? ''));
+          ?>
+            <div class="mx-row">
+              <?php if (!empty($it['thumbnail'])): ?>
+                <img class="mx-row-thumb" src="<?= e($it['thumbnail']) ?>" alt="">
+              <?php elseif ($emInfo && !empty($emInfo['poster'])): ?>
+                <img class="mx-row-thumb" src="<?= e($emInfo['poster']) ?>" alt="">
+              <?php else: ?>
+                <div class="mx-row-thumb mx-row-thumb--icon"><?= $meta['icon'] ?></div>
               <?php endif; ?>
-              <div class="mx-item-meta">
-                <span class="mx-badge <?= $it['status']==='published'?'pub':'draft' ?>">
-                  <?= $it['status']==='published'?'منتشرشده':'پیش‌نویس' ?>
-                </span>
-                <?php if ($emInfo): ?>
-                  <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
-                <?php endif; ?>
-                <span style="color:var(--color-muted)"><?= jalali_date($it['created_at']) ?></span>
-                <?php if (!empty($it['url'])): ?>
-                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن لینک ↗</a>
-                <?php endif; ?>
+
+              <div class="mx-row-main">
+                <div class="mx-row-title"><?= e($it['title']) ?></div>
+                <div class="mx-row-tags">
+                  <?php if (!empty($it['category'])): ?>
+                    <span class="mx-chip">🏷 <?= e($it['category']) ?></span>
+                  <?php endif; ?>
+                  <?php if ($emInfo): ?>
+                    <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
+                  <?php endif; ?>
+                  <span class="mx-badge <?= $it['status']==='published'?'pub':'draft' ?>">
+                    <?= $it['status']==='published'?'منتشرشده':'پیش‌نویس' ?>
+                  </span>
+                  <span class="mx-row-date"><?= jalali_date($it['created_at']) ?></span>
+                </div>
               </div>
-              <?php if ($emHtml): ?>
-                <div class="mx-embed"><?= $emHtml ?></div>
-              <?php endif; ?>
+
+              <div class="mx-row-actions">
+                <?php if (!empty($it['url'])): ?>
+                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="باز کردن لینک">↗</a>
+                <?php endif; ?>
+                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">
+                  <input type="hidden" name="action" value="delete">
+                  <input type="hidden" name="section" value="<?= e($section) ?>">
+                  <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
+                  <button type="submit" class="mx-del">حذف</button>
+                </form>
+              </div>
             </div>
-            <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">
-              <input type="hidden" name="action" value="delete">
-              <input type="hidden" name="section" value="<?= e($section) ?>">
-              <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
-              <button type="submit" class="mx-del">حذف</button>
-            </form>
-          </div>
-        <?php endforeach; ?>
+          <?php endforeach; ?>
+        </div>
       <?php endif; ?>
     </div>
 
