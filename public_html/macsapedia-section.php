@@ -73,14 +73,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #fff; border: 1.5px solid #e1e4e8; border-radius: 12px; overflow: hidden;
     transition: border-color .2s ease;
   }
-  .mp-search:focus-within { border-color: var(--cta-orange, #f5a623); }
+  .mp-search:focus-within { border-color: #0899A9; }
   .mp-search input[type="search"] {
     width: 260px; max-width: 60vw; font-family: inherit; font-size: 14px; color: #2f3437;
     background: transparent; border: 0; outline: none; padding: 10px 14px;
   }
   .mp-search button {
     border: 0; cursor: pointer; flex-shrink: 0;
-    background: var(--cta-orange, #f5a623); color: #fff; font-size: 16px; padding: 10px 16px;
+    background: #0899A9; color: #fff; font-size: 16px; padding: 10px 16px;
   }
   .mp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .mp-chip {
@@ -88,10 +88,10 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #fff; border: 1.5px solid #e6e8ea; border-radius: 99px; padding: 7px 16px;
     transition: border-color .2s ease, color .2s ease, background .2s ease;
   }
-  .mp-chip:hover { border-color: var(--cta-orange, #f5a623); color: #2f3437; }
-  .mp-chip.active { background: var(--cta-orange, #f5a623); border-color: var(--cta-orange, #f5a623); color: #fff; }
+  .mp-chip:hover { border-color: #0899A9; color: #2f3437; }
+  .mp-chip.active { background: #0899A9; border-color: #0899A9; color: #fff; }
   .mp-result-note { font-size: 13.5px; color: #6b7280; margin-bottom: 22px; }
-  .mp-result-clear { color: var(--cta-orange, #f5a623); font-weight: 700; text-decoration: none; margin-right: 8px; }
+  .mp-result-clear { color: #0899A9; font-weight: 700; text-decoration: none; margin-right: 8px; }
   .mp-result-clear:hover { text-decoration: underline; }
 
   /* ---------- چیدمان تماشا: پلیر بزرگ + فهرست ویدیوها ---------- */
