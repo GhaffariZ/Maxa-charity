@@ -76,7 +76,7 @@
       gap:10px;
       position: relative;
       z-index: 60;
-      background: rgba(15, 23, 42, 0.6); /* Translucent dark slate glass */
+      background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       backdrop-filter: blur(16px) saturate(180%);
@@ -882,7 +882,7 @@
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
               <li><a href="/macsapedia">مکساپدیا</a></li>
-              <li><a href="/courses">دوره‌ها</a></li>
+              <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
@@ -1196,113 +1196,6 @@
         })
         .then(function(user){
           if(!user) return;   // وارد نشده: همان دکمه ورود/ثبت‌نام بماند
-          slots.forEach(function(slot){ renderLoggedIn(slot, user); });
-        })
-        .catch(function(){ /* وارد نشده */ });
-    });
-  })();
-  </script>
-
-  <!-- ===== وضعیت ورود کاربر: تبدیل دکمه «ورود/ثبت‌نام» به منوی حساب کاربری ===== -->
-  <script>
-  (function(){
-    if (window.__ctaAuthWidget__) return;   // فقط یک‌بار اجرا شود
-    window.__ctaAuthWidget__ = true;
-
-    function ready(fn){
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
-      else fn();
-    }
-    function initials(u){
-      var f=(u.first_name||'').trim(), l=(u.last_name||'').trim();
-      if(f||l) return ((f[0]||'')+(l[0]||'')) || (f[0]||l[0]||'');
-      var e=(u.email||'').trim();
-      return e ? e[0].toUpperCase() : '؟';
-    }
-    function displayName(u){
-      var n=((u.first_name||'')+' '+(u.last_name||'')).trim();
-      if(n) return n;
-      return u.email ? u.email.split('@')[0] : 'حساب کاربری';
-    }
-    function setAvatar(el, u){
-      if(!el) return;
-      if(u.avatar_url){
-        el.innerHTML='';
-        var img=document.createElement('img'); img.src=u.avatar_url; img.alt=''; el.appendChild(img);
-      } else {
-        el.textContent = initials(u);
-      }
-    }
-    function renderLoggedIn(slot, u){
-      var login = slot.querySelector('.js-cta-login');
-      var account = slot.querySelector('.js-cta-account');
-      if(login) login.setAttribute('hidden','');
-      if(!account) return;
-      account.removeAttribute('hidden');
-
-      var name = displayName(u);
-      var nameEl = slot.querySelector('.js-acc-name'); if(nameEl) nameEl.textContent = name;
-      var fullEl = slot.querySelector('.js-acc-fullname'); if(fullEl) fullEl.textContent = name;
-      var emailEl = slot.querySelector('.js-acc-email'); if(emailEl) emailEl.textContent = u.email || '';
-      setAvatar(slot.querySelector('.js-acc-avatar'), u);
-      setAvatar(slot.querySelector('.js-acc-avatar-lg'), u);
-
-      var btn = slot.querySelector('.cta-account-btn');
-      if(btn){
-        btn.addEventListener('click', function(e){
-          e.stopPropagation();
-          var open = account.classList.toggle('open');
-          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-      }
-      var menu = slot.querySelector('.cta-account-menu');
-      if(menu){ menu.addEventListener('click', function(e){ e.stopPropagation(); }); }
-
-      var logout = slot.querySelector('.js-cta-logout');
-      if(logout){
-        logout.addEventListener('click', function(){
-          logout.disabled = true;
-          fetch('/api/auth/logout', { method:'POST', credentials:'include' })
-            .catch(function(){})
-            .then(function(){ window.location.reload(); });
-        });
-      }
-    }
-
-    document.addEventListener('click', function(){
-      document.querySelectorAll('.cta-account.open').forEach(function(a){
-        a.classList.remove('open');
-        var b=a.querySelector('.cta-account-btn'); if(b) b.setAttribute('aria-expanded','false');
-      });
-    });
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape'){
-        document.querySelectorAll('.cta-account.open').forEach(function(a){
-          a.classList.remove('open');
-          var b=a.querySelector('.cta-account-btn'); if(b) b.setAttribute('aria-expanded','false');
-        });
-      }
-    });
-
-    ready(function(){
-      var slots = Array.prototype.slice.call(document.querySelectorAll('.cta-auth-slot'));
-      if(!slots.length) return;
-
-      // با کوکی رفرش (httpOnly) یک access_token تازه می‌گیریم؛ نشست را هم تمدید می‌کند.
-      fetch('/api/auth/refresh', { method:'POST', credentials:'include', headers:{ 'Accept':'application/json' } })
-        .then(function(res){ return res.ok ? res.json() : null; })
-        .then(function(j){
-          var token = j && j.data && j.data.access_token;
-          if(!token) return null;
-          return fetch('/api/user/me', {
-            headers:{ 'Authorization':'Bearer '+token, 'Accept':'application/json' },
-            credentials:'include'
-          })
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(me){ return (me && me.data && me.data.user) ? me.data.user : null; });
-        })
-        .then(function(user){
-          if(!user) return;   // وارد نشده: دکمه ورود/ثبت‌نام بماند
           slots.forEach(function(slot){ renderLoggedIn(slot, user); });
         })
         .catch(function(){ /* وارد نشده */ });
