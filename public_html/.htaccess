@@ -26,6 +26,21 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^benefactor-dashboard/(.*)$ /benefactor-dashboard/index.html [L]
 
 # ---------------------------------------------------------
+# 0) Maxapedia (مکساپدیا) clean URLs
+#    باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
+#    /macsapedia/{section} به‌جای page-view.php به صفحه‌ی بخش برود.
+#    /macsapedia            -> macsapedia.php (شش کارت)
+#    /macsapedia/{section}  -> macsapedia-section.php?section={section}
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^macsapedia/?$ macsapedia.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^macsapedia/([a-zA-Z0-9_-]+)/?$ macsapedia-section.php?section=$1 [L,QSA]
+
+# ---------------------------------------------------------
 # 1) Redirect old URL
 # /dashboard/news-view.php?id=12  ->  /12/
 # ---------------------------------------------------------
