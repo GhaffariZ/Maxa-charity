@@ -85,7 +85,65 @@ table.tbl tr:last-child td{border-bottom:none}
 .tbtn:hover{border-color:var(--color-primary-light)}
 .tbtn.danger{color:var(--danger)}
 .tbtn.danger:hover{border-color:var(--danger);background:rgba(224,85,107,.06)}
-.actions{display:flex;gap:12px;margin-top:8px}
+.actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+
+/* ---------- ورودی رمز + دکمه‌ی تولید ---------- */
+.pass-row{display:flex;gap:10px;align-items:stretch}
+.pass-row input{flex:1}
+.btn-gen{display:inline-flex;align-items:center;gap:7px;height:46px;padding:0 16px;border:1px solid var(--color-border);
+  background:var(--color-bg);border-radius:12px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--color-primary-dark);
+  cursor:pointer;white-space:nowrap;transition:border-color .2s,background .2s}
+.btn-gen:hover{border-color:var(--color-primary-light);background:var(--primary-08)}
+.btn-gen .ic{width:16px;height:16px}
+
+/* ---------- مودال (کارت پروفایلِ شعبه‌ی ساخته‌شده) ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,40,40,.46);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:120;
+  opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.modal-overlay.show{opacity:1;visibility:visible}
+.modal-card{width:100%;max-width:min(420px,92vw);background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;
+  transform:translateY(14px) scale(.97);transition:transform .3s var(--ease)}
+.modal-overlay.show .modal-card{transform:none}
+.modal-top{padding:22px 22px 16px;text-align:center;position:relative;
+  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff}
+.modal-top .m-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;margin:0 auto 10px;
+  background:rgba(255,255,255,.18)}
+.modal-top .m-ic .ic{width:28px;height:28px}
+.modal-top h3{font-size:16px;font-weight:800}
+.modal-top p{font-size:12px;opacity:.9;margin-top:3px}
+.modal-body{padding:18px 22px 22px}
+.profile-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--color-border)}
+.profile-row:last-of-type{border-bottom:none}
+.profile-row .pk{font-size:12px;color:var(--color-muted);font-weight:700;flex-shrink:0}
+.profile-row .pv{font-size:13.5px;font-weight:800;text-align:left;word-break:break-all}
+.profile-row .pv.ltr{direction:ltr}
+.modal-foot{margin-top:14px}
+.modal-foot .btn{width:100%;justify-content:center}
+
+/* ---------- توست ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:var(--color-text);color:var(--color-surface);padding:12px 20px;border-radius:12px;
+  font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);z-index:140;
+  opacity:0;visibility:hidden;transition:opacity .25s,transform .3s var(--ease),visibility .25s;display:flex;align-items:center;gap:9px}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast .ic{width:17px;height:17px;color:var(--success)}
+
+/* ---------- ریسپانسیو: جدول‌های مدیریتی روی موبایل به کارت تبدیل می‌شوند ---------- */
+@media(max-width:640px){
+  body{padding:16px}
+  .card{padding:16px}
+  table.tbl thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  table.tbl,table.tbl tbody,table.tbl tr,table.tbl td{display:block;width:100%}
+  table.tbl tr{border:1px solid var(--color-border);border-radius:14px;padding:6px 12px;margin-bottom:12px;background:var(--color-surface)}
+  table.tbl tr:last-child{margin-bottom:0}
+  table.tbl td{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:9px 0;border-bottom:1px dashed var(--color-border);text-align:left!important}
+  table.tbl tr td:last-child{border-bottom:none}
+  table.tbl td::before{content:attr(data-label);font-size:11.5px;font-weight:700;color:var(--color-muted);flex-shrink:0;text-align:right}
+  table.tbl td:empty{display:none}
+  .btn{width:100%}
+}
 </style>
 </head>
 <body>

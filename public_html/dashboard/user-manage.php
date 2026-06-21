@@ -78,15 +78,15 @@ require __DIR__ . '/_panel_head.php';
           $permsTxt = $perms ? implode('، ', array_map(fn($p)=>$FEATURE_LABELS[$p] ?? $p, $perms)) : '—';
         } ?>
         <tr>
-          <td>
+          <td data-label="کاربر">
             <div style="font-weight:700"><?= e($u['full_name'] ?: $u['username']) ?></div>
             <div style="font-size:11px;color:var(--color-muted)" dir="ltr"><?= e($u['username']) ?></div>
           </td>
-          <td><?= $isAdmin ? '<span class="badge hq">مدیر شعبه</span>' : e($u['role_name'] ?: '—') ?></td>
-          <td style="font-size:12px;color:var(--color-muted)"><?= e($permsTxt) ?></td>
-          <td style="font-size:12px;color:var(--color-muted)"><?= $u['last_login_at'] ? e($u['last_login_at']) : 'بدون ورود' ?></td>
-          <td><?= $active ? '<span class="badge ok">فعال</span>' : '<span class="badge off">غیرفعال</span>' ?></td>
-          <td style="text-align:left">
+          <td data-label="نقش"><?= $isAdmin ? '<span class="badge hq">مدیر شعبه</span>' : e($u['role_name'] ?: '—') ?></td>
+          <td data-label="دسترسی‌ها" style="font-size:12px;color:var(--color-muted)"><?= e($permsTxt) ?></td>
+          <td data-label="آخرین ورود" style="font-size:12px;color:var(--color-muted)"><?= $u['last_login_at'] ? e($u['last_login_at']) : 'بدون ورود' ?></td>
+          <td data-label="وضعیت"><?= $active ? '<span class="badge ok">فعال</span>' : '<span class="badge off">غیرفعال</span>' ?></td>
+          <td data-label="عملیات" style="text-align:left">
             <?php if (!$isAdmin): ?>
               <form method="POST" style="display:inline">
                 <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">

@@ -449,15 +449,17 @@ function dash_sanitize_slug(string $raw): string
 
 /**
  * آیا slug جهانی یکتا و غیررزرو است؟ (هم در branches و هم در pages مرکزی)
+ * هنگام ویرایش، با $exceptBranchId می‌توان شعبه‌ی فعلی را از بررسیِ تداخل کنار گذاشت
+ * (تا slugِ خودش با خودش تداخل نخورد).
  */
-function dash_slug_available(string $slug): bool
+function dash_slug_available(string $slug, int $exceptBranchId = 0): bool
 {
     if ($slug === '' || in_array($slug, RESERVED_SLUGS, true)) {
         return false;
     }
     $pdo = dash_pdo();
-    $st = $pdo->prepare('SELECT 1 FROM branches WHERE slug = ? LIMIT 1');
-    $st->execute([$slug]);
+    $st = $pdo->prepare('SELECT 1 FROM branches WHERE slug = ? AND id <> ? LIMIT 1');
+    $st->execute([$slug, $exceptBranchId]);
     if ($st->fetch()) {
         return false;
     }

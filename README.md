@@ -40,7 +40,7 @@ for the donor/benefactor experience.
 
 <div align="center">
 
-<!-- Replace with your actual screenshot. See docs/screenshots/README.md -->
+<!--- Replace with your actual screenshot. See docs/screenshots/README.md --->
 <img src="docs/screenshots/home.png" alt="MACSA home page" width="900"/>
 
 <sub><i>Home page (RTL Persian layout). Add your screenshot at <code>docs/screenshots/home.png</code>.</i></sub>
