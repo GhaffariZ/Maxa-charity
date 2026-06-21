@@ -94,6 +94,93 @@ function maxapedia_section_meta(string $slug): ?array {
   return MAXAPEDIA_SECTIONS[$slug] ?? null;
 }
 
+/* ============================================================================
+ *  امبد محتوا — تبدیل لینکِ ورودی (واچ/اشتراک/امبد) به پخش‌کننده‌ی قابل‌نمایش.
+ *  پشتیبانی: یوتیوب، آپارات، نماشا (ویدیو) و اسپاتیفای، کست‌باکس، ساندکلاد (صوت)
+ *  و نیز فایل‌های مستقیم رسانه‌ای (mp4/mp3/…). برای میزبان‌های ناشناخته null
+ *  برمی‌گرداند تا فقط به‌صورت لینک نمایش داده شود (نه iframe دلخواه).
+ * ========================================================================== */
+
+/* خروجی: ['type'=>'iframe|video|audio','kind'=>'video|audio','provider'=>..,'src'=>..] یا null */
+function maxapedia_embed(string $url): ?array {
+  $url = trim($url);
+  if ($url === '') { return null; }
+
+  /* فایل‌های مستقیم رسانه‌ای */
+  if (preg_match('~\.(mp4|webm|ogv|mov)(\?.*)?$~i', $url)) {
+    return ['type'=>'video', 'kind'=>'video', 'provider'=>'فایل ویدیویی', 'src'=>$url];
+  }
+  if (preg_match('~\.(mp3|m4a|aac|ogg|oga|wav|flac)(\?.*)?$~i', $url)) {
+    return ['type'=>'audio', 'kind'=>'audio', 'provider'=>'فایل صوتی', 'src'=>$url];
+  }
+
+  $host = strtolower((string)parse_url($url, PHP_URL_HOST));
+  $host = preg_replace('~^www\.~', '', $host);
+
+  /* یوتیوب: watch / youtu.be / embed / shorts / live */
+  if (preg_match('~(?:youtube\.com/(?:watch\?(?:[^#]*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,})~', $url, $m)) {
+    return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'یوتیوب', 'src'=>'https://www.youtube.com/embed/'.$m[1]];
+  }
+
+  /* آپارات: /v/HASH یا لینک امبد */
+  if ($host === 'aparat.com' && preg_match('~/(?:v|video/video/embed/videohash)/([A-Za-z0-9]+)~', $url, $m)) {
+    return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'آپارات', 'src'=>'https://www.aparat.com/video/video/embed/videohash/'.$m[1].'/vt/frame'];
+  }
+
+  /* نماشا */
+  if ($host === 'namasha.com' && preg_match('~/(?:v/|embed/)?([A-Za-z0-9]+)~', $url, $m)) {
+    return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'نماشا', 'src'=>'https://namasha.com/embed/'.$m[1]];
+  }
+
+  /* اسپاتیفای: track/episode/show/playlist/album */
+  if ($host === 'open.spotify.com' && preg_match('~/(?:embed/)?(track|episode|show|playlist|album)/([A-Za-z0-9]+)~', $url, $m)) {
+    return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'اسپاتیفای', 'src'=>'https://open.spotify.com/embed/'.$m[1].'/'.$m[2]];
+  }
+
+  /* کست‌باکس: لینکِ پلیر آماده، یا استخراج id کانال/قسمت از لینک اشتراک */
+  if ($host === 'castbox.fm') {
+    if (strpos($url, '/app/castbox/player/') !== false) {
+      return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'کست‌باکس', 'src'=>$url];
+    }
+    if (preg_match_all('~id(\d+)~', $url, $mm) && count($mm[1]) >= 2) {
+      return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'کست‌باکس',
+              'src'=>'https://castbox.fm/app/castbox/player/id'.$mm[1][0].'/id'.$mm[1][1].'?v=8.22.11&autoplay=0'];
+    }
+  }
+
+  /* ساندکلاد */
+  if ($host === 'w.soundcloud.com') {
+    return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'ساندکلاد', 'src'=>$url];
+  }
+  if ($host === 'soundcloud.com') {
+    return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'ساندکلاد',
+            'src'=>'https://w.soundcloud.com/player/?url='.rawurlencode($url).'&color=%23007b7a&auto_play=false&show_comments=false&visual=false'];
+  }
+
+  return null;
+}
+
+/* HTML آماده‌ی نمایشِ امبد (یا null اگر لینک قابل‌امبد نباشد). کلاس‌ها بین داشبورد
+ * و صفحه‌ی عمومی مشترک‌اند؛ استایلِ هر طرف در همان صفحه تعریف شده است. */
+function maxapedia_embed_html(string $url, string $title = ''): ?string {
+  $em = maxapedia_embed($url);
+  if (!$em) { return null; }
+  $src = htmlspecialchars($em['src'], ENT_QUOTES, 'UTF-8');
+  $ttl = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+  $cls = 'mxp-embed ' . ($em['kind'] === 'audio' ? 'mxp-embed--audio' : 'mxp-embed--video');
+
+  if ($em['type'] === 'video') {
+    return '<div class="'.$cls.'"><video controls preload="metadata" src="'.$src.'" title="'.$ttl.'"></video></div>';
+  }
+  if ($em['type'] === 'audio') {
+    return '<div class="'.$cls.'"><audio controls preload="metadata" src="'.$src.'"></audio></div>';
+  }
+  return '<div class="'.$cls.'"><iframe src="'.$src.'" title="'.$ttl.'" loading="lazy"'
+       . ' referrerpolicy="strict-origin-when-cross-origin"'
+       . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"'
+       . ' allowfullscreen></iframe></div>';
+}
+
 /* ---------- ساخت خودکار جدول ---------- */
 $maxapediaSchemaReady = false;
 if ($pdo) {
