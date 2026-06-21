@@ -119,7 +119,9 @@ function maxapedia_embed(string $url): ?array {
 
   /* یوتیوب: watch / youtu.be / embed / shorts / live */
   if (preg_match('~(?:youtube\.com/(?:watch\?(?:[^#]*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,})~', $url, $m)) {
-    return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'یوتیوب', 'src'=>'https://www.youtube.com/embed/'.$m[1]];
+    return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'یوتیوب',
+            'src'=>'https://www.youtube.com/embed/'.$m[1],
+            'poster'=>'https://i.ytimg.com/vi/'.$m[1].'/hqdefault.jpg'];
   }
 
   /* آپارات: /v/HASH یا لینک امبد */

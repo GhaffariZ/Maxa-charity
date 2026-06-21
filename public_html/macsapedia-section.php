@@ -65,9 +65,10 @@ require __DIR__ . '/dashboard/components/header/component.php';
   }
   .mp-items {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 26px;
   }
+  @media (max-width: 460px) { .mp-items { grid-template-columns: 1fr; } }
   .mp-item {
     display: flex;
     flex-direction: column;
@@ -122,6 +123,104 @@ require __DIR__ . '/dashboard/components/header/component.php';
     text-decoration: none;
   }
   .mp-item-source:hover { color: var(--cta-orange, #f5a623); }
+
+  /* نمای اولیه‌ی ویدیو (روی کارت) — با کلیک، پلیر بزرگ باز می‌شود */
+  .mp-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: #000;
+    display: block;
+    overflow: hidden;
+  }
+  .mp-media-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .mp-media-poster--icon {
+    display: grid;
+    place-items: center;
+    font-size: 52px;
+    background: linear-gradient(135deg, #1f2937, #111827);
+  }
+  .mp-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 24px;
+    padding-right: 4px;
+    transition: background .2s ease, transform .2s ease;
+    pointer-events: none;
+  }
+  .mp-media:hover .mp-play { background: var(--cta-orange, #f5a623); transform: translate(-50%, -50%) scale(1.06); }
+
+  /* لایت‌باکس پخش ویدیو در اندازه‌ی بزرگ */
+  .mp-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(8,10,12,.82);
+    backdrop-filter: blur(2px);
+  }
+  .mp-lightbox[hidden] { display: none; }
+  .mp-lightbox-stage {
+    position: relative;
+    width: min(960px, 94vw);
+    max-height: 90vh;
+  }
+  .mp-lightbox-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  }
+  .mp-lightbox-frame > iframe,
+  .mp-lightbox-frame > video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .mp-lightbox-close {
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    width: 40px; height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #2f3437;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,.3);
+  }
+  @media (max-width: 520px) {
+    .mp-lightbox-close { top: -48px; left: 0; }
+  }
 </style>
 
 <div class="mp-wrap">
@@ -140,10 +239,25 @@ require __DIR__ . '/dashboard/components/header/component.php';
   <?php else: ?>
     <div class="mp-items">
       <?php foreach ($mpItems as $it): ?>
-        <?php $mpEmbed = maxapedia_embed_html((string)($it['url'] ?? ''), (string)$it['title']); ?>
+        <?php $mpEm = maxapedia_embed((string)($it['url'] ?? '')); ?>
         <article class="mp-item">
-          <?php if ($mpEmbed): ?>
-            <?= $mpEmbed ?>
+          <?php if ($mpEm && $mpEm['kind'] === 'video'): ?>
+            <button type="button" class="mp-media"
+                    data-embed-type="<?= $mpEm['type'] === 'video' ? 'video' : 'iframe' ?>"
+                    data-embed-src="<?= htmlspecialchars($mpEm['src'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-embed-title="<?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="پخش ویدیو: <?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?>">
+              <?php if (!empty($mpEm['poster'])): ?>
+                <img class="mp-media-poster" src="<?= htmlspecialchars($mpEm['poster'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+              <?php elseif (!empty($it['thumbnail'])): ?>
+                <img class="mp-media-poster" src="<?= htmlspecialchars($it['thumbnail'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+              <?php else: ?>
+                <span class="mp-media-poster mp-media-poster--icon"><?= $mpSection['icon'] ?></span>
+              <?php endif; ?>
+              <span class="mp-play">▶</span>
+            </button>
+          <?php elseif ($mpEm && $mpEm['kind'] === 'audio'): ?>
+            <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
           <?php elseif (!empty($it['thumbnail'])): ?>
             <img class="mp-item-thumb" src="<?= htmlspecialchars($it['thumbnail'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($it['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
           <?php else: ?>
@@ -155,7 +269,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
               <p><?= nl2br(htmlspecialchars($it['description'], ENT_QUOTES, 'UTF-8')) ?></p>
             <?php endif; ?>
             <?php if (!empty($it['url'])): ?>
-              <?php if ($mpEmbed): ?>
+              <?php if ($mpEm): ?>
                 <a class="mp-item-source" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
               <?php else: ?>
                 <a class="mp-item-link" href="<?= htmlspecialchars($it['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">مشاهده ↗</a>
@@ -167,6 +281,67 @@ require __DIR__ . '/dashboard/components/header/component.php';
     </div>
   <?php endif; ?>
 </div>
+
+<!-- لایت‌باکس پخش ویدیو -->
+<div class="mp-lightbox" id="mpLightbox" hidden>
+  <div class="mp-lightbox-stage">
+    <button type="button" class="mp-lightbox-close" data-mp-close aria-label="بستن">✕</button>
+    <div class="mp-lightbox-frame" id="mpLightboxFrame"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var lb    = document.getElementById('mpLightbox');
+  var frame = document.getElementById('mpLightboxFrame');
+  if (!lb || !frame) return;
+
+  function openPlayer(type, src, title) {
+    var node;
+    if (type === 'video') {
+      node = document.createElement('video');
+      node.src = src;
+      node.controls = true;
+      node.autoplay = true;
+      node.setAttribute('playsinline', '');
+    } else {
+      node = document.createElement('iframe');
+      node.src = src + (src.indexOf('?') === -1 ? '?' : '&') + 'autoplay=1';
+      node.title = title || '';
+      node.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      node.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      node.setAttribute('allowfullscreen', '');
+    }
+    frame.innerHTML = '';
+    frame.appendChild(node);
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePlayer() {
+    lb.hidden = true;
+    frame.innerHTML = '';            // توقف پخش با حذف نود
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.mp-media').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openPlayer(
+        btn.getAttribute('data-embed-type'),
+        btn.getAttribute('data-embed-src'),
+        btn.getAttribute('data-embed-title')
+      );
+    });
+  });
+
+  lb.addEventListener('click', function (e) {
+    if (e.target === lb || e.target.hasAttribute('data-mp-close')) closePlayer();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !lb.hidden) closePlayer();
+  });
+})();
+</script>
 
 <?php
 require __DIR__ . '/dashboard/components/footer/component.php';
