@@ -23,13 +23,13 @@
       --cta-orange-2:#f39a20;
       --cta-text:#ffffff;
       --cta-muted: rgba(255,255,255,.78);
-      --cta-container: 1180px;
-      --cta-nav-h: 78px;
+      --cta-container: 1360px;
+      --cta-nav-h: 86px;
 
       --cta-shadow: 0 10px 22px rgba(0,0,0,.14);
       --cta-shadow-soft: 0 8px 18px rgba(0,0,0,.12);
       --cta-radius: 14px;
-      --cta-edge-gap: 10px;
+      --cta-edge-gap: 16px;
     }
 
     .cta {
@@ -42,14 +42,14 @@
     .cta-container{
     width: min(var(--cta-container), 100%);
     margin-inline:auto;
-    padding-inline:16px;
+    padding-inline:28px;
     }
 
     /* ===== HERO ===== */
     .cta-hero{
       position:relative;
       width:100%;
-      min-height: 560px;
+      min-height: 640px;
       isolation:isolate;
       overflow:hidden;
       background:#111;
@@ -156,7 +156,7 @@
       padding: 0;
       display:flex;
       align-items:center;
-      gap: 6px;
+      gap: 4px;
       white-space: nowrap;
       flex-wrap: nowrap;
     }
@@ -170,11 +170,11 @@
     .cta-menu > li > a{
       display:inline-flex;
       align-items:center;
-      padding:8px 10px;
+      padding:8px 14px;
       border-radius:10px;
       transition: .2s ease;
       outline: none;
-      font-size: 14px;
+      font-size: 14.5px;
       color: rgba(255,255,255,.92);
     }
 
@@ -355,15 +355,15 @@
 }
 
 .cta-header{
-  background: rgba(15, 23, 42, 0.6); /* Translucent dark slate glass */
+  background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.3), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  padding: 8px 16px;
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(245, 166, 35, 0.14);
+  padding: 10px 22px;
 }
 
 @media (max-width: 1024px){
@@ -403,20 +403,36 @@
 }
 /* ===== HAMBURGER ICON ===== */
 .menu-icon{
-  width: 28px;
-  height: 20px;
+  width: 38px;
+  height: 38px;
   display: none;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   cursor: pointer;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.menu-icon:hover{
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.22);
 }
 
 .menu-icon div{
-  height: 3px;
+  width: 17px;
+  height: 2px;
   background: #fff;
-  border-radius: 3px;
-  transition: .3s ease;
+  border-radius: 2px;
+  transition: transform .3s ease, opacity .3s ease;
 }
+
+.menu-icon.active div:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.menu-icon.active div:nth-child(2){ opacity: 0; }
+.menu-icon.active div:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
 
 /* فقط موبایل و تبلت */
 @media (max-width: 1024px){
@@ -636,9 +652,9 @@
     .cta-content{
       position:relative;
       z-index:6;
-      padding-top: calc(var(--cta-nav-h) + 20px);
-      padding-bottom: 54px;
-      min-height: 560px;
+      padding-top: calc(var(--cta-nav-h) + 30px);
+      padding-bottom: 72px;
+      min-height: 640px;
       display:flex;
       align-items:center;
     }
@@ -750,7 +766,7 @@
     .cta-band{
       position:relative;
       background: linear-gradient(180deg, var(--cta-orange) 0%, var(--cta-orange-2) 100%);
-      padding: 26px 0 64px 0;
+      padding: 34px 0 80px 0;
     }
 
     .cta-band .cta-container{
@@ -812,21 +828,21 @@
     /* ===== Cards (همون قبلی) ===== */
     .cta-cards-wrap{
       position:relative;
-      margin-top: -42px;
-      padding-bottom: 38px;
+      margin-top: -52px;
+      padding-bottom: 52px;
     }
 
     .cta-cards{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:22px;
+      gap:32px;
     }
 
     .cta-card{
       background:#fff;
       border-radius: 10px;
       box-shadow: var(--cta-shadow);
-      padding:18px 18px 16px;
+      padding:26px 24px 22px;
       border:1px solid rgba(0,0,0,.06);
       text-align:center;
       cursor:pointer;
@@ -940,9 +956,9 @@
     /* نقطه شکست موبایل و تبلت برای سایدبار همبرگری */
     @media (max-width: 1024px) {
       :root {
-        --cta-nav-h: 64px;
+        --cta-nav-h: 56px;
       }
-      
+
       .cta-center {
         display: none !important;
       }
@@ -972,12 +988,58 @@
         height: 36px;
       }
 
+      .cta-header {
+        padding: 6px 14px;
+      }
+
       #mobileMenu {
         display: block;
       }
 
       #mobileBackdrop {
         display: block;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .cta-header {
+        padding: 5px 12px;
+        gap: 8px;
+      }
+
+      .cta-brand img {
+        height: 26px;
+      }
+
+      .cta-auth {
+        padding: 0 10px;
+        font-size: 12px;
+        height: 32px;
+      }
+
+      .menu-icon {
+        width: 34px;
+        height: 34px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .cta-header {
+        padding: 5px 10px;
+        gap: 6px;
+      }
+
+      .cta-brand img {
+        height: 22px;
+      }
+
+      .menu-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .menu-icon div {
+        width: 15px;
       }
     }
 
@@ -1285,7 +1347,7 @@
 
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
-              <li><a href="/macsapedia">مکساپدیا</a></li>
+              <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
@@ -1645,12 +1707,14 @@ function initSlider() {
   function openMenu(){
     menu.classList.add("open");
     backdrop.classList.add("show");
+    toggleBtn.classList.add("active");
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu(){
     menu.classList.remove("open");
     backdrop.classList.remove("show");
+    toggleBtn.classList.remove("active");
     document.body.style.overflow = "";
   }
 
