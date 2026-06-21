@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'category'    => trim((string)($_POST['category'] ?? '')),
         'title'       => trim((string)($_POST['title'] ?? '')),
         'description' => trim((string)($_POST['description'] ?? '')),
-        'url'         => trim((string)($_POST['url'] ?? '')),
+        'url'         => maxapedia_extract_url((string)($_POST['url'] ?? '')),
         'thumbnail'   => trim((string)($_POST['thumbnail'] ?? '')),
         'status'      => $_POST['status'] ?? 'published',
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
@@ -55,6 +55,8 @@ $catFilter = trim((string)($_GET['cat'] ?? ''));
 
 /* ---------- داده‌ها برای نمایش ---------- */
 $allCategories = ($pdo) ? maxapedia_categories($pdo, $section) : [];
+/* فهرستِ انتخابِ دسته در فرمِ افزودن = پیش‌فرض‌ها + دسته‌های ساخته‌شده (یکتا) */
+$catOptions = array_values(array_unique(array_merge(MAXAPEDIA_DEFAULT_CATEGORIES, $allCategories)));
 $items  = ($pdo) ? maxapedia_items($pdo, $section, false, ['category' => $catFilter, 'q' => $q]) : [];
 $counts = ($pdo) ? maxapedia_counts($pdo) : [];
 $meta   = maxapedia_section_meta($section);
@@ -253,7 +255,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <input type="text" name="category" maxlength="120" list="mx-cat-list"
                value="<?= e($catFilter) ?>" placeholder="انتخاب از فهرست یا تعریف دسته‌ی جدید…">
         <datalist id="mx-cat-list">
-          <?php foreach ($allCategories as $c): ?>
+          <?php foreach ($catOptions as $c): ?>
             <option value="<?= e($c) ?>"></option>
           <?php endforeach; ?>
         </datalist>
@@ -266,9 +268,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
 
       <div class="mx-field">
-        <label>لینک محتوا (امبد ویدیو / صوت / فایل)</label>
-        <input type="url" name="url" maxlength="1024" placeholder="https://… (یوتیوب، آپارات، کست‌باکس، اسپاتیفای…)">
-        <p class="mx-hint">لینکِ معمولیِ یوتیوب، آپارات، نماشا، کست‌باکس، اسپاتیفای، ساندکلاد یا فایل مستقیم (mp4/mp3) را بگذارید؛ به‌صورت پخش‌کننده در صفحه‌ی عمومی نمایش داده می‌شود.</p>
+        <label>لینک یا کدِ امبدِ محتوا (ویدیو / صوت / فایل)</label>
+        <textarea name="url" maxlength="6000" rows="3" placeholder="https://…  یا کلِ کدِ امبد (مثلاً &lt;iframe …&gt;…&lt;/iframe&gt;)"></textarea>
+        <p class="mx-hint">می‌توانید لینکِ معمولیِ یوتیوب، آپارات، نماشا، کست‌باکس، اسپاتیفای، ساندکلاد یا فایل مستقیم (mp4/mp3) را بگذارید — یا کلِ کدِ امبدی که این سرویس‌ها می‌دهند (iframe یا اسکریپتِ آپارات) را همین‌جا بچسبانید؛ آدرسِ پخش به‌صورت خودکار استخراج می‌شود.</p>
       </div>
 
       <div class="mx-field">

@@ -86,6 +86,12 @@ if (!defined('MAXAPEDIA_SECTIONS')) {
   ]);
 }
 
+/* دسته‌بندی‌های پیش‌فرض (همیشه در فهرستِ انتخاب نمایش داده می‌شوند؛ افزودنِ
+ * دسته‌ی جدید هم ممکن است). دسته‌های ساخته‌شده توسط ادمین به این‌ها افزوده می‌شوند. */
+if (!defined('MAXAPEDIA_DEFAULT_CATEGORIES')) {
+  define('MAXAPEDIA_DEFAULT_CATEGORIES', ['تغذیه', 'مراقبت', 'روتین']);
+}
+
 /* یک بخش معتبر است؟ */
 function maxapedia_is_section(string $slug): bool {
   return array_key_exists($slug, MAXAPEDIA_SECTIONS);
@@ -100,6 +106,36 @@ function maxapedia_section_meta(string $slug): ?array {
  *  و نیز فایل‌های مستقیم رسانه‌ای (mp4/mp3/…). برای میزبان‌های ناشناخته null
  *  برمی‌گرداند تا فقط به‌صورت لینک نمایش داده شود (نه iframe دلخواه).
  * ========================================================================== */
+
+/* استخراجِ آدرسِ قابل‌استفاده از ورودی — ورودی می‌تواند یک URL ساده یا کلِ کدِ
+ * امبد (iframe / اسکریپتِ آپارات / div) باشد. آدرسِ src یا اولین URL را بازمی‌گرداند. */
+function maxapedia_extract_url(string $input): string {
+  $input = trim($input);
+  if ($input === '') { return ''; }
+
+  /* اگر HTML/کد امبد است، آدرس را بیرون می‌کشیم */
+  if (strpos($input, '<') !== false) {
+    // اولویت: src یک <iframe>
+    if (preg_match('~<iframe\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']~i', $input, $m)) {
+      return html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+    }
+    // امبدِ اسکریپتیِ آپارات: <script src="...aparat.com/embed/HASH...">
+    if (preg_match('~<script\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']~i', $input, $m)) {
+      return html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+    }
+    // هر src دیگری در کد
+    if (preg_match('~\bsrc\s*=\s*["\']([^"\']+)["\']~i', $input, $m)) {
+      return html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+    }
+    // در نهایت اولین URL درون متن
+    if (preg_match('~https?://[^\s"\'<>]+~i', $input, $m)) {
+      return html_entity_decode($m[0], ENT_QUOTES, 'UTF-8');
+    }
+    return '';
+  }
+
+  return $input; // ورودیِ سادهٔ URL
+}
 
 /* خروجی: ['type'=>'iframe|video|audio','kind'=>'video|audio','provider'=>..,'src'=>..] یا null */
 function maxapedia_embed(string $url): ?array {
@@ -124,8 +160,10 @@ function maxapedia_embed(string $url): ?array {
             'poster'=>'https://i.ytimg.com/vi/'.$m[1].'/hqdefault.jpg'];
   }
 
-  /* آپارات: /v/HASH یا لینک امبد */
-  if ($host === 'aparat.com' && preg_match('~/(?:v|video/video/embed/videohash)/([A-Za-z0-9]+)~', $url, $m)) {
+  /* آپارات: /v/HASH (تماشا)، /embed/HASH (امبد اسکریپتی) یا /video/video/embed/videohash/HASH (iframe) */
+  if ($host === 'aparat.com'
+      && ( preg_match('~/video/video/embed/videohash/([A-Za-z0-9]+)~', $url, $m)
+        || preg_match('~/(?:v|embed)/([A-Za-z0-9]+)~', $url, $m) )) {
     return ['type'=>'iframe', 'kind'=>'video', 'provider'=>'آپارات', 'src'=>'https://www.aparat.com/video/video/embed/videohash/'.$m[1].'/vt/frame'];
   }
 
