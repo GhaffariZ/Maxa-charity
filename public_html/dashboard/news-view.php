@@ -203,7 +203,7 @@ try {
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
           AND n.id <> ?
         ORDER BY n.publish_date DESC
-        LIMIT 4
+        LIMIT 3
     ");
     $latStmt->execute([$id]);
     $latestNews = $latStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -593,18 +593,27 @@ require_once __DIR__ . '/components/header/component.php';
         padding-right: 14px;
     }
 
-    /* بخش اخبار مرتبط در انتهای خبر */
-    .related-news-section {
-        margin-top: 48px;
-        padding-top: 32px;
+    /* بخش اخبار مرتبط جدید - خارج از کانتینر اصلی بالای فوتر */
+    .related-news-section-outer {
+        background-color: #f3f7f8; /* رنگ پس‌زمینه نرم و ملایم */
         border-top: 1px solid var(--news-border);
+        border-bottom: 1px solid var(--news-border);
+        padding: 56px 0;
+        width: 100%;
+        direction: rtl;
+        margin-top: 48px;
+    }
+    .related-news-section-inner {
+        max-width: var(--cta-container, 1440px);
+        margin: 0 auto;
+        padding: 0 20px;
         text-align: right;
     }
     .related-title {
         font-size: 18px;
         font-weight: 900;
         color: var(--news-text);
-        margin: 0 0 24px 0;
+        margin: 0 0 28px 0;
         position: relative;
         display: inline-block;
         padding-bottom: 8px;
@@ -622,7 +631,7 @@ require_once __DIR__ . '/components/header/component.php';
     .related-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        gap: 24px;
     }
     @media (max-width: 768px) {
         .related-grid {
@@ -637,7 +646,7 @@ require_once __DIR__ . '/components/header/component.php';
         display: flex;
         flex-direction: column;
         text-decoration: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.015);
         transition: all 0.25s ease;
     }
     .related-card:hover {
@@ -761,41 +770,6 @@ require_once __DIR__ . '/components/header/component.php';
                     ?>
                 </footer>
             <?php endif; ?>
-
-            <!-- اخبار مرتبط در پایان هر خبر -->
-            <?php if (count($latestNews) > 0): ?>
-                <div class="related-news-section">
-                    <h3 class="related-title">اخبار مرتبط</h3>
-                    <div class="related-grid">
-                        <?php foreach ($latestNews as $lat): 
-                            $newsSlug = slugify($lat['title'] ?? '');
-                            $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
-                            $latImage = '';
-                            if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
-                                $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
-                            } else {
-                                $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
-                            }
-                            $latDate = formatJalaliDateTimeFa($lat['publish_date'] ?? null);
-                            $latDateParts = explode(' - ', $latDate);
-                            $latDateOnly = $latDateParts[0] ?? $latDate;
-                        ?>
-                            <a href="<?= htmlspecialchars($latUrl) ?>" class="related-card">
-                                <div class="related-img-box">
-                                    <img src="<?= htmlspecialchars($latImage) ?>" alt="<?= htmlspecialchars($lat['title']) ?>" class="related-img" loading="lazy">
-                                </div>
-                                <div class="related-info">
-                                    <h4 class="related-post-title"><?= htmlspecialchars($lat['title']) ?></h4>
-                                    <div class="related-meta">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span><?= htmlspecialchars($latDateOnly) ?></span>
-                                    </div>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
         </article>
 
         <!-- ستون چپ: سایدبار -->
@@ -828,6 +802,43 @@ require_once __DIR__ . '/components/header/component.php';
         </aside>
     </div>
 </div>
+
+<!-- اخبار مرتبط در خارج از کانتینر اصلی، بالای فوتر با پس‌زمینه نرم -->
+<?php if (count($latestNews) > 0): ?>
+    <section class="related-news-section-outer">
+        <div class="related-news-section-inner">
+            <h3 class="related-title">اخبار مرتبط</h3>
+            <div class="related-grid">
+                <?php foreach ($latestNews as $lat): 
+                    $newsSlug = slugify($lat['title'] ?? '');
+                    $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
+                    $latImage = '';
+                    if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
+                        $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
+                    } else {
+                        $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
+                    }
+                    $latDate = formatJalaliDateTimeFa($lat['publish_date'] ?? null);
+                    $latDateParts = explode(' - ', $latDate);
+                    $latDateOnly = $latDateParts[0] ?? $latDate;
+                ?>
+                    <a href="<?= htmlspecialchars($latUrl) ?>" class="related-card">
+                        <div class="related-img-box">
+                            <img src="<?= htmlspecialchars($latImage) ?>" alt="<?= htmlspecialchars($lat['title']) ?>" class="related-img" loading="lazy">
+                        </div>
+                        <div class="related-info">
+                            <h4 class="related-post-title"><?= htmlspecialchars($lat['title']) ?></h4>
+                            <div class="related-meta">
+                                <i class="far fa-calendar-alt"></i>
+                                <span><?= htmlspecialchars($latDateOnly) ?></span>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
 
 <script>
 // اسکریپت کپی لینک با فیدبک تولتیپ
