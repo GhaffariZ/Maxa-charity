@@ -41,6 +41,36 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^macsapedia/([a-zA-Z0-9_-]+)/?$ macsapedia-section.php?section=$1 [L,QSA]
 
 # ---------------------------------------------------------
+# 0.6) دوره‌ها (Courses) clean URLs
+#      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
+#      /courses/{...} به‌جای page-view.php به صفحه‌های دوره برود.
+#      /courses                 -> dashboard/courses.php (کاتالوگ)
+#      /courses/checkout        -> dashboard/course-checkout.php (سبد خرید)
+#      /courses/my              -> dashboard/course-my.php (دوره‌های من)
+#      /courses/learn/{id}      -> dashboard/course-learn.php?id={id} (پخش‌کننده)
+#      /courses/{id}            -> dashboard/course-details.php?id={id} (جزئیات)
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/?$ dashboard/courses.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/checkout/?$ dashboard/course-checkout.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/my/?$ dashboard/course-my.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/learn/([0-9]+)/?$ dashboard/course-learn.php?id=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^courses/([0-9]+)/?$ dashboard/course-details.php?id=$1 [L,QSA]
+
+# ---------------------------------------------------------
 # 1) Redirect old URL
 # /dashboard/news-view.php?id=12  ->  /12/
 # ---------------------------------------------------------

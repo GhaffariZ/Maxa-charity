@@ -762,6 +762,11 @@
     }
     .cta-account-menu a:hover,.cta-account-menu button:hover{background:rgba(255,255,255,.1);color:#fff}
     .cta-account-menu svg{width:17px;height:17px;opacity:.85;flex-shrink:0}
+    .cta-account-cart{position:relative}
+    .cta-cart-badge{margin-inline-start:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;
+      background:#f5a623;color:#3a2a00;font-size:11px;font-weight:800;display:none;place-items:center;
+      font-family:'Vazirmatn',sans-serif;line-height:1}
+    .cta-cart-badge[hidden]{display:none}
     .cta-account-logout{color:#ffb4b4 !important;margin-top:6px;border-top:1px solid rgba(255,255,255,.1) !important;border-radius:0 0 8px 8px !important}
     .cta-account-logout:hover{background:rgba(229,57,53,.28) !important;color:#fff !important}
     [hidden]{display:none !important}
@@ -903,7 +908,7 @@
               <li><a href="/branches.html">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
-              <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
+              <li><a href="/courses">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
@@ -961,6 +966,18 @@
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   کمک آنلاین
                 </a>
+
+                <?php if (!empty($maxaCoursesContext)): /* فقط داخل صفحه‌های دوره‌ها نمایش داده می‌شود */ ?>
+                <a role="menuitem" href="/courses/my" class="cta-account-courses">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  دوره‌های من
+                </a>
+                <a role="menuitem" href="/courses/checkout" class="cta-account-cart">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="21" r="1.6" stroke="currentColor" stroke-width="2"/><circle cx="19" cy="21" r="1.6" stroke="currentColor" stroke-width="2"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L23 7H5.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  سبد خرید
+                  <span class="cta-cart-badge" data-cart-badge hidden>۰</span>
+                </a>
+                <?php endif; ?>
 
                 <button type="button" class="cta-account-logout js-cta-logout" role="menuitem">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17l-5-5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>

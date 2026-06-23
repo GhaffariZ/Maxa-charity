@@ -48,12 +48,10 @@ $pageCss = course_card_styles() . <<<CSS
 @media(max-width:760px){.hero{padding:32px 22px}.hero h1{font-size:24px}}
 CSS;
 
-course_html_head('دوره‌های آموزشی', $pageCss);
-
 $totalStudents = 0; foreach ($courses as $c) { $totalStudents += (int)($c['students'] ?? 0); }
+
+course_site_head('دوره‌های آموزشی', $pageCss);
 ?>
-<body>
-<?php course_public_nav('catalog'); ?>
 
 <div class="page">
   <!-- قهرمان -->
@@ -124,7 +122,6 @@ $totalStudents = 0; foreach ($courses as $c) { $totalStudents += (int)($c['stude
   </div>
 </div>
 
-<?php course_theme_fab(); ?>
 <script>
 (function(){
   "use strict";
@@ -169,5 +166,4 @@ $totalStudents = 0; foreach ($courses as $c) { $totalStudents += (int)($c['stude
   $('sortSel').addEventListener('change', function(){ sortBy(this.value); });
 })();
 </script>
-</body>
-</html>
+<?php course_site_footer(); ?>
