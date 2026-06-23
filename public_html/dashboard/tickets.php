@@ -172,31 +172,61 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       } elseif (!in_array($status, ['open','closed'], true)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'وضعیتِ نامعتبر.'];
       } else {
-        $pdo->beginTransaction();
-        $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $tid]);
+        // بررسی دسترسی ویژه بستن و بازگشایی تیکت
+        $allowStatusChange = false;
 
-        // همگام‌سازی وضعیت بین تیکت ارجاع شده و اصلی
-        if ($t['escalated_from'] !== null) {
-          // الف) این تیکت ارجاع شده است، همگام‌سازی با تیکت اصلی
-          $orig_tid = (int)$t['escalated_from'];
-          $orig_t = tk_load($pdo, $orig_tid);
-          if ($orig_t) {
-            $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $orig_tid]);
+        if ($status === 'closed') {
+          // کسی که تیکت را ایجاد کرده (چه کاربر، چه ادمین شعبه) نمی‌تواند آن را ببندد
+          if ((int)$t['created_by'] !== $ME) {
+            $allowStatusChange = true;
           }
-        } else {
-          // ب) این تیکت اصلی است، همگام‌سازی با تیکت ارجاع شده (در صورت وجود)
-          $st_escal = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
-          $st_escal->execute([$tid]);
-          $escal_t = $st_escal->fetch();
-          if ($escal_t) {
-            $escal_tid = (int)$escal_t['id'];
-            $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $escal_tid]);
+        } elseif ($status === 'open') {
+          // بازگشایی تیکت:
+          if ($MY_ROLE === 'super') {
+            // مدیر ستاد همیشه می‌تواند تیکت‌های ستاد را بازگشایی کند
+            $allowStatusChange = ($t['target'] === 'hq');
+          } elseif ($MY_ROLE === 'branch_admin') {
+            // ادمین شعبه فقط در صورتی که تیکت مربوط به شعبه باشد و ارجاع داده نشده باشد می‌تواند بازگشایی کند
+            if ($t['target'] === 'branch') {
+              $chk = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
+              $chk->execute([$tid]);
+              if (!$chk->fetch()) {
+                $allowStatusChange = true;
+              }
+            }
           }
+          // کاربران عادی هیچ‌گاه نمی‌توانند تیکت را بازگشایی کنند
         }
 
-        $pdo->commit();
-        dash_audit('ticket_status', ['ticket_id'=>$tid,'status'=>$status]);
-        $_SESSION['ticket_flash'] = ['type'=>'ok','text'=> $status==='closed' ? 'تیکت بسته شد.' : 'تیکت بازگشایی شد.'];
+        if (!$allowStatusChange) {
+          $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'شما اجازه تغییر وضعیت این تیکت را ندارید.'];
+        } else {
+          $pdo->beginTransaction();
+          $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $tid]);
+
+          // همگام‌سازی وضعیت بین تیکت ارجاع شده و اصلی
+          if ($t['escalated_from'] !== null) {
+            // الف) این تیکت ارجاع شده است، همگام‌سازی با تیکت اصلی
+            $orig_tid = (int)$t['escalated_from'];
+            $orig_t = tk_load($pdo, $orig_tid);
+            if ($orig_t) {
+              $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $orig_tid]);
+            }
+          } else {
+            // ب) این تیکت اصلی است، همگام‌سازی با تیکت ارجاع شده (در صورت وجود)
+            $st_escal = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
+            $st_escal->execute([$tid]);
+            $escal_t = $st_escal->fetch();
+            if ($escal_t) {
+              $escal_tid = (int)$escal_t['id'];
+              $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $escal_tid]);
+            }
+          }
+
+          $pdo->commit();
+          dash_audit('ticket_status', ['ticket_id'=>$tid,'status'=>$status]);
+          $_SESSION['ticket_flash'] = ['type'=>'ok','text'=> $status==='closed' ? 'تیکت بسته شد.' : 'تیکت بازگشایی شد.'];
+        }
       }
     }
 
@@ -622,6 +652,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         $isEscalated = (int)$t['child_count'] > 0;
         $isEscalIn   = $t['escalated_from'] !== null;
         $readOnly    = ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin');
+
+        $canClose = ($status !== 'closed') && ((int)$t['created_by'] !== $ME);
+        $canReopen = false;
+        if ($status === 'closed') {
+          if ($MY_ROLE === 'super') {
+            $canReopen = ($t['target'] === 'hq');
+          } elseif ($MY_ROLE === 'branch_admin') {
+            $canReopen = ($t['target'] === 'branch' && (int)$t['child_count'] === 0);
+          }
+        }
       ?>
       <article class="tk-card <?= $V['unread']?'unread':'' ?> <?= $status==='closed'?'closed':'' ?>"
                data-id="<?= $tid ?>" data-box="<?= e($box) ?>" data-status="<?= e($status) ?>">
@@ -713,27 +753,31 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     </button>
                   </form>
                 <?php endif; ?>
-                <form method="post">
-                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                  <input type="hidden" name="action" value="status">
-                  <input type="hidden" name="status" value="closed">
-                  <input type="hidden" name="ticket_id" value="<?= $tid ?>">
-                  <button type="submit" class="btn btn-danger">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    بستنِ تیکت
-                  </button>
-                </form>
+                <?php if ($canClose): ?>
+                  <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="status">
+                    <input type="hidden" name="status" value="closed">
+                    <input type="hidden" name="ticket_id" value="<?= $tid ?>">
+                    <button type="submit" class="btn btn-danger">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      بستنِ تیکت
+                    </button>
+                  </form>
+                <?php endif; ?>
               </div>
             <?php else: ?>
               <div class="tk-actions">
                 <div class="tk-locked" style="flex:1">این تیکت بسته شده است.</div>
-                <form method="post">
-                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                  <input type="hidden" name="action" value="status">
-                  <input type="hidden" name="ticket_id" value="<?= $tid ?>">
-                  <input type="hidden" name="status" value="open">
-                  <button type="submit" class="btn btn-ghost btn-sm">بازگشایی</button>
-                </form>
+                <?php if ($canReopen): ?>
+                  <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="action" value="status">
+                    <input type="hidden" name="ticket_id" value="<?= $tid ?>">
+                    <input type="hidden" name="status" value="open">
+                    <button type="submit" class="btn btn-ghost btn-sm">بازگشایی</button>
+                  </form>
+                <?php endif; ?>
               </div>
             <?php endif; ?>
           </div>
