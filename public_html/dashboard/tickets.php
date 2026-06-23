@@ -51,7 +51,7 @@ function tk_load(PDO $pdo, int $id): ?array {
 function tk_can_view(?array $t, string $role, int $me, int $branch): bool {
   if (!$t) return false;
   if ($role === 'super')        return $t['target'] === 'hq';
-  if ($role === 'branch_admin') return ((int)$t['created_by'] === $me) || ((int)$t['branch_id'] === $branch && $t['target'] === 'branch');
+  if ($role === 'branch_admin') return ((int)$t['branch_id'] === $branch || (int)$t['created_by'] === $me);
   return (int)$t['created_by'] === $me && $t['target'] === 'branch'; // user
 }
 
@@ -109,7 +109,7 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t    = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
-      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin') {
+      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان ارسال پاسخ برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif ($body === '') {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'متنِ پاسخ خالی است.'];
@@ -167,7 +167,7 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t      = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
-      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin') {
+      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان تغییر وضعیت برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif (!in_array($status, ['open','closed'], true)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'وضعیتِ نامعتبر.'];
@@ -294,8 +294,8 @@ if (!$SETUP_NEEDED) {
   if ($MY_ROLE === 'super') {
     $where = "t.target = 'hq'"; $params = [];
   } elseif ($MY_ROLE === 'branch_admin') {
-    $where = "((t.branch_id = ? AND t.target = 'branch') OR (t.created_by = ? AND t.target = 'hq'))";
-    $params = [$MY_BRANCH, $ME];
+    $where = "((t.branch_id = ? AND t.target = 'branch') OR (t.branch_id = ? AND t.target = 'hq' AND (t.status <> 'closed' OR t.escalated_from IS NULL)))";
+    $params = [$MY_BRANCH, $MY_BRANCH];
   } else { // user
     $where = "t.created_by = ? AND t.target = 'branch'"; $params = [$ME];
   }
@@ -651,7 +651,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         $canEscalate = $MY_ROLE==='branch_admin' && $box==='inbox' && (int)$t['child_count']===0;
         $isEscalated = (int)$t['child_count'] > 0;
         $isEscalIn   = $t['escalated_from'] !== null;
-        $readOnly    = ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin');
+        $readOnly    = ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null);
 
         $canClose = ($status !== 'closed') && ((int)$t['created_by'] !== $ME);
         $canReopen = false;
