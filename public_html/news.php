@@ -147,7 +147,72 @@ try {
 // فیلترها و مقادیر ارسالی جستجو و دسته‌بندی
 $activeCategory = isset($_GET['category']) ? (int)$_GET['category'] : null;
 $searchQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
+$currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
+// ۱. کوئری شمارش کل اخبار منطبق بر فیلترها
+$countQueryStr = "
+    SELECT COUNT(n.id) AS total
+    FROM news n
+    LEFT JOIN news_categories c ON c.id = n.category_id
+    WHERE n.status = 'published'
+      AND n.publish_date <= NOW()
+      AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
+";
+
+$countParams = [];
+if ($activeCategory) {
+    $countQueryStr .= " AND n.category_id = ?";
+    $countParams[] = $activeCategory;
+}
+if ($searchQuery !== '') {
+    $countQueryStr .= " AND (n.title LIKE ? OR n.content LIKE ?)";
+    $countParams[] = '%' . $searchQuery . '%';
+    $countParams[] = '%' . $searchQuery . '%';
+}
+
+try {
+    $countStmt = $pdo->prepare($countQueryStr);
+    $countStmt->execute($countParams);
+    $totalNewsCount = (int)$countStmt->fetchColumn();
+} catch (PDOException $e) {
+    $totalNewsCount = 0;
+}
+
+// ۲. محاسبه تعداد صفحات و پارامترهای صفحه‌بندی
+$perPage = 6;
+$hasFeatured = (empty($searchQuery) && !$activeCategory);
+
+if ($hasFeatured) {
+    if ($totalNewsCount <= 1) {
+        $totalPages = 1;
+    } else {
+        $totalPages = 1 + (int)ceil(($totalNewsCount - 7) / $perPage);
+    }
+    
+    if ($currentPage === 1) {
+        $limit = $perPage + 1; // ۷ پست (۱ شاخص + ۶ کارت)
+        $offset = 0;
+    } else {
+        $limit = $perPage; // ۶ پست کارت
+        $offset = 1 + ($currentPage - 1) * $perPage;
+    }
+} else {
+    $totalPages = max(1, (int)ceil($totalNewsCount / $perPage));
+    $limit = $perPage;
+    $offset = ($currentPage - 1) * $perPage;
+}
+
+// تصحیح شماره صفحه در صورت بزرگتر بودن از کل صفحات
+if ($currentPage > $totalPages) {
+    $currentPage = $totalPages;
+    if (!$hasFeatured) {
+        $offset = ($currentPage - 1) * $perPage;
+    } else {
+        $offset = ($currentPage === 1) ? 0 : (1 + ($currentPage - 1) * $perPage);
+    }
+}
+
+// ۳. دریافت لیست اخبار برای صفحه جاری
 $queryStr = "
     SELECT n.*, c.name AS category_name
     FROM news n
@@ -168,7 +233,7 @@ if ($searchQuery !== '') {
     $queryParams[] = '%' . $searchQuery . '%';
 }
 
-$queryStr .= " ORDER BY n.publish_date DESC";
+$queryStr .= " ORDER BY n.publish_date DESC LIMIT $limit OFFSET $offset";
 
 try {
     $stmt = $pdo->prepare($queryStr);
@@ -178,11 +243,11 @@ try {
     die("خطا در بارگذاری اخبار: " . $e->getMessage());
 }
 
-// تفکیک پست شاخص (ویژه) و سایر پست‌ها
+// ۴. تفکیک پست ویژه در صفحه اول
 $featuredNews = null;
 $gridNews = $allNews;
 
-if (empty($searchQuery) && !$activeCategory && count($allNews) > 0) {
+if ($hasFeatured && $currentPage === 1 && count($allNews) > 0) {
     $featuredNews = $allNews[0];
     $gridNews = array_slice($allNews, 1);
 }
@@ -777,6 +842,72 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
             padding: 16px;
         }
     }
+
+    /* استایل صفحه‌بندی (Pagination) */
+    .news-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 48px;
+        direction: rtl;
+    }
+    .pagination-numbers {
+        display: flex;
+        gap: 6px;
+    }
+    .pagination-number {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--news-card-bg);
+        border: 1px solid var(--news-border);
+        color: var(--news-text);
+        font-weight: 700;
+        font-size: 14.5px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .pagination-number:hover {
+        border-color: var(--news-primary);
+        color: var(--news-primary);
+        background: rgba(8, 153, 169, 0.04);
+    }
+    .pagination-number.active {
+        background: var(--news-primary);
+        border-color: var(--news-primary);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(8, 153, 169, 0.25);
+    }
+    .pagination-arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 16px;
+        background: var(--news-card-bg);
+        border: 1px solid var(--news-border);
+        color: var(--news-text);
+        font-weight: 700;
+        font-size: 13.5px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .pagination-arrow:hover {
+        border-color: var(--news-primary);
+        color: var(--news-primary);
+        background: rgba(8, 153, 169, 0.04);
+    }
+    .pagination-prev i {
+        font-size: 10px;
+    }
+    .pagination-next i {
+        font-size: 10px;
+    }
 </style>
 
 <div class="cta-navbar-spacer"></div>
@@ -914,6 +1045,36 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
                     </div>
                 <?php endif; ?>
             </div>
+
+            <!-- بخش صفحه‌بندی (Pagination) -->
+            <?php if ($totalPages > 1): ?>
+                <div class="news-pagination">
+                    <!-- دکمه قبلی -->
+                    <?php if ($currentPage > 1): ?>
+                        <a href="?page=<?= $currentPage - 1 ?><?= ($activeCategory) ? '&category=' . $activeCategory : '' ?><?= ($searchQuery !== '') ? '&q=' . urlencode($searchQuery) : '' ?>" class="pagination-arrow pagination-prev">
+                            <i class="fa-solid fa-chevron-right"></i> قبلی
+                        </a>
+                    <?php endif; ?>
+
+                    <div class="pagination-numbers">
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <?php if ($i === $currentPage): ?>
+                                <span class="pagination-number active"><?= faNumbers($i) ?></span>
+                            <?php else: ?>
+                                <a href="?page=<?= $i ?><?= ($activeCategory) ? '&category=' . $activeCategory : '' ?><?= ($searchQuery !== '') ? '&q=' . urlencode($searchQuery) : '' ?>" class="pagination-number"><?= faNumbers($i) ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                    </div>
+
+                    <!-- دکمه بعدی -->
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a href="?page=<?= $currentPage + 1 ?><?= ($activeCategory) ? '&category=' . $activeCategory : '' ?><?= ($searchQuery !== '') ? '&q=' . urlencode($searchQuery) : '' ?>" class="pagination-arrow pagination-next">
+                            بعدی <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
         </div>
 
         <!-- ستون سمت چپ: سایدبار -->
