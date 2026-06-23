@@ -250,6 +250,8 @@ require_once __DIR__ . '/components/header/component.php';
 
 <!-- استایل‌های اختصاصی و پریمیوم صفحه نمایش خبر -->
 <style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
     :root {
         --news-primary: #0899A9;      /* سبز برند مکسا */
         --news-accent: #f5a623;       /* نارنجی/خردلی برند مکسا */
@@ -556,44 +558,139 @@ require_once __DIR__ . '/components/header/component.php';
         color: var(--news-text-muted);
     }
 
-    /* ویجت اهدای کمک (نیکوکاری) */
-    .sidebar-donate-widget {
-        background: linear-gradient(135deg, var(--news-primary) 0%, var(--news-primary-hover) 100%);
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 28px 24px;
-        box-shadow: 0 10px 25px rgba(8, 153, 169, 0.2);
-        text-align: center;
+    /* ویجت فهرست عناوین خبر (TOC) */
+    .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
-    .sidebar-donate-widget h4 {
-        font-size: 17px;
-        font-weight: 900;
-        margin: 0 0 12px 0;
-        color: #ffffff;
+    .toc-item {
+        position: relative;
     }
-    .sidebar-donate-widget p {
-        font-size: 13px;
-        line-height: 1.8;
-        color: rgba(255,255,255,0.92);
-        margin: 0 0 20px 0;
-        text-align: justify;
+    .toc-h2 {
+        padding-right: 0;
     }
-    .sidebar-donate-btn {
-        display: block;
-        background: var(--news-accent);
-        color: #1a1a1a !important;
+    .toc-h3 {
+        padding-right: 14px;
+    }
+    .toc-link {
+        color: var(--news-text);
         text-decoration: none;
-        font-weight: 800;
-        padding: 12px 20px;
-        border-radius: 12px;
         font-size: 13.5px;
-        box-shadow: 0 4px 15px rgba(245, 166, 35, 0.35);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.2s;
+        font-weight: 600;
+        display: block;
+        line-height: 1.6;
+        padding-right: 10px;
+        border-right: 2px solid var(--news-border);
+        transition: all 0.2s ease;
     }
-    .sidebar-donate-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(245, 166, 35, 0.5);
-        background: #ffc24d;
+    .toc-link:hover {
+        color: var(--news-primary);
+        border-right-color: var(--news-primary);
+        padding-right: 14px;
+    }
+
+    /* بخش اخبار مرتبط در انتهای خبر */
+    .related-news-section {
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 1px solid var(--news-border);
+        text-align: right;
+    }
+    .related-title {
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--news-text);
+        margin: 0 0 24px 0;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 8px;
+    }
+    .related-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 35px;
+        height: 3px;
+        background: var(--news-primary);
+        border-radius: 99px;
+    }
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    @media (max-width: 768px) {
+        .related-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .related-card {
+        background: var(--news-card-bg);
+        border: 1px solid var(--news-border);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+        transition: all 0.25s ease;
+    }
+    .related-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.05);
+        border-color: var(--news-primary);
+    }
+    .related-img-box {
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background: #f1f3f5;
+        position: relative;
+    }
+    .related-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .related-card:hover .related-img {
+        transform: scale(1.05);
+    }
+    .related-info {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    .related-post-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        line-height: 1.5;
+        color: var(--news-text);
+        margin: 0 0 8px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: color 0.25s ease;
+    }
+    .related-card:hover .related-post-title {
+        color: var(--news-primary);
+    }
+    .related-meta {
+        font-size: 11px;
+        color: var(--news-text-muted);
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .related-meta i {
+        color: var(--news-accent);
     }
 
     @media (max-width: 1024px) {
@@ -664,6 +761,41 @@ require_once __DIR__ . '/components/header/component.php';
                     ?>
                 </footer>
             <?php endif; ?>
+
+            <!-- اخبار مرتبط در پایان هر خبر -->
+            <?php if (count($latestNews) > 0): ?>
+                <div class="related-news-section">
+                    <h3 class="related-title">اخبار مرتبط</h3>
+                    <div class="related-grid">
+                        <?php foreach ($latestNews as $lat): 
+                            $newsSlug = slugify($lat['title'] ?? '');
+                            $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
+                            $latImage = '';
+                            if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
+                                $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
+                            } else {
+                                $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
+                            }
+                            $latDate = formatJalaliDateTimeFa($lat['publish_date'] ?? null);
+                            $latDateParts = explode(' - ', $latDate);
+                            $latDateOnly = $latDateParts[0] ?? $latDate;
+                        ?>
+                            <a href="<?= htmlspecialchars($latUrl) ?>" class="related-card">
+                                <div class="related-img-box">
+                                    <img src="<?= htmlspecialchars($latImage) ?>" alt="<?= htmlspecialchars($lat['title']) ?>" class="related-img" loading="lazy">
+                                </div>
+                                <div class="related-info">
+                                    <h4 class="related-post-title"><?= htmlspecialchars($lat['title']) ?></h4>
+                                    <div class="related-meta">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <span><?= htmlspecialchars($latDateOnly) ?></span>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </article>
 
         <!-- ستون چپ: سایدبار -->
@@ -687,44 +819,10 @@ require_once __DIR__ . '/components/header/component.php';
                 </div>
             </div>
 
-            <!-- ویجت جدیدترین اخبار -->
-            <?php if (count($latestNews) > 0): ?>
-                <div class="sidebar-widget">
-                    <h4 class="widget-title">جدیدترین اخبار</h4>
-                    <div class="widget-pop-list">
-                        <?php foreach ($latestNews as $lat): 
-                            $newsSlug = slugify($lat['title'] ?? '');
-                            $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
-                            $latImage = '';
-                            if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
-                                $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
-                            } else {
-                                $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
-                            }
-                            $latDate = formatJalaliDateTimeFa($lat['publish_date'] ?? null);
-                            // استخراج بخش تاریخ بدون ساعت
-                            $latDateParts = explode(' - ', $latDate);
-                            $latDateOnly = $latDateParts[0] ?? $latDate;
-                        ?>
-                            <a href="<?= htmlspecialchars($latUrl) ?>" class="widget-pop-item">
-                                <div class="widget-pop-thumb">
-                                    <img src="<?= htmlspecialchars($latImage) ?>" alt="<?= htmlspecialchars($lat['title']) ?>" loading="lazy">
-                                </div>
-                                <div class="widget-pop-info">
-                                    <h5 class="widget-pop-title"><?= htmlspecialchars($lat['title']) ?></h5>
-                                    <span class="widget-pop-date"><i class="far fa-calendar-alt"></i> <?= htmlspecialchars($latDateOnly) ?></span>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- ویجت نیکوکاری (فراخوان اهدا) -->
-            <div class="sidebar-donate-widget">
-                <h4>یاری‌گر بیماران مبتلا به سرطان باشیم</h4>
-                <p>مؤسسه نیکوکاری مکسا به عنوان اولین ارائه‌دهنده خدمات حمایتی و مراقبت‌های تسکینی رایگان به بیماران مبتلا به سرطان در ایران، با تکیه بر کمک‌های مردمی فعالیت می‌کند.</p>
-                <a href="/publicparticipation.html" class="sidebar-donate-btn">حمایت آنلاین از بیماران</a>
+            <!-- ویجت عناوین این مطلب (TOC) -->
+            <div class="sidebar-widget" id="toc-widget">
+                <h4 class="widget-title">عناوین این مطلب</h4>
+                <ul class="toc-list" id="toc-list"></ul>
             </div>
 
         </aside>
@@ -751,6 +849,42 @@ if (copyBtn && tooltip) {
         });
     });
 }
+
+// اسکریپت استخراج عناوین خبر و ساخت فهرست مطالب (TOC)
+document.addEventListener('DOMContentLoaded', () => {
+    const articleContent = document.querySelector('.article-content');
+    const tocList = document.getElementById('toc-list');
+    const tocWidget = document.getElementById('toc-widget');
+    if (!articleContent || !tocList) return;
+
+    const headings = articleContent.querySelectorAll('h2, h3');
+    if (headings.length === 0) {
+        if (tocWidget) tocWidget.style.display = 'none';
+        return;
+    }
+
+    headings.forEach((heading, index) => {
+        const id = 'heading-' + index;
+        heading.id = id;
+        
+        const li = document.createElement('li');
+        li.className = 'toc-item toc-' + heading.tagName.toLowerCase();
+        
+        const a = document.createElement('a');
+        a.href = '#' + id;
+        a.className = 'toc-link';
+        a.textContent = heading.textContent;
+        
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.pushState(null, null, '#' + id);
+        });
+
+        li.appendChild(a);
+        tocList.appendChild(li);
+    });
+});
 </script>
 
 <?php
