@@ -122,6 +122,36 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$newStatus, $tid]);
         $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
                        ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$tid, $ME]);
+
+        // همگام‌سازی تیکت ارجاع شده و اصلی
+        if ($t['escalated_from'] !== null) {
+          // الف) این تیکت ارجاع شده است (target = hq)، همگام‌سازی با تیکت اصلی
+          $orig_tid = (int)$t['escalated_from'];
+          $orig_t = tk_load($pdo, $orig_tid);
+          if ($orig_t) {
+            $orig_newStatus = 'answered';
+            $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,?,?)')
+                ->execute([$orig_tid, $ME, $MY_ROLE, $body]);
+            $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$orig_newStatus, $orig_tid]);
+            $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
+                           ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$orig_tid, $ME]);
+          }
+        } else {
+          // ب) این تیکت اصلی است، بررسی وجود تیکت ارجاع شده برای آن
+          $st_escal = $pdo->prepare('SELECT * FROM tickets WHERE escalated_from = ? LIMIT 1');
+          $st_escal->execute([$tid]);
+          $escal_t = $st_escal->fetch();
+          if ($escal_t) {
+            $escal_tid = (int)$escal_t['id'];
+            $escal_newStatus = 'open';
+            $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,?,?)')
+                ->execute([$escal_tid, $ME, $MY_ROLE, $body]);
+            $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$escal_newStatus, $escal_tid]);
+            $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
+                           ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$escal_tid, $ME]);
+          }
+        }
+
         $pdo->commit();
         dash_audit('ticket_reply', ['ticket_id'=>$tid]);
         $_SESSION['ticket_flash'] = ['type'=>'ok','text'=>'پاسخِ شما ارسال شد.'];
@@ -138,7 +168,29 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       } elseif (!in_array($status, ['open','closed'], true)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'وضعیتِ نامعتبر.'];
       } else {
+        $pdo->beginTransaction();
         $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $tid]);
+
+        // همگام‌سازی وضعیت بین تیکت ارجاع شده و اصلی
+        if ($t['escalated_from'] !== null) {
+          // الف) این تیکت ارجاع شده است، همگام‌سازی با تیکت اصلی
+          $orig_tid = (int)$t['escalated_from'];
+          $orig_t = tk_load($pdo, $orig_tid);
+          if ($orig_t) {
+            $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $orig_tid]);
+          }
+        } else {
+          // ب) این تیکت اصلی است، همگام‌سازی با تیکت ارجاع شده (در صورت وجود)
+          $st_escal = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
+          $st_escal->execute([$tid]);
+          $escal_t = $st_escal->fetch();
+          if ($escal_t) {
+            $escal_tid = (int)$escal_t['id'];
+            $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $escal_tid]);
+          }
+        }
+
+        $pdo->commit();
         dash_audit('ticket_status', ['ticket_id'=>$tid,'status'=>$status]);
         $_SESSION['ticket_flash'] = ['type'=>'ok','text'=> $status==='closed' ? 'تیکت بسته شد.' : 'تیکت بازگشایی شد.'];
       }
