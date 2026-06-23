@@ -507,13 +507,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-msg .mrole{font-size:10.5px;font-weight:700;color:var(--color-muted)}
 .tk-msg .mdate{font-size:10.5px;color:var(--color-muted);font-weight:600}
 .tk-msg p{font-size:13px;line-height:1.9;word-break:break-word;white-space:pre-wrap}
-.tk-actions{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap}
+.tk-actions{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap;justify-content:flex-end}
 .tk-reply-form{margin-top:14px}
 .tk-reply-form textarea{width:100%;font-family:inherit;font-size:13.5px;color:var(--color-text);background:var(--color-bg);
   border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;line-height:1.9;resize:vertical;min-height:80px;
   transition:border-color .2s,box-shadow .2s,background .2s}
 .tk-reply-form textarea:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
-.tk-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-end;flex-wrap:wrap}
+.tk-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-start;flex-wrap:wrap}
 .btn-danger{background:var(--danger-12);color:var(--danger);padding:7px 13px;font-size:12px;border-radius:10px}
 .btn-warn{background:var(--secondary-12);color:var(--color-secondary-dark);padding:7px 13px;font-size:12px;border-radius:10px}
 .btn-send{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:9px 16px;font-size:12.5px}
@@ -619,7 +619,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </button>
       <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')" style="position: relative;">
         ارسالی به ستاد <b>(<span data-boxcount="sent">۰</span>)</b>
-        <span class="tk-dot-sent" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--color-secondary); box-shadow: 0 0 0 2px var(--color-surface);"></span>
+        <span class="tk-dot-sent" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px var(--color-surface);"></span>
       </button>
       <button type="button" class="tk-box-btn" data-box="escalated" onclick="tkBox('escalated')">
         ارجاعی به ستاد <b>(<span data-boxcount="escalated">۰</span>)</b>
@@ -632,13 +632,15 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <div class="tk-tab-ic ic-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
         <div><b data-tabcount="all">۰</b><span>همه</span></div>
       </button>
-      <button type="button" class="tk-tab" data-cat="open" onclick="tkTab('open')">
+      <button type="button" class="tk-tab" data-cat="open" onclick="tkTab('open')" style="position: relative;">
         <div class="tk-tab-ic ic-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
         <div><b data-tabcount="open">۰</b><span>در انتظار پاسخ</span></div>
+        <span class="tk-dot-tab-open" style="display: none; position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px var(--color-surface);"></span>
       </button>
-      <button type="button" class="tk-tab" data-cat="answered" onclick="tkTab('answered')">
+      <button type="button" class="tk-tab" data-cat="answered" onclick="tkTab('answered')" style="position: relative;">
         <div class="tk-tab-ic ic-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>
         <div><b data-tabcount="answered">۰</b><span>پاسخ‌داده‌شده</span></div>
+        <span class="tk-dot-tab-answered" style="display: none; position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px var(--color-surface);"></span>
       </button>
       <button type="button" class="tk-tab" data-cat="closed" onclick="tkTab('closed')">
         <div class="tk-tab-ic ic-closed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
@@ -862,6 +864,25 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     var dotSent = document.querySelector('.tk-dot-sent');
     if (dotSent) dotSent.style.display = hasSentAnswered ? 'block' : 'none';
+
+    // نمایش/مخفی کردن نقطه‌های نوتیفیکیشن در سطح تب‌ها بر اساس نقش و جعبه‌ی فعال
+    var showTabOpen = false;
+    var showTabAnswered = false;
+
+    if (ROLE === 'super') {
+      if (c.open > 0) showTabOpen = true;
+    } else if (ROLE === 'branch_admin') {
+      if (activeBox === 'inbox' && c.open > 0) showTabOpen = true;
+      if (activeBox === 'sent' && c.answered > 0) showTabAnswered = true;
+    } else if (ROLE === 'user') {
+      if (c.answered > 0) showTabAnswered = true;
+    }
+
+    var dotTabOpen = document.querySelector('.tk-dot-tab-open');
+    if (dotTabOpen) dotTabOpen.style.display = showTabOpen ? 'block' : 'none';
+
+    var dotTabAnswered = document.querySelector('.tk-dot-tab-answered');
+    if (dotTabAnswered) dotTabAnswered.style.display = showTabAnswered ? 'block' : 'none';
 
     Object.keys(c).forEach(function(k){
       document.querySelectorAll('[data-tabcount="'+k+'"]').forEach(function(b){ b.textContent=faNum(c[k]); });
