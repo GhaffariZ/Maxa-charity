@@ -275,7 +275,7 @@ require_once __DIR__ . '/components/header/component.php';
     .news-detail-wrapper {
         max-width: var(--cta-container, 1440px);
         margin: 0 auto;
-        padding: 48px 20px 80px;
+        padding: 24px 20px 80px;
         direction: rtl;
     }
 
@@ -714,10 +714,6 @@ require_once __DIR__ . '/components/header/component.php';
             padding: 24px;
         }
     }
-</style>
-
-<div class="cta-navbar-spacer"></div>
-
 <div class="news-detail-wrapper">
     <!-- بردکرامب -->
     <nav class="news-detail-breadcrumbs" aria-label="مسیر راهنما">
