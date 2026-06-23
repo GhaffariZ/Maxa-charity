@@ -55,7 +55,7 @@ $pageCss = <<<CSS
 .trust{display:flex;align-items:center;gap:8px;justify-content:center;font-size:11.5px;color:var(--color-muted);margin-top:14px}
 .trust .ic{width:15px;height:15px;color:var(--success)}
 /* مودال موفقیت */
-.ok-ov{position:fixed;inset:0;background:rgba(16,40,40,.5);backdrop-filter:blur(3px);z-index:120;display:none;place-items:center;padding:20px}
+.ok-ov{position:fixed;inset:0;background:rgba(16,40,40,.5);backdrop-filter:blur(3px);z-index:100002;display:none;place-items:center;padding:20px}
 .ok-ov.show{display:grid}
 .ok-card{background:var(--color-surface);border-radius:22px;box-shadow:var(--shadow-lg);max-width:420px;width:100%;padding:34px 26px;text-align:center;animation:fadeUp .4s var(--ease)}
 .ok-card .oic{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:rgba(22,163,122,.14);color:var(--success)}
@@ -64,10 +64,8 @@ $pageCss = <<<CSS
 .ok-card p{font-size:13.5px;color:var(--color-muted);margin-bottom:22px;line-height:1.8}
 CSS;
 
-course_html_head('تسویه‌حساب', $pageCss);
+course_site_head('تسویه‌حساب', $pageCss);
 ?>
-<body>
-<?php course_public_nav('catalog'); ?>
 
 <div class="page">
   <div class="page-head">
@@ -81,7 +79,7 @@ course_html_head('تسویه‌حساب', $pageCss);
       <div>
         <div style="font-weight:800;font-size:15px;margin-bottom:14px"><span id="itemCount">۰</span> دوره در سبد شما</div>
         <div id="items"></div>
-        <a href="courses.php" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> افزودن دوره‌ی بیشتر</a>
+        <a href="/courses" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> افزودن دوره‌ی بیشتر</a>
       </div>
       <!-- خلاصه -->
       <aside class="summary card card-pad">
@@ -108,7 +106,7 @@ course_html_head('تسویه‌حساب', $pageCss);
       <div class="ei"><?= cic('cart') ?></div>
       <h2 style="font-size:19px;font-weight:800">سبد خرید شما خالی است</h2>
       <p style="color:var(--color-muted);margin:8px 0 20px">هنوز دوره‌ای انتخاب نکرده‌اید. از فروشگاه ما دیدن کنید!</p>
-      <a href="courses.php" class="btn btn-primary" target="_top"><?= cic('grad') ?> مشاهده‌ی دوره‌ها</a>
+      <a href="/courses" class="btn btn-primary" target="_top"><?= cic('grad') ?> مشاهده‌ی دوره‌ها</a>
     </div>
   </div>
 </div>
@@ -119,13 +117,12 @@ course_html_head('تسویه‌حساب', $pageCss);
     <div class="oic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
     <h2>ثبت‌نام موفق! 🎉</h2>
     <p>دوره‌های شما با موفقیت ثبت شد. هم‌اکنون می‌توانید یادگیری را شروع کنید.</p>
-    <a href="my-courses.php" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
-    <a href="courses.php" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>
+    <a href="/courses/my" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
+    <a href="/courses" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>
   </div>
 </div>
 
 <div class="toast" id="toast"><div class="ti"><?= cic('check') ?></div><span id="toastMsg"></span></div>
-<?php course_theme_fab(); ?>
 
 <script>
 (function(){
@@ -140,7 +137,7 @@ course_html_head('تسویه‌حساب', $pageCss);
 
   function getCart(){ try{ return JSON.parse(localStorage.getItem('maxa-cart')||'[]'); }catch(e){ return []; } }
   function setCart(c){ try{ localStorage.setItem('maxa-cart', JSON.stringify(c)); }catch(e){} updateNavCart(); }
-  function updateNavCart(){ var el=$('cartCount'); if(!el) return; var n=getCart().length; if(n){el.style.display='grid';el.textContent=toFa(n);}else el.style.display='none'; }
+  function updateNavCart(){ if(window.maxaCartSync) window.maxaCartSync(); }
 
   var coupon=0; // درصد تخفیف کد
 
@@ -199,5 +196,4 @@ course_html_head('تسویه‌حساب', $pageCss);
   render(); updateNavCart();
 })();
 </script>
-</body>
-</html>
+<?php course_site_footer(); ?>

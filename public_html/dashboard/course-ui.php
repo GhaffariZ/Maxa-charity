@@ -1,22 +1,16 @@
 <?php
 /* ============================================================================
- *  پوسته‌ی مشترک رابط کاربری دوره‌ها — هم‌زبان با index (1).php
- *  course_html_head(عنوان, استایلِ اختصاصیِ صفحه) را صدا بزنید تا <head> کامل
- *  به‌همراه توکن‌های طراحی، تم تاریک و فونت وزیر چاپ شود.
+ *  پوسته‌ی مشترک رابط کاربری دوره‌ها — آکادمی مکسا
+ *  - course_base_css() : توکن‌های طراحی و کامپوننت‌های مشترک (بدون تگ <style>)
+ *  - course_site_head()/course_site_footer() : هدر و فوتر رسمیِ سایت (یکپارچه‌سازی)
+ *  - course_html_head() : فقط برای صفحه‌ی پخش (یادگیری) و صفحه‌های ادمینِ دوره‌ها
+ *    که تمام‌صفحه و مستقل از هدر سایت رندر می‌شوند.
  * ========================================================================== */
-if (!function_exists('course_html_head')):
-function course_html_head(string $title, string $pageStyles = ''): void { ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($title) ?> | آکادمی مکسا</title>
-<script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
+
+/* توکن‌های طراحی + کامپوننت‌های مشترک (سراسری، بدون تگ <style>) */
+if (!function_exists('course_base_css')):
+function course_base_css(): string {
+  return <<<'CSS'
 :root{
   --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
   --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
@@ -40,19 +34,6 @@ function course_html_head(string $title, string $pageStyles = ''): void { ?>
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
   color-scheme:dark;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%}
-body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-ul{list-style:none}
-input,textarea,select{font-family:inherit}
-svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
-::selection{background:var(--primary-16);color:var(--color-primary-dark)}
-*::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:rgba(0,123,122,.34);background-clip:padding-box}
-[data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
 
 /* ---- صفحه و سرصفحه ---- */
 .page{max-width:1320px;margin:0 auto;padding:24px}
@@ -122,7 +103,7 @@ svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 /* ---- توست ---- */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);z-index:200;display:flex;align-items:center;gap:11px;
   background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-lg);border-radius:15px;padding:13px 18px;font-weight:700;font-size:13.5px;
-  transition:transform .45s var(--ease);max-width:92vw}
+  transition:transform .45s var(--ease);max-width:92vw;font-family:'Vazirmatn',sans-serif;color:var(--color-text)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast .ti{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;background:rgba(22,163,122,.14);color:var(--success)}
 .toast .ti .ic{width:19px;height:19px}
@@ -130,10 +111,141 @@ svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .reveal{opacity:0;animation:fadeUp .55s var(--ease) forwards}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
+CSS;
+}
+endif;
+
+/* پوسته‌ی <head> برای صفحه‌های مستقلِ تمام‌صفحه (پخش/یادگیری و ادمینِ دوره‌ها) */
+if (!function_exists('course_html_head')):
+function course_html_head(string $title, string $pageStyles = ''): void { ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($title) ?> | آکادمی مکسا</title>
+<script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+ul{list-style:none}
+input,textarea,select{font-family:inherit}
+svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
+::selection{background:var(--primary-16);color:var(--color-primary-dark)}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(0,123,122,.34);background-clip:padding-box}
+[data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
+<?= course_base_css() ?>
 <?= $pageStyles ?>
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
+<?php }
+endif;
+
+/* پوسته‌ی هدر رسمی سایت برای صفحه‌های عمومیِ دوره‌ها (کاتالوگ/جزئیات/سبد/دوره‌های من).
+   محتوای صفحه داخل <div class="course-shell"> قرار می‌گیرد تا ریست‌ها فقط روی محتوای
+   دوره اعمال شوند و هدر/فوتر سایت دست‌نخورده بمانند. */
+if (!function_exists('course_site_head')):
+function course_site_head(string $title, string $pageCss = ''): void {
+  /* این دو متغیر در دامنه‌ی همین تابع‌اند و هدرِ require شده آن‌ها را می‌بیند:
+     - pageTitle: عنوان تب مرورگر   - maxaCoursesContext: نمایش آیتم‌های دوره در منوی حساب کاربری */
+  $pageTitle = $title . ' | آکادمی مکسا';
+  $maxaCoursesContext = true;
+  require __DIR__ . '/components/header/component.php';
+  ?>
+<style>
+.course-shell{font-family:'Vazirmatn',sans-serif;color:var(--color-text);font-size:14px;line-height:1.7;background:var(--color-bg);min-height:46vh}
+.course-shell, .course-shell *{box-sizing:border-box}
+.course-shell h1,.course-shell h2,.course-shell h3,.course-shell h4,.course-shell h5,.course-shell p,.course-shell ul,.course-shell ol,.course-shell figure,.course-shell blockquote,.course-shell del{margin:0}
+.course-shell ul,.course-shell ol{list-style:none;padding:0}
+.course-shell a{text-decoration:none;color:inherit}
+.course-shell button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.course-shell input,.course-shell textarea,.course-shell select{font-family:inherit}
+.course-shell svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
+<?= course_base_css() ?>
+<?= $pageCss ?>
+</style>
+<div class="course-shell">
+<?php }
+endif;
+
+/* بستن پوسته + نشانگر سبد خرید + فوتر رسمی سایت */
+if (!function_exists('course_site_footer')):
+function course_site_footer(): void {
+  echo "\n</div><!-- /.course-shell -->\n";
+  course_cart_marker();
+  require __DIR__ . '/components/footer/component.php';
+}
+endif;
+
+/* نشانگر شناور سبد خرید در گوشه‌ی صفحه + همگام‌سازی شمارنده‌ها (نشانگر و منوی حساب) */
+if (!function_exists('course_cart_marker')):
+function course_cart_marker(): void { ?>
+<style>
+  #maxaCartFab{position:fixed;bottom:22px;left:22px;z-index:1000;width:54px;height:54px;border-radius:16px;
+    display:none;place-items:center;background:linear-gradient(135deg,#0899A9,#067d8a);color:#fff;
+    box-shadow:0 12px 28px -8px rgba(8,153,169,.7);transition:transform .2s ease,box-shadow .2s ease}
+  #maxaCartFab:hover{transform:translateY(-3px);box-shadow:0 16px 34px -8px rgba(8,153,169,.85)}
+  #maxaCartFab svg{width:24px;height:24px}
+  #maxaCartFab .mx-cart-count{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;
+    background:#f5a623;color:#3a2a00;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;font-family:'Vazirmatn',sans-serif}
+</style>
+<a id="maxaCartFab" href="/courses/checkout" target="_top" aria-label="سبد خرید" title="سبد خرید">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.6"/><circle cx="19" cy="21" r="1.6"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L23 7H5.6"/></svg>
+  <span class="mx-cart-count">۰</span>
+</a>
+<script>
+(function(){
+  function toFa(s){return String(s).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];});}
+  function cartCount(){ try{ return (JSON.parse(localStorage.getItem('maxa-cart')||'[]')||[]).length; }catch(e){ return 0; } }
+  window.maxaCartSync=function(){
+    var n=cartCount();
+    var fab=document.getElementById('maxaCartFab');
+    if(fab){ fab.style.display = n>0 ? 'grid' : 'none'; var c=fab.querySelector('.mx-cart-count'); if(c) c.textContent=toFa(n); }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cart-badge]'), function(b){
+      if(n>0){ b.hidden=false; b.style.display='inline-grid'; b.textContent=toFa(n); }
+      else { b.hidden=true; b.style.display='none'; }
+    });
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', window.maxaCartSync);
+  else window.maxaCartSync();
+  window.addEventListener('storage', function(e){ if(!e || e.key===null || e.key==='maxa-cart') window.maxaCartSync(); });
+})();
+</script>
+<?php }
+endif;
+
+/* دکمه‌ی شناور تغییر تم — برای صفحه‌های مستقل (پخش/ادمینِ دوره‌ها) که از course_html_head استفاده می‌کنند */
+if (!function_exists('course_theme_fab')):
+function course_theme_fab(): void { ?>
+<button id="maxaThemeFab" type="button" aria-label="تغییر تم" title="روشن / تاریک"
+  style="position:fixed;bottom:20px;right:20px;z-index:150;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-md);color:var(--color-text)">
+  <span class="fab-sun"><?= cic('sun') ?></span><span class="fab-moon" style="display:none"><?= cic('moon') ?></span>
+</button>
+<script>
+(function(){
+  var fab=document.getElementById('maxaThemeFab'); if(!fab) return;
+  var root=document.documentElement, sun=fab.querySelector('.fab-sun'), moon=fab.querySelector('.fab-moon');
+  function sync(){var d=root.getAttribute('data-theme')==='dark';sun.style.display=d?'none':'block';moon.style.display=d?'block':'none';}
+  try{ if(window.top!==window.self){ fab.style.display='none'; } }catch(e){}
+  sync();
+  fab.addEventListener('click',function(){
+    var d=root.getAttribute('data-theme')==='dark';
+    if(d) root.removeAttribute('data-theme'); else root.setAttribute('data-theme','dark');
+    try{localStorage.setItem('maxa-theme',d?'light':'dark');}catch(e){}
+    sync();
+  });
+})();
+</script>
 <?php }
 endif;
 
@@ -182,60 +294,6 @@ function cic(string $name, string $cls = ''): string {
 }
 endif;
 
-/* نوار بالای بخش کاربری (فروشگاه دوره‌ها) */
-if (!function_exists('course_public_nav')):
-function course_public_nav(string $active = 'catalog'): void { ?>
-<style>
-.pnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--color-border)}
-[data-theme="dark"] .pnav{background:rgba(16,23,27,.85)}
-.pnav-inner{max-width:1320px;margin:0 auto;height:66px;display:flex;align-items:center;gap:16px;padding:0 22px}
-.pnav-brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px}
-.pnav-brand .lg{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 8px 18px -8px rgba(0,102,101,.6)}
-.pnav-brand .lg .ic{width:22px;height:22px}
-.pnav-brand small{display:block;font-size:10.5px;color:var(--color-muted);font-weight:500;margin-top:-2px}
-.pnav-links{display:flex;align-items:center;gap:4px;margin-inline-start:10px}
-.pnav-links a{padding:9px 14px;border-radius:11px;font-weight:600;font-size:13.5px;color:#5b6469;transition:background .18s,color .18s}
-.pnav-links a:hover{background:var(--primary-08);color:var(--color-primary-dark)}
-.pnav-links a.on{background:var(--primary-08);color:var(--color-primary-dark);font-weight:700}
-.pnav-sp{flex:1}
-.pnav-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#5b6469;transition:background .2s,color .2s;position:relative}
-.pnav-ic:hover{background:var(--primary-08);color:var(--color-primary-dark)}
-.pnav-ic .ic{width:21px;height:21px}
-.pnav-ic .cart-dot{position:absolute;top:7px;left:8px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--color-secondary);color:#5c3d00;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid var(--color-surface)}
-.pnav-toggle{display:none}
-@media(max-width:760px){.pnav-links{display:none}.pnav-links.open{display:flex;position:absolute;top:66px;right:0;left:0;flex-direction:column;background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:10px;gap:4px}.pnav-toggle{display:grid}}
-</style>
-<nav class="pnav">
-  <div class="pnav-inner">
-    <a href="courses.php" class="pnav-brand" target="_top">
-      <span class="lg"><?= cic('grad') ?></span>
-      <span>آکادمی مکسا<small>یادگیری برای همه</small></span>
-    </a>
-    <div class="pnav-links" id="pnavLinks">
-      <a href="courses.php" class="<?= $active==='catalog'?'on':'' ?>" target="_top">همه دوره‌ها</a>
-      <a href="courses.php#cats" target="_top">دسته‌بندی‌ها</a>
-      <a href="my-courses.php" class="<?= $active==='mine'?'on':'' ?>" target="_top">دوره‌های من</a>
-    </div>
-    <div class="pnav-sp"></div>
-    <a href="course-checkout.php" class="pnav-ic" target="_top" title="سبد خرید" id="navCart"><?= cic('cart') ?><span class="cart-dot" id="cartCount" style="display:none">۰</span></a>
-    <button class="pnav-ic" id="pubTheme" type="button" title="روشن / تاریک"><span class="pt-sun"><?= cic('sun') ?></span><span class="pt-moon" style="display:none"><?= cic('moon') ?></span></button>
-    <button class="pnav-ic pnav-toggle" id="pnavToggle" type="button"><?= cic('menu') ?></button>
-  </div>
-</nav>
-<script>
-(function(){
-  var t=document.getElementById('pubTheme'); if(t){ var r=document.documentElement,s=t.querySelector('.pt-sun'),m=t.querySelector('.pt-moon');
-    function sy(){var d=r.getAttribute('data-theme')==='dark';s.style.display=d?'none':'block';m.style.display=d?'block':'none';} sy();
-    t.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark';if(d)r.removeAttribute('data-theme');else r.setAttribute('data-theme','dark');try{localStorage.setItem('maxa-theme',d?'light':'dark');}catch(e){}sy();}); }
-  var tg=document.getElementById('pnavToggle'); if(tg) tg.addEventListener('click',function(){document.getElementById('pnavLinks').classList.toggle('open');});
-  // شمارش سبد خرید از localStorage
-  try{ var cart=JSON.parse(localStorage.getItem('maxa-cart')||'[]'); var el=document.getElementById('cartCount');
-    if(cart.length){ el.style.display='grid'; el.textContent=String(cart.length).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];}); } }catch(e){}
-})();
-</script>
-<?php }
-endif;
-
 /* کارت دوره برای فروشگاه و فهرست‌ها */
 if (!function_exists('course_card')):
 function course_card(array $c): void {
@@ -249,7 +307,7 @@ function course_card(array $c): void {
   $lessons = (int)($c['lessons'] ?? 0);
   $dur = (int)($c['duration'] ?? 0);
   ?>
-  <a class="ccard" href="course-details.php?id=<?= $id ?>" target="_top">
+  <a class="ccard" href="/courses/<?= $id ?>" target="_top">
     <div class="ccard-thumb" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>cc)">
       <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><span class="ph"><?= cic('grad') ?></span><?php endif; ?>
       <?php if ($hasDisc): $off = round((1-$disc/$price)*100); ?><span class="ccard-off"><?= fa_digits($off) ?>٪ تخفیف</span><?php endif; ?>
@@ -304,31 +362,4 @@ function course_card_styles(): string {
 .ccard-price del{font-size:12px;color:var(--color-muted)}
 CSS;
 }
-endif;
-
-/* دکمه‌ی شناور تغییر تم — برای نمایش مستقل صفحات بیرون از پوسته‌ی SPA */
-if (!function_exists('course_theme_fab')):
-function course_theme_fab(): void { ?>
-<button id="maxaThemeFab" type="button" aria-label="تغییر تم" title="روشن / تاریک"
-  style="position:fixed;bottom:20px;right:20px;z-index:150;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
-  background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-md);color:var(--color-text)">
-  <span class="fab-sun"><?= cic('sun') ?></span><span class="fab-moon" style="display:none"><?= cic('moon') ?></span>
-</button>
-<script>
-(function(){
-  var fab=document.getElementById('maxaThemeFab'); if(!fab) return;
-  var root=document.documentElement, sun=fab.querySelector('.fab-sun'), moon=fab.querySelector('.fab-moon');
-  function sync(){var d=root.getAttribute('data-theme')==='dark';sun.style.display=d?'none':'block';moon.style.display=d?'block':'none';}
-  // در داخل آی‌فریمِ پنل، دکمه‌ی شناور لازم نیست
-  try{ if(window.top!==window.self){ fab.style.display='none'; } }catch(e){}
-  sync();
-  fab.addEventListener('click',function(){
-    var d=root.getAttribute('data-theme')==='dark';
-    if(d) root.removeAttribute('data-theme'); else root.setAttribute('data-theme','dark');
-    try{localStorage.setItem('maxa-theme',d?'light':'dark');}catch(e){}
-    sync();
-  });
-})();
-</script>
-<?php }
 endif;
