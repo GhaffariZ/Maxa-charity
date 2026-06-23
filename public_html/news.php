@@ -286,8 +286,6 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
 
 <!-- استایل اختصاصی، واکنش‌گرا و پریمیوم صفحه اخبار -->
 <style>
-    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-
     :root {
         --news-primary: #0899A9;      /* سبز کله‌غازی برند مکسا */
         --news-primary-hover: #067d8a;
@@ -313,7 +311,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
     .news-wrapper {
         max-width: var(--cta-container, 1440px);
         margin: 0 auto;
-        padding: 24px 20px 80px;
+        padding: 48px 20px 80px;
         direction: rtl;
     }
 
@@ -911,6 +909,8 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
         font-size: 10px;
     }
 </style>
+
+<div class="cta-navbar-spacer"></div>
 
 <main class="news-wrapper">
     <!-- بخش خوش‌آمدگویی -->
