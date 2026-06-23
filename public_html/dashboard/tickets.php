@@ -51,7 +51,7 @@ function tk_load(PDO $pdo, int $id): ?array {
 function tk_can_view(?array $t, string $role, int $me, int $branch): bool {
   if (!$t) return false;
   if ($role === 'super')        return $t['target'] === 'hq';
-  if ($role === 'branch_admin') return ((int)$t['branch_id'] === $branch || (int)$t['created_by'] === $me);
+  if ($role === 'branch_admin') return ((int)$t['created_by'] === $me) || ((int)$t['branch_id'] === $branch && $t['target'] === 'branch');
   return (int)$t['created_by'] === $me && $t['target'] === 'branch'; // user
 }
 
@@ -109,8 +109,6 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t    = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
-      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null) {
-        $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان ارسال پاسخ برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif ($body === '') {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'متنِ پاسخ خالی است.'];
       } else {
@@ -124,36 +122,6 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$newStatus, $tid]);
         $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
                        ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$tid, $ME]);
-
-        // همگام‌سازی تیکت ارجاع شده و اصلی
-        if ($t['escalated_from'] !== null) {
-          // الف) این تیکت ارجاع شده است (target = hq)، همگام‌سازی با تیکت اصلی
-          $orig_tid = (int)$t['escalated_from'];
-          $orig_t = tk_load($pdo, $orig_tid);
-          if ($orig_t) {
-            $orig_newStatus = 'answered';
-            $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,?,?)')
-                ->execute([$orig_tid, $ME, $MY_ROLE, $body]);
-            $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$orig_newStatus, $orig_tid]);
-            $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
-                           ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$orig_tid, $ME]);
-          }
-        } else {
-          // ب) این تیکت اصلی است، بررسی وجود تیکت ارجاع شده برای آن
-          $st_escal = $pdo->prepare('SELECT * FROM tickets WHERE escalated_from = ? LIMIT 1');
-          $st_escal->execute([$tid]);
-          $escal_t = $st_escal->fetch();
-          if ($escal_t) {
-            $escal_tid = (int)$escal_t['id'];
-            $escal_newStatus = 'open';
-            $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,?,?)')
-                ->execute([$escal_tid, $ME, $MY_ROLE, $body]);
-            $pdo->prepare('UPDATE tickets SET status = ?, last_reply_at = NOW() WHERE id = ?')->execute([$escal_newStatus, $escal_tid]);
-            $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
-                           ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$escal_tid, $ME]);
-          }
-        }
-
         $pdo->commit();
         dash_audit('ticket_reply', ['ticket_id'=>$tid]);
         $_SESSION['ticket_flash'] = ['type'=>'ok','text'=>'پاسخِ شما ارسال شد.'];
@@ -167,66 +135,12 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t      = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
-      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null) {
-        $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان تغییر وضعیت برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif (!in_array($status, ['open','closed'], true)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'وضعیتِ نامعتبر.'];
       } else {
-        // بررسی دسترسی ویژه بستن و بازگشایی تیکت
-        $allowStatusChange = false;
-
-        if ($status === 'closed') {
-          // کسی که تیکت را ایجاد کرده (چه کاربر، چه ادمین شعبه) نمی‌تواند آن را ببندد
-          if ((int)$t['created_by'] !== $ME) {
-            $allowStatusChange = true;
-          }
-        } elseif ($status === 'open') {
-          // بازگشایی تیکت:
-          if ($MY_ROLE === 'super') {
-            // مدیر ستاد همیشه می‌تواند تیکت‌های ستاد را بازگشایی کند
-            $allowStatusChange = ($t['target'] === 'hq');
-          } elseif ($MY_ROLE === 'branch_admin') {
-            // ادمین شعبه فقط در صورتی که تیکت مربوط به شعبه باشد و ارجاع داده نشده باشد می‌تواند بازگشایی کند
-            if ($t['target'] === 'branch') {
-              $chk = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
-              $chk->execute([$tid]);
-              if (!$chk->fetch()) {
-                $allowStatusChange = true;
-              }
-            }
-          }
-          // کاربران عادی هیچ‌گاه نمی‌توانند تیکت را بازگشایی کنند
-        }
-
-        if (!$allowStatusChange) {
-          $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'شما اجازه تغییر وضعیت این تیکت را ندارید.'];
-        } else {
-          $pdo->beginTransaction();
-          $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $tid]);
-
-          // همگام‌سازی وضعیت بین تیکت ارجاع شده و اصلی
-          if ($t['escalated_from'] !== null) {
-            // الف) این تیکت ارجاع شده است، همگام‌سازی با تیکت اصلی
-            $orig_tid = (int)$t['escalated_from'];
-            $orig_t = tk_load($pdo, $orig_tid);
-            if ($orig_t) {
-              $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $orig_tid]);
-            }
-          } else {
-            // ب) این تیکت اصلی است، همگام‌سازی با تیکت ارجاع شده (در صورت وجود)
-            $st_escal = $pdo->prepare('SELECT id FROM tickets WHERE escalated_from = ? LIMIT 1');
-            $st_escal->execute([$tid]);
-            $escal_t = $st_escal->fetch();
-            if ($escal_t) {
-              $escal_tid = (int)$escal_t['id'];
-              $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $escal_tid]);
-            }
-          }
-
-          $pdo->commit();
-          dash_audit('ticket_status', ['ticket_id'=>$tid,'status'=>$status]);
-          $_SESSION['ticket_flash'] = ['type'=>'ok','text'=> $status==='closed' ? 'تیکت بسته شد.' : 'تیکت بازگشایی شد.'];
-        }
+        $pdo->prepare('UPDATE tickets SET status = ? WHERE id = ?')->execute([$status, $tid]);
+        dash_audit('ticket_status', ['ticket_id'=>$tid,'status'=>$status]);
+        $_SESSION['ticket_flash'] = ['type'=>'ok','text'=> $status==='closed' ? 'تیکت بسته شد.' : 'تیکت بازگشایی شد.'];
       }
     }
 
@@ -243,29 +157,21 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($chk->fetch()) {
           $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'این تیکت پیش‌تر به ستاد ارجاع شده است.'];
         } else {
-          // پیام‌های تیکتِ کاربر + نامِ سازنده
-          $all_msgs_st = $pdo->prepare('SELECT m.user_id, m.author_role, m.body, m.created_at, du.full_name, du.username
-                                         FROM ticket_messages m JOIN dashboard_users du ON du.id = m.user_id
-                                        WHERE m.ticket_id = ? ORDER BY m.id ASC');
-          $all_msgs_st->execute([$tid]);
-          $all_msgs = $all_msgs_st->fetchAll();
-
+          // پیامِ نخستِ تیکتِ کاربر + نامِ سازنده
+          $fm = $pdo->prepare('SELECT m.body, du.full_name, du.username
+                                 FROM ticket_messages m JOIN dashboard_users du ON du.id = m.user_id
+                                WHERE m.ticket_id = ? ORDER BY m.id ASC LIMIT 1');
+          $fm->execute([$tid]);
+          $first = $fm->fetch() ?: ['body'=>'', 'full_name'=>'', 'username'=>''];
+          $who   = trim((string)($first['full_name'] ?: $first['username'])) ?: 'کاربر شعبه';
+          $newBody = '↪ ارجاع از تیکتِ «' . $who . '» (شماره ' . $tid . '):' . "\n\n" . (string)$first['body'];
           $pdo->beginTransaction();
           $pdo->prepare('INSERT INTO tickets (branch_id,subject,target,priority,status,created_by,creator_role,escalated_from,last_reply_at)
                          VALUES (?,?,\'hq\',?,\'open\',?,\'branch_admin\',?,NOW())')
               ->execute([$MY_BRANCH, $t['subject'], $t['priority'], $ME, $tid]);
           $nid = (int)$pdo->lastInsertId();
-
-          $insert_msg_st = $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body,created_at) VALUES (?,?,?,?,?)');
-          foreach ($all_msgs as $index => $m) {
-            $body = (string)$m['body'];
-            if ($index === 0) {
-              $who = trim((string)($m['full_name'] ?: $m['username'])) ?: 'کاربر شعبه';
-              $body = '↪ ارجاع از تیکتِ «' . $who . '» (شماره ' . $tid . '):' . "\n\n" . $body;
-            }
-            $insert_msg_st->execute([$nid, $m['user_id'], $m['author_role'], $body, $m['created_at']]);
-          }
-
+          $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,\'branch_admin\',?)')
+              ->execute([$nid, $ME, $newBody]);
           $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
                          ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$nid, $ME]);
           $pdo->commit();
@@ -294,8 +200,8 @@ if (!$SETUP_NEEDED) {
   if ($MY_ROLE === 'super') {
     $where = "t.target = 'hq'"; $params = [];
   } elseif ($MY_ROLE === 'branch_admin') {
-    $where = "((t.branch_id = ? AND t.target = 'branch') OR (t.branch_id = ? AND t.target = 'hq' AND (t.status <> 'closed' OR t.escalated_from IS NULL)))";
-    $params = [$MY_BRANCH, $MY_BRANCH];
+    $where = "((t.branch_id = ? AND t.target = 'branch') OR (t.created_by = ? AND t.target = 'hq'))";
+    $params = [$MY_BRANCH, $ME];
   } else { // user
     $where = "t.created_by = ? AND t.target = 'branch'"; $params = [$ME];
   }
@@ -329,9 +235,6 @@ if (!$SETUP_NEEDED) {
 /* ---------- آماده‌سازیِ آیتم‌ها برای نمایش ---------- */
 $VIEW = [];
 foreach ($tickets as $t) {
-  if ($MY_ROLE === 'branch_admin' && $t['target'] === 'branch' && $t['child_count'] > 0) {
-    continue;
-  }
   $tid   = (int)$t['id'];
   $msgs  = $msgsByTicket[$tid] ?? [];
   $last  = $msgs ? end($msgs) : null;
@@ -340,7 +243,7 @@ foreach ($tickets as $t) {
   if ($last && (int)$last['user_id'] !== $ME) {
     if ($myRead === null || strtotime((string)$last['created_at']) > strtotime((string)$myRead)) $unread = true;
   }
-  $box = $MY_ROLE === 'branch_admin' ? ($t['target']==='branch' ? 'inbox' : ($t['escalated_from'] !== null ? 'escalated' : 'sent'))
+  $box = $MY_ROLE === 'branch_admin' ? ($t['target']==='branch' ? 'inbox' : 'sent')
        : ($MY_ROLE === 'super' ? 'inbox' : 'mine');
   $VIEW[] = ['t'=>$t,'msgs'=>$msgs,'unread'=>$unread,'box'=>$box,'creator'=>($t['full_name'] ?: $t['username'])];
 }
@@ -502,24 +405,21 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-thread{margin-top:14px;padding-top:14px;border-top:1px dashed var(--color-border)}
 .tk-thread[hidden]{display:none}
 .tk-msgs{display:flex;flex-direction:column;gap:10px}
-.tk-msg{max-width:85%;border:1px solid var(--color-border);border-radius:14px;padding:11px 14px;background:var(--color-bg)}
-.tk-msg.mine{align-self:flex-start;border-bottom-right-radius:2px}
-.tk-msg.other{align-self:flex-end;border-bottom-left-radius:2px}
-.tk-msg.role-user{background:var(--success-12);border-color:rgba(22,163,122,.25)}
-.tk-msg.role-branch_admin{background:var(--violet-12);border-color:rgba(124,77,219,.25)}
-.tk-msg.role-super{background:var(--secondary-12);border-color:rgba(244,166,30,.35)}
+.tk-msg{border:1px solid var(--color-border);border-radius:13px;padding:11px 14px;background:var(--color-bg)}
+.tk-msg.mine{background:var(--primary-08);border-inline-start:3px solid var(--color-primary)}
+.tk-msg.responder{background:var(--violet-12);border-inline-start:3px solid var(--violet)}
 .tk-msg .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
 .tk-msg .mwho{font-size:12px;font-weight:800}
 .tk-msg .mrole{font-size:10.5px;font-weight:700;color:var(--color-muted)}
 .tk-msg .mdate{font-size:10.5px;color:var(--color-muted);font-weight:600}
 .tk-msg p{font-size:13px;line-height:1.9;word-break:break-word;white-space:pre-wrap}
-.tk-actions{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap;justify-content:flex-end}
+.tk-actions{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap}
 .tk-reply-form{margin-top:14px}
 .tk-reply-form textarea{width:100%;font-family:inherit;font-size:13.5px;color:var(--color-text);background:var(--color-bg);
   border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;line-height:1.9;resize:vertical;min-height:80px;
   transition:border-color .2s,box-shadow .2s,background .2s}
 .tk-reply-form textarea:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
-.tk-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-start;flex-wrap:wrap}
+.tk-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-end;flex-wrap:wrap}
 .btn-danger{background:var(--danger-12);color:var(--danger);padding:7px 13px;font-size:12px;border-radius:10px}
 .btn-warn{background:var(--secondary-12);color:var(--color-secondary-dark);padding:7px 13px;font-size:12px;border-radius:10px}
 .btn-send{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:9px 16px;font-size:12.5px}
@@ -531,34 +431,6 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-setup{background:var(--color-surface);border:1.5px dashed var(--color-secondary);border-radius:var(--radius);padding:26px;line-height:2}
 .tk-setup h2{font-size:16px;font-weight:800;margin-bottom:8px}
 .tk-setup code{background:var(--color-bg);border:1px solid var(--color-border);border-radius:8px;padding:3px 8px;font-size:12.5px;direction:ltr;display:inline-block}
-
-.tk-notification-dot{
-  display:none;
-  position:absolute;
-  top:-4px;
-  right:-4px;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background-color:var(--danger);
-  box-shadow:0 0 0 2px #ffffff, 0 0 6px rgba(224, 85, 107, 0.6);
-  animation:tk-pulse-glow 2s infinite ease-in-out;
-  z-index:10;
-}
-@keyframes tk-pulse-glow{
-  0%{
-    transform:scale(1);
-    box-shadow:0 0 0 2px #ffffff, 0 0 4px rgba(224, 85, 107, 0.5);
-  }
-  50%{
-    transform:scale(1.1);
-    box-shadow:0 0 0 2px #ffffff, 0 0 10px rgba(224, 85, 107, 0.8), 0 0 0 4px rgba(224, 85, 107, 0.25);
-  }
-  100%{
-    transform:scale(1);
-    box-shadow:0 0 0 2px #ffffff, 0 0 4px rgba(224, 85, 107, 0.5);
-  }
-}
 
 @media (max-width:680px){
   body{padding:18px 14px}
@@ -647,16 +519,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     <?php if ($MY_ROLE === 'branch_admin'): ?>
     <div class="tk-boxes">
-      <button type="button" class="tk-box-btn active" data-box="inbox" onclick="tkBox('inbox')" style="position: relative;">
+      <button type="button" class="tk-box-btn active" data-box="inbox" onclick="tkBox('inbox')">
         تیکت‌های دریافتی <b>(<span data-boxcount="inbox">۰</span>)</b>
-        <span class="tk-notification-dot tk-dot-inbox"></span>
       </button>
-      <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')" style="position: relative;">
+      <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')">
         ارسالی به ستاد <b>(<span data-boxcount="sent">۰</span>)</b>
-        <span class="tk-notification-dot tk-dot-sent"></span>
-      </button>
-      <button type="button" class="tk-box-btn" data-box="escalated" onclick="tkBox('escalated')">
-        ارجاعی به ستاد <b>(<span data-boxcount="escalated">۰</span>)</b>
       </button>
     </div>
     <?php endif; ?>
@@ -666,15 +533,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <div class="tk-tab-ic ic-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
         <div><b data-tabcount="all">۰</b><span>همه</span></div>
       </button>
-      <button type="button" class="tk-tab" data-cat="open" onclick="tkTab('open')" style="position: relative;">
+      <button type="button" class="tk-tab" data-cat="open" onclick="tkTab('open')">
         <div class="tk-tab-ic ic-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
         <div><b data-tabcount="open">۰</b><span>در انتظار پاسخ</span></div>
-        <span class="tk-notification-dot tk-dot-tab-open"></span>
       </button>
-      <button type="button" class="tk-tab" data-cat="answered" onclick="tkTab('answered')" style="position: relative;">
+      <button type="button" class="tk-tab" data-cat="answered" onclick="tkTab('answered')">
         <div class="tk-tab-ic ic-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>
         <div><b data-tabcount="answered">۰</b><span>پاسخ‌داده‌شده</span></div>
-        <span class="tk-notification-dot tk-dot-tab-answered"></span>
       </button>
       <button type="button" class="tk-tab" data-cat="closed" onclick="tkTab('closed')">
         <div class="tk-tab-ic ic-closed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
@@ -692,17 +557,6 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         $canEscalate = $MY_ROLE==='branch_admin' && $box==='inbox' && (int)$t['child_count']===0;
         $isEscalated = (int)$t['child_count'] > 0;
         $isEscalIn   = $t['escalated_from'] !== null;
-        $readOnly    = ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin' && $t['escalated_from'] !== null);
-
-        $canClose = ($status !== 'closed') && ((int)$t['created_by'] !== $ME);
-        $canReopen = false;
-        if ($status === 'closed') {
-          if ($MY_ROLE === 'super') {
-            $canReopen = ($t['target'] === 'hq');
-          } elseif ($MY_ROLE === 'branch_admin') {
-            $canReopen = ($t['target'] === 'branch' && (int)$t['child_count'] === 0);
-          }
-        }
       ?>
       <article class="tk-card <?= $V['unread']?'unread':'' ?> <?= $status==='closed'?'closed':'' ?>"
                data-id="<?= $tid ?>" data-box="<?= e($box) ?>" data-status="<?= e($status) ?>">
@@ -751,9 +605,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
             <div class="tk-msgs">
               <?php foreach ($msgs as $m):
                 $mine = (int)$m['user_id'] === $ME;
-                $clsSide = $mine ? 'mine' : 'other';
-                $clsRole = 'role-' . $m['author_role'];
-                $cls = $clsSide . ' ' . $clsRole;
+                $mResponder = ($t['target']==='branch' && $m['author_role']==='branch_admin') || ($t['target']==='hq' && $m['author_role']==='super');
+                $cls = $mine ? 'mine' : ($mResponder ? 'responder' : '');
                 $mWho = trim((string)($m['full_name'] ?: $m['username']));
               ?>
               <div class="tk-msg <?= $cls ?>">
@@ -766,11 +619,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               <?php endforeach; ?>
             </div>
 
-            <?php if ($readOnly): ?>
-              <div class="tk-actions">
-                <div class="tk-locked" style="flex:1">این تیکت به ستاد مرکزی ارجاع شده است و فقط توسط ستاد مرکزی مدیریت می‌شود.</div>
-              </div>
-            <?php elseif ($status !== 'closed'): ?>
+            <?php if ($status !== 'closed'): ?>
               <form method="post" class="tk-reply-form" autocomplete="off">
                 <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                 <input type="hidden" name="action" value="reply">
@@ -795,31 +644,27 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     </button>
                   </form>
                 <?php endif; ?>
-                <?php if ($canClose): ?>
-                  <form method="post">
-                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                    <input type="hidden" name="action" value="status">
-                    <input type="hidden" name="status" value="closed">
-                    <input type="hidden" name="ticket_id" value="<?= $tid ?>">
-                    <button type="submit" class="btn btn-danger">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                      بستنِ تیکت
-                    </button>
-                  </form>
-                <?php endif; ?>
+                <form method="post">
+                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                  <input type="hidden" name="action" value="status">
+                  <input type="hidden" name="status" value="closed">
+                  <input type="hidden" name="ticket_id" value="<?= $tid ?>">
+                  <button type="submit" class="btn btn-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    بستنِ تیکت
+                  </button>
+                </form>
               </div>
             <?php else: ?>
               <div class="tk-actions">
                 <div class="tk-locked" style="flex:1">این تیکت بسته شده است.</div>
-                <?php if ($canReopen): ?>
-                  <form method="post">
-                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                    <input type="hidden" name="action" value="status">
-                    <input type="hidden" name="ticket_id" value="<?= $tid ?>">
-                    <input type="hidden" name="status" value="open">
-                    <button type="submit" class="btn btn-ghost btn-sm">بازگشایی</button>
-                  </form>
-                <?php endif; ?>
+                <form method="post">
+                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                  <input type="hidden" name="action" value="status">
+                  <input type="hidden" name="ticket_id" value="<?= $tid ?>">
+                  <input type="hidden" name="status" value="open">
+                  <button type="submit" class="btn btn-ghost btn-sm">بازگشایی</button>
+                </form>
               </div>
             <?php endif; ?>
           </div>
@@ -865,7 +710,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   function applyFilters(){
     var any=false;
     list.querySelectorAll('.tk-card').forEach(function(c){
-      var show = cardVisibleByBox(c) && (activeBox === 'escalated' || activeCat==='all' || c.getAttribute('data-status')===activeCat);
+      var show = cardVisibleByBox(c) && (activeCat==='all' || c.getAttribute('data-status')===activeCat);
       c.style.display = show ? '' : 'none';
       if(show) any=true;
     });
@@ -874,56 +719,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   }
   function updateCounts(){
     var c={all:0,open:0,answered:0,closed:0};
-    var hasInboxOpen = false;
-    var hasSentAnswered = false;
-
     list.querySelectorAll('.tk-card').forEach(function(card){
-      var cardBox = card.getAttribute('data-box');
-      var cardStatus = card.getAttribute('data-status');
-
-      if (cardBox === 'inbox' && cardStatus === 'open') {
-        hasInboxOpen = true;
-      }
-      if (cardBox === 'sent' && cardStatus === 'answered') {
-        hasSentAnswered = true;
-      }
-
       if(!cardVisibleByBox(card)) return;          // شمارشِ تب‌ها فقط برای جعبه‌ی فعال
       c.all++;
-      if(c[cardStatus]!==undefined) c[cardStatus]++;
+      var s=card.getAttribute('data-status');
+      if(c[s]!==undefined) c[s]++;
     });
-
-    // به‌روزرسانی نمایش نقطه‌های قرمز نوتیفیکیشن
-    var dotInbox = document.querySelector('.tk-dot-inbox');
-    if (dotInbox) dotInbox.style.display = hasInboxOpen ? 'block' : 'none';
-
-    var dotSent = document.querySelector('.tk-dot-sent');
-    if (dotSent) dotSent.style.display = hasSentAnswered ? 'block' : 'none';
-
-    // نمایش/مخفی کردن نقطه‌های نوتیفیکیشن در سطح تب‌ها بر اساس نقش و جعبه‌ی فعال
-    var showTabOpen = false;
-    var showTabAnswered = false;
-
-    if (ROLE === 'super') {
-      if (c.open > 0) showTabOpen = true;
-    } else if (ROLE === 'branch_admin') {
-      if (activeBox === 'inbox' && c.open > 0) showTabOpen = true;
-      if (activeBox === 'sent' && c.answered > 0) showTabAnswered = true;
-    } else if (ROLE === 'user') {
-      if (c.answered > 0) showTabAnswered = true;
-    }
-
-    var dotTabOpen = document.querySelector('.tk-dot-tab-open');
-    if (dotTabOpen) dotTabOpen.style.display = showTabOpen ? 'block' : 'none';
-
-    var dotTabAnswered = document.querySelector('.tk-dot-tab-answered');
-    if (dotTabAnswered) dotTabAnswered.style.display = showTabAnswered ? 'block' : 'none';
-
     Object.keys(c).forEach(function(k){
       document.querySelectorAll('[data-tabcount="'+k+'"]').forEach(function(b){ b.textContent=faNum(c[k]); });
     });
     // شمارشِ جعبه‌ها (مدیر شعبه)
-    var box={inbox:0,sent:0,escalated:0};
+    var box={inbox:0,sent:0};
     list.querySelectorAll('.tk-card').forEach(function(card){ var b=card.getAttribute('data-box'); if(box[b]!==undefined) box[b]++; });
     Object.keys(box).forEach(function(k){
       document.querySelectorAll('[data-boxcount="'+k+'"]').forEach(function(s){ s.textContent=faNum(box[k]); });
@@ -938,17 +744,6 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   window.tkBox = function(box){
     activeBox=box;
     document.querySelectorAll('.tk-box-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-box')===box); });
-    
-    // مخفی کردن یا نمایش تب‌ها بر اساس اینکه جعبه ارجاعی فعال است یا خیر
-    var tabs = document.querySelector('.tk-tabs');
-    if (tabs) {
-      if (box === 'escalated') {
-        tabs.style.display = 'none';
-      } else {
-        tabs.style.display = '';
-      }
-    }
-    
     applyFilters();
   };
 
