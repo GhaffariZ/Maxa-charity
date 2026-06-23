@@ -526,6 +526,34 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-setup h2{font-size:16px;font-weight:800;margin-bottom:8px}
 .tk-setup code{background:var(--color-bg);border:1px solid var(--color-border);border-radius:8px;padding:3px 8px;font-size:12.5px;direction:ltr;display:inline-block}
 
+.tk-notification-dot{
+  display:none;
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background-color:var(--danger);
+  box-shadow:0 0 0 2px #ffffff, 0 0 6px rgba(224, 85, 107, 0.6);
+  animation:tk-pulse-glow 2s infinite ease-in-out;
+  z-index:10;
+}
+@keyframes tk-pulse-glow{
+  0%{
+    transform:scale(1);
+    box-shadow:0 0 0 2px #ffffff, 0 0 4px rgba(224, 85, 107, 0.5);
+  }
+  50%{
+    transform:scale(1.1);
+    box-shadow:0 0 0 2px #ffffff, 0 0 10px rgba(224, 85, 107, 0.8), 0 0 0 4px rgba(224, 85, 107, 0.25);
+  }
+  100%{
+    transform:scale(1);
+    box-shadow:0 0 0 2px #ffffff, 0 0 4px rgba(224, 85, 107, 0.5);
+  }
+}
+
 @media (max-width:680px){
   body{padding:18px 14px}
   .tk-tabs{grid-template-columns:repeat(2,1fr)}
@@ -615,11 +643,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <div class="tk-boxes">
       <button type="button" class="tk-box-btn active" data-box="inbox" onclick="tkBox('inbox')" style="position: relative;">
         تیکت‌های دریافتی <b>(<span data-boxcount="inbox">۰</span>)</b>
-        <span class="tk-dot-inbox" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px #ffffff;"></span>
+        <span class="tk-notification-dot tk-dot-inbox"></span>
       </button>
       <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')" style="position: relative;">
         ارسالی به ستاد <b>(<span data-boxcount="sent">۰</span>)</b>
-        <span class="tk-dot-sent" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px #ffffff;"></span>
+        <span class="tk-notification-dot tk-dot-sent"></span>
       </button>
       <button type="button" class="tk-box-btn" data-box="escalated" onclick="tkBox('escalated')">
         ارجاعی به ستاد <b>(<span data-boxcount="escalated">۰</span>)</b>
@@ -635,12 +663,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       <button type="button" class="tk-tab" data-cat="open" onclick="tkTab('open')" style="position: relative;">
         <div class="tk-tab-ic ic-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
         <div><b data-tabcount="open">۰</b><span>در انتظار پاسخ</span></div>
-        <span class="tk-dot-tab-open" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px #ffffff;"></span>
+        <span class="tk-notification-dot tk-dot-tab-open"></span>
       </button>
       <button type="button" class="tk-tab" data-cat="answered" onclick="tkTab('answered')" style="position: relative;">
         <div class="tk-tab-ic ic-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>
         <div><b data-tabcount="answered">۰</b><span>پاسخ‌داده‌شده</span></div>
-        <span class="tk-dot-tab-answered" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px #ffffff;"></span>
+        <span class="tk-notification-dot tk-dot-tab-answered"></span>
       </button>
       <button type="button" class="tk-tab" data-cat="closed" onclick="tkTab('closed')">
         <div class="tk-tab-ic ic-closed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
