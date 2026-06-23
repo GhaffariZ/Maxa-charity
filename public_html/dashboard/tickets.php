@@ -109,6 +109,8 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t    = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
+      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin') {
+        $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان ارسال پاسخ برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif ($body === '') {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'متنِ پاسخ خالی است.'];
       } else {
@@ -165,6 +167,8 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       $t      = tk_load($pdo, $tid);
       if (!tk_can_view($t, $MY_ROLE, $ME, $MY_BRANCH)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'به این تیکت دسترسی ندارید.'];
+      } elseif ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin') {
+        $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'امکان تغییر وضعیت برای تیکت‌های ارسالی به ستاد وجود ندارد.'];
       } elseif (!in_array($status, ['open','closed'], true)) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'وضعیتِ نامعتبر.'];
       } else {
@@ -209,21 +213,29 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($chk->fetch()) {
           $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'این تیکت پیش‌تر به ستاد ارجاع شده است.'];
         } else {
-          // پیامِ نخستِ تیکتِ کاربر + نامِ سازنده
-          $fm = $pdo->prepare('SELECT m.body, du.full_name, du.username
-                                 FROM ticket_messages m JOIN dashboard_users du ON du.id = m.user_id
-                                WHERE m.ticket_id = ? ORDER BY m.id ASC LIMIT 1');
-          $fm->execute([$tid]);
-          $first = $fm->fetch() ?: ['body'=>'', 'full_name'=>'', 'username'=>''];
-          $who   = trim((string)($first['full_name'] ?: $first['username'])) ?: 'کاربر شعبه';
-          $newBody = '↪ ارجاع از تیکتِ «' . $who . '» (شماره ' . $tid . '):' . "\n\n" . (string)$first['body'];
+          // پیام‌های تیکتِ کاربر + نامِ سازنده
+          $all_msgs_st = $pdo->prepare('SELECT m.user_id, m.author_role, m.body, m.created_at, du.full_name, du.username
+                                         FROM ticket_messages m JOIN dashboard_users du ON du.id = m.user_id
+                                        WHERE m.ticket_id = ? ORDER BY m.id ASC');
+          $all_msgs_st->execute([$tid]);
+          $all_msgs = $all_msgs_st->fetchAll();
+
           $pdo->beginTransaction();
           $pdo->prepare('INSERT INTO tickets (branch_id,subject,target,priority,status,created_by,creator_role,escalated_from,last_reply_at)
                          VALUES (?,?,\'hq\',?,\'open\',?,\'branch_admin\',?,NOW())')
               ->execute([$MY_BRANCH, $t['subject'], $t['priority'], $ME, $tid]);
           $nid = (int)$pdo->lastInsertId();
-          $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body) VALUES (?,?,\'branch_admin\',?)')
-              ->execute([$nid, $ME, $newBody]);
+
+          $insert_msg_st = $pdo->prepare('INSERT INTO ticket_messages (ticket_id,user_id,author_role,body,created_at) VALUES (?,?,?,?,?)');
+          foreach ($all_msgs as $index => $m) {
+            $body = (string)$m['body'];
+            if ($index === 0) {
+              $who = trim((string)($m['full_name'] ?: $m['username'])) ?: 'کاربر شعبه';
+              $body = '↪ ارجاع از تیکتِ «' . $who . '» (شماره ' . $tid . '):' . "\n\n" . $body;
+            }
+            $insert_msg_st->execute([$nid, $m['user_id'], $m['author_role'], $body, $m['created_at']]);
+          }
+
           $pdo->prepare('INSERT INTO ticket_reads (ticket_id,user_id,last_read_at) VALUES (?,?,NOW())
                          ON DUPLICATE KEY UPDATE last_read_at = NOW()')->execute([$nid, $ME]);
           $pdo->commit();
@@ -609,6 +621,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         $canEscalate = $MY_ROLE==='branch_admin' && $box==='inbox' && (int)$t['child_count']===0;
         $isEscalated = (int)$t['child_count'] > 0;
         $isEscalIn   = $t['escalated_from'] !== null;
+        $readOnly    = ($t['target'] === 'hq' && $MY_ROLE === 'branch_admin');
       ?>
       <article class="tk-card <?= $V['unread']?'unread':'' ?> <?= $status==='closed'?'closed':'' ?>"
                data-id="<?= $tid ?>" data-box="<?= e($box) ?>" data-status="<?= e($status) ?>">
@@ -671,7 +684,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               <?php endforeach; ?>
             </div>
 
-            <?php if ($status !== 'closed'): ?>
+            <?php if ($readOnly): ?>
+              <div class="tk-actions">
+                <div class="tk-locked" style="flex:1">این تیکت به ستاد مرکزی ارجاع شده است و فقط توسط ستاد مرکزی مدیریت می‌شود.</div>
+              </div>
+            <?php elseif ($status !== 'closed'): ?>
               <form method="post" class="tk-reply-form" autocomplete="off">
                 <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                 <input type="hidden" name="action" value="reply">
