@@ -337,7 +337,7 @@ foreach ($tickets as $t) {
   if ($last && (int)$last['user_id'] !== $ME) {
     if ($myRead === null || strtotime((string)$last['created_at']) > strtotime((string)$myRead)) $unread = true;
   }
-  $box = $MY_ROLE === 'branch_admin' ? ($t['target']==='branch' ? 'inbox' : 'sent')
+  $box = $MY_ROLE === 'branch_admin' ? ($t['target']==='branch' ? 'inbox' : ($t['escalated_from'] !== null ? 'escalated' : 'sent'))
        : ($MY_ROLE === 'super' ? 'inbox' : 'mine');
   $VIEW[] = ['t'=>$t,'msgs'=>$msgs,'unread'=>$unread,'box'=>$box,'creator'=>($t['full_name'] ?: $t['username'])];
 }
@@ -613,11 +613,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     <?php if ($MY_ROLE === 'branch_admin'): ?>
     <div class="tk-boxes">
-      <button type="button" class="tk-box-btn active" data-box="inbox" onclick="tkBox('inbox')">
+      <button type="button" class="tk-box-btn active" data-box="inbox" onclick="tkBox('inbox')" style="position: relative;">
         تیکت‌های دریافتی <b>(<span data-boxcount="inbox">۰</span>)</b>
+        <span class="tk-dot-inbox" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--danger); box-shadow: 0 0 0 2px var(--color-surface);"></span>
       </button>
-      <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')">
+      <button type="button" class="tk-box-btn" data-box="sent" onclick="tkBox('sent')" style="position: relative;">
         ارسالی به ستاد <b>(<span data-boxcount="sent">۰</span>)</b>
+        <span class="tk-dot-sent" style="display: none; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background-color: var(--color-secondary); box-shadow: 0 0 0 2px var(--color-surface);"></span>
+      </button>
+      <button type="button" class="tk-box-btn" data-box="escalated" onclick="tkBox('escalated')">
+        ارجاعی به ستاد <b>(<span data-boxcount="escalated">۰</span>)</b>
       </button>
     </div>
     <?php endif; ?>
@@ -823,7 +828,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   function applyFilters(){
     var any=false;
     list.querySelectorAll('.tk-card').forEach(function(c){
-      var show = cardVisibleByBox(c) && (activeCat==='all' || c.getAttribute('data-status')===activeCat);
+      var show = cardVisibleByBox(c) && (activeBox === 'escalated' || activeCat==='all' || c.getAttribute('data-status')===activeCat);
       c.style.display = show ? '' : 'none';
       if(show) any=true;
     });
@@ -832,17 +837,37 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   }
   function updateCounts(){
     var c={all:0,open:0,answered:0,closed:0};
+    var hasInboxOpen = false;
+    var hasSentAnswered = false;
+
     list.querySelectorAll('.tk-card').forEach(function(card){
+      var cardBox = card.getAttribute('data-box');
+      var cardStatus = card.getAttribute('data-status');
+
+      if (cardBox === 'inbox' && cardStatus === 'open') {
+        hasInboxOpen = true;
+      }
+      if (cardBox === 'sent' && cardStatus === 'answered') {
+        hasSentAnswered = true;
+      }
+
       if(!cardVisibleByBox(card)) return;          // شمارشِ تب‌ها فقط برای جعبه‌ی فعال
       c.all++;
-      var s=card.getAttribute('data-status');
-      if(c[s]!==undefined) c[s]++;
+      if(c[cardStatus]!==undefined) c[cardStatus]++;
     });
+
+    // به‌روزرسانی نمایش نقطه‌های قرمز نوتیفیکیشن
+    var dotInbox = document.querySelector('.tk-dot-inbox');
+    if (dotInbox) dotInbox.style.display = hasInboxOpen ? 'block' : 'none';
+
+    var dotSent = document.querySelector('.tk-dot-sent');
+    if (dotSent) dotSent.style.display = hasSentAnswered ? 'block' : 'none';
+
     Object.keys(c).forEach(function(k){
       document.querySelectorAll('[data-tabcount="'+k+'"]').forEach(function(b){ b.textContent=faNum(c[k]); });
     });
     // شمارشِ جعبه‌ها (مدیر شعبه)
-    var box={inbox:0,sent:0};
+    var box={inbox:0,sent:0,escalated:0};
     list.querySelectorAll('.tk-card').forEach(function(card){ var b=card.getAttribute('data-box'); if(box[b]!==undefined) box[b]++; });
     Object.keys(box).forEach(function(k){
       document.querySelectorAll('[data-boxcount="'+k+'"]').forEach(function(s){ s.textContent=faNum(box[k]); });
@@ -857,6 +882,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   window.tkBox = function(box){
     activeBox=box;
     document.querySelectorAll('.tk-box-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-box')===box); });
+    
+    // مخفی کردن یا نمایش تب‌ها بر اساس اینکه جعبه ارجاعی فعال است یا خیر
+    var tabs = document.querySelector('.tk-tabs');
+    if (tabs) {
+      if (box === 'escalated') {
+        tabs.style.display = 'none';
+      } else {
+        tabs.style.display = '';
+      }
+    }
+    
     applyFilters();
   };
 
