@@ -329,6 +329,9 @@ if (!$SETUP_NEEDED) {
 /* ---------- آماده‌سازیِ آیتم‌ها برای نمایش ---------- */
 $VIEW = [];
 foreach ($tickets as $t) {
+  if ($MY_ROLE === 'branch_admin' && $t['target'] === 'branch' && $t['child_count'] > 0) {
+    continue;
+  }
   $tid   = (int)$t['id'];
   $msgs  = $msgsByTicket[$tid] ?? [];
   $last  = $msgs ? end($msgs) : null;
@@ -499,9 +502,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-thread{margin-top:14px;padding-top:14px;border-top:1px dashed var(--color-border)}
 .tk-thread[hidden]{display:none}
 .tk-msgs{display:flex;flex-direction:column;gap:10px}
-.tk-msg{border:1px solid var(--color-border);border-radius:13px;padding:11px 14px;background:var(--color-bg)}
-.tk-msg.mine{background:var(--primary-08);border-inline-start:3px solid var(--color-primary)}
-.tk-msg.responder{background:var(--violet-12);border-inline-start:3px solid var(--violet)}
+.tk-msg{max-width:85%;border:1px solid var(--color-border);border-radius:14px;padding:11px 14px;background:var(--color-bg)}
+.tk-msg.mine{align-self:flex-start;border-bottom-right-radius:2px}
+.tk-msg.other{align-self:flex-end;border-bottom-left-radius:2px}
+.tk-msg.role-user{background:var(--success-12);border-color:rgba(22,163,122,.25)}
+.tk-msg.role-branch_admin{background:var(--violet-12);border-color:rgba(124,77,219,.25)}
+.tk-msg.role-super{background:var(--secondary-12);border-color:rgba(244,166,30,.35)}
 .tk-msg .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
 .tk-msg .mwho{font-size:12px;font-weight:800}
 .tk-msg .mrole{font-size:10.5px;font-weight:700;color:var(--color-muted)}
@@ -745,8 +751,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
             <div class="tk-msgs">
               <?php foreach ($msgs as $m):
                 $mine = (int)$m['user_id'] === $ME;
-                $mResponder = ($t['target']==='branch' && $m['author_role']==='branch_admin') || ($t['target']==='hq' && $m['author_role']==='super');
-                $cls = $mine ? 'mine' : ($mResponder ? 'responder' : '');
+                $clsSide = $mine ? 'mine' : 'other';
+                $clsRole = 'role-' . $m['author_role'];
+                $cls = $clsSide . ' ' . $clsRole;
                 $mWho = trim((string)($m['full_name'] ?: $m['username']));
               ?>
               <div class="tk-msg <?= $cls ?>">
