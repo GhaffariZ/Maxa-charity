@@ -22,10 +22,13 @@ $conn->set_charset("utf8mb4");
 // فقط همکاران فعال نمایش داده می‌شوند
 $column_check  = $conn->query("SHOW COLUMNS FROM `employee_profiles` LIKE 'is_active'");
 $has_is_active = ($column_check && $column_check->num_rows > 0);
+// ایزولاسیون: ستاد همه‌ی شعب، سایرین فقط شعبه‌ی خود (مقدار int از سرور؛ امن).
+$__branchAnd = dash_is_hq_view() ? '' : (' AND branch_id = ' . (int)dash_active_branch_id());
+$__branchWhere = dash_is_hq_view() ? '' : (' WHERE branch_id = ' . (int)dash_active_branch_id());
 if ($has_is_active) {
-    $sql = "SELECT * FROM employee_profiles WHERE is_active = 1 ORDER BY id DESC";
+    $sql = "SELECT * FROM employee_profiles WHERE is_active = 1$__branchAnd ORDER BY id DESC";
 } else {
-    $sql = "SELECT * FROM employee_profiles ORDER BY id DESC";
+    $sql = "SELECT * FROM employee_profiles$__branchWhere ORDER BY id DESC";
 }
 $result = $conn->query($sql);
 
@@ -513,7 +516,8 @@ $treatment_roles = [
                 
                 $fullname = htmlspecialchars($row['fullname'] ?: 'همکار مکسا');
                 $raw_branch = $row['branch'];
-                $branch_text = isset($branches[$raw_branch]) ? $branches[$raw_branch] : 'نامشخص';
+                // رکوردهای جدید نامِ شعبه را مستقیم در ستونِ branch دارند؛ نگاشتِ قدیمی هم پشتیبانی می‌شود.
+                $branch_text = $branches[$raw_branch] ?? ($raw_branch !== '' ? $raw_branch : 'نامشخص');
                 
                 $raw_role = $row['role'];
                 $role_text = isset($treatment_roles[$raw_role]) ? $treatment_roles[$raw_role] : ($raw_role ?: 'ثبت نشده');
@@ -552,7 +556,7 @@ $treatment_roles = [
                 // 🛠️ تنها بخش تغییر یافته: رفع خطای تگ‌های تودرتو و سینتکس کوتیشن‌ها در echo
                 echo '
                 <div class="action-drawer">
-                    <button class="btn-more-info" onclick="event.stopPropagation(); window.location.href=\'personal-resume-detail/' . urlencode(str_replace(' ', '-', trim($row['fullname']))) . '\';">
+                    <button class="btn-more-info" onclick="event.stopPropagation(); window.location.href=\'personal-resume-detail.php?name=' . urlencode(str_replace(' ', '-', trim($row['fullname']))) . '\';">
                         <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                         اطلاعات بیشتر
                     </button>

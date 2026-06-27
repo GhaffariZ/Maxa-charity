@@ -372,7 +372,10 @@ if ($__row && (int)$__row['is_hq'] === 1) {
             
             <div class="card-body">
                 <h4 class="card-title"><?= htmlspecialchars($c['title']) ?></h4>
-                
+                <?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?>
+                  <span style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:8px;">🏢 <?= htmlspecialchars($c['branch_name']) ?></span>
+                <?php endif; ?>
+
                 <div class="card-desc">
                     <?= nl2br(htmlspecialchars($c['description'])) ?>
                 </div>

@@ -14,6 +14,14 @@ try {
         throw new Exception("متد درخواست نامعتبر است.");
     }
 
+    // اگر حجم کل درخواست از post_max_size بیشتر باشد، $_POST و $_FILES خالی می‌شوند
+    // و خطای گمراه‌کننده «عنوان وارد نشده» نمایش داده می‌شود؛ این حالت را صریح مدیریت می‌کنیم.
+    if (empty($_POST) && empty($_FILES) &&
+        isset($_SERVER['CONTENT_LENGTH']) && (int)$_SERVER['CONTENT_LENGTH'] > 0) {
+        $post_max = ini_get('post_max_size');
+        throw new Exception("حجم کل اطلاعات ارسالی (به‌خصوص تصویر) بیشتر از حد مجاز است (حداکثر $post_max). لطفاً تصویر کوچک‌تری انتخاب کنید.");
+    }
+
     if (empty($_POST['title']) || empty($_POST['content'])) {
         throw new Exception("عنوان یا متن خبر وارد نشده است.");
     }
@@ -119,7 +127,25 @@ try {
     }
 
     // آپلود تصویر شاخص جدید
-    if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        // مدیریت صریح خطاهای آپلود (به جای رد شدن بی‌صدا)
+        $up_err = $_FILES['featured_image']['error'];
+        if ($up_err !== UPLOAD_ERR_OK) {
+            switch ($up_err) {
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $max = ini_get('upload_max_filesize');
+                    throw new Exception("حجم تصویر شاخص بیشتر از حد مجاز است (حداکثر $max). لطفاً تصویر کوچک‌تری انتخاب کنید.");
+                case UPLOAD_ERR_PARTIAL:
+                    throw new Exception("آپلود تصویر شاخص ناقص انجام شد. لطفاً دوباره تلاش کنید.");
+                case UPLOAD_ERR_NO_TMP_DIR:
+                case UPLOAD_ERR_CANT_WRITE:
+                    throw new Exception("امکان ذخیره موقت تصویر روی سرور وجود ندارد. لطفاً با مدیر سیستم تماس بگیرید.");
+                default:
+                    throw new Exception("آپلود تصویر شاخص با خطا مواجه شد (کد $up_err).");
+            }
+        }
+
         if ($record_id === 0) {
             throw new Exception("شناسه خبر نامعتبر است. رکورد ثبت نشد.");
         }

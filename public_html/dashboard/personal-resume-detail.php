@@ -82,7 +82,8 @@ $roles = [
 
 // --- تطبیق ۱۰۰٪ با ستون‌های دیتابیس ---
 $fullname = htmlspecialchars($row['fullname'] ?: 'همکار مکسا');
-$branch_text = isset($branches[$row['branch']]) ? $branches[$row['branch']] : 'نامشخص';
+// رکوردهای جدید نامِ شعبه را مستقیم در ستونِ branch دارند؛ نگاشتِ قدیمی هم پشتیبانی می‌شود.
+$branch_text = $branches[$row['branch']] ?? (($row['branch'] ?? '') !== '' ? $row['branch'] : 'نامشخص');
 $role_text = isset($roles[$row['role']]) ? $roles[$row['role']] : ($row['role'] ?: 'ثبت نشده');
 
 $profile_pic = isset($row['profile_pic']) && !empty($row['profile_pic']) ? $row['profile_pic'] : '';

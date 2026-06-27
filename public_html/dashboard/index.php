@@ -317,6 +317,8 @@ $MENU = [
   'isSuper'       => $isSuper,
   'isBranchAdmin' => dash_is_branch_admin(),
   'isHqView'      => $IS_HQ_VIEW,
+  'isNewsEditor'  => dash_is_news_editor(),
+  'canMaxapedia'  => dash_can_maxapedia(),
   'activeBranch'  => $BRANCH_ID,
   'activeBranchName' => $ACTIVE_BRANCH_ROW['name'] ?? '',
   'branches'      => array_map(static fn($b)=>[
@@ -1055,9 +1057,14 @@ body.spa-active .content{display:none}
   if (CAN.hero)      content.push({label:'هیروها',icon:'award',children:[
                        {label:'ساخت هیرو جدید',icon:'plus',href:'hero-create.php'},
                        {label:'مدیریت هیروها',icon:'list',href:'hero-management.php'}]});
-  if (CAN.news)      content.push({label:'خبرها',icon:'news',children:[
-                       {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
-                       {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}]});
+  if (CAN.news){
+    var newsChildren=[
+      {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
+      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}];
+    // سردبیر (ستاد مرکزی): صفِ بررسیِ اخبارِ ارسال‌شده
+    if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
+    content.push({label:'خبرها',icon:'news',children:newsChildren});
+  }
   if (CAN.partners)  content.push({label:'همکاران',icon:'users',children:[
                        {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
                        {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'},
@@ -1068,8 +1075,8 @@ body.spa-active .content{display:none}
   if (CAN.courses)   content.push({label:'دوره‌ها',icon:'book',children:[
                        {label:'ساخت دوره جدید',icon:'plus',href:'courses-create.php'},
                        {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]});
-  // مکساپدیا فقط از «ستاد مرکزی» در دسترس است (نه شعب)
-  if (MENU.isHqView) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
+  // مکساپدیا فقط از «ستاد مرکزی» و فقط برای مدیر مرکزی (یا کاربرِ دارای دسترسیِ صریح)
+  if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
   if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
                        {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
                        {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},

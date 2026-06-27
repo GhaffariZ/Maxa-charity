@@ -6,7 +6,20 @@
 require __DIR__ . '/course-db.php';
 require __DIR__ . '/course-ui.php';
 
-$courses = load_courses($pdo, $coursesSchemaReady, 'published');
+// ایزولاسیون: اگر ?branch=<slug> آمد، فقط دوره‌های همان شعبه؛ وگرنه همه‌ی دوره‌های منتشرشده.
+$__branchScope = null;
+if ($pdo && !empty($_GET['branch'])) {
+  $__bslug = preg_replace('/[^a-z0-9-]/', '', strtolower((string)$_GET['branch']));
+  if ($__bslug !== '') {
+    try {
+      $bs = $pdo->prepare("SELECT id FROM branches WHERE slug = ? AND status='active' LIMIT 1");
+      $bs->execute([$__bslug]);
+      $br = $bs->fetch();
+      if ($br) { $__branchScope = (int)$br['id']; }
+    } catch (Throwable $e) { /* بی‌اثر */ }
+  }
+}
+$courses = load_courses($pdo, $coursesSchemaReady, 'published', $__branchScope);
 
 /* دسته‌بندی‌های موجود */
 $cats = [];

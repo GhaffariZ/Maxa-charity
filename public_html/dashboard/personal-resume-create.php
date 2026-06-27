@@ -54,10 +54,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->set_charset("utf8mb4");
 
     // ==========================================
+    // ایزولاسیون شعبه: «محل خدمت» همیشه شعبه‌ی فعالِ کاربر است (سمتِ سرور تعیین می‌شود،
+    // نه از روی ورودیِ فرم). نام شعبه در ستونِ متنیِ branch و شناسه در branch_id ذخیره می‌شود.
+    // ==========================================
+    $__branchId   = dash_active_branch_id();
+    $__branchRow  = dash_load_branch($__branchId);
+    $__branchName = $__branchRow['name'] ?? '';
+
+    // ==========================================
     // آپلود عکس (مشترک بین ثبت و ویرایش)
     // ==========================================
     $edit_id    = isset($_POST['edit_id']) ? (int)$_POST['edit_id'] : 0;
     $is_update  = ($edit_id > 0);
+
+    // IDOR: در حالتِ ویرایش، رکوردِ هدف باید متعلق به همین شعبه باشد (مگر ستاد مرکزی)
+    if ($is_update && !dash_is_hq_view()) {
+        $own = $conn->prepare('SELECT branch_id FROM employee_profiles WHERE id = ? LIMIT 1');
+        $own->bind_param('i', $edit_id);
+        $own->execute();
+        $ownRes = $own->get_result()->fetch_assoc();
+        $own->close();
+        if (!$ownRes || (int)$ownRes['branch_id'] !== $__branchId) {
+            echo json_encode(["status" => "error", "message" => "دسترسی غیرمجاز به این رکورد."]);
+            $conn->close();
+            exit;
+        }
+    }
 
     // اگر ویرایش است، مسیر عکس قدیمی را به عنوان پیش‌فرض نگه می‌داریم
     $raw_existing = isset($_POST['existing_pic']) ? trim($_POST['existing_pic']) : '';
@@ -99,19 +121,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($is_update) {
             // ─── UPDATE ───
+            // محل خدمت (branch) و branch_id همیشه از شعبه‌ی فعالِ سرور؛ نه از فرم.
             $stmt = $conn->prepare(
                 "UPDATE employee_profiles
                  SET fullname=?, profile_pic=?, email=?, branch=?, job_category=?, role=?,
                      medical_id=?, study_field=?, start_work_year=?, maxa_join_year=?,
                      instagram=?, linkedin=?, bio_professional=?, academic_background=?,
-                     maxa_responsibilities=?
+                     maxa_responsibilities=?, branch_id=?
                  WHERE id=?"
             );
-            $stmt->bind_param("ssssssssiisssssi",
+            $stmt->bind_param("ssssssssiisssssii",
                 $_POST['fullname'],
                 $pic_path,
                 $_POST['email'],
-                $_POST['branch'],
+                $__branchName,
                 $job_category,
                 $role,
                 $medical_id,
@@ -123,6 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_POST['bio_professional'],
                 $_POST['academic_background'],
                 $_POST['maxa_responsibilities'],
+                $__branchId,
                 $edit_id
             );
             if ($stmt->execute()) {
@@ -132,18 +156,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } else {
             // ─── INSERT ───
+            // محل خدمت (branch) و branch_id همیشه از شعبه‌ی فعالِ سرور؛ نه از فرم.
             $stmt = $conn->prepare(
                 "INSERT INTO employee_profiles
                  (fullname, profile_pic, email, branch, job_category, role, medical_id,
                   study_field, start_work_year, maxa_join_year, instagram, linkedin,
-                  bio_professional, academic_background, maxa_responsibilities)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                  bio_professional, academic_background, maxa_responsibilities, branch_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
-            $stmt->bind_param("ssssssssiisssss",
+            $stmt->bind_param("ssssssssiisssssi",
                 $_POST['fullname'],
                 $pic_path,
                 $_POST['email'],
-                $_POST['branch'],
+                $__branchName,
                 $job_category,
                 $role,
                 $medical_id,
@@ -154,7 +179,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_POST['linkedin'],
                 $_POST['bio_professional'],
                 $_POST['academic_background'],
-                $_POST['maxa_responsibilities']
+                $_POST['maxa_responsibilities'],
+                $__branchId
             );
             if ($stmt->execute()) {
                 echo json_encode(["status" => "success", "message" => "پروفایل همکار با موفقیت در دیتابیس ثبت شد."]);
@@ -588,19 +614,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="col-3" id="branch_container">
                     <div class="input-group">
                         <label>📍 محل خدمت</label>
-                        <select id="branch" class="input" onchange="handleBranchChange()" required>
-                            <option value="">انتخاب محل خدمت...</option>
-                            <option value="tehran">شعبه تهران</option>
-                            <option value="isfahan">شعبه اصفهان</option>
-                            <option value="mashhad">شعبه مشهد</option>
-                            <option value="qom">شعبه قم</option>
-                            <option value="tabriz">شعبه تبریز</option>
-                            <option value="ahvaz">شعبه اهواز</option>
-                            <option value="kerman">شعبه کرمان</option>
-                            <option value="kashan">شعبه کاشان</option>
-                            <option value="telemedicine">مرکز تخصصی ارتباطات و پزشکی از راه دور مکسا</option>
-                            <option value="setad_markazi">ستاد مرکزی</option>
+                        <?php
+                          // محل خدمت قفل‌شده به شعبه‌ی فعالِ کاربر است؛ امکانِ انتخابِ شعبه‌ی دیگر وجود ندارد.
+                          $__pbRow  = dash_load_branch(dash_active_branch_id());
+                          $__pbName = $__pbRow['name'] ?? '';
+                          // مقدارِ option همان «کلیدِ منطقِ فرم» است تا cascadeِ موجود کار کند:
+                          //   ستاد مرکزی → setad_markazi (مسیرِ معاونت‌ها)، سایر شعب → branch (مسیرِ کادر درمان/اداری)
+                          $__pbKey  = (int)($__pbRow['is_hq'] ?? 0) === 1 ? 'setad_markazi' : 'branch';
+                        ?>
+                        <select id="branch" class="input" required onchange="handleBranchChange()"
+                                style="background:#f1f3f9;cursor:not-allowed;pointer-events:none;" tabindex="-1"
+                                title="محل خدمت بر اساس شعبه‌ی شما تعیین می‌شود">
+                            <option value="<?= htmlspecialchars($__pbKey) ?>" selected><?= htmlspecialchars($__pbName) ?></option>
                         </select>
+                        <small style="color:var(--text-muted,#858796);font-size:11px;">محل خدمت به‌صورت خودکار، شعبه‌ی شما است.</small>
                     </div>
                 </div>
                 
@@ -1143,18 +1170,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maxa_responsibilities').value = <?php echo json_encode($edit_data['maxa_responsibilities'] ?? ''); ?>;
 
     // Cascade: شاخه → دسته → سمت
-    const branchVal = <?php echo json_encode($edit_data['branch']       ?? ''); ?>;
+    // محل خدمت قفل است؛ مقدارِ select همان کلیدِ منطق (setad_markazi یا branch) را دارد.
     const catVal    = <?php echo json_encode($edit_data['job_category'] ?? ''); ?>;
     const roleVal   = <?php echo json_encode($edit_data['role']         ?? ''); ?>;
     const medVal    = <?php echo json_encode($edit_data['medical_id']   ?? ''); ?>;
+    const branchKey = document.getElementById('branch').value; // setad_markazi | branch
 
-    if (branchVal) {
-        document.getElementById('branch').value = branchVal;
-        handleBranchChange();
-    }
+    // ساختِ فیلدهای دسته/سمت بر اساس کلیدِ شعبه
+    handleBranchChange();
 
-    // برای ستاد مرکزی، handleBranchChange دسته را به deputies تنظیم می‌کند؛ نیازی به handleCategoryChange نیست
-    if (branchVal && branchVal !== 'setad_markazi' && catVal) {
+    // برای ستاد مرکزی، handleBranchChange دسته را به معاونت‌ها تنظیم می‌کند؛ نیازی به handleCategoryChange نیست
+    if (branchKey !== 'setad_markazi' && catVal) {
         const catEl = document.getElementById('job_category');
         if (catEl) { catEl.value = catVal; handleCategoryChange(); }
     }
@@ -1179,6 +1205,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const joinYear  = <?php echo json_encode((string)($edit_data['maxa_join_year']  ?? '')); ?>;
     if (startYear) document.getElementById('start_work_year').value = startYear;
     if (joinYear)  document.getElementById('maxa_join_year').value  = joinYear;
+});
+<?php endif; ?>
+<?php if (!$is_edit_mode): ?>
+// حالتِ ساخت: چون «محل خدمت» قفل‌شده است، منطقِ نمایشِ دسته/سمت را بلافاصله اجرا کن.
+document.addEventListener('DOMContentLoaded', function(){
+    if (typeof handleBranchChange === 'function') handleBranchChange();
 });
 <?php endif; ?>
 </script>
