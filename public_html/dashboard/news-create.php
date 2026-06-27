@@ -451,6 +451,33 @@ input[type="file"] {
 .status-err { background: #ffeaa7; color: #d63031; border: 1px solid #fdcb6e; }
 .status-ok { background: #55efc4; color: #00b894; border: 1px solid #00b894; }
 
+/* نوار پیشرفت آپلود */
+.upload-progress {
+    margin-top: 12px;
+    display: none;
+}
+.upload-progress.active { display: block; }
+.upload-progress .bar-track {
+    width: 100%;
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.upload-progress .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(135deg, var(--primary-color), #009b90);
+    border-radius: 6px;
+    transition: width 0.15s ease;
+}
+.upload-progress .bar-label {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--primary-color);
+    text-align: center;
+}
+
 .publish-date-row {
     display: flex;
     gap: 8px;
@@ -902,6 +929,11 @@ input[type="file"] {
     </div>
 
     <div id="statusBox" class="status-msg"></div>
+
+    <div id="uploadProgress" class="upload-progress">
+        <div class="bar-track"><div id="uploadBarFill" class="bar-fill"></div></div>
+        <div id="uploadBarLabel" class="bar-label">در حال آپلود...</div>
+    </div>
 
 </div> </div> </div> <div id="previewModal">
     <div class="modal-content">
@@ -1371,6 +1403,70 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /* ======================== */
 
+/* ====== فشرده‌سازی هوشمند تصویر شاخص (حفظ کیفیت، کاهش حجم) ====== */
+// فقط در صورت نیاز فشرده می‌کند: اگر فایل کوچک باشد دست‌نخورده برمی‌گردد.
+async function compressFeaturedImage(file) {
+    const MAX_DIMENSION = 1920;   // حداکثر عرض/ارتفاع
+    const QUALITY = 0.85;         // کیفیت بالا
+    const SIZE_THRESHOLD = 1.5 * 1024 * 1024; // زیر ۱.۵ مگ نیازی به فشرده‌سازی نیست
+
+    // فایل‌های غیرتصویری یا PNG شفاف را دست‌نخورده برمی‌گردانیم تا کیفیت/شفافیت حفظ شود
+    if (!file.type.startsWith("image/")) return file;
+    if (file.size <= SIZE_THRESHOLD) return file;
+
+    try {
+        const dataUrl = await new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = rej;
+            r.readAsDataURL(file);
+        });
+
+        const img = await new Promise((res, rej) => {
+            const i = new Image();
+            i.onload = () => res(i);
+            i.onerror = rej;
+            i.src = dataUrl;
+        });
+
+        let { width, height } = img;
+        if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+            const scale = MAX_DIMENSION / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", QUALITY));
+        if (!blob || blob.size >= file.size) return file; // اگر فشرده‌سازی سود نداشت، اصل را نگه‌دار
+
+        const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+        return new File([blob], newName, { type: "image/jpeg" });
+    } catch (e) {
+        console.warn("Image compression skipped:", e);
+        return file; // در صورت خطا، فایل اصلی ارسال می‌شود
+    }
+}
+
+/* ====== کنترل نوار پیشرفت آپلود ====== */
+function setUploadProgress(percent, label) {
+    const box = document.getElementById("uploadProgress");
+    const fill = document.getElementById("uploadBarFill");
+    const lbl = document.getElementById("uploadBarLabel");
+    box.classList.add("active");
+    fill.style.width = percent + "%";
+    if (label) lbl.textContent = label;
+}
+function hideUploadProgress() {
+    document.getElementById("uploadProgress").classList.remove("active");
+    document.getElementById("uploadBarFill").style.width = "0%";
+}
+
 async function saveNews() {
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("editor").innerHTML.trim();
@@ -1387,7 +1483,7 @@ async function saveNews() {
         // تغییر وضعیت دکمه به لودینگ
         saveBtn.disabled = true;
         saveBtn.innerHTML = 'در حال ذخیره...';
-        showStatus("⏳ در حال برقراری ارتباط با سرور...", true);
+        showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
 
         const fd = new FormData();
         fd.append("id", "<?= $id ?>");
@@ -1399,39 +1495,54 @@ async function saveNews() {
         fd.append("publish_date", document.getElementById("publish_date").value);
         fd.append("tags", document.getElementById("tags").value);
         fd.append("remove_featured_flag", document.getElementById("remove_featured_flag").value);
-        
-        const featuredFile = document.getElementById("featured_image").files[0];
+
+        let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {
+            showStatus("🗜️ در حال بهینه‌سازی تصویر...", true);
+            featuredFile = await compressFeaturedImage(featuredFile);
             fd.append("featured_image", featuredFile);
         }
 
-        const response = await fetch("news-save.php", { 
-            method: "POST", 
-            body: fd,
-            headers: {
-                'Accept': 'application/json'
+        // استفاده از XMLHttpRequest برای نمایش درصد پیشرفت آپلود
+        const data = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "news-save.php", true);
+            xhr.setRequestHeader("Accept", "application/json");
+
+            if (featuredFile) {
+                showStatus("⏫ در حال آپلود به سرور...", true);
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round((e.loaded / e.total) * 100);
+                        setUploadProgress(pct, `در حال آپلود... ${pct}%`);
+                    }
+                };
+                xhr.upload.onload = () => setUploadProgress(100, "آپلود کامل شد، در حال پردازش...");
             }
+
+            xhr.onload = () => {
+                let parsed;
+                try { parsed = JSON.parse(xhr.responseText); }
+                catch (_) { return reject(new Error("پاسخ نامعتبر از سرور دریافت شد.")); }
+                if (xhr.status >= 200 && xhr.status < 300 && parsed.status === "success") {
+                    resolve(parsed);
+                } else {
+                    reject(new Error(parsed.message || "خطایی در پردازش اطلاعات رخ داد."));
+                }
+            };
+            xhr.onerror = () => reject(new Error("ارتباط با سرور برقرار نشد."));
+            xhr.send(fd);
         });
 
-        // در صورت خطای سرور غیر از 200 (مثل 400 بد ریکوئست)
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.message || "خطایی در پردازش اطلاعات رخ داد.");
-        }
-
-        const data = await response.json();
-
-        if (data.status === "success") {
-            showStatus(`✅ ${data.message} در حال انتقال...`, true);
-            setTimeout(() => {
-                window.location.href = "news-list.php";
-            }, 1000);
-        } else {
-            throw new Error(data.message);
-        }
+        setUploadProgress(100, "✅ با موفقیت ذخیره شد");
+        showStatus(`✅ ${data.message} در حال انتقال...`, true);
+        setTimeout(() => {
+            window.location.href = "news-list.php";
+        }, 1000);
 
     } catch (err) {
         console.error("Save Error:", err);
+        hideUploadProgress();
         showStatus("❌ خطایی رخ داد: " + err.message, false);
     } finally {
         // بازگشت دکمه به حالت عادی در صورت خطا

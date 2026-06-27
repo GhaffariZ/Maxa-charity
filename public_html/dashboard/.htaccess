@@ -5,6 +5,22 @@ RewriteEngine On
 # ----------------------------------
 Options -Indexes
 
+# ----------------------------------
+# Upload limits (featured/news images)
+# ----------------------------------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 8M
+    php_value post_max_size 12M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 8M
+    php_value post_max_size 12M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 8M
+    php_value post_max_size 12M
+</IfModule>
+
 # ---------------------------------------------------------
 # Prevent direct access to news-view.php
 # (must be accessed only from root URL)
