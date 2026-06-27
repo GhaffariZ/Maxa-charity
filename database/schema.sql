@@ -2096,3 +2096,55 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ============================================================================
 -- پایان مهاجرت 001
 -- ============================================================================
+
+
+-- ============================================================================
+--  Migration 002 — سامانه‌ی تیکتینگ (Ticketing)  [بدون FOREIGN KEY برای سازگاری با هاست]
+--  یکپارچگیِ داده در لایه‌ی برنامه (PHP) تضمین می‌شود. جزئیات: database/migrations/002_ticketing.sql
+-- ============================================================================
+SET NAMES utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `tickets` (
+  `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `branch_id`      INT UNSIGNED NOT NULL,
+  `subject`        VARCHAR(200) NOT NULL,
+  `target`         ENUM('branch','hq') NOT NULL,
+  `priority`       ENUM('low','normal','high') NOT NULL DEFAULT 'normal',
+  `status`         ENUM('open','answered','closed') NOT NULL DEFAULT 'open',
+  `created_by`     INT UNSIGNED NOT NULL,
+  `creator_role`   ENUM('user','branch_admin','super') NOT NULL,
+  `escalated_from` INT UNSIGNED DEFAULT NULL,
+  `created_at`     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_reply_at`  DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_tickets_branch`  (`branch_id`),
+  KEY `idx_tickets_target`  (`target`),
+  KEY `idx_tickets_creator` (`created_by`),
+  KEY `idx_tickets_status`  (`status`),
+  KEY `idx_tickets_escal`   (`escalated_from`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ticket_messages` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ticket_id`   INT UNSIGNED NOT NULL,
+  `user_id`     INT UNSIGNED NOT NULL,
+  `author_role` ENUM('user','branch_admin','super') NOT NULL,
+  `body`        TEXT NOT NULL,
+  `created_at`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_tmsg_ticket` (`ticket_id`),
+  KEY `idx_tmsg_user`   (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ticket_reads` (
+  `ticket_id`    INT UNSIGNED NOT NULL,
+  `user_id`      INT UNSIGNED NOT NULL,
+  `last_read_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ticket_id`, `user_id`),
+  KEY `idx_tread_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- پایان مهاجرت 002
+-- ============================================================================
