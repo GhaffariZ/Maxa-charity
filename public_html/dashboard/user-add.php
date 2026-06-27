@@ -23,6 +23,11 @@ $FEATURE_LABELS = [
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
     'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
 ];
+// دسترسیِ ویژه‌ی «سردبیری خبر» فقط در ستاد مرکزی قابل‌واگذاری است.
+if (dash_is_hq_view()) {
+    $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
+}
+$GRANTABLE = array_keys($FEATURE_LABELS);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -32,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roleMode = (string)($_POST['role_mode'] ?? 'existing');
     $roleId   = (int)($_POST['role_id'] ?? 0);
     $newName  = trim((string)($_POST['new_role_name'] ?? ''));
-    $newPerms = array_values(array_intersect((array)($_POST['new_perms'] ?? []), DASH_FEATURES));
+    $newPerms = array_values(array_intersect((array)($_POST['new_perms'] ?? []), $GRANTABLE));
 
     $old = ['full_name' => $fullName, 'username' => $username, 'role_mode' => $roleMode,
             'role_id' => $roleId ?: '', 'new_role_name' => $newName, 'new_perms' => $newPerms];

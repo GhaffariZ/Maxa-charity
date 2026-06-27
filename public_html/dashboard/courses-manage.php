@@ -13,6 +13,11 @@ $flash = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $coursesSchemaReady) {
   $id = (int)($_POST['id'] ?? 0);
   $act = (string)($_POST['do'] ?? '');
+  // IDOR: کاربرِ غیرستادی فقط روی دوره‌ی شعبه‌ی خودش عمل کند
+  if ($id && !dash_is_hq_view()) {
+    $own = q($pdo, "SELECT branch_id FROM courses WHERE id=?", [$id])->fetch();
+    if (!$own || (int)$own['branch_id'] !== dash_active_branch_id()) { $id = 0; $flash = 'دسترسی غیرمجاز.'; }
+  }
   try {
     if ($id && $act === 'delete') {
       q($pdo, "DELETE FROM course_lessons WHERE course_id=?", [$id]);
@@ -27,7 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $coursesSchemaReady) {
   } catch (Throwable $e) { $flash = 'خطا: ' . $e->getMessage(); }
 }
 
-$courses = load_courses($pdo, $coursesSchemaReady);
+// ایزولاسیون: ستاد همه‌ی شعب را می‌بیند (با تگ)، سایرین فقط شعبه‌ی خود
+$__branchScope = dash_is_hq_view() ? null : dash_active_branch_id();
+$courses = load_courses($pdo, $coursesSchemaReady, null, $__branchScope);
 
 /* ---------- آمار ---------- */
 $cTotal = count($courses);
@@ -180,7 +187,7 @@ course_html_head('مدیریت دوره‌ها', $pageCss);
                   <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><?= cic('book') ?><?php endif; ?>
                 </div>
                 <div>
-                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?></div>
+                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?><?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?> <span style="font-size:10.5px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:2px 8px;border-radius:99px;">🏢 <?= e($c['branch_name']) ?></span><?php endif; ?></div>
                   <div class="c-meta"><?= e($c['instructor'] ?? 'مدرس نامشخص') ?> · <?= fa_digits((int)($c['lessons'] ?? 0)) ?> درس</div>
                 </div>
               </div>

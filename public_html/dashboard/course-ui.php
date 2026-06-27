@@ -257,6 +257,7 @@ function course_card(array $c): void {
     </div>
     <div class="ccard-body">
       <span class="ccard-cat"><?= e($c['category'] ?? 'عمومی') ?></span>
+      <?php if (!empty($c['branch_name'])): ?><span class="ccard-branch" style="display:inline-block;font-size:10.5px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:2px 9px;border-radius:99px;margin-inline-start:6px;">🏢 <?= e($c['branch_name']) ?></span><?php endif; ?>
       <h3 class="ccard-title"><?= e($c['title'] ?? 'بدون عنوان') ?></h3>
       <div class="ccard-inst"><?= e($c['instructor'] ?? 'مدرس مکسا') ?></div>
       <div class="ccard-meta">

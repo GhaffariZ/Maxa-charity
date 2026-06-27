@@ -102,10 +102,30 @@ function faNumbers($text) {
 // news-list.php
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
-// ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
-$__branch = dash_active_branch_id();
-$stmt = $pdo->prepare("SELECT * FROM news WHERE branch_id = ? ORDER BY id DESC");
-$stmt->execute([$__branch]);
+// نقش‌ها: سردبیر (ستاد مرکزی) همه‌ی اخبارِ همه‌ی شعب را می‌بیند؛ سایرین فقط شعبه‌ی خود.
+$__branch    = dash_active_branch_id();
+$__isEditor  = dash_is_news_editor();
+$__reviewOnly = !empty($_GET['review']);  // صفِ بررسیِ سردبیری
+
+if ($__isEditor) {
+    // سردبیر: همه‌ی شعب، با نامِ شعبه؛ اخبارِ «در حال بررسی» در ابتدا (اولویتِ نمایش).
+    $where = $__reviewOnly ? "WHERE n.status = 'review'" : "";
+    $stmt = $pdo->prepare(
+        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
+           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
+           $where
+          ORDER BY (n.status = 'review') DESC, n.id DESC"
+    );
+    $stmt->execute();
+} else {
+    // ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
+    $stmt = $pdo->prepare(
+        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
+           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
+          WHERE n.branch_id = ? ORDER BY n.id DESC"
+    );
+    $stmt->execute([$__branch]);
+}
 $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -490,7 +510,7 @@ body.select-mode .main-row.selected:hover {
               else echo '<span class="st-badge st-draft">ذخیره شده</span>';
             ?>
           </td>
-          <td style="font-weight: 600;"><?= htmlspecialchars($news['title']) ?></td>
+          <td style="font-weight: 600;"><?= htmlspecialchars($news['title']) ?><?php if ($__isEditor && !empty($news['branch_name'])): ?> <span style="font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 9px;border-radius:99px;margin-inline-start:6px;">🏢 <?= htmlspecialchars($news['branch_name']) ?></span><?php endif; ?></td>
           <td style="color: var(--text-muted); font-size: 13px; text-align: left; direction: ltr;"><?= faNumbers(formatJalaliDateTime($news['publish_date'] ?? null)) ?></td>
           <td style="text-align: center;"><span class="arrow-icon">▼</span></td>
         </tr>
@@ -533,9 +553,22 @@ body.select-mode .main-row.selected:hover {
                 <?php $slug = slugify($news['title']); ?>
                 <a href="/<?= $news['id'] ?>/<?= $slug ?>/" target="_blank" class="btn-min">👁️ مشاهده</a>
                 <a href="news-create.php?id=<?= $news['id'] ?>" class="btn-min">📝 ویرایش</a>
-                <button onclick="updateStatus(<?= $news['id'] ?>, 'review')" class="btn-min">🧑‍💻 ارسال به سردبیر</button>
-                <button onclick="updateStatus(<?= $news['id'] ?>, 'published')" class="btn-min" style="color: var(--primary-color);">✅ انتشار</button>
-                <button onclick="confirmReject(<?= $news['id'] ?>)" class="btn-min" style="color: #e74a3b;">❌ عدم تایید</button>
+                <?php if (!$__isEditor): ?>
+                  <?php /* نویسنده: ارسال به سردبیر فقط وقتی پیش‌نویس یا ردشده است */ ?>
+                  <?php if ($st === 'draft' || $st === 'rejected'): ?>
+                    <button onclick="updateStatus(<?= $news['id'] ?>, 'review')" class="btn-min">🧑‍💻 ارسال به سردبیر</button>
+                  <?php elseif ($st === 'review'): ?>
+                    <span class="btn-min" style="opacity:.7;cursor:default;">⏳ در انتظار سردبیر</span>
+                  <?php endif; ?>
+                <?php else: ?>
+                  <?php /* سردبیر/ادمین ستاد: تایید و انتشار یا عدم تایید */ ?>
+                  <?php if ($st !== 'published'): ?>
+                    <button onclick="updateStatus(<?= $news['id'] ?>, 'published')" class="btn-min" style="color: var(--primary-color);">✅ تایید و انتشار</button>
+                  <?php endif; ?>
+                  <?php if ($st !== 'rejected'): ?>
+                    <button onclick="confirmReject(<?= $news['id'] ?>)" class="btn-min" style="color: #e74a3b;">❌ عدم تایید</button>
+                  <?php endif; ?>
+                <?php endif; ?>
                 <button onclick="confirmDelete(<?= $news['id'] ?>)" class="btn-min" style="color: var(--text-muted);">🗑️ حذف</button>
               </div>
 
@@ -652,11 +685,13 @@ function toggleRow(event, row, newsId) {
 }
 
 // ---------- عملیات تکی ----------
+const NEWS_CSRF = <?= json_encode(csrf_token()) ?>;
 function updateStatus(id, st, reason = '') {
     const fd = new FormData();
     fd.append('id', id);
     fd.append('status', st);
     fd.append('reason', reason);
+    fd.append('csrf_token', NEWS_CSRF);
 
     if (st === 'delete') {
         fetch('news-delete.php', {
