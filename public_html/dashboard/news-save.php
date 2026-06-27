@@ -95,8 +95,24 @@ try {
 
     } else {
         // ======================== حالت ایجاد جدید (INSERT) ========================
-        $news_code = 'NEWS-' . date('Ymd') . '-' . str_pad(mt_rand(1000, 9999), 4, '0', STR_PAD_LEFT);
-        
+        // تولید news_code یکتا (با بررسی برخورد). طول نهایی ۱۸ کاراکتر است و
+        // باید در ستون varchar(30) جا شود؛ در غیر این صورت بریده شدن باعث
+        // می‌شود چند خبر کد یکسان و در نتیجه تصویر شاخصِ مشترک بگیرند.
+        $news_code = '';
+        $code_check = $pdo->prepare("SELECT 1 FROM news WHERE news_code = ? LIMIT 1");
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $candidate = 'NEWS-' . date('Ymd') . '-' . str_pad((string)mt_rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+            $code_check->execute([$candidate]);
+            if (!$code_check->fetch()) {
+                $news_code = $candidate;
+                break;
+            }
+        }
+        if ($news_code === '') {
+            // پشتیبان: در حالت بسیار نادرِ برخوردِ پیاپی، از uniqid استفاده کن (۱۹ کاراکتر، در varchar(30) جا می‌شود)
+            $news_code = 'NEWS-' . date('Ymd') . '-' . substr(uniqid(), -5);
+        }
+
         $sql = "INSERT INTO news
                 (news_code, title, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
