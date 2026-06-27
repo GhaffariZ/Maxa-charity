@@ -523,7 +523,7 @@ CREATE TABLE `news` (
   `category_id` int(10) UNSIGNED DEFAULT NULL,
   `publish_date` datetime DEFAULT current_timestamp(),
   `tag_id` int(11) DEFAULT NULL,
-  `news_code` varchar(10) DEFAULT NULL,
+  `news_code` varchar(30) DEFAULT NULL,
   `featured_image` varchar(255) DEFAULT NULL,
   `images` text DEFAULT NULL,
   `status` enum('draft','review','published','rejected') NOT NULL DEFAULT 'draft',
