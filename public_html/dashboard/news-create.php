@@ -516,23 +516,86 @@ select.input { appearance: none; cursor: pointer; }
 .publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .publish-date-row .input { flex: 1; min-width: 140px; }
 
-/* ===== نوار وضعیت و پیشرفت ===== */
-.status-msg {
-    margin-top: 16px;
-    padding: 11px 14px;
-    border-radius: var(--radius-sm);
+/* ===== توست وضعیت (موفقیت / خطا / در حال انجام) ===== */
+.toast {
+    position: fixed;
+    bottom: 22px;
+    left: 22px;
+    z-index: 10001;
+    width: min(380px, calc(100vw - 44px));
     display: none;
-    font-size: 14px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
 }
-.status-msg:not(:empty) { display: block; animation: toastIn 340ms ease both; }
-.status-err { background: #ffeaa7; color: #d63031; border: 1px solid #fdcb6e; }
-.status-ok  { background: #d5f5e9; color: #00876b; border: 1px solid #2ecc71; }
+.toast.show { display: block; animation: toastSlide 360ms cubic-bezier(.2,.8,.2,1) both; }
+.toast.hide { animation: toastOut 260ms ease both; }
 
-.upload-progress { margin-top: 14px; display: none; }
-.upload-progress.active { display: block; }
-.upload-progress .bar-track { width: 100%; height: 10px; background: var(--border-color); border-radius: 6px; overflow: hidden; }
-.upload-progress .bar-fill { height: 100%; width: 0%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: 6px; transition: width 0.15s ease; }
-.upload-progress .bar-label { margin-top: 6px; font-size: 13px; color: var(--primary-color); text-align: center; }
+/* نوار رنگی کناری بر اساس نوع پیام */
+.toast::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;     /* در RTL سمت چپ کارت */
+    width: 5px;
+    background: var(--primary-color);
+}
+.toast.is-error::before  { background: var(--danger, #e74c3c); }
+.toast.is-success::before { background: #00b894; }
+.toast.is-info::before    { background: var(--secondary-color); }
+
+.toast-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+}
+.toast-ic {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+}
+.toast-ic svg { width: 20px; height: 20px; }
+.toast.is-error  .toast-ic { background: var(--danger, #e74c3c); }
+.toast.is-success .toast-ic { background: #00b894; }
+.toast.is-info    .toast-ic { background: var(--secondary-color); }
+/* اسپینر چرخان برای حالت در حال انجام */
+.toast.is-info .toast-ic.spin svg { animation: toastSpin 0.9s linear infinite; }
+
+.toast-body { flex: 1; min-width: 0; padding-top: 1px; }
+.toast-title { font-size: 14px; font-weight: 800; color: var(--text-color); margin: 0 0 2px; }
+.toast-msg { font-size: 13px; color: var(--muted-color); line-height: 1.7; word-break: break-word; }
+
+.toast-close {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--muted-color);
+    cursor: pointer;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
+}
+.toast-close:hover { background: var(--surface-2); color: var(--text-color); }
+.toast-close svg { width: 16px; height: 16px; }
+
+/* نوار پیشرفت داخل توست */
+.toast-progress { display: none; padding: 0 16px 14px; }
+.toast-progress.active { display: block; }
+.toast-progress .bar-track { width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; }
+.toast-progress .bar-fill {
+    height: 100%; width: 0%; border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    transition: width 0.15s ease;
+}
+
+@keyframes toastSlide { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut   { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+@keyframes toastSpin  { to { transform: rotate(360deg); } }
 
 /* ===== مودال‌ها ===== */
 .date-modal {
@@ -1044,13 +1107,23 @@ select.input { appearance: none; cursor: pointer; }
 
     </div>
 
-    <div id="statusBox" class="status-msg"></div>
+</div>
 
-    <div id="uploadProgress" class="upload-progress">
-        <div class="bar-track"><div id="uploadBarFill" class="bar-fill"></div></div>
-        <div id="uploadBarLabel" class="bar-label">در حال آپلود...</div>
+<!-- توست وضعیت (موفقیت / خطا / در حال انجام) -->
+<div id="statusToast" class="toast" role="status" aria-live="polite">
+    <div class="toast-row">
+        <div class="toast-ic" id="toastIcon"></div>
+        <div class="toast-body">
+            <p class="toast-title" id="toastTitle"></p>
+            <div class="toast-msg" id="toastMsg"></div>
+        </div>
+        <button type="button" class="toast-close" onclick="hideStatus()" aria-label="بستن">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
     </div>
-
+    <div id="uploadProgress" class="toast-progress">
+        <div class="bar-track"><div id="uploadBarFill" class="bar-fill"></div></div>
+    </div>
 </div>
 
 <!-- مودال پیش‌نمایش -->
@@ -1375,11 +1448,63 @@ function renderTagChips(){
 }
 tagsInput.addEventListener("input", renderTagChips);
 
-/* =================== ذخیره خبر (بازطراحی شده) =================== */
-function showStatus(msg, ok){
-    const box = document.getElementById("statusBox");
-    box.textContent = msg;
-    box.className = "status-msg " + (ok ? "status-ok" : "status-err");
+/* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
+const TOAST_ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'
+};
+const TOAST_TITLES = { success: "انجام شد", error: "خطا", info: "در حال انجام" };
+
+let toastHideTimer = null;
+
+/*
+ * نمایش توست وضعیت.
+ *   showStatus(msg)               → اطلاع‌رسانی (info)
+ *   showStatus(msg, true)         → موفقیت (success)
+ *   showStatus(msg, false)        → خطا (error)
+ *   showStatus(msg, "info")       → حالت در حال انجام با اسپینر
+ * برای سازگاری با فراخوانی‌های قبلی، ایموجی‌های ابتدای پیام حذف می‌شوند.
+ */
+function showStatus(msg, type){
+    let kind = "info";
+    if (type === true) kind = "success";
+    else if (type === false) kind = "error";
+    else if (typeof type === "string") kind = type;
+
+    const cleanMsg = String(msg).replace(/^[✅❌⏳⚡🗜🔼⬆\s]+/u, "").trim();
+
+    const toast = document.getElementById("statusToast");
+    const iconEl = document.getElementById("toastIcon");
+    toast.classList.remove("is-success", "is-error", "is-info", "hide");
+    toast.classList.add("is-" + kind, "show");
+
+    iconEl.className = "toast-ic" + (kind === "info" ? " spin" : "");
+    iconEl.innerHTML = TOAST_ICONS[kind];
+    document.getElementById("toastTitle").textContent = TOAST_TITLES[kind];
+    document.getElementById("toastMsg").textContent = cleanMsg;
+
+    // نوار پیشرفت فقط در حالتِ «در حال انجام» معنا دارد
+    if (kind !== "info") {
+        document.getElementById("uploadProgress").classList.remove("active");
+    }
+
+    // پیام موفقیت/خطا پس از چند ثانیه خودکار بسته می‌شود؛ حالت در حال انجام باز می‌ماند.
+    clearTimeout(toastHideTimer);
+    if (kind !== "info") {
+        toastHideTimer = setTimeout(hideStatus, kind === "error" ? 6000 : 3500);
+    }
+}
+
+function hideStatus(){
+    const toast = document.getElementById("statusToast");
+    if (!toast.classList.contains("show")) return;
+    clearTimeout(toastHideTimer);
+    toast.classList.add("hide");
+    setTimeout(() => {
+        toast.classList.remove("show", "hide", "is-success", "is-error", "is-info");
+        hideUploadProgress();
+    }, 250);
 }
 
 /* توابع مربوط به زمان‌بندی */
@@ -1645,14 +1770,12 @@ async function compressFeaturedImage(file) {
     }
 }
 
-/* ====== کنترل نوار پیشرفت آپلود ====== */
+/* ====== کنترل نوار پیشرفت آپلود (داخل توست) ====== */
 function setUploadProgress(percent, label) {
-    const box = document.getElementById("uploadProgress");
-    const fill = document.getElementById("uploadBarFill");
-    const lbl = document.getElementById("uploadBarLabel");
-    box.classList.add("active");
-    fill.style.width = percent + "%";
-    if (label) lbl.textContent = label;
+    document.getElementById("uploadProgress").classList.add("active");
+    document.getElementById("uploadBarFill").style.width = percent + "%";
+    // متنِ پیشرفت در همان توستِ «در حال انجام» نمایش داده می‌شود
+    if (label) showStatus(label, "info");
 }
 function hideUploadProgress() {
     document.getElementById("uploadProgress").classList.remove("active");
