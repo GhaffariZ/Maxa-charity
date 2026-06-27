@@ -1201,8 +1201,12 @@ body.spa-active .content{display:none}
     let current=null;     // نام فایلِ بازشده (null یعنی داشبورد/خانه)
     let syncing=false;    // محافظ در برابر حلقه‌ی hashchange
 
-    const fileOf=href=>{ try{ return new URL(href,location.href).pathname.replace(/^.*\//,''); }
-                         catch(e){ return (href||'').split(/[?#]/)[0].replace(/^.*\//,''); } };
+    // کلیدِ هویتِ صفحه = نام فایل + query (مثلاً news-list.php?review=1).
+    // نگه‌داشتنِ query لازم است تا دو لینکِ هم‌فایل اما با پارامترِ متفاوت
+    // («مدیریت اخبار» = news-list.php و «بررسی سردبیری» = news-list.php?review=1)
+    // از هم تفکیک شوند؛ وگرنه هر دو با هم active می‌شوند و کلیک روی دومی صفحه را بار نمی‌کند.
+    const fileOf=href=>{ try{ const u=new URL(href,location.href); return u.pathname.replace(/^.*\//,'')+u.search; }
+                         catch(e){ return (href||'').replace(/#.*$/,'').replace(/^.*\//,''); } };
 
     function isInternal(a){
       const href=a.getAttribute('href')||'';
@@ -1212,11 +1216,20 @@ body.spa-active .content{display:none}
       return /\.php(\?|#|$)/i.test(href);   // فقط صفحات داخلیِ .php را داخل آی‌فریم باز کن
     }
 
+    const baseOf=key=>(key||'').split('?')[0];   // فقط نام فایل، بدون query
     function setActive(file){
       navEl.querySelectorAll('.nav-sub-link.active,.nav-item.active').forEach(e=>e.classList.remove('active'));
       if(!file) return;
-      navEl.querySelectorAll('a[href]').forEach(a=>{
-        if(fileOf(a.getAttribute('href'))!==file) return;
+      const links=Array.from(navEl.querySelectorAll('a[href]'));
+      // ۱) تطبیقِ دقیق (شاملِ query): «بررسی سردبیری» را از «مدیریت اخبار» جدا می‌کند
+      let matches=links.filter(a=>fileOf(a.getAttribute('href'))===file);
+      // ۲) اگر تطبیقِ دقیق نبود (مثلاً صفحه‌بندیِ news-list.php?page=2)، به تطبیقِ فقط-فایل
+      //    برگرد، ولی فقط لینک‌هایی که خودشان query ندارند تا لینکِ پایه active بماند.
+      if(!matches.length){
+        const base=baseOf(file);
+        matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
+      }
+      matches.forEach(a=>{
         a.classList.add('active');
         const g=a.closest('.nav-group');
         if(g && !g.classList.contains('open')){

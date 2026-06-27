@@ -297,6 +297,36 @@ label.field-label svg { width: 16px; height: 16px; }
 }
 select.input { appearance: none; cursor: pointer; }
 
+/* ===== حالت خطای فیلدها ===== */
+.input.field-invalid,
+.title-card.field-invalid,
+.editor-shell.field-invalid #editor {
+    border-color: var(--danger, #e74c3c) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.14) !important;
+}
+.title-card.field-invalid { animation: fieldShake 0.32s ease; }
+.input.field-invalid { animation: fieldShake 0.32s ease; }
+/* لیبل فیلدِ خطادار قرمز شود تا سریع دیده شود */
+.input-group.has-error label.field-label { color: var(--danger, #e74c3c); }
+
+.field-error {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger, #e74c3c);
+}
+.field-error.show { display: flex; animation: toastSlide 0.28s ease; }
+.field-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+@keyframes fieldShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
 /* ===== ادیتور ===== */
 .editor-toolbar {
     display: flex;
@@ -842,11 +872,15 @@ select.input { appearance: none; cursor: pointer; }
         <div class="col-main">
 
             <!-- عنوان خبر -->
-            <div class="card title-card">
+            <div class="card title-card" id="titleCard">
                 <input type="text" class="" id="title" maxlength="120" placeholder="عنوان خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
                 <div class="title-meta">
                     <span>حداکثر ۱۲۰ کاراکتر</span>
                     <span id="titleCounter">0/120</span>
+                </div>
+                <div class="field-error" id="titleError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>وارد کردن عنوان خبر الزامی است.</span>
                 </div>
             </div>
 
@@ -976,7 +1010,13 @@ select.input { appearance: none; cursor: pointer; }
 
                 </div>
 
-                <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                <div class="editor-shell" id="editorShell">
+                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                </div>
+                <div class="field-error" id="contentError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>نوشتن متن خبر الزامی است.</span>
+                </div>
 
                 <!-- درج تصویر در متن -->
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
@@ -1061,7 +1101,7 @@ select.input { appearance: none; cursor: pointer; }
                     </div>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" id="categoryGroup">
                     <label class="field-label" for="category_id">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                         دسته خبر
@@ -1074,6 +1114,10 @@ select.input { appearance: none; cursor: pointer; }
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <div class="field-error" id="categoryError">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>انتخاب دسته‌بندی الزامی است.</span>
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -1782,12 +1826,56 @@ function hideUploadProgress() {
     document.getElementById("uploadBarFill").style.width = "0%";
 }
 
+/* =================== اعتبارسنجی فیلدها (علامت‌گذاری بصری) =================== */
+function setFieldError(boxId, errId, on){
+    const box = document.getElementById(boxId);
+    const err = document.getElementById(errId);
+    if (box) box.classList.toggle("field-invalid", on);
+    if (err) err.classList.toggle("show", on);
+    // لیبلِ گروهِ والد را هم قرمز کن (برای فیلدهای داخل .input-group)
+    const grp = box ? box.closest(".input-group") : null;
+    if (grp) grp.classList.toggle("has-error", on);
+}
+
+/* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
+document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
+document.getElementById("editor").addEventListener("input", () => setFieldError("editorShell", "contentError", false));
+document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
+
+function validateNewsForm(){
+    const title = document.getElementById("title").value.trim();
+    const editorEl = document.getElementById("editor");
+    const contentText = editorEl.innerText.trim();
+    const categoryVal = document.getElementById("category_id").value;
+
+    const titleBad = !title;
+    const contentBad = contentText === "";
+    const categoryBad = !categoryVal;
+
+    setFieldError("titleCard", "titleError", titleBad);
+    setFieldError("editorShell", "contentError", contentBad);
+    setFieldError("category_id", "categoryError", categoryBad);
+
+    // اسکرول و فوکوس به اولین فیلدِ خطادار
+    let firstBad = null;
+    if (titleBad) firstBad = document.getElementById("title");
+    else if (contentBad) firstBad = editorEl;
+    else if (categoryBad) firstBad = document.getElementById("category_id");
+
+    if (firstBad) {
+        firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { firstBad.focus({ preventScroll: true }); } catch (_) { firstBad.focus(); }
+    }
+
+    return !(titleBad || contentBad || categoryBad);
+}
+
 async function saveNews() {
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("editor").innerHTML.trim();
 
-    if (!title || content === "" || content === "<br>") {
-        showStatus("❌ لطفا تمام فیلدها را پر کنید.", false);
+    if (!validateNewsForm()) {
+        showStatus("لطفاً فیلدهای مشخص‌شده را پر کنید.", false);
         return;
     }
 
