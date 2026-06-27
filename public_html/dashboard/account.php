@@ -2,14 +2,33 @@
 require_once __DIR__ . '/_guard.php';
 /* ============================================================================
  *  صفحهٔ حساب کاربری — پنل مکسا
- *  مقادیر زیر را با داده‌های واقعیِ کاربر (از session/دیتابیس) جایگزین کنید.
- *  اکشن‌های فرم‌ها (account-update.php / account-password.php / logout.php)
- *  نمونه‌اند؛ به مسیرهای واقعیِ سایتتان تغییرشان دهید.
+ *  اطلاعاتِ واقعیِ کاربرِ واردشده را از dash_user() می‌خواند و تغییر رمز را به
+ *  account-password.php (با CSRF) می‌سپارد. جدولِ dashboard_users ستونِ ایمیل/تلفن
+ *  ندارد، پس این فیلدها نمایش داده نمی‌شوند.
  * ========================================================================== */
-$acc_name  = $acc_name  ?? 'مدیر اصلی';
-$acc_role  = $acc_role  ?? 'مدیر سیستم';
-$acc_email = $acc_email ?? 'admin@maxa.org';
-$acc_phone = $acc_phone ?? '';
+$__u = dash_user() ?? [];
+$acc_name     = ($__u['full_name'] ?? '') !== '' ? $__u['full_name'] : ($__u['username'] ?? 'کاربر');
+$acc_username = $__u['username'] ?? '';
+$acc_branch   = (dash_load_branch((int)($__u['branch_id'] ?? 0))['name'] ?? '');
+
+// برچسبِ نقش: سوپرادمین / مدیر شعبه / نامِ نقش
+if (!empty($__u['is_super'])) {
+    $acc_role = 'مدیر مرکزی';
+} elseif (!empty($__u['is_branch_admin'])) {
+    $acc_role = 'مدیر شعبه';
+} else {
+    $acc_role = 'کاربر شعبه';
+    if (!empty($__u['role_id'])) {
+        try {
+            $rs = dash_pdo()->prepare('SELECT name FROM dashboard_roles WHERE id = ? LIMIT 1');
+            $rs->execute([(int)$__u['role_id']]);
+            $rr = $rs->fetch();
+            if ($rr && $rr['name']) { $acc_role = $rr['name']; }
+        } catch (Throwable $e) { /* بی‌اثر */ }
+    }
+}
+
+$acc_pw_msg = $_GET['pw'] ?? '';   // نتیجه‌ی تغییر رمز (از account-password.php)
 
 if(!function_exists('acc_initials')){
   function acc_initials($n){
@@ -151,44 +170,35 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <div class="ac-profile-info">
       <h2><?= htmlspecialchars($acc_name) ?></h2>
       <span class="ac-role"><?= htmlspecialchars($acc_role) ?></span>
-      <div class="ac-mail"><?= htmlspecialchars($acc_email) ?></div>
+      <div class="ac-mail" dir="ltr">@<?= htmlspecialchars($acc_username) ?></div>
     </div>
   </section>
 
-  <!-- اطلاعات حساب (ویرایش در همین صفحه) -->
+  <!-- اطلاعات حساب (فقط نمایش — جدول کاربران ستونِ ایمیل/تلفن ندارد) -->
   <section class="ac-card">
     <div class="ac-card-head">
       <div class="ac-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-1.5a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4V21"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div><h3>اطلاعات حساب</h3><span>نام، ایمیل و راه‌های ارتباطی</span></div>
+      <div><h3>اطلاعات حساب</h3><span>مشخصاتِ حسابِ شما در پنل</span></div>
     </div>
 
-    <!-- اکشن را به مسیر واقعیِ سایتتان تغییر دهید -->
-    <form action="account-update.php" method="POST">
-      <div class="ac-grid">
-        <div class="ac-field ac-col-2">
-          <label>نام و نام خانوادگی</label>
-          <input type="text" name="full_name" value="<?= htmlspecialchars($acc_name) ?>" placeholder="نام و نام خانوادگی">
-        </div>
-        <div class="ac-field">
-          <label>ایمیل</label>
-          <input type="email" name="email" dir="ltr" value="<?= htmlspecialchars($acc_email) ?>" placeholder="example@maxa.org">
-        </div>
-        <div class="ac-field">
-          <label>شماره تماس</label>
-          <input type="tel" name="phone" dir="ltr" value="<?= htmlspecialchars($acc_phone) ?>" placeholder="۰۹۱۲...">
-        </div>
-        <div class="ac-field ac-col-2">
-          <label>نقش</label>
-          <input type="text" value="<?= htmlspecialchars($acc_role) ?>" readonly>
-        </div>
+    <div class="ac-grid">
+      <div class="ac-field ac-col-2">
+        <label>نام و نام خانوادگی</label>
+        <input type="text" value="<?= htmlspecialchars($acc_name) ?>" readonly>
       </div>
-      <div class="ac-foot">
-        <button type="submit" class="btn btn-gold">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
-          ذخیره تغییرات
-        </button>
+      <div class="ac-field">
+        <label>نام کاربری</label>
+        <input type="text" dir="ltr" value="<?= htmlspecialchars($acc_username) ?>" readonly>
       </div>
-    </form>
+      <div class="ac-field">
+        <label>شعبه</label>
+        <input type="text" value="<?= htmlspecialchars($acc_branch) ?>" readonly>
+      </div>
+      <div class="ac-field ac-col-2">
+        <label>نقش</label>
+        <input type="text" value="<?= htmlspecialchars($acc_role) ?>" readonly>
+      </div>
+    </div>
   </section>
 
   <!-- تغییر رمز عبور (ویرایش در همین صفحه) -->
@@ -198,8 +208,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       <div><h3>تغییر رمز عبور</h3><span>برای امنیت بیشتر، رمز را دوره‌ای تغییر دهید</span></div>
     </div>
 
-    <!-- اکشن را به مسیر واقعیِ سایتتان تغییر دهید -->
+    <?php if ($acc_pw_msg === 'ok'): ?>
+      <div style="background:rgba(22,163,122,.10);color:#0f7a5b;border:1px solid rgba(22,163,122,.22);border-radius:12px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;">رمز عبور با موفقیت تغییر کرد.</div>
+    <?php elseif ($acc_pw_msg === 'wrong'): ?>
+      <div style="background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22);border-radius:12px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;">رمز عبور فعلی نادرست است.</div>
+    <?php elseif ($acc_pw_msg === 'short'): ?>
+      <div style="background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22);border-radius:12px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;">رمز جدید باید حداقل ۸ کاراکتر و با تکرارش یکسان باشد.</div>
+    <?php endif; ?>
+
     <form action="account-password.php" method="POST">
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
       <div class="ac-grid">
         <div class="ac-field ac-col-2">
           <label>رمز عبور فعلی</label>
@@ -229,8 +247,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       <div class="ac-card-ic red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
       <div><h3>خروج از حساب</h3><span>از حساب کاربری خود خارج می‌شوید</span></div>
     </div>
-    <!-- مسیر خروج را به فایلِ واقعیِ سایتتان تغییر دهید -->
-    <a href="logout.php" class="btn btn-danger">
+    <a href="logout.php" target="_top" class="btn btn-danger">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       خروج از حساب
     </a>

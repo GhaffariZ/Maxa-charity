@@ -754,8 +754,9 @@
 
     (async function loadCampaignsSimple() {
       try {
-        // دریافت دادهها از API
-        const response = await fetch("/dashboard/campaign-list.php");
+        // دریافت دادهها از API (در صفحه‌ی شعبه، کمپین‌های همان شعبه)
+        const __b = (typeof window.__MAXA_BRANCH__ === 'string' && window.__MAXA_BRANCH__) ? ('?branch=' + encodeURIComponent(window.__MAXA_BRANCH__)) : '';
+        const response = await fetch("/dashboard/campaign-list.php" + __b);
         const json = await response.json();
 
         // حالت اول: موفقیتآمیز و دارای دیتا
@@ -821,6 +822,7 @@
                 </div>
                 <div class="card-body">
                     <h3 class="card-title" title="${camp.title}">${camp.title}</h3>
+                    ${camp.branch_name ? `<span class="branch-tag" style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;">🏢 ${camp.branch_name}</span>` : ''}
                     <div class="card-desc">${descHtml}</div>
 
                     <div class="progress-container">

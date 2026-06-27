@@ -33,6 +33,20 @@ if ($col_check && $col_check->num_rows === 0) {
 }
 
 // آپدیت وضعیت همکار در دیتابیس
+// IDOR: کاربرِ غیرستادی فقط همکارِ شعبه‌ی خودش را تغییر دهد
+if (!dash_is_hq_view()) {
+    $own = $conn->prepare("SELECT branch_id FROM `employee_profiles` WHERE `id` = ? LIMIT 1");
+    $own->bind_param("i", $id);
+    $own->execute();
+    $ownRow = $own->get_result()->fetch_assoc();
+    $own->close();
+    if (!$ownRow || (int)$ownRow['branch_id'] !== (int)dash_active_branch_id()) {
+        $conn->close();
+        header('Location: Admin-personal-resume-list.php');
+        exit;
+    }
+}
+
 $stmt = $conn->prepare("UPDATE `employee_profiles` SET `is_active` = ? WHERE `id` = ?");
 $stmt->bind_param("ii", $status, $id);
 $stmt->execute();

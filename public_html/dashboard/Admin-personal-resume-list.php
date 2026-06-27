@@ -23,13 +23,19 @@ $conn->set_charset("utf8mb4");
 $column_check = $conn->query("SHOW COLUMNS FROM `employee_profiles` LIKE 'is_active'");
 $has_is_active = ($column_check && $column_check->num_rows > 0);
 
+// ایزولاسیون: ستاد همه‌ی شعب را می‌بیند (با ستونِ شعبه)، سایرین فقط شعبه‌ی خود.
+// مقدار از تابعِ سرور می‌آید و int است؛ امن برای درج مستقیم.
+$__branchWhere = dash_is_hq_view() ? '' : (' WHERE branch_id = ' . (int)dash_active_branch_id());
+
 if ($has_is_active) {
     $sql = "SELECT id, fullname, branch, role, job_category, profile_pic, is_active
             FROM employee_profiles
+            $__branchWhere
             ORDER BY is_active DESC, id DESC";
 } else {
     $sql = "SELECT id, fullname, branch, role, job_category, profile_pic
             FROM employee_profiles
+            $__branchWhere
             ORDER BY id DESC";
 }
 $result = $conn->query($sql);
@@ -638,7 +644,8 @@ $treatment_roles = [
             }
 
             $is_active   = (int)$row['is_active'];
-            $branch_text = isset($branches[$raw_branch]) ? $branches[$raw_branch] : 'نامشخص';
+            // رکوردهای جدید نامِ شعبه را مستقیم در ستونِ branch دارند؛ نگاشتِ قدیمی هم پشتیبانی می‌شود.
+            $branch_text = $branches[$raw_branch] ?? ($raw_branch !== '' ? $raw_branch : 'نامشخص');
             
             // تعیین عنوان نمایشی سمت شغلی با توجه به ساختار متفاوت ردیف‌ها در دیتابیس
             if (isset($treatment_roles[$raw_role])) {

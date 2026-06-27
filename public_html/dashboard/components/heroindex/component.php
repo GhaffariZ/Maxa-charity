@@ -1531,8 +1531,9 @@
     const heroBtn = document.getElementById("heroBtn");
 
     try {
-        // ۱. دریافت داده‌ها از API
-        const response = await fetch("/dashboard/hero-list.php");
+        // ۱. دریافت داده‌ها از API (در صفحه‌ی شعبه، هیروهای همان شعبه)
+        const __b = (typeof window.__MAXA_BRANCH__ === 'string' && window.__MAXA_BRANCH__) ? ('?branch=' + encodeURIComponent(window.__MAXA_BRANCH__)) : '';
+        const response = await fetch("/dashboard/hero-list.php" + __b);
         const json = await response.json();
 
         if (json.status === "success" && json.data.length > 0) {
