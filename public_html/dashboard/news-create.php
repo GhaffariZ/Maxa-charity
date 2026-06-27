@@ -574,24 +574,147 @@ select.input { appearance: none; cursor: pointer; }
 #previewModal {
     position: fixed; inset: 0;
     background: var(--modal-overlay);
-    display: none; z-index: 9999; overflow-y: auto; padding: 20px;
+    display: none; z-index: 9999; overflow-y: auto;
+    padding: 24px 16px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 .modal-content {
-    max-width: 900px; margin: 30px auto;
+    max-width: 880px; margin: 0 auto;
     background: var(--panel-bg); color: var(--text-color);
-    padding: 30px; border-radius: var(--radius);
+    border-radius: var(--radius);
     box-shadow: var(--shadow-md);
     position: relative;
+    overflow: hidden;
     transform: translateY(14px) scale(0.98);
     opacity: 0;
     transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
 }
 #previewModal.show .modal-content { transform: translateY(0) scale(1); opacity: 1; }
-.preview-close {
-    position: absolute; top: 15px; left: 15px;
-    background: #e74c3c; color: #fff; border: none;
-    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit;
+
+/* نوار بالای مودال پیش‌نمایش */
+.preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
+.preview-bar-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 800; color: var(--header-text);
+}
+.preview-bar-title .ph-ic { width: 34px; height: 34px; border-radius: 10px; }
+.preview-bar-title .ph-ic svg { width: 17px; height: 17px; }
+.preview-close {
+    background: transparent;
+    color: var(--muted-color);
+    border: 1px solid var(--border-color);
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
+    font-family: inherit;
+}
+.preview-close:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.preview-close svg { width: 18px; height: 18px; }
+
+.preview-scroll { padding: 22px; }
+
+/* مقاله پیش‌نمایش */
+.pv-article { animation: toastIn 380ms ease both; }
+.pv-hero {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: var(--surface-2);
+}
+.pv-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 55%);
+}
+.pv-hero-cat {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff; font-size: 12px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+}
+.pv-hero-title {
+    position: absolute; right: 18px; left: 18px; bottom: 16px; z-index: 2;
+    color: #fff; font-size: 26px; font-weight: 800; line-height: 1.5;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    margin: 0;
+}
+.pv-title-fallback {
+    font-size: 26px; font-weight: 800; color: var(--header-text);
+    margin: 0 0 14px; line-height: 1.5;
+}
+.pv-meta {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+}
+.pv-meta .chip { background: var(--surface-2); }
+.pv-meta .chip svg { width: 14px; height: 14px; color: var(--primary-color); }
+.pv-body {
+    line-height: 2.1; font-size: 16px; color: var(--text-color);
+}
+.pv-body img { max-width: 100%; height: auto; border-radius: 10px; }
+.pv-body .gallery-row img { border-radius: 8px; }
+.pv-empty { color: var(--muted-color); font-style: italic; }
+
+/* پنل خلاصه سئو در پیش‌نمایش */
+.pv-seo {
+    margin-top: 26px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    padding: 18px;
+}
+.pv-seo-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.pv-seo-head .card-title { margin: 0; }
+.pv-seo-badge {
+    font-size: 13px; font-weight: 800;
+    padding: 4px 12px; border-radius: 999px; color: #fff;
+}
+.pv-seo-bar-track {
+    height: 12px; background: var(--border-color);
+    border-radius: 999px; overflow: hidden;
+}
+.pv-seo-bar-fill { height: 100%; border-radius: 999px; transition: width .5s ease, background .5s ease; }
+.pv-seo-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px; font-size: 13px; color: var(--muted-color);
+}
+.pv-seo-foot b { color: var(--text-color); }
+.pv-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px; }
+.pv-check {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-color);
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+}
+.pv-check svg { width: 16px; height: 16px; flex-shrink: 0; }
+.pv-check.ok svg { color: #00b894; }
+.pv-check.no { color: var(--muted-color); }
+.pv-check.no svg { color: var(--muted-color); opacity: 0.7; }
 
 /* ===== ریسپانسیو ===== */
 @media (max-width: 980px) {
@@ -933,8 +1056,20 @@ select.input { appearance: none; cursor: pointer; }
 <!-- مودال پیش‌نمایش -->
 <div id="previewModal">
     <div class="modal-content">
-        <button onclick="closePreview()" class="preview-close">بستن</button>
-        <div id="previewContent" style="margin-top: 20px;"></div>
+        <div class="preview-bar">
+            <div class="preview-bar-title">
+                <span class="ph-ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </span>
+                پیش‌نمایش خبر
+            </div>
+            <button onclick="closePreview()" class="preview-close" title="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="preview-scroll">
+            <div id="previewContent"></div>
+        </div>
     </div>
 </div>
 
@@ -1608,27 +1743,55 @@ async function saveNews() {
     }
 }
 
+function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function openPreview(){
-    const title = document.getElementById("title").value;
-    const author = document.getElementById("author").value;
-    const date = document.getElementById("publish_date_display").value;
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const date = document.getElementById("publish_date_display").value.trim();
     const content = document.getElementById("editor").innerHTML;
+    const catSelect = document.getElementById("category_id");
+    const category = catSelect.value ? catSelect.options[catSelect.selectedIndex].text.trim() : "";
     const featured = featuredInput.files[0]
         ? URL.createObjectURL(featuredInput.files[0])
         : (dzImg.getAttribute("src") || "");
 
+    const contentHasText = editor.innerText.trim().length > 0;
+    const titleSafe = escapeHtml(title || "بدون عنوان");
+
+    /* آیکون‌های متادیتا */
+    const icAuthor = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    const icDate = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+    /* هیرو: اگر تصویر بود عنوان روی تصویر، وگرنه عنوان معمولی */
+    let heroHtml;
+    if (featured) {
+        heroHtml = `
+            <div class="pv-hero">
+                ${category ? `<span class="pv-hero-cat">${escapeHtml(category)}</span>` : ""}
+                <img src="${featured}" alt="تصویر شاخص">
+                <h1 class="pv-hero-title">${titleSafe}</h1>
+            </div>`;
+    } else {
+        heroHtml = `<h1 class="pv-title-fallback">${titleSafe}</h1>`;
+    }
+
+    const metaChips = [];
+    if (author) metaChips.push(`<span class="chip">${icAuthor}${escapeHtml(author)}</span>`);
+    if (date) metaChips.push(`<span class="chip">${icDate}${escapeHtml(date)}</span>`);
+    if (category && !featured) metaChips.push(`<span class="chip">${escapeHtml(category)}</span>`);
+
     const html = `
-        <h1 style="font-size:26px;margin-bottom:10px;color:var(--primary-color)">${title}</h1>
-        <div style="color:var(--text-color); opacity:0.7; font-size:13px;margin-bottom:20px;">
-            ${author ? "✍ " + author : ""}
-            ${date ? " | 📅 " + date : ""}
+        <div class="pv-article">
+            ${heroHtml}
+            ${metaChips.length ? `<div class="pv-meta">${metaChips.join("")}</div>` : ""}
+            <div class="pv-body">
+                ${contentHasText ? content : '<p class="pv-empty">هنوز متنی برای این خبر نوشته نشده است.</p>'}
+            </div>
+            <div id="seoScoreBox" class="pv-seo"></div>
         </div>
-        ${featured ? `<img src="${featured}" style="width:100%;max-height:400px;object-fit:cover;border-radius:12px;margin-bottom:20px;">` : ""}
-        <div style="line-height:2;font-size:15px;color:var(--text-color);">
-            ${content}
-        </div>
-        <hr style="margin:30px 0; border-color: var(--border-color);">
-        <div id="seoScoreBox"></div>
     `;
 
     document.getElementById("previewContent").innerHTML = html;
@@ -1636,6 +1799,7 @@ function openPreview(){
     const modal = document.getElementById("previewModal");
     modal.style.display = "block";
     requestAnimationFrame(() => modal.classList.add("show"));
+    document.querySelector(".preview-scroll").scrollTop = 0;
 }
 
 function closePreview(){
@@ -1693,28 +1857,49 @@ featuredInput.addEventListener("change", updateSeoWidget);
 
 function calculateSEO(){
     const score = computeSeoScore();
-    let color = "#d63031";
-    if(score >= 70) color = "#00b894";
-    else if(score >= 40) color = "#f9a825";
+
+    let color = "#e74c3c", label = "ضعیف";
+    if(score >= 70) { color = "#00b894"; label = "خوب"; }
+    else if(score >= 40) { color = "#F79F1F"; label = "متوسط"; }
+
+    /* وضعیت هر معیار برای چک‌لیست */
+    const title = document.getElementById("title").value.trim();
+    const wordCount = editor.innerText.trim() ? editor.innerText.trim().split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const keywords = document.getElementById("keywords").value.trim();
+    const hasH2 = !!editor.querySelector("h2");
+
+    const checks = [
+        { ok: title.length > 5,   text: "عنوان مناسب" },
+        { ok: wordCount > 300,    text: "طول متن کافی" },
+        { ok: !!hasImage,         text: "تصویر شاخص" },
+        { ok: keywords.length > 3,text: "کلمات کلیدی" },
+        { ok: hasH2,              text: "تیتر H2 در متن" },
+    ];
+
+    const icOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const icNo = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="12" x2="15" y2="12"/></svg>';
+
+    const checksHtml = checks.map(c =>
+        `<div class="pv-check ${c.ok ? "ok" : "no"}">${c.ok ? icOk : icNo}<span>${c.text}</span></div>`
+    ).join("");
 
     document.getElementById("seoScoreBox").innerHTML = `
-        <h3 style="margin-bottom:10px;color:var(--text-color)">SEO Score</h3>
-        <div style="
-            background: var(--border-color);
-            border-radius:8px;
-            overflow:hidden;
-            height:20px;
-        ">
-            <div style="
-                width:${score}%;
-                background:${color};
-                height:100%;
-                transition:.4s;
-            "></div>
+        <div class="pv-seo-head">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                امتیاز سئو
+            </h3>
+            <span class="pv-seo-badge" style="background:${color}">${label}</span>
         </div>
-        <div style="margin-top:8px;font-weight:bold;color:${color}">
-            امتیاز: ${score} از 100
+        <div class="pv-seo-bar-track">
+            <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
         </div>
+        <div class="pv-seo-foot">
+            <span>امتیاز کلی</span>
+            <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
+        </div>
+        <div class="pv-checks">${checksHtml}</div>
     `;
 }
 
