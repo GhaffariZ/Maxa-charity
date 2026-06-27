@@ -618,12 +618,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                           // محل خدمت قفل‌شده به شعبه‌ی فعالِ کاربر است؛ امکانِ انتخابِ شعبه‌ی دیگر وجود ندارد.
                           $__pbRow  = dash_load_branch(dash_active_branch_id());
                           $__pbName = $__pbRow['name'] ?? '';
-                          // کلیدِ منطقِ فرم: ستاد مرکزی → setad_markazi، سایر شعب → branch
+                          // مقدارِ option همان «کلیدِ منطقِ فرم» است تا cascadeِ موجود کار کند:
+                          //   ستاد مرکزی → setad_markazi (مسیرِ معاونت‌ها)، سایر شعب → branch (مسیرِ کادر درمان/اداری)
                           $__pbKey  = (int)($__pbRow['is_hq'] ?? 0) === 1 ? 'setad_markazi' : 'branch';
                         ?>
-                        <input id="branch" class="input" type="text" value="<?= htmlspecialchars($__pbName) ?>"
-                               data-key="<?= htmlspecialchars($__pbKey) ?>" readonly
-                               style="background:#f1f3f9;cursor:not-allowed;" title="محل خدمت بر اساس شعبه‌ی شما تعیین می‌شود">
+                        <select id="branch" class="input" required onchange="handleBranchChange()"
+                                style="background:#f1f3f9;cursor:not-allowed;pointer-events:none;" tabindex="-1"
+                                title="محل خدمت بر اساس شعبه‌ی شما تعیین می‌شود">
+                            <option value="<?= htmlspecialchars($__pbKey) ?>" selected><?= htmlspecialchars($__pbName) ?></option>
+                        </select>
                         <small style="color:var(--text-muted,#858796);font-size:11px;">محل خدمت به‌صورت خودکار، شعبه‌ی شما است.</small>
                     </div>
                 </div>
@@ -795,8 +798,7 @@ function handleBranchChange() {
     const medContainer = document.getElementById("medical_id_container");
     const charCount = document.getElementById("role_char_count");
 
-    // محل خدمت قفل‌شده است؛ کلیدِ منطق از data-key می‌آید (نه از مقدارِ نمایشی).
-    const selectedBranch = branchSelect.dataset.key || branchSelect.value;
+    const selectedBranch = branchSelect.value;
 
     roleSelect.value = "";
     roleInput.value = "";
@@ -1168,18 +1170,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('maxa_responsibilities').value = <?php echo json_encode($edit_data['maxa_responsibilities'] ?? ''); ?>;
 
     // Cascade: شاخه → دسته → سمت
-    const branchVal = <?php echo json_encode($edit_data['branch']       ?? ''); ?>;
+    // محل خدمت قفل است؛ مقدارِ select همان کلیدِ منطق (setad_markazi یا branch) را دارد.
     const catVal    = <?php echo json_encode($edit_data['job_category'] ?? ''); ?>;
     const roleVal   = <?php echo json_encode($edit_data['role']         ?? ''); ?>;
     const medVal    = <?php echo json_encode($edit_data['medical_id']   ?? ''); ?>;
+    const branchKey = document.getElementById('branch').value; // setad_markazi | branch
 
-    if (branchVal) {
-        document.getElementById('branch').value = branchVal;
-        handleBranchChange();
-    }
+    // ساختِ فیلدهای دسته/سمت بر اساس کلیدِ شعبه
+    handleBranchChange();
 
-    // برای ستاد مرکزی، handleBranchChange دسته را به deputies تنظیم می‌کند؛ نیازی به handleCategoryChange نیست
-    if (branchVal && branchVal !== 'setad_markazi' && catVal) {
+    // برای ستاد مرکزی، handleBranchChange دسته را به معاونت‌ها تنظیم می‌کند؛ نیازی به handleCategoryChange نیست
+    if (branchKey !== 'setad_markazi' && catVal) {
         const catEl = document.getElementById('job_category');
         if (catEl) { catEl.value = catVal; handleCategoryChange(); }
     }
