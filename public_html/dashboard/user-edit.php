@@ -21,10 +21,7 @@ $FEATURE_LABELS = [
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
     'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
 ];
-if (dash_is_hq_view()) {
-    $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
-    $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
-}
+if (dash_is_hq_view()) { $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)'; }
 $GRANTABLE = array_keys($FEATURE_LABELS);
 
 // کاربرِ هدف
@@ -42,12 +39,9 @@ if (!$target || (int)$target['branch_id'] !== $BRANCH_ID || (int)$target['is_sup
 
 $err = ''; $ok = '';
 $old = [
-    'full_name'     => $target['full_name'] ?? '',
-    'username'      => $target['username'],
-    'role_mode'     => 'existing',
-    'role_id'       => $target['role_id'] !== null ? (int)$target['role_id'] : '',
-    'new_role_name' => '',
-    'new_perms'     => [],
+    'full_name' => $target['full_name'] ?? '',
+    'username'  => $target['username'],
+    'role_id'   => $target['role_id'] !== null ? (int)$target['role_id'] : '',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -55,13 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim((string)($_POST['full_name'] ?? ''));
     $username = trim((string)($_POST['username'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
-    $roleMode = (string)($_POST['role_mode'] ?? 'existing');
     $roleId   = (int)($_POST['role_id'] ?? 0);
-    $newName  = trim((string)($_POST['new_role_name'] ?? ''));
-    $newPerms = array_values(array_intersect((array)($_POST['new_perms'] ?? []), $GRANTABLE));
 
-    $old = ['full_name' => $fullName, 'username' => $username, 'role_mode' => $roleMode,
-            'role_id' => $roleId ?: '', 'new_role_name' => $newName, 'new_perms' => $newPerms];
+    $old = ['full_name' => $fullName, 'username' => $username, 'role_id' => $roleId ?: ''];
 
     if (!preg_match('/^[A-Za-z0-9_.-]{3,60}$/', $username)) {
         $err = 'نام کاربری نامعتبر است (۳ تا ۶۰ کاراکترِ مجاز).';
@@ -74,38 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($chk->fetch()) { $err = 'این نام کاربری از قبل وجود دارد.'; }
     }
 
-    // نقش: یا انتخابِ نقشِ موجود (اختیاری)، یا تعریفِ نقشِ جدید با دسترسی‌های دلخواه.
+    // نقش (اختیاری) — اگر انتخاب شد باید متعلق به همین شعبه باشد
     $finalRoleId = null;
-    if ($err === '') {
-        if ($roleMode === 'new') {
-            if ($newName === '' || mb_strlen($newName) > 80) {
-                $err = 'نام نقش جدید را وارد کنید.';
-            } elseif (!$newPerms) {
-                $err = 'برای نقش جدید حداقل یک دسترسی انتخاب کنید.';
-            } else {
-                // یکتایی نام نقش در همین شعبه
-                $rc = $pdo->prepare('SELECT 1 FROM dashboard_roles WHERE branch_id = ? AND name = ? LIMIT 1');
-                $rc->execute([$BRANCH_ID, $newName]);
-                if ($rc->fetch()) { $err = 'نقشی با این نام در این شعبه وجود دارد.'; }
-            }
-        } elseif ($roleId > 0) {
-            // نقشِ موجود — باید متعلق به همین شعبه باشد
-            $rc = $pdo->prepare('SELECT id FROM dashboard_roles WHERE id = ? AND branch_id = ? LIMIT 1');
-            $rc->execute([$roleId, $BRANCH_ID]);
-            if (!$rc->fetch()) { $err = 'نقش انتخاب‌شده معتبر نیست.'; }
-            else { $finalRoleId = $roleId; }
-        }
-        // در غیر این صورت (existing بدون انتخاب) → بدون نقش (null)
+    if ($err === '' && $roleId > 0) {
+        $rc = $pdo->prepare('SELECT id FROM dashboard_roles WHERE id = ? AND branch_id = ? LIMIT 1');
+        $rc->execute([$roleId, $BRANCH_ID]);
+        if (!$rc->fetch()) { $err = 'نقش انتخاب‌شده معتبر نیست.'; }
+        else { $finalRoleId = $roleId; }
     }
 
     if ($err === '') {
         try {
             $pdo->beginTransaction();
-            if ($roleMode === 'new') {
-                $pdo->prepare('INSERT INTO dashboard_roles (branch_id, name, permissions, is_preset) VALUES (?,?,?,0)')
-                    ->execute([$BRANCH_ID, $newName, json_encode($newPerms, JSON_UNESCAPED_UNICODE)]);
-                $finalRoleId = (int)$pdo->lastInsertId();
-            }
             $pdo->prepare('UPDATE dashboard_users SET full_name = ?, username = ?, role_id = ? WHERE id = ? AND branch_id = ?')
                 ->execute([$fullName ?: null, $username, $finalRoleId, $uid, $BRANCH_ID]);
             if ($password !== '') {
@@ -170,21 +140,9 @@ require __DIR__ . '/_panel_head.php';
     </div>
 
     <div class="card">
-      <h2>نقش و دسترسی</h2>
-      <div class="hint">یا نقشِ موجودِ کاربر را تغییر دهید، یا نقشِ جدیدی با دسترسی‌های دلخواه برای او بسازید.</div>
-
+      <h2>نقش</h2>
+      <div class="hint">نقشِ کاربر دسترسی‌های او را تعیین می‌کند (نقش‌های همین شعبه).</div>
       <div class="field">
-        <label class="check" style="display:inline-flex;margin-inline-end:10px">
-          <input type="radio" name="role_mode" value="existing" <?= $old['role_mode'] !== 'new' ? 'checked' : '' ?>>
-          <span>نقش موجود</span>
-        </label>
-        <label class="check" style="display:inline-flex">
-          <input type="radio" name="role_mode" value="new" <?= $old['role_mode'] === 'new' ? 'checked' : '' ?>>
-          <span>افزودن نقش جدید</span>
-        </label>
-      </div>
-
-      <div id="existingBox" class="field">
         <label>انتخاب نقش</label>
         <select name="role_id">
           <option value="">— بدون نقش —</option>
@@ -195,21 +153,6 @@ require __DIR__ . '/_panel_head.php';
             </option>
           <?php endforeach; ?>
         </select>
-      </div>
-
-      <div id="newBox" class="field" style="display:none">
-        <label>نام نقش جدید</label>
-        <input type="text" name="new_role_name" value="<?= e($old['new_role_name']) ?>" placeholder="مثلاً: مسئول مکساپدیا">
-        <div class="sub" style="margin:12px 0 8px">دسترسی‌های این نقش:</div>
-        <div class="checks">
-          <?php foreach ($FEATURE_LABELS as $key => $label):
-            $checked = in_array($key, $old['new_perms'], true); ?>
-            <label class="check <?= $checked ? 'on' : '' ?>">
-              <input type="checkbox" name="new_perms[]" value="<?= e($key) ?>" <?= $checked ? 'checked' : '' ?>>
-              <span><?= e($label) ?></span>
-            </label>
-          <?php endforeach; ?>
-        </div>
       </div>
     </div>
 
@@ -223,17 +166,6 @@ require __DIR__ . '/_panel_head.php';
   </form>
 
 <script>
-  function syncRoleMode(){
-    var isNew=document.querySelector('input[name=role_mode]:checked').value==='new';
-    document.getElementById('newBox').style.display=isNew?'block':'none';
-    document.getElementById('existingBox').style.display=isNew?'none':'block';
-  }
-  document.querySelectorAll('input[name=role_mode]').forEach(r=>r.addEventListener('change',syncRoleMode));
-  document.querySelectorAll('.check input[type=checkbox]').forEach(function(cb){
-    cb.addEventListener('change',function(){ cb.closest('.check').classList.toggle('on',cb.checked); });
-  });
-  syncRoleMode();
-
   (function(){
     var btn=document.getElementById('genPass'); if(!btn) return;
     var chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%*';

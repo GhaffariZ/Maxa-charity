@@ -34,14 +34,8 @@ const DASH_FEATURES = [
 ];
 
 /* دسترسی‌های ویژه (نه یک «بخش» منو/شعبه؛ بلکه یک قابلیتِ اضافی روی یک بخش).
- * news_editor: اجازه‌ی تایید/رد/انتشارِ خبر در سطحِ سردبیریِ ستاد مرکزی.
- * maxapedia: دسترسی به مدیریتِ «مکساپدیا» (فقط ستاد مرکزی). */
-const DASH_EXTRA_PERMISSIONS = ['news_editor', 'maxapedia'];
-
-/* دسترسی‌هایی که به‌صورتِ پیش‌فرض فقط «مدیر مرکزی» (سوپرادمین) دارد و حتی به
- * ادمینِ شعبه‌ی ستاد هم خودبه‌خود داده نمی‌شود؛ مگر این‌که صریحاً در نقش واگذار شود.
- * maxapedia طبقِ خواست کارفرما باید فقط در اختیار مدیر مرکزی باشد و قابلِ واگذاری. */
-const DASH_SUPER_ONLY_PERMISSIONS = ['maxapedia'];
+ * news_editor: اجازه‌ی تایید/رد/انتشارِ خبر در سطحِ سردبیریِ ستاد مرکزی. */
+const DASH_EXTRA_PERMISSIONS = ['news_editor'];
 
 /* slugهای رزرو شده — نباید به‌عنوان slugِ شعبه استفاده شوند (جلوگیری از تداخل) */
 const RESERVED_SLUGS = [
@@ -269,28 +263,9 @@ function dash_establish_session(array $u): void
 function dash_resolve_permissions(array $u): array
 {
     $allowed = array_merge(DASH_FEATURES, DASH_EXTRA_PERMISSIONS);
-    // سوپرادمین (مدیر مرکزی): همه‌ی قابلیت‌ها بدون استثنا
-    if ((int)$u['is_super'] === 1) {
+    // سوپرادمین و ادمین شعبه: همه‌ی قابلیت‌ها + سردبیری (در محدوده‌ی شعبه‌ی خودشان)
+    if ((int)$u['is_super'] === 1 || (int)$u['is_branch_admin'] === 1) {
         return $allowed;
-    }
-    // ادمین شعبه: همه‌ی قابلیت‌ها به‌جزِ دسترسی‌های ویژه‌ی مدیر مرکزی (مثل مکساپدیا)؛
-    // این موارد فقط با واگذاریِ صریح در نقش به او می‌رسند.
-    if ((int)$u['is_branch_admin'] === 1) {
-        $base = array_values(array_diff($allowed, DASH_SUPER_ONLY_PERMISSIONS));
-        // اگر در نقشِ ادمین صریحاً واگذار شده باشد، اضافه کن
-        if (!empty($u['role_id'])) {
-            $st = dash_pdo()->prepare('SELECT permissions FROM dashboard_roles WHERE id = ? LIMIT 1');
-            $st->execute([(int)$u['role_id']]);
-            $row = $st->fetch();
-            if ($row) {
-                $p = json_decode((string)$row['permissions'], true);
-                if (is_array($p)) {
-                    $granted = array_intersect($p, DASH_SUPER_ONLY_PERMISSIONS);
-                    $base = array_values(array_unique(array_merge($base, $granted)));
-                }
-            }
-        }
-        return $base;
     }
     // کاربر شعبه: از روی نقش
     if (!empty($u['role_id'])) {
@@ -406,29 +381,6 @@ function dash_is_news_editor(): bool
         return true;
     }
     return in_array('news_editor', $u['permissions'] ?? [], true);
-}
-
-/**
- * آیا کاربر به «مکساپدیا» دسترسی دارد؟
- * مکساپدیا فقط از «ستاد مرکزی» معنا دارد و طبقِ خواست کارفرما به‌صورتِ پیش‌فرض
- * فقط «مدیر مرکزی» (سوپرادمین) دارد. مدیر مرکزی می‌تواند این دسترسی را در
- * «افزودن/ویرایش کاربر» به یک کاربرِ ستاد بدهد (permission: maxapedia).
- * توجه: ادمینِ شعبه‌ی ستاد به‌صورتِ خودکار این دسترسی را ندارد (resolve آن را حذف می‌کند)؛
- * مگر این‌که صریحاً در نقشش واگذار شده باشد.
- */
-function dash_can_maxapedia(): bool
-{
-    if (!dash_is_hq_view()) {
-        return false;
-    }
-    $u = dash_user();
-    if (!$u) {
-        return false;
-    }
-    if (!empty($u['is_super'])) {
-        return true;
-    }
-    return in_array('maxapedia', $u['permissions'] ?? [], true);
 }
 
 /* ---------- شعبه‌ی فعال (با ایزولاسیون) ----------

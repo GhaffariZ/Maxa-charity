@@ -23,10 +23,9 @@ $FEATURE_LABELS = [
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
     'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
 ];
-// دسترسی‌های ویژه‌ی ستاد مرکزی فقط آن‌جا قابل‌واگذاری‌اند.
+// دسترسیِ ویژه‌ی «سردبیری خبر» فقط در ستاد مرکزی قابل‌واگذاری است.
 if (dash_is_hq_view()) {
     $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
-    $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
 }
 $GRANTABLE = array_keys($FEATURE_LABELS);
 
