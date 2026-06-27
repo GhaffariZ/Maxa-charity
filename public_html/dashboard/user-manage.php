@@ -88,12 +88,18 @@ require __DIR__ . '/_panel_head.php';
           <td data-label="وضعیت"><?= $active ? '<span class="badge ok">فعال</span>' : '<span class="badge off">غیرفعال</span>' ?></td>
           <td data-label="عملیات" style="text-align:left">
             <?php if (!$isAdmin): ?>
-              <form method="POST" style="display:inline">
-                <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
-                <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
-                <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
-              </form>
+              <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+                <a class="tbtn" href="user-edit.php?id=<?= (int)$u['id'] ?>">
+                  <svg class="ic" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+                  ویرایش
+                </a>
+                <form method="POST" style="display:inline">
+                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                  <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
+                  <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
+                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
+                </form>
+              </div>
             <?php else: ?><span style="color:var(--color-muted);font-size:12px">—</span><?php endif; ?>
           </td>
         </tr>

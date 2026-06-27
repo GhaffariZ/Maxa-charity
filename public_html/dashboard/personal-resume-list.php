@@ -22,10 +22,13 @@ $conn->set_charset("utf8mb4");
 // فقط همکاران فعال نمایش داده می‌شوند
 $column_check  = $conn->query("SHOW COLUMNS FROM `employee_profiles` LIKE 'is_active'");
 $has_is_active = ($column_check && $column_check->num_rows > 0);
+// ایزولاسیون: ستاد همه‌ی شعب، سایرین فقط شعبه‌ی خود (مقدار int از سرور؛ امن).
+$__branchAnd = dash_is_hq_view() ? '' : (' AND branch_id = ' . (int)dash_active_branch_id());
+$__branchWhere = dash_is_hq_view() ? '' : (' WHERE branch_id = ' . (int)dash_active_branch_id());
 if ($has_is_active) {
-    $sql = "SELECT * FROM employee_profiles WHERE is_active = 1 ORDER BY id DESC";
+    $sql = "SELECT * FROM employee_profiles WHERE is_active = 1$__branchAnd ORDER BY id DESC";
 } else {
-    $sql = "SELECT * FROM employee_profiles ORDER BY id DESC";
+    $sql = "SELECT * FROM employee_profiles$__branchWhere ORDER BY id DESC";
 }
 $result = $conn->query($sql);
 

@@ -193,16 +193,20 @@ function maxa_demo_curriculum(): array {
   ];
 }
 
-/* بارگذاری دوره‌ها: از دیتابیس یا داده‌ی نمونه */
-function load_courses(?PDO $pdo, bool $ready, ?string $status = null): array {
+/* بارگذاری دوره‌ها: از دیتابیس یا داده‌ی نمونه
+ * $branchId: اگر null باشد همه‌ی شعب (نمای ستاد/عمومیِ مرکزی)، وگرنه فقط همان شعبه.
+ * نامِ شعبه (branch_name) برای نمایشِ تگ همراه می‌شود. */
+function load_courses(?PDO $pdo, bool $ready, ?string $status = null, ?int $branchId = null): array {
   if ($pdo && $ready) {
     try {
-      $sql = "SELECT c.*,
+      $sql = "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug,
                 (SELECT COUNT(*) FROM course_lessons l WHERE l.course_id=c.id) AS lessons,
                 (SELECT COALESCE(SUM(l.duration),0) FROM course_lessons l WHERE l.course_id=c.id) AS duration
-              FROM courses c";
-      $p = [];
-      if ($status) { $sql .= " WHERE c.status=?"; $p[] = $status; }
+              FROM courses c LEFT JOIN branches b ON b.id = c.branch_id";
+      $p = []; $conds = [];
+      if ($status)            { $conds[] = "c.status=?";    $p[] = $status; }
+      if ($branchId !== null) { $conds[] = "c.branch_id=?"; $p[] = $branchId; }
+      if ($conds) { $sql .= " WHERE " . implode(' AND ', $conds); }
       $sql .= " ORDER BY c.created_at DESC, c.id DESC";
       $rows = q($pdo, $sql, $p)->fetchAll();
       if ($rows) return $rows;
