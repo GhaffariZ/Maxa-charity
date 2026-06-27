@@ -72,6 +72,13 @@ $pdo->prepare(
      WHERE NOT EXISTS (SELECT 1 FROM dashboard_roles WHERE branch_id = ? AND name = 'خبرنگار')"
 )->execute([$hqId, $hqId]);
 
+/* ---------- نقش پیش‌فرض سردبیر برای HQ (تایید/انتشار خبر) ---------- */
+$pdo->prepare(
+    "INSERT INTO dashboard_roles (branch_id, name, permissions, is_preset)
+     SELECT ?, 'سردبیر', JSON_ARRAY('news','news_editor'), 1
+     WHERE NOT EXISTS (SELECT 1 FROM dashboard_roles WHERE branch_id = ? AND name = 'سردبیر')"
+)->execute([$hqId, $hqId]);
+
 /* ---------- ساخت/به‌روزرسانی ادمین مرکزی ---------- */
 $hash = password_hash($pass, PASSWORD_DEFAULT);
 $existing = $pdo->prepare("SELECT id FROM dashboard_users WHERE username = ? LIMIT 1");

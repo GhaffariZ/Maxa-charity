@@ -6,14 +6,23 @@ header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
 try {
+    csrf_check();
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
     if ($id <= 0) throw new Exception("شناسه خبر نامعتبر است.");
 
-    // خواندن news_code
-    $stmt = $pdo->prepare("SELECT news_code FROM news WHERE id=?");
+    // ایزولاسیون: نویسنده فقط خبرِ شعبه‌ی خودش؛ سردبیر/ادمینِ ستاد هر خبری.
+    $__branch = dash_active_branch_id();
+    $__isEditor = dash_is_news_editor();
+
+    // خواندن news_code + بررسیِ مالکیتِ شعبه
+    $stmt = $pdo->prepare("SELECT news_code, branch_id FROM news WHERE id=?");
     $stmt->execute([$id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$row) throw new Exception("خبر یافت نشد.");
+    if (!$__isEditor && (int)$row['branch_id'] !== $__branch) {
+        http_response_code(403);
+        throw new Exception("دسترسی غیرمجاز.");
+    }
     $news_code = $row['news_code'];
 
     // حذف از دیتابیس

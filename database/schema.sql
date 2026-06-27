@@ -526,7 +526,7 @@ CREATE TABLE `news` (
   `news_code` varchar(10) DEFAULT NULL,
   `featured_image` varchar(255) DEFAULT NULL,
   `images` text DEFAULT NULL,
-  `status` enum('draft','published') DEFAULT 'draft',
+  `status` enum('draft','review','published','rejected') NOT NULL DEFAULT 'draft',
   `read_time` int(11) DEFAULT 1,
   `reject_reason` varchar(255) DEFAULT NULL,
   `viewed` int(11) DEFAULT 0,

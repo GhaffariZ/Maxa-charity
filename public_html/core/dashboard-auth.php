@@ -33,6 +33,10 @@ const DASH_FEATURES = [
     'pages', 'financial', 'feedback', 'medical',
 ];
 
+/* دسترسی‌های ویژه (نه یک «بخش» منو/شعبه؛ بلکه یک قابلیتِ اضافی روی یک بخش).
+ * news_editor: اجازه‌ی تایید/رد/انتشارِ خبر در سطحِ سردبیریِ ستاد مرکزی. */
+const DASH_EXTRA_PERMISSIONS = ['news_editor'];
+
 /* slugهای رزرو شده — نباید به‌عنوان slugِ شعبه استفاده شوند (جلوگیری از تداخل) */
 const RESERVED_SLUGS = [
     'api', 'dashboard', 'admin', 'benefactor-dashboard', 'core', 'assets',
@@ -258,9 +262,10 @@ function dash_establish_session(array $u): void
 /* ---------- محاسبه‌ی دسترسی‌ها ---------- */
 function dash_resolve_permissions(array $u): array
 {
-    // سوپرادمین و ادمین شعبه: همه‌ی قابلیت‌ها (در محدوده‌ی شعبه‌ی خودشان)
+    $allowed = array_merge(DASH_FEATURES, DASH_EXTRA_PERMISSIONS);
+    // سوپرادمین و ادمین شعبه: همه‌ی قابلیت‌ها + سردبیری (در محدوده‌ی شعبه‌ی خودشان)
     if ((int)$u['is_super'] === 1 || (int)$u['is_branch_admin'] === 1) {
-        return DASH_FEATURES;
+        return $allowed;
     }
     // کاربر شعبه: از روی نقش
     if (!empty($u['role_id'])) {
@@ -270,7 +275,7 @@ function dash_resolve_permissions(array $u): array
         if ($row) {
             $p = json_decode((string)$row['permissions'], true);
             if (is_array($p)) {
-                return array_values(array_intersect($p, DASH_FEATURES));
+                return array_values(array_intersect($p, $allowed));
             }
         }
     }
@@ -356,6 +361,26 @@ function dash_require_hq(): void
         http_response_code(403);
         exit('۴۰۳ | این بخش فقط از «ستاد مرکزی» در دسترس است.');
     }
+}
+
+/**
+ * آیا کاربر «سردبیر» است؟ (اجازه‌ی تایید/رد/انتشارِ خبر)
+ * سردبیری فقط در «ستاد مرکزی» معنا دارد: شعبه‌ی فعال باید HQ باشد و کاربر یا
+ * سوپرادمین/ادمینِ ستاد باشد یا دسترسیِ news_editor داشته باشد.
+ */
+function dash_is_news_editor(): bool
+{
+    if (!dash_is_hq_view()) {
+        return false;
+    }
+    $u = dash_user();
+    if (!$u) {
+        return false;
+    }
+    if (!empty($u['is_super']) || !empty($u['is_branch_admin'])) {
+        return true;
+    }
+    return in_array('news_editor', $u['permissions'] ?? [], true);
 }
 
 /* ---------- شعبه‌ی فعال (با ایزولاسیون) ----------

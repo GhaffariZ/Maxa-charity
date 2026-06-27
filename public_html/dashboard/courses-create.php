@@ -9,9 +9,15 @@ dash_require('courses');
 require __DIR__ . '/course-db.php';
 require __DIR__ . '/course-ui.php';
 
+/* ---------- ایزولاسیون شعبه ---------- */
+$__branch  = dash_active_branch_id();
+$__isHq    = dash_is_hq_view();
+
 /* ---------- حالت ویرایش ---------- */
 $editId  = (int)($_GET['edit'] ?? $_POST['edit_id'] ?? 0);
 $editing = $editId ? load_course_full($pdo, $coursesSchemaReady, $editId) : null;
+// IDOR: کاربرِ غیرستادی فقط دوره‌ی شعبه‌ی خودش را ویرایش کند
+if ($editing && !$__isHq && (int)($editing['branch_id'] ?? 0) !== $__branch) { $editing = null; }
 if (!$editing) $editId = 0;
 
 /* ---------- ذخیره‌سازی فرم ---------- */
@@ -27,10 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       try {
         $pdo->beginTransaction();
         if ($editId) {
-          q($pdo, "UPDATE courses SET
-              title=?,subtitle=?,description=?,category=?,level=?,language=?,price=?,discount_price=?,is_free=?,
-              thumbnail=?,promo_video=?,instructor=?,instructor_bio=?,what_you_learn=?,requirements=?,status=?
-              WHERE id=?", [
+          // قید branch_id برای غیرستادی‌ها (دفاعِ مضاعف در برابر IDOR)
+          $upWhere = $__isHq ? "WHERE id=?" : "WHERE id=? AND branch_id=?";
+          $upParams = [
             $title,
             trim((string)($_POST['subtitle'] ?? '')),
             trim((string)($_POST['description'] ?? '')),
@@ -47,15 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             trim((string)($_POST['what_you_learn'] ?? '')),
             trim((string)($_POST['requirements'] ?? '')),
             $status, $editId,
-          ]);
+          ];
+          if (!$__isHq) { $upParams[] = $__branch; }
+          q($pdo, "UPDATE courses SET
+              title=?,subtitle=?,description=?,category=?,level=?,language=?,price=?,discount_price=?,is_free=?,
+              thumbnail=?,promo_video=?,instructor=?,instructor_bio=?,what_you_learn=?,requirements=?,status=?
+              $upWhere", $upParams);
           $cid = $editId;
           q($pdo, "DELETE FROM course_lessons WHERE course_id=?", [$cid]);
           q($pdo, "DELETE FROM course_sections WHERE course_id=?", [$cid]);
         } else {
         q($pdo, "INSERT INTO courses
             (title,subtitle,description,category,level,language,price,discount_price,is_free,
-             thumbnail,promo_video,instructor,instructor_bio,what_you_learn,requirements,status)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [
+             thumbnail,promo_video,instructor,instructor_bio,what_you_learn,requirements,status,branch_id)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [
           $title,
           trim((string)($_POST['subtitle'] ?? '')),
           trim((string)($_POST['description'] ?? '')),
@@ -71,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           trim((string)($_POST['instructor_bio'] ?? '')),
           trim((string)($_POST['what_you_learn'] ?? '')),
           trim((string)($_POST['requirements'] ?? '')),
-          $status,
+          $status, $__branch,
         ]);
         $cid = (int)$pdo->lastInsertId();
         }

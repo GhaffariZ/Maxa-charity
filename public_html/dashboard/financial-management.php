@@ -91,6 +91,16 @@ if ($endDate) {
   $params['end_date'] = $endDate . ' 23:59:59';
 }
 
+/* ---------- ایزولاسیون شعبه: گزارشِ مالیِ همان شعبه ----------
+ *  هر کمک (panel_donations) هنگام ثبت branch_id خود را دارد:
+ *    - کمکِ کمپینی → شعبه‌ی همان کمپین
+ *    - کمکِ عمومی (بدون کمپین) → ستاد مرکزی
+ *  پس فیلترِ branch_id کافی است تا هر شعبه فقط درآمدِ خود را ببیند.
+ */
+$BRANCH_ID = dash_active_branch_id();
+$branchCond = " AND pd.branch_id = :branch_id";
+$params['branch_id'] = $BRANCH_ID;
+
 /* ---------- محاسبات تفکیکی منابع مالی (فقط موفق) ---------- */
 $onlineHelpTotal = 0.0;
 $campaignHelpTotal = 0.0;
@@ -100,9 +110,9 @@ $ordersTotal = 0.0;  // ساختار موقت طبق درخواست شما
 if ($pdo) {
   try {
     // کمک آنلاین مستقیم (بدون کمپین)
-    $onlineHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond, $params)->fetch()['s'];
+    $onlineHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond, $params)->fetch()['s'];
     // کمک‌های مربوط به کمپین‌ها
-    $campaignHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NOT NULL" . $dateCond, $params)->fetch()['s'];
+    $campaignHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NOT NULL" . $dateCond . $branchCond, $params)->fetch()['s'];
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
 $grandTotalCollected = $onlineHelpTotal + $campaignHelpTotal + $coursesTotal + $ordersTotal;
@@ -120,7 +130,7 @@ if ($pdo) {
          FROM panel_donations pd
          JOIN panel_users pu        ON pu.id = pd.user_id
          LEFT JOIN user_profiles up ON up.user_id = pd.user_id
-        WHERE pd.status='success'" . $dateCond . "
+        WHERE pd.status='success'" . $dateCond . $branchCond . "
         GROUP BY pd.user_id, pu.email
         ORDER BY total DESC
         LIMIT 10", $params)->fetchAll();
@@ -139,6 +149,7 @@ if ($pdo) {
       "SELECT c.title, COALESCE(SUM(pd.amount), 0) AS total_collected
          FROM campaigns c
          LEFT JOIN panel_donations pd ON c.id = pd.campaign_id AND pd.status='success'" . $dateCond . "
+        WHERE c.branch_id = :branch_id
         GROUP BY c.id, c.title
         ORDER BY total_collected DESC", $params)->fetchAll();
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
@@ -166,7 +177,7 @@ if ($pdo) {
          LEFT JOIN panel_users pu   ON pu.id = pd.user_id
          LEFT JOIN user_profiles up ON up.user_id = pd.user_id
          LEFT JOIN campaigns c      ON c.id = pd.campaign_id
-        WHERE pd.status='success'" . $dateCond . "
+        WHERE pd.status='success'" . $dateCond . $branchCond . "
         ORDER BY COALESCE(pd.paid_at, pd.created_at) DESC
         LIMIT 20", $params)->fetchAll();
     foreach ($txRaw as $r) {
@@ -186,7 +197,7 @@ if ($pdo) {
 $don = []; $users = [];
 if ($pdo) {
   try {
-    $don = q($pdo, "SELECT pd.amount, pd.campaign_id, COALESCE(pd.paid_at, pd.created_at) AS ts FROM panel_donations pd WHERE pd.status='success'" . $dateCond, $params)->fetchAll();
+    $don = q($pdo, "SELECT pd.amount, pd.campaign_id, COALESCE(pd.paid_at, pd.created_at) AS ts FROM panel_donations pd WHERE pd.status='success'" . $dateCond . $branchCond, $params)->fetchAll();
     $users = q($pdo, "SELECT created_at, last_login_at FROM panel_users")->fetchAll();
   } catch (Throwable $e) {}
 }

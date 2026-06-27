@@ -32,6 +32,7 @@ $branch = $st->fetch();
 
 if ($branch) {
     $branchId = (int)$branch['id'];
+    $branchSlug = (string)$branch['slug'];
 
     // 1-a) مسیر داخلیِ خبر: /{branch}/news/{news-slug}
     if ($sub !== '' && str_starts_with($sub, 'news/')) {
@@ -42,23 +43,23 @@ if ($branch) {
 
     // 1-b) مسیر داخلیِ صفحه‌ی دلخواهِ شعبه: /{branch}/{page-slug}
     if ($sub !== '') {
-        render_page_by_slug($pdo, $branchId, $sub);
+        render_page_by_slug($pdo, $branchId, $sub, $branchSlug);
         exit;
     }
 
     // 1-c) خانه‌ی شعبه: /{branch}
-    render_page_by_slug($pdo, $branchId, 'home');
+    render_page_by_slug($pdo, $branchId, 'home', $branchSlug);
     exit;
 }
 
 /* ---------- 2) صفحه‌ی مرکزی (branch_id = HQ) ---------- */
-render_page_by_slug($pdo, $HQ_BRANCH, $slug);
+render_page_by_slug($pdo, $HQ_BRANCH, $slug, '');
 exit;
 
 
 /* ============================ توابع رندر ============================ */
 
-function render_page_by_slug(PDO $pdo, int $branchId, string $slug): void
+function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = ''): void
 {
     $st = $pdo->prepare("SELECT * FROM pages WHERE branch_id = ? AND slug = ? AND status = 'published' LIMIT 1");
     $st->execute([$branchId, $slug]);
@@ -76,6 +77,8 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug): void
     echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
     echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
     echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n</head>\n<body>\n";
+    // شعبه‌ی جاری برای کامپوننت‌ها (هیرو/خبر/کمپین/...) تا فیدهای عمومی را scope کنند
+    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
     foreach ($components as $component) {
         $componentPath = __DIR__ . '/components/' . $component . '/component.php';
