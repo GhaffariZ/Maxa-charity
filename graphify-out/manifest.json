@@ -375,9 +375,9 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/_guard.php": {
-    "mtime": 1782201889.8030117,
-    "ast_hash": "61636749c94ca7496d0421ff1d99c827",
-    "semantic_hash": "61636749c94ca7496d0421ff1d99c827"
+    "mtime": 1782575349.9000041,
+    "ast_hash": "c980b8c537dd02be608fa912375922b5",
+    "semantic_hash": ""
   },
   "public_html/dashboard/_panel_head.php": {
     "mtime": 1782027422.6464584,
