@@ -1295,8 +1295,8 @@
     "semantic_hash": "b96cdddf766aa4d382421739464b1d0a"
   },
   "public_html/dashboard/index.php": {
-    "mtime": 1782566418.4319434,
-    "ast_hash": "cfde19868525b6c7e53e93e50c0f5793",
+    "mtime": 1782576449.418949,
+    "ast_hash": "6cb6f11935f996d48a490ddf4a730153",
     "semantic_hash": ""
   },
   "public_html/dashboard/login.php": {
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/news-create.php": {
-    "mtime": 1782574072.8598025,
-    "ast_hash": "83e794fe4f5c5bddf49231ed6c031ebd",
+    "mtime": 1782576709.9627426,
+    "ast_hash": "96293af08bf66140866de783804b733e",
     "semantic_hash": ""
   },
   "public_html/dashboard/news-delete.php": {
@@ -1330,8 +1330,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/news-list.php": {
-    "mtime": 1782553527.5421898,
-    "ast_hash": "91fba4d7715b8e787fc52a1cb7938342",
+    "mtime": 1782577258.3627753,
+    "ast_hash": "88c4e82a44de52b8fc9ce2e77a4eb4fe",
     "semantic_hash": ""
   },
   "public_html/dashboard/news-save.php": {
