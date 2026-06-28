@@ -239,7 +239,22 @@ select.input { appearance: none; cursor: pointer; }
 }
 .dp-nav-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 .dp-nav-btn svg { width: 17px; height: 17px; }
-.dp-month-label { font-size: 14px; font-weight: 800; color: var(--text-color); text-align: center; flex: 1; }
+.dp-month-label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.dp-label-btn {
+    border: none; background: transparent; color: var(--text-color); cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 800; padding: 5px 10px; border-radius: 8px;
+    transition: background var(--anim-fast), color var(--anim-fast);
+}
+.dp-label-btn:hover { background: rgba(0,125,117,0.10); color: var(--primary-color); }
+.dp-grid-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px 0; max-height: 252px; overflow-y: auto; }
+.dp-pick-item {
+    border: 1px solid var(--border-color); background: var(--surface-2); color: var(--text-color);
+    border-radius: 10px; padding: 12px 6px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;
+    transition: all var(--anim-fast);
+}
+.dp-pick-item:hover { background: rgba(0,125,117,0.10); border-color: var(--primary-color); }
+.dp-pick-item.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; border-color: transparent; }
+.dp-pick-item.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); }
 .dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
 .dp-weekdays span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted-color); padding: 4px 0; }
 .dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -572,16 +587,23 @@ select.input { appearance: none; cursor: pointer; }
             <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <div class="dp-month-label" id="dpMonthLabel">—</div>
+            <div class="dp-month-label">
+                <button type="button" class="dp-label-btn" id="dpMonthBtn" onclick="dpToggleView('months')">—</button>
+                <button type="button" class="dp-label-btn" id="dpYearBtn" onclick="dpToggleView('years')">—</button>
+            </div>
             <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
         </div>
 
-        <div class="dp-weekdays">
-            <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+        <div class="dp-view" id="dpDayView">
+            <div class="dp-weekdays">
+                <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+            </div>
+            <div class="dp-days" id="dpDays"></div>
         </div>
-        <div class="dp-days" id="dpDays"></div>
+        <div class="dp-view dp-grid-pick" id="dpMonthView" style="display:none;"></div>
+        <div class="dp-view dp-grid-pick" id="dpYearView" style="display:none;"></div>
 
         <div class="dp-time">
             <div class="dp-time-head">
@@ -875,9 +897,21 @@ function setPickerValues(jy, jm, jd, hh, mm) {
     dpRenderTime(); dpRenderCalendar();
 }
 
+let dpView = 'days';
+function dpToggleView(which) { dpView = (dpView === which) ? 'days' : which; dpApplyView(); }
+function dpApplyView() {
+    document.getElementById("dpDayView").style.display   = dpView === 'days'   ? '' : 'none';
+    document.getElementById("dpMonthView").style.display = dpView === 'months' ? 'grid' : 'none';
+    document.getElementById("dpYearView").style.display  = dpView === 'years'  ? 'grid' : 'none';
+    if (dpView === 'months') dpRenderMonths();
+    else if (dpView === 'years') dpRenderYears();
+}
+
 function dpRenderCalendar() {
-    const label = document.getElementById("dpMonthLabel");
-    if (label) label.textContent = `${PERSIAN_MONTHS[dpViewMonth - 1]} ${toFaDigits(dpViewYear)}`;
+    const mBtn = document.getElementById("dpMonthBtn");
+    const yBtn = document.getElementById("dpYearBtn");
+    if (mBtn) mBtn.textContent = PERSIAN_MONTHS[dpViewMonth - 1];
+    if (yBtn) yBtn.textContent = toFaDigits(dpViewYear);
     const grid = document.getElementById("dpDays");
     if (!grid) return;
     grid.innerHTML = "";
@@ -898,6 +932,40 @@ function dpRenderCalendar() {
 }
 
 function dpSelectDay(d) { dpSet("jy", dpViewYear); dpSet("jm", dpViewMonth); dpSet("jd", d); dpRenderCalendar(); }
+
+function dpRenderMonths() {
+    const wrap = document.getElementById("dpMonthView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy, tjm] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    for (let m = 1; m <= 12; m++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = PERSIAN_MONTHS[m - 1];
+        if (m === dpViewMonth) b.classList.add("is-selected");
+        if (dpViewYear === tjy && m === tjm) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickMonth(m));
+        wrap.appendChild(b);
+    }
+}
+function dpRenderYears() {
+    const wrap = document.getElementById("dpYearView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    for (let y = dpViewYear - 10; y <= dpViewYear + 10; y++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = toFaDigits(y);
+        if (y === dpViewYear) b.classList.add("is-selected");
+        if (y === tjy) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickYear(y));
+        wrap.appendChild(b);
+    }
+}
+function dpPickMonth(m) { dpViewMonth = m; dpView = 'days'; dpApplyView(); dpRenderCalendar(); }
+function dpPickYear(y) { dpViewYear = y; dpView = 'months'; dpApplyView(); dpRenderCalendar(); }
+
 function dpChangeMonth(dir) {
     dpViewMonth += dir;
     if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
@@ -912,7 +980,7 @@ function dpStepTime(unit, dir) {
     let v = dpGet(unit) + dir; const max = unit === "hh" ? 24 : 60;
     v = (v + max) % max; dpSet(unit, v); dpRenderTime();
 }
-function openDatePicker() { document.getElementById("dateModal").classList.add("show"); }
+function openDatePicker() { dpView = 'days'; dpApplyView(); document.getElementById("dateModal").classList.add("show"); }
 function closeDatePicker() { document.getElementById("dateModal").classList.remove("show"); }
 function setPickerNow() {
     const now = new Date();
