@@ -41,25 +41,27 @@ if ($branch) {
         exit;
     }
 
+    $branchName = (string)($branch['name'] ?? '');
+
     // 1-b) مسیر داخلیِ صفحه‌ی دلخواهِ شعبه: /{branch}/{page-slug}
     if ($sub !== '') {
-        render_page_by_slug($pdo, $branchId, $sub, $branchSlug);
+        render_page_by_slug($pdo, $branchId, $sub, $branchSlug, $branchName);
         exit;
     }
 
     // 1-c) خانه‌ی شعبه: /{branch}
-    render_page_by_slug($pdo, $branchId, 'home', $branchSlug);
+    render_page_by_slug($pdo, $branchId, 'home', $branchSlug, $branchName);
     exit;
 }
 
 /* ---------- 2) صفحه‌ی مرکزی (branch_id = HQ) ---------- */
-render_page_by_slug($pdo, $HQ_BRANCH, $slug, '');
+render_page_by_slug($pdo, $HQ_BRANCH, $slug, '', '');
 exit;
 
 
 /* ============================ توابع رندر ============================ */
 
-function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = ''): void
+function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = '', string $branchName = ''): void
 {
     $st = $pdo->prepare("SELECT * FROM pages WHERE branch_id = ? AND slug = ? AND status = 'published' LIMIT 1");
     $st->execute([$branchId, $slug]);
@@ -78,7 +80,8 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
     echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n</head>\n<body>\n";
     // شعبه‌ی جاری برای کامپوننت‌ها (هیرو/خبر/کمپین/...) تا فیدهای عمومی را scope کنند
-    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
+    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
     foreach ($components as $component) {
         $componentPath = __DIR__ . '/components/' . $component . '/component.php';

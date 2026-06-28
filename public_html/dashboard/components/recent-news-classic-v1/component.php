@@ -38,7 +38,8 @@
   const fa=(v)=>String(v).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
   const ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="750"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-size="48" font-family="Vazirmatn,Tahoma">بدون تصویر</text></svg>');
   const ex=(t,m=110)=>{t=(t||'').trim();return t.length>m?t.slice(0,m)+'…':t;};
-  fetch('/dashboard/recent-news-feed.php?limit=3').then(r=>r.json()).then(d=>{
+  const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
+  fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
     const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rncv1-empty">خبری برای نمایش وجود ندارد.</div>';return;}
     grid.innerHTML=items.map(n=>'<a class="rncv1-card" href="'+n.url+'"><div class="rncv1-img-box"><img src="'+(n.image||ph)+'" alt=""></div><p class="rncv1-cat">'+n.category+'</p><h3>'+n.title+'</h3><p class="rncv1-excerpt">'+ex(n.excerpt||'')+'</p><time>'+fa(n.date)+'</time></a>').join('');
   }).catch(()=>{grid.innerHTML='<div class="rncv1-empty">خطا در بارگذاری اخبار.</div>';});
