@@ -1,16 +1,16 @@
 # Graph Report - Maxa-charity  (2026-06-28)
 
 ## Corpus Check
-- 322 files · ~6,211,671 words
+- 325 files · ~6,218,998 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5037 nodes · 9143 edges · 635 communities (324 shown, 311 thin omitted)
+- 5039 nodes · 9143 edges · 642 communities (329 shown, 313 thin omitted)
 - Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 932 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d0b8fb05`
+- Built from commit: `32ecf70c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -480,6 +480,11 @@
 - [[_COMMUNITY_Community 630|Community 630]]
 - [[_COMMUNITY_Community 631|Community 631]]
 - [[_COMMUNITY_Community 632|Community 632]]
+- [[_COMMUNITY_Community 635|Community 635]]
+- [[_COMMUNITY_Community 636|Community 636]]
+- [[_COMMUNITY_Community 637|Community 637]]
+- [[_COMMUNITY_Community 638|Community 638]]
+- [[_COMMUNITY_Community 639|Community 639]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `_()` - 1042 edges
@@ -567,7 +572,7 @@
 - **User profile pictures** —  [INFERRED]
 - **User profile pictures (2)** — usersprofilepic_profile_6a161fc1aee19, usersprofilepic_profile_6a1739e63d182, usersprofilepic_profile_6a175008f283c, usersprofilepic_profile_6a19d73aaa7dc, usersprofilepic_profile_6a19dd4ac23c0, usersprofilepic_profile_6a1a93516d252, usersprofilepic_profile_6a1a9386201d1, usersprofilepic_profile_6a1b3c0e59c19 [INFERRED]
 
-## Communities (635 total, 311 thin omitted)
+## Communities (642 total, 313 thin omitted)
 
 ### Community 0 - "PDF.js Font & Buffer Engine (vendor)"
 Cohesion: 0.01
@@ -575,11 +580,11 @@ Nodes (46): $(), arrayClone(), asciiSlice(), base64Slice(), bi_reverse(), build_
 
 ### Community 1 - "Minified vendor bundle #1"
 Cohesion: 0.01
-Nodes (188): _(), _1, _7, A1, A2(), a6(), a7(), a9() (+180 more)
+Nodes (164): _(), _1, _7, _9(), A1, A2(), a4(), a6() (+156 more)
 
 ### Community 2 - "Minified vendor bundle #2"
 Cohesion: 0.04
-Nodes (83): aV(), B5(), b8(), bB(), bV(), c8(), Cd(), d1() (+75 more)
+Nodes (101): _8(), a8(), Ah(), aV(), _B, B5(), b8(), bB() (+93 more)
 
 ### Community 3 - "Minified vendor bundle #3"
 Cohesion: 0.06
@@ -587,11 +592,11 @@ Nodes (73): A(), ae(), at(), b(), be(), binarySearch(), c(), callbackifyOnReject
 
 ### Community 4 - "Minified vendor bundle #4"
 Cohesion: 0.05
-Nodes (74): _3(), _4(), a3(), Aae(), An(), b1(), b4(), bh() (+66 more)
+Nodes (69): _3(), _4(), a3(), Aae(), An(), b1(), b4(), bh() (+61 more)
 
 ### Community 5 - "Minified vendor bundle #5"
-Cohesion: 0.04
-Nodes (77): _8(), a0(), a8(), aI(), aq(), _B, bi(), bN (+69 more)
+Cohesion: 0.05
+Nodes (59): a0(), aq(), bq(), Bs(), bx(), cq(), _D(), dae() (+51 more)
 
 ### Community 6 - "Toastr Notifications (vendor JS)"
 Cohesion: 0.05
@@ -603,7 +608,7 @@ Nodes (75): AFMFont(), cache(), call(), CFFEncodingVersion(), CFFPointer(), CFFS
 
 ### Community 8 - "Minified vendor bundle #8"
 Cohesion: 0.05
-Nodes (71): Ah(), Aj(), az(), bR(), bz(), cne(), cw, cz() (+63 more)
+Nodes (72): Aj(), aw(), az(), bz(), cne(), cO(), cw, cz() (+64 more)
 
 ### Community 9 - "Dashboard Auth & Branch Session (PHP)"
 Cohesion: 0.11
@@ -615,11 +620,11 @@ Nodes (21): $(), At(), B(), cancelRequests(), de(), G(), getMenuSize(), getTitle
 
 ### Community 12 - "Minified vendor bundle #12"
 Cohesion: 0.06
-Nodes (37): As(), aY(), b2(), bd(), bj(), cB(), eY(), HC() (+29 more)
+Nodes (29): aY(), Bl(), bN, dw, eK(), eY(), g2(), i1() (+21 more)
 
 ### Community 13 - "Minified vendor bundle #13"
-Cohesion: 0.04
-Nodes (63): ae(), aM(), B3(), bF, cM(), CR(), cs(), dc (+55 more)
+Cohesion: 0.05
+Nodes (49): ae(), B3(), CR(), cs(), Dh(), Di(), dre(), F3() (+41 more)
 
 ### Community 14 - "Minified vendor bundle #14"
 Cohesion: 0.08
@@ -630,8 +635,8 @@ Cohesion: 0.06
 Nodes (21): At(), b(), bi(), Bt(), Ct(), Et(), h, hn() (+13 more)
 
 ### Community 16 - "Minified vendor bundle #16"
-Cohesion: 0.06
-Nodes (44): _a(), bo(), bx(), clamp(), cU(), De(), dF, displayable() (+36 more)
+Cohesion: 0.05
+Nodes (49): _a(), bo(), Cd(), clamp(), cU(), De(), dF, displayable() (+41 more)
 
 ### Community 17 - "Minified vendor bundle #17"
 Cohesion: 0.04
@@ -663,19 +668,23 @@ Nodes (3): Bt, cs, getSelectorFromElement()
 
 ### Community 26 - "startScrollTracking cluster"
 Cohesion: 0.03
-Nodes (64): ac(), are(), ate(), bC(), cO(), cte(), die(), dw (+56 more)
+Nodes (70): ac(), aI(), are(), ate(), bC(), cte(), die(), Dx() (+62 more)
 
 ### Community 27 - "Minified vendor bundle #27"
 Cohesion: 0.15
 Nodes (30): $(), Ae(), be(), Ce(), De(), di(), $e(), Ee() (+22 more)
+
+### Community 28 - "Bootstrap Tooltip/Modal Popper (vendor JS)"
+Cohesion: 0.10
+Nodes (4): on(), Q, remove(), trigger()
 
 ### Community 29 - "Font Glyph/Cmap Processing (vendor)"
 Cohesion: 0.05
 Nodes (48): appendChoices(), _applyDecoratedDescriptor(), _arrayLikeToArray(), assign(), CFFDict(), clearSubstitutionFlags(), CmapProcessor(), consonantPosition() (+40 more)
 
 ### Community 30 - "Minified vendor bundle #30"
-Cohesion: 0.10
-Nodes (20): Ad(), aL(), ap(), bte, c7(), c9(), cre, gte() (+12 more)
+Cohesion: 0.16
+Nodes (15): Ad(), aL(), ap(), bte, c7(), c9(), gte(), hR() (+7 more)
 
 ### Community 31 - "scrapeMotionValuesFromProps cluster"
 Cohesion: 0.16
@@ -686,8 +695,8 @@ Cohesion: 0.07
 Nodes (44): AssertionError(), _assertThisInitialized(), checkIsPromise(), compare(), compareExceptionKey(), copyError(), CorkedRequest(), createErrDiff() (+36 more)
 
 ### Community 33 - "Minified vendor bundle #33"
-Cohesion: 0.07
-Nodes (44): a4(), aw(), bq(), Dh(), Di(), fc(), fo(), Fs() (+36 more)
+Cohesion: 0.15
+Nodes (15): gG(), h9(), hB(), NT(), Qg(), qV(), Su(), T0() (+7 more)
 
 ### Community 34 - "Tinymce.Min module"
 Cohesion: 0.12
@@ -711,10 +720,10 @@ Nodes (20): $(), a(), a0(), e0(), F(), f0(), I(), J() (+12 more)
 
 ### Community 39 - "_resolvePossibleFunction cluster"
 Cohesion: 0.09
-Nodes (5): getDataAttributes(), H, j(), Jn, remove()
+Nodes (4): getDataAttributes(), H, j(), Jn
 
 ### Community 40 - "getGeneratorVelocity cluster"
-Cohesion: 0.11
+Cohesion: 0.10
 Nodes (5): Fh, UW(), Dt(), _n(), $i()
 
 ### Community 41 - "Vendor JS: apexcharts.js"
@@ -722,28 +731,28 @@ Cohesion: 0.10
 Nodes (18): a(), Ce(), De(), _e(), F(), He(), i(), ke() (+10 more)
 
 ### Community 42 - "Index module"
-Cohesion: 0.08
-Nodes (9): AuthMiddleware, Jwt, EngagementController, ApiException, ValidationException, Request, Request, self (+1 more)
+Cohesion: 0.09
+Nodes (7): AuthMiddleware, Jwt, ApiException, ValidationException, Request, self, RuntimeException
 
 ### Community 43 - "Minified vendor bundle #43"
 Cohesion: 0.16
 Nodes (24): _(), A(), B(), C(), E(), f(), g(), h() (+16 more)
 
 ### Community 45 - "onKeyframesResolved cluster"
-Cohesion: 0.08
-Nodes (4): hte(), np(), pte, WW()
+Cohesion: 0.12
+Nodes (3): hte(), np(), pte
 
 ### Community 46 - "Passwordpolicy module"
-Cohesion: 0.12
-Nodes (5): PasswordPolicy, AuthController, EmailTemplates, Request, Audit
+Cohesion: 0.11
+Nodes (9): PasswordPolicy, AuthController, EmailTemplates, Mailer, OneTimeTokenRepository, Request, RefreshTokenService, Audit (+1 more)
 
 ### Community 47 - "setPreviewThumbnails cluster"
 Cohesion: 0.07
 Nodes (3): Ce(), createIcon(), mt()
 
 ### Community 48 - "getDefaultTransition cluster"
-Cohesion: 0.08
-Nodes (8): IW(), _ne(), ote(), qI(), _te(), vi(), zte(), na()
+Cohesion: 0.07
+Nodes (11): cie, il, IW(), _ne(), ote(), qB, qI(), _te() (+3 more)
 
 ### Community 49 - "getBaseTargetFromProps cluster"
 Cohesion: 0.09
@@ -754,8 +763,8 @@ Cohesion: 0.13
 Nodes (22): course_accent(), fa_digits(), fmt_duration(), gregorian_to_jalali(), jalali_date(), level_label(), load_course_full(), load_courses() (+14 more)
 
 ### Community 51 - "dataApiKeydownHandler cluster"
-Cohesion: 0.06
-Nodes (6): M(), qi, removeDataAttribute(), setDataAttribute(), W, Y
+Cohesion: 0.12
+Nodes (4): M(), qi, removeDataAttribute(), setDataAttribute()
 
 ### Community 52 - "setCaptionsMenu cluster"
 Cohesion: 0.15
@@ -770,8 +779,8 @@ Cohesion: 0.13
 Nodes (5): Aa, oa(), Zo(), ia, init()
 
 ### Community 55 - "scalePositionWithinConstraints cluster"
-Cohesion: 0.17
-Nodes (3): eie(), pie(), yie()
+Cohesion: 0.14
+Nodes (4): eie(), lie, pie(), yie()
 
 ### Community 56 - "Conca Admin Dashboard Template cluster"
 Cohesion: 0.10
@@ -786,8 +795,8 @@ Cohesion: 0.10
 Nodes (3): bindPendingEventDelegates(), M, Zb()
 
 ### Community 60 - "Minified vendor bundle #60"
-Cohesion: 0.07
-Nodes (40): bY(), Ch, cK(), dK(), _ee(), FB, fK(), fne() (+32 more)
+Cohesion: 0.08
+Nodes (29): b2(), bd(), cB(), cK(), dK(), _ee(), eee, fK() (+21 more)
 
 ### Community 61 - "toggleNativeControls cluster"
 Cohesion: 0.11
@@ -818,16 +827,16 @@ Cohesion: 0.15
 Nodes (3): m6, md(), p6()
 
 ### Community 70 - "Donationcontroller module"
-Cohesion: 0.16
-Nodes (7): CampaignRepository, CampaignController, DonationRepository, GatewayFactory, Request, GatewayResult, DonationService
+Cohesion: 0.21
+Nodes (6): CampaignRepository, DonationRepository, GatewayFactory, ProfileRepository, GatewayResult, DonationService
 
 ### Community 71 - "Minified vendor bundle #71"
 Cohesion: 0.18
 Nodes (15): _(), A(), c(), e(), f(), J(), L(), m() (+7 more)
 
 ### Community 72 - "Usercontroller module"
-Cohesion: 0.13
-Nodes (8): UserController, Mailer, OneTimeTokenRepository, ProfileRepository, Request, RefreshTokenService, AvatarStorage, UserRepository
+Cohesion: 0.20
+Nodes (3): UserController, Request, AvatarStorage
 
 ### Community 73 - "flattenStyleArray cluster"
 Cohesion: 0.16
@@ -842,8 +851,8 @@ Cohesion: 0.11
 Nodes (5): RefreshTokenService, PDO, PDO, OneTimeTokenRepository, Str
 
 ### Community 77 - "getOrCreateInstance cluster"
-Cohesion: 0.10
-Nodes (27): aB(), aO(), aU(), ci(), Ej(), fi(), fU(), Gee() (+19 more)
+Cohesion: 0.23
+Nodes (12): aB(), aO(), aU(), ci(), GM(), iB(), nj(), nq() (+4 more)
 
 ### Community 79 - "removeValueFromRenderState cluster"
 Cohesion: 0.18
@@ -854,8 +863,8 @@ Cohesion: 0.15
 Nodes (7): b(), D(), e(), i(), S(), u(), y()
 
 ### Community 81 - "attachTimeline cluster"
-Cohesion: 0.16
-Nodes (4): cie, il, qB, Vte()
+Cohesion: 0.09
+Nodes (24): bR(), $C(), cV(), dv, eq(), fV(), g4(), gd() (+16 more)
 
 ### Community 82 - "Vendor JS: persian-datepicker.min.js"
 Cohesion: 0.18
@@ -910,8 +919,8 @@ Cohesion: 0.22
 Nodes (11): be(), ce(), dt(), Gn(), Hn(), Ie(), Kn(), Me() (+3 more)
 
 ### Community 107 - "Minified vendor bundle #107"
-Cohesion: 0.09
-Nodes (25): bW(), d2(), DU(), eL(), f2(), fw, hk(), _I (+17 more)
+Cohesion: 0.06
+Nodes (38): As(), bj(), bW(), d2(), DU(), Ed(), eL(), f2() (+30 more)
 
 ### Community 108 - "Database module"
 Cohesion: 0.27
@@ -926,8 +935,8 @@ Cohesion: 0.22
 Nodes (7): ai(), I(), ii(), Le(), li(), sr(), ui()
 
 ### Community 113 - "Onetimetokenrepository module"
-Cohesion: 0.18
-Nodes (3): fte(), K_(), yi()
+Cohesion: 0.15
+Nodes (4): fte(), K_(), ute, yi()
 
 ### Community 115 - "executeShortcutAction cluster"
 Cohesion: 0.12
@@ -994,8 +1003,8 @@ Cohesion: 0.36
 Nodes (5): buildLocalPlaceholderImage(), faNumbers(), formatJalaliDate(), getNewsImageUrl(), gregorianToJalali()
 
 ### Community 138 - "updateAnimationControlsSubscri cluster"
-Cohesion: 0.07
-Nodes (33): _9(), aK(), Bl(), cX(), eee, eK(), ez(), f9() (+25 more)
+Cohesion: 0.05
+Nodes (52): aG(), aK(), bG(), cG(), cX(), dee(), dN(), dz() (+44 more)
 
 ### Community 139 - "News View module"
 Cohesion: 0.38
@@ -1014,8 +1023,8 @@ Cohesion: 0.33
 Nodes (6): Official articles-of-association (asasnameh) registration document page 1 for MACSA (Iranian Cancer Control Charity), showing judiciary header, barcode, name/type/registration details, and Articles 1-11 defining the non-commercial charitable institution's name, purpose, location, and governance, Articles-of-association registration document page 2, covering rules for general assemblies, board of trustees (hayat-e omana), board of directors, and inspectors (Articles 11-17), Articles-of-association registration document page 3, covering amendments, dissolution, board of directors composition and meetings, and legal representation duties (Articles 18-23), Articles-of-association registration document page 4, covering board authorities, appointment and duties of inspectors (bazras), and managing director provisions (Articles 24-31), Articles-of-association registration document page 5, covering managing director duties and authorities, funding sources, budget, fiscal year, and official correspondence (Articles 32-39), Articles-of-association registration document final page, covering seal/emblem custody, dissolution and liquidation procedures, special permits, and final approval clause dated 1400/03/06 (Articles 40-43)
 
 ### Community 146 - "Campaigncontroller module"
-Cohesion: 0.19
-Nodes (3): ire, jte, ute
+Cohesion: 0.16
+Nodes (6): cre, ire, jte, nS(), tre(), Wl()
 
 ### Community 148 - "checkBoxedPrimitive cluster"
 Cohesion: 0.33
@@ -1046,8 +1055,8 @@ Cohesion: 0.33
 Nodes (6): scripts, check, coverage, lint, style, test
 
 ### Community 157 - "scrapeMotionValuesFromProps cluster"
-Cohesion: 0.12
-Nodes (3): Response, Security, Cookie
+Cohesion: 0.10
+Nodes (5): DonationController, Response, Security, Request, Cookie
 
 ### Community 159 - "tinf_inflate_block_data cluster"
 Cohesion: 0.50
@@ -1064,6 +1073,10 @@ Nodes (5): MACSA horizontal logo: teal four-petal flower in rounded square with 
 ### Community 164 - "ext-filter cluster"
 Cohesion: 0.40
 Nodes (5): require, ext-ctype, ext-filter, ext-hash, php
+
+### Community 165 - "DKIM_HeaderC cluster"
+Cohesion: 0.14
+Nodes (22): bY(), Ch, FB, fne(), fY(), GH(), gne(), gu (+14 more)
 
 ### Community 167 - "Engagementcontroller module"
 Cohesion: 0.12
@@ -1185,25 +1198,29 @@ Nodes (4): auth(), can(), forbid(), require_role()
 Cohesion: 0.33
 Nodes (5): اتصال به دیتابیس (App Database Config), ترتیب خواندن (اولین موردی که پیدا شود), ⚠️ تعویض پسورد, راه‌اندازی روی سرور (production), راه‌اندازی محلی (development)
 
+### Community 637 - "Community 637"
+Cohesion: 0.13
+Nodes (16): aM(), bF, cM(), dc, _F, fM(), gie(), nM (+8 more)
+
 ## Knowledge Gaps
 - **567 isolated node(s):** `import.sh script`, `self`, `Request`, `GatewayResult`, `GatewayResult` (+562 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **311 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **313 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `_()` connect `Minified vendor bundle #1` to `Minified vendor bundle #2`, `Minified vendor bundle #4`, `Minified vendor bundle #5`, `Minified vendor bundle #8`, `updateAnimationControlsSubscri cluster`, `Minified vendor bundle #12`, `Minified vendor bundle #13`, `Minified vendor bundle #16`, `Campaigncontroller module`, `startScrollTracking cluster`, `Minified vendor bundle #30`, `scrapeMotionValuesFromProps cluster`, `Minified vendor bundle #33`, `getGeneratorVelocity cluster`, `onKeyframesResolved cluster`, `getDefaultTransition cluster`, `getBaseTargetFromProps cluster`, `queryCommandSupported cluster`, `scalePositionWithinConstraints cluster`, `Minified vendor bundle #60`, `getDocumentBaseUrl cluster`, `constructor cluster`, `quadraticCurveTo cluster`, `scheduleRenderMicrotask cluster`, `getOrCreateInstance cluster`, `removeValueFromRenderState cluster`, `attachTimeline cluster`, `constructor cluster`, `Minified vendor bundle #101`, `Minified vendor bundle #107`, `Onetimetokenrepository module`, `executeShortcutAction cluster`, `unbindAllNativeEvents cluster`, `Community 632`?**
+- **Why does `_()` connect `Minified vendor bundle #1` to `Minified vendor bundle #2`, `Minified vendor bundle #4`, `Minified vendor bundle #5`, `Minified vendor bundle #8`, `updateAnimationControlsSubscri cluster`, `Minified vendor bundle #12`, `Minified vendor bundle #13`, `Minified vendor bundle #16`, `Campaigncontroller module`, `startScrollTracking cluster`, `Minified vendor bundle #30`, `scrapeMotionValuesFromProps cluster`, `Minified vendor bundle #33`, `DKIM_HeaderC cluster`, `getGeneratorVelocity cluster`, `onKeyframesResolved cluster`, `getDefaultTransition cluster`, `getBaseTargetFromProps cluster`, `queryCommandSupported cluster`, `scalePositionWithinConstraints cluster`, `Minified vendor bundle #60`, `getDocumentBaseUrl cluster`, `constructor cluster`, `quadraticCurveTo cluster`, `scheduleRenderMicrotask cluster`, `getOrCreateInstance cluster`, `removeValueFromRenderState cluster`, `attachTimeline cluster`, `constructor cluster`, `Minified vendor bundle #101`, `Minified vendor bundle #107`, `Onetimetokenrepository module`, `executeShortcutAction cluster`, `unbindAllNativeEvents cluster`, `Community 632`, `Community 636`, `Community 637`?**
   _High betweenness centrality (0.199) - this node is a cross-community bridge._
 - **Why does `$()` connect `PDF.js Font & Buffer Engine (vendor)` to `Minified vendor bundle #3`, `isNativeReflectConstruct cluster`, `checkBoxedPrimitive cluster`, `SAX/Stream Parser (vendor JS)`, `flush_block_only cluster`, `deflateResetKeep cluster`, `Font Glyph/Cmap Processing (vendor)`, `tinf_inflate_block_data cluster`, `findLooseMatchingPrimitives cluster`, `Node Buffer Polyfill (vendor)`, `inflateResetKeep cluster`, `constructor cluster`, `flattenStyleArray cluster`, `$43d7963e56408b24$export$3c52d cluster`, `CopyUncompressedBlockToOutput cluster`, `validateMatrix cluster`, `_tr_stored_block cluster`, `updateReadableListening cluster`, `getGlobalMatrix cluster`?**
   _High betweenness centrality (0.131) - this node is a cross-community bridge._
-- **Why does `$()` connect `Minified vendor bundle #20` to `Minified vendor bundle #128`, `findLooseMatchingPrimitives cluster`, `Minified vendor bundle #224`, `Minified vendor bundle #225`, `Minified vendor bundle #226`, `Minified vendor bundle #227`, `Minified vendor bundle #228`, `Minified vendor bundle #229`, `getGeneratorVelocity cluster`, `Minified vendor bundle #110`, `getDefaultTransition cluster`, `queryCommandSupported cluster`, `Minified vendor bundle #151`, `Minified vendor bundle #185`, `Minified vendor bundle #222`, `Minified vendor bundle #223`?**
+- **Why does `$()` connect `Minified vendor bundle #20` to `Minified vendor bundle #128`, `findLooseMatchingPrimitives cluster`, `Minified vendor bundle #224`, `Minified vendor bundle #225`, `Minified vendor bundle #226`, `Minified vendor bundle #227`, `Minified vendor bundle #228`, `Minified vendor bundle #229`, `getGeneratorVelocity cluster`, `Minified vendor bundle #110`, `queryCommandSupported cluster`, `Minified vendor bundle #151`, `Minified vendor bundle #185`, `Community 636`, `Minified vendor bundle #222`, `Minified vendor bundle #223`?**
   _High betweenness centrality (0.120) - this node is a cross-community bridge._
 - **What connects `import.sh script`, `self`, `Request` to the rest of the system?**
   _570 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `PDF.js Font & Buffer Engine (vendor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0064854299928926796 - nodes in this community are weakly interconnected._
 - **Should `Minified vendor bundle #1` be split into smaller, more focused modules?**
-  _Cohesion score 0.01017473410028218 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.01054590570719603 - nodes in this community are weakly interconnected._
 - **Should `Minified vendor bundle #2` be split into smaller, more focused modules?**
-  _Cohesion score 0.041434028798119305 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.03683168316831683 - nodes in this community are weakly interconnected._
