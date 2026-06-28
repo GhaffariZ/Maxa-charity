@@ -42,6 +42,13 @@ $SETUP_NEEDED = false;
 try { $pdo->query('SELECT 1 FROM tickets LIMIT 1'); }
 catch (Throwable $e) { $SETUP_NEEDED = true; }
 
+$IS_HQ_BRANCH = false;
+if (!$SETUP_NEEDED) {
+  $chkHq = $pdo->prepare('SELECT is_hq FROM branches WHERE id = ? LIMIT 1');
+  $chkHq->execute([$MY_BRANCH]);
+  $IS_HQ_BRANCH = (bool)$chkHq->fetchColumn();
+}
+
 /* ---------- بررسیِ دسترسیِ یک تیکت برای کاربرِ فعلی ---------- */
 function tk_load(PDO $pdo, int $id): ?array {
   $s = $pdo->prepare('SELECT * FROM tickets WHERE id = ? LIMIT 1');
@@ -52,7 +59,7 @@ function tk_can_view(?array $t, string $role, int $me, int $branch): bool {
   if (!$t) return false;
   if ($role === 'super')        return $t['target'] === 'hq';
   if ($role === 'branch_admin') return ((int)$t['branch_id'] === $branch || (int)$t['created_by'] === $me);
-  return (int)$t['created_by'] === $me && $t['target'] === 'branch'; // user
+  return (int)$t['created_by'] === $me; // user
 }
 
 /* ============================================================================
@@ -86,7 +93,7 @@ if (!$SETUP_NEEDED && $_SERVER['REQUEST_METHOD'] === 'POST') {
       } elseif (mb_strlen($subject) > 200) {
         $_SESSION['ticket_flash'] = ['type'=>'err','text'=>'موضوع نباید بیش از ۲۰۰ نویسه باشد.'];
       } else {
-        $target = $MY_ROLE === 'user' ? 'branch' : 'hq';
+        $target = ($MY_ROLE === 'user' && !$IS_HQ_BRANCH) ? 'branch' : 'hq';
         $pdo->beginTransaction();
         $pdo->prepare('INSERT INTO tickets (branch_id,subject,target,priority,status,created_by,creator_role,last_reply_at)
                        VALUES (?,?,?,?,\'open\',?,?,NOW())')
@@ -297,7 +304,7 @@ if (!$SETUP_NEEDED) {
     $where = "((t.branch_id = ? AND t.target = 'branch') OR (t.branch_id = ? AND t.target = 'hq' AND (t.status <> 'closed' OR t.escalated_from IS NULL)))";
     $params = [$MY_BRANCH, $MY_BRANCH];
   } else { // user
-    $where = "t.created_by = ? AND t.target = 'branch'"; $params = [$ME];
+    $where = "t.created_by = ?"; $params = [$ME];
   }
   $sql = "SELECT t.*, du.full_name, du.username, b.name AS branch_name,
                  (SELECT COUNT(*) FROM tickets c WHERE c.escalated_from = t.id) AS child_count
@@ -351,10 +358,11 @@ if ($MY_ROLE === 'super') {
 } elseif ($MY_ROLE === 'branch_admin') {
   $H_TITLE = 'تیکت‌ها'; $H_SUB = 'به تیکتِ کاربرانِ شعبه‌ی خود پاسخ دهید و با ستاد مرکزی در ارتباط باشید.';
 } else {
-  $H_TITLE = 'تیکت‌های من'; $H_SUB = 'درخواست‌های خود را برای مدیرِ شعبه ثبت و پیگیری کنید.';
+  $H_TITLE = 'تیکت‌های من';
+  $H_SUB = $IS_HQ_BRANCH ? 'درخواست‌های خود را برای ستاد مرکزی ثبت و پیگیری کنید.' : 'درخواست‌های خود را برای مدیرِ شعبه ثبت و پیگیری کنید.';
 }
 $CAN_CREATE = $MY_ROLE !== 'super';
-$CREATE_TO  = $MY_ROLE === 'user' ? 'مدیرِ شعبه' : 'ستاد مرکزی';
+$CREATE_TO  = ($MY_ROLE === 'user' && !$IS_HQ_BRANCH) ? 'مدیرِ شعبه' : 'ستاد مرکزی';
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
