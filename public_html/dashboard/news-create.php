@@ -297,6 +297,44 @@ label.field-label svg { width: 16px; height: 16px; }
 }
 select.input { appearance: none; cursor: pointer; }
 
+/* ===== دراپ‌داون سفارشی مدرن ===== */
+.msel { position: relative; width: 100%; font-family: inherit; }
+.msel-trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: var(--input-bg); color: var(--text-color);
+    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+    padding: 11px 12px; font-size: 15px; font-family: inherit; cursor: pointer; text-align: right;
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
+}
+.msel-trigger:hover { border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color)); }
+.msel.open .msel-trigger { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.14); }
+.msel-trigger .msel-value { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msel-trigger.is-placeholder .msel-value { color: var(--muted-color); }
+.msel-caret { color: var(--muted-color); transition: transform var(--anim-fast); flex-shrink: 0; display: flex; }
+.msel-caret svg { width: 18px; height: 18px; }
+.msel.open .msel-caret { transform: rotate(180deg); color: var(--primary-color); }
+
+.msel-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--panel-bg); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    padding: 6px; max-height: 240px; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--anim-fast), transform var(--anim-fast), visibility var(--anim-fast);
+}
+.msel.open .msel-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.msel-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--text-color);
+    transition: background var(--anim-fast); user-select: none;
+}
+.msel-opt:hover, .msel-opt.is-active { background: rgba(0,125,117,0.10); }
+.msel-opt.is-selected { color: var(--primary-color); font-weight: 700; }
+.msel-opt .msel-check { opacity: 0; color: var(--primary-color); display: flex; flex-shrink: 0; }
+.msel-opt .msel-check svg { width: 16px; height: 16px; }
+.msel-opt.is-selected .msel-check { opacity: 1; }
+.msel.field-invalid .msel-trigger { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.14) !important; }
+
 /* ===== حالت خطای فیلدها ===== */
 .input.field-invalid,
 .title-card.field-invalid,
@@ -540,7 +578,8 @@ select.input { appearance: none; cursor: pointer; }
 .chip button svg { width: 13px; height: 13px; }
 
 /* بخش‌بندی کارت تنظیمات */
-.settings-card .input-group { padding: 16px; margin: 0; border-bottom: 1px solid var(--border-color); }
+.settings-card { overflow: visible; }   /* تا منوی دراپ‌داون سفارشی بریده نشود */
+.settings-card .input-group { padding: 16px; margin: 0; border-bottom: 1px solid var(--border-color); position: relative; }
 .settings-card .input-group:last-child { border-bottom: none; }
 
 .publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -648,21 +687,61 @@ select.input { appearance: none; cursor: pointer; }
     opacity: 0;
     transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
 }
-.date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.date-modal-title { margin: 0; color: var(--primary-color); font-size: 16px; font-weight: 800; }
-.date-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.date-grid .input-group { margin-bottom: 0; padding: 0; border: none; }
-.date-actions { margin-top: 14px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-.calendar-box, .time-box {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px;
-    background: var(--surface-2);
+.date-modal-box { max-width: 360px; }
+.date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.date-modal-title { margin: 0; color: var(--primary-color); font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.date-modal-title svg { width: 18px; height: 18px; }
+.dp-close {
+    width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--muted-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
 }
-.time-box { margin-top: 10px; }
-.time-box-title { font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; }
-.time-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
-.time-separator { font-size: 20px; font-weight: 800; color: var(--primary-color); text-align: center; }
+.dp-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.dp-close svg { width: 15px; height: 15px; }
+
+/* ===== تقویم گرید ===== */
+.dp-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.dp-nav-btn {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast); flex-shrink: 0;
+}
+.dp-nav-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-nav-btn svg { width: 17px; height: 17px; }
+.dp-month-label { font-size: 14px; font-weight: 800; color: var(--text-color); text-align: center; flex: 1; }
+
+.dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.dp-weekdays span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted-color); padding: 4px 0; }
+.dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.dp-day {
+    aspect-ratio: 1; border: none; background: transparent; color: var(--text-color);
+    border-radius: 10px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; transition: background var(--anim-fast), color var(--anim-fast), transform var(--anim-fast);
+}
+.dp-day:hover { background: rgba(0,125,117,0.10); }
+.dp-day.is-empty { background: transparent; cursor: default; pointer-events: none; }
+.dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); color: var(--secondary-color); }
+.dp-day.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); transform: scale(1.04); }
+
+/* ===== انتخاب زمان ===== */
+.dp-time { margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px; }
+.dp-time-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+.dp-time-head svg { width: 15px; height: 15px; }
+.dp-time-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.dp-stepper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dp-step-btn {
+    width: 30px; height: 24px; border-radius: 7px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
+}
+.dp-step-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-step-btn svg { width: 14px; height: 14px; }
+.dp-time-val {
+    width: 56px; text-align: center; font-size: 22px; font-weight: 800; color: var(--text-color);
+    background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 0; font-family: inherit;
+}
+.dp-time-colon { font-size: 22px; font-weight: 800; color: var(--primary-color); }
+
+.date-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 
 #previewModal {
     position: fixed; inset: 0;
@@ -1190,42 +1269,67 @@ select.input { appearance: none; cursor: pointer; }
     </div>
 </div>
 
-<!-- مودال انتخاب تاریخ -->
+<!-- مودال انتخاب تاریخ (تقویم شمسی مدرن) -->
 <div id="dateModal" class="date-modal" onclick="if(event.target===this) closeDatePicker()">
     <div class="date-modal-box">
         <div class="date-header">
-            <h4 class="date-modal-title">تقویم فارسی</h4>
-            <button type="button" class="btn-insert" style="padding:6px 10px" onclick="closeDatePicker()">✕</button>
+            <h4 class="date-modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                تقویم شمسی
+            </h4>
+            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-        <div class="calendar-box">
-            <div class="date-grid">
-                <div class="input-group">
-                    <label class="field-label">سال</label>
-                    <select id="jy" class="input"></select>
+
+        <!-- ناوبری ماه -->
+        <div class="dp-nav">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="dp-month-label" id="dpMonthLabel">—</div>
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <!-- روزهای هفته -->
+        <div class="dp-weekdays">
+            <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+        </div>
+        <!-- شبکه روزها -->
+        <div class="dp-days" id="dpDays"></div>
+
+        <!-- انتخاب زمان -->
+        <div class="dp-time">
+            <div class="dp-time-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                انتخاب زمان
+            </div>
+            <div class="dp-time-row">
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="ساعت بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpHourVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="ساعت کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
-                <div class="input-group">
-                    <label class="field-label">ماه</label>
-                    <select id="jm" class="input"></select>
-                </div>
-                <div class="input-group">
-                    <label class="field-label">روز</label>
-                    <select id="jd" class="input"></select>
+                <span class="dp-time-colon">:</span>
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="دقیقه بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="دقیقه کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
             </div>
         </div>
-        <div class="time-box">
-            <div class="time-box-title">انتخاب زمان</div>
-            <div class="time-grid">
-                <select id="hh" class="input"></select>
-                <span class="time-separator">:</span>
-                <select id="mm" class="input"></select>
-            </div>
-        </div>
+
         <div class="date-actions">
             <button type="button" class="btn-insert" onclick="setPickerNow()">اکنون</button>
             <button type="button" class="btn-insert" onclick="closeDatePicker()">انصراف</button>
             <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
         </div>
+
+        <!-- state مخفی که توابع تبدیل از آن می‌خوانند/می‌نویسند -->
+        <input type="hidden" id="jy"><input type="hidden" id="jm"><input type="hidden" id="jd">
+        <input type="hidden" id="hh"><input type="hidden" id="mm">
     </div>
 </div>
 
@@ -1653,29 +1757,95 @@ function setDateFromGregorianDate(dateObj) {
     setPickerValues(jy, jm, jd, hh, mm);
 }
 
-function setPickerValues(jy, jm, jd, hh, mm) {
-    document.getElementById("jy").value = String(jy);
-    document.getElementById("jm").value = String(jm);
-    updateDayOptions();
-    document.getElementById("jd").value = String(jd);
-    document.getElementById("hh").value = String(hh);
-    document.getElementById("mm").value = String(mm);
+/* ===== دیت‌پیکر شمسی مدرن (تقویم گرید) ===== */
+const PERSIAN_MONTHS = [
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+];
+// ماهی که اکنون در گرید نمایش داده می‌شود (ممکن است با روزِ انتخاب‌شده فرق کند)
+let dpViewYear = 0, dpViewMonth = 1;
+
+function dpGet(id){ return parseInt(document.getElementById(id).value || "0", 10); }
+function dpSet(id, v){ document.getElementById(id).value = String(v); }
+
+// روزِ هفته‌ی اولِ ماهِ شمسی (شنبه=0 ... جمعه=6)
+function jalaliFirstDow(jy, jm) {
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
+    const js = new Date(gy, gm - 1, gd).getDay(); // یکشنبه=0 ... شنبه=6
+    return (js + 1) % 7;                          // شنبه=0 ... جمعه=6
 }
 
-function updateDayOptions() {
-    const jy = parseInt(document.getElementById("jy").value, 10);
-    const jm = parseInt(document.getElementById("jm").value, 10);
-    const daySelect = document.getElementById("jd");
-    const current = parseInt(daySelect.value || "1", 10);
-    const maxDays = getJalaliMonthDays(jy, jm);
-    daySelect.innerHTML = "";
-    for (let d = 1; d <= maxDays; d++) {
-        const op = document.createElement("option");
-        op.value = String(d);
-        op.textContent = toFaDigits(pad2(d));
-        daySelect.appendChild(op);
+// state کامل پیکر را ست می‌کند (روزِ انتخاب‌شده + زمان) و گرید را روی همان ماه می‌برد
+function setPickerValues(jy, jm, jd, hh, mm) {
+    dpSet("jy", jy); dpSet("jm", jm); dpSet("jd", jd);
+    dpSet("hh", hh); dpSet("mm", mm);
+    dpViewYear = jy; dpViewMonth = jm;
+    dpRenderTime();
+    dpRenderCalendar();
+}
+
+// رندرِ شبکه‌ی روزها برای ماهِ جاریِ نمایش
+function dpRenderCalendar() {
+    const label = document.getElementById("dpMonthLabel");
+    if (label) label.textContent = `${PERSIAN_MONTHS[dpViewMonth - 1]} ${toFaDigits(dpViewYear)}`;
+
+    const grid = document.getElementById("dpDays");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const lead = jalaliFirstDow(dpViewYear, dpViewMonth);
+    const days = getJalaliMonthDays(dpViewYear, dpViewMonth);
+
+    // روزِ امروز (شمسی) برای هایلایت
+    const now = new Date();
+    const [tjy, tjm, tjd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+    const selJy = dpGet("jy"), selJm = dpGet("jm"), selJd = dpGet("jd");
+
+    // خانه‌های خالیِ ابتدای ماه
+    for (let i = 0; i < lead; i++) {
+        const sp = document.createElement("span");
+        sp.className = "dp-day is-empty";
+        grid.appendChild(sp);
     }
-    daySelect.value = String(Math.min(current, maxDays));
+    for (let d = 1; d <= days; d++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dp-day";
+        btn.textContent = toFaDigits(d);
+        if (dpViewYear === tjy && dpViewMonth === tjm && d === tjd) btn.classList.add("is-today");
+        if (dpViewYear === selJy && dpViewMonth === selJm && d === selJd) btn.classList.add("is-selected");
+        btn.addEventListener("click", () => dpSelectDay(d));
+        grid.appendChild(btn);
+    }
+}
+
+function dpSelectDay(d) {
+    dpSet("jy", dpViewYear);
+    dpSet("jm", dpViewMonth);
+    dpSet("jd", d);
+    dpRenderCalendar();
+}
+
+function dpChangeMonth(dir) {
+    // dir=+1 یعنی ماهِ بعد، dir=-1 یعنی ماهِ قبل
+    dpViewMonth += dir;
+    if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
+    else if (dpViewMonth < 1) { dpViewMonth = 12; dpViewYear--; }
+    dpRenderCalendar();
+}
+
+function dpRenderTime() {
+    document.getElementById("dpHourVal").value = toFaDigits(pad2(dpGet("hh")));
+    document.getElementById("dpMinuteVal").value = toFaDigits(pad2(dpGet("mm")));
+}
+
+function dpStepTime(unit, dir) {
+    let v = dpGet(unit) + dir;
+    const max = unit === "hh" ? 24 : 60;
+    v = (v + max) % max;            // چرخشی
+    dpSet(unit, v);
+    dpRenderTime();
 }
 
 function openDatePicker() {
@@ -1693,11 +1863,9 @@ function setPickerNow() {
 }
 
 function applyDatePicker() {
-    const jy = parseInt(document.getElementById("jy").value, 10);
-    const jm = parseInt(document.getElementById("jm").value, 10);
-    const jd = parseInt(document.getElementById("jd").value, 10);
-    const hh = parseInt(document.getElementById("hh").value, 10);
-    const mm = parseInt(document.getElementById("mm").value, 10);
+    const jy = dpGet("jy"), jm = dpGet("jm"), jd = dpGet("jd");
+    const hh = dpGet("hh"), mm = dpGet("mm");
+    if (!jy || !jm || !jd) { closeDatePicker(); return; }
     const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
     document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
     renderPublishDisplay(jy, jm, jd, hh, mm);
@@ -1705,62 +1873,101 @@ function applyDatePicker() {
 }
 
 function initDatePicker() {
-    const yearSel = document.getElementById("jy");
-    const monthSel = document.getElementById("jm");
-    const hourSel = document.getElementById("hh");
-    const minuteSel = document.getElementById("mm");
-    const persianMonths = [
-        "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-        "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
-    ];
-
     const now = new Date();
-    const [nowJy] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
-    for (let y = nowJy - 3; y <= nowJy + 5; y++) {
-        const op = document.createElement("option");
-        op.value = String(y);
-        op.textContent = toFaDigits(String(y));
-        yearSel.appendChild(op);
-    }
-    for (let m = 1; m <= 12; m++) {
-        const op = document.createElement("option");
-        op.value = String(m);
-        op.textContent = `${toFaDigits(pad2(m))} - ${persianMonths[m - 1]}`;
-        monthSel.appendChild(op);
-    }
-    for (let h = 0; h <= 23; h++) {
-        const op = document.createElement("option");
-        op.value = String(h);
-        op.textContent = toFaDigits(pad2(h));
-        hourSel.appendChild(op);
-    }
-    for (let m = 0; m <= 59; m++) {
-        const op = document.createElement("option");
-        op.value = String(m);
-        op.textContent = toFaDigits(pad2(m));
-        minuteSel.appendChild(op);
-    }
-    yearSel.addEventListener("change", updateDayOptions);
-    monthSel.addEventListener("change", updateDayOptions);
-
     const savedGregorian = `<?= $pub_val ? htmlspecialchars(str_replace('T', ' ', $pub_val) . ':00') : '' ?>`;
     if (savedGregorian) {
         const parsed = new Date(savedGregorian.replace(' ', 'T'));
-        if (!Number.isNaN(parsed.getTime())) {
-            setDateFromGregorianDate(parsed);
-        } else {
-            setDateFromGregorianDate(now);
-        }
+        setDateFromGregorianDate(Number.isNaN(parsed.getTime()) ? now : parsed);
     } else {
         setDateFromGregorianDate(now);
     }
 }
+
+/* ===== ارتقای <select> به دراپ‌داون سفارشی مدرن ===== */
+const MSEL_CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+const MSEL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function enhanceSelect(select){
+    if (!select || select.dataset.enhanced) return;
+    select.dataset.enhanced = "1";
+
+    const placeholderText = (select.options[0] && select.options[0].value === "") ? select.options[0].textContent : "";
+
+    const wrap = document.createElement("div");
+    wrap.className = "msel";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "msel-trigger";
+    trigger.innerHTML = '<span class="msel-value"></span><span class="msel-caret">' + MSEL_CARET + '</span>';
+
+    const menu = document.createElement("div");
+    menu.className = "msel-menu";
+    menu.setAttribute("role", "listbox");
+
+    // ساختِ گزینه‌ها از روی <option>ها
+    Array.from(select.options).forEach(opt => {
+        if (opt.value === "" && placeholderText) return; // placeholder را گزینه نکن
+        const o = document.createElement("div");
+        o.className = "msel-opt";
+        o.setAttribute("role", "option");
+        o.dataset.value = opt.value;
+        o.innerHTML = '<span>' + opt.textContent + '</span><span class="msel-check">' + MSEL_CHECK + '</span>';
+        o.addEventListener("click", () => {
+            select.value = opt.value;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            syncMsel();
+            closeMenu();
+        });
+        menu.appendChild(o);
+    });
+
+    // مخفی‌کردنِ select بومی و درج کامپوننت
+    select.style.display = "none";
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+    wrap.appendChild(select); // select داخلِ wrap بماند تا fieldها سالم بمانند
+
+    function syncMsel(){
+        const valEl = trigger.querySelector(".msel-value");
+        const sel = select.options[select.selectedIndex];
+        const isPlaceholder = !select.value && placeholderText;
+        valEl.textContent = isPlaceholder ? placeholderText : (sel ? sel.textContent : "");
+        trigger.classList.toggle("is-placeholder", !!isPlaceholder);
+        menu.querySelectorAll(".msel-opt").forEach(o => {
+            o.classList.toggle("is-selected", o.dataset.value === select.value);
+        });
+        // انتقالِ حالتِ خطا از select به wrap
+        wrap.classList.toggle("field-invalid", select.classList.contains("field-invalid"));
+    }
+
+    function openMenu(){ wrap.classList.add("open"); }
+    function closeMenu(){ wrap.classList.remove("open"); }
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // بستنِ سایر دراپ‌داون‌های باز
+        document.querySelectorAll(".msel.open").forEach(m => { if (m !== wrap) m.classList.remove("open"); });
+        wrap.classList.toggle("open");
+    });
+    // وقتی خطای فیلد پاک/ست می‌شود، ظاهرِ دراپ‌داون را همگام کن
+    select.addEventListener("change", syncMsel);
+    select._mselSync = syncMsel;
+
+    syncMsel();
+}
+
+// بستنِ دراپ‌داون‌ها با کلیک بیرون یا Esc
+document.addEventListener("click", () => document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")); });
 
 document.addEventListener("DOMContentLoaded", () => {
     initDatePicker();
     updateTitleCounter();
     renderTagChips();
     updateSeoWidget();
+    enhanceSelect(document.getElementById("category_id"));
 });
 /* ======================== */
 
@@ -1835,6 +2042,8 @@ function setFieldError(boxId, errId, on){
     // لیبلِ گروهِ والد را هم قرمز کن (برای فیلدهای داخل .input-group)
     const grp = box ? box.closest(".input-group") : null;
     if (grp) grp.classList.toggle("has-error", on);
+    // اگر فیلد یک <select>‌ ارتقایافته باشد، حالتِ خطا را به دراپ‌داون سفارشی منتقل کن
+    if (box && box._mselSync) box._mselSync();
 }
 
 /* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */

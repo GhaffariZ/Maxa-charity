@@ -163,6 +163,120 @@ label.field-label svg { width: 16px; height: 16px; }
 .input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.14); }
 select.input { appearance: none; cursor: pointer; }
 
+.btn-insert {
+    background: transparent; border: 1px dashed var(--primary-color); color: var(--primary-color);
+    padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit;
+    font-size: 13px; font-weight: 600; transition: all var(--anim-fast);
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-insert:hover { background: var(--primary-color); color: #fff; }
+
+/* ===== دراپ‌داون سفارشی مدرن ===== */
+.msel { position: relative; width: 100%; font-family: inherit; }
+.msel-trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: var(--input-bg); color: var(--text-color);
+    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+    padding: 11px 12px; font-size: 15px; font-family: inherit; cursor: pointer; text-align: right;
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
+}
+.msel-trigger:hover { border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color)); }
+.msel.open .msel-trigger { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.14); }
+.msel-trigger .msel-value { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msel-trigger.is-placeholder .msel-value { color: var(--muted-color); }
+.msel-caret { color: var(--muted-color); transition: transform var(--anim-fast); flex-shrink: 0; display: flex; }
+.msel-caret svg { width: 18px; height: 18px; }
+.msel.open .msel-caret { transform: rotate(180deg); color: var(--primary-color); }
+.msel-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--panel-bg); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    padding: 6px; max-height: 240px; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--anim-fast), transform var(--anim-fast), visibility var(--anim-fast);
+}
+.msel.open .msel-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.msel-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--text-color);
+    transition: background var(--anim-fast); user-select: none;
+}
+.msel-opt:hover, .msel-opt.is-active { background: rgba(0,125,117,0.10); }
+.msel-opt.is-selected { color: var(--primary-color); font-weight: 700; }
+.msel-opt .msel-check { opacity: 0; color: var(--primary-color); display: flex; flex-shrink: 0; }
+.msel-opt .msel-check svg { width: 16px; height: 16px; }
+.msel-opt.is-selected .msel-check { opacity: 1; }
+.msel.field-invalid .msel-trigger { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.14) !important; }
+
+/* ===== مودال تقویم شمسی ===== */
+.date-modal {
+    position: fixed; inset: 0; background: var(--modal-overlay);
+    display: none; align-items: center; justify-content: center; z-index: 10000; padding: 12px;
+}
+.date-modal.show { display: flex; }
+.date-modal.show .date-modal-box { transform: translateY(0) scale(1); opacity: 1; }
+.date-modal-box {
+    background: var(--panel-bg); color: var(--text-color); width: 100%; max-width: 360px;
+    border-radius: 16px; border: 1px solid var(--border-color); padding: 16px; box-shadow: var(--shadow-md);
+    transform: translateY(10px) scale(0.98); opacity: 0;
+    transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
+}
+.date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.date-modal-title { margin: 0; color: var(--primary-color); font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.date-modal-title svg { width: 18px; height: 18px; }
+.dp-close {
+    width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--muted-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
+}
+.dp-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.dp-close svg { width: 15px; height: 15px; }
+.dp-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.dp-nav-btn {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast); flex-shrink: 0;
+}
+.dp-nav-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-nav-btn svg { width: 17px; height: 17px; }
+.dp-month-label { font-size: 14px; font-weight: 800; color: var(--text-color); text-align: center; flex: 1; }
+.dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.dp-weekdays span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted-color); padding: 4px 0; }
+.dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.dp-day {
+    aspect-ratio: 1; border: none; background: transparent; color: var(--text-color);
+    border-radius: 10px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; transition: background var(--anim-fast), color var(--anim-fast), transform var(--anim-fast);
+}
+.dp-day:hover { background: rgba(0,125,117,0.10); }
+.dp-day.is-empty { background: transparent; cursor: default; pointer-events: none; }
+.dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); color: var(--secondary-color); }
+.dp-day.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); transform: scale(1.04); }
+.dp-time { margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px; }
+.dp-time-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+.dp-time-head svg { width: 15px; height: 15px; }
+.dp-time-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.dp-stepper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dp-step-btn {
+    width: 30px; height: 24px; border-radius: 7px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
+}
+.dp-step-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-step-btn svg { width: 14px; height: 14px; }
+.dp-time-val {
+    width: 56px; text-align: center; font-size: 22px; font-weight: 800; color: var(--text-color);
+    background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 0; font-family: inherit;
+}
+.dp-time-colon { font-size: 22px; font-weight: 800; color: var(--primary-color); }
+.date-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+.publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.publish-date-row .input { flex: 1; min-width: 130px; }
+
+/* تا منوی دراپ‌داون سفارشی بریده نشود */
+.settings-card { overflow: visible; }
+.settings-card .input-group { position: relative; }
+
 /* ===== حالت خطای فیلدها ===== */
 .input.field-invalid,
 .title-card.field-invalid {
@@ -421,11 +535,16 @@ select.input { appearance: none; cursor: pointer; }
                 </div>
 
                 <div class="input-group">
-                    <label class="field-label" for="publish_date">
+                    <label class="field-label">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                         تاریخ و زمان انتشار
                     </label>
-                    <input type="datetime-local" class="input" id="publish_date">
+                    <div class="publish-date-row">
+                        <input type="hidden" id="publish_date">
+                        <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
+                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
+                        <button type="button" class="btn-insert" onclick="setNow()">همین الان</button>
+                    </div>
                 </div>
 
             </div>
@@ -434,6 +553,65 @@ select.input { appearance: none; cursor: pointer; }
 
     </div>
 
+</div>
+
+<!-- مودال انتخاب تاریخ (تقویم شمسی مدرن) -->
+<div id="dateModal" class="date-modal" onclick="if(event.target===this) closeDatePicker()">
+    <div class="date-modal-box">
+        <div class="date-header">
+            <h4 class="date-modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                تقویم شمسی
+            </h4>
+            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div class="dp-nav">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="dp-month-label" id="dpMonthLabel">—</div>
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <div class="dp-weekdays">
+            <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+        </div>
+        <div class="dp-days" id="dpDays"></div>
+
+        <div class="dp-time">
+            <div class="dp-time-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                انتخاب زمان
+            </div>
+            <div class="dp-time-row">
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="ساعت بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpHourVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="ساعت کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </div>
+                <span class="dp-time-colon">:</span>
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="دقیقه بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="دقیقه کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="date-actions">
+            <button type="button" class="btn-insert" onclick="setPickerNow()">اکنون</button>
+            <button type="button" class="btn-insert" onclick="closeDatePicker()">انصراف</button>
+            <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
+        </div>
+
+        <input type="hidden" id="jy"><input type="hidden" id="jm"><input type="hidden" id="jd">
+        <input type="hidden" id="hh"><input type="hidden" id="mm">
+    </div>
 </div>
 
 <!-- توست وضعیت -->
@@ -622,6 +800,189 @@ function saveHero() {
         saveBtn.innerHTML = originalBtnText;
     });
 }
+
+/* ===================== دیت‌پیکر شمسی مدرن ===================== */
+function setNow() { setDateFromGregorianDate(new Date()); }
+function toFaDigits(value) { return String(value).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
+function pad2(num) { return String(num).padStart(2, '0'); }
+
+function gregorianToJalali(gy, gm, gd) {
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let jy;
+    if (gy > 1600) { jy = 979; gy -= 1600; } else { jy = 0; gy -= 621; }
+    const gy2 = gm > 2 ? gy + 1 : gy;
+    let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100)
+        + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+    jy += 33 * Math.floor(days / 12053); days %= 12053;
+    jy += 4 * Math.floor(days / 1461); days %= 1461;
+    if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+    let jm, jd;
+    if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + (days % 31); }
+    else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + ((days - 186) % 30); }
+    return [jy, jm, jd];
+}
+
+function jalaliToGregorian(jy, jm, jd) {
+    let gy;
+    if (jy > 979) { gy = 1600; jy -= 979; } else { gy = 621; }
+    let days = (365 * jy) + (Math.floor(jy / 33) * 8) + Math.floor(((jy % 33) + 3) / 4) + 78 + jd
+        + (jm < 7 ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+    gy += 400 * Math.floor(days / 146097); days %= 146097;
+    if (days > 36524) { gy += 100 * Math.floor(--days / 36524); days %= 36524; if (days >= 365) days++; }
+    gy += 4 * Math.floor(days / 1461); days %= 1461;
+    if (days > 365) { gy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+    let gd = days + 1;
+    const sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let gm;
+    for (gm = 1; gm <= 12; gm++) { if (gd <= sal_a[gm]) break; gd -= sal_a[gm]; }
+    return [gy, gm, gd];
+}
+
+function getJalaliMonthDays(jy, jm) {
+    if (jm <= 6) return 31;
+    if (jm <= 11) return 30;
+    const leap = (((jy + 38) * 682) % 2816) < 682;
+    return leap ? 30 : 29;
+}
+
+function renderPublishDisplay(jy, jm, jd, hh, mm) {
+    document.getElementById("publish_date_display").value = toFaDigits(`${jy}/${pad2(jm)}/${pad2(jd)} - ${pad2(hh)}:${pad2(mm)}`);
+}
+
+function setDateFromGregorianDate(dateObj) {
+    const gy = dateObj.getFullYear(), gm = dateObj.getMonth() + 1, gd = dateObj.getDate();
+    const hh = dateObj.getHours(), mm = dateObj.getMinutes();
+    const [jy, jm, jd] = gregorianToJalali(gy, gm, gd);
+    document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
+    renderPublishDisplay(jy, jm, jd, hh, mm);
+    setPickerValues(jy, jm, jd, hh, mm);
+}
+
+const PERSIAN_MONTHS = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+let dpViewYear = 0, dpViewMonth = 1;
+function dpGet(id){ return parseInt(document.getElementById(id).value || "0", 10); }
+function dpSet(id, v){ document.getElementById(id).value = String(v); }
+
+function jalaliFirstDow(jy, jm) {
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
+    const js = new Date(gy, gm - 1, gd).getDay();
+    return (js + 1) % 7;
+}
+
+function setPickerValues(jy, jm, jd, hh, mm) {
+    dpSet("jy", jy); dpSet("jm", jm); dpSet("jd", jd); dpSet("hh", hh); dpSet("mm", mm);
+    dpViewYear = jy; dpViewMonth = jm;
+    dpRenderTime(); dpRenderCalendar();
+}
+
+function dpRenderCalendar() {
+    const label = document.getElementById("dpMonthLabel");
+    if (label) label.textContent = `${PERSIAN_MONTHS[dpViewMonth - 1]} ${toFaDigits(dpViewYear)}`;
+    const grid = document.getElementById("dpDays");
+    if (!grid) return;
+    grid.innerHTML = "";
+    const lead = jalaliFirstDow(dpViewYear, dpViewMonth);
+    const days = getJalaliMonthDays(dpViewYear, dpViewMonth);
+    const now = new Date();
+    const [tjy, tjm, tjd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    const selJy = dpGet("jy"), selJm = dpGet("jm"), selJd = dpGet("jd");
+    for (let i = 0; i < lead; i++) { const sp = document.createElement("span"); sp.className = "dp-day is-empty"; grid.appendChild(sp); }
+    for (let d = 1; d <= days; d++) {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "dp-day"; btn.textContent = toFaDigits(d);
+        if (dpViewYear === tjy && dpViewMonth === tjm && d === tjd) btn.classList.add("is-today");
+        if (dpViewYear === selJy && dpViewMonth === selJm && d === selJd) btn.classList.add("is-selected");
+        btn.addEventListener("click", () => dpSelectDay(d));
+        grid.appendChild(btn);
+    }
+}
+
+function dpSelectDay(d) { dpSet("jy", dpViewYear); dpSet("jm", dpViewMonth); dpSet("jd", d); dpRenderCalendar(); }
+function dpChangeMonth(dir) {
+    dpViewMonth += dir;
+    if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
+    else if (dpViewMonth < 1) { dpViewMonth = 12; dpViewYear--; }
+    dpRenderCalendar();
+}
+function dpRenderTime() {
+    document.getElementById("dpHourVal").value = toFaDigits(pad2(dpGet("hh")));
+    document.getElementById("dpMinuteVal").value = toFaDigits(pad2(dpGet("mm")));
+}
+function dpStepTime(unit, dir) {
+    let v = dpGet(unit) + dir; const max = unit === "hh" ? 24 : 60;
+    v = (v + max) % max; dpSet(unit, v); dpRenderTime();
+}
+function openDatePicker() { document.getElementById("dateModal").classList.add("show"); }
+function closeDatePicker() { document.getElementById("dateModal").classList.remove("show"); }
+function setPickerNow() {
+    const now = new Date();
+    const [jy, jm, jd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    setPickerValues(jy, jm, jd, now.getHours(), now.getMinutes());
+}
+function applyDatePicker() {
+    const jy = dpGet("jy"), jm = dpGet("jm"), jd = dpGet("jd"), hh = dpGet("hh"), mm = dpGet("mm");
+    if (!jy || !jm || !jd) { closeDatePicker(); return; }
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
+    document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
+    renderPublishDisplay(jy, jm, jd, hh, mm);
+    closeDatePicker();
+}
+
+/* ===================== دراپ‌داون سفارشی ===================== */
+const MSEL_CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+const MSEL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function enhanceSelect(select){
+    if (!select || select.dataset.enhanced) return;
+    select.dataset.enhanced = "1";
+    const placeholderText = (select.options[0] && select.options[0].value === "") ? select.options[0].textContent : "";
+    const wrap = document.createElement("div");
+    wrap.className = "msel";
+    const trigger = document.createElement("button");
+    trigger.type = "button"; trigger.className = "msel-trigger";
+    trigger.innerHTML = '<span class="msel-value"></span><span class="msel-caret">' + MSEL_CARET + '</span>';
+    const menu = document.createElement("div");
+    menu.className = "msel-menu"; menu.setAttribute("role", "listbox");
+    Array.from(select.options).forEach(opt => {
+        if (opt.value === "" && placeholderText) return;
+        const o = document.createElement("div");
+        o.className = "msel-opt"; o.setAttribute("role", "option"); o.dataset.value = opt.value;
+        o.innerHTML = '<span>' + opt.textContent + '</span><span class="msel-check">' + MSEL_CHECK + '</span>';
+        o.addEventListener("click", () => {
+            select.value = opt.value;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            syncMsel(); wrap.classList.remove("open");
+        });
+        menu.appendChild(o);
+    });
+    select.style.display = "none";
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(trigger); wrap.appendChild(menu); wrap.appendChild(select);
+    function syncMsel(){
+        const valEl = trigger.querySelector(".msel-value");
+        const sel = select.options[select.selectedIndex];
+        const isPlaceholder = !select.value && placeholderText;
+        valEl.textContent = isPlaceholder ? placeholderText : (sel ? sel.textContent : "");
+        trigger.classList.toggle("is-placeholder", !!isPlaceholder);
+        menu.querySelectorAll(".msel-opt").forEach(o => o.classList.toggle("is-selected", o.dataset.value === select.value));
+        wrap.classList.toggle("field-invalid", select.classList.contains("field-invalid"));
+    }
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".msel.open").forEach(m => { if (m !== wrap) m.classList.remove("open"); });
+        wrap.classList.toggle("open");
+    });
+    select.addEventListener("change", syncMsel);
+    select._mselSync = syncMsel;
+    syncMsel();
+}
+document.addEventListener("click", () => document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")); });
+
+document.addEventListener("DOMContentLoaded", () => {
+    setDateFromGregorianDate(new Date());
+    enhanceSelect(document.getElementById("category"));
+});
 </script>
 
 </body>
