@@ -511,6 +511,8 @@ function saveHero() {
         formData.append("image", imageFile);
     }
 
+    formData.append("csrf_token", <?= json_encode(csrf_token()) ?>);
+
     // ارسال درخواست
     fetch('./hero-save.php', {
         method: "POST",

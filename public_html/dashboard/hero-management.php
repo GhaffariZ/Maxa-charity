@@ -11,21 +11,14 @@ $slides = $__hstmt->fetchAll(PDO::FETCH_ASSOC);
 
 if(count($slides) == 0){
 $slides = [
-['id'=>'','title'=>'','description'=>'','button_text'=>'','button_link'=>'','sort_order'=>1,'status'=>1,'image'=>''],
-['id'=>'','title'=>'','description'=>'','button_text'=>'','button_link'=>'','sort_order'=>2,'status'=>1,'image'=>''],
-['id'=>'','title'=>'','description'=>'','button_text'=>'','button_link'=>'','sort_order'=>3,'status'=>1,'image'=>'']
+['id'=>'','title'=>'','description'=>'','button_link'=>'','publish_date'=>'','sort_order'=>1,'status'=>1,'image'=>''],
+['id'=>'','title'=>'','description'=>'','button_link'=>'','publish_date'=>'','sort_order'=>2,'status'=>1,'image'=>''],
+['id'=>'','title'=>'','description'=>'','button_link'=>'','publish_date'=>'','sort_order'=>3,'status'=>1,'image'=>'']
 ];
 }
 
-/* شمارش‌های اطلاعاتی (فقط نمایش/فیلتر — منطق دیتابیس دست‌نخورده) */
-$activeSlides  = 0;
-$pendingSlides = 0;
-$expiredSlides = 0; // فیلدی برای انقضا وجود ندارد؛ فعلاً صفر
-foreach($slides as $s){
-  $st = isset($s['status']) ? (int)$s['status'] : 1;
-  if($st === 1) $activeSlides++;
-  else          $pendingSlides++;
-}
+/* شمارشِ کلِ هیروها (فقط برای نمایش در کارتِ بالای صفحه) */
+$activeSlides = count(array_filter($slides, function($s){ return !empty($s['id']); }));
 if(!function_exists('hm_fa')){
   function hm_fa($n){ return strtr((string)$n, ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']); }
 }
@@ -76,27 +69,23 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .hm-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
   background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
 .hm-head-ic svg{width:27px;height:27px}
+.hm-head-txt{flex:1;min-width:0}
 .hm-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .hm-head p{font-size:13px;color:var(--color-muted);margin-top:3px;max-width:640px}
 
-/* تب‌های آماری (قابل‌کلیک) */
-.hm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
-.hm-stat{font-family:inherit;text-align:start;cursor:pointer;background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:16px;
-  padding:15px 18px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:13px;transition:border-color .2s,box-shadow .25s,transform .15s var(--ease)}
-.hm-stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.hm-stat.active{border-color:var(--color-primary)}
+/* کارتِ آماری */
+.hm-stats{display:grid;grid-template-columns:minmax(0,260px);gap:14px;margin-bottom:22px}
+.hm-stat{font-family:inherit;text-align:start;background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:16px;
+  padding:15px 18px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:13px}
 .hm-stat-ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
 .hm-stat-ic svg{width:22px;height:22px}
 .hm-stat b{font-size:22px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block;color:var(--color-text)}
 .hm-stat span{font-size:12px;color:var(--color-muted);font-weight:600;margin-top:4px;display:block}
 .ic-active{background:rgba(22,163,122,.12);color:var(--success)}
-.ic-pending{background:var(--secondary-12);color:#b9760a}
-.ic-expired{background:var(--danger-12);color:var(--danger)}
 
-/* عنوان ستونِ ترتیب (فقط حالت فعال) */
-.hm-list-head{display:none;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--color-muted);padding:2px 16px 10px}
+/* عنوان ستونِ ترتیب */
+.hm-list-head{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--color-muted);padding:2px 16px 10px}
 .hm-list-head svg{width:15px;height:15px}
-.mode-reorder .hm-list-head{display:flex}
 
 /* آکاردئونِ اسلایدها */
 .hm-item{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);
@@ -108,8 +97,7 @@ body.hm-dragging{cursor:grabbing;user-select:none;-webkit-user-select:none;touch
 body.hm-dragging .hm-drag{cursor:grabbing}
 
 .hm-item-head{display:flex;align-items:stretch}
-.hm-reorder{display:none;align-items:center;gap:9px;padding:0 14px;border-inline-end:1px solid var(--color-border);flex-shrink:0}
-.mode-reorder .hm-reorder{display:flex}
+.hm-reorder{display:flex;align-items:center;gap:9px;padding:0 14px;border-inline-end:1px solid var(--color-border);flex-shrink:0}
 .hm-drag{display:grid;place-items:center;width:26px;height:26px;color:var(--color-muted);cursor:grab;touch-action:none;border-radius:8px;transition:background .2s,color .2s}
 .hm-drag:hover{background:var(--primary-08);color:var(--color-primary-dark)}
 .hm-drag:active{cursor:grabbing}
@@ -152,16 +140,32 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 .hm-empty{text-align:center;padding:50px 20px;color:var(--color-muted);font-weight:600;background:var(--color-surface);
   border:1.5px dashed var(--color-border);border-radius:var(--radius)}
 
-.hm-actions{position:sticky;bottom:14px;display:flex;justify-content:flex-end;margin-top:18px}
-.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;
+.hm-actions{position:sticky;bottom:14px;display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:18px}
+.hm-msg{font-size:13px;font-weight:700}
+.hm-msg.ok{color:var(--success)}
+.hm-msg.err{color:var(--danger)}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;text-decoration:none;
   padding:13px 28px;border-radius:14px;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
 .btn svg{width:18px;height:18px}
 .btn:active{transform:scale(.97)}
 .btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 12px 26px -10px rgba(0,123,122,.7)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(0,123,122,.8)}
+/* دکمه‌ی «ساخت هیرو جدید» در هدر */
+.btn-new{flex-shrink:0;color:#fff;padding:11px 20px;font-size:13.5px;border-radius:12px;
+  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 22px -10px rgba(0,123,122,.7)}
+.btn-new:hover{transform:translateY(-2px);box-shadow:0 16px 28px -10px rgba(0,123,122,.8)}
+
+/* دکمه‌ی حذفِ هر اسلاید (داخل آکاردئون) */
+.hm-row-actions{display:flex;justify-content:flex-end;margin-top:16px}
+.hm-del{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;
+  color:var(--danger);background:var(--danger-12);border:1px solid transparent;border-radius:11px;padding:9px 16px;transition:filter .2s,border-color .2s}
+.hm-del:hover{border-color:var(--danger);filter:brightness(.98)}
+.hm-del svg{width:15px;height:15px}
 
 @media (max-width:680px){
   body{padding:18px 14px}
+  .hm-head{flex-wrap:wrap}
+  .btn-new{width:100%;justify-content:center}
   .hm-stats{grid-template-columns:1fr}
   .hm-grid{grid-template-columns:1fr}
   .hm-head h1{font-size:19px}
@@ -177,25 +181,21 @@ body.hm-dragging .hm-drag{cursor:grabbing}
     <div class="hm-head-ic">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2.5"/><path d="m3 14 4.5-4.5a2 2 0 0 1 2.8 0L16 15"/><path d="m14 13 1.8-1.8a2 2 0 0 1 2.8 0L21 14"/><circle cx="8.5" cy="8.5" r="1.4"/></svg>
     </div>
-    <div>
+    <div class="hm-head-txt">
       <h1>مدیریت هیرو</h1>
-      <p>وضعیت هیروها را از کارت‌های زیر انتخاب کنید. در حالت «هیروهای فعال» می‌توانید با گرفتنِ آیکونِ کنار هر هیرو، ترتیب نمایش را با کشیدن جابه‌جا کنید.</p>
+      <p>هیروهای فعالِ این شعبه را اینجا ویرایش کنید. با گرفتنِ آیکونِ کنار هر هیرو، ترتیب نمایش را با کشیدن جابه‌جا کنید.</p>
     </div>
+    <a href="hero-create.php" class="btn btn-new">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      ساخت هیرو جدید
+    </a>
   </header>
 
   <section class="hm-stats">
-    <button type="button" class="hm-stat active" data-cat="active" onclick="showTab('active')">
+    <div class="hm-stat">
       <div class="hm-stat-ic ic-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <div><b><?= hm_fa($activeSlides) ?></b><span>هیروهای فعال</span></div>
-    </button>
-    <button type="button" class="hm-stat" data-cat="pending" onclick="showTab('pending')">
-      <div class="hm-stat-ic ic-pending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
-      <div><b><?= hm_fa($pendingSlides) ?></b><span>در انتظار انتشار</span></div>
-    </button>
-    <button type="button" class="hm-stat" data-cat="expired" onclick="showTab('expired')">
-      <div class="hm-stat-ic ic-expired"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="m9.5 13.5 5 5"/><path d="m14.5 13.5-5 5"/></svg></div>
-      <div><b><?= hm_fa($expiredSlides) ?></b><span>هیروهای منقضی‌شده</span></div>
-    </button>
+    </div>
   </section>
 
   <div class="hm-list-head">
@@ -203,16 +203,18 @@ body.hm-dragging .hm-drag{cursor:grabbing}
     ترتیب نمایش — برای جابه‌جایی، آیکونِ کنار هر هیرو را بکشید
   </div>
 
-  <form action="hero-save.php" method="POST" enctype="multipart/form-data">
+  <form id="heroForm" action="hero-save.php" method="POST" enctype="multipart/form-data">
+    <?= csrf_field() ?>
 
     <div id="heroList">
     <?php foreach($slides as $i=>$slide){
-      $tt  = trim((string)$slide['title']);
-      $st  = isset($slide['status']) ? (int)$slide['status'] : 1;
-      $cat = ($st === 1) ? 'active' : 'pending';
+      $tt    = trim((string)$slide['title']);
+      $hid   = (int)($slide['id'] ?? 0);
+      // تاریخِ دیتابیس (datetime) را به فرمتِ ورودیِ <input type="date"> تبدیل کن
+      $pdate = !empty($slide['publish_date']) ? substr((string)$slide['publish_date'], 0, 10) : '';
     ?>
 
-    <section class="hm-item" data-cat="<?= $cat ?>">
+    <section class="hm-item">
       <div class="hm-item-head">
         <span class="hm-reorder">
           <span class="hm-drag" title="کشیدن برای تغییر ترتیب" aria-label="جابه‌جایی">
@@ -256,31 +258,34 @@ body.hm-dragging .hm-drag{cursor:grabbing}
             </div>
 
             <div class="hm-field">
-              <label>متن دکمه</label>
-              <input type="text" name="button_text[]" value="<?php echo htmlspecialchars($slide['button_text']); ?>" placeholder="مثلاً: اطلاعات بیشتر">
-            </div>
-
-            <div class="hm-field">
               <label>لینک دکمه</label>
-              <input type="text" name="button_link[]" value="<?php echo htmlspecialchars($slide['button_link']); ?>" placeholder="https://...">
+              <input type="text" name="button_link[]" value="<?php echo htmlspecialchars($slide['button_link'] ?? ''); ?>" placeholder="https://...">
             </div>
 
             <div class="hm-field">
               <label>تاریخ انتشار</label>
-              <input type="date" name="publish_date[]" dir="ltr" value="<?php echo htmlspecialchars($slide['publish_date'] ?? ''); ?>">
+              <input type="date" name="publish_date[]" dir="ltr" value="<?php echo htmlspecialchars($pdate); ?>">
             </div>
           </div>
+
+          <?php if($hid > 0){ ?>
+          <div class="hm-row-actions">
+            <button type="button" class="hm-del" onclick="deleteHero(<?= $hid ?>, this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              حذف این هیرو
+            </button>
+          </div>
+          <?php } ?>
         </div>
       </div>
     </section>
 
     <?php } ?>
-
-      <div id="hmEmpty" class="hm-empty" style="display:none">در این دسته فعلاً هیرویی وجود ندارد.</div>
     </div>
 
     <div class="hm-actions">
-      <button type="submit" class="btn btn-primary">
+      <span id="hmMsg" class="hm-msg" role="status"></span>
+      <button type="submit" id="hmSaveBtn" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
         ذخیره هیرو
       </button>
@@ -292,7 +297,6 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 (function(){
   "use strict";
   var heroList = document.getElementById('heroList');
-  var emptyBox = document.getElementById('hmEmpty');
 
   function faNum(n){ return String(n).replace(/\d/g, function(d){ return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
 
@@ -303,31 +307,17 @@ body.hm-dragging .hm-drag{cursor:grabbing}
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   };
 
-  function visibleItems(){
-    return Array.prototype.filter.call(heroList.querySelectorAll('.hm-item'), function(it){ return it.style.display !== 'none'; });
+  function allItems(){
+    return Array.prototype.slice.call(heroList.querySelectorAll('.hm-item'));
   }
 
   /* شماره‌گذاری مجددِ ترتیب نمایش (هم نشانگرِ عددی هم مقدارِ sort_order) */
   function renumber(){
-    visibleItems().forEach(function(it, idx){
+    allItems().forEach(function(it, idx){
       var badge = it.querySelector('.hm-order'); if(badge) badge.textContent = faNum(idx + 1);
       var si = it.querySelector('input[name="sort_order[]"]'); if(si) si.value = idx + 1;
     });
   }
-
-  /* تب‌ها: نمایش فقط هیروهای دسته‌ی انتخاب‌شده */
-  window.showTab = function(cat){
-    document.querySelectorAll('.hm-stat').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-cat') === cat); });
-    document.body.classList.toggle('mode-reorder', cat === 'active');
-    var any = false;
-    heroList.querySelectorAll('.hm-item').forEach(function(it){
-      var show = it.getAttribute('data-cat') === cat;
-      it.style.display = show ? '' : 'none';
-      if(show) any = true;
-    });
-    emptyBox.style.display = any ? 'none' : '';
-    if(cat === 'active') renumber();
-  };
 
   /* درگ‌اند‌دراپِ ترتیب — Pointer Events با شنونده‌های سطحِ document
      (مقاوم: بدون setPointerCapture که هنگام جابه‌جاییِ DOM رها می‌شد، و رهاکردن همیشه گرفته می‌شود) */
@@ -335,7 +325,7 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 
   function getDragAfter(y){
     var closest = { offset:-Infinity, el:null };
-    visibleItems().forEach(function(child){
+    allItems().forEach(function(child){
       if(child === drag.item) return;
       var box = child.getBoundingClientRect();
       var offset = y - box.top - box.height/2;
@@ -380,8 +370,68 @@ body.hm-dragging .hm-drag{cursor:grabbing}
     document.addEventListener('pointercancel', onUp);
   });
 
-  /* شروع روی تبِ «هیروهای فعال» */
-  showTab('active');
+  /* شماره‌گذاریِ اولیه‌ی ترتیب */
+  renumber();
+
+  /* ذخیره‌ی گروهی با AJAX (تا پاسخِ JSON به‌جای نمایشِ خام، پردازش شود) */
+  var form    = document.getElementById('heroForm');
+  var saveBtn = document.getElementById('hmSaveBtn');
+  var msgBox  = document.getElementById('hmMsg');
+
+  function showMsg(text, ok){
+    msgBox.textContent = text;
+    msgBox.className = 'hm-msg ' + (ok ? 'ok' : 'err');
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    renumber();
+    saveBtn.disabled = true;
+    showMsg('در حال ذخیره...', true);
+
+    fetch('hero-save.php', { method:'POST', body:new FormData(form) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data && data.status === 'success'){
+          showMsg(data.message || 'ذخیره شد ✅', true);
+          // بارگذاری مجدد تا ردیف‌های جدید id واقعی بگیرند و دکمه‌ی حذف ظاهر شود
+          setTimeout(function(){ location.reload(); }, 700);
+        } else {
+          saveBtn.disabled = false;
+          showMsg((data && data.message) ? data.message : 'خطا در ذخیره‌سازی', false);
+        }
+      })
+      .catch(function(){
+        saveBtn.disabled = false;
+        showMsg('خطا در ارتباط با سرور', false);
+      });
+  });
+
+  /* حذفِ یک هیرو */
+  var CSRF = (form.querySelector('input[name="csrf_token"]') || {}).value || '';
+  window.deleteHero = function(id, btn){
+    if(!window.confirm('آیا از حذف این هیرو اطمینان دارید؟ این کار قابل بازگشت نیست.')) return;
+    btn.disabled = true;
+    var fd = new FormData();
+    fd.append('id', id);
+    fd.append('csrf_token', CSRF);
+    fetch('hero-delete.php', { method:'POST', body:fd })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data && data.status === 'success'){
+          var item = btn.closest('.hm-item');
+          if(item){ item.parentNode.removeChild(item); }
+          renumber();
+        } else {
+          btn.disabled = false;
+          alert((data && data.message) ? data.message : 'خطا در حذف هیرو');
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        alert('خطا در ارتباط با سرور');
+      });
+  };
 
   /* تم (دارک/لایت) از «داشبورد مدیریت» کنترل می‌شود — کلید مشترک: maxa-theme */
   function applyMaxaTheme(){
