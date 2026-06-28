@@ -730,9 +730,9 @@
     "semantic_hash": "4151983cc43300d3795005a6b847038f"
   },
   "public_html/dashboard/branch-create.php": {
-    "mtime": 1782027422.6464584,
-    "ast_hash": "650fde5371d12dde12d3f881dc38e4a6",
-    "semantic_hash": "650fde5371d12dde12d3f881dc38e4a6"
+    "mtime": 1782666600.1825328,
+    "ast_hash": "359aeff7b1ab8504e03b0c047153b58a",
+    "semantic_hash": ""
   },
   "public_html/dashboard/branch-edit.php": {
     "mtime": 1782027422.6474586,
@@ -1095,9 +1095,9 @@
     "semantic_hash": "468ead0a555b9b3d87696c1ced7ed1f0"
   },
   "public_html/dashboard/components/recent-news-cards-v3/component.php": {
-    "mtime": 1781024291.7508936,
-    "ast_hash": "597aa8734a0466bb5d91e5e724c11972",
-    "semantic_hash": "597aa8734a0466bb5d91e5e724c11972"
+    "mtime": 1782666357.515746,
+    "ast_hash": "30b62d79b7b6d8d9779e81e41ef7e9b9",
+    "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-cards-v3/meta.json": {
     "mtime": 1780933516.349759,
@@ -1105,9 +1105,9 @@
     "semantic_hash": "7bd62b8aaba04e9c4891450b1288019d"
   },
   "public_html/dashboard/components/recent-news-classic-v1/component.php": {
-    "mtime": 1781024291.7515574,
-    "ast_hash": "ae6283458affe9d755f19f204bee8ebe",
-    "semantic_hash": "ae6283458affe9d755f19f204bee8ebe"
+    "mtime": 1782666374.7992914,
+    "ast_hash": "c5d432b5ae26dd76c1796619a221c682",
+    "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-classic-v1/meta.json": {
     "mtime": 1780933516.349759,
@@ -1115,9 +1115,9 @@
     "semantic_hash": "7bd62b8aaba04e9c4891450b1288019d"
   },
   "public_html/dashboard/components/recent-news-hero-v2/component.php": {
-    "mtime": 1781024291.7515574,
-    "ast_hash": "ec6a4678e586710b39f136de543b5da5",
-    "semantic_hash": "ec6a4678e586710b39f136de543b5da5"
+    "mtime": 1782666372.899073,
+    "ast_hash": "e7fa1c958443604ee056cf4466805db1",
+    "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-hero-v2/meta.json": {
     "mtime": 1780933516.3507617,
@@ -1275,8 +1275,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/hero-create.php": {
-    "mtime": 1782649447.5570507,
-    "ast_hash": "a5d23ddf8cfff648946037e2cd9fff73",
+    "mtime": 1782656464.0091383,
+    "ast_hash": "348629d4444d2b3486a9d5e3dc3d4e79",
     "semantic_hash": ""
   },
   "public_html/dashboard/hero-list.php": {
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/news-create.php": {
-    "mtime": 1782576709.9627426,
-    "ast_hash": "96293af08bf66140866de783804b733e",
+    "mtime": 1782656284.9467978,
+    "ast_hash": "d5bc641994b2a9b78754db8dbeca9508",
     "semantic_hash": ""
   },
   "public_html/dashboard/news-delete.php": {
@@ -1380,8 +1380,8 @@
     "semantic_hash": "84b2b0b785577646d527695d17ba6251"
   },
   "public_html/dashboard/page-view.php": {
-    "mtime": 1782553527.5432,
-    "ast_hash": "194644b01a2c4198c3eb957f61ea1c61",
+    "mtime": 1782666461.6209083,
+    "ast_hash": "aaa619a51fe16c23e151b4af5631fdc3",
     "semantic_hash": ""
   },
   "public_html/dashboard/personal-resume-create.php": {
@@ -1400,9 +1400,9 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/recent-news-feed.php": {
-    "mtime": 1780933516.3920517,
-    "ast_hash": "94e69c44d06ea275c08c62688952de37",
-    "semantic_hash": "94e69c44d06ea275c08c62688952de37"
+    "mtime": 1782666334.8037436,
+    "ast_hash": "8b4f485737f1a22c9046acc9128b315e",
+    "semantic_hash": ""
   },
   "public_html/dashboard/register.php": {
     "mtime": 1782027422.6644588,
@@ -3582,6 +3582,21 @@
   "public_html/dashboard/hero-delete.php": {
     "mtime": 1782646690.3263147,
     "ast_hash": "77e84fc413865999c06afa3ff54bd9e0",
+    "semantic_hash": ""
+  },
+  "database/migrations/004_branch_home_redesign.sql": {
+    "mtime": 1782666624.238963,
+    "ast_hash": "e5413cf47141dfc4e5534ad652dc24ef",
+    "semantic_hash": ""
+  },
+  "public_html/dashboard/branch-courses-feed.php": {
+    "mtime": 1782666432.5098262,
+    "ast_hash": "836fbbb027e701f67bc71c5c096f6f1f",
+    "semantic_hash": ""
+  },
+  "public_html/dashboard/components/branch-home/component.php": {
+    "mtime": 1782666664.9980028,
+    "ast_hash": "48219f70b597b654c58b5e41bca3082e",
     "semantic_hash": ""
   }
 }

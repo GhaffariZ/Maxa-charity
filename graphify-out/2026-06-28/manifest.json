@@ -1275,9 +1275,9 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/hero-create.php": {
-    "mtime": 1782027422.6564555,
-    "ast_hash": "55cf3d5b6e35f20c9ebcfc601b065ace",
-    "semantic_hash": "55cf3d5b6e35f20c9ebcfc601b065ace"
+    "mtime": 1782656464.0091383,
+    "ast_hash": "348629d4444d2b3486a9d5e3dc3d4e79",
+    "semantic_hash": ""
   },
   "public_html/dashboard/hero-list.php": {
     "mtime": 1782553527.5362122,
@@ -1285,14 +1285,14 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/hero-management.php": {
-    "mtime": 1782027422.6564555,
-    "ast_hash": "050753c48ae655e2284cd44c4e666a96",
-    "semantic_hash": "050753c48ae655e2284cd44c4e666a96"
+    "mtime": 1782649414.8443675,
+    "ast_hash": "b667d7621ff6c2be2a926ed5deefae45",
+    "semantic_hash": ""
   },
   "public_html/dashboard/hero-save.php": {
-    "mtime": 1782027422.6574557,
-    "ast_hash": "b96cdddf766aa4d382421739464b1d0a",
-    "semantic_hash": "b96cdddf766aa4d382421739464b1d0a"
+    "mtime": 1782646633.404655,
+    "ast_hash": "3a46c300e16ed223402e6ddecb7a744c",
+    "semantic_hash": ""
   },
   "public_html/dashboard/index.php": {
     "mtime": 1782576449.418949,
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/news-create.php": {
-    "mtime": 1782576709.9627426,
-    "ast_hash": "96293af08bf66140866de783804b733e",
+    "mtime": 1782656284.9467978,
+    "ast_hash": "d5bc641994b2a9b78754db8dbeca9508",
     "semantic_hash": ""
   },
   "public_html/dashboard/news-delete.php": {
@@ -3577,6 +3577,11 @@
   "database/migrations/003_news_code_length_fix.sql": {
     "mtime": 1782573188.5871184,
     "ast_hash": "7a21925df2b35339945dc600636ee06d",
+    "semantic_hash": ""
+  },
+  "public_html/dashboard/hero-delete.php": {
+    "mtime": 1782646690.3263147,
+    "ast_hash": "77e84fc413865999c06afa3ff54bd9e0",
     "semantic_hash": ""
   }
 }
