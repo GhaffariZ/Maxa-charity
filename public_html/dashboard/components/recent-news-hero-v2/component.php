@@ -49,7 +49,8 @@
   const grid=host.querySelector('#rnhv2-grid');
   const fa=(v)=>String(v).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
   const ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-size="56" font-family="Vazirmatn,Tahoma">بدون تصویر</text></svg>');
-  fetch('/dashboard/recent-news-feed.php?limit=3').then(r=>r.json()).then(d=>{
+  const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
+  fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
     const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-empty">خبری برای نمایش وجود ندارد.</div>'; return;}
     const first=items[0], rest=items.slice(1);
     grid.innerHTML='<a class="rnhv2-main" href="'+first.url+'"><img class="rnhv2-main-img" src="'+(first.image||ph)+'" alt=""><div class="rnhv2-overlay"></div><div class="rnhv2-main-content"><span class="rnhv2-badge">'+first.category+'</span><h3 class="rnhv2-main-title">'+first.title+'</h3><div class="rnhv2-meta"><span>'+fa(first.date)+'</span><span class="rnhv2-dot"></span><span>'+fa(first.read_time)+' دقیقه مطالعه</span></div></div></a><div class="rnhv2-side"></div>';
