@@ -12,6 +12,22 @@ use Maksa\Core\Database;
 
 final class MedicalRecordController
 {
+    public function show(Request $request): void
+    {
+        $userId = $request->userId();
+        
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare('SELECT * FROM medical_records WHERE user_id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $record = $stmt->fetch();
+
+        if ($record) {
+            $record['documents'] = $record['documents'] ? json_decode($record['documents'], true) : [];
+        }
+
+        Response::success(['record' => $record ?: null]);
+    }
+
     public function store(Request $request): void
     {
         $userId = $request->userId();
@@ -30,7 +46,17 @@ final class MedicalRecordController
         $diagnosisStatus = !empty($request->body['diagnosis_status']) ? substr($request->body['diagnosis_status'], 0, 100) : null;
         $description = !empty($request->body['description']) ? $request->body['description'] : null;
 
+        $pdo = Database::connection();
+        
+        // Check if user already has a record
+        $stmt = $pdo->prepare('SELECT id, documents FROM medical_records WHERE user_id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $existingRecord = $stmt->fetch();
+        
         $documents = [];
+        if ($existingRecord && $existingRecord['documents']) {
+            $documents = json_decode($existingRecord['documents'], true) ?: [];
+        }
         
         $uploadDir = dirname(__DIR__, 3) . '/uploads/medical_records';
         if (!is_dir($uploadDir)) {
@@ -60,27 +86,49 @@ final class MedicalRecordController
             }
         }
 
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare('
-            INSERT INTO medical_records 
-            (user_id, full_name, mobile, age, gender, province, city, cancer_type, diagnosis_status, description, documents) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ');
+        if ($existingRecord) {
+            $stmt = $pdo->prepare('
+                UPDATE medical_records 
+                SET full_name = ?, mobile = ?, age = ?, gender = ?, province = ?, city = ?, 
+                    cancer_type = ?, diagnosis_status = ?, description = ?, documents = ?, created_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ');
+            $stmt->execute([
+                $data['full_name'],
+                $data['mobile'],
+                $age,
+                $gender,
+                $data['province'],
+                $data['city'],
+                $cancerType,
+                $diagnosisStatus,
+                $description,
+                json_encode($documents),
+                $existingRecord['id']
+            ]);
+            $message = 'پرونده پزشکی با موفقیت بروزرسانی شد.';
+        } else {
+            $stmt = $pdo->prepare('
+                INSERT INTO medical_records 
+                (user_id, full_name, mobile, age, gender, province, city, cancer_type, diagnosis_status, description, documents) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ');
+            $stmt->execute([
+                $userId,
+                $data['full_name'],
+                $data['mobile'],
+                $age,
+                $gender,
+                $data['province'],
+                $data['city'],
+                $cancerType,
+                $diagnosisStatus,
+                $description,
+                json_encode($documents)
+            ]);
+            $message = 'پرونده پزشکی با موفقیت ثبت شد.';
+        }
 
-        $stmt->execute([
-            $userId,
-            $data['full_name'],
-            $data['mobile'],
-            $age,
-            $gender,
-            $data['province'],
-            $data['city'],
-            $cancerType,
-            $diagnosisStatus,
-            $description,
-            json_encode($documents)
-        ]);
-
-        Response::success(['message' => 'پرونده پزشکی با موفقیت ثبت شد.']);
+        Response::success(['message' => $message]);
     }
 }

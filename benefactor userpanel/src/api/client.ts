@@ -204,6 +204,7 @@ export const api = {
   updateNotificationPrefs: (prefs: { news: boolean; impact_reports: boolean; new_campaigns: boolean }) =>
     apiRequest("/user/notification-prefs", { method: "PUT", body: prefs }),
   dashboard: () => apiRequest<DashboardDto>("/user/dashboard"),
+  getMedicalRecord: () => apiRequest<{ record: MedicalRecordDto | null }>("/medical-records/me"),
 
   // campaigns
   campaigns: (status?: "active" | "completed") =>
@@ -289,3 +290,20 @@ export interface DashboardDto {
   tier: { slug: string | null; name: string | null };
   unread_notifications: number;
 }
+
+export interface MedicalRecordDto {
+  id: number;
+  user_id: number;
+  full_name: string;
+  mobile: string;
+  age: number | null;
+  gender: string | null;
+  province: string;
+  city: string;
+  cancer_type: string | null;
+  diagnosis_status: string | null;
+  description: string | null;
+  documents: string[];
+  created_at: string;
+}
+
