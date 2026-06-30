@@ -354,28 +354,48 @@ margin-top:20px;
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    var token = localStorage.getItem('token');
-    if (!token) {
-        localStorage.setItem('redirect_to_patientintake', '1');
+    function enforceLoginAndInit() {
+        var token = localStorage.getItem('token');
+        if (token) {
+            initForm(token);
+        } else {
+            // Check if user is logged in via HttpOnly cookie by calling refresh endpoint
+            fetch('/api/auth/refresh', { method:'POST', credentials:'include', headers:{ 'Accept':'application/json' } })
+            .then(function(res){ return res.ok ? res.json() : null; })
+            .then(function(j){
+                if (j && j.data && j.data.access_token) {
+                    var refreshedToken = j.data.access_token;
+                    localStorage.setItem('token', refreshedToken);
+                    initForm(refreshedToken);
+                } else {
+                    redirectToLogin();
+                }
+            })
+            .catch(function() {
+                redirectToLogin();
+            });
+        }
+    }
+
+    function redirectToLogin() {
+        localStorage.setItem('redirect_to_patientintake', window.location.href);
         window.location.href = '/benefactor-dashboard/login';
-        return;
     }
 
-    var form = document.querySelector(".medical-intake form");
-    var fileInput = document.getElementById("miFileInput");
-    var preview = document.getElementById("miPreview");
-    var filesArray = [];
+    function initForm(token) {
+        var form = document.querySelector(".medical-intake form");
+        var fileInput = document.getElementById("miFileInput");
+        var preview = document.getElementById("miPreview");
+        var filesArray = [];
 
-    if (fileInput) {
-        fileInput.addEventListener("change", function() {
-
-            for (var i = 0; i < this.files.length; i++) {
-                filesArray.push(this.files[i]);
-            }
-
-            renderImages();
-        });
-    }
+        if (fileInput) {
+            fileInput.addEventListener("change", function() {
+                for (var i = 0; i < this.files.length; i++) {
+                    filesArray.push(this.files[i]);
+                }
+                renderImages();
+            });
+        }
 
     function renderImages() {
 
@@ -513,8 +533,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(function(response) {
                 if (!response.ok) {
                     if (response.status === 401) {
-                        localStorage.setItem('redirect_to_patientintake', '1');
-                        window.location.href = '/benefactor-dashboard/login';
+                        redirectToLogin();
                         throw new Error('Unauthorized');
                     }
                     throw new Error('خطا در ارسال اطلاعات');
@@ -553,6 +572,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
     });
+
+    }
+
+    enforceLoginAndInit();
 
 });
 </script>
