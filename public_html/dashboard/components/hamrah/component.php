@@ -52,6 +52,15 @@
 
 </div>
 
+<!-- نقاط راهنما (فقط موبایل) -->
+<div class="macsa-dots" aria-hidden="true">
+  <button class="macsa-dot" type="button"></button>
+  <button class="macsa-dot" type="button"></button>
+  <button class="macsa-dot" type="button"></button>
+  <button class="macsa-dot" type="button"></button>
+  <button class="macsa-dot" type="button"></button>
+</div>
+
 </section>
 <div class="skill-divider"></div>
 
@@ -196,6 +205,9 @@
   box-shadow:0 12px 26px rgba(212,175,55,0.5);
 }
 
+/* نقاط راهنما — به‌صورت پیش‌فرض پنهان (فقط در موبایل دیده می‌شود) */
+.macsa-dots{ display:none; }
+
 /* نسخه دسکتاپ دست نخورده بماند... */
 
 /* تبلت: کارت‌ها را کوچک‌تر کن تا ردیف ۵تایی جا شود */
@@ -266,6 +278,29 @@
     box-shadow:0 6px 18px rgba(0,0,0,.15);
   }
 
+  /* نقاط راهنما زیر اسلایدر */
+  .macsa-dots{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-top:18px;
+  }
+  .macsa-dot{
+    width:9px;
+    height:9px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:#d9d9d9;
+    cursor:pointer;
+    transition:transform .25s ease, background .25s ease;
+  }
+  .macsa-dot.active{
+    background:#c9a227;   /* طلایی */
+    transform:scale(1.35);
+  }
+
 }
 
 </style>
@@ -274,6 +309,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const gallery = document.querySelector(".macsa-gallery");
   const cards   = document.querySelectorAll(".gallery-item");
+  const dots    = document.querySelectorAll(".macsa-dot");
   if(!gallery || !cards.length) return;
 
   const isMobile = () => window.matchMedia("(max-width:700px)").matches;
@@ -309,6 +345,27 @@ document.addEventListener("DOMContentLoaded", function(){
     gallery.scrollTo({ left: left, behavior: "smooth" });
   }
 
+  function syncDots(){
+    if(!dots.length) return;
+    const active = activeSlide();
+    dots.forEach((d, i)=> d.classList.toggle("active", i === active));
+  }
+
+  // کلیک روی نقطه = رفتن به همان اسلاید
+  dots.forEach((dot, i)=>{
+    dot.addEventListener("click", ()=>{
+      pauseUntil = Date.now() + 6000;
+      goTo(i);
+    });
+  });
+
+  // به‌روزرسانی نقطهٔ فعال هنگام اسکرول/کشیدن
+  let scrollRaf = null;
+  gallery.addEventListener("scroll", ()=>{
+    if(scrollRaf) return;
+    scrollRaf = requestAnimationFrame(()=>{ scrollRaf = null; syncDots(); });
+  }, { passive:true });
+
   function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
   function startAuto(){
     stopAuto();
@@ -330,6 +387,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     if(isMobile()){
       gallery.scrollLeft = 0;
+      syncDots();
       startAuto();
     } else {
       current = 0;
