@@ -8,6 +8,15 @@
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
       <script type="module" crossorigin src="/benefactor-dashboard/assets/index-BQnqynKr.js"></script>
       <link rel="stylesheet" crossorigin href="/benefactor-dashboard/assets/index-qfIQ8TsH.css">
+      <script>
+        // Redirect to patientintake if user came from there and successfully logged in
+        setInterval(function() {
+          if (localStorage.getItem('token') && localStorage.getItem('redirect_to_patientintake') === '1') {
+            localStorage.removeItem('redirect_to_patientintake');
+            window.location.href = '/patientintake';
+          }
+        }, 300);
+      </script>
     </head>
 
     <body>
