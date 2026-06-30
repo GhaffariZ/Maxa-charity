@@ -1037,9 +1037,7 @@ stroke-width:1.19434">آذربایجان شرقی</tspan></text><text
 .branches__card {
   max-width: 980px;
   margin: 0 auto;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
+  background: transparent;
   padding: clamp(20px, 4vw, 44px);
 }
 
