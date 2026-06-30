@@ -209,30 +209,35 @@
 
 @media (max-width:700px){
 
+  /* اسلایدر افقی قابل کشیدن با انگشت (swipe) */
   .macsa-gallery{
     position:relative;
     width:100%;
-    height:85vh;
-    overflow:hidden;
+    height:auto;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:flex-start;
+    align-items:flex-end;
+    gap:16px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scroll-padding:0 10vw;
+    padding:10px 10vw 16px;   /* نمایش گوشهٔ کارت بعدی/قبلی */
+    scrollbar-width:none;      /* Firefox */
   }
+  .macsa-gallery::-webkit-scrollbar{ display:none; } /* WebKit */
 
-.gallery-item{
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:88vw;
-  transform:translate(-50%, -50%);
-  opacity:0;
-  z-index:1;
-  transition:opacity 0.2s linear;  /* ← سرعت تعض کارت = 1 ثانیه */
-}
-
-.gallery-item.active{
-  opacity:1;
-  z-index:3;
-}
-
-
+  .gallery-item{
+    position:static;
+    flex:0 0 80vw;
+    width:80vw;
+    transform:none;
+    opacity:1;
+    z-index:auto;
+    scroll-snap-align:center;
+  }
 
   .card{
     width:100%;
@@ -267,8 +272,15 @@
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
-  const cards = document.querySelectorAll(".gallery-item");
+  const gallery = document.querySelector(".macsa-gallery");
+  const cards   = document.querySelectorAll(".gallery-item");
+  if(!gallery || !cards.length) return;
+
+  const isMobile = () => window.matchMedia("(max-width:700px)").matches;
+
+  /* ---------- نسخهٔ دسکتاپ: همان فید قبلی ---------- */
   let current = 0;
+  let fadeTimer = null;
 
   function showCard(index){
     cards[current].classList.remove("active");
@@ -276,14 +288,63 @@ document.addEventListener("DOMContentLoaded", function(){
     cards[current].classList.add("active");
   }
 
-  showCard(0);
+  /* ---------- نسخهٔ موبایل: اسلایدر قابل کشیدن + پخش خودکار ملایم ---------- */
+  let autoTimer  = null;
+  let pauseUntil = 0;   // تا این لحظه پخش خودکار متوقف است (پس از تعامل کاربر)
 
-  // ⏱ توقف روی هر کارت = 2.5 ثانیه
-  // ⚡ سرعت تعویض کارت = 1 ثانیه (در CSS)
-  setInterval(()=>{
-    let next = (current + 1) % cards.length;
-    showCard(next);
-  }, 2500);  // ← زمان توقف روی کارت
+  function activeSlide(){
+    const center = gallery.scrollLeft + gallery.clientWidth / 2;
+    let best = 0, bestDist = Infinity;
+    cards.forEach((c, i)=>{
+      const cc = c.offsetLeft + c.offsetWidth / 2;
+      const d  = Math.abs(cc - center);
+      if(d < bestDist){ bestDist = d; best = i; }
+    });
+    return best;
+  }
+
+  function goTo(i){
+    const card = cards[(i + cards.length) % cards.length];
+    const left = card.offsetLeft - (gallery.clientWidth - card.offsetWidth) / 2;
+    gallery.scrollTo({ left: left, behavior: "smooth" });
+  }
+
+  function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+  function startAuto(){
+    stopAuto();
+    autoTimer = setInterval(()=>{
+      if(Date.now() < pauseUntil) return;          // کاربر در حال تعامل است
+      goTo(activeSlide() + 1);
+    }, 3500);
+  }
+
+  // هر تعامل کاربر، پخش خودکار را برای چند ثانیه متوقف می‌کند
+  ["touchstart","pointerdown","wheel","scroll"].forEach(ev=>{
+    gallery.addEventListener(ev, ()=>{ pauseUntil = Date.now() + 6000; }, { passive:true });
+  });
+
+  function setup(){
+    stopAuto();
+    if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
+    cards.forEach(c=>c.classList.remove("active"));
+
+    if(isMobile()){
+      gallery.scrollLeft = 0;
+      startAuto();
+    } else {
+      current = 0;
+      showCard(0);
+      fadeTimer = setInterval(()=>{ showCard((current + 1) % cards.length); }, 2500);
+    }
+  }
+
+  setup();
+
+  let resizeTimer;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setup, 200);
+  });
 
 });
 </script>
