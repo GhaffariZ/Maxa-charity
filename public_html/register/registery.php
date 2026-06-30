@@ -69,6 +69,8 @@ exit;
 
 <style>
 
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
 body{
 font-family:tahoma;
 background:#f5f5f5;

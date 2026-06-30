@@ -41,25 +41,33 @@ if ($branch) {
         exit;
     }
 
+    $branchName = (string)($branch['name'] ?? '');
+
+    // 1-a2) شبکه‌ی همکارانِ شعبه: /{branch}/network → کامپوننتِ همکاران، scope‌شده به همان شعبه
+    if ($sub === 'network') {
+        render_branch_components($pdo, ['header', 'personal-resume-list', 'footer'], $branchSlug, $branchName, 'شبکه همکاران ' . $branchName);
+        exit;
+    }
+
     // 1-b) مسیر داخلیِ صفحه‌ی دلخواهِ شعبه: /{branch}/{page-slug}
     if ($sub !== '') {
-        render_page_by_slug($pdo, $branchId, $sub, $branchSlug);
+        render_page_by_slug($pdo, $branchId, $sub, $branchSlug, $branchName);
         exit;
     }
 
     // 1-c) خانه‌ی شعبه: /{branch}
-    render_page_by_slug($pdo, $branchId, 'home', $branchSlug);
+    render_page_by_slug($pdo, $branchId, 'home', $branchSlug, $branchName);
     exit;
 }
 
 /* ---------- 2) صفحه‌ی مرکزی (branch_id = HQ) ---------- */
-render_page_by_slug($pdo, $HQ_BRANCH, $slug, '');
+render_page_by_slug($pdo, $HQ_BRANCH, $slug, '', '');
 exit;
 
 
 /* ============================ توابع رندر ============================ */
 
-function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = ''): void
+function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = '', string $branchName = ''): void
 {
     $st = $pdo->prepare("SELECT * FROM pages WHERE branch_id = ? AND slug = ? AND status = 'published' LIMIT 1");
     $st->execute([$branchId, $slug]);
@@ -76,10 +84,39 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
 
     echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
     echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-    echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n</head>\n<body>\n";
+    echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n";
+    // ریستِ پایه تا حاشیه‌ی پیش‌فرضِ مرورگر (margin: 8px روی body) دورِ صفحه نیفتد.
+    echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
+    echo "</head>\n<body>\n";
     // شعبه‌ی جاری برای کامپوننت‌ها (هیرو/خبر/کمپین/...) تا فیدهای عمومی را scope کنند
-    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
+    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
+    echo_components($components);
+
+    echo "\n</body>\n</html>";
+}
+
+/**
+ * رندرِ یک فهرستِ صریح از کامپوننت‌ها (بدونِ نیاز به ردیفِ pages) — برای مسیرهای
+ * ویژه‌ی شعبه مثلِ /{branch}/network که محتوایشان از pages نمی‌آید.
+ */
+function render_branch_components(PDO $pdo, array $components, string $branchSlug, string $branchName, string $title): void
+{
+    echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+    echo '<title>' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . "</title>\n";
+    echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
+    echo "</head>\n<body>\n";
+    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
+    echo_components($components);
+    echo "\n</body>\n</html>";
+}
+
+/** حلقه‌ی مشترکِ echo‌کردنِ کامپوننت‌ها (با جایگزینیِ {{imageN}}). */
+function echo_components(array $components): void
+{
     foreach ($components as $component) {
         $componentPath = __DIR__ . '/components/' . $component . '/component.php';
         if (is_string($component) && file_exists($componentPath)) {
@@ -92,8 +129,6 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
             echo '<!-- Component not found -->';
         }
     }
-
-    echo "\n</body>\n</html>";
 }
 
 function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
@@ -108,9 +143,83 @@ function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
         include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
         exit;
     }
+
+    $e = static fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+    $title   = (string)($news['title'] ?? '');
+    $content = (string)($news['content'] ?? '');
+    $author  = (string)($news['author'] ?? '');
+    $pubDate = (string)($news['publish_date'] ?? '');
+    $code    = (string)($news['news_code'] ?? '');
+    $featured = (string)($news['featured_image'] ?? '');
+    $images  = json_decode((string)($news['images'] ?? ''), true) ?: [];
+    $video   = (string)($news['video'] ?? '');
+    $folder  = '/uploads/news/' . rawurlencode($code) . '/';
+    $excerpt = mb_substr(trim(preg_replace('/\s+/u', ' ', strip_tags($content))), 0, 150);
+
     echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
-    echo '<title>' . htmlspecialchars((string)$news['title'], ENT_QUOTES, 'UTF-8') . "</title>\n</head>\n<body>\n";
-    echo '<article><h1>' . htmlspecialchars((string)$news['title'], ENT_QUOTES, 'UTF-8') . '</h1>';
-    echo (string)$news['content'];
-    echo "</article>\n</body>\n</html>";
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+    echo '<meta name="description" content="' . $e($excerpt) . '">' . "\n";
+    echo '<title>' . $e($title) . "</title>\n";
+    echo <<<CSS
+<style>
+@font-face{font-family:'Vazirmatn';src:url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');font-weight:100 900;font-style:normal;font-display:swap}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:'Vazirmatn',Tahoma,sans-serif;background:#f3f7f7;color:#2f3437;line-height:1.9}
+.na-hero{position:relative;background:linear-gradient(135deg,#063a3c 0%,#0a5c5b 60%,#063a3c 100%);color:#fff;padding:54px 20px 90px}
+.na-wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.na-back{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:18px}
+.na-back:hover{color:#fff}
+.na-tag{display:inline-block;background:#f5a623;color:#1a1a1a;font-size:12px;font-weight:700;padding:5px 13px;border-radius:999px;margin-bottom:14px}
+.na-hero h1{margin:0;font-size:30px;line-height:1.4;font-weight:800}
+.na-meta{margin-top:14px;color:rgba(255,255,255,.8);font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
+.na-card{max-width:860px;margin:-60px auto 50px;background:#fff;border:1px solid #e6e8ea;border-radius:20px;
+  box-shadow:0 18px 44px -14px rgba(0,102,101,.18);overflow:hidden}
+.na-cover{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#eef1f2}
+.na-body{padding:30px 30px 36px;font-size:16px}
+.na-body img{max-width:100%;height:auto;border-radius:12px;margin:14px 0}
+.na-body h2,.na-body h3{color:#063a3c}
+.na-gallery{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}
+.na-gallery img{width:150px;height:110px;object-fit:cover;border-radius:10px;cursor:pointer;transition:transform .3s}
+.na-gallery img:hover{transform:scale(1.05)}
+.na-video{margin-top:20px}.na-video video{width:100%;border-radius:12px}
+@media(max-width:600px){.na-hero h1{font-size:23px}.na-body{padding:22px 18px 26px}}
+</style>
+CSS;
+    echo "\n</head>\n<body>\n";
+
+    echo '<section class="na-hero"><div class="na-wrap">';
+    echo '<a class="na-back" href="javascript:history.length>1?history.back():location.assign(\'/\')">'
+       . '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+       . 'بازگشت</a>';
+    if (!empty($news['tag_id'])) {
+        // برچسبِ خبر (در صورت وجود)
+        $tg = $pdo->prepare('SELECT name_fa FROM news_tags WHERE id = ? LIMIT 1');
+        $tg->execute([(int)$news['tag_id']]);
+        $tagName = (string)($tg->fetchColumn() ?: '');
+        if ($tagName !== '') { echo '<span class="na-tag">' . $e($tagName) . '</span>'; }
+    }
+    echo '<h1>' . $e($title) . '</h1>';
+    echo '<div class="na-meta">';
+    if ($author !== '')  { echo '<span>نویسنده: ' . $e($author) . '</span>'; }
+    if ($pubDate !== '') { echo '<span>تاریخ: ' . $e($pubDate) . '</span>'; }
+    echo '</div></div></section>';
+
+    echo '<article class="na-card">';
+    if ($featured !== '') {
+        echo '<img class="na-cover" src="' . $e($folder . rawurlencode($featured)) . '" alt="' . $e($title) . '">';
+    }
+    echo '<div class="na-body">' . $content;
+
+    if ($images) {
+        echo '<div class="na-gallery">';
+        foreach ($images as $img) {
+            echo '<img src="' . $e($folder . rawurlencode((string)$img)) . '" alt="">';
+        }
+        echo '</div>';
+    }
+    if ($video !== '') {
+        echo '<div class="na-video"><video controls><source src="' . $e($folder . rawurlencode($video)) . '" type="video/mp4">مرورگر شما ویدیو را پشتیبانی نمی‌کند.</video></div>';
+    }
+    echo '</div></article>';
+    echo "\n</body>\n</html>";
 }

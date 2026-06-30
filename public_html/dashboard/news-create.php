@@ -40,37 +40,49 @@ if ($news_data && !empty($news_data['publish_date'])) {
 
 ?>
 <!DOCTYPE html>
-<link rel="stylesheet" href="/font.css">
 <html lang="fa" dir="rtl">
 <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-
-<style>
-  body {
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-</style>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ایجاد خبر</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر' ?></title>
+
+<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
+<script>
+(function(){
+  function applyMaxaTheme(){
+    var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
+    if(d){ document.documentElement.setAttribute('data-theme','dark'); if(document.body) document.body.setAttribute('data-theme','dark'); }
+    else { document.documentElement.removeAttribute('data-theme'); if(document.body) document.body.removeAttribute('data-theme'); }
+  }
+  applyMaxaTheme();
+  window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
 
 <style>
 :root {
     /* پالت رنگی لایت مود (برگرفته از لوگو مکسا) */
-    --primary-color: #007D75; /* سبز-آبی مکسا */
-    --secondary-color: #F79F1F; /* نارنجی مکسا */
+    --primary-color: #007D75;       /* سبز-آبی مکسا */
+    --primary-dark: #006159;
+    --secondary-color: #F79F1F;     /* نارنجی مکسا */
     --bg-color: #f4f7f6;
     --text-color: #333333;
+    --muted-color: #6b7674;
     --panel-bg: #ffffff;
-    --border-color: #dddddd;
+    --surface-2: #f7faf9;
+    --border-color: #e3e9e8;
     --input-bg: #ffffff;
     --header-text: #007D75;
-    --btn-hover-opacity: 0.9;
+    --btn-hover-opacity: 0.92;
     --modal-overlay: rgba(0,0,0,0.6);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.07);
+    --radius: 16px;
+    --radius-sm: 10px;
     --anim-fast: 220ms;
     --anim-mid: 420ms;
     --anim-slow: 700ms;
@@ -79,633 +91,842 @@ if ($news_data && !empty($news_data['publish_date'])) {
 [data-theme="dark"] {
     /* پالت رنگی دارک مود */
     --primary-color: #00a89d;
+    --primary-dark: #00897e;
     --secondary-color: #ffb142;
     --bg-color: #121212;
     --text-color: #e0e0e0;
+    --muted-color: #9aa3a1;
     --panel-bg: #1e1e1e;
-    --border-color: #444444;
+    --surface-2: #262626;
+    --border-color: #383838;
     --input-bg: #2d2d2d;
     --header-text: #00a89d;
     --modal-overlay: rgba(0,0,0,0.8);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.35);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.45);
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
+    font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
     transition: background-color 0.3s, color 0.3s;
-    /*font-family: Tahoma, Arial, sans-serif;*/
     margin: 0;
     padding: 0;
     min-height: 100vh;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 20px 15px;
+    padding: 0 16px 40px;
     animation: pageRise var(--anim-slow) cubic-bezier(.2,.8,.2,1) both;
 }
 
-.card {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+/* ===== هدر چسبان ویرایشگر ===== */
+.editor-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg-color) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    margin: 0 -16px 24px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.eh-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.ph-ic {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
     border-radius: 12px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    box-shadow: var(--shadow-sm);
+}
+
+.ph-ic svg { width: 22px; height: 22px; }
+
+.eh-title h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--header-text);
+}
+
+.eh-title p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--muted-color);
+}
+
+.draft-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--muted-color);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.eh-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ===== شبکه اصلی ===== */
+.layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.col-main { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.col-side { display: flex; flex-direction: column; gap: 24px; }
+
+/* ===== کارت‌ها ===== */
+.card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
     position: relative;
+    overflow: hidden;
     animation: cardPop var(--anim-mid) cubic-bezier(.2,.8,.2,1) both;
 }
 
-.card::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(120deg, rgba(0,125,117,.12), rgba(247,159,31,.12), rgba(0,125,117,.08));
-    opacity: 0;
-    transition: opacity var(--anim-mid) ease;
-    pointer-events: none;
-}
+.card-pad { padding: 20px; }
 
-.card:hover::before {
-    opacity: 1;
-}
-
-.panel-heading {
-    background-color: var(--panel-bg);
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 800;
     color: var(--header-text);
-    border-bottom: 2px solid var(--primary-color);
-    padding: 15px 20px;
+    margin: 0 0 16px;
+}
+
+.card-title svg { width: 19px; height: 19px; color: var(--primary-color); }
+
+/* ===== عنوان خبر ===== */
+.title-card { padding: 20px; transition: box-shadow var(--anim-fast), border-color var(--anim-fast); }
+.title-card:focus-within { border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-color)); box-shadow: 0 0 0 4px rgba(0,125,117,0.08); }
+
+#title {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 26px;
+    font-weight: 800;
+    padding: 0;
+    line-height: 1.5;
+}
+#title:focus { outline: none; }
+#title::placeholder { color: var(--muted-color); opacity: 0.55; }
+
+.title-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+    color: var(--muted-color);
 }
+#titleCounter.over { color: #e74c3c; font-weight: 700; }
 
-.panel-title {
-    margin: 0;
-    font-weight: bold;
-    font-size: 1.25rem;
-}
+/* ===== فیلدهای عمومی ===== */
+.input-group { margin-bottom: 18px; }
+.input-group:last-child { margin-bottom: 0; }
 
-.theme-toggle-btn {
-    background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    border-radius: 50%; /* دایره‌ای کردن دکمه */
-    width: 42px;
-    height: 42px;
+label.field-label {
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: transform 0.2s, background-color 0.3s;
-    outline: none;
-}
-
-.theme-toggle-btn:hover {
-    transform: scale(1.08);
-    opacity: var(--btn-hover-opacity);
-}
-
-.theme-toggle-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-.panel-body {
-    padding: 20px;
-}
-
-/* گرید سیستم اختصاصی برای ریسپانسیو */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -10px;
-    margin-right: -10px;
-}
-
-.col-4, .col-6, .col-12 {
-    padding: 0 10px;
-    margin-bottom: 15px;
-}
-
-.col-4 { width: 33.333%; }
-.col-6 { width: 50%; }
-.col-12 { width: 100%; }
-
-.input-group {
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.input-group label {
-    display: block;
+    gap: 6px;
     margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--primary-color);
 }
+label.field-label svg { width: 16px; height: 16px; }
 
 .input {
     width: 100%;
-    background-color: var(--input-bg);
+    background: var(--input-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 12px;
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
     font-size: 15px;
     font-family: inherit;
-    transition: border-color var(--anim-fast), box-shadow var(--anim-fast), transform var(--anim-fast);
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
 }
-
 .input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.15);
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.14);
+}
+select.input { appearance: none; cursor: pointer; }
+
+/* ===== دراپ‌داون سفارشی مدرن ===== */
+.msel { position: relative; width: 100%; font-family: inherit; }
+.msel-trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: var(--input-bg); color: var(--text-color);
+    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+    padding: 11px 12px; font-size: 15px; font-family: inherit; cursor: pointer; text-align: right;
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
+}
+.msel-trigger:hover { border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color)); }
+.msel.open .msel-trigger { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.14); }
+.msel-trigger .msel-value { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msel-trigger.is-placeholder .msel-value { color: var(--muted-color); }
+.msel-caret { color: var(--muted-color); transition: transform var(--anim-fast); flex-shrink: 0; display: flex; }
+.msel-caret svg { width: 18px; height: 18px; }
+.msel.open .msel-caret { transform: rotate(180deg); color: var(--primary-color); }
+
+.msel-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--panel-bg); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    padding: 6px; max-height: 240px; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--anim-fast), transform var(--anim-fast), visibility var(--anim-fast);
+}
+.msel.open .msel-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.msel-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--text-color);
+    transition: background var(--anim-fast); user-select: none;
+}
+.msel-opt:hover, .msel-opt.is-active { background: rgba(0,125,117,0.10); }
+.msel-opt.is-selected { color: var(--primary-color); font-weight: 700; }
+.msel-opt .msel-check { opacity: 0; color: var(--primary-color); display: flex; flex-shrink: 0; }
+.msel-opt .msel-check svg { width: 16px; height: 16px; }
+.msel-opt.is-selected .msel-check { opacity: 1; }
+.msel.field-invalid .msel-trigger { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.14) !important; }
+
+/* ===== حالت خطای فیلدها ===== */
+.input.field-invalid,
+.title-card.field-invalid,
+.editor-shell.field-invalid #editor {
+    border-color: var(--danger, #e74c3c) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.14) !important;
+}
+.title-card.field-invalid { animation: fieldShake 0.32s ease; }
+.input.field-invalid { animation: fieldShake 0.32s ease; }
+/* لیبل فیلدِ خطادار قرمز شود تا سریع دیده شود */
+.input-group.has-error label.field-label { color: var(--danger, #e74c3c); }
+
+.field-error {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger, #e74c3c);
+}
+.field-error.show { display: flex; animation: toastSlide 0.28s ease; }
+.field-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+@keyframes fieldShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }
 
-/* ادیتور */
+/* ===== ادیتور ===== */
 .editor-toolbar {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
-    padding: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .tb-btn {
-    background-color: var(--input-bg);
+    background: var(--surface-2);
     border: 1px solid var(--border-color);
     color: var(--text-color);
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    padding: 6px 8px;
+    padding: 7px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all var(--anim-fast);
 }
-
 .tb-btn:hover {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: #fff;
     border-color: var(--primary-color);
     transform: translateY(-2px);
 }
+.tb-btn svg { stroke: currentColor; }
+.tb-btn:hover svg { stroke: #fff; }
+.tb-btn svg circle, .tb-btn svg path[fill="#333"] { fill: currentColor; stroke: none; }
+.tb-btn:hover svg circle, .tb-btn:hover svg path[fill="#333"] { fill: #fff; }
 
-.tb-btn svg {
-    stroke: currentColor;
-}
-
-.tb-btn:hover svg {
-    stroke: #fff;
-}
-
-.tb-btn svg circle, .tb-btn svg path[fill="#333"] {
-    fill: currentColor;
-    stroke: none;
-}
-
-.tb-btn:hover svg circle, .tb-btn:hover svg path[fill="#333"] {
-    fill: #fff;
-}
+.tb-sep { width: 1px; height: 24px; background: var(--border-color); margin: 0 2px; }
 
 .tb-select {
-    background-color: var(--input-bg);
+    background: var(--surface-2);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 6px;
-    font-family: inherit;
-}
-
-.tb-select.small {
-    width: 70px;
-}
-
-#editor {
-    min-height: 300px;
-    border: 1px solid var(--border-color);
-    border-radius: 0 0 8px 8px;
-    padding: 15px;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    overflow-y: auto;
-    line-height: 1.8;
-}
-
-#editor:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-#editor img {
-    max-width: 100%;
-    height: auto;
     border-radius: 8px;
-}
-
-.color-row {
-    display: flex;
-    gap: 4px;
-    margin-right: auto;
-}
-
-.color-box {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
+    padding: 7px 6px;
+    font-family: inherit;
     cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.1);
 }
+.tb-select.small { width: 72px; }
 
-/* دکمه‌ها */
-.builder-toolbar {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
+.color-row { display: flex; gap: 5px; margin-right: auto; }
+.color-box {
+    width: 22px;
+    height: 22px;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 15px;
-    transition: transform var(--anim-fast), box-shadow var(--anim-fast), opacity var(--anim-fast);
-    font-family: inherit;
-    flex-grow: 1;
-    text-align: center;
+    border: 1px solid rgba(0,0,0,0.12);
+    transition: transform var(--anim-fast);
 }
+.color-box:hover { transform: scale(1.15); }
 
-.btn:hover {
-    opacity: var(--btn-hover-opacity);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+#editor {
+    min-height: 380px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    overflow-y: auto;
+    line-height: 1.9;
+    font-size: 16px;
 }
+#editor:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.10); }
+#editor:empty:before { content: attr(data-placeholder); color: var(--muted-color); opacity: 0.55; }
+#editor img { max-width: 100%; height: auto; border-radius: 10px; }
+
+/* ===== دکمه‌ها ===== */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: transform var(--anim-fast), box-shadow var(--anim-fast), opacity var(--anim-fast), background var(--anim-fast);
+}
+.btn svg { width: 17px; height: 17px; }
+.btn:hover { transform: translateY(-2px); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 .btn-save {
-    background: linear-gradient(135deg, var(--primary-color), #009b90);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #fff;
+    box-shadow: var(--shadow-sm);
 }
+.btn-save:hover { box-shadow: var(--shadow-md); }
 
-.btn-preview {
-    background: linear-gradient(135deg, var(--secondary-color), #ffbf5a);
-    color: white;
+.btn-ghost {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
+.btn-ghost:hover { background: rgba(0,125,117,0.06); }
 
 .btn-insert {
-    background-color: var(--panel-bg);
+    background: transparent;
     border: 1px dashed var(--primary-color);
     color: var(--primary-color);
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all var(--anim-fast);
     font-family: inherit;
-}
-
-.btn-insert:hover {
-    background-color: var(--primary-color);
-    color: #fff;
-    transform: translateY(-1px);
-}
-
-/* تصاویر شاخص و گالری */
-input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    background: var(--input-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-}
-
-.image-preview-wrapper {
-    margin-top: 10px;
-}
-
-.image-preview-item {
-    position: relative;
-    display: inline-block;
-}
-
-.image-preview-item img {
-    max-width: 150px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.image-remove-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-}
-
-.gallery-row {
-    display: flex;
-    gap: 10px;
-    margin: 10px 0;
-    flex-wrap: wrap;
-}
-
-.gallery-row img {
-    flex: 1;
-    min-width: 30%;
-    max-width: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.status-msg {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    display: none;
-}
-
-.status-msg:not(:empty) {
-    display: block;
-    animation: toastIn 340ms ease both;
-}
-
-.status-err { background: #ffeaa7; color: #d63031; border: 1px solid #fdcb6e; }
-.status-ok { background: #55efc4; color: #00b894; border: 1px solid #00b894; }
-
-/* نوار پیشرفت آپلود */
-.upload-progress {
-    margin-top: 12px;
-    display: none;
-}
-.upload-progress.active { display: block; }
-.upload-progress .bar-track {
-    width: 100%;
-    height: 10px;
-    background: #e9ecef;
-    border-radius: 6px;
-    overflow: hidden;
-}
-.upload-progress .bar-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(135deg, var(--primary-color), #009b90);
-    border-radius: 6px;
-    transition: width 0.15s ease;
-}
-.upload-progress .bar-label {
-    margin-top: 6px;
     font-size: 13px;
-    color: var(--primary-color);
-    text-align: center;
-}
-
-.publish-date-row {
-    display: flex;
-    gap: 8px;
+    font-weight: 600;
+    transition: all var(--anim-fast);
+    display: inline-flex;
     align-items: center;
+    gap: 6px;
 }
+.btn-insert:hover { background: var(--primary-color); color: #fff; }
 
-.publish-date-row .input {
-    flex: 1;
-}
-
-.date-picker-btn {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 10px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: inherit;
-    white-space: nowrap;
-}
-
-.date-picker-btn:hover {
-    background-color: var(--primary-color);
-    color: #fff;
-}
-
-.date-modal {
-    position: fixed;
-    inset: 0;
-    background: var(--modal-overlay);
-    display: none;
+/* ===== آپلود تصویر شاخص (Dropzone) ===== */
+.dropzone {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10000;
-    padding: 12px;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: all var(--anim-fast);
+    overflow: hidden;
 }
+.dropzone:hover, .dropzone.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(0,125,117,0.05);
+}
+.dropzone .dz-icon { color: var(--muted-color); transition: color var(--anim-fast); }
+.dropzone:hover .dz-icon { color: var(--primary-color); }
+.dropzone .dz-icon svg { width: 38px; height: 38px; }
+.dropzone .dz-main { font-size: 14px; font-weight: 600; color: var(--text-color); margin-top: 8px; }
+.dropzone .dz-hint { font-size: 12px; color: var(--muted-color); margin-top: 4px; }
 
-.date-modal.show {
+.dz-preview {
+    position: absolute;
+    inset: 0;
+    display: none;
+}
+.dz-preview.show { display: block; }
+.dz-preview img { width: 100%; height: 100%; object-fit: cover; }
+.dz-remove {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(231,76,60,0.92);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.dz-remove svg { width: 16px; height: 16px; }
+
+/* ===== ویجت امتیاز سئو ===== */
+.seo-widget { display: flex; align-items: center; gap: 16px; }
+.seo-ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.seo-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.seo-ring .ring-track { stroke: var(--border-color); }
+.seo-ring .ring-fill { transition: stroke-dasharray var(--anim-mid) ease, stroke var(--anim-mid) ease; }
+.seo-ring .ring-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800; color: var(--text-color);
+}
+.seo-info { flex: 1; min-width: 0; }
+.seo-state { font-size: 14px; color: var(--text-color); }
+.seo-state b { font-weight: 800; }
+.seo-tip { font-size: 12px; color: var(--muted-color); margin-top: 4px; }
+
+/* ===== چیپ تگ‌ها ===== */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: var(--surface-2);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    font-size: 12px;
+}
+.chip button {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted-color); padding: 0; display: flex;
+    line-height: 1;
+}
+.chip button:hover { color: #e74c3c; }
+.chip button svg { width: 13px; height: 13px; }
+
+/* بخش‌بندی کارت تنظیمات */
+.settings-card { overflow: visible; }   /* تا منوی دراپ‌داون سفارشی بریده نشود */
+.settings-card .input-group { padding: 16px; margin: 0; border-bottom: 1px solid var(--border-color); position: relative; }
+.settings-card .input-group:last-child { border-bottom: none; }
+
+.publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.publish-date-row .input { flex: 1; min-width: 140px; }
+
+/* ===== توست وضعیت (موفقیت / خطا / در حال انجام) ===== */
+.toast {
+    position: fixed;
+    bottom: 22px;
+    left: 22px;
+    z-index: 10001;
+    width: min(380px, calc(100vw - 44px));
+    display: none;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+.toast.show { display: block; animation: toastSlide 360ms cubic-bezier(.2,.8,.2,1) both; }
+.toast.hide { animation: toastOut 260ms ease both; }
+
+/* نوار رنگی کناری بر اساس نوع پیام */
+.toast::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;     /* در RTL سمت چپ کارت */
+    width: 5px;
+    background: var(--primary-color);
+}
+.toast.is-error::before  { background: var(--danger, #e74c3c); }
+.toast.is-success::before { background: #00b894; }
+.toast.is-info::before    { background: var(--secondary-color); }
+
+.toast-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+}
+.toast-ic {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+}
+.toast-ic svg { width: 20px; height: 20px; }
+.toast.is-error  .toast-ic { background: var(--danger, #e74c3c); }
+.toast.is-success .toast-ic { background: #00b894; }
+.toast.is-info    .toast-ic { background: var(--secondary-color); }
+/* اسپینر چرخان برای حالت در حال انجام */
+.toast.is-info .toast-ic.spin svg { animation: toastSpin 0.9s linear infinite; }
+
+.toast-body { flex: 1; min-width: 0; padding-top: 1px; }
+.toast-title { font-size: 14px; font-weight: 800; color: var(--text-color); margin: 0 0 2px; }
+.toast-msg { font-size: 13px; color: var(--muted-color); line-height: 1.7; word-break: break-word; }
+
+.toast-close {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--muted-color);
+    cursor: pointer;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
+}
+.toast-close:hover { background: var(--surface-2); color: var(--text-color); }
+.toast-close svg { width: 16px; height: 16px; }
+
+/* نوار پیشرفت داخل توست */
+.toast-progress { display: none; padding: 0 16px 14px; }
+.toast-progress.active { display: block; }
+.toast-progress .bar-track { width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; }
+.toast-progress .bar-fill {
+    height: 100%; width: 0%; border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    transition: width 0.15s ease;
 }
 
-.date-modal.show .date-modal-box {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-}
+@keyframes toastSlide { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut   { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+@keyframes toastSpin  { to { transform: rotate(360deg); } }
 
+/* ===== مودال‌ها ===== */
+.date-modal {
+    position: fixed; inset: 0;
+    background: var(--modal-overlay);
+    display: none; align-items: center; justify-content: center;
+    z-index: 10000; padding: 12px;
+}
+.date-modal.show { display: flex; }
+.date-modal.show .date-modal-box { transform: translateY(0) scale(1); opacity: 1; }
 .date-modal-box {
     background: var(--panel-bg);
     color: var(--text-color);
-    width: 100%;
-    max-width: 380px;
+    width: 100%; max-width: 380px;
     border-radius: 16px;
     border: 1px solid var(--border-color);
-    padding: 14px;
-    box-shadow: 0 20px 35px rgba(0,0,0,0.18);
+    padding: 16px;
+    box-shadow: var(--shadow-md);
     transform: translateY(10px) scale(0.98);
     opacity: 0;
     transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
 }
-
-.date-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
+.date-modal-box { max-width: 360px; }
+.date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.date-modal-title { margin: 0; color: var(--primary-color); font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.date-modal-title svg { width: 18px; height: 18px; }
+.dp-close {
+    width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--muted-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
 }
+.dp-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.dp-close svg { width: 15px; height: 15px; }
 
-.date-modal-title {
-    margin: 0;
-    color: var(--primary-color);
-    font-size: 16px;
-    font-weight: 800;
+/* ===== تقویم گرید ===== */
+.dp-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.dp-nav-btn {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast); flex-shrink: 0;
 }
-
-.date-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+.dp-nav-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-nav-btn svg { width: 17px; height: 17px; }
+.dp-month-label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.dp-label-btn {
+    border: none; background: transparent; color: var(--text-color); cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 800; padding: 5px 10px; border-radius: 8px;
+    transition: background var(--anim-fast), color var(--anim-fast);
 }
+.dp-label-btn:hover { background: rgba(0,125,117,0.10); color: var(--primary-color); }
 
-.date-grid .input-group {
-    margin-bottom: 0;
+/* پنل انتخاب ماه/سال */
+.dp-grid-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px 0; max-height: 252px; overflow-y: auto; }
+.dp-pick-item {
+    border: 1px solid var(--border-color); background: var(--surface-2); color: var(--text-color);
+    border-radius: 10px; padding: 12px 6px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;
+    transition: all var(--anim-fast);
 }
+.dp-pick-item:hover { background: rgba(0,125,117,0.10); border-color: var(--primary-color); }
+.dp-pick-item.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; border-color: transparent; }
+.dp-pick-item.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); }
 
-.date-actions {
-    margin-top: 14px;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+.dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.dp-weekdays span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted-color); padding: 4px 0; }
+.dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.dp-day {
+    aspect-ratio: 1; border: none; background: transparent; color: var(--text-color);
+    border-radius: 10px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; transition: background var(--anim-fast), color var(--anim-fast), transform var(--anim-fast);
 }
+.dp-day:hover { background: rgba(0,125,117,0.10); }
+.dp-day.is-empty { background: transparent; cursor: default; pointer-events: none; }
+.dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); color: var(--secondary-color); }
+.dp-day.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); transform: scale(1.04); }
 
-.calendar-box,
-.time-box {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px;
-    background: var(--input-bg);
+/* ===== انتخاب زمان ===== */
+.dp-time { margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px; }
+.dp-time-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+.dp-time-head svg { width: 15px; height: 15px; }
+.dp-time-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.dp-stepper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dp-step-btn {
+    width: 30px; height: 24px; border-radius: 7px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
 }
-
-.time-box {
-    margin-top: 10px;
+.dp-step-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-step-btn svg { width: 14px; height: 14px; }
+.dp-time-val {
+    width: 56px; text-align: center; font-size: 22px; font-weight: 800; color: var(--text-color);
+    background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 0; font-family: inherit;
 }
+.dp-time-colon { font-size: 22px; font-weight: 800; color: var(--primary-color); }
 
-.time-box-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 8px;
-}
+.date-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 
-.time-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 8px;
-    align-items: center;
-}
-
-.time-separator {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--primary-color);
-}
-
-/* پیش‌نمایش مودال */
 #previewModal {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: var(--modal-overlay);
-    display: none;
-    z-index: 9999;
-    overflow-y: auto;
-    padding: 20px;
+    display: none; z-index: 9999; overflow-y: auto;
+    padding: 24px 16px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
-
 .modal-content {
-    max-width: 900px;
-    margin: 30px auto;
-    background: var(--panel-bg);
-    color: var(--text-color);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    max-width: 880px; margin: 0 auto;
+    background: var(--panel-bg); color: var(--text-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
     position: relative;
+    overflow: hidden;
     transform: translateY(14px) scale(0.98);
     opacity: 0;
     transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
 }
+#previewModal.show .modal-content { transform: translateY(0) scale(1); opacity: 1; }
 
-#previewModal.show .modal-content {
-    transform: translateY(0) scale(1);
-    opacity: 1;
+/* نوار بالای مودال پیش‌نمایش */
+.preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.preview-bar-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 800; color: var(--header-text);
+}
+.preview-bar-title .ph-ic { width: 34px; height: 34px; border-radius: 10px; }
+.preview-bar-title .ph-ic svg { width: 17px; height: 17px; }
+.preview-close {
+    background: transparent;
+    color: var(--muted-color);
+    border: 1px solid var(--border-color);
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
+    font-family: inherit;
+}
+.preview-close:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.preview-close svg { width: 18px; height: 18px; }
+
+.preview-scroll { padding: 22px; }
+
+/* مقاله پیش‌نمایش */
+.pv-article { animation: toastIn 380ms ease both; }
+.pv-hero {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: var(--surface-2);
+}
+.pv-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 55%);
+}
+.pv-hero-cat {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff; font-size: 12px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+}
+.pv-hero-title {
+    position: absolute; right: 18px; left: 18px; bottom: 16px; z-index: 2;
+    color: #fff; font-size: 26px; font-weight: 800; line-height: 1.5;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    margin: 0;
+}
+.pv-title-fallback {
+    font-size: 26px; font-weight: 800; color: var(--header-text);
+    margin: 0 0 14px; line-height: 1.5;
+}
+.pv-meta {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+}
+.pv-meta .chip { background: var(--surface-2); }
+.pv-meta .chip svg { width: 14px; height: 14px; color: var(--primary-color); }
+.pv-body {
+    line-height: 2.1; font-size: 16px; color: var(--text-color);
+}
+.pv-body img { max-width: 100%; height: auto; border-radius: 10px; }
+.pv-body .gallery-row img { border-radius: 8px; }
+.pv-empty { color: var(--muted-color); font-style: italic; }
+
+/* پنل خلاصه سئو در پیش‌نمایش */
+.pv-seo {
+    margin-top: 26px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    padding: 18px;
+}
+.pv-seo-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.pv-seo-head .card-title { margin: 0; }
+.pv-seo-badge {
+    font-size: 13px; font-weight: 800;
+    padding: 4px 12px; border-radius: 999px; color: #fff;
+}
+.pv-seo-bar-track {
+    height: 12px; background: var(--border-color);
+    border-radius: 999px; overflow: hidden;
+}
+.pv-seo-bar-fill { height: 100%; border-radius: 999px; transition: width .5s ease, background .5s ease; }
+.pv-seo-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px; font-size: 13px; color: var(--muted-color);
+}
+.pv-seo-foot b { color: var(--text-color); }
+.pv-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px; }
+.pv-check {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-color);
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+}
+.pv-check svg { width: 16px; height: 16px; flex-shrink: 0; }
+.pv-check.ok svg { color: #00b894; }
+.pv-check.no { color: var(--muted-color); }
+.pv-check.no svg { color: var(--muted-color); opacity: 0.7; }
+
+/* ===== ریسپانسیو ===== */
+@media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    #title { font-size: 22px; }
+    .eh-actions { width: 100%; }
+    .eh-actions .btn { flex: 1; }
+    .tb-btn { flex: 1 1 calc(16.66% - 6px); }
 }
 
-/* استایل‌های ریسپانسیو (برای موبایل) */
-@media (max-width: 768px) {
-    .col-4, .col-6 { width: 100%; }
-    
-    .panel-heading {
-        padding: 15px;
-    }
+/* ===== انیمیشن‌ها ===== */
+.col-side > .card { animation-delay: 90ms; }
+.col-side > .card:nth-child(2) { animation-delay: 150ms; }
+.col-side > .card:nth-child(3) { animation-delay: 210ms; }
 
-    .btn {
-        width: 100%;
-    }
-    
-    .color-row {
-        margin-top: 10px;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .modal-content {
-        padding: 15px;
-        margin: 10px auto;
-    }
-    
-    .tb-btn {
-        flex: 1 1 calc(16.66% - 6px); /* شش دکمه در هر ردیف موبایل */
-    }
-    
-    .tb-select {
-        flex: 1 1 100%;
-        margin-top: 5px;
-    }
-}
-
-.panel-body > .input-group,
-.panel-body > .row,
-.panel-body > .builder-toolbar,
-.panel-body > #statusBox {
-    opacity: 0;
-    transform: translateY(10px);
-    animation: revealItem 500ms cubic-bezier(.2,.8,.2,1) both;
-}
-
-.panel-body > .input-group:nth-of-type(1) { animation-delay: 60ms; }
-.panel-body > .input-group:nth-of-type(2) { animation-delay: 120ms; }
-.panel-body > .input-group:nth-of-type(3) { animation-delay: 180ms; }
-.panel-body > .row:nth-of-type(1) { animation-delay: 220ms; }
-.panel-body > .row:nth-of-type(2) { animation-delay: 260ms; }
-.panel-body > .input-group:nth-of-type(4) { animation-delay: 300ms; }
-.panel-body > .builder-toolbar { animation-delay: 340ms; }
-
-@keyframes pageRise {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes cardPop {
-    from { opacity: 0; transform: translateY(16px) scale(0.985); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes revealItem {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes toastIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+@keyframes pageRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cardPop { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-    }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
@@ -713,270 +934,427 @@ input[type="file"] {
 <body>
 
 <div class="container">
-<div class="card">
 
-<div class="panel-heading">
-    <h3 class="panel-title">ایجاد خبر جدید</h3>
-    <!-- دکمه‌ی تغییر تم حذف شد — تم از «داشبورد مدیریت» کنترل می‌شود -->
-</div>
-
-<div class="panel-body">
-    <div class="input-group">
-        <label>عنوان خبر</label>
-        <input type="text" class="input" id="title" value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
-    </div>
-
-    <div class="input-group">
-        <label>متن خبر</label>
-
-        <div class="editor-toolbar">
-
-            <button type="button" onclick="format('bold')" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24"><path d="M7 5v14h6a4 4 0 0 0 0-8H7m6 0a4 4 0 0 0 0-8H7" fill="none" stroke-width="2"/></svg>
-            </button>
-
-            <button type="button" onclick="format('italic')" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4" stroke-width="2"/><line x1="14" y1="20" x2="5" y2="20" stroke-width="2"/><line x1="15" y1="4" x2="9" y2="20" stroke-width="2"/></svg>
-            </button>
-
-            <button type="button" onclick="format('underline')" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4" fill="none" stroke-width="2"/><line x1="4" y1="20" x2="20" y2="20" stroke-width="2"/></svg>
-            </button>
-
-            <select id="fontSelect" onchange="setFont(this)" class="tb-select">
-                <option value="">فونت</option>
-                <option value="Tahoma">Tahoma</option>
-                <option value="Arial">Arial</option>
-                <option value="Vazirmatn">Vazirmatn</option>
-                <option value="Sahel">Sahel</option>
-                <option value="Shabnam">Shabnam</option>
-            </select>
-
-            <select id="fontSizeSelect" onchange="setFontSize(this)" class="tb-select small">
-                <option value="">سایز</option>
-                <option value="12">12</option>
-                <option value="14">14</option>
-                <option value="16">16</option>
-                <option value="18">18</option>
-                <option value="20">20</option>
-                <option value="24">24</option>
-                <option value="28">28</option>
-            </select>
-
-            <select id="headingSelect" onchange="setHeading(this)" class="tb-select small">
-                <option value="p"> عادی </option>
-                <option value="h2">H2</option>
-                <option value="h3">H3</option>
-                <option value="h4">H4</option>
-                <option value="h5">H5</option>
-                <option value="h6">H6</option>
-            </select>
-
-            <button type="button" onclick="format('insertUnorderedList')" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <circle cx="5" cy="6" r="2" fill="#333"/>
-                    <circle cx="5" cy="12" r="2" fill="#333"/>
-                    <circle cx="5" cy="18" r="2" fill="#333"/>
-                    <line x1="10" y1="6" x2="20" y2="6" stroke-width="2"/>
-                    <line x1="10" y1="12" x2="20" y2="12" stroke-width="2"/>
-                    <line x1="10" y1="18" x2="20" y2="18" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="insertLink()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <path d="M10 14a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" fill="none" stroke-width="2"/>
-                    <path d="M14 10a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" fill="none" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="clearFormat()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <path d="M3 6h18M8 6v12m8-12v12" stroke-width="2" fill="none"/>
-                    <line x1="4" y1="18" x2="20" y2="4" stroke="red" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="alignLeft()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
-                    <line x1="3" y1="12" x2="15" y2="12" stroke-width="2"/>
-                    <line x1="3" y1="18" x2="18" y2="18" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="alignCenter()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <line x1="6" y1="6" x2="18" y2="6" stroke-width="2"/>
-                    <line x1="4" y1="12" x2="20" y2="12" stroke-width="2"/>
-                    <line x1="6" y1="18" x2="18" y2="18" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="alignRight()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <line x1="21" y1="6" x2="3" y2="6" stroke-width="2"/>
-                    <line x1="21" y1="12" x2="9" y2="12" stroke-width="2"/>
-                    <line x1="21" y1="18" x2="6" y2="18" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <button type="button" onclick="alignJustify()" class="tb-btn">
-                <svg width="18" viewBox="0 0 24 24">
-                    <line x1="3" y1="6"  x2="21" y2="6"  stroke-width="2"/>
-                    <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
-                    <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
-                </svg>
-            </button>
-
-            <div class="color-row">
-                <div class="color-box" style="background:#000" onclick="applyColor('#000')"></div>
-                <div class="color-box" style="background:#333" onclick="applyColor('#333')"></div>
-                <div class="color-box" style="background:#007D75" onclick="applyColor('#007D75')"></div>
-                <div class="color-box" style="background:#009688" onclick="applyColor('#009688')"></div>
-                <div class="color-box" style="background:#1565c0" onclick="applyColor('#1565c0')"></div>
-                <div class="color-box" style="background:#c62828" onclick="applyColor('#c62828')"></div>
-                <div class="color-box" style="background:#F79F1F" onclick="applyColor('#F79F1F')"></div>
-                <div class="color-box" style="background:#6a1b9a" onclick="applyColor('#6a1b9a')"></div>
+    <!-- هدر چسبان -->
+    <div class="editor-header">
+        <div class="eh-title">
+            <span class="ph-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </span>
+            <div>
+                <h1><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر جدید' ?></h1>
+                <p>مدیریت محتوای دیجیتال</p>
             </div>
-
+            <span class="draft-badge">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                پیش‌نویس ذخیره نشده
+            </span>
         </div>
-
-        <div id="editor" contenteditable="true"><?= $news_data ? $news_data['content'] : '' ?></div>
-    </div>
-
-    <div class="input-group">
-        <label>کلمات کلیدی</label>
-        <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>">
-    </div>
-
- <div class="row">
-    <div class="col-6">
-        <div class="input-group">
-            <label>📷 تصویر شاخص</label>
-            <input type="file" id="featured_image" name="featured_image" accept="image/*">
-            <input type="hidden" id="remove_featured_flag" name="remove_featured_flag" value="0">
-
-            <div id="featuredPreview">
-                <?php if (!empty($existing_image_url)): ?>
-                    <div class="image-preview-item">
-                        <img src="<?= htmlspecialchars($existing_image_url) ?>" alt="تصویر شاخص">
-                        <button class="image-remove-btn" type="button" onclick="removeFeatured()">×</button>
-                    </div>
-                <?php endif; ?>
-            </div>
+        <div class="eh-actions">
+            <button type="button" class="btn btn-ghost" onclick="openPreview()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                پیش‌نمایش
+            </button>
+            <button type="button" class="btn btn-save" onclick="saveNews()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <?= $id > 0 ? 'ذخیره ویرایش' : 'ثبت خبر نهایی' ?>
+            </button>
         </div>
     </div>
 
-    <div class="col-6">
-        <div class="input-group">
-            <label>درج تصویر در متن</label>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button type="button" class="btn-insert" onclick="uploadSingleImage()">📷 درج تصویر تکی</button>
-                <button type="button" class="btn-insert" onclick="uploadGalleryInline()">🖼️ درج گالری سه‌تایی</button>
-            </div>
-            <div style="font-size:12px;color:var(--text-color);opacity:0.7;margin-top:6px">
-                تصاویر در محل کرسر وارد می‌شوند.
-            </div>
-        </div>
-    </div>
-</div>
+    <div class="layout">
 
+        <!-- ستون اصلی: عنوان + ادیتور -->
+        <div class="col-main">
 
-    <div class="row">
-        <div class="col-4">
-            <div class="input-group">
-                <label>نویسنده</label>
-                <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>">
-            </div>
-        </div>
-
-        <div class="col-4">
-            <div class="input-group">
-                <label>تاریخ و زمان انتشار</label>
-                <div class="publish-date-row">
-                    <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
-                    <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
-                    <button type="button" class="date-picker-btn" onclick="openDatePicker()">📅 انتخاب</button>
-                    <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
+            <!-- عنوان خبر -->
+            <div class="card title-card" id="titleCard">
+                <input type="text" class="" id="title" maxlength="120" placeholder="عنوان خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
+                <div class="title-meta">
+                    <span>حداکثر ۱۲۰ کاراکتر</span>
+                    <span id="titleCounter">0/120</span>
+                </div>
+                <div class="field-error" id="titleError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>وارد کردن عنوان خبر الزامی است.</span>
                 </div>
             </div>
-        </div>
 
-        <div class="col-4">
-            <div class="input-group">
-                <label>دسته خبر</label>
-                <select id="category_id" name="category_id" class="input" required>
-                    <option value="">انتخاب دسته</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?= (int)$category['id'] ?>" <?= $selectedCategoryId === (int)$category['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($category['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <!-- متن خبر -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    متن خبر
+                </h3>
+
+                <div class="editor-toolbar">
+
+                    <button type="button" onclick="format('bold')" class="tb-btn" title="درشت">
+                        <svg width="18" viewBox="0 0 24 24"><path d="M7 5v14h6a4 4 0 0 0 0-8H7m6 0a4 4 0 0 0 0-8H7" fill="none" stroke-width="2"/></svg>
+                    </button>
+
+                    <button type="button" onclick="format('italic')" class="tb-btn" title="مورب">
+                        <svg width="18" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4" stroke-width="2"/><line x1="14" y1="20" x2="5" y2="20" stroke-width="2"/><line x1="15" y1="4" x2="9" y2="20" stroke-width="2"/></svg>
+                    </button>
+
+                    <button type="button" onclick="format('underline')" class="tb-btn" title="زیرخط">
+                        <svg width="18" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4" fill="none" stroke-width="2"/><line x1="4" y1="20" x2="20" y2="20" stroke-width="2"/></svg>
+                    </button>
+
+                    <div class="tb-sep"></div>
+
+                    <select id="fontSelect" onchange="setFont(this)" class="tb-select">
+                        <option value="">فونت</option>
+                        <option value="Tahoma">Tahoma</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Vazirmatn">Vazirmatn</option>
+                        <option value="Sahel">Sahel</option>
+                        <option value="Shabnam">Shabnam</option>
+                    </select>
+
+                    <select id="fontSizeSelect" onchange="setFontSize(this)" class="tb-select small">
+                        <option value="">سایز</option>
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                        <option value="18">18</option>
+                        <option value="20">20</option>
+                        <option value="24">24</option>
+                        <option value="28">28</option>
+                    </select>
+
+                    <select id="headingSelect" onchange="setHeading(this)" class="tb-select small">
+                        <option value="p"> عادی </option>
+                        <option value="h2">H2</option>
+                        <option value="h3">H3</option>
+                        <option value="h4">H4</option>
+                        <option value="h5">H5</option>
+                        <option value="h6">H6</option>
+                    </select>
+
+                    <div class="tb-sep"></div>
+
+                    <button type="button" onclick="format('insertUnorderedList')" class="tb-btn" title="لیست">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <circle cx="5" cy="6" r="2" fill="#333"/>
+                            <circle cx="5" cy="12" r="2" fill="#333"/>
+                            <circle cx="5" cy="18" r="2" fill="#333"/>
+                            <line x1="10" y1="6" x2="20" y2="6" stroke-width="2"/>
+                            <line x1="10" y1="12" x2="20" y2="12" stroke-width="2"/>
+                            <line x1="10" y1="18" x2="20" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="insertLink()" class="tb-btn" title="پیوند">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <path d="M10 14a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" fill="none" stroke-width="2"/>
+                            <path d="M14 10a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" fill="none" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="clearFormat()" class="tb-btn" title="حذف فرمت">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <path d="M3 6h18M8 6v12m8-12v12" stroke-width="2" fill="none"/>
+                            <line x1="4" y1="18" x2="20" y2="4" stroke="red" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <div class="tb-sep"></div>
+
+                    <button type="button" onclick="alignRight()" class="tb-btn" title="راست‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="21" y1="6" x2="3" y2="6" stroke-width="2"/>
+                            <line x1="21" y1="12" x2="9" y2="12" stroke-width="2"/>
+                            <line x1="21" y1="18" x2="6" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignCenter()" class="tb-btn" title="وسط‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="6" y1="6" x2="18" y2="6" stroke-width="2"/>
+                            <line x1="4" y1="12" x2="20" y2="12" stroke-width="2"/>
+                            <line x1="6" y1="18" x2="18" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignLeft()" class="tb-btn" title="چپ‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+                            <line x1="3" y1="12" x2="15" y2="12" stroke-width="2"/>
+                            <line x1="3" y1="18" x2="18" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignJustify()" class="tb-btn" title="هم‌تراز">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="3" y1="6"  x2="21" y2="6"  stroke-width="2"/>
+                            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
+                            <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <div class="color-row">
+                        <div class="color-box" style="background:#000" onclick="applyColor('#000')"></div>
+                        <div class="color-box" style="background:#333" onclick="applyColor('#333')"></div>
+                        <div class="color-box" style="background:#007D75" onclick="applyColor('#007D75')"></div>
+                        <div class="color-box" style="background:#009688" onclick="applyColor('#009688')"></div>
+                        <div class="color-box" style="background:#1565c0" onclick="applyColor('#1565c0')"></div>
+                        <div class="color-box" style="background:#c62828" onclick="applyColor('#c62828')"></div>
+                        <div class="color-box" style="background:#F79F1F" onclick="applyColor('#F79F1F')"></div>
+                        <div class="color-box" style="background:#6a1b9a" onclick="applyColor('#6a1b9a')"></div>
+                    </div>
+
+                </div>
+
+                <div class="editor-shell" id="editorShell">
+                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                </div>
+                <div class="field-error" id="contentError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>نوشتن متن خبر الزامی است.</span>
+                </div>
+
+                <!-- درج تصویر در متن -->
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+                    <button type="button" class="btn-insert" onclick="uploadSingleImage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        درج تصویر تکی
+                    </button>
+                    <button type="button" class="btn-insert" onclick="uploadGalleryInline()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        درج گالری سه‌تایی
+                    </button>
+                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">تصاویر در محل کرسر وارد می‌شوند.</span>
+                </div>
+
             </div>
+
         </div>
+
+        <!-- ستون کناری: متادیتا -->
+        <div class="col-side">
+
+            <!-- تصویر شاخص -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    تصویر شاخص
+                </h3>
+
+                <input type="file" id="featured_image" name="featured_image" accept="image/*" style="display:none;">
+                <input type="hidden" id="remove_featured_flag" name="remove_featured_flag" value="0">
+
+                <div class="dropzone" id="dropzone">
+                    <div class="dz-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="dz-main">تصویر را اینجا بکشید یا کلیک کنید</div>
+                    <div class="dz-hint">PNG, JPG حداکثر ۵ مگابایت</div>
+
+                    <div class="dz-preview <?= !empty($existing_image_url) ? 'show' : '' ?>" id="dzPreview">
+                        <img id="dzImg" src="<?= htmlspecialchars($existing_image_url) ?>" alt="پیش‌نمایش تصویر">
+                        <button class="dz-remove" type="button" onclick="removeFeatured(event)" title="حذف تصویر">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- امتیاز سئو -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    امتیاز سئو
+                </h3>
+                <div class="seo-widget">
+                    <div class="seo-ring">
+                        <svg viewBox="0 0 36 36">
+                            <path class="ring-track" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"/>
+                            <path class="ring-fill" id="seoRingFill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F79F1F" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                        <span class="ring-num" id="seoRingNum">۰</span>
+                    </div>
+                    <div class="seo-info">
+                        <div class="seo-state">وضعیت: <b id="seoState" style="color:var(--muted-color)">—</b></div>
+                        <div class="seo-tip" id="seoTip">با پر کردن فیلدها امتیاز محاسبه می‌شود.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنظیمات -->
+            <div class="card settings-card">
+
+                <div class="input-group">
+                    <label class="field-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        تاریخ و زمان انتشار
+                    </label>
+                    <div class="publish-date-row">
+                        <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
+                        <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
+                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
+                        <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
+                    </div>
+                </div>
+
+                <div class="input-group" id="categoryGroup">
+                    <label class="field-label" for="category_id">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        دسته خبر
+                    </label>
+                    <select id="category_id" name="category_id" class="input" required>
+                        <option value="">انتخاب دسته</option>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= (int)$category['id'] ?>" <?= $selectedCategoryId === (int)$category['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($category['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="field-error" id="categoryError">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>انتخاب دسته‌بندی الزامی است.</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="author">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        نویسنده
+                    </label>
+                    <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>" placeholder="نام نویسنده">
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="keywords">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><circle cx="12" cy="12" r="2"/></svg>
+                        کلمات کلیدی
+                    </label>
+                    <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="کلمات کلیدی را وارد کنید">
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="tags">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        تگ‌های سئو
+                    </label>
+                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
+                    <div class="chips" id="tagsChips"></div>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="input-group">
-        <label>تگ‌های SEO</label>
-        <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="مثلاً اقتصاد، مدیریت، دانشگاه...">
+</div>
+
+<!-- توست وضعیت (موفقیت / خطا / در حال انجام) -->
+<div id="statusToast" class="toast" role="status" aria-live="polite">
+    <div class="toast-row">
+        <div class="toast-ic" id="toastIcon"></div>
+        <div class="toast-body">
+            <p class="toast-title" id="toastTitle"></p>
+            <div class="toast-msg" id="toastMsg"></div>
+        </div>
+        <button type="button" class="toast-close" onclick="hideStatus()" aria-label="بستن">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
     </div>
-
-    <div class="builder-toolbar">
-        <button class="btn btn-save" onclick="saveNews()"><?= $id > 0 ? 'ویرایش خبر' : 'ثبت خبر نهایی' ?></button>
-        <button type="button" class="btn btn-preview" onclick="openPreview()">پیش‌نمایش</button>
-    </div>
-
-    <div id="statusBox" class="status-msg"></div>
-
-    <div id="uploadProgress" class="upload-progress">
+    <div id="uploadProgress" class="toast-progress">
         <div class="bar-track"><div id="uploadBarFill" class="bar-fill"></div></div>
-        <div id="uploadBarLabel" class="bar-label">در حال آپلود...</div>
-    </div>
-
-</div> </div> </div> <div id="previewModal">
-    <div class="modal-content">
-        <button onclick="closePreview()" style="position:absolute;top:15px;left:15px;background:#e74c3c;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:inherit;">بستن</button>
-        <div id="previewContent" style="margin-top: 20px;"></div>
     </div>
 </div>
 
+<!-- مودال پیش‌نمایش -->
+<div id="previewModal">
+    <div class="modal-content">
+        <div class="preview-bar">
+            <div class="preview-bar-title">
+                <span class="ph-ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </span>
+                پیش‌نمایش خبر
+            </div>
+            <button onclick="closePreview()" class="preview-close" title="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="preview-scroll">
+            <div id="previewContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال انتخاب تاریخ (تقویم شمسی مدرن) -->
 <div id="dateModal" class="date-modal" onclick="if(event.target===this) closeDatePicker()">
     <div class="date-modal-box">
         <div class="date-header">
-            <h4 class="date-modal-title">تقویم فارسی</h4>
-            <button type="button" class="btn-insert" style="padding:6px 10px" onclick="closeDatePicker()">✕</button>
+            <h4 class="date-modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                تقویم شمسی
+            </h4>
+            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-        <div class="calendar-box">
-            <div class="date-grid">
-                <div class="input-group">
-                    <label>سال</label>
-                    <select id="jy" class="input"></select>
+
+        <!-- ناوبری ماه -->
+        <div class="dp-nav">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="dp-month-label">
+                <button type="button" class="dp-label-btn" id="dpMonthBtn" onclick="dpToggleView('months')">—</button>
+                <button type="button" class="dp-label-btn" id="dpYearBtn" onclick="dpToggleView('years')">—</button>
+            </div>
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <!-- نمای روز -->
+        <div class="dp-view" id="dpDayView">
+            <div class="dp-weekdays">
+                <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+            </div>
+            <div class="dp-days" id="dpDays"></div>
+        </div>
+        <!-- نمای ماه -->
+        <div class="dp-view dp-grid-pick" id="dpMonthView" style="display:none;"></div>
+        <!-- نمای سال -->
+        <div class="dp-view dp-grid-pick" id="dpYearView" style="display:none;"></div>
+
+        <!-- انتخاب زمان -->
+        <div class="dp-time">
+            <div class="dp-time-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                انتخاب زمان
+            </div>
+            <div class="dp-time-row">
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="ساعت بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpHourVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="ساعت کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
-                <div class="input-group">
-                    <label>ماه</label>
-                    <select id="jm" class="input"></select>
-                </div>
-                <div class="input-group">
-                    <label>روز</label>
-                    <select id="jd" class="input"></select>
+                <span class="dp-time-colon">:</span>
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="دقیقه بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="دقیقه کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
             </div>
         </div>
-        <div class="time-box">
-            <div class="time-box-title">انتخاب زمان</div>
-            <div class="time-grid">
-                <select id="hh" class="input"></select>
-                <span class="time-separator">:</span>
-                <select id="mm" class="input"></select>
-            </div>
-        </div>
+
         <div class="date-actions">
             <button type="button" class="btn-insert" onclick="setPickerNow()">اکنون</button>
             <button type="button" class="btn-insert" onclick="closeDatePicker()">انصراف</button>
-            <button type="button" class="btn btn-save" style="flex-grow:0;padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
+            <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
         </div>
+
+        <!-- state مخفی که توابع تبدیل از آن می‌خوانند/می‌نویسند -->
+        <input type="hidden" id="jy"><input type="hidden" id="jm"><input type="hidden" id="jd">
+        <input type="hidden" id="hh"><input type="hidden" id="mm">
     </div>
 </div>
 
@@ -1084,29 +1462,64 @@ function alignLeft(){ format("justifyLeft"); }
 function alignCenter(){ format("justifyCenter"); }
 function alignJustify(){ format("justifyFull"); }
 
-/* =================== تصویر شاخص =================== */
+/* =================== شمارنده عنوان =================== */
+const titleInput = document.getElementById("title");
+const titleCounter = document.getElementById("titleCounter");
+function updateTitleCounter(){
+    const len = titleInput.value.length;
+    titleCounter.textContent = len + "/120";
+    titleCounter.classList.toggle("over", len > 100);
+}
+titleInput.addEventListener("input", updateTitleCounter);
+
+/* =================== تصویر شاخص (Dropzone) =================== */
 const featuredInput = document.getElementById("featured_image");
-const featuredPreview = document.getElementById("featuredPreview");
+const dropzone = document.getElementById("dropzone");
+const dzPreview = document.getElementById("dzPreview");
+const dzImg = document.getElementById("dzImg");
+
+dropzone.addEventListener("click", (e) => {
+    if (e.target.closest(".dz-remove")) return;
+    featuredInput.click();
+});
+
+["dragenter","dragover","dragleave","drop"].forEach(ev => {
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); });
+});
+["dragenter","dragover"].forEach(ev => {
+    dropzone.addEventListener(ev, () => dropzone.classList.add("drag-over"));
+});
+["dragleave","drop"].forEach(ev => {
+    dropzone.addEventListener(ev, () => dropzone.classList.remove("drag-over"));
+});
+dropzone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+        featuredInput.files = files;
+        showFeaturedPreview(files[0]);
+    }
+});
 
 featuredInput.onchange = function(){
-    featuredPreview.innerHTML = "";
     document.getElementById("remove_featured_flag").value = "0";
-    if (this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e=>{
-            featuredPreview.innerHTML = `
-                <div class="image-preview-item">
-                    <img src="${e.target.result}">
-                    <button class="image-remove-btn" type="button" onclick="removeFeatured()">×</button>
-                </div>`;
-        };
-        reader.readAsDataURL(this.files[0]);
-    }
+    if (this.files[0]) showFeaturedPreview(this.files[0]);
 };
 
-function removeFeatured(){
+function showFeaturedPreview(file){
+    document.getElementById("remove_featured_flag").value = "0";
+    const reader = new FileReader();
+    reader.onload = e => {
+        dzImg.src = e.target.result;
+        dzPreview.classList.add("show");
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeFeatured(e){
+    if (e) e.stopPropagation();
     featuredInput.value = "";
-    featuredPreview.innerHTML = "";
+    dzImg.src = "";
+    dzPreview.classList.remove("show");
     document.getElementById("remove_featured_flag").value = "1";
 }
 
@@ -1171,10 +1584,12 @@ function uploadGalleryInline(){
 function insertGalleryRow(urls){
     const row = document.createElement("div");
     row.className = "gallery-row";
+    row.style.cssText = "display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;";
 
     urls.slice(0,3).forEach(u=>{
         const img = document.createElement("img");
         img.src = u;
+        img.style.cssText = "flex:1;min-width:30%;max-width:100%;border-radius:8px;object-fit:cover;";
         row.appendChild(img);
     });
 
@@ -1186,11 +1601,83 @@ function insertGalleryRow(urls){
     saveSelection();
 }
 
-/* =================== ذخیره خبر (بازطراحی شده) =================== */
-function showStatus(msg, ok){
-    const box = document.getElementById("statusBox");
-    box.textContent = msg;
-    box.className = "status-msg " + (ok ? "status-ok" : "status-err");
+/* =================== چیپ تگ‌ها (نمایشی) =================== */
+const tagsInput = document.getElementById("tags");
+const tagsChips = document.getElementById("tagsChips");
+function renderTagChips(){
+    const parts = tagsInput.value.split("،").join(",").split(",").map(t=>t.trim()).filter(Boolean);
+    tagsChips.innerHTML = "";
+    parts.forEach((t, idx) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = t;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("، "); renderTagChips(); };
+        chip.appendChild(btn);
+        tagsChips.appendChild(chip);
+    });
+}
+tagsInput.addEventListener("input", renderTagChips);
+
+/* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
+const TOAST_ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'
+};
+const TOAST_TITLES = { success: "انجام شد", error: "خطا", info: "در حال انجام" };
+
+let toastHideTimer = null;
+
+/*
+ * نمایش توست وضعیت.
+ *   showStatus(msg)               → اطلاع‌رسانی (info)
+ *   showStatus(msg, true)         → موفقیت (success)
+ *   showStatus(msg, false)        → خطا (error)
+ *   showStatus(msg, "info")       → حالت در حال انجام با اسپینر
+ * برای سازگاری با فراخوانی‌های قبلی، ایموجی‌های ابتدای پیام حذف می‌شوند.
+ */
+function showStatus(msg, type){
+    let kind = "info";
+    if (type === true) kind = "success";
+    else if (type === false) kind = "error";
+    else if (typeof type === "string") kind = type;
+
+    const cleanMsg = String(msg).replace(/^[✅❌⏳⚡🗜🔼⬆\s]+/u, "").trim();
+
+    const toast = document.getElementById("statusToast");
+    const iconEl = document.getElementById("toastIcon");
+    toast.classList.remove("is-success", "is-error", "is-info", "hide");
+    toast.classList.add("is-" + kind, "show");
+
+    iconEl.className = "toast-ic" + (kind === "info" ? " spin" : "");
+    iconEl.innerHTML = TOAST_ICONS[kind];
+    document.getElementById("toastTitle").textContent = TOAST_TITLES[kind];
+    document.getElementById("toastMsg").textContent = cleanMsg;
+
+    // نوار پیشرفت فقط در حالتِ «در حال انجام» معنا دارد
+    if (kind !== "info") {
+        document.getElementById("uploadProgress").classList.remove("active");
+    }
+
+    // پیام موفقیت/خطا پس از چند ثانیه خودکار بسته می‌شود؛ حالت در حال انجام باز می‌ماند.
+    clearTimeout(toastHideTimer);
+    if (kind !== "info") {
+        toastHideTimer = setTimeout(hideStatus, kind === "error" ? 6000 : 3500);
+    }
+}
+
+function hideStatus(){
+    const toast = document.getElementById("statusToast");
+    if (!toast.classList.contains("show")) return;
+    clearTimeout(toastHideTimer);
+    toast.classList.add("hide");
+    setTimeout(() => {
+        toast.classList.remove("show", "hide", "is-success", "is-error", "is-info");
+        hideUploadProgress();
+    }, 250);
 }
 
 /* توابع مربوط به زمان‌بندی */
@@ -1295,32 +1782,162 @@ function setDateFromGregorianDate(dateObj) {
     setPickerValues(jy, jm, jd, hh, mm);
 }
 
-function setPickerValues(jy, jm, jd, hh, mm) {
-    document.getElementById("jy").value = String(jy);
-    document.getElementById("jm").value = String(jm);
-    updateDayOptions();
-    document.getElementById("jd").value = String(jd);
-    document.getElementById("hh").value = String(hh);
-    document.getElementById("mm").value = String(mm);
+/* ===== دیت‌پیکر شمسی مدرن (تقویم گرید) ===== */
+const PERSIAN_MONTHS = [
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+];
+// ماهی که اکنون در گرید نمایش داده می‌شود (ممکن است با روزِ انتخاب‌شده فرق کند)
+let dpViewYear = 0, dpViewMonth = 1;
+
+function dpGet(id){ return parseInt(document.getElementById(id).value || "0", 10); }
+function dpSet(id, v){ document.getElementById(id).value = String(v); }
+
+// روزِ هفته‌ی اولِ ماهِ شمسی (شنبه=0 ... جمعه=6)
+function jalaliFirstDow(jy, jm) {
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
+    const js = new Date(gy, gm - 1, gd).getDay(); // یکشنبه=0 ... شنبه=6
+    return (js + 1) % 7;                          // شنبه=0 ... جمعه=6
 }
 
-function updateDayOptions() {
-    const jy = parseInt(document.getElementById("jy").value, 10);
-    const jm = parseInt(document.getElementById("jm").value, 10);
-    const daySelect = document.getElementById("jd");
-    const current = parseInt(daySelect.value || "1", 10);
-    const maxDays = getJalaliMonthDays(jy, jm);
-    daySelect.innerHTML = "";
-    for (let d = 1; d <= maxDays; d++) {
-        const op = document.createElement("option");
-        op.value = String(d);
-        op.textContent = toFaDigits(pad2(d));
-        daySelect.appendChild(op);
+// state کامل پیکر را ست می‌کند (روزِ انتخاب‌شده + زمان) و گرید را روی همان ماه می‌برد
+function setPickerValues(jy, jm, jd, hh, mm) {
+    dpSet("jy", jy); dpSet("jm", jm); dpSet("jd", jd);
+    dpSet("hh", hh); dpSet("mm", mm);
+    dpViewYear = jy; dpViewMonth = jm;
+    dpRenderTime();
+    dpRenderCalendar();
+}
+
+// نمای فعالِ پیکر: 'days' | 'months' | 'years'
+let dpView = 'days';
+
+function dpToggleView(which) {
+    dpView = (dpView === which) ? 'days' : which;
+    dpApplyView();
+}
+function dpApplyView() {
+    document.getElementById("dpDayView").style.display   = dpView === 'days'   ? '' : 'none';
+    document.getElementById("dpMonthView").style.display = dpView === 'months' ? 'grid' : 'none';
+    document.getElementById("dpYearView").style.display  = dpView === 'years'  ? 'grid' : 'none';
+    if (dpView === 'months') dpRenderMonths();
+    else if (dpView === 'years') dpRenderYears();
+}
+
+// رندرِ شبکه‌ی روزها برای ماهِ جاریِ نمایش
+function dpRenderCalendar() {
+    const mBtn = document.getElementById("dpMonthBtn");
+    const yBtn = document.getElementById("dpYearBtn");
+    if (mBtn) mBtn.textContent = PERSIAN_MONTHS[dpViewMonth - 1];
+    if (yBtn) yBtn.textContent = toFaDigits(dpViewYear);
+
+    const grid = document.getElementById("dpDays");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const lead = jalaliFirstDow(dpViewYear, dpViewMonth);
+    const days = getJalaliMonthDays(dpViewYear, dpViewMonth);
+
+    // روزِ امروز (شمسی) برای هایلایت
+    const now = new Date();
+    const [tjy, tjm, tjd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+    const selJy = dpGet("jy"), selJm = dpGet("jm"), selJd = dpGet("jd");
+
+    // خانه‌های خالیِ ابتدای ماه
+    for (let i = 0; i < lead; i++) {
+        const sp = document.createElement("span");
+        sp.className = "dp-day is-empty";
+        grid.appendChild(sp);
     }
-    daySelect.value = String(Math.min(current, maxDays));
+    for (let d = 1; d <= days; d++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dp-day";
+        btn.textContent = toFaDigits(d);
+        if (dpViewYear === tjy && dpViewMonth === tjm && d === tjd) btn.classList.add("is-today");
+        if (dpViewYear === selJy && dpViewMonth === selJm && d === selJd) btn.classList.add("is-selected");
+        btn.addEventListener("click", () => dpSelectDay(d));
+        grid.appendChild(btn);
+    }
+}
+
+function dpSelectDay(d) {
+    dpSet("jy", dpViewYear);
+    dpSet("jm", dpViewMonth);
+    dpSet("jd", d);
+    dpRenderCalendar();
+}
+
+// شبکه‌ی ۱۲ ماه برای انتخابِ سریع
+function dpRenderMonths() {
+    const wrap = document.getElementById("dpMonthView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy, tjm] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    for (let m = 1; m <= 12; m++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = PERSIAN_MONTHS[m - 1];
+        if (m === dpViewMonth) b.classList.add("is-selected");
+        if (dpViewYear === tjy && m === tjm) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickMonth(m));
+        wrap.appendChild(b);
+    }
+}
+
+// شبکه‌ی سال‌ها (۱۰ سال قبل تا ۱۰ سال بعدِ سالِ نمایش)
+function dpRenderYears() {
+    const wrap = document.getElementById("dpYearView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    const start = dpViewYear - 10, end = dpViewYear + 10;
+    for (let y = start; y <= end; y++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = toFaDigits(y);
+        if (y === dpViewYear) b.classList.add("is-selected");
+        if (y === tjy) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickYear(y));
+        wrap.appendChild(b);
+    }
+}
+
+function dpPickMonth(m) {
+    dpViewMonth = m;
+    dpView = 'days'; dpApplyView();
+    dpRenderCalendar();
+}
+function dpPickYear(y) {
+    dpViewYear = y;
+    dpView = 'months'; dpApplyView();   // پس از سال، به انتخابِ ماه برو
+    dpRenderCalendar();
+}
+
+function dpChangeMonth(dir) {
+    // dir=+1 یعنی ماهِ بعد، dir=-1 یعنی ماهِ قبل
+    dpViewMonth += dir;
+    if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
+    else if (dpViewMonth < 1) { dpViewMonth = 12; dpViewYear--; }
+    dpRenderCalendar();
+}
+
+function dpRenderTime() {
+    document.getElementById("dpHourVal").value = toFaDigits(pad2(dpGet("hh")));
+    document.getElementById("dpMinuteVal").value = toFaDigits(pad2(dpGet("mm")));
+}
+
+function dpStepTime(unit, dir) {
+    let v = dpGet(unit) + dir;
+    const max = unit === "hh" ? 24 : 60;
+    v = (v + max) % max;            // چرخشی
+    dpSet(unit, v);
+    dpRenderTime();
 }
 
 function openDatePicker() {
+    dpView = 'days'; dpApplyView();   // همیشه با نمای روز باز شود
     document.getElementById("dateModal").classList.add("show");
 }
 
@@ -1335,11 +1952,9 @@ function setPickerNow() {
 }
 
 function applyDatePicker() {
-    const jy = parseInt(document.getElementById("jy").value, 10);
-    const jm = parseInt(document.getElementById("jm").value, 10);
-    const jd = parseInt(document.getElementById("jd").value, 10);
-    const hh = parseInt(document.getElementById("hh").value, 10);
-    const mm = parseInt(document.getElementById("mm").value, 10);
+    const jy = dpGet("jy"), jm = dpGet("jm"), jd = dpGet("jd");
+    const hh = dpGet("hh"), mm = dpGet("mm");
+    if (!jy || !jm || !jd) { closeDatePicker(); return; }
     const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
     document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
     renderPublishDisplay(jy, jm, jd, hh, mm);
@@ -1347,59 +1962,101 @@ function applyDatePicker() {
 }
 
 function initDatePicker() {
-    const yearSel = document.getElementById("jy");
-    const monthSel = document.getElementById("jm");
-    const hourSel = document.getElementById("hh");
-    const minuteSel = document.getElementById("mm");
-    const persianMonths = [
-        "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-        "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
-    ];
-
     const now = new Date();
-    const [nowJy] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
-    for (let y = nowJy - 3; y <= nowJy + 5; y++) {
-        const op = document.createElement("option");
-        op.value = String(y);
-        op.textContent = toFaDigits(String(y));
-        yearSel.appendChild(op);
-    }
-    for (let m = 1; m <= 12; m++) {
-        const op = document.createElement("option");
-        op.value = String(m);
-        op.textContent = `${toFaDigits(pad2(m))} - ${persianMonths[m - 1]}`;
-        monthSel.appendChild(op);
-    }
-    for (let h = 0; h <= 23; h++) {
-        const op = document.createElement("option");
-        op.value = String(h);
-        op.textContent = toFaDigits(pad2(h));
-        hourSel.appendChild(op);
-    }
-    for (let m = 0; m <= 59; m++) {
-        const op = document.createElement("option");
-        op.value = String(m);
-        op.textContent = toFaDigits(pad2(m));
-        minuteSel.appendChild(op);
-    }
-    yearSel.addEventListener("change", updateDayOptions);
-    monthSel.addEventListener("change", updateDayOptions);
-
     const savedGregorian = `<?= $pub_val ? htmlspecialchars(str_replace('T', ' ', $pub_val) . ':00') : '' ?>`;
     if (savedGregorian) {
         const parsed = new Date(savedGregorian.replace(' ', 'T'));
-        if (!Number.isNaN(parsed.getTime())) {
-            setDateFromGregorianDate(parsed);
-        } else {
-            setDateFromGregorianDate(now);
-        }
+        setDateFromGregorianDate(Number.isNaN(parsed.getTime()) ? now : parsed);
     } else {
         setDateFromGregorianDate(now);
     }
 }
 
+/* ===== ارتقای <select> به دراپ‌داون سفارشی مدرن ===== */
+const MSEL_CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+const MSEL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function enhanceSelect(select){
+    if (!select || select.dataset.enhanced) return;
+    select.dataset.enhanced = "1";
+
+    const placeholderText = (select.options[0] && select.options[0].value === "") ? select.options[0].textContent : "";
+
+    const wrap = document.createElement("div");
+    wrap.className = "msel";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "msel-trigger";
+    trigger.innerHTML = '<span class="msel-value"></span><span class="msel-caret">' + MSEL_CARET + '</span>';
+
+    const menu = document.createElement("div");
+    menu.className = "msel-menu";
+    menu.setAttribute("role", "listbox");
+
+    // ساختِ گزینه‌ها از روی <option>ها
+    Array.from(select.options).forEach(opt => {
+        if (opt.value === "" && placeholderText) return; // placeholder را گزینه نکن
+        const o = document.createElement("div");
+        o.className = "msel-opt";
+        o.setAttribute("role", "option");
+        o.dataset.value = opt.value;
+        o.innerHTML = '<span>' + opt.textContent + '</span><span class="msel-check">' + MSEL_CHECK + '</span>';
+        o.addEventListener("click", () => {
+            select.value = opt.value;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            syncMsel();
+            closeMenu();
+        });
+        menu.appendChild(o);
+    });
+
+    // مخفی‌کردنِ select بومی و درج کامپوننت
+    select.style.display = "none";
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+    wrap.appendChild(select); // select داخلِ wrap بماند تا fieldها سالم بمانند
+
+    function syncMsel(){
+        const valEl = trigger.querySelector(".msel-value");
+        const sel = select.options[select.selectedIndex];
+        const isPlaceholder = !select.value && placeholderText;
+        valEl.textContent = isPlaceholder ? placeholderText : (sel ? sel.textContent : "");
+        trigger.classList.toggle("is-placeholder", !!isPlaceholder);
+        menu.querySelectorAll(".msel-opt").forEach(o => {
+            o.classList.toggle("is-selected", o.dataset.value === select.value);
+        });
+        // انتقالِ حالتِ خطا از select به wrap
+        wrap.classList.toggle("field-invalid", select.classList.contains("field-invalid"));
+    }
+
+    function openMenu(){ wrap.classList.add("open"); }
+    function closeMenu(){ wrap.classList.remove("open"); }
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // بستنِ سایر دراپ‌داون‌های باز
+        document.querySelectorAll(".msel.open").forEach(m => { if (m !== wrap) m.classList.remove("open"); });
+        wrap.classList.toggle("open");
+    });
+    // وقتی خطای فیلد پاک/ست می‌شود، ظاهرِ دراپ‌داون را همگام کن
+    select.addEventListener("change", syncMsel);
+    select._mselSync = syncMsel;
+
+    syncMsel();
+}
+
+// بستنِ دراپ‌داون‌ها با کلیک بیرون یا Esc
+document.addEventListener("click", () => document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")); });
+
 document.addEventListener("DOMContentLoaded", () => {
     initDatePicker();
+    updateTitleCounter();
+    renderTagChips();
+    updateSeoWidget();
+    enhanceSelect(document.getElementById("category_id"));
 });
 /* ======================== */
 
@@ -1453,26 +2110,70 @@ async function compressFeaturedImage(file) {
     }
 }
 
-/* ====== کنترل نوار پیشرفت آپلود ====== */
+/* ====== کنترل نوار پیشرفت آپلود (داخل توست) ====== */
 function setUploadProgress(percent, label) {
-    const box = document.getElementById("uploadProgress");
-    const fill = document.getElementById("uploadBarFill");
-    const lbl = document.getElementById("uploadBarLabel");
-    box.classList.add("active");
-    fill.style.width = percent + "%";
-    if (label) lbl.textContent = label;
+    document.getElementById("uploadProgress").classList.add("active");
+    document.getElementById("uploadBarFill").style.width = percent + "%";
+    // متنِ پیشرفت در همان توستِ «در حال انجام» نمایش داده می‌شود
+    if (label) showStatus(label, "info");
 }
 function hideUploadProgress() {
     document.getElementById("uploadProgress").classList.remove("active");
     document.getElementById("uploadBarFill").style.width = "0%";
 }
 
+/* =================== اعتبارسنجی فیلدها (علامت‌گذاری بصری) =================== */
+function setFieldError(boxId, errId, on){
+    const box = document.getElementById(boxId);
+    const err = document.getElementById(errId);
+    if (box) box.classList.toggle("field-invalid", on);
+    if (err) err.classList.toggle("show", on);
+    // لیبلِ گروهِ والد را هم قرمز کن (برای فیلدهای داخل .input-group)
+    const grp = box ? box.closest(".input-group") : null;
+    if (grp) grp.classList.toggle("has-error", on);
+    // اگر فیلد یک <select>‌ ارتقایافته باشد، حالتِ خطا را به دراپ‌داون سفارشی منتقل کن
+    if (box && box._mselSync) box._mselSync();
+}
+
+/* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
+document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
+document.getElementById("editor").addEventListener("input", () => setFieldError("editorShell", "contentError", false));
+document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
+
+function validateNewsForm(){
+    const title = document.getElementById("title").value.trim();
+    const editorEl = document.getElementById("editor");
+    const contentText = editorEl.innerText.trim();
+    const categoryVal = document.getElementById("category_id").value;
+
+    const titleBad = !title;
+    const contentBad = contentText === "";
+    const categoryBad = !categoryVal;
+
+    setFieldError("titleCard", "titleError", titleBad);
+    setFieldError("editorShell", "contentError", contentBad);
+    setFieldError("category_id", "categoryError", categoryBad);
+
+    // اسکرول و فوکوس به اولین فیلدِ خطادار
+    let firstBad = null;
+    if (titleBad) firstBad = document.getElementById("title");
+    else if (contentBad) firstBad = editorEl;
+    else if (categoryBad) firstBad = document.getElementById("category_id");
+
+    if (firstBad) {
+        firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { firstBad.focus({ preventScroll: true }); } catch (_) { firstBad.focus(); }
+    }
+
+    return !(titleBad || contentBad || categoryBad);
+}
+
 async function saveNews() {
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("editor").innerHTML.trim();
 
-    if (!title || content === "" || content === "<br>") {
-        showStatus("❌ لطفا تمام فیلدها را پر کنید.", false);
+    if (!validateNewsForm()) {
+        showStatus("لطفاً فیلدهای مشخص‌شده را پر کنید.", false);
         return;
     }
 
@@ -1551,27 +2252,55 @@ async function saveNews() {
     }
 }
 
+function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function openPreview(){
-    const title = document.getElementById("title").value;
-    const author = document.getElementById("author").value;
-    const date = document.getElementById("publish_date_display").value;
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const date = document.getElementById("publish_date_display").value.trim();
     const content = document.getElementById("editor").innerHTML;
+    const catSelect = document.getElementById("category_id");
+    const category = catSelect.value ? catSelect.options[catSelect.selectedIndex].text.trim() : "";
     const featured = featuredInput.files[0]
         ? URL.createObjectURL(featuredInput.files[0])
-        : "";
+        : (dzImg.getAttribute("src") || "");
+
+    const contentHasText = editor.innerText.trim().length > 0;
+    const titleSafe = escapeHtml(title || "بدون عنوان");
+
+    /* آیکون‌های متادیتا */
+    const icAuthor = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    const icDate = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+    /* هیرو: اگر تصویر بود عنوان روی تصویر، وگرنه عنوان معمولی */
+    let heroHtml;
+    if (featured) {
+        heroHtml = `
+            <div class="pv-hero">
+                ${category ? `<span class="pv-hero-cat">${escapeHtml(category)}</span>` : ""}
+                <img src="${featured}" alt="تصویر شاخص">
+                <h1 class="pv-hero-title">${titleSafe}</h1>
+            </div>`;
+    } else {
+        heroHtml = `<h1 class="pv-title-fallback">${titleSafe}</h1>`;
+    }
+
+    const metaChips = [];
+    if (author) metaChips.push(`<span class="chip">${icAuthor}${escapeHtml(author)}</span>`);
+    if (date) metaChips.push(`<span class="chip">${icDate}${escapeHtml(date)}</span>`);
+    if (category && !featured) metaChips.push(`<span class="chip">${escapeHtml(category)}</span>`);
 
     const html = `
-        <h1 style="font-size:26px;margin-bottom:10px;color:var(--primary-color)">${title}</h1>
-        <div style="color:var(--text-color); opacity:0.7; font-size:13px;margin-bottom:20px;">
-            ${author ? "✍ " + author : ""} 
-            ${date ? " | 📅 " + date : ""}
+        <div class="pv-article">
+            ${heroHtml}
+            ${metaChips.length ? `<div class="pv-meta">${metaChips.join("")}</div>` : ""}
+            <div class="pv-body">
+                ${contentHasText ? content : '<p class="pv-empty">هنوز متنی برای این خبر نوشته نشده است.</p>'}
+            </div>
+            <div id="seoScoreBox" class="pv-seo"></div>
         </div>
-        ${featured ? `<img src="${featured}" style="width:100%;max-height:400px;object-fit:cover;border-radius:12px;margin-bottom:20px;">` : ""}
-        <div style="line-height:2;font-size:15px;color:var(--text-color);">
-            ${content}
-        </div>
-        <hr style="margin:30px 0; border-color: var(--border-color);">
-        <div id="seoScoreBox"></div>
     `;
 
     document.getElementById("previewContent").innerHTML = html;
@@ -1579,6 +2308,7 @@ function openPreview(){
     const modal = document.getElementById("previewModal");
     modal.style.display = "block";
     requestAnimationFrame(() => modal.classList.add("show"));
+    document.querySelector(".preview-scroll").scrollTop = 0;
 }
 
 function closePreview(){
@@ -1589,12 +2319,13 @@ function closePreview(){
     }, 260);
 }
 
-function calculateSEO(){
+/* محاسبه امتیاز سئو (مشترک بین ویجت و پیش‌نمایش) */
+function computeSeoScore(){
     let score = 0;
     const title = document.getElementById("title").value.trim();
     const contentText = editor.innerText.trim();
-    const wordCount = contentText.split(/\s+/).length;
-    const hasImage = featuredInput.files[0];
+    const wordCount = contentText ? contentText.split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
     const keywords = document.getElementById("keywords").value.trim();
     const hasH2 = editor.querySelector("h2");
 
@@ -1603,29 +2334,81 @@ function calculateSEO(){
     if(hasImage) score += 15;
     if(keywords.length > 3) score += 20;
     if(hasH2) score += 20;
+    return score;
+}
 
-    let color = "#d63031";
-    if(score >= 70) color = "#00b894";
-    else if(score >= 40) color = "#f9a825";
+/* به‌روزرسانی ویجت حلقه‌ای امتیاز سئو در ستون کناری */
+function updateSeoWidget(){
+    const score = computeSeoScore();
+    const fill = document.getElementById("seoRingFill");
+    const num = document.getElementById("seoRingNum");
+    const stateEl = document.getElementById("seoState");
+    const tipEl = document.getElementById("seoTip");
+
+    let color = "#e74c3c", label = "ضعیف", tip = "عنوان و متن را کامل‌تر کنید.";
+    if (score >= 70) { color = "#00b894"; label = "خوب"; tip = "محتوای شما برای سئو مناسب است."; }
+    else if (score >= 40) { color = "#F79F1F"; label = "متوسط"; tip = "تصویر، کلمات کلیدی یا تیتر H2 اضافه کنید."; }
+
+    fill.setAttribute("stroke-dasharray", score + ", 100");
+    fill.setAttribute("stroke", color);
+    num.textContent = toFaDigits(score);
+    stateEl.textContent = label;
+    stateEl.style.color = color;
+    tipEl.textContent = tip;
+}
+
+/* به‌روزرسانی زنده ویجت با تغییر ورودی‌ها */
+["title","keywords"].forEach(id => {
+    document.getElementById(id).addEventListener("input", updateSeoWidget);
+});
+editor.addEventListener("input", updateSeoWidget);
+featuredInput.addEventListener("change", updateSeoWidget);
+
+function calculateSEO(){
+    const score = computeSeoScore();
+
+    let color = "#e74c3c", label = "ضعیف";
+    if(score >= 70) { color = "#00b894"; label = "خوب"; }
+    else if(score >= 40) { color = "#F79F1F"; label = "متوسط"; }
+
+    /* وضعیت هر معیار برای چک‌لیست */
+    const title = document.getElementById("title").value.trim();
+    const wordCount = editor.innerText.trim() ? editor.innerText.trim().split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const keywords = document.getElementById("keywords").value.trim();
+    const hasH2 = !!editor.querySelector("h2");
+
+    const checks = [
+        { ok: title.length > 5,   text: "عنوان مناسب" },
+        { ok: wordCount > 300,    text: "طول متن کافی" },
+        { ok: !!hasImage,         text: "تصویر شاخص" },
+        { ok: keywords.length > 3,text: "کلمات کلیدی" },
+        { ok: hasH2,              text: "تیتر H2 در متن" },
+    ];
+
+    const icOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const icNo = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="12" x2="15" y2="12"/></svg>';
+
+    const checksHtml = checks.map(c =>
+        `<div class="pv-check ${c.ok ? "ok" : "no"}">${c.ok ? icOk : icNo}<span>${c.text}</span></div>`
+    ).join("");
 
     document.getElementById("seoScoreBox").innerHTML = `
-        <h3 style="margin-bottom:10px;color:var(--text-color)">SEO Score</h3>
-        <div style="
-            background: var(--border-color);
-            border-radius:8px;
-            overflow:hidden;
-            height:20px;
-        ">
-            <div style="
-                width:${score}%;
-                background:${color};
-                height:100%;
-                transition:.4s;
-            "></div>
+        <div class="pv-seo-head">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                امتیاز سئو
+            </h3>
+            <span class="pv-seo-badge" style="background:${color}">${label}</span>
         </div>
-        <div style="margin-top:8px;font-weight:bold;color:${color}">
-            امتیاز: ${score} از 100
+        <div class="pv-seo-bar-track">
+            <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
         </div>
+        <div class="pv-seo-foot">
+            <span>امتیاز کلی</span>
+            <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
+        </div>
+        <div class="pv-checks">${checksHtml}</div>
     `;
 }
 
@@ -1634,39 +2417,6 @@ document.getElementById("editor").addEventListener("keydown", function(e) {
         e.preventDefault();
         document.execCommand("insertLineBreak");
     }
-});
-
-// مدیریت تم (دارک/لایت)
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    
-    // آیکون‌های SVG برای تم
-    const sunIcon = `<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>`;
-    const moonIcon = `<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>`;
-
-    // تم از «داشبورد مدیریت» کنترل می‌شود (کلید مشترک: maxa-theme)
-    var applyMaxaTheme = function(){
-        var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
-        if(d){ document.documentElement.setAttribute('data-theme','dark'); if(document.body) document.body.setAttribute('data-theme','dark'); }
-        else { document.documentElement.removeAttribute('data-theme'); if(document.body) document.body.removeAttribute('data-theme'); }
-    };
-    applyMaxaTheme();
-    window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
-
-    if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
-        let theme = document.body.getAttribute('data-theme');
-        
-        if (theme === 'dark') {
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-            themeToggleBtn.innerHTML = moonIcon;
-        } else {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            themeToggleBtn.innerHTML = sunIcon;
-        }
-    });
 });
 </script>
 

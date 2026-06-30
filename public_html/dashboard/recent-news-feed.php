@@ -28,21 +28,38 @@ function jalali_feed($dt) {
 }
 
 $limit = isset($_GET['limit']) ? max(1, min(12, (int)$_GET['limit'])) : 3;
+
+// ایزولاسیون چندشعبه‌ای: با ?branch=<slug> فقط اخبارِ همان شعبه؛ بدون پارامتر یا
+// slug ناشناخته → اخبارِ «ستاد مرکزی» (HQ، branch_id = 1). همان الگوی hero-list.php.
+$branchSlug = isset($_GET['branch']) ? preg_replace('/[^a-z0-9-]/', '', strtolower((string)$_GET['branch'])) : '';
+$branchId   = 1;
+if ($branchSlug !== '') {
+    $bs = $pdo->prepare("SELECT id FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
+    $bs->execute([$branchSlug]);
+    $brow = $bs->fetch(PDO::FETCH_ASSOC);
+    if ($brow) { $branchId = (int)$brow['id']; }
+}
+
 $stmt = $pdo->prepare("
 SELECT n.id,n.title,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
 FROM news n
 LEFT JOIN news_categories c ON c.id=n.category_id
-WHERE n.status='published' AND n.publish_date<=NOW() AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
+WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
 ORDER BY n.publish_date DESC
 LIMIT {$limit}
 ");
-$stmt->execute();
+$stmt->execute([$branchId]);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$data = array_map(function($row){
+$data = array_map(function($row) use ($branchSlug){
     $image = (!empty($row['featured_image']) && !empty($row['news_code']))
       ? "/uploads/news/" . rawurlencode($row['news_code']) . "/" . rawurlencode($row['featured_image'])
       : "";
+    // لینکِ خبر: برای شعبه از مسیرِ داخلیِ شعبه (‎/{slug}/news/{id}) که page-view رندرش می‌کند؛
+    // برای ستاد مرکزی همان مسیرِ قدیمیِ ‎/{id}/{slug}/.
+    $url = $branchSlug !== ''
+      ? "/" . rawurlencode($branchSlug) . "/news/" . (int)$row['id']
+      : "/" . (int)$row['id'] . "/" . rawurlencode(slugify_feed($row['title'] ?? '')) . "/";
     return [
       "id" => (int)$row['id'],
       "title" => $row['title'] ?? '',
@@ -50,7 +67,7 @@ $data = array_map(function($row){
       "date" => jalali_feed($row['publish_date'] ?? ''),
       "read_time" => max(1, (int)($row['read_time'] ?? 1)),
       "excerpt" => mb_substr(trim(preg_replace('/\s+/u',' ',strip_tags((string)($row['content'] ?? '')))),0,120),
-      "url" => "/" . (int)$row['id'] . "/" . rawurlencode(slugify_feed($row['title'] ?? '')) . "/",
+      "url" => $url,
       "image" => $image
     ];
 }, $rows);
