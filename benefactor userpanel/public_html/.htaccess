@@ -1,0 +1,55 @@
+# =============================================================================
+#  SPA + site hardening  (place at public_html/.htaccess on erfanteymuri.ir)
+#  React app is served from /benefactor-dashboard/ (Vite `base`).
+# =============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # ---- Force HTTPS --------------------------------------------------------
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # ---- Leave the API alone (handled by public_html/api/.htaccess) ---------
+    RewriteRule ^api(/|$) - [L]
+
+    # ---- React Router SPA fallback for the dashboard ------------------------
+    # Any /benefactor-dashboard/* path that isn't a real file serves index.html.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^benefactor-dashboard/ /benefactor-dashboard/index.html [L]
+</IfModule>
+
+# ---- Security headers for the HTML app -------------------------------------
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" "expr=%{HTTPS} == 'on'"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # CSP for the SPA. 'unsafe-inline' on style-src is needed by MUI/emotion +
+    # Tailwind runtime styles. The Vazirmatn font is loaded from Google Fonts
+    # (stylesheet from fonts.googleapis.com, font files from fonts.gstatic.com).
+    # Scripts are same-origin only. img-src allows campaign images (your /uploads
+    # are same-origin; Unsplash is kept for the demo images).
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+</IfModule>
+
+# ---- Static asset caching ---------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Hashed Vite assets are immutable.
+    <FilesMatch "\.(js|css|woff2?|svg|png|jpe?g|webp|gif|ico)$">
+        ExpiresDefault "access plus 1 year"
+        Header append Cache-Control "public, immutable"
+    </FilesMatch>
+    # Never cache the HTML shell, so new deploys are picked up.
+    <FilesMatch "\.html$">
+        ExpiresDefault "access plus 0 seconds"
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+Options -Indexes
