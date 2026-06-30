@@ -9,11 +9,12 @@
       <script type="module" crossorigin src="/benefactor-dashboard/assets/index-BQnqynKr.js"></script>
       <link rel="stylesheet" crossorigin href="/benefactor-dashboard/assets/index-qfIQ8TsH.css">
       <script>
-        // Redirect to patientintake if user came from there and successfully logged in
+        // Redirect back to the originating page if user came from there and successfully logged in
         setInterval(function() {
-          if (localStorage.getItem('token') && localStorage.getItem('redirect_to_patientintake') === '1') {
+          var redirectUrl = localStorage.getItem('redirect_to_patientintake');
+          if (localStorage.getItem('token') && redirectUrl) {
             localStorage.removeItem('redirect_to_patientintake');
-            window.location.href = '/patientintake';
+            window.location.href = redirectUrl;
           }
         }, 300);
       </script>
