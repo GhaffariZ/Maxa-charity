@@ -1345,11 +1345,11 @@
                 </div>
               </li>
 
-              <li><a href="/branches.html">شعب</a></li>
+              <li><a href="/branches.php">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
-              <li><a href="/courses">دوره‌ها</a></li>
-              <li><a href="/contactus">تماس با ما</a></li>
+              <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
+              <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
         </div>
@@ -1531,9 +1531,8 @@
     const heroBtn = document.getElementById("heroBtn");
 
     try {
-        // ۱. دریافت داده‌ها از API (در صفحه‌ی شعبه، هیروهای همان شعبه)
-        const __b = (typeof window.__MAXA_BRANCH__ === 'string' && window.__MAXA_BRANCH__) ? ('?branch=' + encodeURIComponent(window.__MAXA_BRANCH__)) : '';
-        const response = await fetch("/dashboard/hero-list.php" + __b);
+        // ۱. دریافت داده‌ها از API
+        const response = await fetch("/dashboard/hero-list.php");
         const json = await response.json();
 
         if (json.status === "success" && json.data.length > 0) {
