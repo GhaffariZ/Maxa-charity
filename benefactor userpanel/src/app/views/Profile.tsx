@@ -14,10 +14,11 @@ import {
   ChevronLeft,
   Loader2,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../contexts/AuthContext";
-import { api, ApiRequestError } from "../../api/client";
+import { api, ApiRequestError, MedicalRecordDto } from "../../api/client";
 import { faNumber, faDate } from "../lib/format";
 
 type Prefs = { news: boolean; impact_reports: boolean; new_campaigns: boolean };
@@ -34,6 +35,9 @@ export function Profile() {
   const [prefs, setPrefs] = React.useState<Prefs>({ news: true, impact_reports: true, new_campaigns: true });
   const [donationCount, setDonationCount] = React.useState<number | null>(null);
   const [showPwForm, setShowPwForm] = React.useState(false);
+  
+  const [medicalRecord, setMedicalRecord] = React.useState<MedicalRecordDto | null>(null);
+  const [loadingRecord, setLoadingRecord] = React.useState(true);
 
   const fileRef = React.useRef<HTMLInputElement>(null);
 
@@ -49,6 +53,10 @@ export function Profile() {
   React.useEffect(() => {
     api.notificationPrefs().then((r) => setPrefs(r.preferences)).catch(() => {});
     api.dashboard().then((d) => setDonationCount(d.stats.donation_count)).catch(() => {});
+    api.getMedicalRecord().then((r) => {
+      setMedicalRecord(r.record);
+      setLoadingRecord(false);
+    }).catch(() => setLoadingRecord(false));
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -239,6 +247,58 @@ export function Profile() {
                 </button>
               </div>
             </form>
+          </section>
+
+          <section className="bg-surface p-8 rounded-[2.5rem] border border-border">
+            <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+              <FileText className="text-primary" size={24} />
+              پرونده ی مجازی
+            </h3>
+
+            {loadingRecord ? (
+              <div className="flex justify-center p-4">
+                <Loader2 size={24} className="animate-spin text-primary" />
+              </div>
+            ) : medicalRecord ? (
+              <div className="bg-muted/30 p-6 rounded-2xl flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block mb-1">نوع بیماری</span>
+                    <span className="font-bold">{medicalRecord.cancer_type || "نامشخص"}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block mb-1">وضعیت تشخیص</span>
+                    <span className="font-bold">{medicalRecord.diagnosis_status || "نامشخص"}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block mb-1">استان / شهر</span>
+                    <span className="font-bold">{medicalRecord.province} - {medicalRecord.city}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block mb-1">تاریخ ثبت</span>
+                    <span className="font-bold" dir="ltr">{faDate(medicalRecord.created_at)}</span>
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-border mt-2">
+                  <a
+                    href="/patientintake"
+                    className="inline-flex bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md items-center gap-2"
+                  >
+                    ویرایش پرونده
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-muted/30 p-6 rounded-2xl text-center space-y-4">
+                <p className="text-muted-foreground">شما پرونده پزشکی مجازی ندارید.</p>
+                <a
+                  href="/patientintake"
+                  className="inline-flex bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md items-center gap-2"
+                >
+                  ایجاد پرونده پزشکی
+                </a>
+              </div>
+            )}
           </section>
         </div>
 

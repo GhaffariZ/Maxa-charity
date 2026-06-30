@@ -23,6 +23,7 @@ return static function (Router $r): void {
     $auth = [new AuthMiddleware()];
 
     // ---- Medical Records ----------------------------------------------------
+    $r->get('/medical-records/me',        [MedicalRecordController::class, 'show'], $auth);
     $r->post('/medical-records',          [MedicalRecordController::class, 'store'], $auth);
 
     // ---- Health -------------------------------------------------------------

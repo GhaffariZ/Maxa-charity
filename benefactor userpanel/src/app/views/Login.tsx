@@ -73,7 +73,15 @@ function SignInPanel() {
     try {
       await login(email.trim(), pw);
       setStatus("success");
-      setTimeout(() => navigate(from, { replace: true }), 600);
+      setTimeout(() => {
+        const redirect = localStorage.getItem('redirect_to_patientintake');
+        if (redirect) {
+          localStorage.removeItem('redirect_to_patientintake');
+          window.location.href = redirect;
+        } else {
+          navigate(from, { replace: true });
+        }
+      }, 600);
     } catch (e) {
       setStatus("idle");
       if (e instanceof ApiRequestError) {

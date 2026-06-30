@@ -386,7 +386,30 @@ document.addEventListener("DOMContentLoaded", function() {
         var form = document.querySelector(".medical-intake form");
         var fileInput = document.getElementById("miFileInput");
         var preview = document.getElementById("miPreview");
+        var submitBtn = form.querySelector('.mi-submit');
         var filesArray = [];
+
+        // Fetch existing record if any
+        fetch('/api/medical-records/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(json){
+            if (json && json.data && json.data.record) {
+                var r = json.data.record;
+                if(form.querySelector('[name="full_name"]')) form.querySelector('[name="full_name"]').value = r.full_name || '';
+                if(form.querySelector('[name="mobile"]')) form.querySelector('[name="mobile"]').value = r.mobile || '';
+                if(form.querySelector('[name="age"]')) form.querySelector('[name="age"]').value = r.age || '';
+                if(form.querySelector('[name="gender"]')) form.querySelector('[name="gender"]').value = r.gender || '';
+                if(form.querySelector('[name="province"]')) form.querySelector('[name="province"]').value = r.province || '';
+                if(form.querySelector('[name="city"]')) form.querySelector('[name="city"]').value = r.city || '';
+                if(form.querySelector('[name="cancer_type"]')) form.querySelector('[name="cancer_type"]').value = r.cancer_type || '';
+                if(form.querySelector('[name="diagnosis_status"]')) form.querySelector('[name="diagnosis_status"]').value = r.diagnosis_status || '';
+                if(form.querySelector('[name="description"]')) form.querySelector('[name="description"]').value = r.description || '';
+                
+                if (submitBtn) submitBtn.innerText = 'ویرایش پرونده';
+            }
+        }).catch(function(e){ console.error(e); });
 
         if (fileInput) {
             fileInput.addEventListener("change", function() {
