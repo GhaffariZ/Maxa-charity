@@ -85,6 +85,20 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^contactus/?$ contactus.php [L,QSA]
 
 # ---------------------------------------------------------
+# 0.8) شعب مکسا (Branches) clean URL
+#      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
+#      /branches به‌جای page-view.php به صفحه‌ی فهرست شعب + نقشه برود.
+#      /branches            -> branches.php (فهرست شعب + کامپوننت نقشه)
+#      /branches.html       -> 301 به /branches (سازگاری با لینک‌های قدیمی)
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+branches\.html[\s?] [NC]
+RewriteRule ^branches\.html$ /branches [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^branches/?$ branches.php [L,QSA]
+
+# ---------------------------------------------------------
 # 1) Redirect old URL
 # /dashboard/news-view.php?id=12  ->  /12/
 # ---------------------------------------------------------

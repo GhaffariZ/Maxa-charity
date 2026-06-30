@@ -15,35 +15,35 @@
 
 <div class="macsa-gallery">
 
-  <a href="/branches.html" class="gallery-item">
+  <a href="/branches" class="gallery-item">
     <div class="card card-lg">
       <img src="{{image1}}">
     </div>
     <span class="macsa-btn">شعب مکسا</span>
   </a>
 
-  <a href="/contactcenter.html" class="gallery-item">
+  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
     <div class="card card-md">
       <img src="{{image2}}">
     </div>
     <span class="macsa-btn">مرکز تماس کشوری</span>
   </a>
 
-  <a href="/publicparticipation.html" class="gallery-item">
+  <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
       <img src="{{image3}}">
     </div>
     <span class="macsa-btn">حامیان و داوطلبان</span>
   </a>
 
-  <a href="/clinicians.html" class="gallery-item">
+  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
     <div class="card card-md">
       <img src="{{image4}}">
     </div>
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
-  <a href="/patient.html" class="gallery-item">
+  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
     <div class="card card-lg">
       <img src="{{image5}}">
     </div>
