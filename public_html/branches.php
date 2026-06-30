@@ -29,9 +29,28 @@ require __DIR__ . '/dashboard/components/header/component.php';
     font-family: 'Vazirmatn', sans-serif;
     direction: rtl;
   }
+
+  /* چیدمان دوستونه: ستون راست = عنوان + فهرست شعب، ستون چپ = نقشه */
+  .br-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 36px;
+  }
+  .br-side {           /* ستون راست */
+    flex: 0 0 360px;
+    max-width: 360px;
+  }
+  .br-map {            /* ستون چپ (نقشه) */
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* نقشه‌ی درون ستون چپ بدون فاصله‌ی عمودی اضافی و تمام‌عرض ستون */
+  .br-map .branches { padding: 0; }
+  .br-map #Iran { width: 100%; max-width: none; }
+
   .br-head {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
   }
   .br-head h1 {
     font-size: clamp(28px, 4vw, 44px);
@@ -47,12 +66,12 @@ require __DIR__ . '/dashboard/components/header/component.php';
     margin: 0 auto;
   }
 
-  /* فهرست شعب */
+  /* فهرست شعب — ستونی (عمودی) */
   .br-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 18px;
-    margin: 0 auto 8px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 0;
   }
   .br-item {
     display: flex;
@@ -100,42 +119,61 @@ require __DIR__ . '/dashboard/components/header/component.php';
     border: 1px dashed #e2e5ea;
     border-radius: 16px;
   }
+
+  /* روی صفحه‌های کوچک: ستون‌ها زیر هم بچینند (عنوان+فهرست، سپس نقشه) */
+  @media (max-width: 920px) {
+    .br-layout { flex-direction: column; }
+    .br-side { flex-basis: auto; max-width: none; width: 100%; }
+    .br-list {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    .br-map #Iran { width: 78%; max-width: 760px; }
+  }
 </style>
 
 <div class="br-wrap">
-  <div class="br-head">
-    <h1>شعب مکسا</h1>
-    <p>شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. در فهرست زیر شعب فعال را ببینید و روی نقشه، استان‌های دارای شعبه را مشاهده کنید.</p>
-  </div>
+  <div class="br-layout">
 
-  <?php if (!empty($branches)): ?>
-    <div class="br-list">
-      <?php foreach ($branches as $b):
-        $isHq  = !empty($b['is_hq']);
-        $name  = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
-        $slug  = trim((string)($b['slug'] ?? ''));
-        // شعب (غیر از دفتر مرکزی) به صفحه‌ی خانه‌ی شعبه لینک می‌شوند.
-        $href  = (!$isHq && $slug !== '') ? '/' . rawurlencode($slug) : '';
-        $tag   = $isHq ? 'دفتر مرکزی' : 'شعبه';
-        $tagCls = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
-        $el    = $href !== '' ? 'a' : 'div';
-      ?>
-        <<?= $el ?> class="br-item"<?= $href !== '' ? ' href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
-          <span class="br-icon">📍</span>
-          <div>
-            <h3><?= $name ?></h3>
-            <span class="<?= $tagCls ?>"><?= $tag ?></span>
-          </div>
-        </<?= $el ?>>
-      <?php endforeach; ?>
+    <!-- ستون راست: عنوان + فهرست شعب -->
+    <div class="br-side">
+      <div class="br-head">
+        <h1>شعب مکسا</h1>
+        <p>شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. در فهرست زیر شعب فعال را ببینید و روی نقشه، استان‌های دارای شعبه را مشاهده کنید.</p>
+      </div>
+
+      <?php if (!empty($branches)): ?>
+        <div class="br-list">
+          <?php foreach ($branches as $b):
+            $isHq  = !empty($b['is_hq']);
+            $name  = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
+            $slug  = trim((string)($b['slug'] ?? ''));
+            // شعب (غیر از دفتر مرکزی) به صفحه‌ی خانه‌ی شعبه لینک می‌شوند.
+            $href  = (!$isHq && $slug !== '') ? '/' . rawurlencode($slug) : '';
+            $tag   = $isHq ? 'دفتر مرکزی' : 'شعبه';
+            $tagCls = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
+            $el    = $href !== '' ? 'a' : 'div';
+          ?>
+            <<?= $el ?> class="br-item"<?= $href !== '' ? ' href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+              <span class="br-icon">📍</span>
+              <div>
+                <h3><?= $name ?></h3>
+                <span class="<?= $tagCls ?>"><?= $tag ?></span>
+              </div>
+            </<?= $el ?>>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="br-empty">در حال حاضر فهرست شعب در دسترس نیست. لطفاً بعداً دوباره مراجعه کنید.</div>
+      <?php endif; ?>
     </div>
-  <?php else: ?>
-    <div class="br-empty">در حال حاضر فهرست شعب در دسترس نیست. لطفاً بعداً دوباره مراجعه کنید.</div>
-  <?php endif; ?>
+
+    <!-- ستون چپ: نقشه‌ی ایران با شعب رنگی (همان کامپوننت صفحه‌ی شعب) -->
+    <div class="br-map">
+      <?php require __DIR__ . '/dashboard/components/branches/component.php'; ?>
+    </div>
+
+  </div>
 </div>
 
 <?php
-/* کامپوننت نقشه‌ی ایران با شعب رنگی (همان کامپوننت صفحه‌ی شعب). */
-require __DIR__ . '/dashboard/components/branches/component.php';
-
 require __DIR__ . '/dashboard/components/footer/component.php';
