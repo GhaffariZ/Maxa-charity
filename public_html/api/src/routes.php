@@ -15,12 +15,16 @@ use Maksa\Controllers\ContactController;
 use Maksa\Controllers\DonationController;
 use Maksa\Controllers\EngagementController;
 use Maksa\Controllers\HealthController;
+use Maksa\Controllers\MedicalRecordController;
 use Maksa\Controllers\NotificationController;
 use Maksa\Controllers\UserController;
 use Maksa\Core\Router;
 
 return static function (Router $r): void {
     $auth = [new AuthMiddleware()];
+
+    // ---- Medical Records ----------------------------------------------------
+    $r->post('/medical-records',          [MedicalRecordController::class, 'store'], $auth);
 
     // ---- Health -------------------------------------------------------------
     $r->get('/', [HealthController::class, 'ping']);
