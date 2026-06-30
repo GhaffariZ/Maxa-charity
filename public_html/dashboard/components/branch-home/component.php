@@ -32,15 +32,20 @@
   .bh-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
   .bh a{text-decoration:none;color:inherit}
 
+  /* ===== NAVBAR FLOATS OVER HERO =====
+     هدرِ مشترک با position:fixed یک «spacer» سفید بعد از خودش می‌گذارد؛ آن را حذف
+     می‌کنیم تا نوار روی هیرو شناور شود و زیرِ آن سفیدیِ خالی نیفتد. */
+  .cta-navbar-spacer{display:none !important}
+
   /* ===== HERO ===== */
-  .bh-hero{position:relative;min-height:560px;display:flex;align-items:center;overflow:hidden;background:#0b3b3a}
+  .bh-hero{position:relative;min-height:620px;display:flex;align-items:center;overflow:hidden;background:#0b3b3a}
   .bh-hero-slides{position:absolute;inset:0;z-index:1}
   .bh-hero-track{display:flex;height:100%;width:100%;transition:transform .65s var(--ease);will-change:transform}
   .bh-slide{position:relative;min-width:100%;height:100%;background-size:cover;background-position:center;filter:saturate(1.02) contrast(1.03)}
   .bh-slide::after{content:"";position:absolute;inset:0;background:
       linear-gradient(to left,rgba(0,40,40,.62),rgba(0,40,40,.30) 55%,rgba(0,40,40,.14)),
       radial-gradient(circle at 14% 28%,rgba(0,0,0,.10),transparent 55%);z-index:0}
-  .bh-hero-inner{position:relative;z-index:5;width:100%;padding:96px 0 84px}
+  .bh-hero-inner{position:relative;z-index:5;width:100%;padding:140px 0 90px}
   .bh-hero-text{width:min(580px,100%);color:#fff;text-align:right}
   .bh-kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
       color:#fff;background:rgba(245,166,35,.92);padding:6px 14px;border-radius:999px;margin-bottom:16px}
@@ -59,17 +64,33 @@
   .bh-dots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:7;display:flex;gap:8px}
   .bh-dot{width:9px;height:9px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.15);cursor:pointer;transition:.2s var(--ease)}
   .bh-dot.active{width:22px;background:var(--orange);border-color:transparent}
-  .bh-hero-soon{position:relative;z-index:5;width:100%;text-align:center;color:#fff;padding:120px 0}
+  .bh-hero-soon{position:relative;z-index:5;width:100%;text-align:center;color:#fff;padding:160px 0 120px}
   .bh-hero-soon h2{font-size:30px;font-weight:800;margin:0 0 10px}
   .bh-hero-soon p{margin:0;color:rgba(255,255,255,.8);font-size:15px}
 
-  /* ===== STAT STRIP ===== */
-  .bh-stats{background:linear-gradient(180deg,#fff, var(--bg));border-bottom:1px solid var(--line)}
-  .bh-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:26px 0}
-  .bh-stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);
-      padding:18px 16px;text-align:center;box-shadow:var(--shadow-sm)}
-  .bh-stat b{display:block;font-size:28px;font-weight:900;color:var(--teal);line-height:1}
-  .bh-stat span{display:block;margin-top:8px;font-size:13px;color:var(--muted);font-weight:600}
+  /* ===== BRANCH IDENTITY BAR (portfolio-style) =====
+     نواری که می‌گوید این صفحه مربوط به کدام شعبه است، با طراحیِ شاخص. */
+  .bh-id{position:relative;overflow:hidden;color:#fff;
+      background:
+        radial-gradient(circle at 86% -10%,rgba(245,166,35,.28),transparent 42%),
+        radial-gradient(circle at 8% 120%,rgba(16,174,184,.30),transparent 46%),
+        linear-gradient(135deg,#063a3c 0%,#0a5c5b 55%,#063a3c 100%)}
+  .bh-id::before{content:"";position:absolute;inset:0;opacity:.06;pointer-events:none;
+      background-image:radial-gradient(rgba(255,255,255,.9) 1px,transparent 1px);background-size:22px 22px}
+  .bh-id-inner{position:relative;z-index:2;display:flex;align-items:center;gap:28px;padding:46px 0;flex-wrap:wrap}
+  .bh-id-badge{flex:0 0 auto;width:92px;height:92px;border-radius:24px;display:grid;place-items:center;
+      background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);
+      font-size:38px;font-weight:900;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.22)}
+  .bh-id-main{flex:1 1 280px;min-width:240px}
+  .bh-id-kicker{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.04em;
+      color:#0a3a3a;background:var(--orange);padding:5px 13px;border-radius:999px;margin-bottom:12px}
+  .bh-id-name{margin:0;font-size:34px;font-weight:900;line-height:1.2;letter-spacing:-.5px}
+  .bh-id-sub{margin:8px 0 0;color:rgba(255,255,255,.78);font-size:14px;line-height:1.85;max-width:62ch}
+  .bh-id-line{display:flex;align-items:center;gap:10px;margin-top:16px;color:rgba(255,255,255,.9);font-size:13px;font-weight:600}
+  .bh-id-line svg{width:17px;height:17px;color:var(--orange)}
+  .bh-id-rule{height:1px;flex:1;background:linear-gradient(90deg,rgba(255,255,255,.32),transparent)}
+  @media(max-width:760px){.bh-id-inner{gap:18px;padding:34px 0}.bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}.bh-id-name{font-size:26px}}
 
   /* ===== SECTIONS ===== */
   .bh-sec{padding:64px 0}
@@ -119,26 +140,10 @@
   .bh-soon b{display:block;font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
   .bh-soon span{font-size:13.5px}
 
-  /* ===== BRANCH CTA BAND (teal, not HQ's orange) ===== */
-  .bh-cta{position:relative;overflow:hidden;color:#fff;padding:56px 0;
-      background:
-        radial-gradient(circle at 12% 12%,rgba(255,255,255,.18),transparent 36%),
-        radial-gradient(circle at 88% 86%,rgba(255,255,255,.12),transparent 40%),
-        linear-gradient(155deg,var(--teal-l) 0%,var(--teal-d) 58%,#05646e 100%)}
-  .bh-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
-  .bh-cta h3{margin:0 0 8px;font-size:24px;font-weight:900}
-  .bh-cta p{margin:0;color:rgba(255,255,255,.88);font-size:14px;line-height:1.85;max-width:60ch}
-  .bh-cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--orange);color:#1a1a1a;
-      font-weight:800;font-size:15px;padding:14px 28px;border-radius:12px;white-space:nowrap;
-      box-shadow:0 12px 26px rgba(0,0,0,.18);transition:.2s var(--ease)}
-  .bh-cta-btn:hover{transform:translateY(-2px);filter:brightness(1.04)}
-
   @media(max-width:760px){
     .bh-hero-title{font-size:30px}
-    .bh-stats-grid{grid-template-columns:repeat(2,1fr)}
     .bh-sec{padding:48px 0}
     .bh-head h2{font-size:23px}
-    .bh-cta-inner{flex-direction:column;text-align:center;align-items:center}
   }
 </style>
 
@@ -152,14 +157,22 @@
     <div class="bh-dots" id="bh-dots"></div>
   </section>
 
-  <!-- STAT STRIP -->
-  <section class="bh-stats">
-    <div class="bh-wrap">
-      <div class="bh-stats-grid" id="bh-stats">
-        <div class="bh-stat"><b id="bh-st-campaigns">۰</b><span>کمپین فعال</span></div>
-        <div class="bh-stat"><b id="bh-st-news">۰</b><span>خبر منتشرشده</span></div>
-        <div class="bh-stat"><b id="bh-st-courses">۰</b><span>دوره‌ی آموزشی</span></div>
-        <div class="bh-stat"><b id="bh-st-hero">۰</b><span>پویش ویژه</span></div>
+  <!-- BRANCH IDENTITY BAR (portfolio-style) -->
+  <section class="bh-id">
+    <div class="bh-wrap bh-id-inner">
+      <div class="bh-id-badge" id="bh-id-badge">م</div>
+      <div class="bh-id-main">
+        <span class="bh-id-kicker">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
+          شعبه‌ای از خیریه مکسا
+        </span>
+        <h2 class="bh-id-name" id="bh-id-name">شعبه‌ی مکسا</h2>
+        <p class="bh-id-sub">به صفحه‌ی این شعبه از مؤسسه‌ی نیکوکاری مکسا خوش آمدید؛ این‌جا کمپین‌ها، اخبار و دوره‌های همین شعبه را دنبال می‌کنید.</p>
+        <div class="bh-id-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z"/></svg>
+          <span id="bh-id-tagline">در خدمت مردم، در کنار شما</span>
+          <span class="bh-id-rule"></span>
+        </div>
       </div>
     </div>
   </section>
@@ -172,33 +185,11 @@
     </div>
   </section>
 
-  <!-- NEWS -->
-  <section class="bh-sec alt" id="bh-news">
-    <div class="bh-wrap">
-      <div class="bh-head"><h2>آخرین اخبار شعبه</h2></div>
-      <div class="bh-grid" id="bh-news-grid"></div>
-    </div>
-  </section>
-
   <!-- COURSES -->
-  <section class="bh-sec" id="bh-courses">
+  <section class="bh-sec alt" id="bh-courses">
     <div class="bh-wrap">
       <div class="bh-head"><h2>دوره‌های شعبه</h2></div>
       <div class="bh-grid cols-2" id="bh-courses-grid"></div>
-    </div>
-  </section>
-
-  <!-- BRANCH CTA -->
-  <section class="bh-cta">
-    <div class="bh-wrap bh-cta-inner">
-      <div>
-        <h3 id="bh-cta-title">در کنار ما باشید</h3>
-        <p>با حمایت از فعالیت‌های این شعبه، در رساندنِ خدمات به نیازمندان سهیم شوید. هر کمک، هرچند کوچک، اثرگذار است.</p>
-      </div>
-      <a class="bh-cta-btn" id="bh-cta-btn" href="#" target="_top">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
-        حمایت می‌کنم
-      </a>
     </div>
   </section>
 
@@ -223,6 +214,17 @@
   }
   function jget(url){return fetch(url).then(function(r){return r.json();}).catch(function(){return null;});}
 
+  /* ---- BRANCH IDENTITY BAR ---- */
+  (function(){
+    var nm=NAME||'مکسا';
+    var nameEl=document.getElementById('bh-id-name');
+    if(nameEl) nameEl.textContent='شعبه‌ی '+nm;
+    var badge=document.getElementById('bh-id-badge');
+    if(badge){ var ch=(nm.trim()[0]||'م'); badge.textContent=ch; }
+    var tag=document.getElementById('bh-id-tagline');
+    if(tag) tag.textContent='شعبه‌ی '+nm+' — در خدمت مردم، در کنار شما';
+  })();
+
   /* ---- HERO ---- */
   (function(){
     var track=document.getElementById('bh-hero-track');
@@ -231,7 +233,6 @@
     var kickerName=NAME?('شعبه‌ی '+NAME):'شعبه‌ی مکسا';
     jget('/dashboard/hero-list.php'+Q).then(function(d){
       var items=(d&&d.data)||[];
-      document.getElementById('bh-st-hero').textContent=fa(items.length);
       if(!items.length){
         document.getElementById('bh-hero').innerHTML='<div class="bh-wrap bh-hero-soon"><h2>'+esc(kickerName)+'</h2><p>محتوای ویژه‌ی این شعبه به‌زودی منتشر می‌شود.</p></div>';
         return;
@@ -266,7 +267,6 @@
   /* ---- CAMPAIGNS ---- */
   jget('/dashboard/campaign-list.php'+Q).then(function(d){
     var items=(d&&d.data)||[]; var grid=document.getElementById('bh-campaigns-grid');
-    document.getElementById('bh-st-campaigns').textContent=fa(items.length);
     if(!items.length){grid.innerHTML=soon('هنوز کمپینی برای این شعبه تعریف نشده است.');return;}
     grid.innerHTML=items.slice(0,3).map(function(c){
       var tgt=parseFloat(c.target_amount)||0, col=parseFloat(c.collected_amount)||0;
@@ -284,26 +284,9 @@
     }).join('');
   });
 
-  /* ---- NEWS ---- */
-  jget('/dashboard/recent-news-feed.php?limit=3'+QA).then(function(d){
-    var items=(d&&d.items)||[]; var grid=document.getElementById('bh-news-grid');
-    document.getElementById('bh-st-news').textContent=fa(items.length);
-    if(!items.length){grid.innerHTML=soon('هنوز خبری برای این شعبه منتشر نشده است.');return;}
-    grid.innerHTML=items.map(function(n){
-      var img=n.image||ph;
-      return '<a class="bh-card" href="'+esc(n.url||'#')+'" target="_top"><div class="bh-thumb"><img src="'+esc(img)+'" alt="" onerror="this.src=\''+ph+'\'"></div>'
-        +'<div class="bh-body"><div class="bh-meta"><span class="bh-cat">'+esc(n.category||'اخبار')+'</span><span>'+fa(n.date||'')+'</span></div>'
-        +'<h3>'+esc(n.title||'')+'</h3>'
-        +(n.excerpt?('<p>'+esc(cut(n.excerpt,100))+'</p>'):'')
-        +'<div class="bh-foot"><span class="bh-meta">'+fa(n.read_time||1)+' دقیقه مطالعه</span>'
-        +'<span class="bh-link">ادامه ‹</span></div></div></a>';
-    }).join('');
-  });
-
   /* ---- COURSES ---- */
   jget('/dashboard/branch-courses-feed.php?limit=4'+QA).then(function(d){
     var items=(d&&d.items)||[]; var grid=document.getElementById('bh-courses-grid');
-    document.getElementById('bh-st-courses').textContent=fa(items.length);
     if(!items.length){grid.innerHTML=soon('هنوز دوره‌ای برای این شعبه منتشر نشده است.');return;}
     grid.innerHTML=items.map(function(c){
       var img=c.image||ph;
@@ -317,12 +300,5 @@
         +'</div></a>';
     }).join('');
   });
-
-  /* ---- CTA copy + donation link ---- */
-  (function(){
-    if(NAME){document.getElementById('bh-cta-title').textContent='به شعبه‌ی '+NAME+' کمک کنید';}
-    // مسیر مشارکت: صفحه‌ی کمپین‌های همان شعبه (در نبودِ مسیر اختصاصیِ پرداخت)
-    document.getElementById('bh-cta-btn').setAttribute('href', SLUG?('/'+encodeURIComponent(SLUG)+'#bh-campaigns'):'#bh-campaigns');
-  })();
 })();
 </script>

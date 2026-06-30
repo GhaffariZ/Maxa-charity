@@ -6,11 +6,14 @@
 --  تفاوتِ escapeِ JSON در ذخیره‌ی MySQL) به‌روز نشدند.
 --
 --  این مهاجرت، صفحه‌ی homeِ «همه‌ی شعب به‌جز ستاد مرکزی (branch_id = 1)» را قطعاً به
---  چیدمانِ استانداردِ شعبه می‌برد: ["header","branch-home","footer"].
+--  چیدمانِ استانداردِ شعبه می‌برد:
+--      ["header","branch-home","recent-news-hero-v2","footer"]
+--  (branch-home: هیرو + هویتِ شعبه + کمپین‌ها + دوره‌ها — و سپس کامپوننتِ خبرِ مشترکِ
+--   سایت که اخبارِ همان شعبه را نشان می‌دهد.)
 --  ستادِ مرکزی دست‌نخورده می‌ماند. اجرای مجدد بی‌خطر است (idempotent).
 -- ============================================================================
 
 UPDATE pages
-   SET components = '["header","branch-home","footer"]'
+   SET components = '["header","branch-home","recent-news-hero-v2","footer"]'
  WHERE slug = 'home'
    AND branch_id <> 1;
