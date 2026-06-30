@@ -14,6 +14,9 @@ RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+# ---- Redirect root to /home -----------------------------------------------------
+RewriteRule ^$ /home [R=301,L]
+
 # ---- Leave the API alone (handled by api/.htaccess) -----------------------------
 RewriteRule ^api(/|$) - [L]
 
