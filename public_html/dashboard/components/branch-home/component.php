@@ -92,9 +92,21 @@
   .bh-id-rule{height:1px;flex:1;background:linear-gradient(90deg,rgba(255,255,255,.32),transparent)}
   @media(max-width:760px){.bh-id-inner{gap:18px;padding:34px 0}.bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}.bh-id-name{font-size:26px}}
 
+  /* ===== CONTENT BACKDROP (behind news + campaigns + courses) =====
+     یک پس‌زمینه‌ی نرم و طرح‌دار به‌جای سفیدیِ یکدستِ قبلی. */
+  .bh-content{position:relative;overflow:hidden;
+      background:
+        radial-gradient(circle at 90% 0,rgba(16,174,184,.10),transparent 38%),
+        radial-gradient(circle at 0 30%,rgba(245,166,35,.08),transparent 34%),
+        radial-gradient(circle at 50% 100%,rgba(0,123,122,.07),transparent 46%),
+        linear-gradient(180deg,#f3f7f7 0%,#eef4f4 50%,#f3f7f7 100%)}
+  .bh-content::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+      background-image:radial-gradient(rgba(0,123,122,.06) 1px,transparent 1px);background-size:26px 26px}
+  .bh-content>*{position:relative;z-index:1}
+
   /* ===== SECTIONS ===== */
-  .bh-sec{padding:64px 0}
-  .bh-sec.alt{background:var(--bg)}
+  .bh-sec{padding:60px 0}
+  .bh-sec.tight{padding-bottom:24px}
   .bh-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:34px}
   .bh-head h2{margin:0;font-size:28px;font-weight:800;position:relative;padding-bottom:12px}
   .bh-head h2::after{content:"";position:absolute;right:0;bottom:0;width:48px;height:3px;border-radius:999px;background:var(--teal)}
@@ -121,6 +133,30 @@
   .bh-cat{background:rgba(0,123,122,.08);color:var(--teal);border-radius:6px;padding:2px 8px;font-weight:700}
   .bh-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
   .bh-link{font-size:12.5px;font-weight:800;color:var(--teal);display:inline-flex;align-items:center;gap:6px}
+
+  /* ===== NEWS (feature + side list) ===== */
+  .bh-news-grid{display:grid;grid-template-columns:1fr;gap:24px}
+  @media(min-width:1000px){.bh-news-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.bh-news-main{grid-column:span 7}.bh-news-side{grid-column:span 5}}
+  .bh-news-main{position:relative;display:block;overflow:hidden;border-radius:var(--radius);background:#000;aspect-ratio:16/10;
+      box-shadow:var(--shadow-md)}
+  .bh-news-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.66;transition:transform 1s var(--ease)}
+  .bh-news-main:hover img{transform:scale(1.05)}
+  .bh-news-main::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,.05) 60%,transparent)}
+  .bh-news-main-c{position:absolute;inset-inline:0;bottom:0;padding:28px;color:#fff;z-index:2}
+  .bh-news-badge{display:inline-block;background:var(--teal);color:#fff;border-radius:999px;font-size:12px;font-weight:700;padding:4px 12px;margin-bottom:12px}
+  .bh-news-main-c h3{margin:0 0 12px;font-size:26px;line-height:1.4;font-weight:800}
+  .bh-news-main-c .bh-meta{color:#dfe5e5}
+  .bh-news-side{display:flex;flex-direction:column;gap:16px}
+  .bh-news-card{display:flex;gap:14px;background:var(--surface);padding:14px;border-radius:var(--radius);border:1px solid var(--line);
+      box-shadow:var(--shadow-sm);transition:box-shadow .2s var(--ease),transform .2s var(--ease)}
+  .bh-news-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .bh-news-thumb{width:92px;height:92px;flex-shrink:0;border-radius:14px;overflow:hidden}
+  .bh-news-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .35s var(--ease)}
+  .bh-news-card:hover .bh-news-thumb img{transform:scale(1.08)}
+  .bh-news-cbody{display:flex;flex-direction:column;justify-content:center;gap:5px}
+  .bh-news-cbody .bh-cat{align-self:flex-start}
+  .bh-news-cbody h4{margin:0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1c2022}
+  .bh-news-cbody time{font-size:11px;color:#a3a9ad}
 
   /* campaign progress */
   .bh-prog{margin-top:4px}
@@ -177,21 +213,34 @@
     </div>
   </section>
 
-  <!-- CAMPAIGNS -->
-  <section class="bh-sec" id="bh-campaigns">
-    <div class="bh-wrap">
-      <div class="bh-head"><h2>کمپین‌های شعبه</h2></div>
-      <div class="bh-grid" id="bh-campaigns-grid"></div>
-    </div>
-  </section>
+  <!-- CONTENT (news → campaigns → courses) over a soft branded backdrop -->
+  <div class="bh-content">
 
-  <!-- COURSES -->
-  <section class="bh-sec alt" id="bh-courses">
-    <div class="bh-wrap">
-      <div class="bh-head"><h2>دوره‌های شعبه</h2></div>
-      <div class="bh-grid cols-2" id="bh-courses-grid"></div>
-    </div>
-  </section>
+    <!-- NEWS -->
+    <section class="bh-sec" id="bh-news">
+      <div class="bh-wrap">
+        <div class="bh-head"><h2>آخرین اخبار شعبه</h2></div>
+        <div class="bh-news-grid" id="bh-news-grid"></div>
+      </div>
+    </section>
+
+    <!-- CAMPAIGNS -->
+    <section class="bh-sec" id="bh-campaigns">
+      <div class="bh-wrap">
+        <div class="bh-head"><h2>کمپین‌های شعبه</h2></div>
+        <div class="bh-grid" id="bh-campaigns-grid"></div>
+      </div>
+    </section>
+
+    <!-- COURSES -->
+    <section class="bh-sec" id="bh-courses">
+      <div class="bh-wrap">
+        <div class="bh-head"><h2>دوره‌های شعبه</h2></div>
+        <div class="bh-grid cols-2" id="bh-courses-grid"></div>
+      </div>
+    </section>
+
+  </div>
 
 </div>
 
@@ -263,6 +312,28 @@
       }
     });
   })();
+
+  /* ---- NEWS (feature + side list, branch-scoped) ---- */
+  jget('/dashboard/recent-news-feed.php?limit=3'+QA).then(function(d){
+    var items=(d&&d.items)||[]; var grid=document.getElementById('bh-news-grid');
+    grid.className='bh-grid';   // برای حالتِ خالی، گریدِ معمولی تا «به‌زودی» تمام‌عرض شود
+    if(!items.length){grid.innerHTML=soon('هنوز خبری برای این شعبه منتشر نشده است.');return;}
+    grid.className='bh-news-grid';
+    var first=items[0], rest=items.slice(1);
+    var main='<a class="bh-news-main" href="'+esc(first.url||'#')+'" target="_top">'
+      +'<img src="'+esc(first.image||ph)+'" alt="" onerror="this.src=\''+ph+'\'">'
+      +'<div class="bh-news-main-c"><span class="bh-news-badge">'+esc(first.category||'اخبار')+'</span>'
+      +'<h3>'+esc(first.title||'')+'</h3>'
+      +'<div class="bh-meta"><span>'+fa(first.date||'')+'</span><span>•</span><span>'+fa(first.read_time||1)+' دقیقه مطالعه</span></div>'
+      +'</div></a>';
+    var side='<div class="bh-news-side">'+rest.map(function(n){
+      return '<a class="bh-news-card" href="'+esc(n.url||'#')+'" target="_top">'
+        +'<div class="bh-news-thumb"><img src="'+esc(n.image||ph)+'" alt="" onerror="this.src=\''+ph+'\'"></div>'
+        +'<div class="bh-news-cbody"><span class="bh-cat">'+esc(n.category||'اخبار')+'</span>'
+        +'<h4>'+esc(cut(n.title||'',70))+'</h4><time>'+fa(n.date||'')+'</time></div></a>';
+    }).join('')+'</div>';
+    grid.innerHTML=main+side;
+  });
 
   /* ---- CAMPAIGNS ---- */
   jget('/dashboard/campaign-list.php'+Q).then(function(d){
