@@ -40,6 +40,10 @@
 .rnhv2-side-time{margin-top:8px;font-size:10px;color:#a3a3a3}.rnhv2-more{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed #e5e5e5;border-radius:24px;min-height:92px;color:#a3a3a3;text-decoration:none;font-weight:700;transition:all .2s ease}
 .rnhv2-more:hover{color:#2563eb;border-color:#2563eb}.rnhv2-more-arrow{font-size:20px;line-height:1;transition:transform .2s ease}.rnhv2-more:hover .rnhv2-more-arrow{transform:translateX(-4px)}
 .rnhv2-empty{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;color:#6b7280}
+.rnhv2-soon{grid-column:1/-1;text-align:center;padding:54px 20px;border:1.5px dashed #d6e0e0;border-radius:24px;background:rgba(0,123,122,.03);color:#7e858a}
+.rnhv2-soon svg{width:40px;height:40px;color:#007b7a;opacity:.7;margin-bottom:12px}
+.rnhv2-soon b{display:block;font-size:18px;font-weight:800;color:#2f3437;margin-bottom:6px}
+.rnhv2-soon span{font-size:13.5px}
 @media (min-width:1024px){.rnhv2-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.rnhv2-main{grid-column:span 7}.rnhv2-side{grid-column:span 5}}
 @media (max-width:768px){.rnhv2-section{padding:44px 0}.rnhv2-title{font-size:28px}.rnhv2-main-content{padding:20px}.rnhv2-main-title{font-size:22px}}
 </style>
@@ -51,7 +55,7 @@
   const ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-size="56" font-family="Vazirmatn,Tahoma">بدون تصویر</text></svg>');
   const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
   fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
-    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-empty">خبری برای نمایش وجود ندارد.</div>'; return;}
+    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز خبری برای نمایش منتشر نشده است.</span></div>'; return;}
     const first=items[0], rest=items.slice(1);
     grid.innerHTML='<a class="rnhv2-main" href="'+first.url+'"><img class="rnhv2-main-img" src="'+(first.image||ph)+'" alt=""><div class="rnhv2-overlay"></div><div class="rnhv2-main-content"><span class="rnhv2-badge">'+first.category+'</span><h3 class="rnhv2-main-title">'+first.title+'</h3><div class="rnhv2-meta"><span>'+fa(first.date)+'</span><span class="rnhv2-dot"></span><span>'+fa(first.read_time)+' دقیقه مطالعه</span></div></div></a><div class="rnhv2-side"></div>';
     const side=grid.querySelector('.rnhv2-side');
