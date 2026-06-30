@@ -20,23 +20,23 @@
 
 <div class="mi-group">
 <label>نام و نام خانوادگی <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="full_name" required>
 </div>
 
 <div class="mi-group">
 <label>شماره موبایل <span class="mi-required">*</span></label>
-<input type="tel" required>
+<input type="tel" name="mobile" required>
 </div>
 
 <div class="mi-group">
 <label>سن</label>
-<input type="number">
+<input type="number" name="age">
 </div>
 
 <div class="mi-group">
 <label>جنسیت</label>
-<select>
-<option>انتخاب کنید</option>
+<select name="gender">
+<option value="">انتخاب کنید</option>
 <option>مرد</option>
 <option>زن</option>
 </select>
@@ -44,12 +44,12 @@
 
 <div class="mi-group">
 <label>استان <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="province" required>
 </div>
 
 <div class="mi-group">
 <label>شهر محل سکونت <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="city" required>
 </div>
 
 </div>
@@ -64,8 +64,8 @@
 
 <div class="mi-group">
 <label>نوع سرطان</label>
-<select>
-<option>انتخاب کنید</option>
+<select name="cancer_type">
+<option value="">انتخاب کنید</option>
 <option>سرطان پستان</option>
 <option>سرطان ریه</option>
 <option>سرطان معده</option>
@@ -77,8 +77,8 @@
 
 <div class="mi-group">
 <label>وضعیت تشخیص</label>
-<select>
-<option>انتخاب کنید</option>
+<select name="diagnosis_status">
+<option value="">انتخاب کنید</option>
 <option>تشخیص قطعی</option>
 <option>در حال بررسی</option>
 <option>مشکوک</option>
@@ -89,7 +89,7 @@
 
 <div class="mi-group">
 <label>توضیحات</label>
-<textarea rows="3"></textarea>
+<textarea name="description" rows="3"></textarea>
 </div>
 
 </div>
@@ -354,6 +354,13 @@ margin-top:20px;
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
+    var token = localStorage.getItem('token');
+    if (!token) {
+        localStorage.setItem('redirect_to_patientintake', '1');
+        window.location.href = '/benefactor-dashboard/login';
+        return;
+    }
+
     var form = document.querySelector(".medical-intake form");
     var fileInput = document.getElementById("miFileInput");
     var preview = document.getElementById("miPreview");
@@ -486,27 +493,62 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
 
-            var container = document.querySelector(".mi-card");
-            form.style.display = "none";
+            var submitBtn = form.querySelector('.mi-submit');
+            var originalText = submitBtn.innerText;
+            submitBtn.innerText = 'در حال ارسال...';
+            submitBtn.disabled = true;
 
-            var success = document.createElement("div");
-            success.className = "mi-success-message";
+            var formData = new FormData(form);
+            filesArray.forEach(function(file) {
+                formData.append('documents[]', file);
+            });
 
-            success.innerHTML =
-            "<p><strong>اطلاعات شما با موفقیت ثبت شد.</strong></p>" +
-            "<p>همکاران ما تا 48 ساعت آینده با شما تماس خواهند گرفت.</p>" +
-            "<p>با سپاس از شما</p>";
-
-            container.appendChild(success);
-
-            setTimeout(function(){
-
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-
-            },100);
+            fetch('/api/medical-records', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                body: formData
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.setItem('redirect_to_patientintake', '1');
+                        window.location.href = '/benefactor-dashboard/login';
+                        throw new Error('Unauthorized');
+                    }
+                    throw new Error('خطا در ارسال اطلاعات');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                var container = document.querySelector(".mi-card");
+                form.style.display = "none";
+    
+                var success = document.createElement("div");
+                success.className = "mi-success-message";
+    
+                success.innerHTML =
+                "<p><strong>اطلاعات شما با موفقیت ثبت شد.</strong></p>" +
+                "<p>همکاران ما تا 48 ساعت آینده با شما تماس خواهند گرفت.</p>" +
+                "<p>با سپاس از شما</p>";
+    
+                container.appendChild(success);
+    
+                setTimeout(function(){
+                    window.scrollTo({
+                        top:0,
+                        behavior:"smooth"
+                    });
+                },100);
+            })
+            .catch(function(error) {
+                if (error.message !== 'Unauthorized') {
+                    alert('مشکلی در ثبت اطلاعات پیش آمد. لطفا دوباره تلاش کنید.');
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
 
         }
 
