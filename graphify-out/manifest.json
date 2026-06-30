@@ -730,8 +730,8 @@
     "semantic_hash": "4151983cc43300d3795005a6b847038f"
   },
   "public_html/dashboard/branch-create.php": {
-    "mtime": 1782666600.1825328,
-    "ast_hash": "359aeff7b1ab8504e03b0c047153b58a",
+    "mtime": 1782814725.650412,
+    "ast_hash": "ace49eb2baf96bd27c222a66978c62c9",
     "semantic_hash": ""
   },
   "public_html/dashboard/branch-edit.php": {
@@ -1115,8 +1115,8 @@
     "semantic_hash": "7bd62b8aaba04e9c4891450b1288019d"
   },
   "public_html/dashboard/components/recent-news-hero-v2/component.php": {
-    "mtime": 1782666372.899073,
-    "ast_hash": "e7fa1c958443604ee056cf4466805db1",
+    "mtime": 1782814760.0424733,
+    "ast_hash": "9a8e67c76a77872ce6828e80b2afb0b5",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-hero-v2/meta.json": {
@@ -3595,8 +3595,13 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branch-home/component.php": {
-    "mtime": 1782666664.9980028,
-    "ast_hash": "48219f70b597b654c58b5e41bca3082e",
+    "mtime": 1782814699.0512767,
+    "ast_hash": "debb65e07a6b566212b34696733b3b57",
+    "semantic_hash": ""
+  },
+  "database/migrations/005_branch_home_force.sql": {
+    "mtime": 1782814739.4985676,
+    "ast_hash": "613b04d56f35efa9ffcc3ed95e5323f4",
     "semantic_hash": ""
   }
 }
