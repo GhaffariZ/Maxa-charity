@@ -11,6 +11,7 @@ declare(strict_types=1);
 use Maksa\Auth\AuthMiddleware;
 use Maksa\Controllers\AuthController;
 use Maksa\Controllers\CampaignController;
+use Maksa\Controllers\ContactController;
 use Maksa\Controllers\DonationController;
 use Maksa\Controllers\EngagementController;
 use Maksa\Controllers\HealthController;
@@ -24,6 +25,9 @@ return static function (Router $r): void {
     // ---- Health -------------------------------------------------------------
     $r->get('/', [HealthController::class, 'ping']);
     $r->get('/health', [HealthController::class, 'ping']);
+
+    // ---- Contact form (public) ---------------------------------------------
+    $r->post('/contact',                  [ContactController::class, 'submit']);
 
     // ---- Auth (public) ------------------------------------------------------
     $r->post('/auth/register',            [AuthController::class, 'register']);

@@ -71,6 +71,20 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^courses/([0-9]+)/?$ dashboard/course-details.php?id=$1 [L,QSA]
 
 # ---------------------------------------------------------
+# 0.7) تماس با ما (Contact us) clean URL
+#      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
+#      /contactus به‌جای page-view.php به صفحه‌ی تماس برود.
+#      /contactus            -> contactus.php
+#      /contactus.html       -> 301 به /contactus (سازگاری با لینک‌های قدیمی)
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+contactus\.html[\s?] [NC]
+RewriteRule ^contactus\.html$ /contactus [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^contactus/?$ contactus.php [L,QSA]
+
+# ---------------------------------------------------------
 # 1) Redirect old URL
 # /dashboard/news-view.php?id=12  ->  /12/
 # ---------------------------------------------------------
