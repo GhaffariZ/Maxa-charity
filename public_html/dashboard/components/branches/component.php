@@ -1041,7 +1041,6 @@ stroke-width:1.19434">آذربایجان شرقی</tspan></text><text
   border: 1px solid var(--color-border);
   border-radius: 20px;
   padding: clamp(20px, 4vw, 44px);
-  box-shadow: 0 18px 50px -28px rgba(0, 102, 101, 0.45);
 }
 
 /* سربرگ */
