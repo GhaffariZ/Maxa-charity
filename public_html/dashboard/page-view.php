@@ -78,7 +78,10 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
 
     echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
     echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-    echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n</head>\n<body>\n";
+    echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n";
+    // ریستِ پایه تا حاشیه‌ی پیش‌فرضِ مرورگر (margin: 8px روی body) دورِ صفحه نیفتد.
+    echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
+    echo "</head>\n<body>\n";
     // شعبه‌ی جاری برای کامپوننت‌ها (هیرو/خبر/کمپین/...) تا فیدهای عمومی را scope کنند
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
