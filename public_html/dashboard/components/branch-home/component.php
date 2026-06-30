@@ -93,15 +93,19 @@
   @media(max-width:760px){.bh-id-inner{gap:18px;padding:34px 0}.bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}.bh-id-name{font-size:26px}}
 
   /* ===== CONTENT BACKDROP (behind news + campaigns + courses) =====
-     یک پس‌زمینه‌ی نرم و طرح‌دار به‌جای سفیدیِ یکدستِ قبلی. */
+     یک گرادیانِ سبکِ برندی با پالتِ مکسا (فیروزه‌ای → نعنایی → کرمِ گرم) به‌جای
+     سفیدیِ خامِ بی‌هویتِ قبلی. */
   .bh-content{position:relative;overflow:hidden;
       background:
-        radial-gradient(circle at 90% 0,rgba(16,174,184,.10),transparent 38%),
-        radial-gradient(circle at 0 30%,rgba(245,166,35,.08),transparent 34%),
-        radial-gradient(circle at 50% 100%,rgba(0,123,122,.07),transparent 46%),
-        linear-gradient(180deg,#f3f7f7 0%,#eef4f4 50%,#f3f7f7 100%)}
-  .bh-content::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-      background-image:radial-gradient(rgba(0,123,122,.06) 1px,transparent 1px);background-size:26px 26px}
+        radial-gradient(60% 50% at 88% -4%,rgba(16,174,184,.22),transparent 70%),
+        radial-gradient(52% 44% at 6% 14%,rgba(245,166,35,.16),transparent 68%),
+        radial-gradient(60% 50% at 50% 108%,rgba(0,123,122,.18),transparent 72%),
+        linear-gradient(165deg,#eaf5f4 0%,#eef6f1 36%,#fbf4e6 72%,#e9f4f3 100%)}
+  /* یک خطِ گرادیانِ نازکِ برندی در بالای ناحیه برای جداسازیِ نرم از نوار هویت */
+  .bh-content::after{content:"";position:absolute;top:0;inset-inline:0;height:3px;
+      background:linear-gradient(90deg,var(--teal),var(--teal-l) 45%,var(--orange));opacity:.85}
+  .bh-content::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+      background-image:radial-gradient(rgba(0,123,122,.07) 1px,transparent 1px);background-size:28px 28px}
   .bh-content>*{position:relative;z-index:1}
 
   /* ===== SECTIONS ===== */
@@ -168,6 +172,29 @@
   /* course price */
   .bh-price b{font-size:15px;font-weight:900;color:var(--text)}
   .bh-price .free{color:#16a37a}
+
+  /* ===== COURSES — minimal compact cards ===== */
+  .bh-courses-grid{display:grid;grid-template-columns:1fr;gap:16px}
+  @media(min-width:560px){.bh-courses-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(min-width:920px){.bh-courses-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(min-width:1200px){.bh-courses-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .bh-ccard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+      border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);
+      transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s}
+  .bh-ccard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:rgba(0,123,122,.28)}
+  .bh-ccard-thumb{position:relative;aspect-ratio:5/3;background:#eef1f2}
+  .bh-ccard-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .bh-ccard-cat{position:absolute;top:8px;inset-inline-end:8px;font-size:10px;font-weight:700;color:#fff;
+      background:rgba(0,123,122,.92);padding:2px 8px;border-radius:999px;backdrop-filter:blur(2px)}
+  .bh-ccard-body{padding:11px 13px 13px;display:flex;flex-direction:column;gap:5px;flex:1}
+  .bh-ccard-body h3{margin:0;font-size:14px;line-height:1.55;font-weight:800;color:#1c2022;
+      display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .bh-ccard-inst{font-size:11.5px;color:var(--muted)}
+  .bh-ccard-foot{margin-top:auto;padding-top:9px;display:flex;align-items:center;justify-content:space-between;
+      border-top:1px solid var(--line)}
+  .bh-ccard-meta{font-size:11px;color:#a3a9ad}
+  .bh-ccard-price b{font-size:13px;font-weight:900;color:var(--text)}
+  .bh-ccard-price .free{color:#16a37a}
 
   /* empty / coming soon */
   .bh-soon{grid-column:1/-1;text-align:center;padding:54px 20px;border:1.5px dashed var(--line);
@@ -236,7 +263,7 @@
     <section class="bh-sec" id="bh-courses">
       <div class="bh-wrap">
         <div class="bh-head"><h2>دوره‌های شعبه</h2></div>
-        <div class="bh-grid cols-2" id="bh-courses-grid"></div>
+        <div class="bh-courses-grid" id="bh-courses-grid"></div>
       </div>
     </section>
 
@@ -355,19 +382,21 @@
     }).join('');
   });
 
-  /* ---- COURSES ---- */
-  jget('/dashboard/branch-courses-feed.php?limit=4'+QA).then(function(d){
+  /* ---- COURSES (minimal compact cards) ---- */
+  jget('/dashboard/branch-courses-feed.php?limit=8'+QA).then(function(d){
     var items=(d&&d.items)||[]; var grid=document.getElementById('bh-courses-grid');
-    if(!items.length){grid.innerHTML=soon('هنوز دوره‌ای برای این شعبه منتشر نشده است.');return;}
+    if(!items.length){grid.className='bh-grid';grid.innerHTML=soon('هنوز دوره‌ای برای این شعبه منتشر نشده است.');return;}
     grid.innerHTML=items.map(function(c){
       var img=c.image||ph;
       var price=c.is_free?'<b class="free">رایگان</b>':(c.discount>0?('<b>'+money(c.discount)+' ت</b>'):('<b>'+money(c.price)+' ت</b>'));
-      return '<a class="bh-card" href="'+esc(c.url||'#')+'" target="_top"><div class="bh-thumb"><img src="'+esc(img)+'" alt="" onerror="this.src=\''+ph+'\'"></div>'
-        +'<div class="bh-body"><div class="bh-meta"><span class="bh-cat">'+esc(c.category||'عمومی')+'</span>'
-        +(c.lessons?('<span>'+fa(c.lessons)+' درس</span>'):'')+'</div>'
+      return '<a class="bh-ccard" href="'+esc(c.url||'#')+'" target="_top">'
+        +'<div class="bh-ccard-thumb"><img src="'+esc(img)+'" alt="" onerror="this.src=\''+ph+'\'">'
+        +'<span class="bh-ccard-cat">'+esc(c.category||'عمومی')+'</span></div>'
+        +'<div class="bh-ccard-body">'
         +'<h3>'+esc(c.title||'')+'</h3>'
-        +'<p>'+esc(c.instructor||'مدرس مکسا')+'</p>'
-        +'<div class="bh-foot"><span class="bh-price">'+price+'</span><span class="bh-link">مشاهده ‹</span></div>'
+        +'<div class="bh-ccard-inst">'+esc(c.instructor||'مدرس مکسا')+'</div>'
+        +'<div class="bh-ccard-foot"><span class="bh-ccard-price">'+price+'</span>'
+        +'<span class="bh-ccard-meta">'+(c.lessons?(fa(c.lessons)+' درس'):'مشاهده ‹')+'</span></div>'
         +'</div></a>';
     }).join('');
   });
