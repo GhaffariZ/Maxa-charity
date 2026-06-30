@@ -1023,9 +1023,7 @@ stroke-width:1.19434">آذربایجان شرقی</tspan></text><text
   box-sizing: border-box;
   width: 100%;
   padding: 40px 16px;
-  background:
-    radial-gradient(120% 120% at 50% 0%, rgba(0, 123, 122, 0.06), transparent 60%),
-    var(--color-bg);
+  background: transparent;
   font-family: 'Vazirmatn', sans-serif;
   color: var(--color-text);
 }
