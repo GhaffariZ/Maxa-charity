@@ -168,6 +168,32 @@
   .bh-prog-bar{height:8px;border-radius:999px;background:#eef1f2;overflow:hidden}
   .bh-prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal-l),var(--teal))}
   .bh-prog-badge{display:inline-block;font-size:12px;font-weight:800;color:var(--teal)}
+  /* support button — همان زبانِ دکمه‌ی «همین حالا کمک کنید» در بقیه‌ی سایت */
+  .bh-help{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;
+      padding:12px 18px;border:none;cursor:pointer;border-radius:13px;color:#fff;font-weight:700;font-size:14px;
+      font-family:inherit;background:linear-gradient(135deg,var(--teal),var(--teal-d));
+      box-shadow:0 10px 22px -10px rgba(0,123,122,.7);transition:transform .15s var(--ease),box-shadow .22s var(--ease)}
+  .bh-help:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.85)}
+
+  /* ===== DONATION MODAL ===== */
+  .bh-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(6,40,40,.55);
+      align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s var(--ease)}
+  .bh-modal.show{display:flex;opacity:1}
+  .bh-modal-c{background:#fff;border-radius:20px;width:min(460px,100%);padding:26px 26px 28px;
+      box-shadow:0 30px 70px -20px rgba(0,0,0,.4);transform:translateY(14px);transition:transform .3s var(--ease)}
+  .bh-modal.show .bh-modal-c{transform:none}
+  .bh-modal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .bh-modal-top h3{margin:0;font-size:19px;font-weight:800;color:#063a3c;line-height:1.6}
+  .bh-x{border:none;background:#f1f5f5;width:34px;height:34px;border-radius:10px;cursor:pointer;color:#5a6a6a;font-size:20px;line-height:1;flex:0 0 auto}
+  .bh-x:hover{background:#e6eded}
+  .bh-fg{margin-bottom:13px}
+  .bh-fg label{display:block;font-size:13px;font-weight:700;color:#3a4548;margin-bottom:6px}
+  .bh-fg input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:14px;color:var(--text);background:#fafcfc}
+  .bh-fg input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,123,122,.12)}
+  .bh-fg-row{display:flex;gap:12px}.bh-fg-row .bh-fg{flex:1}
+  .bh-submit{width:100%;margin-top:6px;padding:13px;border:none;cursor:pointer;border-radius:13px;color:#fff;font-weight:800;font-size:15px;
+      font-family:inherit;background:linear-gradient(135deg,var(--orange),var(--orange-2));box-shadow:0 12px 24px -10px rgba(245,166,35,.7);transition:transform .15s var(--ease)}
+  .bh-submit:hover{transform:translateY(-2px)}
 
   /* course price */
   .bh-price b{font-size:15px;font-weight:900;color:var(--text)}
@@ -269,6 +295,25 @@
 
   </div>
 
+  <!-- DONATION MODAL (همان فرمِ «کمک» در بقیه‌ی سایت) -->
+  <div class="bh-modal" id="bh-donate">
+    <div class="bh-modal-c">
+      <div class="bh-modal-top">
+        <h3 id="bh-donate-title">کمک به کمپین</h3>
+        <button type="button" class="bh-x" id="bh-donate-x" aria-label="بستن">&times;</button>
+      </div>
+      <form onsubmit="return false;">
+        <div class="bh-fg"><label>نام و نام خانوادگی</label><input type="text" placeholder="نام شما"></div>
+        <div class="bh-fg-row">
+          <div class="bh-fg"><label>ایمیل</label><input type="email" placeholder="ایمیل" dir="ltr"></div>
+          <div class="bh-fg"><label>تلفن</label><input type="tel" placeholder="تلفن" dir="ltr"></div>
+        </div>
+        <div class="bh-fg"><label>مبلغ کمک (تومان)</label><input type="number" placeholder="مبلغ" dir="ltr"></div>
+        <button type="submit" class="bh-submit">ثبت کمک</button>
+      </form>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -289,6 +334,20 @@
       +'<b>به‌زودی</b><span>'+esc(msg)+'</span></div>';
   }
   function jget(url){return fetch(url).then(function(r){return r.json();}).catch(function(){return null;});}
+
+  /* ---- DONATION MODAL ---- */
+  var bhModal=document.getElementById('bh-donate');
+  function bhOpenDonate(title){
+    if(!bhModal) return;
+    document.getElementById('bh-donate-title').textContent='کمک برای: '+(title||'کمپین');
+    bhModal.style.display='flex'; void bhModal.offsetHeight; bhModal.classList.add('show');
+  }
+  function bhCloseDonate(){ if(!bhModal) return; bhModal.classList.remove('show'); setTimeout(function(){ if(!bhModal.classList.contains('show')) bhModal.style.display='none'; },300); }
+  if(bhModal){
+    document.getElementById('bh-donate-x').addEventListener('click',bhCloseDonate);
+    bhModal.addEventListener('click',function(e){ if(e.target===bhModal) bhCloseDonate(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') bhCloseDonate(); });
+  }
 
   /* ---- BRANCH IDENTITY BAR ---- */
   (function(){
@@ -378,8 +437,14 @@
         +'<div class="bh-prog"><div class="bh-prog-info"><span class="bh-prog-badge">'+fa(pct)+'٪</span>'
         +'<span>'+money(col)+' از '+money(tgt)+' تومان</span></div>'
         +'<div class="bh-prog-bar"><div class="bh-prog-fill" style="width:'+pct+'%"></div></div></div>'
+        +'<button type="button" class="bh-help" data-title="'+esc(c.title||'')+'">'
+        +'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>'
+        +'همین حالا کمک کنید</button>'
         +'</div></article>';
     }).join('');
+    Array.prototype.forEach.call(grid.querySelectorAll('.bh-help'),function(b){
+      b.addEventListener('click',function(){ bhOpenDonate(b.getAttribute('data-title')||''); });
+    });
   });
 
   /* ---- COURSES (minimal compact cards) ---- */
