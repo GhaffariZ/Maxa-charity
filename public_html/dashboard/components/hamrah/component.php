@@ -15,7 +15,7 @@
 
 <div class="macsa-gallery">
 
-  <a href="/branches" class="gallery-item">
+  <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
       <img src="{{image1}}">
     </div>
