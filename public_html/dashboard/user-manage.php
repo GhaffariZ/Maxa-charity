@@ -35,6 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->execute([$newStatus, $uid, $BRANCH_ID]);
         dash_audit('user_status_changed', ['user_id' => $uid, 'status' => $newStatus, 'branch_id' => $BRANCH_ID]);
         $msg = 'وضعیت کاربر به‌روزرسانی شد.';
+    } elseif ($action === 'delete') {
+        if (dash_is_hq_view()) {
+            $pdo->prepare('DELETE FROM dashboard_users WHERE id = ? AND branch_id = ? AND is_super = 0')
+                ->execute([$uid, $BRANCH_ID]);
+            dash_audit('user_deleted', ['user_id' => $uid, 'branch_id' => $BRANCH_ID]);
+            $msg = 'کاربر با موفقیت از دیتابیس حذف شد.';
+        } else {
+            $msg = 'حذف کاربر فقط از طریق ستاد مرکزی مجاز است.';
+        }
     }
 }
 
@@ -99,6 +108,14 @@ require __DIR__ . '/_panel_head.php';
                   <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
                   <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
                 </form>
+                <?php if (dash_is_hq_view()): ?>
+                <form method="POST" style="display:inline" onsubmit="return confirm('آیا از حذف دائم این همکار اطمینان دارید؟ این عملیات قابل بازگشت نیست و کاربر از دیتابیس حذف می‌شود.');">
+                  <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                  <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
+                  <input type="hidden" name="action" value="delete">
+                  <button class="tbtn danger" type="submit">حذف</button>
+                </form>
+                <?php endif; ?>
               </div>
             <?php else: ?><span style="color:var(--color-muted);font-size:12px">—</span><?php endif; ?>
           </td>
