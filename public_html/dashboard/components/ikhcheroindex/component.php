@@ -77,13 +77,15 @@
       display:flex;
       align-items:center;
       overflow: visible;
-      padding-inline: 16px;
+      padding-inline: 0;
+      background: #111111; /* Solid flat background */
+      border-bottom: 2px solid var(--cta-orange);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
     }
 
     /* Detached look when scrolled */
     .cta-topbar.scrolled {
-      top: 12px;
+      top: 0;
       height: 68px;
     }
 
@@ -104,6 +106,8 @@
       gap:10px;
       position: relative;
       z-index: 60;
+      width: 100%;
+      padding: 0 16px;
     }
 
     /* راست: لوگو */
@@ -146,8 +150,7 @@
 }
 
 .cta-glass {
-  backdrop-filter: blur(6px);
-  box-shadow: var(--cta-shadow-soft);
+  /* Removed glass effect */
 }
     /* ✅ منو افقی (حل عمودی شدن) */
     .cta-menu{
