@@ -1358,9 +1358,6 @@
   <div></div>
 </div>
 
-          <form class="cta-search" action="#" method="get" role="search" aria-label="جستجو">
-            <input type="search" name="q" placeholder="جستجو..." />
-          </form>
 
           <div class="cta-auth-slot">
             <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">

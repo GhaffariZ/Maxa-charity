@@ -1240,9 +1240,6 @@
   <div></div>
 </div>
 
-          <form class="cta-search" action="#" method="get" role="search" aria-label="جستجو">
-            <input type="search" name="q" placeholder="جستجو..." />
-          </form>
 
           <a class="cta-auth" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
             ورود / ثبت‌نام
