@@ -46,7 +46,7 @@ $folder = "uploads/news/" . $news_code . "/";
 <head>
 <meta charset="UTF-8">
 <title><?php echo htmlspecialchars($title); ?></title>
-<meta name="description" content="<?php echo htmlspecialchars(mb_substr(strip_tags($content),0,150)); ?>">
+<meta name="description" content="<?php echo htmlspecialchars(!empty($news['subtitle']) ? $news['subtitle'] : mb_substr(strip_tags($content),0,150)); ?>">
 <meta name="keywords" content="<?php echo htmlspecialchars($keywords); ?>">
 <meta name="author" content="<?php echo htmlspecialchars($author); ?>">
 
@@ -68,6 +68,9 @@ h1 { font-size:28px; margin-bottom:15px; }
 
 <article>
     <h1><?php echo htmlspecialchars($title); ?></h1>
+    <?php if(!empty($news['subtitle'])): ?>
+        <p class="article-subtitle" style="font-size:18px; color:#555; line-height:1.6; margin-top:-5px; margin-bottom:15px; font-weight:600;"><?php echo htmlspecialchars($news['subtitle']); ?></p>
+    <?php endif; ?>
     <div class="article-meta">
         <?php echo "نویسنده: " . htmlspecialchars($author) . " | تاریخ: " . htmlspecialchars($publish_date); ?><br>
         <?php if($tag_name): ?>

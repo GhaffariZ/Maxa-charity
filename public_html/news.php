@@ -401,7 +401,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
         color: var(--news-accent);
     }
     .hero-post-title {
-        font-size: 26px;
+        font-size: 32px;
         font-weight: 900;
         line-height: 1.45;
         color: var(--news-text);
@@ -833,7 +833,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
             padding: 32px 16px 60px;
         }
         .hero-post-title {
-            font-size: 20px;
+            font-size: 24px;
         }
         .hero-info-wrapper {
             padding: 20px;
@@ -945,7 +945,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
 
     <!-- بخش خبر ویژه (شاخص) در صورتی که فیلتری اعمال نشده باشد -->
     <?php if ($featuredNews): 
-        $excerpt = mb_substr(strip_tags($featuredNews['content']), 0, 200) . '...';
+        $excerpt = !empty($featuredNews['subtitle']) ? $featuredNews['subtitle'] : (mb_substr(strip_tags($featuredNews['content']), 0, 200) . '...');
         $imageUrl = getNewsImageUrl($featuredNews, $basePath);
         $author = !empty($featuredNews['author']) ? $featuredNews['author'] : 'روابط عمومی مکسا';
         $categoryName = !empty($featuredNews['category_name']) ? $featuredNews['category_name'] : 'خبر';
@@ -1005,7 +1005,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
                 <?php if (count($gridNews) > 0): ?>
                     <div class="news-grid-cards">
                         <?php foreach ($gridNews as $row): 
-                            $excerpt = mb_substr(strip_tags($row['content']), 0, 110) . '...';
+                            $excerpt = !empty($row['subtitle']) ? $row['subtitle'] : (mb_substr(strip_tags($row['content']), 0, 110) . '...');
                             $imageUrl = getNewsImageUrl($row, $basePath);
                             $author = !empty($row['author']) ? $row['author'] : 'روابط عمومی مکسا';
                             $categoryName = !empty($row['category_name']) ? $row['category_name'] : 'خبر';

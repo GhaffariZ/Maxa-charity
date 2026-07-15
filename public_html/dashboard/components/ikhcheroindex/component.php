@@ -664,7 +664,7 @@
       margin-bottom:10px;
     }
     .cta-title{
-      font-size:42px;
+      font-size:52px;
       line-height:1.15;
       margin:0 0 14px 0;
       font-weight:800;
@@ -994,7 +994,7 @@
     /* تبلت‌ها و صفحات متوسط */
     @media (max-width: 960px) {
       .cta-title {
-        font-size: 32px;
+        font-size: 40px;
       }
 
       .cta-band .cta-container {
@@ -1042,7 +1042,7 @@
       }
 
       .cta-title {
-        font-size: 26px;
+        font-size: 32px;
         line-height: 1.35;
       }
 
@@ -1072,7 +1072,7 @@
     /* گوشی‌های بسیار باریک */
     @media (max-width: 420px) {
       .cta-title {
-        font-size: 22px;
+        font-size: 26px;
       }
 
       .cta-desc {

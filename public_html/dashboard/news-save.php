@@ -28,6 +28,7 @@ try {
 
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
     $title = trim($_POST['title']);
+    $subtitle = isset($_POST['subtitle']) ? trim($_POST['subtitle']) : '';
     
     // پاکسازی محتوا و اجازه دادن به تگ‌های ضروری ادیتور (فونت و اسپن اضافه شد)
     $raw_content = $_POST['content'];
@@ -85,10 +86,10 @@ try {
 
         // قید branch_id در WHERE برای ایمنی مضاعف
         $sql = "UPDATE news SET
-                title = ?, content = ?, author = ?, publish_date = ?,
+                title = ?, subtitle = ?, content = ?, author = ?, publish_date = ?,
                 category_id = ?, keywords = ?, tags = ?, read_time = ? WHERE id = ? AND branch_id = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id, $__branch]);
+        $stmt->execute([$title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id, $__branch]);
         
         $message = "تغییرات با موفقیت به‌روزرسانی شد.";
         $record_id = $id;
@@ -114,10 +115,10 @@ try {
         }
 
         $sql = "INSERT INTO news
-                (news_code, title, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
+                (news_code, title, subtitle, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$news_code, $title, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
+        $stmt->execute([$news_code, $title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
         
         $record_id = (int)$pdo->lastInsertId();
         $message = "خبر جدید با موفقیت ثبت شد.";

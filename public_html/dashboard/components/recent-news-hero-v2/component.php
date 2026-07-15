@@ -27,11 +27,11 @@
 <style>
 .rnhv2-section{padding:64px 0;  background:transparent !important;font-family:'Vazirmatn',Tahoma,sans-serif}.rnhv2-container{max-width:1280px;margin:0 auto;padding:0 16px}
 .rnhv2-head{margin-bottom:48px}.rnhv2-kicker{color:#2563eb;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:8px}
-.rnhv2-title{font-size:36px;line-height:1.1;font-weight:900;margin:0;color:#0a0a0a}.rnhv2-grid{display:grid;grid-template-columns:1fr;gap:32px}
+.rnhv2-title{font-size:42px;line-height:1.1;font-weight:900;margin:0;color:#0a0a0a}.rnhv2-grid{display:grid;grid-template-columns:1fr;gap:32px}
 .rnhv2-main{position:relative;overflow:hidden;border-radius:24px;background:#000;aspect-ratio:16/10;display:block;text-decoration:none}.rnhv2-main-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;transition:transform 1s ease}
 .rnhv2-main:hover .rnhv2-main-img{transform:scale(1.05)}.rnhv2-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,0),rgba(0,0,0,0))}
 .rnhv2-main-content{position:absolute;right:0;left:0;bottom:0;padding:32px;color:#fff}.rnhv2-badge{display:inline-block;background:#2563eb;color:#fff;border-radius:999px;font-size:12px;font-weight:700;padding:4px 12px;margin-bottom:14px}
-.rnhv2-main-title{margin:0 0 14px;font-size:30px;line-height:1.3;font-weight:700}.rnhv2-meta{display:flex;align-items:center;gap:12px;color:#d4d4d8;font-size:14px}.rnhv2-dot{width:4px;height:4px;border-radius:999px;background:#737373}
+.rnhv2-main-title{margin:0 0 14px;font-size:36px;line-height:1.3;font-weight:700}.rnhv2-meta{display:flex;align-items:center;gap:12px;color:#d4d4d8;font-size:14px}.rnhv2-dot{width:4px;height:4px;border-radius:999px;background:#737373}
 .rnhv2-side{display:flex;flex-direction:column;gap:20px}.rnhv2-side-card{display:flex;gap:16px;background:#fff;padding:16px;border-radius:24px;border:1px solid #f5f5f5;box-shadow:0 1px 2px rgba(0,0,0,.04);text-decoration:none;transition:box-shadow .2s ease}
 .rnhv2-side-card:hover{box-shadow:0 10px 22px rgba(0,0,0,.08)}.rnhv2-side-thumb-wrap{width:96px;height:96px;flex-shrink:0;border-radius:16px;overflow:hidden}
 .rnhv2-side-thumb{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.rnhv2-side-card:hover .rnhv2-side-thumb{transform:scale(1.1)}
@@ -45,7 +45,7 @@
 .rnhv2-soon b{display:block;font-size:18px;font-weight:800;color:#2f3437;margin-bottom:6px}
 .rnhv2-soon span{font-size:13.5px}
 @media (min-width:1024px){.rnhv2-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.rnhv2-main{grid-column:span 7}.rnhv2-side{grid-column:span 5}}
-@media (max-width:768px){.rnhv2-section{padding:44px 0}.rnhv2-title{font-size:28px}.rnhv2-main-content{padding:20px}.rnhv2-main-title{font-size:22px}}
+@media (max-width:768px){.rnhv2-section{padding:44px 0}.rnhv2-title{font-size:32px}.rnhv2-main-content{padding:20px}.rnhv2-main-title{font-size:26px}}
 </style>
 <script>
 (function(){

@@ -980,6 +980,15 @@ select.input { appearance: none; cursor: pointer; }
                 </div>
             </div>
 
+            <!-- زیرعنوان خبر -->
+            <div class="card title-card" id="subtitleCard" style="margin-top: 10px;">
+                <input type="text" class="" id="subtitle" maxlength="200" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?>">
+                <div class="title-meta">
+                    <span>حداکثر ۲۰۰ کاراکتر</span>
+                    <span id="subtitleCounter">0/200</span>
+                </div>
+            </div>
+
             <!-- متن خبر -->
             <div class="card card-pad">
                 <h3 class="card-title">
@@ -1462,7 +1471,7 @@ function alignLeft(){ format("justifyLeft"); }
 function alignCenter(){ format("justifyCenter"); }
 function alignJustify(){ format("justifyFull"); }
 
-/* =================== شمارنده عنوان =================== */
+/* =================== شمارنده عنوان و زیرعنوان =================== */
 const titleInput = document.getElementById("title");
 const titleCounter = document.getElementById("titleCounter");
 function updateTitleCounter(){
@@ -1471,6 +1480,15 @@ function updateTitleCounter(){
     titleCounter.classList.toggle("over", len > 100);
 }
 titleInput.addEventListener("input", updateTitleCounter);
+
+const subtitleInput = document.getElementById("subtitle");
+const subtitleCounter = document.getElementById("subtitleCounter");
+function updateSubtitleCounter(){
+    const len = subtitleInput.value.length;
+    subtitleCounter.textContent = len + "/200";
+    subtitleCounter.classList.toggle("over", len > 180);
+}
+subtitleInput.addEventListener("input", updateSubtitleCounter);
 
 /* =================== تصویر شاخص (Dropzone) =================== */
 const featuredInput = document.getElementById("featured_image");
@@ -2054,6 +2072,7 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.q
 document.addEventListener("DOMContentLoaded", () => {
     initDatePicker();
     updateTitleCounter();
+    updateSubtitleCounter();
     renderTagChips();
     updateSeoWidget();
     enhanceSelect(document.getElementById("category_id"));
@@ -2189,6 +2208,7 @@ async function saveNews() {
         const fd = new FormData();
         fd.append("id", "<?= $id ?>");
         fd.append("title", title);
+        fd.append("subtitle", document.getElementById("subtitle").value.trim());
         fd.append("content", content);
         fd.append("author", document.getElementById("author").value);
         fd.append("category_id", document.getElementById("category_id").value);
