@@ -106,14 +106,14 @@ require __DIR__ . '/_panel_head.php';
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
-                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="button" onclick="openUserModal(<?= (int)$u['id'] ?>, '<?= $active ? 'disable' : 'enable' ?>', '<?= htmlspecialchars($u['full_name'] ?: $u['username'], ENT_QUOTES) ?>')"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
+                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="button" data-name="<?= e($u['full_name'] ?: $u['username']) ?>" onclick="openUserModal(<?= (int)$u['id'] ?>, '<?= $active ? 'disable' : 'enable' ?>', this.getAttribute('data-name'))"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
                 </form>
                 <?php if (dash_is_hq_view()): ?>
                 <form method="POST" style="display:inline" id="frm-delete-<?= (int)$u['id'] ?>">
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="delete">
-                  <button class="tbtn danger" type="button" onclick="openUserModal(<?= (int)$u['id'] ?>, 'delete', '<?= htmlspecialchars($u['full_name'] ?: $u['username'], ENT_QUOTES) ?>')">حذف</button>
+                  <button class="tbtn danger" type="button" data-name="<?= e($u['full_name'] ?: $u['username']) ?>" onclick="openUserModal(<?= (int)$u['id'] ?>, 'delete', this.getAttribute('data-name'))">حذف</button>
                 </form>
                 <?php endif; ?>
               </div>
