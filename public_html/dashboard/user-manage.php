@@ -36,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         dash_audit('user_status_changed', ['user_id' => $uid, 'status' => $newStatus, 'branch_id' => $BRANCH_ID]);
         $msg = 'وضعیت کاربر به‌روزرسانی شد.';
     } elseif ($action === 'delete') {
-        if (dash_is_hq_view()) {
+        if (dash_is_super()) {
             $pdo->prepare('DELETE FROM dashboard_users WHERE id = ? AND branch_id = ? AND is_super = 0')
                 ->execute([$uid, $BRANCH_ID]);
             dash_audit('user_deleted', ['user_id' => $uid, 'branch_id' => $BRANCH_ID]);
             $msg = 'کاربر با موفقیت از دیتابیس حذف شد.';
         } else {
-            $msg = 'حذف کاربر فقط از طریق ستاد مرکزی مجاز است.';
+            $msg = 'حذف کاربر فقط برای مدیران ارشد مجاز است.';
         }
     }
 }
@@ -108,7 +108,7 @@ require __DIR__ . '/_panel_head.php';
                   <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
                   <button class="tbtn <?= $active ? 'danger' : '' ?>" type="button" data-name="<?= e($u['full_name'] ?: $u['username']) ?>" onclick="openUserModal(<?= (int)$u['id'] ?>, '<?= $active ? 'disable' : 'enable' ?>', this.getAttribute('data-name'))"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
                 </form>
-                <?php if (dash_is_hq_view()): ?>
+                <?php if (dash_is_super()): ?>
                 <form method="POST" style="display:inline" id="frm-delete-<?= (int)$u['id'] ?>">
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
@@ -229,18 +229,20 @@ function openUserModal(id, action, name) {
     modal.classList.add('visible');
 }
 
-document.getElementById('cmodal-cancel').addEventListener('click', () => {
-    document.getElementById('custom-modal').classList.remove('visible');
-    _pendingFormId = null;
-});
-document.getElementById('cmodal-confirm').addEventListener('click', () => {
-    if (_pendingFormId) document.getElementById(_pendingFormId).submit();
-});
-document.getElementById('custom-modal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) {
-        e.currentTarget.classList.remove('visible');
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('cmodal-cancel').addEventListener('click', () => {
+        document.getElementById('custom-modal').classList.remove('visible');
         _pendingFormId = null;
-    }
+    });
+    document.getElementById('cmodal-confirm').addEventListener('click', () => {
+        if (_pendingFormId) document.getElementById(_pendingFormId).submit();
+    });
+    document.getElementById('custom-modal').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            e.currentTarget.classList.remove('visible');
+            _pendingFormId = null;
+        }
+    });
 });
 </script>
 </body></html>
