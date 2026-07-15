@@ -751,27 +751,32 @@
     }
 
     .cta-band .cta-container{
-      display:flex;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
       align-items:center;
-      justify-content:space-between;
-      gap:16px;
+      gap:24px;
       color:#fff;
+    }
+
+    .cta-band-text{
+      text-align:center;
+      grid-column: 2;
     }
 
     .cta-band h3{
       margin:0;
       font-size:20px;
       font-weight:900;
-      text-align:right;
+      text-align:center;
     }
 
     .cta-band p{
-      margin:6px 0 0 0;
+      margin:6px auto 0 auto;
       opacity:.92;
       font-size:13px;
       line-height:1.7;
       max-width: 58ch;
-      text-align:right;
+      text-align:center;
     }
 
     .cta-band-cta {
@@ -791,8 +796,8 @@
       cursor: pointer;
       transition: all 0.25s ease;
       box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
-      width: fit-content;
-      margin-inline: auto;
+      width: 100%;
+      grid-column: 1;
     }
     .cta-band-cta:hover {
       background: linear-gradient(135deg, #c62828, #b71c1c);
@@ -992,13 +997,14 @@
       }
 
       .cta-band .cta-container {
+        display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         gap: 20px;
       }
 
-      .cta-band .cta-container > div {
+      .cta-band-text {
         order: 1;
       }
 
@@ -1288,7 +1294,7 @@
     <section class="cta-band" aria-label="Band">
       <div class="cta-container">
         <a class="cta-band-cta" href="/onlinedonation">❤ می‌خواهم کمک کنم </a>
-        <div style="text-align:right">
+        <div class="cta-band-text">
           <h3>با هم برای جهانی بهتر</h3>
           <p>
             مشارکت شما می‌تونه یک تغییر واقعی بسازه؛
