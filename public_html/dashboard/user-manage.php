@@ -192,8 +192,8 @@ require __DIR__ . '/_panel_head.php';
 </div>
 
 <script>
-let _pendingFormId = null;
-function openUserModal(id, action, name) {
+window._pendingFormId = null;
+window.openUserModal = function(id, action, name) {
     const modal   = document.getElementById('custom-modal');
     const icon    = document.getElementById('cmodal-icon');
     const title   = document.getElementById('cmodal-title');
@@ -201,7 +201,7 @@ function openUserModal(id, action, name) {
     const confirm = document.getElementById('cmodal-confirm');
 
     if (action === 'disable') {
-        _pendingFormId = 'frm-status-' + id;
+        window._pendingFormId = 'frm-status-' + id;
         icon.textContent  = '⛔';
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'غیرفعال کردن کاربر';
@@ -209,7 +209,7 @@ function openUserModal(id, action, name) {
         confirm.textContent = 'غیرفعال کن';
         desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟`;
     } else if (action === 'delete') {
-        _pendingFormId = 'frm-delete-' + id;
+        window._pendingFormId = 'frm-delete-' + id;
         icon.textContent  = '🗑️';
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'حذف کاربر';
@@ -217,7 +217,7 @@ function openUserModal(id, action, name) {
         confirm.textContent = 'حذف دائمی';
         desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
     } else {
-        _pendingFormId = 'frm-status-' + id;
+        window._pendingFormId = 'frm-status-' + id;
         icon.textContent  = '✅';
         icon.className    = 'modal-icon-wrap success';
         title.textContent = 'فعال کردن کاربر';
@@ -227,22 +227,20 @@ function openUserModal(id, action, name) {
     }
 
     modal.classList.add('visible');
-}
+};
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('cmodal-cancel').addEventListener('click', () => {
-        document.getElementById('custom-modal').classList.remove('visible');
-        _pendingFormId = null;
-    });
-    document.getElementById('cmodal-confirm').addEventListener('click', () => {
-        if (_pendingFormId) document.getElementById(_pendingFormId).submit();
-    });
-    document.getElementById('custom-modal').addEventListener('click', e => {
-        if (e.target === e.currentTarget) {
-            e.currentTarget.classList.remove('visible');
-            _pendingFormId = null;
-        }
-    });
+document.getElementById('cmodal-cancel').addEventListener('click', () => {
+    document.getElementById('custom-modal').classList.remove('visible');
+    window._pendingFormId = null;
+});
+document.getElementById('cmodal-confirm').addEventListener('click', () => {
+    if (window._pendingFormId) document.getElementById(window._pendingFormId).submit();
+});
+document.getElementById('custom-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('visible');
+        window._pendingFormId = null;
+    }
 });
 </script>
 </body></html>
