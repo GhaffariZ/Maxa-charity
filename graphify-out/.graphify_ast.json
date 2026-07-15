@@ -1,0 +1,3034 @@
+{
+  "nodes": [
+    {
+      "id": "database_seed_admin",
+      "label": "seed-admin.php",
+      "file_type": "code",
+      "source_file": "database/seed-admin.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_controllers_contactcontroller",
+      "label": "ContactController.php",
+      "file_type": "code",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "label": "ContactController",
+      "file_type": "code",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L20",
+      "_origin": "ast"
+    },
+    {
+      "id": "mailer",
+      "label": "Mailer",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_controllers_contactcontroller_contactcontroller_construct",
+      "label": ".__construct()",
+      "file_type": "code",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L24",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_controllers_contactcontroller_contactcontroller_submit",
+      "label": ".submit()",
+      "file_type": "code",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L30",
+      "_origin": "ast"
+    },
+    {
+      "id": "request",
+      "label": "Request",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_controllers_contactcontroller_contactcontroller_buildemail",
+      "label": ".buildEmail()",
+      "file_type": "code",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L69",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_api_src_routes",
+      "label": "routes.php",
+      "file_type": "code",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_branches",
+      "label": "branches.php",
+      "file_type": "code",
+      "source_file": "public_html/branches.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_contactus",
+      "label": "contactus.php",
+      "file_type": "code",
+      "source_file": "public_html/contactus.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth",
+      "label": "dashboard-auth.php",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_pdo",
+      "label": "dash_pdo()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L54",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_session_start",
+      "label": "dash_session_start()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L78",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_enforce_timeouts",
+      "label": "dash_enforce_timeouts()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L99",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_csrf_token",
+      "label": "csrf_token()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L114",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_csrf_field",
+      "label": "csrf_field()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L121",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_csrf_check",
+      "label": "csrf_check()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L125",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_e",
+      "label": "e()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L135",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_ip",
+      "label": "dash_ip()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L141",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_ua",
+      "label": "dash_ua()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L145",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_log_attempt",
+      "label": "dash_log_attempt()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L151",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_audit",
+      "label": "dash_audit()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L162",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_locked",
+      "label": "dash_is_locked()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L177",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_register_failure",
+      "label": "dash_register_failure()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L181",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_reset_failures",
+      "label": "dash_reset_failures()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L192",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_attempt_login",
+      "label": "dash_attempt_login()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L202",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_establish_session",
+      "label": "dash_establish_session()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L245",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_resolve_permissions",
+      "label": "dash_resolve_permissions()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L269",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_load_branch",
+      "label": "dash_load_branch()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L311",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_logout",
+      "label": "dash_logout()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L319",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_redirect_login",
+      "label": "dash_redirect_login()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L335",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_authenticated",
+      "label": "dash_is_authenticated()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L343",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_user",
+      "label": "dash_user()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L347",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_super",
+      "label": "dash_is_super()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L351",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_branch_admin",
+      "label": "dash_is_branch_admin()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L355",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "label": "dash_is_hq_view()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L366",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_require_hq",
+      "label": "dash_require_hq()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L383",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_is_news_editor",
+      "label": "dash_is_news_editor()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L396",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_can_maxapedia",
+      "label": "dash_can_maxapedia()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L419",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_active_branch_id",
+      "label": "dash_active_branch_id()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L437",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_set_active_branch",
+      "label": "dash_set_active_branch()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L453",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_can",
+      "label": "dash_can()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L467",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_branch_feature_enabled",
+      "label": "dash_branch_feature_enabled()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L481",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_require",
+      "label": "dash_require()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L498",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_all_branches",
+      "label": "dash_all_branches()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L509",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_sanitize_slug",
+      "label": "dash_sanitize_slug()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L515",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_core_dashboard_auth_dash_slug_available",
+      "label": "dash_slug_available()",
+      "file_type": "code",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L528",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_admin_personal_resume_list",
+      "label": "Admin-personal-resume-list.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/Admin-personal-resume-list.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_account",
+      "label": "account.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/account.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_account_acc_initials",
+      "label": "acc_initials()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/account.php",
+      "source_location": "L34",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_admin_toggle_employee_status",
+      "label": "admin-toggle-employee-status.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/admin-toggle-employee-status.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_campaign_list",
+      "label": "campaign-list.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/campaign-list.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_campaign_status",
+      "label": "campaign-status.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/campaign-status.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_branches_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/branches/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_footer_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/footer/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_hamrah_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/hamrah/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_header_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/header/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_heroindex_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/heroindex/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_ikhcheroindex_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/ikhcheroindex/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_macsa_stories_details_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/macsa_stories_details/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_ourexcellence_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/ourexcellence/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_components_support_projects_component",
+      "label": "component.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/components/support_projects/component.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db",
+      "label": "course-db.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_q",
+      "label": "q()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L38",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_php_pdostatement",
+      "label": "PDOStatement",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_fa_digits",
+      "label": "fa_digits()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L43",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_gregorian_to_jalali",
+      "label": "gregorian_to_jalali()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L48",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_jalali_date",
+      "label": "jalali_date()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L62",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_toman",
+      "label": "toman()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L71",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_e",
+      "label": "e()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L74",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_maxa_demo_courses",
+      "label": "maxa_demo_courses()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L144",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_maxa_demo_curriculum",
+      "label": "maxa_demo_curriculum()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L177",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_load_courses",
+      "label": "load_courses()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L199",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_load_course_full",
+      "label": "load_course_full()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L221",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_course_accent",
+      "label": "course_accent()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L256",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_level_label",
+      "label": "level_label()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L260",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_db_fmt_duration",
+      "label": "fmt_duration()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L263",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui",
+      "label": "course-ui.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_base_css",
+      "label": "course_base_css()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L12",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_html_head",
+      "label": "course_html_head()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L120",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_site_head",
+      "label": "course_site_head()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L157",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_site_footer",
+      "label": "course_site_footer()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L182",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_cart_marker",
+      "label": "course_cart_marker()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L191",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_theme_fab",
+      "label": "course_theme_fab()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L228",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_cic",
+      "label": "cic()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L254",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_card",
+      "label": "course_card()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L299",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_course_ui_course_card_styles",
+      "label": "course_card_styles()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L342",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_courses_create",
+      "label": "courses-create.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/courses-create.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_courses_manage",
+      "label": "courses-manage.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/courses-manage.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_courses",
+      "label": "courses.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/courses.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management",
+      "label": "financial-management.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_q",
+      "label": "q()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L33",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_php_pdostatement",
+      "label": "PDOStatement",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_fa_digits",
+      "label": "fa_digits()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L36",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_gregorian_to_jalali",
+      "label": "gregorian_to_jalali()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L41",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_jmonth_name",
+      "label": "jmonth_name()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L53",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_jalali_datetime",
+      "label": "jalali_datetime()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L54",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_money_compact",
+      "label": "money_compact()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L58",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_format_gregorian_to_jalali_string",
+      "label": "format_gregorian_to_jalali_string()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L65",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_financial_management_build_monthly_series",
+      "label": "build_monthly_series()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L205",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_hero_list",
+      "label": "hero-list.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/hero-list.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index",
+      "label": "index.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_q",
+      "label": "q()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L40",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_php_pdostatement",
+      "label": "PDOStatement",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_fa_digits",
+      "label": "fa_digits()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L43",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_gregorian_to_jalali",
+      "label": "gregorian_to_jalali()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L49",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_jmonth_name",
+      "label": "jmonth_name()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L62",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_jalali_short",
+      "label": "jalali_short()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L63",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_jalali_datetime",
+      "label": "jalali_datetime()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L67",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_money_compact",
+      "label": "money_compact()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L71",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_index_build_series",
+      "label": "build_series()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L197",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_maxapedia",
+      "label": "maxapedia.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/maxapedia.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_create",
+      "label": "news-create.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-create.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_delete",
+      "label": "news-delete.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-delete.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_list",
+      "label": "news-list.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_list_slugify",
+      "label": "slugify()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L4",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_list_gregoriantojalali",
+      "label": "gregorianToJalali()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L27",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_list_formatjalalidatetime",
+      "label": "formatJalaliDateTime()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L70",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_list_fanumbers",
+      "label": "faNumbers()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L93",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_save",
+      "label": "news-save.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-save.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_news_status_update",
+      "label": "news-status-update.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/news-status-update.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_page_view",
+      "label": "page-view.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_page_view_render_page_by_slug",
+      "label": "render_page_by_slug()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L62",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_page_view_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_page_view_render_branch_news",
+      "label": "render_branch_news()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L99",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_personal_resume_create",
+      "label": "personal-resume-create.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/personal-resume-create.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_personal_resume_detail",
+      "label": "personal-resume-detail.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/personal-resume-detail.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_personal_resume_list",
+      "label": "personal-resume-list.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/personal-resume-list.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets",
+      "label": "tickets.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_tk_fa",
+      "label": "tk_fa()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L28",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_tk_initials",
+      "label": "tk_initials()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L31",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_tk_color",
+      "label": "tk_color()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L34",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_tk_load",
+      "label": "tk_load()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L53",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_php_pdo",
+      "label": "PDO",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_tickets_tk_can_view",
+      "label": "tk_can_view()",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L58",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_user_add",
+      "label": "user-add.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/user-add.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_user_edit",
+      "label": "user-edit.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/user-edit.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "public_html_dashboard_user_manage",
+      "label": "user-manage.php",
+      "file_type": "code",
+      "source_file": "public_html/dashboard/user-manage.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "config",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "apiexception",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "request",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "response",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "validator",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "mailer",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "logger",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller",
+      "target": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "target": "mailer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L22",
+      "weight": 1.0,
+      "context": "field"
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "target": "public_html_api_src_controllers_contactcontroller_contactcontroller_construct",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "target": "public_html_api_src_controllers_contactcontroller_contactcontroller_submit",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller_submit",
+      "target": "request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L30",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller",
+      "target": "public_html_api_src_controllers_contactcontroller_contactcontroller_buildemail",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_controllers_contactcontroller_contactcontroller_submit",
+      "target": "public_html_api_src_controllers_contactcontroller_contactcontroller_buildemail",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/Controllers/ContactController.php",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "authmiddleware",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "authcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "campaigncontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "contactcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "donationcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "engagementcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "healthcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "notificationcontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "usercontroller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_api_src_routes",
+      "target": "router",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/api/src/routes.php",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_pdo",
+      "target": "public_html_core_dashboard_auth_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L54",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_session_start",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_enforce_timeouts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_csrf_token",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_csrf_field",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_csrf_check",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_ip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_ua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_log_attempt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_audit",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_locked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_register_failure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_reset_failures",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_attempt_login",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_establish_session",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L245",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_resolve_permissions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L269",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_load_branch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L311",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_logout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L319",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_redirect_login",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L335",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_authenticated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L343",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_user",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L347",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_super",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L351",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_branch_admin",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L355",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L366",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_require_hq",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L383",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_is_news_editor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L396",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_can_maxapedia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L419",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_active_branch_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L437",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_set_active_branch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L453",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_can",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L467",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_branch_feature_enabled",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L481",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_require",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L498",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_all_branches",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L509",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_sanitize_slug",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L515",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth",
+      "target": "public_html_core_dashboard_auth_dash_slug_available",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L528",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_pdo",
+      "target": "public_html_core_dashboard_auth_php_pdo",
+      "relation": "references_constant",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_enforce_timeouts",
+      "target": "public_html_core_dashboard_auth_dash_logout",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_enforce_timeouts",
+      "target": "public_html_core_dashboard_auth_dash_redirect_login",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_csrf_field",
+      "target": "public_html_core_dashboard_auth_csrf_token",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_log_attempt",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_log_attempt",
+      "target": "public_html_core_dashboard_auth_dash_ip",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_log_attempt",
+      "target": "public_html_core_dashboard_auth_dash_ua",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_audit",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_audit",
+      "target": "public_html_core_dashboard_auth_dash_ip",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_audit",
+      "target": "public_html_core_dashboard_auth_dash_ua",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_register_failure",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_reset_failures",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_log_attempt",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_is_locked",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_register_failure",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_reset_failures",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L232",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_ip",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_establish_session",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L239",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_attempt_login",
+      "target": "public_html_core_dashboard_auth_dash_audit",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L240",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_establish_session",
+      "target": "public_html_core_dashboard_auth_dash_load_branch",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L247",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_establish_session",
+      "target": "public_html_core_dashboard_auth_dash_resolve_permissions",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_establish_session",
+      "target": "public_html_core_dashboard_auth_csrf_token",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L265",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_resolve_permissions",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L282",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_load_branch",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L313",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_logout",
+      "target": "public_html_core_dashboard_auth_dash_audit",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L322",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "target": "public_html_core_dashboard_auth_dash_active_branch_id",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L369",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "target": "public_html_core_dashboard_auth_dash_load_branch",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_require_hq",
+      "target": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_is_news_editor",
+      "target": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L398",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_is_news_editor",
+      "target": "public_html_core_dashboard_auth_dash_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L401",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_can_maxapedia",
+      "target": "public_html_core_dashboard_auth_dash_is_hq_view",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L421",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_can_maxapedia",
+      "target": "public_html_core_dashboard_auth_dash_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L424",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_active_branch_id",
+      "target": "public_html_core_dashboard_auth_dash_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L439",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_set_active_branch",
+      "target": "public_html_core_dashboard_auth_dash_is_super",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L455",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_set_active_branch",
+      "target": "public_html_core_dashboard_auth_dash_load_branch",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L458",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_can",
+      "target": "public_html_core_dashboard_auth_dash_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L469",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_can",
+      "target": "public_html_core_dashboard_auth_dash_branch_feature_enabled",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L475",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_can",
+      "target": "public_html_core_dashboard_auth_dash_active_branch_id",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L475",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_branch_feature_enabled",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L486",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_require",
+      "target": "public_html_core_dashboard_auth_dash_can",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L500",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_all_branches",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L511",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_core_dashboard_auth_dash_slug_available",
+      "target": "public_html_core_dashboard_auth_dash_pdo",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/core/dashboard-auth.php",
+      "source_location": "L533",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_account",
+      "target": "public_html_dashboard_account_acc_initials",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/account.php",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_q",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_q",
+      "target": "public_html_dashboard_course_db_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L38",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_course_db_q",
+      "target": "public_html_dashboard_course_db_php_pdostatement",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L38",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_fa_digits",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_gregorian_to_jalali",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_jalali_date",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_toman",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_maxa_demo_courses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_maxa_demo_curriculum",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_load_courses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_courses",
+      "target": "public_html_dashboard_course_db_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L199",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_load_course_full",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L221",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_course_full",
+      "target": "public_html_dashboard_course_db_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L221",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_course_accent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_level_label",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db",
+      "target": "public_html_dashboard_course_db_fmt_duration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_jalali_date",
+      "target": "public_html_dashboard_course_db_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_jalali_date",
+      "target": "public_html_dashboard_course_db_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_toman",
+      "target": "public_html_dashboard_course_db_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_courses",
+      "target": "public_html_dashboard_course_db_q",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_courses",
+      "target": "public_html_dashboard_course_db_maxa_demo_courses",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_course_full",
+      "target": "public_html_dashboard_course_db_q",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L224",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_course_full",
+      "target": "public_html_dashboard_course_db_maxa_demo_courses",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_load_course_full",
+      "target": "public_html_dashboard_course_db_maxa_demo_curriculum",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_db_fmt_duration",
+      "target": "public_html_dashboard_course_db_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-db.php",
+      "source_location": "L266",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_base_css",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_html_head",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_site_head",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_site_footer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_cart_marker",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_theme_fab",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L228",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_cic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L299",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui",
+      "target": "public_html_dashboard_course_ui_course_card_styles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L342",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_html_head",
+      "target": "public_html_dashboard_course_ui_course_base_css",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_site_head",
+      "target": "public_html_dashboard_course_ui_course_base_css",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_site_footer",
+      "target": "public_html_dashboard_course_ui_course_cart_marker",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L184",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_theme_fab",
+      "target": "public_html_dashboard_course_ui_cic",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L232",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_card",
+      "target": "public_html_dashboard_course_ui_cic",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L312",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_q",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_q",
+      "target": "public_html_dashboard_financial_management_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L33",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_financial_management_q",
+      "target": "public_html_dashboard_financial_management_php_pdostatement",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L33",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_fa_digits",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_gregorian_to_jalali",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_jmonth_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_jalali_datetime",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_money_compact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_format_gregorian_to_jalali_string",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management",
+      "target": "public_html_dashboard_financial_management_build_monthly_series",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L205",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_jalali_datetime",
+      "target": "public_html_dashboard_financial_management_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_jalali_datetime",
+      "target": "public_html_dashboard_financial_management_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_money_compact",
+      "target": "public_html_dashboard_financial_management_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_format_gregorian_to_jalali_string",
+      "target": "public_html_dashboard_financial_management_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_build_monthly_series",
+      "target": "public_html_dashboard_financial_management_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_financial_management_build_monthly_series",
+      "target": "public_html_dashboard_financial_management_jmonth_name",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/financial-management.php",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_q",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_q",
+      "target": "public_html_dashboard_index_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_index_q",
+      "target": "public_html_dashboard_index_php_pdostatement",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_fa_digits",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_gregorian_to_jalali",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_jmonth_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_jalali_short",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_jalali_datetime",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_money_compact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index",
+      "target": "public_html_dashboard_index_build_series",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_jalali_short",
+      "target": "public_html_dashboard_index_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_jalali_short",
+      "target": "public_html_dashboard_index_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_jalali_datetime",
+      "target": "public_html_dashboard_index_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_jalali_datetime",
+      "target": "public_html_dashboard_index_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_money_compact",
+      "target": "public_html_dashboard_index_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_build_series",
+      "target": "public_html_dashboard_index_jalali_short",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_build_series",
+      "target": "public_html_dashboard_index_gregorian_to_jalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_build_series",
+      "target": "public_html_dashboard_index_jmonth_name",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_index_build_series",
+      "target": "public_html_dashboard_index_fa_digits",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/index.php",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_news_list",
+      "target": "public_html_dashboard_news_list_slugify",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_news_list",
+      "target": "public_html_dashboard_news_list_gregoriantojalali",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_news_list",
+      "target": "public_html_dashboard_news_list_formatjalalidatetime",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_news_list",
+      "target": "public_html_dashboard_news_list_fanumbers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_news_list_formatjalalidatetime",
+      "target": "public_html_dashboard_news_list_gregoriantojalali",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/news-list.php",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_page_view",
+      "target": "public_html_dashboard_page_view_render_page_by_slug",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_page_view_render_page_by_slug",
+      "target": "public_html_dashboard_page_view_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L62",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_page_view",
+      "target": "public_html_dashboard_page_view_render_branch_news",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_page_view_render_branch_news",
+      "target": "public_html_dashboard_page_view_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/page-view.php",
+      "source_location": "L99",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_tickets",
+      "target": "public_html_dashboard_tickets_tk_fa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_tickets",
+      "target": "public_html_dashboard_tickets_tk_initials",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_tickets",
+      "target": "public_html_dashboard_tickets_tk_color",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_tickets",
+      "target": "public_html_dashboard_tickets_tk_load",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_tickets_tk_load",
+      "target": "public_html_dashboard_tickets_php_pdo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L53",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "public_html_dashboard_tickets",
+      "target": "public_html_dashboard_tickets_tk_can_view",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public_html/dashboard/tickets.php",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_card",
+      "target": "public_html_dashboard_course_db_course_accent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L301",
+      "weight": 1.0
+    },
+    {
+      "source": "public_html_dashboard_course_ui_course_card",
+      "target": "public_html_dashboard_course_db_level_label",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "public_html/dashboard/course-ui.php",
+      "source_location": "L327",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
