@@ -515,6 +515,7 @@ DROP TABLE IF EXISTS `news`;
 CREATE TABLE `news` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
+  `subtitle` varchar(255) DEFAULT NULL,
   `content` longtext NOT NULL,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_vietnamese_ai_cs DEFAULT NULL,
   `video` varchar(255) DEFAULT NULL,

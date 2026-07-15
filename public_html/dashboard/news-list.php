@@ -528,6 +528,12 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <?php endif; ?>
 
+                <?php if (!empty($news['subtitle'])): ?>
+                <div style="font-size: 13px; color: var(--text-muted); border-right: 3px solid var(--primary-color); padding: 2px 10px; margin: 4px 0 12px 0; line-height: 1.6;">
+                    <strong>زیرعنوان / خلاصه خبر:</strong> <?= htmlspecialchars($news['subtitle']) ?>
+                </div>
+                <?php endif; ?>
+
               <div class="minimal-actions">
                 <?php $slug = slugify($news['title']); ?>
                 <a href="/<?= $news['id'] ?>/<?= $slug ?>/" target="_blank" class="btn-min">

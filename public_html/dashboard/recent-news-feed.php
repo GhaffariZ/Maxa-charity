@@ -41,7 +41,7 @@ if ($branchSlug !== '') {
 }
 
 $stmt = $pdo->prepare("
-SELECT n.id,n.title,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
+SELECT n.id,n.title,n.subtitle,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
 FROM news n
 LEFT JOIN news_categories c ON c.id=n.category_id
 WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
@@ -66,7 +66,7 @@ $data = array_map(function($row) use ($branchSlug){
       "category" => $row['category_name'] ?? 'اخبار',
       "date" => jalali_feed($row['publish_date'] ?? ''),
       "read_time" => max(1, (int)($row['read_time'] ?? 1)),
-      "excerpt" => mb_substr(trim(preg_replace('/\s+/u',' ',strip_tags((string)($row['content'] ?? '')))),0,120),
+      "excerpt" => !empty($row['subtitle']) ? $row['subtitle'] : mb_substr(trim(preg_replace('/\s+/u',' ',strip_tags((string)($row['content'] ?? '')))),0,120),
       "url" => $url,
       "image" => $image
     ];
