@@ -54,13 +54,13 @@
       display:flex;
       align-items:center;
       overflow: visible;
-      padding-inline: 16px;
+      padding-inline: 0;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
     }
 
     /* Detached look when scrolled */
     .cta-topbar.scrolled {
-      top: 12px;
+      top: 0;
       height: 68px;
     }
 
@@ -76,15 +76,13 @@
       gap:10px;
       position: relative;
       z-index: 60;
-      background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      box-shadow:
-        0 4px 30px rgba(0, 0, 0, 0.3),
-        inset 0 1px 1px rgba(245, 166, 35, 0.14);
+      background: #111111; /* Solid flat color */
+      border: none;
+      border-bottom: 2px solid var(--cta-orange);
+      border-radius: 0;
+      box-shadow: none;
       padding: 8px 16px;
+      width: 100%;
     }
 
     /* راست: لوگو */
@@ -127,8 +125,7 @@
     }
 
     .cta-glass {
-      backdrop-filter: blur(6px);
-      box-shadow: var(--cta-shadow-soft);
+      /* Removed glass effect */
     }
 
     /* ✅ منو افقی (حل عمودی شدن) */
