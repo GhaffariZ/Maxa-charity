@@ -246,6 +246,34 @@
       background: rgba(255,255,255,.3);
     }
 
+    .cta-donate {
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: #111111;
+      color: #ffffff !important;
+      padding: 0 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-weight: 800;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-donate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      background: #000000;
+    }
+
+    .cta-donate:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
 .cta-auth {
   height: 38px;
   border-radius: 10px;
@@ -980,6 +1008,10 @@
         display: none !important;
       }
 
+      .cta-donate {
+        display: none;
+      }
+
       .cta-auth {
         order: 2;
         font-size: 13px;
@@ -1010,6 +1042,7 @@
         height: 26px;
       }
 
+      .cta-donate,
       .cta-auth {
         padding: 0 10px;
         font-size: 12px;
@@ -1147,9 +1180,12 @@
         line-height: 1.7;
       }
 
+      .cta-donate,
       .cta-auth {
         padding: 0 10px;
         font-size: 12px;
+        height: 30px;
+        gap: 4px;
       }
 
       .cta-text {
@@ -1362,6 +1398,10 @@
   <div></div>
 </div>
 
+
+          <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
+            کمک آنلاین
+          </a>
 
           <div class="cta-auth-slot">
             <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
