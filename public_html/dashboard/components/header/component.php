@@ -579,6 +579,8 @@
 
     /* ===== Responsive ===== */
     html, body {
+      margin: 0;            /* حذفِ حاشیه‌ی پیش‌فرضِ مرورگر (۸px) که دورِ کلِ صفحه می‌افتاد */
+      padding: 0;
       overflow-x: hidden;
       max-width: 100%;
     }

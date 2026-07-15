@@ -80,7 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute([$branchId, $adminUser, $hash, 'مدیر ' . $name]);
 
             // 5) صفحه‌ی home پیش‌فرض برای شعبه (تا mymacsa.ir/{slug} بلافاصله کار کند)
-            $defaultComponents = json_encode(['header', 'heroindex', 'footer'], JSON_UNESCAPED_UNICODE);
+            //    بدنه = کامپوننتِ اختصاصیِ شعبه (branch-home: هیرو + هویتِ شعبه + اخبار/کمپین/
+            //    دوره) و سپس کامپوننتِ «همکارانِ شعبه» (branch-partners). همه فقط محتوای همین
+            //    شعبه را نشان می‌دهند؛ نه heroindexِ ستاد (که صفحه را کپی‌به‌نظر می‌رساند).
+            $defaultComponents = json_encode(['header', 'branch-home', 'branch-partners', 'footer'], JSON_UNESCAPED_UNICODE);
             $pdo->prepare("INSERT INTO pages (title, slug, components, status, branch_id) VALUES (?, 'home', ?, 'published', ?)")
                 ->execute([$name, $defaultComponents, $branchId]);
 

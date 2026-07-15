@@ -348,12 +348,34 @@ window.addEventListener('resize', adjustRoleFonts);
 // ─── فچ داده از API ───
 let allEmployees = [];
 
+// ایزولاسیونِ شعبه: اگر صفحه از مسیرِ یک شعبه آمده باشد (page-view گلوبالِ branch را
+// تزریق می‌کند)، فقط همکارانِ همان شعبه نمایش داده می‌شوند. تطبیق هم با نامِ فارسیِ
+// شعبه (مقدارِ ذخیره‌شده در ستونِ branch) و هم با slug/کلید انجام می‌شود تا با هر دو
+// مدلِ داده کار کند.
+const BRANCH_SLUG = (typeof window.__MAXA_BRANCH__ === 'string') ? window.__MAXA_BRANCH__ : '';
+const BRANCH_NAME = (typeof window.__MAXA_BRANCH_NAME__ === 'string') ? window.__MAXA_BRANCH_NAME__ : '';
+function empInBranch(emp) {
+    if (!BRANCH_SLUG && !BRANCH_NAME) return true;
+    const b = (emp.branch || '').trim();
+    if (BRANCH_NAME && b === BRANCH_NAME) return true;
+    if (BRANCH_SLUG && b === BRANCH_SLUG) return true;
+    // تطبیق با نگاشتِ کلید→نام (مثلاً branch='tehran' و نامِ شعبه='شعبه تهران')
+    if (BRANCH_NAME && BRANCHES[b] === BRANCH_NAME) return true;
+    return false;
+}
+
 async function loadEmployees() {
     renderSkeletons();
     try {
         const res  = await fetch(API_URL);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         allEmployees = await res.json();
+        if (BRANCH_SLUG || BRANCH_NAME) {
+            allEmployees = allEmployees.filter(empInBranch);
+            // عنوانِ صفحه را به نامِ شعبه به‌روزرسانی کن (در صورت وجود)
+            const ht = document.querySelector('.header-title');
+            if (ht && BRANCH_NAME) ht.textContent = 'همکاران ' + BRANCH_NAME;
+        }
         renderCards(allEmployees);
     } catch (err) {
         document.getElementById('cards-grid').innerHTML =
