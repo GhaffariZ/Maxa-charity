@@ -362,17 +362,6 @@
   padding-right: 5px;
 }
 
-.cta-header{
-  background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow:
-    0 4px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(245, 166, 35, 0.14);
-  padding: 10px 22px;
-}
 
 @media (max-width: 1024px){
   .mega-menu-content{
