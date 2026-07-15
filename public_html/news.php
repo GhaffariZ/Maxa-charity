@@ -401,7 +401,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
         color: var(--news-accent);
     }
     .hero-post-title {
-        font-size: 26px;
+        font-size: 32px;
         font-weight: 900;
         line-height: 1.45;
         color: var(--news-text);
@@ -833,7 +833,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
             padding: 32px 16px 60px;
         }
         .hero-post-title {
-            font-size: 20px;
+            font-size: 24px;
         }
         .hero-info-wrapper {
             padding: 20px;
