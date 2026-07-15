@@ -40,16 +40,33 @@ if ($branchSlug !== '') {
     if ($brow) { $branchId = (int)$brow['id']; }
 }
 
-$stmt = $pdo->prepare("
-SELECT n.id,n.title,n.subtitle,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
-FROM news n
-LEFT JOIN news_categories c ON c.id=n.category_id
-WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
-ORDER BY n.publish_date DESC
-LIMIT {$limit}
-");
-$stmt->execute([$branchId]);
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $stmt = $pdo->prepare("
+    SELECT n.id,n.title,n.subtitle,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
+    FROM news n
+    LEFT JOIN news_categories c ON c.id=n.category_id
+    WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
+    ORDER BY n.publish_date DESC
+    LIMIT {$limit}
+    ");
+    $stmt->execute([$branchId]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    if ($e->getCode() == '42S22' || strpos($e->getMessage(), 'subtitle') !== false) {
+        $stmt = $pdo->prepare("
+        SELECT n.id,n.title,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
+        FROM news n
+        LEFT JOIN news_categories c ON c.id=n.category_id
+        WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
+        ORDER BY n.publish_date DESC
+        LIMIT {$limit}
+        ");
+        $stmt->execute([$branchId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        throw $e;
+    }
+}
 
 $data = array_map(function($row) use ($branchSlug){
     $image = (!empty($row['featured_image']) && !empty($row['news_code']))
