@@ -73,7 +73,7 @@ require __DIR__ . '/_panel_head.php';
         display: none; align-items: center; justify-content: center;
         background: rgba(15,23,42,0.50); backdrop-filter: blur(10px);
     }
-    .modal-overlay.visible { display: flex !important; }
+    .modal-overlay.visible { display: flex !important; opacity: 1 !important; visibility: visible !important; }
     .modal-box {
         background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #e2e8f0);
         border-radius: 28px; padding: 36px 30px; width: 90%; max-width: 360px;
