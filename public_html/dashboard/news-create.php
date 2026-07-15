@@ -266,12 +266,12 @@ body {
 
 /* ===== زیرعنوان خبر ===== */
 .subtitle-card {
-    background: var(--surface-2);
+    background: var(--panel-bg);
     border: 1px dashed var(--border-color);
     border-radius: var(--radius);
     padding: 20px;
     margin-top: 16px;
-    box-shadow: none;
+    box-shadow: var(--shadow-sm);
     transition: all var(--anim-fast);
 }
 .subtitle-card:focus-within {
