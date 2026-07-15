@@ -38,7 +38,7 @@ if ($branchSlug !== '') {
     $bs->execute([$branchSlug]);
     $brow = $bs->fetch(PDO::FETCH_ASSOC);
     if ($brow) { $branchId = (int)$brow['id']; }
-}
+} 
 
 try {
     $stmt = $pdo->prepare("
