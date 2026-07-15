@@ -55,6 +55,8 @@
       align-items:center;
       overflow: visible;
       padding-inline: 0;
+      background: var(--cta-orange);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
     }
 
@@ -76,9 +78,8 @@
       gap:10px;
       position: relative;
       z-index: 60;
-      background: #111111; /* Solid flat color */
+      background: transparent;
       border: none;
-      border-bottom: 2px solid var(--cta-orange);
       border-radius: 0;
       box-shadow: none;
       padding: 8px 16px;
@@ -154,16 +155,17 @@
       transition: .2s ease;
       outline: none;
       font-size: 14px;
-      color: rgba(255,255,255,.92);
+      font-weight: 700;
+      color: #111111;
     }
 
     .cta-menu > li > a:hover{
-      background: rgba(255,255,255,.10);
+      background: rgba(0,0,0,.06);
     }
 
     .cta-menu > li > a:focus-visible{
-      box-shadow: 0 0 0 3px rgba(245,166,35,.25);
-      background: rgba(255,255,255,.10);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.15);
+      background: rgba(0,0,0,.06);
     }
 
     .highlighted-menu > a{
@@ -187,9 +189,9 @@
     .cta-donate {
       height: 38px;
       border-radius: 10px;
-      border: 1px solid rgba(245, 166, 35, 0.5);
-      background: linear-gradient(135deg, #f5a623, #f39a20);
-      color: #1a1a1a !important;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: #111111;
+      color: #ffffff !important;
       padding: 0 16px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -198,18 +200,18 @@
       gap: 8px;
       white-space: nowrap;
       font-weight: 800;
-      box-shadow: 0 0 12px rgba(245, 166, 35, 0.3);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     }
 
     .cta-donate:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(245, 166, 35, 0.6);
-      background: linear-gradient(135deg, #ffc24d, #f5a623);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      background: #000000;
     }
 
     .cta-donate:active {
       transform: translateY(1px);
-      box-shadow: 0 0 8px rgba(245, 166, 35, 0.4);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
     }
 
     .cta-auth {

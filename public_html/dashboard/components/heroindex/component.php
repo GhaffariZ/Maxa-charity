@@ -78,8 +78,8 @@
       align-items:center;
       overflow: visible;
       padding-inline: 0;
-      background: #111111; /* Solid flat background */
-      border-bottom: 2px solid var(--cta-orange);
+      background: var(--cta-orange);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
     }
 
@@ -106,8 +106,12 @@
       gap:10px;
       position: relative;
       z-index: 60;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 8px 16px;
       width: 100%;
-      padding: 0 16px;
     }
 
     /* راست: لوگو */
@@ -178,16 +182,17 @@
       transition: .2s ease;
       outline: none;
       font-size: 14.5px;
-      color: rgba(255,255,255,.92);
+      font-weight: 700;
+      color: #111111;
     }
 
     .cta-menu > li > a:hover{
-      background: rgba(255,255,255,.10);
+      background: rgba(0,0,0,.06);
     }
 
     .cta-menu > li > a:focus-visible{
-      box-shadow: 0 0 0 3px rgba(245,166,35,.25);
-      background: rgba(255,255,255,.10);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.15);
+      background: rgba(0,0,0,.06);
     }
 
     .highlighted-menu > a{
@@ -219,9 +224,9 @@
       width: 170px;
       height: 38px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.20);
-      background: rgba(0,0,0,.28);
-      color: #fff;
+      border: 1px solid rgba(0,0,0,.15);
+      background: rgba(255,255,255,.2);
+      color: #111111;
       padding: 0 12px;
       outline: none;
       transition: .2s ease;
@@ -232,13 +237,13 @@
   box-shadow: var(--cta-shadow-soft);
 }
     .cta-search input::placeholder{
-      color: rgba(255,255,255,.65);
+      color: rgba(0,0,0,.65);
     }
 
     .cta-search input:focus{
-      border-color: rgba(245,166,35,.55);
-      box-shadow: 0 0 0 2px rgba(245,166,35,.08);
-      background: rgba(0,0,0,.34);
+      border-color: rgba(0,0,0,.3);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.05);
+      background: rgba(255,255,255,.3);
     }
 
 .cta-auth {
@@ -357,17 +362,6 @@
   padding-right: 5px;
 }
 
-.cta-header{
-  background: rgba(40, 32, 10, 0.6); /* Translucent dark slate glass, warmed with a touch of yellow */
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow:
-    0 4px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(245, 166, 35, 0.14);
-  padding: 10px 22px;
-}
 
 @media (max-width: 1024px){
   .mega-menu-content{
