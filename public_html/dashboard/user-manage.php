@@ -106,14 +106,14 @@ require __DIR__ . '/_panel_head.php';
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
-                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="button" data-name="<?= e($u['full_name'] ?: $u['username']) ?>" onclick="openUserModal(<?= (int)$u['id'] ?>, '<?= $active ? 'disable' : 'enable' ?>', this.getAttribute('data-name'))"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
+                  <button class="tbtn js-user-action <?= $active ? 'danger' : '' ?>" type="button" data-id="<?= (int)$u['id'] ?>" data-action="<?= $active ? 'disable' : 'enable' ?>" data-name="<?= e($u['full_name'] ?: $u['username']) ?>"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
                 </form>
                 <?php if (dash_is_super()): ?>
                 <form method="POST" style="display:inline" id="frm-delete-<?= (int)$u['id'] ?>">
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="delete">
-                  <button class="tbtn danger" type="button" data-name="<?= e($u['full_name'] ?: $u['username']) ?>" onclick="openUserModal(<?= (int)$u['id'] ?>, 'delete', this.getAttribute('data-name'))">حذف</button>
+                  <button class="tbtn danger js-user-action" type="button" data-id="<?= (int)$u['id'] ?>" data-action="delete" data-name="<?= e($u['full_name'] ?: $u['username']) ?>">حذف</button>
                 </form>
                 <?php endif; ?>
               </div>
@@ -192,55 +192,71 @@ require __DIR__ . '/_panel_head.php';
 </div>
 
 <script>
-window._pendingFormId = null;
-window.openUserModal = function(id, action, name) {
-    const modal   = document.getElementById('custom-modal');
-    const icon    = document.getElementById('cmodal-icon');
-    const title   = document.getElementById('cmodal-title');
-    const desc    = document.getElementById('cmodal-desc');
-    const confirm = document.getElementById('cmodal-confirm');
+(function(){
+    let _pendingFormId = null;
+    
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.js-user-action');
+        if (!btn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const id     = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-action');
+        const name   = btn.getAttribute('data-name');
+        
+        const modal   = document.getElementById('custom-modal');
+        const icon    = document.getElementById('cmodal-icon');
+        const title   = document.getElementById('cmodal-title');
+        const desc    = document.getElementById('cmodal-desc');
+        const confirm = document.getElementById('cmodal-confirm');
 
-    if (action === 'disable') {
-        window._pendingFormId = 'frm-status-' + id;
-        icon.textContent  = '⛔';
-        icon.className    = 'modal-icon-wrap danger';
-        title.textContent = 'غیرفعال کردن کاربر';
-        confirm.className = 'btn-modal-confirm danger';
-        confirm.textContent = 'غیرفعال کن';
-        desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟`;
-    } else if (action === 'delete') {
-        window._pendingFormId = 'frm-delete-' + id;
-        icon.textContent  = '🗑️';
-        icon.className    = 'modal-icon-wrap danger';
-        title.textContent = 'حذف کاربر';
-        confirm.className = 'btn-modal-confirm danger';
-        confirm.textContent = 'حذف دائمی';
-        desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
-    } else {
-        window._pendingFormId = 'frm-status-' + id;
-        icon.textContent  = '✅';
-        icon.className    = 'modal-icon-wrap success';
-        title.textContent = 'فعال کردن کاربر';
-        confirm.className = 'btn-modal-confirm success';
-        confirm.textContent = 'فعال کن';
-        desc.innerHTML = `آیا از فعال‌سازی مجدد <span class="modal-name">${name}</span> اطمینان دارید؟`;
-    }
+        if (action === 'disable') {
+            _pendingFormId = 'frm-status-' + id;
+            icon.textContent  = '⛔';
+            icon.className    = 'modal-icon-wrap danger';
+            title.textContent = 'غیرفعال کردن کاربر';
+            confirm.className = 'btn-modal-confirm danger';
+            confirm.textContent = 'غیرفعال کن';
+            desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟`;
+        } else if (action === 'delete') {
+            _pendingFormId = 'frm-delete-' + id;
+            icon.textContent  = '🗑️';
+            icon.className    = 'modal-icon-wrap danger';
+            title.textContent = 'حذف کاربر';
+            confirm.className = 'btn-modal-confirm danger';
+            confirm.textContent = 'حذف دائمی';
+            desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
+        } else {
+            _pendingFormId = 'frm-status-' + id;
+            icon.textContent  = '✅';
+            icon.className    = 'modal-icon-wrap success';
+            title.textContent = 'فعال کردن کاربر';
+            confirm.className = 'btn-modal-confirm success';
+            confirm.textContent = 'فعال کن';
+            desc.innerHTML = `آیا از فعال‌سازی مجدد <span class="modal-name">${name}</span> اطمینان دارید؟`;
+        }
 
-    modal.classList.add('visible');
-};
+        modal.classList.add('visible');
+    });
 
-document.getElementById('cmodal-cancel').addEventListener('click', () => {
-    document.getElementById('custom-modal').classList.remove('visible');
-    window._pendingFormId = null;
-});
-document.getElementById('cmodal-confirm').addEventListener('click', () => {
-    if (window._pendingFormId) document.getElementById(window._pendingFormId).submit();
-});
-document.getElementById('custom-modal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) {
-        e.currentTarget.classList.remove('visible');
-        window._pendingFormId = null;
-    }
-});
+    document.getElementById('cmodal-cancel').addEventListener('click', () => {
+        document.getElementById('custom-modal').classList.remove('visible');
+        _pendingFormId = null;
+    });
+    
+    document.getElementById('cmodal-confirm').addEventListener('click', () => {
+        if (_pendingFormId) document.getElementById(_pendingFormId).submit();
+    });
+    
+    document.getElementById('custom-modal').addEventListener('click', e => {
+        if (e.target === e.currentTarget) {
+            e.currentTarget.classList.remove('visible');
+            _pendingFormId = null;
+        }
+    });
+})();
+
 </script>
 </body></html>
