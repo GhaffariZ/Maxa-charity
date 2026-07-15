@@ -23,6 +23,22 @@ try {
 } catch (Exception $e) {
     $categories = [];
 }
+
+// دریافت لیست تگ‌ها و تگ‌های انتخاب شده
+$all_tags = [];
+$selected_tag_ids = [];
+try {
+    $tag_stmt = $pdo->query("SELECT id, name FROM news_tags ORDER BY id ASC");
+    $all_tags = $tag_stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($id > 0) {
+        $stmt_selected_tags = $pdo->prepare("SELECT tag_id FROM news_tags_map WHERE news_id = ?");
+        $stmt_selected_tags->execute([$id]);
+        $selected_tag_ids = $stmt_selected_tags->fetchAll(PDO::FETCH_COLUMN);
+    }
+} catch (Exception $e) {
+    $all_tags = [];
+    $selected_tag_ids = [];
+}
 // بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
 $existing_image_url = '';
 if ($id > 0 && !empty($news_data['featured_image'])) {
@@ -309,6 +325,39 @@ body {
     color: var(--muted-color);
 }
 #subtitleCounter.over { color: #e74c3c; font-weight: 700; }
+
+/* ===== برچسب‌های خبر (چند انتخابی) ===== */
+.tag-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--anim-fast);
+    user-select: none;
+    color: var(--text-color);
+}
+.tag-checkbox-label:hover {
+    border-color: var(--primary-color);
+    background: rgba(0, 125, 117, 0.04);
+}
+.tag-checkbox-label input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+.tag-checkbox-label:has(input[type="checkbox"]:checked) {
+    background: rgba(0, 125, 117, 0.08);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
 
 /* ===== فیلدهای عمومی ===== */
 .input-group { margin-bottom: 18px; }
@@ -1296,6 +1345,21 @@ select.input { appearance: none; cursor: pointer; }
                     <div class="chips" id="tagsChips"></div>
                 </div>
 
+                <div class="input-group">
+                    <label class="field-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        برچسب‌های موضوعی خبر (چند انتخابی)
+                    </label>
+                    <div class="tags-checklist" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                        <?php foreach ($all_tags as $t): ?>
+                            <label class="tag-checkbox-label">
+                                <input type="checkbox" name="tag_ids[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $selected_tag_ids) ? 'checked' : '' ?>>
+                                <span><?= htmlspecialchars($t['name']) ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -2262,6 +2326,11 @@ async function saveNews() {
         fd.append("publish_date", document.getElementById("publish_date").value);
         fd.append("tags", document.getElementById("tags").value);
         fd.append("remove_featured_flag", document.getElementById("remove_featured_flag").value);
+
+        const checkedTags = document.querySelectorAll('input[name="tag_ids[]"]:checked');
+        checkedTags.forEach(cb => {
+            fd.append("tag_ids[]", cb.value);
+        });
 
         let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {

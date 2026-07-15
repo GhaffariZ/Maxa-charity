@@ -124,6 +124,17 @@ try {
         $message = "خبر جدید با موفقیت ثبت شد.";
     }
 
+    // ذخیره برچسب‌های چندگانه (Multi-tag)
+    if ($record_id > 0) {
+        $pdo->prepare("DELETE FROM news_tags_map WHERE news_id = ?")->execute([$record_id]);
+        if (!empty($_POST['tag_ids']) && is_array($_POST['tag_ids'])) {
+            $stmt_tag_ins = $pdo->prepare("INSERT INTO news_tags_map (news_id, tag_id) VALUES (?, ?)");
+            foreach ($_POST['tag_ids'] as $t_id) {
+                $stmt_tag_ins->execute([$record_id, (int)$t_id]);
+            }
+        }
+    }
+
     // ======================== مدیریت تصاویر ========================
 
     // بررسی حذف تصویر شاخص

@@ -73,9 +73,30 @@ h1 { font-size:28px; margin-bottom:15px; }
     <?php endif; ?>
     <div class="article-meta">
         <?php echo "نویسنده: " . htmlspecialchars($author) . " | تاریخ: " . htmlspecialchars($publish_date); ?><br>
-        <?php if($tag_name): ?>
-            <span class="tag"><?php echo htmlspecialchars($tag_name); ?></span>
-        <?php endif; ?>
+        <?php 
+        // Fetch multi-tags
+        $db_tags = [];
+        try {
+            $stmt_db_tags = $pdo->prepare("
+                SELECT t.name 
+                FROM news_tags t 
+                JOIN news_tags_map m ON t.id = m.tag_id 
+                WHERE m.news_id = ?
+            ");
+            $stmt_db_tags->execute([$news['id']]);
+            $db_tags = $stmt_db_tags->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            $db_tags = [];
+        }
+        
+        $custom_tags = !empty($news['tags']) ? explode(',', $news['tags']) : [];
+        $all_news_tags = array_unique(array_merge($db_tags, $custom_tags));
+        $all_news_tags = array_filter(array_map('trim', $all_news_tags));
+        
+        foreach ($all_news_tags as $t): 
+        ?>
+            <span class="tag"><?php echo htmlspecialchars($t); ?></span>
+        <?php endforeach; ?>
     </div>
 
     <?php if($featured_image && file_exists($folder . $featured_image)): ?>

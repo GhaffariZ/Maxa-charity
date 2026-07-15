@@ -609,6 +609,18 @@ CREATE TABLE `news_tags` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
+-- Table structure for table `news_tags_map`
+--
+
+DROP TABLE IF EXISTS `news_tags_map`;
+CREATE TABLE `news_tags_map` (
+  `news_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL,
+  PRIMARY KEY (`news_id`, `tag_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+--
 -- Dumping data for table `news_tags`
 --
 

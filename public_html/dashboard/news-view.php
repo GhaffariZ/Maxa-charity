@@ -56,6 +56,21 @@ if (!$news) {
     die("خبر یافت نشد");
 }
 
+// دریافت برچسب‌های چندگانه خبر
+$db_tags = [];
+try {
+    $stmt_db_tags = $pdo->prepare("
+        SELECT t.name 
+        FROM news_tags t 
+        JOIN news_tags_map m ON t.id = m.tag_id 
+        WHERE m.news_id = ?
+    ");
+    $stmt_db_tags->execute([$id]);
+    $db_tags = $stmt_db_tags->fetchAll(PDO::FETCH_COLUMN);
+} catch (Exception $e) {
+    $db_tags = [];
+}
+
 /* -----------------------------------------
    بررسی slug صحیح و ریدایرکت ۳۰۱ برای سئو
    ------------------------------------------- */
@@ -754,20 +769,17 @@ require_once __DIR__ . '/components/header/component.php';
             </section>
 
             <!-- تگ‌ها -->
-            <?php if (!empty($news['keywords'])): ?>
+            <?php 
+            $custom_tags = !empty($news['keywords']) ? explode(',', $news['keywords']) : [];
+            $all_news_tags = array_unique(array_merge($db_tags, $custom_tags));
+            $all_news_tags = array_filter(array_map('trim', $all_news_tags));
+            if (!empty($all_news_tags)): 
+            ?>
                 <footer class="article-tags">
                     <strong>برچسب‌ها:</strong>
-                    <?php 
-                    $tags = explode(',', $news['keywords']);
-                    foreach ($tags as $tag): 
-                        $tag = trim($tag);
-                        if (!empty($tag)):
-                    ?>
+                    <?php foreach ($all_news_tags as $tag): ?>
                         <a href="/news.php?q=<?= urlencode($tag) ?>" class="tag-chip"><?= htmlspecialchars($tag) ?></a>
-                    <?php 
-                        endif;
-                    endforeach; 
-                    ?>
+                    <?php endforeach; ?>
                 </footer>
             <?php endif; ?>
         </article>
