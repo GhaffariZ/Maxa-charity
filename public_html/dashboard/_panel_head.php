@@ -12,7 +12,21 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($PANEL_TITLE) ?> | پنل مکسا</title>
-<script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+<script>
+(function(){
+  function applyTheme() {
+    try {
+      var t = localStorage.getItem('maxa-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.removeAttribute('data-theme');
+    } catch(e) {}
+  }
+  applyTheme();
+  window.addEventListener('storage', function(e) {
+    if (!e || e.key === 'maxa-theme' || e.key === null) applyTheme();
+  });
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
