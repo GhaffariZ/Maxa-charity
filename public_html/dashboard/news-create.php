@@ -264,6 +264,52 @@ body {
 }
 #titleCounter.over { color: #e74c3c; font-weight: 700; }
 
+/* ===== زیرعنوان خبر ===== */
+.subtitle-card {
+    background: var(--surface-2);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: none;
+    transition: all var(--anim-fast);
+}
+.subtitle-card:focus-within {
+    border-color: var(--primary-color);
+    background: var(--panel-bg);
+    box-shadow: 0 0 0 4px rgba(0, 125, 117, 0.08);
+}
+#subtitle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0;
+    line-height: 1.6;
+    resize: none;
+}
+#subtitle:focus {
+    outline: none;
+}
+#subtitle::placeholder {
+    color: var(--muted-color);
+    opacity: 0.65;
+}
+.subtitle-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+    font-size: 11px;
+    color: var(--muted-color);
+}
+#subtitleCounter.over { color: #e74c3c; font-weight: 700; }
+
 /* ===== فیلدهای عمومی ===== */
 .input-group { margin-bottom: 18px; }
 .input-group:last-child { margin-bottom: 0; }
@@ -981,9 +1027,9 @@ select.input { appearance: none; cursor: pointer; }
             </div>
 
             <!-- زیرعنوان خبر -->
-            <div class="card title-card" id="subtitleCard" style="margin-top: 10px;">
-                <input type="text" class="" id="subtitle" maxlength="200" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?>">
-                <div class="title-meta">
+            <div class="subtitle-card" id="subtitleCard">
+                <textarea id="subtitle" maxlength="200" rows="2" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..."><?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?></textarea>
+                <div class="subtitle-meta">
                     <span>حداکثر ۲۰۰ کاراکتر</span>
                     <span id="subtitleCounter">0/200</span>
                 </div>
