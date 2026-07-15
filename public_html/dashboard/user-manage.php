@@ -102,18 +102,18 @@ require __DIR__ . '/_panel_head.php';
                   <svg class="ic" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                   ویرایش
                 </a>
-                <form method="POST" style="display:inline">
+                <form method="POST" style="display:inline" id="frm-status-<?= (int)$u['id'] ?>">
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="<?= $active ? 'disable' : 'enable' ?>">
-                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="submit"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
+                  <button class="tbtn <?= $active ? 'danger' : '' ?>" type="button" onclick="openUserModal(<?= (int)$u['id'] ?>, '<?= $active ? 'disable' : 'enable' ?>', '<?= htmlspecialchars($u['full_name'] ?: $u['username'], ENT_QUOTES) ?>')"><?= $active ? 'غیرفعال‌سازی' : 'فعال‌سازی' ?></button>
                 </form>
                 <?php if (dash_is_hq_view()): ?>
-                <form method="POST" style="display:inline" onsubmit="return confirm('آیا از حذف دائم این همکار اطمینان دارید؟ این عملیات قابل بازگشت نیست و کاربر از دیتابیس حذف می‌شود.');">
+                <form method="POST" style="display:inline" id="frm-delete-<?= (int)$u['id'] ?>">
                   <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                   <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
                   <input type="hidden" name="action" value="delete">
-                  <button class="tbtn danger" type="submit">حذف</button>
+                  <button class="tbtn danger" type="button" onclick="openUserModal(<?= (int)$u['id'] ?>, 'delete', '<?= htmlspecialchars($u['full_name'] ?: $u['username'], ENT_QUOTES) ?>')">حذف</button>
                 </form>
                 <?php endif; ?>
               </div>
@@ -132,4 +132,115 @@ require __DIR__ . '/_panel_head.php';
       افزودن کاربر
     </a>
   </div>
-</div></body></html>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed; inset: 0; z-index: 500;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(15,23,42,0.50); backdrop-filter: blur(10px);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+    .modal-box {
+        background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 28px; padding: 36px 30px; width: 90%; max-width: 360px;
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.22);
+        transform: scale(0.88) translateY(24px); opacity: 0;
+        transition: transform 0.38s ease, opacity 0.30s ease;
+    }
+    .modal-overlay.visible .modal-box { transform: scale(1) translateY(0); opacity: 1; }
+    .modal-icon-wrap {
+        width: 58px; height: 58px; border-radius: 18px; margin: 0 auto 20px;
+        display: flex; align-items: center; justify-content: center; font-size: 28px;
+    }
+    .modal-icon-wrap.danger  { background: rgba(239, 68, 68, 0.07); }
+    .modal-icon-wrap.success { background: rgba(34, 197, 94, 0.07); }
+    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight: 800; text-align: center; }
+    .modal-desc  { margin: 0 0 26px; font-size: 13.5px; color: var(--color-muted, #64748b); text-align: center; line-height: 1.75; }
+    .modal-name  { color: var(--color-text, #1e293b); font-weight: 800; }
+    .modal-actions { display: flex; gap: 10px; }
+    .btn-modal-cancel {
+        flex: 1; padding: 12px; border-radius: 14px;
+        background: transparent; border: 1px solid var(--border-color, #e2e8f0);
+        color: var(--color-muted, #64748b);
+        font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-modal-cancel:hover { border-color: var(--color-muted, #64748b); color: var(--color-text, #1e293b); }
+    .btn-modal-confirm {
+        flex: 1; padding: 12px; border-radius: 14px; border: none;
+        font-size: 14px; font-weight: 700; cursor: pointer;
+        transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-modal-confirm.danger  { background: #ef4444; color: #fff; }
+    .btn-modal-confirm.danger:hover  { filter: brightness(1.08); box-shadow: 0 6px 18px rgba(239, 68, 68, 0.12); transform: translateY(-1px); }
+    .btn-modal-confirm.success { background: #22c55e; color: #fff; }
+    .btn-modal-confirm.success:hover { filter: brightness(1.08); box-shadow: 0 6px 18px rgba(34, 197, 94, 0.12); transform: translateY(-1px); }
+</style>
+
+<div id="custom-modal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box">
+        <div id="cmodal-icon" class="modal-icon-wrap danger">⛔</div>
+        <h3 id="cmodal-title" class="modal-title">تایید عملیات</h3>
+        <p  id="cmodal-desc"  class="modal-desc">آیا مطمئن هستید؟</p>
+        <div class="modal-actions">
+            <button id="cmodal-cancel"  class="btn-modal-cancel">لغو</button>
+            <button id="cmodal-confirm" class="btn-modal-confirm danger">تأیید</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let _pendingFormId = null;
+function openUserModal(id, action, name) {
+    const modal   = document.getElementById('custom-modal');
+    const icon    = document.getElementById('cmodal-icon');
+    const title   = document.getElementById('cmodal-title');
+    const desc    = document.getElementById('cmodal-desc');
+    const confirm = document.getElementById('cmodal-confirm');
+
+    if (action === 'disable') {
+        _pendingFormId = 'frm-status-' + id;
+        icon.textContent  = '⛔';
+        icon.className    = 'modal-icon-wrap danger';
+        title.textContent = 'غیرفعال کردن کاربر';
+        confirm.className = 'btn-modal-confirm danger';
+        confirm.textContent = 'غیرفعال کن';
+        desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟`;
+    } else if (action === 'delete') {
+        _pendingFormId = 'frm-delete-' + id;
+        icon.textContent  = '🗑️';
+        icon.className    = 'modal-icon-wrap danger';
+        title.textContent = 'حذف کاربر';
+        confirm.className = 'btn-modal-confirm danger';
+        confirm.textContent = 'حذف دائمی';
+        desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
+    } else {
+        _pendingFormId = 'frm-status-' + id;
+        icon.textContent  = '✅';
+        icon.className    = 'modal-icon-wrap success';
+        title.textContent = 'فعال کردن کاربر';
+        confirm.className = 'btn-modal-confirm success';
+        confirm.textContent = 'فعال کن';
+        desc.innerHTML = `آیا از فعال‌سازی مجدد <span class="modal-name">${name}</span> اطمینان دارید؟`;
+    }
+
+    modal.classList.add('visible');
+}
+
+document.getElementById('cmodal-cancel').addEventListener('click', () => {
+    document.getElementById('custom-modal').classList.remove('visible');
+    _pendingFormId = null;
+});
+document.getElementById('cmodal-confirm').addEventListener('click', () => {
+    if (_pendingFormId) document.getElementById(_pendingFormId).submit();
+});
+document.getElementById('custom-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('visible');
+        _pendingFormId = null;
+    }
+});
+</script>
+</body></html>
