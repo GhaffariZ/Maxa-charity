@@ -818,7 +818,11 @@ function handleBranchChange() {
     if (selectedBranch === "setad_markazi") {
         catContainer.style.display = "block";
         catContainer.classList.add("fade-in-field");
-        catSelect.innerHTML = '<option value="deputies" selected>معاونت‌ها</option>';
+        catSelect.innerHTML = `
+            <option value="deputies" selected>معاونت‌ها</option>
+            <option value="admin">کادر اداری</option>
+            <option value="ceo_office">حوزه مدیر عامل</option>
+        `;
         
         roleContainer.style.display = "block";
         roleContainer.classList.add("fade-in-field");

@@ -77,7 +77,9 @@ $roles = [
     'nutritionists' => 'متخصص تغذیه',
     'rehabilitation' => 'متخصص توانبخشی',
     'genetic_counselors' => 'مشاور ژنتیک',
-    'deputies' => 'معاونت'
+    'deputies' => 'معاونت',
+    'admin' => 'کادر اداری',
+    'ceo_office' => 'حوزه مدیر عامل'
 ];
 
 // --- تطبیق ۱۰۰٪ با ستون‌های دیتابیس ---
