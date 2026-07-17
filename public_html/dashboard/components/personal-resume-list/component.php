@@ -241,6 +241,8 @@ const ROLES = {
     rehabilitation:    'متخصص توانبخشی',
     genetic_counselors:'مشاور ژنتیک و غربالگری',
     deputies:          'معاونت',
+    admin:             'کادر اداری',
+    ceo_office:        'حوزه مدیر عامل',
 };
 
 // ─── لودینگ اسکلتون ───

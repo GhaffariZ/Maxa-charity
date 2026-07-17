@@ -101,7 +101,7 @@
 
   // نگاشتِ کلید→نامِ شعبه و نقش (همان نگاشتِ صفحه‌ی شبکه‌ی همکاران)
   var BRANCHES={tehran:'شعبه تهران',isfahan:'شعبه اصفهان',mashhad:'شعبه مشهد',qom:'شعبه قم',tabriz:'شعبه تبریز',ahvaz:'شعبه اهواز',kerman:'شعبه کرمان',kashan:'شعبه کاشان',telemedicine:'پزشکی از راه دور مکسا',setad_markazi:'ستاد مرکزی'};
-  var ROLES={administrative:'سمت‌های اداری',doctors:'پزشک متخصص',nurses:'کادر پرستاری',psychologists:'روانشناس سلامت',social_workers:'مددکار اجتماعی',spiritual_care:'مراقب معنوی',nutritionists:'متخصص تغذیه',rehabilitation:'متخصص توانبخشی',genetic_counselors:'مشاور ژنتیک و غربالگری',deputies:'معاونت'};
+  var ROLES={administrative:'سمت‌های اداری',doctors:'پزشک متخصص',nurses:'کادر پرستاری',psychologists:'روانشناس سلامت',social_workers:'مددکار اجتماعی',spiritual_care:'مراقب معنوی',nutritionists:'متخصص تغذیه',rehabilitation:'متخصص توانبخشی',genetic_counselors:'مشاور ژنتیک و غربالگری',deputies:'معاونت',admin:'کادر اداری',ceo_office:'حوزه مدیر عامل'};
 
   // دکمه‌ی «همه‌ی همکاران» → صفحه‌ی شبکه‌ی همکارانِ همین شعبه
   var allBtn=document.getElementById('bp-all');
