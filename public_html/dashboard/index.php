@@ -1093,6 +1093,8 @@ body.spa-active .content{display:none}
   if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
   // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل در دسترس است (سطحِ دسترسی داخلِ خودِ صفحه اعمال می‌شود)
   people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
+  // اثرات کمک (Impact of Donations)
+  people.push({single:true,label:'اثرات کمک',icon:'heart',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
