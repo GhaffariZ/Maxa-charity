@@ -125,7 +125,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .card-footer { display: flex; justify-content: space-between; align-items: center; }
 .card-qty { font-size: 16px; font-weight: 800; color: var(--color-primary); }
 .card-ach { font-size: 13px; color: var(--color-muted); font-weight: 600; }
-.card-total { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; }
+.card-total { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; }
 .card-total-amount { font-size: 18px; font-weight: 800; color: var(--color-primary-light); }
 .card-total-label { font-size: 13px; color: var(--color-muted); font-weight: 600; }
 
