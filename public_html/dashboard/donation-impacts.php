@@ -125,7 +125,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .card-footer { display: flex; justify-content: space-between; align-items: center; }
 .card-qty { font-size: 16px; font-weight: 800; color: var(--color-primary); }
 .card-ach { font-size: 13px; color: var(--color-muted); font-weight: 600; }
-.card-total { font-size: 13px; color: var(--color-muted); margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; text-align: right; font-weight: 600; }
+.card-total { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; }
+.card-total-amount { font-size: 18px; font-weight: 800; color: var(--color-primary-light); }
+.card-total-label { font-size: 13px; color: var(--color-muted); font-weight: 600; }
 
 /* Form Elements */
 .panel{background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;}
@@ -222,13 +224,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
             <div class="card-title"><?= htmlspecialchars($item['title']) ?></div>
             <hr class="card-divider">
             <div class="card-footer">
-              <div class="card-qty"><?= strtr((string)$item['quantity'], ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) ?> <?= htmlspecialchars($item['quantity_unit']) ?></div>
               <div class="card-ach">تعداد:</div>
+              <div class="card-qty"><?= strtr((string)$item['quantity'], ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) ?> <?= htmlspecialchars($item['quantity_unit']) ?></div>
             </div>
             <?php 
               if ($item['unit_price'] && $item['quantity']) {
                 $total_amount = $item['unit_price'] * $item['quantity'];
-                echo '<div class="card-total">مبلغ کل: ' . strtr((string)number_format($total_amount), ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) . ' تومان</div>';
+                echo '<div class="card-total">';
+                echo '  <div class="card-total-label">مبلغ کل:</div>';
+                echo '  <div class="card-total-amount">' . strtr((string)number_format($total_amount), ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) . ' تومان</div>';
+                echo '</div>';
               }
             ?>
           </div>
