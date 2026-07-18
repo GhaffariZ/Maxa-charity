@@ -116,16 +116,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .flash.err{background:var(--danger-12);color:var(--danger);border:1px solid rgba(224,85,107,.25)}
 
 /* Cards Grid */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
 .card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--color-border); }
-.card-icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 16px; object-fit: cover; align-self: flex-end; background: #007b7a; display: flex; align-items: center; justify-content: center; }
+.card-icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 16px; object-fit: cover; align-self: flex-start; background: #007b7a; display: flex; align-items: center; justify-content: center; }
 .card-icon img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
-.card-title { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 12px; text-align: right; }
-.card-desc { font-size: 13.5px; color: var(--color-muted); line-height: 1.8; margin-bottom: 24px; text-align: justify; flex-grow: 1; }
+.card-title { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 16px; text-align: right; flex-grow: 1; }
 .card-divider { height: 1px; background: var(--color-border); margin: 0 0 16px 0; border: none; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; }
 .card-qty { font-size: 16px; font-weight: 800; color: var(--color-primary); }
 .card-ach { font-size: 13px; color: var(--color-muted); font-weight: 600; }
+.card-total { font-size: 13px; color: var(--color-muted); margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; text-align: right; font-weight: 600; }
 
 /* Form Elements */
 .panel{background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;}
@@ -172,12 +172,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         
         <div class="field">
           <label>نام کمک (عنوان)</label>
-          <input type="text" name="title" required placeholder="مثال: حمایت از کودکان">
+          <input type="text" name="title" required placeholder="مثال: حمایت از بیماران نیازمند به ویلچر">
         </div>
         
         <div class="field">
           <label>توضیح کمک</label>
-          <textarea name="description" required placeholder="مثال: کمک‌های شما باعث شده ۱۰ کودک..."></textarea>
+          <textarea name="description" required placeholder="مثال: با کمک‌های شما ۱۰ ویلچر..."></textarea>
         </div>
         
         <div class="form-row">
@@ -187,7 +187,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
           </div>
           <div class="field">
             <label>واحد تعداد</label>
-            <input type="text" name="quantity_unit" required placeholder="مثال: کودک">
+            <input type="text" name="quantity_unit" required placeholder="مثال: ویلچر">
           </div>
         </div>
         
@@ -220,12 +220,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               <img src="/uploads/impacts/<?= htmlspecialchars($item['image']) ?>" alt="">
             </div>
             <div class="card-title"><?= htmlspecialchars($item['title']) ?></div>
-            <div class="card-desc"><?= nl2br(htmlspecialchars($item['description'])) ?></div>
             <hr class="card-divider">
             <div class="card-footer">
               <div class="card-qty"><?= strtr((string)$item['quantity'], ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) ?> <?= htmlspecialchars($item['quantity_unit']) ?></div>
-              <div class="card-ach">دستاورد:</div>
+              <div class="card-ach">تعداد:</div>
             </div>
+            <?php 
+              if ($item['unit_price'] && $item['quantity']) {
+                $total_amount = $item['unit_price'] * $item['quantity'];
+                echo '<div class="card-total">مبلغ کل: ' . strtr((string)number_format($total_amount), ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) . ' تومان</div>';
+              }
+            ?>
           </div>
         <?php endforeach; ?>
       </div>
