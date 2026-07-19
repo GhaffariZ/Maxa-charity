@@ -146,6 +146,91 @@ final class UserController
     }
 
     /** @param array<string,mixed> $p */
+    // ---- GET /user/impacts --------------------------------------------------
+    public function impacts(Request $request): void
+    {
+        $db = \Maksa\Core\Database::connection();
+        
+        $stmt = $db->prepare("SELECT user_id, amount FROM panel_donations WHERE status = 'success' AND campaign_id IS NULL ORDER BY paid_at ASC");
+        $stmt->execute();
+        $donations = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt = $db->prepare("SELECT * FROM donation_impacts WHERE unit_price IS NOT NULL AND unit_price > 0 ORDER BY id ASC");
+        $stmt->execute();
+        $impacts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $userAllocations = [];
+        $targetUserId = $request->userId();
+        
+        $impactIndex = 0;
+        $currentImpactRemaining = 0;
+        if (isset($impacts[0])) {
+            $currentImpactRemaining = (int)$impacts[0]['quantity'] * (int)$impacts[0]['unit_price'];
+        }
+
+        foreach ($donations as $donation) {
+            $amount = (int)$donation['amount'];
+            $uid = (int)$donation['user_id'];
+            
+            while ($amount > 0 && $impactIndex < count($impacts)) {
+                $allocation = min($amount, $currentImpactRemaining);
+                
+                if ($uid === $targetUserId) {
+                    $impactId = $impacts[$impactIndex]['id'];
+                    if (!isset($userAllocations[$impactId])) {
+                        $userAllocations[$impactId] = 0;
+                    }
+                    $userAllocations[$impactId] += $allocation;
+                }
+                
+                $amount -= $allocation;
+                $currentImpactRemaining -= $allocation;
+                
+                if ($currentImpactRemaining <= 0) {
+                    $impactIndex++;
+                    if ($impactIndex < count($impacts)) {
+                        $currentImpactRemaining = (int)$impacts[$impactIndex]['quantity'] * (int)$impacts[$impactIndex]['unit_price'];
+                    }
+                }
+            }
+        }
+
+        $result = [];
+        foreach ($impacts as $impact) {
+            $impactId = $impact['id'];
+            if (!isset($userAllocations[$impactId]) || $userAllocations[$impactId] <= 0) {
+                continue;
+            }
+            
+            $contribution = $userAllocations[$impactId];
+            $unitPrice = (int)$impact['unit_price'];
+            $units = floor($contribution / $unitPrice);
+            $remainder = $contribution % $unitPrice;
+            $percentage = round(($remainder / $unitPrice) * 100);
+            
+            $statText = "";
+            if ($units > 0 && $percentage > 0) {
+                $statText = $units . " عدد " . $impact['quantity_unit'] . " و مقداری (" . $percentage . " درصد) از یک " . $impact['quantity_unit'];
+            } elseif ($units > 0) {
+                $statText = $units . " عدد " . $impact['quantity_unit'];
+            } elseif ($percentage > 0) {
+                $statText = "مقداری از یک عدد " . $impact['quantity_unit'] . " (" . $percentage . " درصد)";
+            }
+            
+            $statText = strtr($statText, ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']);
+            
+            $result[] = [
+                'id' => $impact['id'],
+                'title' => $impact['title'],
+                'description' => $impact['description'],
+                'image' => $impact['image'],
+                'stat_text' => $statText
+            ];
+        }
+        
+        Response::success(['impacts' => $result]);
+    }
+
     private function shape(array $p): array
     {
         return [
