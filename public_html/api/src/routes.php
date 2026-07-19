@@ -49,6 +49,7 @@ return static function (Router $r): void {
     $r->get('/user/notification-prefs',   [UserController::class, 'getPrefs'], $auth);
     $r->add('PUT', '/user/notification-prefs', [UserController::class, 'updatePrefs'], $auth);
     $r->get('/user/dashboard',            [UserController::class, 'dashboard'], $auth);
+    $r->get('/user/impacts',              [UserController::class, 'impacts'], $auth);
     // Public avatar serving (path is unguessable; route validates the filename).
     $r->get('/user/avatar/{file}',        [UserController::class, 'serveAvatar']);
 
