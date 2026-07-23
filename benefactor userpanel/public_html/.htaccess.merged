@@ -1,0 +1,94 @@
+RewriteEngine On
+RewriteBase /
+
+Options -Indexes
+
+# ----------------------------------
+# Custom error pages
+# ----------------------------------
+ErrorDocument 403 /403.html
+ErrorDocument 404 /404.html
+
+# ---- Force HTTPS ----------------------------------------------------------------
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# ---- Leave the API alone (handled by api/.htaccess) -----------------------------
+RewriteRule ^api(/|$) - [L]
+
+# ---- Redirect /benefactor-dashboard  ->  /benefactor-dashboard/ ----------------
+RewriteRule ^benefactor-dashboard$ /benefactor-dashboard/ [R=301,L]
+
+# ---- React Router SPA fallback for the dashboard --------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^benefactor-dashboard/(.*)$ /benefactor-dashboard/index.html [L]
+
+# ---------------------------------------------------------
+# 1) Redirect old URL
+# /dashboard/news-view.php?id=12  ->  /12/
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/dashboard/news-view\.php\?id=([0-9]+)\s [NC]
+RewriteRule ^ /%1/ [R=301,L]
+
+# ---------------------------------------------------------
+# 2) News URLs (root domain)
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9]+)/([^/]+)/?$ dashboard/news-view.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9]+)/?$ dashboard/news-view.php [L,QSA]
+
+# ---------------------------------------------------------
+# 3) Page Builder
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^page/([a-zA-Z0-9-_]+)/?$ dashboard/page-view.php?slug=$1 [L,QSA]
+
+# ---------------------------------------------------------
+# 4) Root Pages
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9-_]+)/?$ dashboard/page-view.php?slug=$1 [L,QSA]
+
+# ---------------------------------------------------------
+# 5) Main router (other pages)
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+
+# ---- Security headers (همه صفحات) ----------------------------------------------
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" "expr=%{HTTPS} == 'on'"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ---- CSP فقط برای پنل React (benefactor-dashboard) ----------------------------
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^/benefactor-dashboard#">
+        Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    </If>
+</IfModule>
+
+# ---- Static asset caching -------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    <FilesMatch "\.(js|css|woff2?|svg|png|jpe?g|webp|gif|ico)$">
+        ExpiresDefault "access plus 1 year"
+        Header append Cache-Control "public, immutable"
+    </FilesMatch>
+    <FilesMatch "\.html$">
+        ExpiresDefault "access plus 0 seconds"
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
