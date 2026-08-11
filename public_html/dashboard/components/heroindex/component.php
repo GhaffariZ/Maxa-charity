@@ -464,112 +464,332 @@
   .menu-icon{ display:flex; }
 }
 
-/* ===== MOBILE MENU (SAME AS DESKTOP) ===== */
-.mobile-menu-sidebar{
-  position: fixed;
-  top: 0;
-  right: -320px;
-  width: 100%;
-  max-width: 320px;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.75); /* Dark translucent slate glass */
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow: 
-    -10px 0 30px rgba(0, 0, 0, 0.5), 
-    inset 1px 0 0 rgba(255, 255, 255, 0.1);
-  z-index: 99999;
-  padding: 32px 20px;
-  overflow-y: auto;
-  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  direction: rtl;
-}
+    /* ===== MOBILE MENU REDESIGN ===== */
+    .mobile-menu-sidebar {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: min(340px, 88vw);
+      height: 100vh;
+      height: 100dvh;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-left: 1px solid rgba(245, 166, 35, 0.25);
+      box-shadow: -12px 0 36px rgba(0, 0, 0, 0.15);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      visibility: hidden;
+      transition: right 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s;
+      direction: rtl;
+    }
 
-.mobile-menu-sidebar.open{
-  right: 0;
-}
+    .mobile-menu-sidebar.open {
+      right: 0;
+      visibility: visible;
+    }
 
-.mobile-menu{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+    /* Drawer Header */
+    .mobile-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.12), rgba(8, 153, 169, 0.06));
+      border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      flex-shrink: 0;
+    }
 
-.mobile-menu > li{
-  border-bottom: 1px solid rgba(255,255,255,.12);
-}
+    .mobile-menu-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.mobile-menu a{
-  display: block;
-  padding: 14px 8px;
-  color: rgba(255,255,255,.92);
-  font-size: 14px;
-  border-radius: 8px;
-}
+    .mobile-menu-brand img {
+      height: 30px;
+      width: auto;
+      object-fit: contain;
+    }
 
-.mobile-menu a:hover{
-  background: rgba(255,255,255,.10);
-}
+    .mobile-brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e293b;
+      letter-spacing: -0.2px;
+    }
 
-/* مگا منو در موبایل */
-.mobile-menu .mega-menu-content{
-  display: none;
-  position: static;
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px;
-  margin: 8px 0 12px;
-  padding: 12px;
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
-  transition: none !important;
-}
+    .mobile-menu-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+      padding: 0;
+    }
 
-.mobile-menu .mega-menu-content.active{
-  display: block;
-}
+    .mobile-menu-close:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      transform: scale(1.05);
+    }
 
-.mobile-menu .mega-row{
-  display: block;
-}
+    .mobile-menu-close:active {
+      transform: scale(0.95);
+    }
 
-.mobile-menu .mega-col{
-  border: none;
-  padding: 0;
-  margin-bottom: 14px;
-}
+    /* Drawer Action Bar */
+    .mobile-menu-actions {
+      display: flex;
+      gap: 10px;
+      padding: 14px 18px 8px 18px;
+      flex-shrink: 0;
+    }
 
-.mobile-menu .mega-col h6{
-  color: #FFD700;
-  font-size: 13px;
-  margin-bottom: 6px;
-}
+    .mobile-action-donate {
+      flex: 1;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #e53935, #c62828);
+      color: #ffffff !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-weight: 800;
+      font-size: 13.5px;
+      box-shadow: 0 4px 14px rgba(198, 40, 40, 0.28);
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
 
-.mobile-menu .mega-col a{
-  font-size: 13px;
-  padding: 6px 0;
-  color: #fff;
-}
+    .mobile-action-donate:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(198, 40, 40, 0.38);
+    }
 
-/* فلش آکاردئونی برای مگا منوی موبایل */
-.mobile-menu .mega-toggle {
-  position: relative;
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-}
+    .mobile-action-auth {
+      flex: 1;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0899A9, #067d8a);
+      color: #ffffff !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-weight: 700;
+      font-size: 13.5px;
+      box-shadow: 0 4px 14px rgba(8, 153, 169, 0.28);
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
 
-.mobile-menu .mega-toggle::after {
-  content: "▾";
-  font-size: 16px;
-  transition: transform 0.3s ease;
-}
+    .mobile-action-auth:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(8, 153, 169, 0.38);
+    }
 
-.mobile-menu .mega-toggle.open::after {
-  transform: rotate(180deg);
-}
+    /* Drawer Navigation Body */
+    .mobile-menu-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px 20px 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    }
+
+    .mobile-menu-container::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .mobile-menu-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+    }
+
+    .mobile-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mobile-menu > li {
+      width: 100%;
+      border-radius: 12px;
+      transition: background 0.2s ease;
+    }
+
+    .mobile-menu > li > a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      color: #334155;
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 700;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-menu > li > a:hover {
+      background: rgba(245, 166, 35, 0.12);
+      color: #0899A9;
+    }
+
+    .mobile-menu > li > a:active {
+      background: rgba(245, 166, 35, 0.18);
+    }
+
+    /* Highlighted / Special Menu item */
+    .mobile-menu .highlighted-menu > a {
+      background: rgba(245, 166, 35, 0.15);
+      color: #d97706;
+      font-weight: 800;
+    }
+
+    /* Mega Menu Accordion in Mobile Drawer */
+    .mobile-menu .mega-menu-content {
+      display: none;
+      position: static;
+      background: rgba(248, 250, 252, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      margin: 4px 0 8px 0;
+      padding: 14px 16px;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      transition: none !important;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .mobile-menu .mega-menu-content.active {
+      display: block;
+      animation: mobileSubMenuFade 0.25s ease forwards;
+    }
+
+    @keyframes mobileSubMenuFade {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-menu .mega-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mobile-menu .mega-col {
+      border: none;
+      padding: 0;
+    }
+
+    .mobile-menu .mega-col h6 {
+      color: #0899A9;
+      font-size: 13px;
+      font-weight: 800;
+      margin: 10px 0 6px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed rgba(8, 153, 169, 0.2);
+    }
+
+    .mobile-menu .mega-col:first-child h6 {
+      margin-top: 0;
+    }
+
+    .mobile-menu .mega-col a {
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 8px 10px;
+      color: #475569;
+      display: block;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      margin-bottom: 2px;
+    }
+
+    .mobile-menu .mega-col a:hover {
+      background: #ffffff;
+      color: #f5a623;
+      padding-right: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Accordion Toggle Indicator */
+    .mobile-menu .mega-toggle {
+      position: relative;
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-menu .mega-toggle::after {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-left: 2px solid #64748b;
+      border-bottom: 2px solid #64748b;
+      transform: rotate(-45deg);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+      flex-shrink: 0;
+      margin-left: 4px;
+    }
+
+    .mobile-menu .mega-toggle.open::after {
+      transform: rotate(135deg);
+      border-color: #0899A9;
+    }
+
+    .mobile-menu .mega-toggle.open {
+      color: #0899A9;
+      background: rgba(8, 153, 169, 0.08);
+    }
+
+    /* Drawer Footer */
+    .mobile-menu-footer {
+      padding: 14px 18px;
+      background: rgba(241, 245, 249, 0.85);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+      direction: rtl;
+    }
+
+    .mobile-footer-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .mobile-footer-info svg {
+      color: #0899A9;
+    }
+
+    .mobile-footer-tagline {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 3px;
+      font-weight: 500;
+    }
 
 /* استایل باکس جستجو در موبایل */
 .mobile-search {
@@ -1557,7 +1777,39 @@
     </section>
 
   </section>
-<nav class="mobile-menu-sidebar cta-glass" id="mobileMenu" aria-label="منوی موبایل">
+<nav class="mobile-menu-sidebar" id="mobileMenu" aria-label="منوی موبایل">
+  <div class="mobile-menu-header">
+    <div class="mobile-menu-brand">
+      <img src="/dashboard/components/header/images/1.png" alt="مکسا">
+      <span class="mobile-brand-title">مؤسسه نیکوکاری مکسا</span>
+    </div>
+    <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
+      <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu-actions">
+    <a class="mobile-action-donate" href="/onlinedonation">
+      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      کمک آنلاین
+    </a>
+    <a class="mobile-action-auth js-mobile-login" href="/benefactor-dashboard/">
+      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      ورود / ثبت‌نام
+    </a>
+  </div>
+
+  <div class="mobile-menu-container" id="mobileMenuContainer"></div>
+
+  <div class="mobile-menu-footer">
+    <div class="mobile-footer-info">
+      <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
+      <span>پشتیبانی: ۰۲۱-۵۴۱۶۴۰۰۰</span>
+    </div>
+    <div class="mobile-footer-tagline">مؤسسه خیریه مولی‌الموحدین - مراقبت‌های تسکینی سرطان</div>
+  </div>
 </nav>
 <div class="mobile-backdrop" id="mobileBackdrop"></div>
 
@@ -1737,6 +1989,7 @@ function initSlider() {
 
 (function(){
   const toggleBtn = document.getElementById("menuToggle");
+  const closeBtn = document.getElementById("mobileMenuClose");
   const menu = document.getElementById("mobileMenu");
   const backdrop = document.getElementById("mobileBackdrop");
 
@@ -1744,14 +1997,14 @@ function initSlider() {
 
   function openMenu(){
     menu.classList.add("open");
-    backdrop.classList.add("show");
+    if(backdrop) backdrop.classList.add("show");
     toggleBtn.classList.add("active");
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu(){
     menu.classList.remove("open");
-    backdrop.classList.remove("show");
+    if(backdrop) backdrop.classList.remove("show");
     toggleBtn.classList.remove("active");
     document.body.style.overflow = "";
   }
@@ -1761,7 +2014,8 @@ function initSlider() {
     menu.classList.contains("open") ? closeMenu() : openMenu();
   });
 
-  backdrop.addEventListener("click", closeMenu);
+  if(closeBtn) closeBtn.addEventListener("click", closeMenu);
+  if(backdrop) backdrop.addEventListener("click", closeMenu);
 
   document.querySelectorAll(".toggle-sub").forEach(function(btn){
     btn.addEventListener("click", function(){
@@ -1826,27 +2080,18 @@ function initSlider() {
 
   document.addEventListener("DOMContentLoaded", function(){
     const desktopMenu = document.querySelector(".cta-menu");
-    const mobileMenu = document.getElementById("mobileMenu");
+    const container = document.getElementById("mobileMenuContainer");
 
-    if(!desktopMenu || !mobileMenu) return;
+    if(!desktopMenu || !container) return;
 
-    // اضافه کردن باکس جستجو به منوی موبایل
-    const searchForm = document.querySelector(".cta-search");
-    if (searchForm) {
-      const clonedSearch = searchForm.cloneNode(true);
-      clonedSearch.className = "mobile-search";
-      clonedSearch.style.display = "block";
-      mobileMenu.appendChild(clonedSearch);
-    }
-
-    // کپی کامل منو
+    // کپی کامل منو در کانتینر مخصوص اسکرول سایدبار
     const clonedMenu = desktopMenu.cloneNode(true);
     clonedMenu.classList.remove("cta-menu");
     clonedMenu.classList.add("mobile-menu");
-    mobileMenu.appendChild(clonedMenu);
+    container.appendChild(clonedMenu);
 
     // تبدیل مگا منو به آکاردئون
-    mobileMenu.querySelectorAll(".mega-menu").forEach(function(item){
+    container.querySelectorAll(".mega-menu").forEach(function(item){
       const toggle = item.querySelector(".mega-toggle");
       const content = item.querySelector(".mega-menu-content");
 
@@ -1964,6 +2209,13 @@ document.addEventListener("DOMContentLoaded", function () {
       var login = slot.querySelector('.js-cta-login');
       var account = slot.querySelector('.js-cta-account');
       if(login) login.setAttribute('hidden','');
+
+      var mobLogin = document.querySelector('.js-mobile-login');
+      if(mobLogin){
+        mobLogin.href = '/benefactor-dashboard/';
+        mobLogin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> داشبورد من';
+      }
+
       if(!account) return;
       account.removeAttribute('hidden');
 
