@@ -73,6 +73,26 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     margin: 0 auto;
 }
 
+/* Customizing Datepicker Font and Style */
+.datepicker-plot-area {
+    font-family: 'Vazirmatn', Tahoma, sans-serif !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
+    border: none !important;
+}
+.datepicker-plot-area * {
+    font-family: 'Vazirmatn', Tahoma, sans-serif !important;
+}
+.datepicker-plot-area .datepicker-day-view .table-days td.selected span,
+.datepicker-plot-area .datepicker-time-view .time-segment:hover {
+    background-color: #e53935 !important;
+    border-radius: 8px !important;
+}
+.datepicker-plot-area .datepicker-time-view .up-btn:hover,
+.datepicker-plot-area .datepicker-time-view .down-btn:hover {
+    background-color: #f3f4f6 !important;
+}
+
 /* 
    In RTL, the first element is on the right, the second is on the left. 
    Grid: 1.1fr (Form, Right) and 0.9fr (Image, Left)
@@ -111,6 +131,7 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    perspective: 1200px; /* Added for 3D effect */
 }
 .so-image-col img {
     max-width: 100%;
@@ -122,7 +143,51 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     background: #fff;
     min-height: 200px;
     object-fit: contain;
+    transition: transform 0.1s linear;
+    transform-style: preserve-3d;
 }
+
+/* 360 Rotator Styling */
+.so-rotator-container {
+    width: 100%;
+    max-width: 260px;
+    margin: 24px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.so-rotator-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.so-rotator-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    outline: none;
+}
+.so-rotator-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #e53935;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(229, 57, 53, 0.4);
+    transition: transform 0.15s ease;
+}
+.so-rotator-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
 .so-price-tag {
     font-size: 19px;
     font-weight: 800;
@@ -326,6 +391,16 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
             <h3><?= htmlspecialchars($selectedStand['title']) ?></h3>
             <div class="so-price-tag">مبلغ: <?= $selectedStand['price'] ?></div>
             <p><?= htmlspecialchars($selectedStand['desc']) ?></p>
+
+            <div class="so-rotator-container">
+                <div class="so-rotator-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 12l5-5M3 12l5 5M21 12l-5-5M21 12l-5 5"></path>
+                    </svg>
+                    چرخش سه‌بعدی
+                </div>
+                <input type="range" min="-180" max="180" value="0" class="so-rotator-slider" id="standRotator">
+            </div>
         </div>
     </div>
 </div>
@@ -371,6 +446,15 @@ document.getElementById('standOrderForm').addEventListener('submit', function(e)
         // window.location.href = '/cart.php'; 
     }, 1500);
 });
+
+// 360 Image Rotator
+const rotator = document.getElementById('standRotator');
+const imgPreview = document.getElementById('standImagePreview');
+if(rotator && imgPreview) {
+    rotator.addEventListener('input', function(e) {
+        imgPreview.style.transform = `rotateY(${e.target.value}deg)`;
+    });
+}
 </script>
 
 <?php
