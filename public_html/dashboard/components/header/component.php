@@ -393,12 +393,8 @@
       height: 2px;
       background: #fff;
       border-radius: 2px;
-      transition: transform .3s ease, opacity .3s ease;
+      transition: opacity .3s ease;
     }
-
-    .menu-icon.active div:nth-child(1){ transform: translateY(7px) rotate(45deg); }
-    .menu-icon.active div:nth-child(2){ opacity: 0; }
-    .menu-icon.active div:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
 
     /* فقط موبایل و تبلت */
     @media (max-width: 1024px){
@@ -413,7 +409,7 @@
       width: min(340px, 88vw);
       height: 100vh;
       height: 100dvh;
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border-left: 1px solid rgba(245, 166, 35, 0.25);
@@ -433,34 +429,29 @@
       visibility: visible;
     }
 
-    /* Drawer Header */
+    /* Drawer Header - Aligned thickness with main navbar */
     .mobile-menu-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
+      height: var(--cta-nav-h, 56px);
+      min-height: 56px;
+      padding: 0 16px;
       background: linear-gradient(135deg, rgba(245, 166, 35, 0.12), rgba(8, 153, 169, 0.06));
       border-bottom: 1px solid rgba(0, 0, 0, 0.07);
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .mobile-menu-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
     }
 
     .mobile-menu-brand img {
-      height: 30px;
+      height: 32px;
       width: auto;
       object-fit: contain;
-    }
-
-    .mobile-brand-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #1e293b;
-      letter-spacing: -0.2px;
     }
 
     .mobile-menu-close {
@@ -574,26 +565,28 @@
       transition: background 0.2s ease;
     }
 
-    .mobile-menu > li > a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      color: #334155;
-      text-decoration: none;
-      font-size: 14.5px;
-      font-weight: 700;
-      border-radius: 10px;
-      transition: all 0.2s ease;
+    .mobile-menu a,
+    .mobile-menu > li > a,
+    .mobile-menu li a {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 12px 14px !important;
+      color: #1e293b !important;
+      text-decoration: none !important;
+      font-size: 14.5px !important;
+      font-weight: 700 !important;
+      border-radius: 10px !important;
+      transition: all 0.2s ease !important;
     }
 
     .mobile-menu > li > a:hover {
-      background: rgba(245, 166, 35, 0.12);
-      color: #0899A9;
+      background: rgba(245, 166, 35, 0.12) !important;
+      color: #0899A9 !important;
     }
 
     .mobile-menu > li > a:active {
-      background: rgba(245, 166, 35, 0.18);
+      background: rgba(245, 166, 35, 0.18) !important;
     }
 
     /* Highlighted / Special Menu item */
@@ -1149,7 +1142,6 @@
     <div class="mobile-menu-header">
       <div class="mobile-menu-brand">
         <img src="/dashboard/components/header/images/1.png" alt="مکسا">
-        <span class="mobile-brand-title">مؤسسه نیکوکاری مکسا</span>
       </div>
       <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
         <svg viewBox="0 0 24 24" fill="none" width="18" height="18">

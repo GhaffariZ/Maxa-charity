@@ -437,10 +437,11 @@
 }
 
 .menu-icon div{
-  height: 3px;
+  width: 17px;
+  height: 2px;
   background: #fff;
-  border-radius: 3px;
-  transition: .3s ease;
+  border-radius: 2px;
+  transition: opacity .3s ease;
 }
 
 /* فقط موبایل و تبلت */
@@ -456,7 +457,7 @@
       width: min(340px, 88vw);
       height: 100vh;
       height: 100dvh;
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border-left: 1px solid rgba(245, 166, 35, 0.25);
@@ -476,25 +477,27 @@
       visibility: visible;
     }
 
-    /* Drawer Header */
+    /* Drawer Header - Aligned thickness with main navbar */
     .mobile-menu-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
+      height: var(--cta-nav-h, 56px);
+      min-height: 56px;
+      padding: 0 16px;
       background: linear-gradient(135deg, rgba(245, 166, 35, 0.12), rgba(8, 153, 169, 0.06));
       border-bottom: 1px solid rgba(0, 0, 0, 0.07);
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .mobile-menu-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
     }
 
     .mobile-menu-brand img {
-      height: 30px;
+      height: 32px;
       width: auto;
       object-fit: contain;
     }
@@ -617,26 +620,28 @@
       transition: background 0.2s ease;
     }
 
-    .mobile-menu > li > a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      color: #334155;
-      text-decoration: none;
-      font-size: 14.5px;
-      font-weight: 700;
-      border-radius: 10px;
-      transition: all 0.2s ease;
+    .mobile-menu a,
+    .mobile-menu > li > a,
+    .mobile-menu li a {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 12px 14px !important;
+      color: #1e293b !important;
+      text-decoration: none !important;
+      font-size: 14.5px !important;
+      font-weight: 700 !important;
+      border-radius: 10px !important;
+      transition: all 0.2s ease !important;
     }
 
     .mobile-menu > li > a:hover {
-      background: rgba(245, 166, 35, 0.12);
-      color: #0899A9;
+      background: rgba(245, 166, 35, 0.12) !important;
+      color: #0899A9 !important;
     }
 
     .mobile-menu > li > a:active {
-      background: rgba(245, 166, 35, 0.18);
+      background: rgba(245, 166, 35, 0.18) !important;
     }
 
     /* Highlighted / Special Menu item */
@@ -1134,37 +1139,7 @@
       font-size:13px;
     }
 
-/* تنظیم دقیق لیست منو در موبایل */
-.mobile-menu {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
-}
 
-.mobile-menu > li {
-  border-bottom: 1px solid rgba(255,255,255,.1);
-  width: 100%;
-}
-
-.mobile-menu > li > a {
-  display: block;
-  padding: 16px 12px;
-  color: #fff;
-  text-decoration: none;
-  font-size: 15px;
-  transition: .2s;
-}
-
-/* برای منوهای خاص مثل نیکوکاری */
-.mobile-menu .highlighted-menu > a {
-  background: rgba(245,166,35,0.2);
-  color: #f5a623;
-  font-weight: bold;
-}
-
-.mobile-menu > li > a:hover {
-  background: rgba(255,255,255,0.05);
-}
 
     /* ===== Responsive ===== */
     /* ===== Responsive ===== */
@@ -1618,7 +1593,6 @@
   <div class="mobile-menu-header">
     <div class="mobile-menu-brand">
       <img src="/dashboard/components/header/images/1.png" alt="مکسا">
-      <span class="mobile-brand-title">مؤسسه نیکوکاری مکسا</span>
     </div>
     <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
       <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
