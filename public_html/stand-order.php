@@ -131,20 +131,85 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    perspective: 1200px; /* Added for 3D effect */
 }
-.so-image-col img {
+
+/* 3D Stand Model */
+.so-scene {
+    width: 100%;
+    perspective: 1500px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+.so-stand-model {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s linear;
+}
+.so-face {
+    backface-visibility: hidden;
+}
+.so-front {
+    position: relative;
+    z-index: 2;
+    transform: translateZ(2px);
+}
+.so-front img {
     max-width: 100%;
     max-height: 380px;
     width: auto;
-    border-radius: 12px;
-    box-shadow: 0 12px 24px rgba(0,0,0,.08);
-    margin-bottom: 28px;
-    background: #fff;
-    min-height: 200px;
-    object-fit: contain;
-    transition: transform 0.1s linear;
-    transform-style: preserve-3d;
+    border-radius: 8px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    display: block;
+}
+.so-glass {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%);
+    pointer-events: none;
+    border-radius: 8px;
+}
+.so-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg) translateZ(2px);
+    background: #e2e8f0;
+    border-radius: 8px;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.08);
+}
+.so-pole-center {
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12%;
+    height: 94%;
+    background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
+    border-radius: 4px;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.15);
+}
+.so-pole-base {
+    position: absolute;
+    bottom: -2%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 25px;
+    background: linear-gradient(180deg, #64748b 0%, #334155 100%);
+    border-radius: 6px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+.so-pole-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+    border-bottom: 1px solid #94a3b8;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* 360 Rotator Styling */
@@ -194,17 +259,7 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     color: #e53935;
     margin: 16px 0;
 }
-.so-image-col h3 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #2f3437;
-    margin-bottom: 12px;
-}
-.so-image-col p {
-    color: #6b7280;
-    font-size: 14.5px;
-    line-height: 1.8;
-}
+
 .so-image-col .so-badge {
     display: inline-block;
     background: rgba(245, 166, 35, 0.15);
@@ -386,20 +441,38 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
         <!-- Left Column (RTL order 2): Image -->
         <div class="so-image-col">
             <span class="so-badge">انتخاب شما</span>
-            <!-- Fallback image logic handled in HTML if src fails -->
-            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImagePreview" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
-            <h3><?= htmlspecialchars($selectedStand['title']) ?></h3>
-            <div class="so-price-tag">مبلغ: <?= $selectedStand['price'] ?></div>
-            <p><?= htmlspecialchars($selectedStand['desc']) ?></p>
+            
+            <!-- 3D Stand Model -->
+            <div class="so-scene">
+                <div class="so-stand-model" id="stand3dModel">
+                    <div class="so-face so-front">
+                        <!-- Fallback image logic handled in HTML if src fails -->
+                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImageFront" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
+                        <div class="so-glass"></div>
+                    </div>
+                    <div class="so-face so-back">
+                        <div class="so-pole-top-bar"></div>
+                        <div class="so-pole-center"></div>
+                        <div class="so-pole-base"></div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Slider directly under the image -->
             <div class="so-rotator-container">
                 <div class="so-rotator-label">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 12l5-5M3 12l5 5M21 12l-5-5M21 12l-5 5"></path>
                     </svg>
-                    چرخش سه‌بعدی
+                    نمای ۳۶۰ درجه استند
                 </div>
                 <input type="range" min="-180" max="180" value="0" class="so-rotator-slider" id="standRotator">
+            </div>
+
+            <div style="margin-top: 36px; text-align: center;">
+                <h3 style="margin:0 0 12px; font-size: 20px; font-weight: 800; color: #2f3437;"><?= htmlspecialchars($selectedStand['title']) ?></h3>
+                <div class="so-price-tag" style="margin:16px 0;">مبلغ: <?= $selectedStand['price'] ?></div>
+                <p style="color: #6b7280; font-size: 14.5px; line-height: 1.8; margin:0;"><?= htmlspecialchars($selectedStand['desc']) ?></p>
             </div>
         </div>
     </div>
@@ -449,10 +522,10 @@ document.getElementById('standOrderForm').addEventListener('submit', function(e)
 
 // 360 Image Rotator
 const rotator = document.getElementById('standRotator');
-const imgPreview = document.getElementById('standImagePreview');
-if(rotator && imgPreview) {
+const standModel = document.getElementById('stand3dModel');
+if(rotator && standModel) {
     rotator.addEventListener('input', function(e) {
-        imgPreview.style.transform = `rotateY(${e.target.value}deg)`;
+        standModel.style.transform = `rotateY(${e.target.value}deg)`;
     });
 }
 </script>
