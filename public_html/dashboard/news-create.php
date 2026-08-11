@@ -2663,7 +2663,7 @@ function generateSuggestions() {
     const combinedText = (title + " " + subtitle + " " + contentText)
         .replace(/[\u200c-\u200f]/g, " ") // جایگزینی نیم‌فاصله‌ها
         .replace(/[0-9۰-۹]/g, "") // حذف اعداد
-        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
+        .replace(/[^\u0600-\u06FFa-zA-Z\s-]/g, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
         .toLowerCase();
     
     // تبدیل به کلمات تکی و فیلتر کردن

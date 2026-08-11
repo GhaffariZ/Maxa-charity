@@ -1,4 +1,16 @@
 ﻿
+(function(){
+  function applyMaxaTheme(){
+    var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
+    if(d){ document.documentElement.setAttribute('data-theme','dark'); if(document.body) document.body.setAttribute('data-theme','dark'); }
+    else { document.documentElement.removeAttribute('data-theme'); if(document.body) document.body.removeAttribute('data-theme'); }
+  }
+  applyMaxaTheme();
+  window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
+})();
+
+
+
 /* Ø°Ø®ÛŒØ±Ù‡ Ù…Ø­Ø¯ÙˆØ¯Ù‡ Ø§Ù†ØªØ®Ø§Ø¨ */
 let savedRange = null;
 const editor = document.getElementById("editor");
