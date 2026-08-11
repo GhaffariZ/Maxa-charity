@@ -7,13 +7,9 @@ try {
     $queries = [
         "ALTER TABLE news ADD COLUMN subtitle VARCHAR(255) NULL AFTER title",
         "ALTER TABLE news ADD COLUMN keywords VARCHAR(255) NULL AFTER category_id",
-        "ALTER TABLE news ADD COLUMN tags VARCHAR(255) NULL AFTER keywords",
         "ALTER TABLE news ADD COLUMN read_time INT(11) DEFAULT 0 AFTER viewed",
-        "CREATE TABLE IF NOT EXISTS `news_tags_map` (
-          `news_id` INT NOT NULL,
-          `tag_id` INT NOT NULL,
-          PRIMARY KEY (`news_id`, `tag_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        "ALTER TABLE news DROP COLUMN tags",
+        "DROP TABLE IF EXISTS news_tags_map"
     ];
     
     foreach ($queries as $q) {
@@ -23,6 +19,8 @@ try {
         } catch (PDOException $e) {
             if (strpos($e->getMessage(), 'Duplicate column name') !== false) {
                 echo "SKIPPED: Already exists -> " . substr($q, 0, 50) . "... <br>";
+            } elseif (strpos($e->getMessage(), 'check that column/key exists') !== false || strpos($e->getMessage(), 'Unknown column') !== false) {
+                echo "SKIPPED: Column already removed -> " . substr($q, 0, 50) . "... <br>";
             } else {
                 echo "ERROR on -> " . substr($q, 0, 50) . "... : " . $e->getMessage() . "<br>";
             }

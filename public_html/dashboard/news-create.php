@@ -1261,29 +1261,7 @@ select.input { appearance: none; cursor: pointer; }
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label class="field-label" for="tags">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        تگ‌های سئو
-                    </label>
-                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
-                    <div class="chips" id="tagsChips"></div>
-                </div>
 
-                <div class="input-group">
-                    <label class="field-label">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        برچسب‌های موضوعی خبر (چند انتخابی)
-                    </label>
-                    <div class="tags-checklist" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                        <?php foreach ($all_tags as $t): ?>
-                            <label class="tag-checkbox-label">
-                                <input type="checkbox" name="tag_ids[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $selected_tag_ids) ? 'checked' : '' ?>>
-                                <span><?= htmlspecialchars($t['name']) ?></span>
-                            </label>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
 
             </div>
 
@@ -2752,7 +2730,7 @@ function renderKeywordsChips() {
     const container = document.getElementById("keywordsChips");
     if (!hiddenInput || !container) return;
     
-    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
     container.innerHTML = "";
     kws.forEach((kw, index) => {
         const chip = document.createElement("span");
@@ -2767,7 +2745,7 @@ function renderKeywordsChips() {
 
 function removeKeyword(index) {
     const hiddenInput = document.getElementById("keywords");
-    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
     kws.splice(index, 1);
     hiddenInput.value = kws.join("،");
     renderKeywordsChips();
@@ -2782,7 +2760,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const val = this.value.trim();
                 if (val) {
                     const hiddenInput = document.getElementById("keywords");
-                    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+                    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
                     if (!kws.includes(val)) kws.push(val);
                     hiddenInput.value = kws.join("،");
                     this.value = "";
@@ -2794,7 +2772,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const val = this.value.trim();
             if (val) {
                 const hiddenInput = document.getElementById("keywords");
-                let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+                let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
                 if (!kws.includes(val)) kws.push(val);
                 hiddenInput.value = kws.join("،");
                 this.value = "";
