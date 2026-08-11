@@ -8,21 +8,25 @@ $type = $_GET['type'] ?? 'congrats-1';
 $standData = [
     'congrats-1' => [
         'title' => 'استند تبریک و شادباش - طرح اول',
+        'image' => '/uploads/stand/happy/1.jpg',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'با سفارش این استند، ضمن تبریک به عزیزانتان، حامی بیماران مبتلا به سرطان باشید.'
     ],
     'congrats-2' => [
         'title' => 'استند تبریک و شادباش - طرح دوم',
+        'image' => '/uploads/stand/happy/2.jpg',
         'price' => '۳۵۰,۰۰۰ تومان',
         'desc' => 'شادی‌های خود را با مهربانی پیوند بزنید.'
     ],
     'condolence-1' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح اول',
+        'image' => '/uploads/stand/sad/1.jpg',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'تسلی بخش دل بازماندگان و امیدی برای بیماران سرطانی.'
     ],
     'condolence-2' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح دوم',
+        'image' => '/uploads/stand/sad/2.jpg',
         'price' => '۴۰۰,۰۰۰ تومان',
         'desc' => 'با اهدای هزینه تاج گل به خیریه، نامی ماندگار از عزیز از دست رفته به یادگار بگذارید.'
     ],
@@ -35,8 +39,8 @@ if (!array_key_exists($type, $standData)) {
 $selectedStand = $standData[$type];
 $isCongrats = (strpos($type, 'congrats') !== false);
 
-// Read image from query string if available
-$imgSrc = !empty($_GET['img']) ? $_GET['img'] : '/assets/img/placeholder.jpg';
+// Read image from local arrays (ignoring query param as per user request)
+$imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
 ?>
 
 <!-- Persian Datepicker CSS -->
@@ -342,7 +346,13 @@ $(document).ready(function() {
         format: 'HH:mm',
         onlyTimePicker: true,
         initialValue: false,
-        autoClose: true
+        autoClose: true,
+        timePicker: {
+            enabled: true,
+            second: {
+                enabled: false
+            }
+        }
     });
 });
 
