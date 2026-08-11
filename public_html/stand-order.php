@@ -163,7 +163,7 @@ $imgSrc = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false
     width: auto;
     display: block;
     margin: 0 auto;
-    /* The image itself is now transparent PNG */
+    /* The image itself is a transparent PNG */
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
 }
 .so-glass {
@@ -456,7 +456,7 @@ $imgSrc = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false
                 <div class="so-stand-model" id="stand3dModel">
                     <div class="so-face so-front">
                         <!-- Fallback image logic handled in HTML if src fails -->
-                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImageFront" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
+                        <img src="<?= htmlspecialchars($imgSrc) ?>?v=<?= time() ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImageFront" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
                         <div class="so-glass"></div>
                     </div>
                     <div class="so-face so-back">
