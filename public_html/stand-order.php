@@ -39,8 +39,9 @@ if (!array_key_exists($type, $standData)) {
 $selectedStand = $standData[$type];
 $isCongrats = (strpos($type, 'congrats') !== false);
 
-// Read image from local arrays (ignoring query param as per user request)
-$imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
+$imgSrc = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false 
+    ? $_GET['img'] 
+    : ($selectedStand['image'] ?? '/uploads/stand/happy/1.jpg');
 ?>
 
 <!-- Persian Datepicker CSS -->
@@ -144,7 +145,7 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
 .so-stand-model {
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.1s linear;
+    transition: transform 0.15s ease-out;
 }
 .so-face {
     backface-visibility: hidden;
@@ -153,62 +154,70 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
     position: relative;
     z-index: 2;
     transform: translateZ(2px);
+    background: transparent; /* Transparent for cutout */
 }
 .so-front img {
     max-width: 100%;
-    max-height: 380px;
+    max-height: 420px;
     width: auto;
-    border-radius: 8px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     display: block;
+    margin: 0 auto;
+    /* This cuts out the white background! */
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
 }
 .so-glass {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%);
-    pointer-events: none;
-    border-radius: 8px;
+    display: none; /* Disable glass for cutout mode */
 }
 .so-back {
     position: absolute;
     inset: 0;
     transform: rotateY(180deg) translateZ(2px);
-    background: #e2e8f0;
-    border-radius: 8px;
+    background: transparent;
     z-index: 1;
-    overflow: hidden;
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.08);
+}
+/* The Canvas on the back */
+.so-back-canvas {
+    position: absolute;
+    top: 5%;
+    bottom: 8%;
+    left: 15%;
+    right: 15%;
+    background: #e5e5e5;
+    border-radius: 4px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
 }
 .so-pole-center {
     position: absolute;
-    bottom: 3%;
+    bottom: 2%;
     left: 50%;
     transform: translateX(-50%);
-    width: 12%;
-    height: 94%;
-    background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
-    border-radius: 4px;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.15);
+    width: 12px;
+    height: 98%;
+    background: linear-gradient(90deg, #d1d5db 0%, #ffffff 50%, #9ca3af 100%);
+    border-radius: 6px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.2);
 }
 .so-pole-base {
     position: absolute;
-    bottom: -2%;
+    bottom: -4%;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
-    height: 25px;
-    background: linear-gradient(180deg, #64748b 0%, #334155 100%);
-    border-radius: 6px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    width: 50%;
+    height: 28px;
+    background: linear-gradient(180deg, #9ca3af 0%, #4b5563 100%);
+    border-radius: 8px 8px 4px 4px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+    border-top: 2px solid #e5e7eb;
 }
 .so-pole-top-bar {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 12px;
-    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
-    border-bottom: 1px solid #94a3b8;
+    top: 3%;
+    left: 10%;
+    width: 80%;
+    height: 14px;
+    background: linear-gradient(180deg, #f3f4f6 0%, #d1d5db 100%);
+    border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
@@ -451,8 +460,9 @@ $imgSrc = $selectedStand['image'] ?? '/uploads/stand/happy/1.jpg';
                         <div class="so-glass"></div>
                     </div>
                     <div class="so-face so-back">
-                        <div class="so-pole-top-bar"></div>
+                        <div class="so-back-canvas"></div>
                         <div class="so-pole-center"></div>
+                        <div class="so-pole-top-bar"></div>
                         <div class="so-pole-base"></div>
                     </div>
                 </div>
