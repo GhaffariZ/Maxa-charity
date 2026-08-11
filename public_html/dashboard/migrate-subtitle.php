@@ -8,18 +8,23 @@ try {
         "ALTER TABLE news ADD COLUMN subtitle VARCHAR(255) NULL AFTER title",
         "ALTER TABLE news ADD COLUMN keywords VARCHAR(255) NULL AFTER category_id",
         "ALTER TABLE news ADD COLUMN tags VARCHAR(255) NULL AFTER keywords",
-        "ALTER TABLE news ADD COLUMN read_time INT(11) DEFAULT 0 AFTER viewed"
+        "ALTER TABLE news ADD COLUMN read_time INT(11) DEFAULT 0 AFTER viewed",
+        "CREATE TABLE IF NOT EXISTS `news_tags_map` (
+          `news_id` INT NOT NULL,
+          `tag_id` INT NOT NULL,
+          PRIMARY KEY (`news_id`, `tag_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
     ];
     
     foreach ($queries as $q) {
         try {
             $pdo->exec($q);
-            echo "SUCCESS: Executed -> $q <br>";
+            echo "SUCCESS: Executed -> " . substr($q, 0, 50) . "... <br>";
         } catch (PDOException $e) {
             if (strpos($e->getMessage(), 'Duplicate column name') !== false) {
-                echo "SKIPPED: Column already exists for -> $q <br>";
+                echo "SKIPPED: Already exists -> " . substr($q, 0, 50) . "... <br>";
             } else {
-                echo "ERROR on -> $q : " . $e->getMessage() . "<br>";
+                echo "ERROR on -> " . substr($q, 0, 50) . "... : " . $e->getMessage() . "<br>";
             }
         }
     }
