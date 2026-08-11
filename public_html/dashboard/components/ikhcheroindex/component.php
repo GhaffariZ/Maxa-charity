@@ -1085,8 +1085,8 @@
 
     .cta-cards{
       display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:22px;
+      grid-template-columns: repeat(4, 1fr);
+      gap:24px;
     }
 
     .cta-card{
@@ -1458,7 +1458,6 @@
                     </div>
                     <div class="mega-col">
                       <h6>همیاری اجتماعی و فرهنگی</h6>
-                      <a href="/stand-sell-section">استندها و کارتهای دیجیتال تبریک و تسلیت</a>
                       <a href="/csr.html">مسئولیت اجتماعی</a>
                       <a href="#">حمایت های خلاقانه و هنری</a>
                     </div>
@@ -1595,6 +1594,17 @@
 
     <h4>تشکیل پرونده اولیه مجازی</h4>
     <p>برای دریافت مشاوره تخصصی و بررسی پرونده درمانی، فرم مجازی را تکمیل کنید.</p>
+  </div>
+
+  <div class="cta-card" role="link" tabindex="0" data-link="/stand-sell-section" aria-label="سفارش استند و کارت دیجیتال تبریک و تسلیت">
+    <div class="cta-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h4>استند و کارت تسلیت</h4>
+    <p>در شادی‌ها و غم‌ها با سفارش استند، حامی بیماران مبتلا به سرطان باشید.</p>
   </div>
 
 </div>
