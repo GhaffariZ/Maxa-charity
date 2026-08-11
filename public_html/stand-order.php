@@ -5,38 +5,42 @@ require __DIR__ . '/dashboard/components/header/component.php';
 // Get the type of stand from the URL (e.g., ?type=congrats-1)
 $type = $_GET['type'] ?? 'congrats-1';
 
-// We map the types to placeholder images and titles since the real images come from the CMS dynamically in event-cards.
-// In a real integration, we might pass the image URL or ID via URL, but for now we provide placeholders that match the context.
 $standData = [
     'congrats-1' => [
         'title' => 'استند تبریک و شادباش - طرح اول',
-        'image' => '/assets/img/congrats-placeholder.jpg',
+        'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'با سفارش این استند، ضمن تبریک به عزیزانتان، حامی بیماران مبتلا به سرطان باشید.'
     ],
     'congrats-2' => [
         'title' => 'استند تبریک و شادباش - طرح دوم',
-        'image' => '/assets/img/congrats-placeholder2.jpg',
+        'price' => '۳۵۰,۰۰۰ تومان',
         'desc' => 'شادی‌های خود را با مهربانی پیوند بزنید.'
     ],
     'condolence-1' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح اول',
-        'image' => '/assets/img/condolence-placeholder.jpg',
+        'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'تسلی بخش دل بازماندگان و امیدی برای بیماران سرطانی.'
     ],
     'condolence-2' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح دوم',
-        'image' => '/assets/img/condolence-placeholder2.jpg',
+        'price' => '۴۰۰,۰۰۰ تومان',
         'desc' => 'با اهدای هزینه تاج گل به خیریه، نامی ماندگار از عزیز از دست رفته به یادگار بگذارید.'
     ],
 ];
 
-// Fallback if type is not recognized
 if (!array_key_exists($type, $standData)) {
     $type = 'congrats-1';
 }
 
 $selectedStand = $standData[$type];
+$isCongrats = (strpos($type, 'congrats') !== false);
+
+// Read image from query string if available
+$imgSrc = !empty($_GET['img']) ? $_GET['img'] : '/assets/img/placeholder.jpg';
 ?>
+
+<!-- Persian Datepicker CSS -->
+<link rel="stylesheet" href="/dashboard/assets/css/persian-datepicker.min.css">
 
 <style>
 /* Modern styling for the order page - Matching site's UI/UX */
@@ -106,13 +110,20 @@ $selectedStand = $standData[$type];
 }
 .so-image-col img {
     max-width: 100%;
-    height: auto;
+    max-height: 380px;
+    width: auto;
     border-radius: 12px;
     box-shadow: 0 12px 24px rgba(0,0,0,.08);
     margin-bottom: 28px;
     background: #fff;
-    min-height: 250px; /* Placeholder for missing image */
+    min-height: 200px;
     object-fit: contain;
+}
+.so-price-tag {
+    font-size: 19px;
+    font-weight: 800;
+    color: #e53935;
+    margin: 16px 0;
 }
 .so-image-col h3 {
     font-size: 20px;
@@ -264,18 +275,18 @@ $selectedStand = $standData[$type];
                 </div>
 
                 <div class="so-field">
-                    <label>نام دریافت‌کننده (یا نام مرحوم/مرحومه) <span class="req">*</span></label>
-                    <input type="text" name="receiver_name" required placeholder="نام شخصی که استند برای ایشان ارسال می‌شود">
+                    <label><?= $isCongrats ? 'نام گیرنده پیام (صاحب مجلس / عروس و داماد و ...)' : 'نام دریافت‌کننده (یا نام مرحوم/مرحومه)' ?> <span class="req">*</span></label>
+                    <input type="text" name="receiver_name" required placeholder="<?= $isCongrats ? 'نام شخصی که تبریک برای ایشان است' : 'نام شخصی که استند برای ایشان ارسال می‌شود' ?>">
                 </div>
 
                 <div class="so-field-row">
                     <div class="so-field">
                         <label>تاریخ برگزاری مراسم <span class="req">*</span></label>
-                        <input type="text" name="event_date" required placeholder="مثال: 1402/08/20">
+                        <input type="text" name="event_date" class="pdate" required placeholder="انتخاب تاریخ" readonly style="background:#fff; cursor:pointer">
                     </div>
                     <div class="so-field">
                         <label>ساعت مراسم <span class="req">*</span></label>
-                        <input type="text" name="event_time" required placeholder="مثال: 16:00 تا 18:00">
+                        <input type="text" name="event_time" class="ptime" required placeholder="انتخاب ساعت" readonly style="background:#fff; cursor:pointer">
                     </div>
                 </div>
 
@@ -290,8 +301,9 @@ $selectedStand = $standData[$type];
                 </div>
 
                 <button type="submit" class="so-submit">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
                     افزودن به سبد خرید
                 </button>
@@ -306,14 +318,34 @@ $selectedStand = $standData[$type];
         <div class="so-image-col">
             <span class="so-badge">انتخاب شما</span>
             <!-- Fallback image logic handled in HTML if src fails -->
-            <img src="<?= htmlspecialchars($selectedStand['image']) ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImagePreview" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
+            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($selectedStand['title']) ?>" id="standImagePreview" onerror="this.src='https://via.placeholder.com/400x600?text=تصویر+استند'">
             <h3><?= htmlspecialchars($selectedStand['title']) ?></h3>
+            <div class="so-price-tag">مبلغ: <?= $selectedStand['price'] ?></div>
             <p><?= htmlspecialchars($selectedStand['desc']) ?></p>
         </div>
     </div>
 </div>
 
+<!-- jQuery and Datepicker Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/dashboard/assets/js/datepicker/persian-date.min.js"></script>
+<script src="/dashboard/assets/js/datepicker/persian-datepicker.min.js"></script>
+
 <script>
+$(document).ready(function() {
+    $('.pdate').persianDatepicker({
+        format: 'YYYY/MM/DD',
+        initialValue: false,
+        autoClose: true
+    });
+    $('.ptime').persianDatepicker({
+        format: 'HH:mm',
+        onlyTimePicker: true,
+        initialValue: false,
+        autoClose: true
+    });
+});
+
 document.getElementById('standOrderForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = this.querySelector('button[type="submit"]');
