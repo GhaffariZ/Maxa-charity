@@ -1457,7 +1457,7 @@
 
         <div class="cta-right">
           <a class="cta-brand" href="/home">
-            <img src="{{image1}}">
+            <img src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
         </div>
 
