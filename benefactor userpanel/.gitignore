@@ -1,0 +1,22 @@
+# Secrets — NEVER commit
+.env
+*.env
+!.env.example
+api/config.local.php
+
+# PHP deps (uploaded manually to the host)
+/api/vendor/
+
+# Node / build
+node_modules/
+dist/
+
+# Logs & uploads
+*.log
+/maksa-private/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

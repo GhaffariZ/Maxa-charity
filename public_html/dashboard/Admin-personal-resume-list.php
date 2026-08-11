@@ -81,6 +81,8 @@ $treatment_roles = [
     'rehabilitation'     => 'متخصص توانبخشی',
     'genetic_counselors' => 'مشاور ژنتیک و غربالگری',
     'deputies'           => 'معاونت',
+    'admin'              => 'کادر اداری',
+    'ceo_office'         => 'حوزه مدیر عامل',
 ];
 ?>
 <!DOCTYPE html>
@@ -728,6 +730,19 @@ $treatment_roles = [
                     فعال کردن
                 </button>
                 <?php endif; ?>
+                
+                <?php if (dash_is_hq_view()): ?>
+                <button class="btn-admin" style="background:var(--danger-bg);color:var(--danger);border-color:rgba(239,68,68,0.20);"
+                        data-action="delete"
+                        data-url="admin-delete-employee.php?id=<?php echo $id; ?>"
+                        data-name="<?php echo $fullname; ?>"
+                        onclick="event.stopPropagation(); openModal(this);"
+                        onmouseover="this.style.background='var(--danger)'; this.style.color='#fff'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px var(--danger-glow)';"
+                        onmouseout="this.style.background='var(--danger-bg)'; this.style.color='var(--danger)'; this.style.transform='none'; this.style.boxShadow='none';">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.12-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    حذف
+                </button>
+                <?php endif; ?>
             </div>
         </div>
         <?php endforeach; ?>
@@ -963,6 +978,13 @@ function openModal(btn) {
         confirm.className = 'btn-modal-confirm danger';
         confirm.textContent = 'غیرفعال کن';
         desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟<br>دسترسی این همکار به سیستم قطع خواهد شد.`;
+    } else if (action === 'delete') {
+        icon.textContent  = '🗑️';
+        icon.className    = 'modal-icon-wrap danger';
+        title.textContent = 'حذف همکار';
+        confirm.className = 'btn-modal-confirm danger';
+        confirm.textContent = 'حذف دائمی';
+        desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
     } else {
         icon.textContent  = '✅';
         icon.className    = 'modal-icon-wrap success';
