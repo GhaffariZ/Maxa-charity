@@ -466,8 +466,10 @@
       top: 0;
       right: -100%;
       width: min(340px, 88vw);
+      height: 100%;
       height: 100vh;
       height: 100dvh;
+      max-height: 100dvh;
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -477,7 +479,10 @@
       display: flex;
       flex-direction: column;
       padding: 0;
-      overflow: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       visibility: hidden;
       transition: right 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s;
       direction: rtl;
@@ -488,15 +493,25 @@
       visibility: visible;
     }
 
-    /* Drawer Header - Aligned thickness with main navbar */
+    body.mobile-menu-open {
+      overflow: hidden !important;
+      touch-action: none;
+    }
+
+    /* Drawer Header - Sticky at top of drawer when scrolling */
     .mobile-menu-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: var(--cta-nav-h, 56px);
       min-height: 56px;
       padding: 0 16px;
-      background: linear-gradient(135deg, rgba(245, 166, 35, 0.12), rgba(8, 153, 169, 0.06));
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.07);
       flex-shrink: 0;
       box-sizing: border-box;
@@ -1961,14 +1976,14 @@ function initSlider() {
     menu.classList.add("open");
     if(backdrop) backdrop.classList.add("show");
     toggleBtn.classList.add("active");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("mobile-menu-open");
   }
 
   function closeMenu(){
     menu.classList.remove("open");
     if(backdrop) backdrop.classList.remove("show");
     toggleBtn.classList.remove("active");
-    document.body.style.overflow = "";
+    document.body.classList.remove("mobile-menu-open");
   }
 
   toggleBtn.addEventListener("click", function(e){
