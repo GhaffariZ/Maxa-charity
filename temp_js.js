@@ -1,69 +1,4 @@
-<?php
-require_once __DIR__ . '/_guard.php';
-dash_require('news');
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
-
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$news_data = null;
-
-if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ?");
-    $stmt->execute([$id]);
-    $news_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$news_data) {
-        die("خبر یافت نشد.");
-    }
-}
-// دریافت لیست دسته‌بندی‌ها از جدول جدید
-$categories = [];
-try {
-    $cat_stmt = $pdo->query("SELECT id, name FROM news_categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC");
-    $categories = $cat_stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    $categories = [];
-}
-
-// دریافت لیست تگ‌ها و تگ‌های انتخاب شده
-$all_tags = [];
-$selected_tag_ids = [];
-try {
-    $tag_stmt = $pdo->query("SELECT id, name FROM news_tags ORDER BY id ASC");
-    $all_tags = $tag_stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($id > 0) {
-        $stmt_selected_tags = $pdo->prepare("SELECT tag_id FROM news_tags_map WHERE news_id = ?");
-        $stmt_selected_tags->execute([$id]);
-        $selected_tag_ids = $stmt_selected_tags->fetchAll(PDO::FETCH_COLUMN);
-    }
-} catch (Exception $e) {
-    $all_tags = [];
-    $selected_tag_ids = [];
-}
-// بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
-$existing_image_url = '';
-if ($id > 0 && !empty($news_data['featured_image'])) {
-    $existing_image_url = "/uploads/news/{$news_data['news_code']}/{$news_data['featured_image']}";
-}
-
-$tags = [];
-$selectedCategoryId = (int)($news_data['category_id'] ?? 0);
-
-// آماده‌سازی زمان برای فرمت datetime-local مرورگر
-$pub_val = '';
-if ($news_data && !empty($news_data['publish_date'])) {
-    $pub_val = date('Y-m-d\TH:i', strtotime($news_data['publish_date']));
-}
-
-?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر' ?></title>
-
-<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
-<script>
+﻿
 (function(){
   function applyMaxaTheme(){
     var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
@@ -81,10 +16,10 @@ if ($news_data && !empty($news_data['publish_date'])) {
 
 <style>
 :root {
-    /* پالت رنگی لایت مود (برگرفته از لوگو مکسا) */
-    --primary-color: #007D75;       /* سبز-آبی مکسا */
+    /* Ù¾Ø§Ù„Øª Ø±Ù†Ú¯ÛŒ Ù„Ø§ÛŒØª Ù…ÙˆØ¯ (Ø¨Ø±Ú¯Ø±ÙØªÙ‡ Ø§Ø² Ù„ÙˆÚ¯Ùˆ Ù…Ú©Ø³Ø§) */
+    --primary-color: #007D75;       /* Ø³Ø¨Ø²-Ø¢Ø¨ÛŒ Ù…Ú©Ø³Ø§ */
     --primary-dark: #006159;
-    --secondary-color: #F79F1F;     /* نارنجی مکسا */
+    --secondary-color: #F79F1F;     /* Ù†Ø§Ø±Ù†Ø¬ÛŒ Ù…Ú©Ø³Ø§ */
     --bg-color: #f4f7f6;
     --text-color: #333333;
     --muted-color: #6b7674;
@@ -105,7 +40,7 @@ if ($news_data && !empty($news_data['publish_date'])) {
 }
 
 [data-theme="dark"] {
-    /* پالت رنگی دارک مود */
+    /* Ù¾Ø§Ù„Øª Ø±Ù†Ú¯ÛŒ Ø¯Ø§Ø±Ú© Ù…ÙˆØ¯ */
     --primary-color: #00a89d;
     --primary-dark: #00897e;
     --secondary-color: #ffb142;
@@ -141,7 +76,7 @@ body {
     animation: pageRise var(--anim-slow) cubic-bezier(.2,.8,.2,1) both;
 }
 
-/* ===== هدر چسبان ویرایشگر ===== */
+/* ===== Ù‡Ø¯Ø± Ú†Ø³Ø¨Ø§Ù† ÙˆÛŒØ±Ø§ÛŒØ´Ú¯Ø± ===== */
 .editor-header {
     position: sticky;
     top: 0;
@@ -214,7 +149,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* ===== شبکه اصلی ===== */
+/* ===== Ø´Ø¨Ú©Ù‡ Ø§ØµÙ„ÛŒ ===== */
 .layout {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -225,7 +160,7 @@ body {
 .col-main { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 .col-side { display: flex; flex-direction: column; gap: 24px; }
 
-/* ===== کارت‌ها ===== */
+/* ===== Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ ===== */
 .card {
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
@@ -250,7 +185,7 @@ body {
 
 .card-title svg { width: 19px; height: 19px; color: var(--primary-color); }
 
-/* ===== عنوان خبر ===== */
+/* ===== Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± ===== */
 .title-card { padding: 20px; transition: box-shadow var(--anim-fast), border-color var(--anim-fast); }
 .title-card:focus-within { border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-color)); box-shadow: 0 0 0 4px rgba(0,125,117,0.08); }
 
@@ -280,7 +215,7 @@ body {
 }
 #titleCounter.over { color: #e74c3c; font-weight: 700; }
 
-/* ===== زیرعنوان خبر ===== */
+/* ===== Ø²ÛŒØ±Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± ===== */
 .subtitle-card {
     background: var(--panel-bg);
     border: 1px dashed var(--border-color);
@@ -326,7 +261,7 @@ body {
 }
 #subtitleCounter.over { color: #e74c3c; font-weight: 700; }
 
-/* ===== برچسب‌های خبر (چند انتخابی) ===== */
+/* ===== Ø¨Ø±Ú†Ø³Ø¨â€ŒÙ‡Ø§ÛŒ Ø®Ø¨Ø± (Ú†Ù†Ø¯ Ø§Ù†ØªØ®Ø§Ø¨ÛŒ) ===== */
 .tag-checkbox-label {
     display: inline-flex;
     align-items: center;
@@ -359,7 +294,7 @@ body {
     color: var(--primary-color);
 }
 
-/* ===== پیشنهاد کلمات کلیدی هوشمند ===== */
+/* ===== Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ Ù‡ÙˆØ´Ù…Ù†Ø¯ ===== */
 .suggestion-chip {
     cursor: pointer;
     display: inline-flex;
@@ -383,7 +318,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 125, 117, 0.15);
 }
 
-/* ===== فیلدهای عمومی ===== */
+/* ===== ÙÛŒÙ„Ø¯Ù‡Ø§ÛŒ Ø¹Ù…ÙˆÙ…ÛŒ ===== */
 .input-group { margin-bottom: 18px; }
 .input-group:last-child { margin-bottom: 0; }
 
@@ -416,7 +351,7 @@ label.field-label svg { width: 16px; height: 16px; }
 }
 select.input { appearance: none; cursor: pointer; }
 
-/* ===== دراپ‌داون سفارشی مدرن ===== */
+/* ===== Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ† Ø³ÙØ§Ø±Ø´ÛŒ Ù…Ø¯Ø±Ù† ===== */
 .msel { position: relative; width: 100%; font-family: inherit; }
 .msel-trigger {
     width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -454,7 +389,7 @@ select.input { appearance: none; cursor: pointer; }
 .msel-opt.is-selected .msel-check { opacity: 1; }
 .msel.field-invalid .msel-trigger { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.14) !important; }
 
-/* ===== حالت خطای فیلدها ===== */
+/* ===== Ø­Ø§Ù„Øª Ø®Ø·Ø§ÛŒ ÙÛŒÙ„Ø¯Ù‡Ø§ ===== */
 .input.field-invalid,
 .title-card.field-invalid,
 .editor-shell.field-invalid #editor {
@@ -463,7 +398,7 @@ select.input { appearance: none; cursor: pointer; }
 }
 .title-card.field-invalid { animation: fieldShake 0.32s ease; }
 .input.field-invalid { animation: fieldShake 0.32s ease; }
-/* لیبل فیلدِ خطادار قرمز شود تا سریع دیده شود */
+/* Ù„ÛŒØ¨Ù„ ÙÛŒÙ„Ø¯Ù Ø®Ø·Ø§Ø¯Ø§Ø± Ù‚Ø±Ù…Ø² Ø´ÙˆØ¯ ØªØ§ Ø³Ø±ÛŒØ¹ Ø¯ÛŒØ¯Ù‡ Ø´ÙˆØ¯ */
 .input-group.has-error label.field-label { color: var(--danger, #e74c3c); }
 
 .field-error {
@@ -484,7 +419,7 @@ select.input { appearance: none; cursor: pointer; }
     75% { transform: translateX(4px); }
 }
 
-/* ===== ادیتور ===== */
+/* ===== Ø§Ø¯ÛŒØªÙˆØ± ===== */
 .editor-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -557,7 +492,7 @@ select.input { appearance: none; cursor: pointer; }
 #editor:empty:before { content: attr(data-placeholder); color: var(--muted-color); opacity: 0.55; }
 #editor img { max-width: 100%; height: auto; border-radius: 10px; }
 
-/* ===== دکمه‌ها ===== */
+/* ===== Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ ===== */
 .btn {
     padding: 10px 20px;
     border: none;
@@ -607,7 +542,7 @@ select.input { appearance: none; cursor: pointer; }
 }
 .btn-insert:hover { background: var(--primary-color); color: #fff; }
 
-/* ===== آپلود تصویر شاخص (Dropzone) ===== */
+/* ===== Ø¢Ù¾Ù„ÙˆØ¯ ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ (Dropzone) ===== */
 .dropzone {
     position: relative;
     border: 2px dashed var(--border-color);
@@ -659,7 +594,7 @@ select.input { appearance: none; cursor: pointer; }
 }
 .dz-remove svg { width: 16px; height: 16px; }
 
-/* ===== ویجت امتیاز سئو ===== */
+/* ===== ÙˆÛŒØ¬Øª Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ ===== */
 .seo-widget { display: flex; align-items: center; gap: 16px; }
 .seo-ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
 .seo-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -675,7 +610,7 @@ select.input { appearance: none; cursor: pointer; }
 .seo-state b { font-weight: 800; }
 .seo-tip { font-size: 12px; color: var(--muted-color); margin-top: 4px; }
 
-/* ===== چیپ تگ‌ها ===== */
+/* ===== Ú†ÛŒÙ¾ ØªÚ¯â€ŒÙ‡Ø§ ===== */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .chip {
     display: inline-flex;
@@ -696,15 +631,15 @@ select.input { appearance: none; cursor: pointer; }
 .chip button:hover { color: #e74c3c; }
 .chip button svg { width: 13px; height: 13px; }
 
-/* بخش‌بندی کارت تنظیمات */
-.settings-card { overflow: visible; }   /* تا منوی دراپ‌داون سفارشی بریده نشود */
+/* Ø¨Ø®Ø´â€ŒØ¨Ù†Ø¯ÛŒ Ú©Ø§Ø±Øª ØªÙ†Ø¸ÛŒÙ…Ø§Øª */
+.settings-card { overflow: visible; }   /* ØªØ§ Ù…Ù†ÙˆÛŒ Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ† Ø³ÙØ§Ø±Ø´ÛŒ Ø¨Ø±ÛŒØ¯Ù‡ Ù†Ø´ÙˆØ¯ */
 .settings-card .input-group { padding: 16px; margin: 0; border-bottom: 1px solid var(--border-color); position: relative; }
 .settings-card .input-group:last-child { border-bottom: none; }
 
 .publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .publish-date-row .input { flex: 1; min-width: 140px; }
 
-/* ===== توست وضعیت (موفقیت / خطا / در حال انجام) ===== */
+/* ===== ØªÙˆØ³Øª ÙˆØ¶Ø¹ÛŒØª (Ù…ÙˆÙÙ‚ÛŒØª / Ø®Ø·Ø§ / Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…) ===== */
 .toast {
     position: fixed;
     bottom: 22px;
@@ -721,11 +656,11 @@ select.input { appearance: none; cursor: pointer; }
 .toast.show { display: block; animation: toastSlide 360ms cubic-bezier(.2,.8,.2,1) both; }
 .toast.hide { animation: toastOut 260ms ease both; }
 
-/* نوار رنگی کناری بر اساس نوع پیام */
+/* Ù†ÙˆØ§Ø± Ø±Ù†Ú¯ÛŒ Ú©Ù†Ø§Ø±ÛŒ Ø¨Ø± Ø§Ø³Ø§Ø³ Ù†ÙˆØ¹ Ù¾ÛŒØ§Ù… */
 .toast::before {
     content: "";
     position: absolute;
-    inset: 0 auto 0 0;     /* در RTL سمت چپ کارت */
+    inset: 0 auto 0 0;     /* Ø¯Ø± RTL Ø³Ù…Øª Ú†Ù¾ Ú©Ø§Ø±Øª */
     width: 5px;
     background: var(--primary-color);
 }
@@ -750,7 +685,7 @@ select.input { appearance: none; cursor: pointer; }
 .toast.is-error  .toast-ic { background: var(--danger, #e74c3c); }
 .toast.is-success .toast-ic { background: #00b894; }
 .toast.is-info    .toast-ic { background: var(--secondary-color); }
-/* اسپینر چرخان برای حالت در حال انجام */
+/* Ø§Ø³Ù¾ÛŒÙ†Ø± Ú†Ø±Ø®Ø§Ù† Ø¨Ø±Ø§ÛŒ Ø­Ø§Ù„Øª Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù… */
 .toast.is-info .toast-ic.spin svg { animation: toastSpin 0.9s linear infinite; }
 
 .toast-body { flex: 1; min-width: 0; padding-top: 1px; }
@@ -771,7 +706,7 @@ select.input { appearance: none; cursor: pointer; }
 .toast-close:hover { background: var(--surface-2); color: var(--text-color); }
 .toast-close svg { width: 16px; height: 16px; }
 
-/* نوار پیشرفت داخل توست */
+/* Ù†ÙˆØ§Ø± Ù¾ÛŒØ´Ø±ÙØª Ø¯Ø§Ø®Ù„ ØªÙˆØ³Øª */
 .toast-progress { display: none; padding: 0 16px 14px; }
 .toast-progress.active { display: block; }
 .toast-progress .bar-track { width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; }
@@ -785,7 +720,7 @@ select.input { appearance: none; cursor: pointer; }
 @keyframes toastOut   { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
 @keyframes toastSpin  { to { transform: rotate(360deg); } }
 
-/* ===== مودال‌ها ===== */
+/* ===== Ù…ÙˆØ¯Ø§Ù„â€ŒÙ‡Ø§ ===== */
 .date-modal {
     position: fixed; inset: 0;
     background: var(--modal-overlay);
@@ -818,7 +753,7 @@ select.input { appearance: none; cursor: pointer; }
 .dp-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 .dp-close svg { width: 15px; height: 15px; }
 
-/* ===== تقویم گرید ===== */
+/* ===== ØªÙ‚ÙˆÛŒÙ… Ú¯Ø±ÛŒØ¯ ===== */
 .dp-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
 .dp-nav-btn {
     width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
@@ -835,7 +770,7 @@ select.input { appearance: none; cursor: pointer; }
 }
 .dp-label-btn:hover { background: rgba(0,125,117,0.10); color: var(--primary-color); }
 
-/* پنل انتخاب ماه/سال */
+/* Ù¾Ù†Ù„ Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø§Ù‡/Ø³Ø§Ù„ */
 .dp-grid-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px 0; max-height: 252px; overflow-y: auto; }
 .dp-pick-item {
     border: 1px solid var(--border-color); background: var(--surface-2); color: var(--text-color);
@@ -859,7 +794,7 @@ select.input { appearance: none; cursor: pointer; }
 .dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); color: var(--secondary-color); }
 .dp-day.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); transform: scale(1.04); }
 
-/* ===== انتخاب زمان ===== */
+/* ===== Ø§Ù†ØªØ®Ø§Ø¨ Ø²Ù…Ø§Ù† ===== */
 .dp-time { margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px; }
 .dp-time-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
 .dp-time-head svg { width: 15px; height: 15px; }
@@ -900,7 +835,7 @@ select.input { appearance: none; cursor: pointer; }
 }
 #previewModal.show .modal-content { transform: translateY(0) scale(1); opacity: 1; }
 
-/* نوار بالای مودال پیش‌نمایش */
+/* Ù†ÙˆØ§Ø± Ø¨Ø§Ù„Ø§ÛŒ Ù…ÙˆØ¯Ø§Ù„ Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ */
 .preview-bar {
     display: flex;
     align-items: center;
@@ -935,7 +870,7 @@ select.input { appearance: none; cursor: pointer; }
 
 .preview-scroll { padding: 22px; }
 
-/* مقاله پیش‌نمایش */
+/* Ù…Ù‚Ø§Ù„Ù‡ Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ */
 .pv-article { animation: toastIn 380ms ease both; }
 .pv-hero {
     position: relative;
@@ -983,7 +918,7 @@ select.input { appearance: none; cursor: pointer; }
 .pv-body .gallery-row img { border-radius: 8px; }
 .pv-empty { color: var(--muted-color); font-style: italic; }
 
-/* پنل خلاصه سئو در پیش‌نمایش */
+/* Ù¾Ù†Ù„ Ø®Ù„Ø§ØµÙ‡ Ø³Ø¦Ùˆ Ø¯Ø± Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ */
 .pv-seo {
     margin-top: 26px;
     border: 1px solid var(--border-color);
@@ -1024,7 +959,7 @@ select.input { appearance: none; cursor: pointer; }
 .pv-check.no { color: var(--muted-color); }
 .pv-check.no svg { color: var(--muted-color); opacity: 0.7; }
 
-/* ===== ریسپانسیو ===== */
+/* ===== Ø±ÛŒØ³Ù¾Ø§Ù†Ø³ÛŒÙˆ ===== */
 @media (max-width: 980px) {
     .layout { grid-template-columns: 1fr; }
 }
@@ -1035,7 +970,7 @@ select.input { appearance: none; cursor: pointer; }
     .tb-btn { flex: 1 1 calc(16.66% - 6px); }
 }
 
-/* ===== انیمیشن‌ها ===== */
+/* ===== Ø§Ù†ÛŒÙ…ÛŒØ´Ù†â€ŒÙ‡Ø§ ===== */
 .col-side > .card { animation-delay: 90ms; }
 .col-side > .card:nth-child(2) { animation-delay: 150ms; }
 .col-side > .card:nth-child(3) { animation-delay: 210ms; }
@@ -1054,65 +989,65 @@ select.input { appearance: none; cursor: pointer; }
 
 <div class="container">
 
-    <!-- هدر چسبان -->
+    <!-- Ù‡Ø¯Ø± Ú†Ø³Ø¨Ø§Ù† -->
     <div class="editor-header">
         <div class="eh-title">
             <span class="ph-ic">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </span>
             <div>
-                <h1><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر جدید' ?></h1>
-                <p>مدیریت محتوای دیجیتال</p>
+                <h1><?= $id > 0 ? 'ÙˆÛŒØ±Ø§ÛŒØ´ Ø®Ø¨Ø±' : 'Ø§ÛŒØ¬Ø§Ø¯ Ø®Ø¨Ø± Ø¬Ø¯ÛŒØ¯' ?></h1>
+                <p>Ù…Ø¯ÛŒØ±ÛŒØª Ù…Ø­ØªÙˆØ§ÛŒ Ø¯ÛŒØ¬ÛŒØªØ§Ù„</p>
             </div>
             <span class="draft-badge">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                پیش‌نویس ذخیره نشده
+                Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ Ø°Ø®ÛŒØ±Ù‡ Ù†Ø´Ø¯Ù‡
             </span>
         </div>
         <div class="eh-actions">
             <button type="button" class="btn btn-ghost" onclick="openPreview()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                پیش‌نمایش
+                Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´
             </button>
             <button type="button" class="btn btn-save" onclick="saveNews()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <?= $id > 0 ? 'ذخیره ویرایش' : 'ثبت خبر نهایی' ?>
+                <?= $id > 0 ? 'Ø°Ø®ÛŒØ±Ù‡ ÙˆÛŒØ±Ø§ÛŒØ´' : 'Ø«Ø¨Øª Ø®Ø¨Ø± Ù†Ù‡Ø§ÛŒÛŒ' ?>
             </button>
         </div>
     </div>
 
     <div class="layout">
 
-        <!-- ستون اصلی: عنوان + ادیتور -->
+        <!-- Ø³ØªÙˆÙ† Ø§ØµÙ„ÛŒ: Ø¹Ù†ÙˆØ§Ù† + Ø§Ø¯ÛŒØªÙˆØ± -->
         <div class="col-main">
 
-            <!-- عنوان خبر -->
+            <!-- Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± -->
             <div class="card title-card" id="titleCard">
-                <input type="text" class="" id="title" maxlength="120" placeholder="عنوان خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
+                <input type="text" class="" id="title" maxlength="120" placeholder="Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± Ø±Ø§ Ø§ÛŒÙ†Ø¬Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯..." value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
                 <div class="title-meta">
-                    <span>حداکثر ۱۲۰ کاراکتر</span>
+                    <span>Ø­Ø¯Ø§Ú©Ø«Ø± Û±Û²Û° Ú©Ø§Ø±Ø§Ú©ØªØ±</span>
                     <span id="titleCounter">0/120</span>
                 </div>
                 <div class="field-error" id="titleError">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span>وارد کردن عنوان خبر الزامی است.</span>
+                    <span>ÙˆØ§Ø±Ø¯ Ú©Ø±Ø¯Ù† Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± Ø§Ù„Ø²Ø§Ù…ÛŒ Ø§Ø³Øª.</span>
                 </div>
             </div>
 
-            <!-- زیرعنوان خبر -->
+            <!-- Ø²ÛŒØ±Ø¹Ù†ÙˆØ§Ù† Ø®Ø¨Ø± -->
             <div class="subtitle-card" id="subtitleCard">
-                <textarea id="subtitle" maxlength="200" rows="2" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..."><?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?></textarea>
+                <textarea id="subtitle" maxlength="200" rows="2" placeholder="Ø²ÛŒØ±Ø¹Ù†ÙˆØ§Ù† (ØªÙˆØ¶ÛŒØ­ Ú©ÙˆØªØ§Ù‡) Ø®Ø¨Ø± Ø±Ø§ Ø§ÛŒÙ†Ø¬Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯..."><?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?></textarea>
                 <div class="subtitle-meta">
-                    <span>حداکثر ۲۰۰ کاراکتر</span>
+                    <span>Ø­Ø¯Ø§Ú©Ø«Ø± Û²Û°Û° Ú©Ø§Ø±Ø§Ú©ØªØ±</span>
                     <span id="subtitleCounter">0/200</span>
                 </div>
             </div>
 
-            <!-- متن خبر -->
+            <!-- Ù…ØªÙ† Ø®Ø¨Ø± -->
             <div class="card card-pad">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                    متن خبر
+                    Ù…ØªÙ† Ø®Ø¨Ø±
                 </h3>
 
                 <div class="editor-shell" id="editorShell" style="margin-top: 12px;">
@@ -1120,34 +1055,34 @@ select.input { appearance: none; cursor: pointer; }
                 </div>
                 <div class="field-error" id="contentError">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span>نوشتن متن خبر الزامی است.</span>
+                    <span>Ù†ÙˆØ´ØªÙ† Ù…ØªÙ† Ø®Ø¨Ø± Ø§Ù„Ø²Ø§Ù…ÛŒ Ø§Ø³Øª.</span>
                 </div>
 
-                <!-- دکمه‌های درج سریع تصویر و گالری -->
+                <!-- Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ø¯Ø±Ø¬ Ø³Ø±ÛŒØ¹ ØªØµÙˆÛŒØ± Ùˆ Ú¯Ø§Ù„Ø±ÛŒ -->
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
                     <button type="button" class="btn-insert" onclick="uploadSingleImage()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        درج سریع تصویر (آپلود / Drag & Drop)
+                        Ø¯Ø±Ø¬ Ø³Ø±ÛŒØ¹ ØªØµÙˆÛŒØ± (Ø¢Ù¾Ù„ÙˆØ¯ / Drag & Drop)
                     </button>
                     <button type="button" class="btn-insert" onclick="uploadGalleryInline()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                        درج گالری تصاویر شبکه
+                        Ø¯Ø±Ø¬ Ú¯Ø§Ù„Ø±ÛŒ ØªØµØ§ÙˆÛŒØ± Ø´Ø¨Ú©Ù‡
                     </button>
-                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">شما همچنین می‌توانید تصاویر را مستقیماً بکشید و داخل متن رها کنید (Drag & Drop) یا Copy-Paste کنید.</span>
+                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">Ø´Ù…Ø§ Ù‡Ù…Ú†Ù†ÛŒÙ† Ù…ÛŒâ€ŒØªÙˆØ§Ù†ÛŒØ¯ ØªØµØ§ÙˆÛŒØ± Ø±Ø§ Ù…Ø³ØªÙ‚ÛŒÙ…Ø§Ù‹ Ø¨Ú©Ø´ÛŒØ¯ Ùˆ Ø¯Ø§Ø®Ù„ Ù…ØªÙ† Ø±Ù‡Ø§ Ú©Ù†ÛŒØ¯ (Drag & Drop) ÛŒØ§ Copy-Paste Ú©Ù†ÛŒØ¯.</span>
                 </div>
 
             </div>
 
         </div>
 
-        <!-- ستون کناری: متادیتا -->
+        <!-- Ø³ØªÙˆÙ† Ú©Ù†Ø§Ø±ÛŒ: Ù…ØªØ§Ø¯ÛŒØªØ§ -->
         <div class="col-side">
 
-            <!-- تصویر شاخص -->
+            <!-- ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ -->
             <div class="card card-pad">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    تصویر شاخص
+                    ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ
                 </h3>
 
                 <input type="file" id="featured_image" name="featured_image" accept="image/*" style="display:none;">
@@ -1157,23 +1092,23 @@ select.input { appearance: none; cursor: pointer; }
                     <div class="dz-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     </div>
-                    <div class="dz-main">تصویر را اینجا بکشید یا کلیک کنید</div>
-                    <div class="dz-hint">PNG, JPG حداکثر ۵ مگابایت</div>
+                    <div class="dz-main">ØªØµÙˆÛŒØ± Ø±Ø§ Ø§ÛŒÙ†Ø¬Ø§ Ø¨Ú©Ø´ÛŒØ¯ ÛŒØ§ Ú©Ù„ÛŒÚ© Ú©Ù†ÛŒØ¯</div>
+                    <div class="dz-hint">PNG, JPG Ø­Ø¯Ø§Ú©Ø«Ø± Ûµ Ù…Ú¯Ø§Ø¨Ø§ÛŒØª</div>
 
                     <div class="dz-preview <?= !empty($existing_image_url) ? 'show' : '' ?>" id="dzPreview">
-                        <img id="dzImg" src="<?= htmlspecialchars($existing_image_url) ?>" alt="پیش‌نمایش تصویر">
-                        <button class="dz-remove" type="button" onclick="removeFeatured(event)" title="حذف تصویر">
+                        <img id="dzImg" src="<?= htmlspecialchars($existing_image_url) ?>" alt="Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ ØªØµÙˆÛŒØ±">
+                        <button class="dz-remove" type="button" onclick="removeFeatured(event)" title="Ø­Ø°Ù ØªØµÙˆÛŒØ±">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- امتیاز سئو -->
+            <!-- Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ -->
             <div class="card card-pad">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    امتیاز سئو
+                    Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ
                 </h3>
                 <div class="seo-widget">
                     <div class="seo-ring">
@@ -1181,38 +1116,38 @@ select.input { appearance: none; cursor: pointer; }
                             <path class="ring-track" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"/>
                             <path class="ring-fill" id="seoRingFill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F79F1F" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round"/>
                         </svg>
-                        <span class="ring-num" id="seoRingNum">۰</span>
+                        <span class="ring-num" id="seoRingNum">Û°</span>
                     </div>
                     <div class="seo-info">
-                        <div class="seo-state">وضعیت: <b id="seoState" style="color:var(--muted-color)">—</b></div>
-                        <div class="seo-tip" id="seoTip">با پر کردن فیلدها امتیاز محاسبه می‌شود.</div>
+                        <div class="seo-state">ÙˆØ¶Ø¹ÛŒØª: <b id="seoState" style="color:var(--muted-color)">â€”</b></div>
+                        <div class="seo-tip" id="seoTip">Ø¨Ø§ Ù¾Ø± Ú©Ø±Ø¯Ù† ÙÛŒÙ„Ø¯Ù‡Ø§ Ø§Ù…ØªÛŒØ§Ø² Ù…Ø­Ø§Ø³Ø¨Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- تنظیمات -->
+            <!-- ØªÙ†Ø¸ÛŒÙ…Ø§Øª -->
             <div class="card settings-card">
 
                 <div class="input-group">
                     <label class="field-label">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        تاریخ و زمان انتشار
+                        ØªØ§Ø±ÛŒØ® Ùˆ Ø²Ù…Ø§Ù† Ø§Ù†ØªØ´Ø§Ø±
                     </label>
                     <div class="publish-date-row">
                         <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
-                        <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
-                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
-                        <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
+                        <input type="text" id="publish_date_display" class="input" readonly placeholder="ØªØ§Ø±ÛŒØ® Ùˆ Ø²Ù…Ø§Ù† Ø´Ù…Ø³ÛŒ Ø±Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯">
+                        <button type="button" class="btn-insert" onclick="openDatePicker()">ðŸ“… Ø§Ù†ØªØ®Ø§Ø¨</button>
+                        <button type="button" class="btn-insert now-btn" onclick="setNow()">Ù‡Ù…ÛŒÙ† Ø§Ù„Ø§Ù†</button>
                     </div>
                 </div>
 
                 <div class="input-group" id="categoryGroup">
                     <label class="field-label" for="category_id">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                        دسته خبر
+                        Ø¯Ø³ØªÙ‡ Ø®Ø¨Ø±
                     </label>
                     <select id="category_id" name="category_id" class="input" required>
-                        <option value="">انتخاب دسته</option>
+                        <option value="">Ø§Ù†ØªØ®Ø§Ø¨ Ø¯Ø³ØªÙ‡</option>
                         <?php foreach ($categories as $category): ?>
                             <option value="<?= (int)$category['id'] ?>" <?= $selectedCategoryId === (int)$category['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($category['name']) ?>
@@ -1221,59 +1156,55 @@ select.input { appearance: none; cursor: pointer; }
                     </select>
                     <div class="field-error" id="categoryError">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <span>انتخاب دسته‌بندی الزامی است.</span>
+                        <span>Ø§Ù†ØªØ®Ø§Ø¨ Ø¯Ø³ØªÙ‡â€ŒØ¨Ù†Ø¯ÛŒ Ø§Ù„Ø²Ø§Ù…ÛŒ Ø§Ø³Øª.</span>
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label class="field-label" for="author">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        نویسنده
+                        Ù†ÙˆÛŒØ³Ù†Ø¯Ù‡
                     </label>
-                    <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>" placeholder="نام نویسنده">
+                    <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>" placeholder="Ù†Ø§Ù… Ù†ÙˆÛŒØ³Ù†Ø¯Ù‡">
                 </div>
 
                 <div class="input-group">
-                    <label class="field-label" for="keywords_visual">
+                    <label class="field-label" for="keywords">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><circle cx="12" cy="12" r="2"/></svg>
-                        کلمات کلیدی
+                        Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ
                     </label>
-                    <div class="keywords-container" id="keywordsContainer">
-                        <div id="keywordsChips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
-                        <input type="text" class="input" id="keywords_visual" placeholder="کلمه کلیدی را بنویسید و Enter یا ویرگول بزنید" style="border:1px dashed var(--border-color); box-shadow:none;">
-                    </div>
-                    <input type="hidden" id="keywords" name="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>">
+                    <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯">
                 </div>
 
-                <!-- پیشنهاد هوشمند کلمات کلیدی -->
+                <!-- Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ù‡ÙˆØ´Ù…Ù†Ø¯ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ -->
                 <div class="input-group" id="suggestion-container" style="margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                         <span style="font-size: 12px; font-weight: 700; color: var(--primary-color); display: inline-flex; align-items: center; gap: 4px;">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            کلمات کلیدی پیشنهادی از متن
+                            Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ Ø§Ø² Ù…ØªÙ†
                         </span>
                         <button type="button" onclick="generateSuggestions()" class="btn-insert" style="border-style: solid; padding: 4px 10px; border-radius: 999px; font-size: 11px; cursor: pointer;">
-                            ✨ اسکن و پیشنهاد
+                            âœ¨ Ø§Ø³Ú©Ù† Ùˆ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯
                         </button>
                     </div>
                     <div id="suggested-chips-list" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); min-height: 44px; align-items: center; background: var(--surface-2);">
-                        <span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">برای استخراج کلمات کلیدی، روی دکمه اسکن کلیک کنید.</span>
+                        <span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">Ø¨Ø±Ø§ÛŒ Ø§Ø³ØªØ®Ø±Ø§Ø¬ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒØŒ Ø±ÙˆÛŒ Ø¯Ú©Ù…Ù‡ Ø§Ø³Ú©Ù† Ú©Ù„ÛŒÚ© Ú©Ù†ÛŒØ¯.</span>
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label class="field-label" for="tags">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        تگ‌های سئو
+                        ØªÚ¯â€ŒÙ‡Ø§ÛŒ Ø³Ø¦Ùˆ
                     </label>
-                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
+                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="ØªÚ¯â€ŒÙ‡Ø§ Ø±Ø§ Ø¨Ø§ Ú©Ø§Ù…Ø§ Ø¬Ø¯Ø§ Ú©Ù†ÛŒØ¯">
                     <div class="chips" id="tagsChips"></div>
                 </div>
 
                 <div class="input-group">
                     <label class="field-label">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        برچسب‌های موضوعی خبر (چند انتخابی)
+                        Ø¨Ø±Ú†Ø³Ø¨â€ŒÙ‡Ø§ÛŒ Ù…ÙˆØ¶ÙˆØ¹ÛŒ Ø®Ø¨Ø± (Ú†Ù†Ø¯ Ø§Ù†ØªØ®Ø§Ø¨ÛŒ)
                     </label>
                     <div class="tags-checklist" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
                         <?php foreach ($all_tags as $t): ?>
@@ -1293,7 +1224,7 @@ select.input { appearance: none; cursor: pointer; }
 
 </div>
 
-<!-- توست وضعیت (موفقیت / خطا / در حال انجام) -->
+<!-- ØªÙˆØ³Øª ÙˆØ¶Ø¹ÛŒØª (Ù…ÙˆÙÙ‚ÛŒØª / Ø®Ø·Ø§ / Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…) -->
 <div id="statusToast" class="toast" role="status" aria-live="polite">
     <div class="toast-row">
         <div class="toast-ic" id="toastIcon"></div>
@@ -1301,7 +1232,7 @@ select.input { appearance: none; cursor: pointer; }
             <p class="toast-title" id="toastTitle"></p>
             <div class="toast-msg" id="toastMsg"></div>
         </div>
-        <button type="button" class="toast-close" onclick="hideStatus()" aria-label="بستن">
+        <button type="button" class="toast-close" onclick="hideStatus()" aria-label="Ø¨Ø³ØªÙ†">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
     </div>
@@ -1310,7 +1241,7 @@ select.input { appearance: none; cursor: pointer; }
     </div>
 </div>
 
-<!-- مودال پیش‌نمایش -->
+<!-- Ù…ÙˆØ¯Ø§Ù„ Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ -->
 <div id="previewModal">
     <div class="modal-content">
         <div class="preview-bar">
@@ -1318,9 +1249,9 @@ select.input { appearance: none; cursor: pointer; }
                 <span class="ph-ic">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </span>
-                پیش‌نمایش خبر
+                Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ Ø®Ø¨Ø±
             </div>
-            <button onclick="closePreview()" class="preview-close" title="بستن">
+            <button onclick="closePreview()" class="preview-close" title="Ø¨Ø³ØªÙ†">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
@@ -1330,80 +1261,80 @@ select.input { appearance: none; cursor: pointer; }
     </div>
 </div>
 
-<!-- مودال انتخاب تاریخ (تقویم شمسی مدرن) -->
+<!-- Ù…ÙˆØ¯Ø§Ù„ Ø§Ù†ØªØ®Ø§Ø¨ ØªØ§Ø±ÛŒØ® (ØªÙ‚ÙˆÛŒÙ… Ø´Ù…Ø³ÛŒ Ù…Ø¯Ø±Ù†) -->
 <div id="dateModal" class="date-modal" onclick="if(event.target===this) closeDatePicker()">
     <div class="date-modal-box">
         <div class="date-header">
             <h4 class="date-modal-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                تقویم شمسی
+                ØªÙ‚ÙˆÛŒÙ… Ø´Ù…Ø³ÛŒ
             </h4>
-            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="بستن">
+            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="Ø¨Ø³ØªÙ†">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
 
-        <!-- ناوبری ماه -->
+        <!-- Ù†Ø§ÙˆØ¨Ø±ÛŒ Ù…Ø§Ù‡ -->
         <div class="dp-nav">
-            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="Ù…Ø§Ù‡ Ø¨Ø¹Ø¯">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="dp-month-label">
-                <button type="button" class="dp-label-btn" id="dpMonthBtn" onclick="dpToggleView('months')">—</button>
-                <button type="button" class="dp-label-btn" id="dpYearBtn" onclick="dpToggleView('years')">—</button>
+                <button type="button" class="dp-label-btn" id="dpMonthBtn" onclick="dpToggleView('months')">â€”</button>
+                <button type="button" class="dp-label-btn" id="dpYearBtn" onclick="dpToggleView('years')">â€”</button>
             </div>
-            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="Ù…Ø§Ù‡ Ù‚Ø¨Ù„">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
         </div>
 
-        <!-- نمای روز -->
+        <!-- Ù†Ù…Ø§ÛŒ Ø±ÙˆØ² -->
         <div class="dp-view" id="dpDayView">
             <div class="dp-weekdays">
-                <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+                <span>Ø´</span><span>ÛŒ</span><span>Ø¯</span><span>Ø³</span><span>Ú†</span><span>Ù¾</span><span>Ø¬</span>
             </div>
             <div class="dp-days" id="dpDays"></div>
         </div>
-        <!-- نمای ماه -->
+        <!-- Ù†Ù…Ø§ÛŒ Ù…Ø§Ù‡ -->
         <div class="dp-view dp-grid-pick" id="dpMonthView" style="display:none;"></div>
-        <!-- نمای سال -->
+        <!-- Ù†Ù…Ø§ÛŒ Ø³Ø§Ù„ -->
         <div class="dp-view dp-grid-pick" id="dpYearView" style="display:none;"></div>
 
-        <!-- انتخاب زمان -->
+        <!-- Ø§Ù†ØªØ®Ø§Ø¨ Ø²Ù…Ø§Ù† -->
         <div class="dp-time">
             <div class="dp-time-head">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                انتخاب زمان
+                Ø§Ù†ØªØ®Ø§Ø¨ Ø²Ù…Ø§Ù†
             </div>
             <div class="dp-time-row">
                 <div class="dp-stepper">
-                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="ساعت بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
-                    <input type="text" class="dp-time-val" id="dpHourVal" value="۰۰" readonly inputmode="numeric">
-                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="ساعت کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="Ø³Ø§Ø¹Øª Ø¨ÛŒØ´ØªØ±"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpHourVal" value="Û°Û°" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="Ø³Ø§Ø¹Øª Ú©Ù…ØªØ±"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
                 <span class="dp-time-colon">:</span>
                 <div class="dp-stepper">
-                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="دقیقه بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
-                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="۰۰" readonly inputmode="numeric">
-                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="دقیقه کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="Ø¯Ù‚ÛŒÙ‚Ù‡ Ø¨ÛŒØ´ØªØ±"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="Û°Û°" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="Ø¯Ù‚ÛŒÙ‚Ù‡ Ú©Ù…ØªØ±"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
             </div>
         </div>
 
         <div class="date-actions">
-            <button type="button" class="btn-insert" onclick="setPickerNow()">اکنون</button>
-            <button type="button" class="btn-insert" onclick="closeDatePicker()">انصراف</button>
-            <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
+            <button type="button" class="btn-insert" onclick="setPickerNow()">Ø§Ú©Ù†ÙˆÙ†</button>
+            <button type="button" class="btn-insert" onclick="closeDatePicker()">Ø§Ù†ØµØ±Ø§Ù</button>
+            <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">ØªØ§ÛŒÛŒØ¯</button>
         </div>
 
-        <!-- state مخفی که توابع تبدیل از آن می‌خوانند/می‌نویسند -->
+        <!-- state Ù…Ø®ÙÛŒ Ú©Ù‡ ØªÙˆØ§Ø¨Ø¹ ØªØ¨Ø¯ÛŒÙ„ Ø§Ø² Ø¢Ù† Ù…ÛŒâ€ŒØ®ÙˆØ§Ù†Ù†Ø¯/Ù…ÛŒâ€ŒÙ†ÙˆÛŒØ³Ù†Ø¯ -->
         <input type="hidden" id="jy"><input type="hidden" id="jm"><input type="hidden" id="jd">
         <input type="hidden" id="hh"><input type="hidden" id="mm">
     </div>
 </div>
 
 <script>
-/* ذخیره محدوده انتخاب */
+/* Ø°Ø®ÛŒØ±Ù‡ Ù…Ø­Ø¯ÙˆØ¯Ù‡ Ø§Ù†ØªØ®Ø§Ø¨ */
 let savedRange = null;
 const editor = document.getElementById("editor");
 
@@ -1426,7 +1357,7 @@ function restoreSelection(){
     }
 }
 
-/* ===================== ابزارهای پایه ===================== */
+/* ===================== Ø§Ø¨Ø²Ø§Ø±Ù‡Ø§ÛŒ Ù¾Ø§ÛŒÙ‡ ===================== */
 function format(cmd,val=null){
     editor.focus();
     restoreSelection();
@@ -1434,14 +1365,14 @@ function format(cmd,val=null){
     saveSelection();
 }
 
-/* ===================== رنگ متن ===================== */
+/* ===================== Ø±Ù†Ú¯ Ù…ØªÙ† ===================== */
 function applyColor(color){
     restoreSelection();
     document.execCommand("foreColor", false, color);
     saveSelection();
 }
 
-/* ===================== هدینگ ===================== */
+/* ===================== Ù‡Ø¯ÛŒÙ†Ú¯ ===================== */
 function setHeading(selectEl){
     editor.focus();
     restoreSelection();
@@ -1454,7 +1385,7 @@ function setHeading(selectEl){
     saveSelection();
 }
 
-/* ===================== فونت ===================== */
+/* ===================== ÙÙˆÙ†Øª ===================== */
 function setFont(selectEl){
     const font = selectEl.value;
     if(!font) return;
@@ -1465,7 +1396,7 @@ function setFont(selectEl){
     saveSelection();
 }
 
-/* ===================== سایز فونت ===================== */
+/* ===================== Ø³Ø§ÛŒØ² ÙÙˆÙ†Øª ===================== */
 function setFontSize(selectEl){
     const size = selectEl.value;
     if(!size) return;
@@ -1481,18 +1412,18 @@ function setFontSize(selectEl){
     saveSelection();
 }
 
-/* ===================== لینک ===================== */
+/* ===================== Ù„ÛŒÙ†Ú© ===================== */
 function insertLink(){
     editor.focus();
     restoreSelection();
-    const url = prompt("آدرس لینک:");
+    const url = prompt("Ø¢Ø¯Ø±Ø³ Ù„ÛŒÙ†Ú©:");
     if(url){
         document.execCommand("createLink",false,url);
     }
     saveSelection();
 }
 
-/* ===================== حذف فرمت ===================== */
+/* ===================== Ø­Ø°Ù ÙØ±Ù…Øª ===================== */
 function clearFormat(){
     editor.focus();
     restoreSelection();
@@ -1500,13 +1431,13 @@ function clearFormat(){
     saveSelection();
 }
 
-/* ===================== چینش متن ===================== */
+/* ===================== Ú†ÛŒÙ†Ø´ Ù…ØªÙ† ===================== */
 function alignRight(){ format("justifyRight"); }
 function alignLeft(){ format("justifyLeft"); }
 function alignCenter(){ format("justifyCenter"); }
 function alignJustify(){ format("justifyFull"); }
 
-/* =================== شمارنده عنوان و زیرعنوان =================== */
+/* =================== Ø´Ù…Ø§Ø±Ù†Ø¯Ù‡ Ø¹Ù†ÙˆØ§Ù† Ùˆ Ø²ÛŒØ±Ø¹Ù†ÙˆØ§Ù† =================== */
 const titleInput = document.getElementById("title");
 const titleCounter = document.getElementById("titleCounter");
 function updateTitleCounter(){
@@ -1525,7 +1456,7 @@ function updateSubtitleCounter(){
 }
 subtitleInput.addEventListener("input", updateSubtitleCounter);
 
-/* =================== تصویر شاخص (Dropzone) =================== */
+/* =================== ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ (Dropzone) =================== */
 const featuredInput = document.getElementById("featured_image");
 const dropzone = document.getElementById("dropzone");
 const dzPreview = document.getElementById("dzPreview");
@@ -1576,7 +1507,7 @@ function removeFeatured(e){
     document.getElementById("remove_featured_flag").value = "1";
 }
 
-/* ============== درج تصویر داخل متن ============== */
+/* ============== Ø¯Ø±Ø¬ ØªØµÙˆÛŒØ± Ø¯Ø§Ø®Ù„ Ù…ØªÙ† ============== */
 function uploadSingleImage(){
     const input = document.createElement("input");
     input.type = "file";
@@ -1654,11 +1585,11 @@ function insertGalleryRow(urls){
     saveSelection();
 }
 
-/* =================== چیپ تگ‌ها (نمایشی) =================== */
+/* =================== Ú†ÛŒÙ¾ ØªÚ¯â€ŒÙ‡Ø§ (Ù†Ù…Ø§ÛŒØ´ÛŒ) =================== */
 const tagsInput = document.getElementById("tags");
 const tagsChips = document.getElementById("tagsChips");
 function renderTagChips(){
-    const parts = tagsInput.value.split("،").join(",").split(",").map(t=>t.trim()).filter(Boolean);
+    const parts = tagsInput.value.split("ØŒ").join(",").split(",").map(t=>t.trim()).filter(Boolean);
     tagsChips.innerHTML = "";
     parts.forEach((t, idx) => {
         const chip = document.createElement("span");
@@ -1667,30 +1598,30 @@ function renderTagChips(){
         const btn = document.createElement("button");
         btn.type = "button";
         btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("، "); renderTagChips(); };
+        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("ØŒ "); renderTagChips(); };
         chip.appendChild(btn);
         tagsChips.appendChild(chip);
     });
 }
 tagsInput.addEventListener("input", renderTagChips);
 
-/* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
+/* =================== ØªÙˆØ³Øª ÙˆØ¶Ø¹ÛŒØª (Ù…ÙˆÙÙ‚ÛŒØª / Ø®Ø·Ø§ / Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…) =================== */
 const TOAST_ICONS = {
     success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
     error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
     info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'
 };
-const TOAST_TITLES = { success: "انجام شد", error: "خطا", info: "در حال انجام" };
+const TOAST_TITLES = { success: "Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯", error: "Ø®Ø·Ø§", info: "Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…" };
 
 let toastHideTimer = null;
 
 /*
- * نمایش توست وضعیت.
- *   showStatus(msg)               → اطلاع‌رسانی (info)
- *   showStatus(msg, true)         → موفقیت (success)
- *   showStatus(msg, false)        → خطا (error)
- *   showStatus(msg, "info")       → حالت در حال انجام با اسپینر
- * برای سازگاری با فراخوانی‌های قبلی، ایموجی‌های ابتدای پیام حذف می‌شوند.
+ * Ù†Ù…Ø§ÛŒØ´ ØªÙˆØ³Øª ÙˆØ¶Ø¹ÛŒØª.
+ *   showStatus(msg)               â†’ Ø§Ø·Ù„Ø§Ø¹â€ŒØ±Ø³Ø§Ù†ÛŒ (info)
+ *   showStatus(msg, true)         â†’ Ù…ÙˆÙÙ‚ÛŒØª (success)
+ *   showStatus(msg, false)        â†’ Ø®Ø·Ø§ (error)
+ *   showStatus(msg, "info")       â†’ Ø­Ø§Ù„Øª Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù… Ø¨Ø§ Ø§Ø³Ù¾ÛŒÙ†Ø±
+ * Ø¨Ø±Ø§ÛŒ Ø³Ø§Ø²Ú¯Ø§Ø±ÛŒ Ø¨Ø§ ÙØ±Ø§Ø®ÙˆØ§Ù†ÛŒâ€ŒÙ‡Ø§ÛŒ Ù‚Ø¨Ù„ÛŒØŒ Ø§ÛŒÙ…ÙˆØ¬ÛŒâ€ŒÙ‡Ø§ÛŒ Ø§Ø¨ØªØ¯Ø§ÛŒ Ù¾ÛŒØ§Ù… Ø­Ø°Ù Ù…ÛŒâ€ŒØ´ÙˆÙ†Ø¯.
  */
 function showStatus(msg, type){
     let kind = "info";
@@ -1698,7 +1629,7 @@ function showStatus(msg, type){
     else if (type === false) kind = "error";
     else if (typeof type === "string") kind = type;
 
-    const cleanMsg = String(msg).replace(/^[✅❌⏳⚡🗜🔼⬆\s]+/u, "").trim();
+    const cleanMsg = String(msg).replace(/^[âœ…âŒâ³âš¡ðŸ—œðŸ”¼â¬†\s]+/u, "").trim();
 
     const toast = document.getElementById("statusToast");
     const iconEl = document.getElementById("toastIcon");
@@ -1710,12 +1641,12 @@ function showStatus(msg, type){
     document.getElementById("toastTitle").textContent = TOAST_TITLES[kind];
     document.getElementById("toastMsg").textContent = cleanMsg;
 
-    // نوار پیشرفت فقط در حالتِ «در حال انجام» معنا دارد
+    // Ù†ÙˆØ§Ø± Ù¾ÛŒØ´Ø±ÙØª ÙÙ‚Ø· Ø¯Ø± Ø­Ø§Ù„ØªÙ Â«Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…Â» Ù…Ø¹Ù†Ø§ Ø¯Ø§Ø±Ø¯
     if (kind !== "info") {
         document.getElementById("uploadProgress").classList.remove("active");
     }
 
-    // پیام موفقیت/خطا پس از چند ثانیه خودکار بسته می‌شود؛ حالت در حال انجام باز می‌ماند.
+    // Ù¾ÛŒØ§Ù… Ù…ÙˆÙÙ‚ÛŒØª/Ø®Ø·Ø§ Ù¾Ø³ Ø§Ø² Ú†Ù†Ø¯ Ø«Ø§Ù†ÛŒÙ‡ Ø®ÙˆØ¯Ú©Ø§Ø± Ø¨Ø³ØªÙ‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯Ø› Ø­Ø§Ù„Øª Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù… Ø¨Ø§Ø² Ù…ÛŒâ€ŒÙ…Ø§Ù†Ø¯.
     clearTimeout(toastHideTimer);
     if (kind !== "info") {
         toastHideTimer = setTimeout(hideStatus, kind === "error" ? 6000 : 3500);
@@ -1733,13 +1664,13 @@ function hideStatus(){
     }, 250);
 }
 
-/* توابع مربوط به زمان‌بندی */
+/* ØªÙˆØ§Ø¨Ø¹ Ù…Ø±Ø¨ÙˆØ· Ø¨Ù‡ Ø²Ù…Ø§Ù†â€ŒØ¨Ù†Ø¯ÛŒ */
 function setNow() {
     setDateFromGregorianDate(new Date());
 }
 
 function toFaDigits(value) {
-    return String(value).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    return String(value).replace(/[0-9]/g, d => 'Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹'[d]);
 }
 
 function pad2(num) {
@@ -1835,25 +1766,25 @@ function setDateFromGregorianDate(dateObj) {
     setPickerValues(jy, jm, jd, hh, mm);
 }
 
-/* ===== دیت‌پیکر شمسی مدرن (تقویم گرید) ===== */
+/* ===== Ø¯ÛŒØªâ€ŒÙ¾ÛŒÚ©Ø± Ø´Ù…Ø³ÛŒ Ù…Ø¯Ø±Ù† (ØªÙ‚ÙˆÛŒÙ… Ú¯Ø±ÛŒØ¯) ===== */
 const PERSIAN_MONTHS = [
-    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+    "ÙØ±ÙˆØ±Ø¯ÛŒÙ†", "Ø§Ø±Ø¯ÛŒØ¨Ù‡Ø´Øª", "Ø®Ø±Ø¯Ø§Ø¯", "ØªÛŒØ±", "Ù…Ø±Ø¯Ø§Ø¯", "Ø´Ù‡Ø±ÛŒÙˆØ±",
+    "Ù…Ù‡Ø±", "Ø¢Ø¨Ø§Ù†", "Ø¢Ø°Ø±", "Ø¯ÛŒ", "Ø¨Ù‡Ù…Ù†", "Ø§Ø³ÙÙ†Ø¯"
 ];
-// ماهی که اکنون در گرید نمایش داده می‌شود (ممکن است با روزِ انتخاب‌شده فرق کند)
+// Ù…Ø§Ù‡ÛŒ Ú©Ù‡ Ø§Ú©Ù†ÙˆÙ† Ø¯Ø± Ú¯Ø±ÛŒØ¯ Ù†Ù…Ø§ÛŒØ´ Ø¯Ø§Ø¯Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯ (Ù…Ù…Ú©Ù† Ø§Ø³Øª Ø¨Ø§ Ø±ÙˆØ²Ù Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡ ÙØ±Ù‚ Ú©Ù†Ø¯)
 let dpViewYear = 0, dpViewMonth = 1;
 
 function dpGet(id){ return parseInt(document.getElementById(id).value || "0", 10); }
 function dpSet(id, v){ document.getElementById(id).value = String(v); }
 
-// روزِ هفته‌ی اولِ ماهِ شمسی (شنبه=0 ... جمعه=6)
+// Ø±ÙˆØ²Ù Ù‡ÙØªÙ‡â€ŒÛŒ Ø§ÙˆÙ„Ù Ù…Ø§Ù‡Ù Ø´Ù…Ø³ÛŒ (Ø´Ù†Ø¨Ù‡=0 ... Ø¬Ù…Ø¹Ù‡=6)
 function jalaliFirstDow(jy, jm) {
     const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
-    const js = new Date(gy, gm - 1, gd).getDay(); // یکشنبه=0 ... شنبه=6
-    return (js + 1) % 7;                          // شنبه=0 ... جمعه=6
+    const js = new Date(gy, gm - 1, gd).getDay(); // ÛŒÚ©Ø´Ù†Ø¨Ù‡=0 ... Ø´Ù†Ø¨Ù‡=6
+    return (js + 1) % 7;                          // Ø´Ù†Ø¨Ù‡=0 ... Ø¬Ù…Ø¹Ù‡=6
 }
 
-// state کامل پیکر را ست می‌کند (روزِ انتخاب‌شده + زمان) و گرید را روی همان ماه می‌برد
+// state Ú©Ø§Ù…Ù„ Ù¾ÛŒÚ©Ø± Ø±Ø§ Ø³Øª Ù…ÛŒâ€ŒÚ©Ù†Ø¯ (Ø±ÙˆØ²Ù Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡ + Ø²Ù…Ø§Ù†) Ùˆ Ú¯Ø±ÛŒØ¯ Ø±Ø§ Ø±ÙˆÛŒ Ù‡Ù…Ø§Ù† Ù…Ø§Ù‡ Ù…ÛŒâ€ŒØ¨Ø±Ø¯
 function setPickerValues(jy, jm, jd, hh, mm) {
     dpSet("jy", jy); dpSet("jm", jm); dpSet("jd", jd);
     dpSet("hh", hh); dpSet("mm", mm);
@@ -1862,7 +1793,7 @@ function setPickerValues(jy, jm, jd, hh, mm) {
     dpRenderCalendar();
 }
 
-// نمای فعالِ پیکر: 'days' | 'months' | 'years'
+// Ù†Ù…Ø§ÛŒ ÙØ¹Ø§Ù„Ù Ù¾ÛŒÚ©Ø±: 'days' | 'months' | 'years'
 let dpView = 'days';
 
 function dpToggleView(which) {
@@ -1877,7 +1808,7 @@ function dpApplyView() {
     else if (dpView === 'years') dpRenderYears();
 }
 
-// رندرِ شبکه‌ی روزها برای ماهِ جاریِ نمایش
+// Ø±Ù†Ø¯Ø±Ù Ø´Ø¨Ú©Ù‡â€ŒÛŒ Ø±ÙˆØ²Ù‡Ø§ Ø¨Ø±Ø§ÛŒ Ù…Ø§Ù‡Ù Ø¬Ø§Ø±ÛŒÙ Ù†Ù…Ø§ÛŒØ´
 function dpRenderCalendar() {
     const mBtn = document.getElementById("dpMonthBtn");
     const yBtn = document.getElementById("dpYearBtn");
@@ -1891,13 +1822,13 @@ function dpRenderCalendar() {
     const lead = jalaliFirstDow(dpViewYear, dpViewMonth);
     const days = getJalaliMonthDays(dpViewYear, dpViewMonth);
 
-    // روزِ امروز (شمسی) برای هایلایت
+    // Ø±ÙˆØ²Ù Ø§Ù…Ø±ÙˆØ² (Ø´Ù…Ø³ÛŒ) Ø¨Ø±Ø§ÛŒ Ù‡Ø§ÛŒÙ„Ø§ÛŒØª
     const now = new Date();
     const [tjy, tjm, tjd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
 
     const selJy = dpGet("jy"), selJm = dpGet("jm"), selJd = dpGet("jd");
 
-    // خانه‌های خالیِ ابتدای ماه
+    // Ø®Ø§Ù†Ù‡â€ŒÙ‡Ø§ÛŒ Ø®Ø§Ù„ÛŒÙ Ø§Ø¨ØªØ¯Ø§ÛŒ Ù…Ø§Ù‡
     for (let i = 0; i < lead; i++) {
         const sp = document.createElement("span");
         sp.className = "dp-day is-empty";
@@ -1922,7 +1853,7 @@ function dpSelectDay(d) {
     dpRenderCalendar();
 }
 
-// شبکه‌ی ۱۲ ماه برای انتخابِ سریع
+// Ø´Ø¨Ú©Ù‡â€ŒÛŒ Û±Û² Ù…Ø§Ù‡ Ø¨Ø±Ø§ÛŒ Ø§Ù†ØªØ®Ø§Ø¨Ù Ø³Ø±ÛŒØ¹
 function dpRenderMonths() {
     const wrap = document.getElementById("dpMonthView");
     if (!wrap) return;
@@ -1939,7 +1870,7 @@ function dpRenderMonths() {
     }
 }
 
-// شبکه‌ی سال‌ها (۱۰ سال قبل تا ۱۰ سال بعدِ سالِ نمایش)
+// Ø´Ø¨Ú©Ù‡â€ŒÛŒ Ø³Ø§Ù„â€ŒÙ‡Ø§ (Û±Û° Ø³Ø§Ù„ Ù‚Ø¨Ù„ ØªØ§ Û±Û° Ø³Ø§Ù„ Ø¨Ø¹Ø¯Ù Ø³Ø§Ù„Ù Ù†Ù…Ø§ÛŒØ´)
 function dpRenderYears() {
     const wrap = document.getElementById("dpYearView");
     if (!wrap) return;
@@ -1964,12 +1895,12 @@ function dpPickMonth(m) {
 }
 function dpPickYear(y) {
     dpViewYear = y;
-    dpView = 'months'; dpApplyView();   // پس از سال، به انتخابِ ماه برو
+    dpView = 'months'; dpApplyView();   // Ù¾Ø³ Ø§Ø² Ø³Ø§Ù„ØŒ Ø¨Ù‡ Ø§Ù†ØªØ®Ø§Ø¨Ù Ù…Ø§Ù‡ Ø¨Ø±Ùˆ
     dpRenderCalendar();
 }
 
 function dpChangeMonth(dir) {
-    // dir=+1 یعنی ماهِ بعد، dir=-1 یعنی ماهِ قبل
+    // dir=+1 ÛŒØ¹Ù†ÛŒ Ù…Ø§Ù‡Ù Ø¨Ø¹Ø¯ØŒ dir=-1 ÛŒØ¹Ù†ÛŒ Ù…Ø§Ù‡Ù Ù‚Ø¨Ù„
     dpViewMonth += dir;
     if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
     else if (dpViewMonth < 1) { dpViewMonth = 12; dpViewYear--; }
@@ -1984,13 +1915,13 @@ function dpRenderTime() {
 function dpStepTime(unit, dir) {
     let v = dpGet(unit) + dir;
     const max = unit === "hh" ? 24 : 60;
-    v = (v + max) % max;            // چرخشی
+    v = (v + max) % max;            // Ú†Ø±Ø®Ø´ÛŒ
     dpSet(unit, v);
     dpRenderTime();
 }
 
 function openDatePicker() {
-    dpView = 'days'; dpApplyView();   // همیشه با نمای روز باز شود
+    dpView = 'days'; dpApplyView();   // Ù‡Ù…ÛŒØ´Ù‡ Ø¨Ø§ Ù†Ù…Ø§ÛŒ Ø±ÙˆØ² Ø¨Ø§Ø² Ø´ÙˆØ¯
     document.getElementById("dateModal").classList.add("show");
 }
 
@@ -2025,7 +1956,7 @@ function initDatePicker() {
     }
 }
 
-/* ===== ارتقای <select> به دراپ‌داون سفارشی مدرن ===== */
+/* ===== Ø§Ø±ØªÙ‚Ø§ÛŒ <select> Ø¨Ù‡ Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ† Ø³ÙØ§Ø±Ø´ÛŒ Ù…Ø¯Ø±Ù† ===== */
 const MSEL_CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 const MSEL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
@@ -2047,9 +1978,9 @@ function enhanceSelect(select){
     menu.className = "msel-menu";
     menu.setAttribute("role", "listbox");
 
-    // ساختِ گزینه‌ها از روی <option>ها
+    // Ø³Ø§Ø®ØªÙ Ú¯Ø²ÛŒÙ†Ù‡â€ŒÙ‡Ø§ Ø§Ø² Ø±ÙˆÛŒ <option>Ù‡Ø§
     Array.from(select.options).forEach(opt => {
-        if (opt.value === "" && placeholderText) return; // placeholder را گزینه نکن
+        if (opt.value === "" && placeholderText) return; // placeholder Ø±Ø§ Ú¯Ø²ÛŒÙ†Ù‡ Ù†Ú©Ù†
         const o = document.createElement("div");
         o.className = "msel-opt";
         o.setAttribute("role", "option");
@@ -2064,12 +1995,12 @@ function enhanceSelect(select){
         menu.appendChild(o);
     });
 
-    // مخفی‌کردنِ select بومی و درج کامپوننت
+    // Ù…Ø®ÙÛŒâ€ŒÚ©Ø±Ø¯Ù†Ù select Ø¨ÙˆÙ…ÛŒ Ùˆ Ø¯Ø±Ø¬ Ú©Ø§Ù…Ù¾ÙˆÙ†Ù†Øª
     select.style.display = "none";
     select.parentNode.insertBefore(wrap, select);
     wrap.appendChild(trigger);
     wrap.appendChild(menu);
-    wrap.appendChild(select); // select داخلِ wrap بماند تا fieldها سالم بمانند
+    wrap.appendChild(select); // select Ø¯Ø§Ø®Ù„Ù wrap Ø¨Ù…Ø§Ù†Ø¯ ØªØ§ fieldÙ‡Ø§ Ø³Ø§Ù„Ù… Ø¨Ù…Ø§Ù†Ù†Ø¯
 
     function syncMsel(){
         const valEl = trigger.querySelector(".msel-value");
@@ -2080,7 +2011,7 @@ function enhanceSelect(select){
         menu.querySelectorAll(".msel-opt").forEach(o => {
             o.classList.toggle("is-selected", o.dataset.value === select.value);
         });
-        // انتقالِ حالتِ خطا از select به wrap
+        // Ø§Ù†ØªÙ‚Ø§Ù„Ù Ø­Ø§Ù„ØªÙ Ø®Ø·Ø§ Ø§Ø² select Ø¨Ù‡ wrap
         wrap.classList.toggle("field-invalid", select.classList.contains("field-invalid"));
     }
 
@@ -2089,18 +2020,18 @@ function enhanceSelect(select){
 
     trigger.addEventListener("click", (e) => {
         e.stopPropagation();
-        // بستنِ سایر دراپ‌داون‌های باز
+        // Ø¨Ø³ØªÙ†Ù Ø³Ø§ÛŒØ± Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ†â€ŒÙ‡Ø§ÛŒ Ø¨Ø§Ø²
         document.querySelectorAll(".msel.open").forEach(m => { if (m !== wrap) m.classList.remove("open"); });
         wrap.classList.toggle("open");
     });
-    // وقتی خطای فیلد پاک/ست می‌شود، ظاهرِ دراپ‌داون را همگام کن
+    // ÙˆÙ‚ØªÛŒ Ø®Ø·Ø§ÛŒ ÙÛŒÙ„Ø¯ Ù¾Ø§Ú©/Ø³Øª Ù…ÛŒâ€ŒØ´ÙˆØ¯ØŒ Ø¸Ø§Ù‡Ø±Ù Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ† Ø±Ø§ Ù‡Ù…Ú¯Ø§Ù… Ú©Ù†
     select.addEventListener("change", syncMsel);
     select._mselSync = syncMsel;
 
     syncMsel();
 }
 
-// بستنِ دراپ‌داون‌ها با کلیک بیرون یا Esc
+// Ø¨Ø³ØªÙ†Ù Ø¯Ø±Ø§Ù¾â€ŒØ¯Ø§ÙˆÙ†â€ŒÙ‡Ø§ Ø¨Ø§ Ú©Ù„ÛŒÚ© Ø¨ÛŒØ±ÙˆÙ† ÛŒØ§ Esc
 document.addEventListener("click", () => document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")));
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")); });
 
@@ -2114,7 +2045,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /* ======================== */
 
-/* =================== راه‌اندازی ادیتور پیشرفته TinyMCE 7 =================== */
+/* =================== Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø§Ø¯ÛŒØªÙˆØ± Ù¾ÛŒØ´Ø±ÙØªÙ‡ TinyMCE 7 =================== */
 function initTinyMCEEditor() {
     if (typeof tinymce === 'undefined') {
         console.error("TinyMCE not loaded!");
@@ -2178,25 +2109,25 @@ function initTinyMCEEditor() {
 
                 xhr.onload = function () {
                     if (xhr.status < 200 || xhr.status >= 300) {
-                        reject('خطا در آپلود تصویر: HTTP ' + xhr.status);
+                        reject('Ø®Ø·Ø§ Ø¯Ø± Ø¢Ù¾Ù„ÙˆØ¯ ØªØµÙˆÛŒØ±: HTTP ' + xhr.status);
                         return;
                     }
                     var json;
                     try {
                         json = JSON.parse(xhr.responseText);
                     } catch (err) {
-                        reject('پاسخ نامعتبر سرور: ' + xhr.responseText);
+                        reject('Ù¾Ø§Ø³Ø® Ù†Ø§Ù…Ø¹ØªØ¨Ø± Ø³Ø±ÙˆØ±: ' + xhr.responseText);
                         return;
                     }
                     if (!json || typeof json.location !== 'string') {
-                        reject(json && json.message ? json.message : 'پاسخ نامعتبر از سرور.');
+                        reject(json && json.message ? json.message : 'Ù¾Ø§Ø³Ø® Ù†Ø§Ù…Ø¹ØªØ¨Ø± Ø§Ø² Ø³Ø±ÙˆØ±.');
                         return;
                     }
                     resolve(json.location);
                 };
 
                 xhr.onerror = function () {
-                    reject('خطای ارتباط با سرور در هنگام آپلود تصویر.');
+                    reject('Ø®Ø·Ø§ÛŒ Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ø³Ø±ÙˆØ± Ø¯Ø± Ù‡Ù†Ú¯Ø§Ù… Ø¢Ù¾Ù„ÙˆØ¯ ØªØµÙˆÛŒØ±.');
                 };
 
                 var formData = new FormData();
@@ -2248,7 +2179,7 @@ function uploadGalleryInline() {
     input.onchange = async function () {
         if (!this.files || this.files.length === 0) return;
         const files = Array.from(this.files).slice(0, 6);
-        showStatus("در حال آپلود گالری تصاویر...", true);
+        showStatus("Ø¯Ø± Ø­Ø§Ù„ Ø¢Ù¾Ù„ÙˆØ¯ Ú¯Ø§Ù„Ø±ÛŒ ØªØµØ§ÙˆÛŒØ±...", true);
         const imgUrls = [];
         for (const file of files) {
             const fd = new FormData();
@@ -2262,7 +2193,7 @@ function uploadGalleryInline() {
         if (imgUrls.length > 0) {
             const galleryHtml = `
                 <div class="news-gallery" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 24px 0;">
-                    ${imgUrls.map((url, i) => `<figure style="margin:0;"><img src="${url}" alt="تصویر ${i+1}" style="width:100%;height:auto;border-radius:10px;"><figcaption style="text-align:center;font-size:12.5px;color:#666;margin-top:4px;">تصویر ${i+1}</figcaption></figure>`).join('')}
+                    ${imgUrls.map((url, i) => `<figure style="margin:0;"><img src="${url}" alt="ØªØµÙˆÛŒØ± ${i+1}" style="width:100%;height:auto;border-radius:10px;"><figcaption style="text-align:center;font-size:12.5px;color:#666;margin-top:4px;">ØªØµÙˆÛŒØ± ${i+1}</figcaption></figure>`).join('')}
                 </div><p></p>
             `;
             if (window.tinymce && tinymce.get("editor")) {
@@ -2270,20 +2201,20 @@ function uploadGalleryInline() {
                 tinymce.get("editor").save();
                 updateSeoWidget();
             }
-            showStatus("گالری تصاویر با موفقیت در متن درج شد.", true);
+            showStatus("Ú¯Ø§Ù„Ø±ÛŒ ØªØµØ§ÙˆÛŒØ± Ø¨Ø§ Ù…ÙˆÙÙ‚ÛŒØª Ø¯Ø± Ù…ØªÙ† Ø¯Ø±Ø¬ Ø´Ø¯.", true);
         }
     };
     input.click();
 }
 
-/* ====== فشرده‌سازی هوشمند تصویر شاخص (حفظ کیفیت، کاهش حجم) ====== */
-// فقط در صورت نیاز فشرده می‌کند: اگر فایل کوچک باشد دست‌نخورده برمی‌گردد.
+/* ====== ÙØ´Ø±Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ Ù‡ÙˆØ´Ù…Ù†Ø¯ ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ (Ø­ÙØ¸ Ú©ÛŒÙÛŒØªØŒ Ú©Ø§Ù‡Ø´ Ø­Ø¬Ù…) ====== */
+// ÙÙ‚Ø· Ø¯Ø± ØµÙˆØ±Øª Ù†ÛŒØ§Ø² ÙØ´Ø±Ø¯Ù‡ Ù…ÛŒâ€ŒÚ©Ù†Ø¯: Ø§Ú¯Ø± ÙØ§ÛŒÙ„ Ú©ÙˆÚ†Ú© Ø¨Ø§Ø´Ø¯ Ø¯Ø³Øªâ€ŒÙ†Ø®ÙˆØ±Ø¯Ù‡ Ø¨Ø±Ù…ÛŒâ€ŒÚ¯Ø±Ø¯Ø¯.
 async function compressFeaturedImage(file) {
-    const MAX_DIMENSION = 1920;   // حداکثر عرض/ارتفاع
-    const QUALITY = 0.85;         // کیفیت بالا
-    const SIZE_THRESHOLD = 1.5 * 1024 * 1024; // زیر ۱.۵ مگ نیازی به فشرده‌سازی نیست
+    const MAX_DIMENSION = 1920;   // Ø­Ø¯Ø§Ú©Ø«Ø± Ø¹Ø±Ø¶/Ø§Ø±ØªÙØ§Ø¹
+    const QUALITY = 0.85;         // Ú©ÛŒÙÛŒØª Ø¨Ø§Ù„Ø§
+    const SIZE_THRESHOLD = 1.5 * 1024 * 1024; // Ø²ÛŒØ± Û±.Ûµ Ù…Ú¯ Ù†ÛŒØ§Ø²ÛŒ Ø¨Ù‡ ÙØ´Ø±Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ Ù†ÛŒØ³Øª
 
-    // فایل‌های غیرتصویری یا PNG شفاف را دست‌نخورده برمی‌گردانیم تا کیفیت/شفافیت حفظ شود
+    // ÙØ§ÛŒÙ„â€ŒÙ‡Ø§ÛŒ ØºÛŒØ±ØªØµÙˆÛŒØ±ÛŒ ÛŒØ§ PNG Ø´ÙØ§Ù Ø±Ø§ Ø¯Ø³Øªâ€ŒÙ†Ø®ÙˆØ±Ø¯Ù‡ Ø¨Ø±Ù…ÛŒâ€ŒÚ¯Ø±Ø¯Ø§Ù†ÛŒÙ… ØªØ§ Ú©ÛŒÙÛŒØª/Ø´ÙØ§ÙÛŒØª Ø­ÙØ¸ Ø´ÙˆØ¯
     if (!file.type.startsWith("image/")) return file;
     if (file.size <= SIZE_THRESHOLD) return file;
 
@@ -2316,21 +2247,21 @@ async function compressFeaturedImage(file) {
         ctx.drawImage(img, 0, 0, width, height);
 
         const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", QUALITY));
-        if (!blob || blob.size >= file.size) return file; // اگر فشرده‌سازی سود نداشت، اصل را نگه‌دار
+        if (!blob || blob.size >= file.size) return file; // Ø§Ú¯Ø± ÙØ´Ø±Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ Ø³ÙˆØ¯ Ù†Ø¯Ø§Ø´ØªØŒ Ø§ØµÙ„ Ø±Ø§ Ù†Ú¯Ù‡â€ŒØ¯Ø§Ø±
 
         const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
         return new File([blob], newName, { type: "image/jpeg" });
     } catch (e) {
         console.warn("Image compression skipped:", e);
-        return file; // در صورت خطا، فایل اصلی ارسال می‌شود
+        return file; // Ø¯Ø± ØµÙˆØ±Øª Ø®Ø·Ø§ØŒ ÙØ§ÛŒÙ„ Ø§ØµÙ„ÛŒ Ø§Ø±Ø³Ø§Ù„ Ù…ÛŒâ€ŒØ´ÙˆØ¯
     }
 }
 
-/* ====== کنترل نوار پیشرفت آپلود (داخل توست) ====== */
+/* ====== Ú©Ù†ØªØ±Ù„ Ù†ÙˆØ§Ø± Ù¾ÛŒØ´Ø±ÙØª Ø¢Ù¾Ù„ÙˆØ¯ (Ø¯Ø§Ø®Ù„ ØªÙˆØ³Øª) ====== */
 function setUploadProgress(percent, label) {
     document.getElementById("uploadProgress").classList.add("active");
     document.getElementById("uploadBarFill").style.width = percent + "%";
-    // متنِ پیشرفت در همان توستِ «در حال انجام» نمایش داده می‌شود
+    // Ù…ØªÙ†Ù Ù¾ÛŒØ´Ø±ÙØª Ø¯Ø± Ù‡Ù…Ø§Ù† ØªÙˆØ³ØªÙ Â«Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†Ø¬Ø§Ù…Â» Ù†Ù…Ø§ÛŒØ´ Ø¯Ø§Ø¯Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯
     if (label) showStatus(label, "info");
 }
 function hideUploadProgress() {
@@ -2338,7 +2269,7 @@ function hideUploadProgress() {
     document.getElementById("uploadBarFill").style.width = "0%";
 }
 
-/* =================== اعتبارسنجی فیلدها (علامت‌گذاری بصری) =================== */
+/* =================== Ø§Ø¹ØªØ¨Ø§Ø±Ø³Ù†Ø¬ÛŒ ÙÛŒÙ„Ø¯Ù‡Ø§ (Ø¹Ù„Ø§Ù…Øªâ€ŒÚ¯Ø°Ø§Ø±ÛŒ Ø¨ØµØ±ÛŒ) =================== */
 function setFieldError(boxId, errId, on){
     const box = document.getElementById(boxId);
     const err = document.getElementById(errId);
@@ -2349,7 +2280,7 @@ function setFieldError(boxId, errId, on){
     if (box && box._mselSync) box._mselSync();
 }
 
-/* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
+/* Ø¨Ø§ Ø§ÙˆÙ„ÛŒÙ† ØªØ¹Ø§Ù…Ù„Ù Ú©Ø§Ø±Ø¨Ø±ØŒ Ø®Ø·Ø§ÛŒ Ù‡Ù…Ø§Ù† ÙÛŒÙ„Ø¯ Ù¾Ø§Ú© Ù…ÛŒâ€ŒØ´ÙˆØ¯ */
 document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
 document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
 
@@ -2389,7 +2320,7 @@ async function saveNews() {
     const content = getEditorHTML().trim();
 
     if (!validateNewsForm()) {
-        showStatus("لطفاً فیلدهای مشخص‌شده را پر کنید.", false);
+        showStatus("Ù„Ø·ÙØ§Ù‹ ÙÛŒÙ„Ø¯Ù‡Ø§ÛŒ Ù…Ø´Ø®Øµâ€ŒØ´Ø¯Ù‡ Ø±Ø§ Ù¾Ø± Ú©Ù†ÛŒØ¯.", false);
         return;
     }
 
@@ -2398,8 +2329,8 @@ async function saveNews() {
 
     try {
         saveBtn.disabled = true;
-        saveBtn.innerHTML = 'در حال ذخیره...';
-        showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
+        saveBtn.innerHTML = 'Ø¯Ø± Ø­Ø§Ù„ Ø°Ø®ÛŒØ±Ù‡...';
+        showStatus("â³ Ø¯Ø± Ø­Ø§Ù„ Ø¢Ù…Ø§Ø¯Ù‡â€ŒØ³Ø§Ø²ÛŒ Ø§Ø·Ù„Ø§Ø¹Ø§Øª...", true);
 
         const fd = new FormData();
         fd.append("id", "<?= $id ?>");
@@ -2420,7 +2351,7 @@ async function saveNews() {
 
         let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {
-            showStatus("🗜️ در حال بهینه‌سازی تصویر...", true);
+            showStatus("ðŸ—œï¸ Ø¯Ø± Ø­Ø§Ù„ Ø¨Ù‡ÛŒÙ†Ù‡â€ŒØ³Ø§Ø²ÛŒ ØªØµÙˆÛŒØ±...", true);
             featuredFile = await compressFeaturedImage(featuredFile);
             fd.append("featured_image", featuredFile);
         }
@@ -2431,32 +2362,32 @@ async function saveNews() {
             xhr.setRequestHeader("Accept", "application/json");
 
             if (featuredFile) {
-                showStatus("⏫ در حال آپلود به سرور...", true);
+                showStatus("â« Ø¯Ø± Ø­Ø§Ù„ Ø¢Ù¾Ù„ÙˆØ¯ Ø¨Ù‡ Ø³Ø±ÙˆØ±...", true);
                 xhr.upload.onprogress = (e) => {
                     if (e.lengthComputable) {
                         const pct = Math.round((e.loaded / e.total) * 100);
-                        setUploadProgress(pct, `در حال آپلود... ${pct}%`);
+                        setUploadProgress(pct, `Ø¯Ø± Ø­Ø§Ù„ Ø¢Ù¾Ù„ÙˆØ¯... ${pct}%`);
                     }
                 };
-                xhr.upload.onload = () => setUploadProgress(100, "آپلود کامل شد، در حال پردازش...");
+                xhr.upload.onload = () => setUploadProgress(100, "Ø¢Ù¾Ù„ÙˆØ¯ Ú©Ø§Ù…Ù„ Ø´Ø¯ØŒ Ø¯Ø± Ø­Ø§Ù„ Ù¾Ø±Ø¯Ø§Ø²Ø´...");
             }
 
             xhr.onload = () => {
                 let parsed;
                 try { parsed = JSON.parse(xhr.responseText); }
-                catch (_) { return reject(new Error("پاسخ نامعتبر از سرور دریافت شد.")); }
+                catch (_) { return reject(new Error("Ù¾Ø§Ø³Ø® Ù†Ø§Ù…Ø¹ØªØ¨Ø± Ø§Ø² Ø³Ø±ÙˆØ± Ø¯Ø±ÛŒØ§ÙØª Ø´Ø¯.")); }
                 if (xhr.status >= 200 && xhr.status < 300 && parsed.status === "success") {
                     resolve(parsed);
                 } else {
-                    reject(new Error(parsed.message || "خطایی در پردازش اطلاعات رخ داد."));
+                    reject(new Error(parsed.message || "Ø®Ø·Ø§ÛŒÛŒ Ø¯Ø± Ù¾Ø±Ø¯Ø§Ø²Ø´ Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ø±Ø® Ø¯Ø§Ø¯."));
                 }
             };
-            xhr.onerror = () => reject(new Error("ارتباط با سرور برقرار نشد."));
+            xhr.onerror = () => reject(new Error("Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ø³Ø±ÙˆØ± Ø¨Ø±Ù‚Ø±Ø§Ø± Ù†Ø´Ø¯."));
             xhr.send(fd);
         });
 
-        setUploadProgress(100, "✅ با موفقیت ذخیره شد");
-        showStatus(`✅ ${data.message} در حال انتقال...`, true);
+        setUploadProgress(100, "âœ… Ø¨Ø§ Ù…ÙˆÙÙ‚ÛŒØª Ø°Ø®ÛŒØ±Ù‡ Ø´Ø¯");
+        showStatus(`âœ… ${data.message} Ø¯Ø± Ø­Ø§Ù„ Ø§Ù†ØªÙ‚Ø§Ù„...`, true);
         setTimeout(() => {
             window.location.href = "news-list.php";
         }, 1000);
@@ -2464,7 +2395,7 @@ async function saveNews() {
     } catch (err) {
         console.error("Save Error:", err);
         hideUploadProgress();
-        showStatus("❌ خطایی رخ داد: " + err.message, false);
+        showStatus("âŒ Ø®Ø·Ø§ÛŒÛŒ Ø±Ø® Ø¯Ø§Ø¯: " + err.message, false);
     } finally {
         saveBtn.disabled = false;
         saveBtn.innerHTML = originalBtnText;
@@ -2487,7 +2418,7 @@ function openPreview(){
         : (dzImg.getAttribute("src") || "");
 
     const contentHasText = getEditorText().trim().length > 0;
-    const titleSafe = escapeHtml(title || "بدون عنوان");
+    const titleSafe = escapeHtml(title || "Ø¨Ø¯ÙˆÙ† Ø¹Ù†ÙˆØ§Ù†");
 
     const icAuthor = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
     const icDate = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
@@ -2497,7 +2428,7 @@ function openPreview(){
         heroHtml = `
             <div class="pv-hero">
                 ${category ? `<span class="pv-hero-cat">${escapeHtml(category)}</span>` : ""}
-                <img src="${featured}" alt="تصویر شاخص">
+                <img src="${featured}" alt="ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ">
                 <h1 class="pv-hero-title">${titleSafe}</h1>
             </div>`;
     } else {
@@ -2514,7 +2445,7 @@ function openPreview(){
             ${heroHtml}
             ${metaChips.length ? `<div class="pv-meta">${metaChips.join("")}</div>` : ""}
             <div class="pv-body">
-                ${contentHasText ? content : '<p class="pv-empty">هنوز متنی برای این خبر نوشته نشده است.</p>'}
+                ${contentHasText ? content : '<p class="pv-empty">Ù‡Ù†ÙˆØ² Ù…ØªÙ†ÛŒ Ø¨Ø±Ø§ÛŒ Ø§ÛŒÙ† Ø®Ø¨Ø± Ù†ÙˆØ´ØªÙ‡ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.</p>'}
             </div>
             <div id="seoScoreBox" class="pv-seo"></div>
         </div>
@@ -2536,7 +2467,7 @@ function closePreview(){
     }, 260);
 }
 
-/* محاسبه امتیاز سئو (مشترک بین ویجت و پیش‌نمایش) */
+/* Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ (Ù…Ø´ØªØ±Ú© Ø¨ÛŒÙ† ÙˆÛŒØ¬Øª Ùˆ Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´) */
 function computeSeoScore(){
     let score = 0;
     const title = document.getElementById("title").value.trim();
@@ -2555,7 +2486,7 @@ function computeSeoScore(){
     return score;
 }
 
-/* به‌روزرسانی ویجت حلقه‌ای امتیاز سئو در ستون کناری */
+/* Ø¨Ù‡â€ŒØ±ÙˆØ²Ø±Ø³Ø§Ù†ÛŒ ÙˆÛŒØ¬Øª Ø­Ù„Ù‚Ù‡â€ŒØ§ÛŒ Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ Ø¯Ø± Ø³ØªÙˆÙ† Ú©Ù†Ø§Ø±ÛŒ */
 function updateSeoWidget(){
     const score = computeSeoScore();
     const fill = document.getElementById("seoRingFill");
@@ -2563,9 +2494,9 @@ function updateSeoWidget(){
     const stateEl = document.getElementById("seoState");
     const tipEl = document.getElementById("seoTip");
 
-    let color = "#e74c3c", label = "ضعیف", tip = "عنوان و متن را کامل‌تر کنید.";
-    if (score >= 70) { color = "#00b894"; label = "خوب"; tip = "محتوای شما برای سئو مناسب است."; }
-    else if (score >= 40) { color = "#F79F1F"; label = "متوسط"; tip = "تصویر، کلمات کلیدی یا تیتر H2 اضافه کنید."; }
+    let color = "#e74c3c", label = "Ø¶Ø¹ÛŒÙ", tip = "Ø¹Ù†ÙˆØ§Ù† Ùˆ Ù…ØªÙ† Ø±Ø§ Ú©Ø§Ù…Ù„â€ŒØªØ± Ú©Ù†ÛŒØ¯.";
+    if (score >= 70) { color = "#00b894"; label = "Ø®ÙˆØ¨"; tip = "Ù…Ø­ØªÙˆØ§ÛŒ Ø´Ù…Ø§ Ø¨Ø±Ø§ÛŒ Ø³Ø¦Ùˆ Ù…Ù†Ø§Ø³Ø¨ Ø§Ø³Øª."; }
+    else if (score >= 40) { color = "#F79F1F"; label = "Ù…ØªÙˆØ³Ø·"; tip = "ØªØµÙˆÛŒØ±ØŒ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ ÛŒØ§ ØªÛŒØªØ± H2 Ø§Ø¶Ø§ÙÙ‡ Ú©Ù†ÛŒØ¯."; }
 
     if (fill) {
         fill.setAttribute("stroke-dasharray", score + ", 100");
@@ -2579,7 +2510,7 @@ function updateSeoWidget(){
     if (tipEl) tipEl.textContent = tip;
 }
 
-/* به‌روزرسانی زنده ویجت با تغییر ورودی‌ها */
+/* Ø¨Ù‡â€ŒØ±ÙˆØ²Ø±Ø³Ø§Ù†ÛŒ Ø²Ù†Ø¯Ù‡ ÙˆÛŒØ¬Øª Ø¨Ø§ ØªØºÛŒÛŒØ± ÙˆØ±ÙˆØ¯ÛŒâ€ŒÙ‡Ø§ */
 ["title","keywords"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("input", updateSeoWidget);
@@ -2590,9 +2521,9 @@ function calculateSEO(){
     const score = computeSeoScore();
     const contentHtml = getEditorHTML();
 
-    let color = "#e74c3c", label = "ضعیف";
-    if(score >= 70) { color = "#00b894"; label = "خوب"; }
-    else if(score >= 40) { color = "#F79F1F"; label = "متوسط"; }
+    let color = "#e74c3c", label = "Ø¶Ø¹ÛŒÙ";
+    if(score >= 70) { color = "#00b894"; label = "Ø®ÙˆØ¨"; }
+    else if(score >= 40) { color = "#F79F1F"; label = "Ù…ØªÙˆØ³Ø·"; }
 
     const title = document.getElementById("title").value.trim();
     const wordCount = getEditorText().trim() ? getEditorText().trim().split(/\s+/).length : 0;
@@ -2601,11 +2532,11 @@ function calculateSEO(){
     const hasH2 = contentHtml.includes("<h2");
 
     const checks = [
-        { ok: title.length > 5,   text: "عنوان مناسب" },
-        { ok: wordCount > 300,    text: "طول متن کافی" },
-        { ok: !!hasImage,         text: "تصویر شاخص یا درون‌متنی" },
-        { ok: keywords.length > 3,text: "کلمات کلیدی" },
-        { ok: hasH2,              text: "تیتر H2 در متن" },
+        { ok: title.length > 5,   text: "Ø¹Ù†ÙˆØ§Ù† Ù…Ù†Ø§Ø³Ø¨" },
+        { ok: wordCount > 300,    text: "Ø·ÙˆÙ„ Ù…ØªÙ† Ú©Ø§ÙÛŒ" },
+        { ok: !!hasImage,         text: "ØªØµÙˆÛŒØ± Ø´Ø§Ø®Øµ ÛŒØ§ Ø¯Ø±ÙˆÙ†â€ŒÙ…ØªÙ†ÛŒ" },
+        { ok: keywords.length > 3,text: "Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ" },
+        { ok: hasH2,              text: "ØªÛŒØªØ± H2 Ø¯Ø± Ù…ØªÙ†" },
     ];
 
     const icOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -2621,7 +2552,7 @@ function calculateSEO(){
             <div class="pv-seo-head">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    امتیاز سئو
+                    Ø§Ù…ØªÛŒØ§Ø² Ø³Ø¦Ùˆ
                 </h3>
                 <span class="pv-seo-badge" style="background:${color}">${label}</span>
             </div>
@@ -2629,23 +2560,23 @@ function calculateSEO(){
                 <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
             </div>
             <div class="pv-seo-foot">
-                <span>امتیاز کلی</span>
-                <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
+                <span>Ø§Ù…ØªÛŒØ§Ø² Ú©Ù„ÛŒ</span>
+                <span><b>${toFaDigits(score)}</b> Ø§Ø² ${toFaDigits(100)}</span>
             </div>
             <div class="pv-checks">${checksHtml}</div>
         `;
     }
 }
 
-/* =================== سیستم هوشمند پیشنهاد برچسب و کلمات کلیدی =================== */
+/* =================== Ø³ÛŒØ³ØªÙ… Ù‡ÙˆØ´Ù…Ù†Ø¯ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ø¨Ø±Ú†Ø³Ø¨ Ùˆ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ =================== */
 const PERSIAN_STOPWORDS = new Set([
-    "از", "به", "با", "که", "در", "را", "و", "این", "آن", "برای", "ما", "شما", "آنها", "او", "من", "تو",
-    "است", "هست", "بود", "شد", "یک", "دو", "سه", "کار", "خود", "هم", "روی", "تا", "کند", "کنند", "کرد",
-    "کردن", "بودن", "شدن", "داشت", "داشتن", "دهد", "دهند", "پس", "اما", "اگر", "حتی", "درباره", "تحت",
-    "مورد", "دیگر", "بسیار", "خیلی", "باید", "شاید", "تواند", "توانند", "همین", "همان", "پیش", "بعد",
-    "قبل", "طریق", "مختلف", "بخش", "بخش‌های", "مراحل", "تعداد", "یکی", "برخی", "تمام", "همه", "هیچ",
-    "بدون", "بین", "زیر", "های", "ها", "می", "میکند", "میکنند", "دارد", "دارند", "باشند", "باشد",
-    "شود", "شوند", "شده", "شده است", "شده اند", "هایی", "طور", "باره", "ثانیه", "دقیقه", "ساعت", "مکسا"
+    "Ø§Ø²", "Ø¨Ù‡", "Ø¨Ø§", "Ú©Ù‡", "Ø¯Ø±", "Ø±Ø§", "Ùˆ", "Ø§ÛŒÙ†", "Ø¢Ù†", "Ø¨Ø±Ø§ÛŒ", "Ù…Ø§", "Ø´Ù…Ø§", "Ø¢Ù†Ù‡Ø§", "Ø§Ùˆ", "Ù…Ù†", "ØªÙˆ",
+    "Ø§Ø³Øª", "Ù‡Ø³Øª", "Ø¨ÙˆØ¯", "Ø´Ø¯", "ÛŒÚ©", "Ø¯Ùˆ", "Ø³Ù‡", "Ú©Ø§Ø±", "Ø®ÙˆØ¯", "Ù‡Ù…", "Ø±ÙˆÛŒ", "ØªØ§", "Ú©Ù†Ø¯", "Ú©Ù†Ù†Ø¯", "Ú©Ø±Ø¯",
+    "Ú©Ø±Ø¯Ù†", "Ø¨ÙˆØ¯Ù†", "Ø´Ø¯Ù†", "Ø¯Ø§Ø´Øª", "Ø¯Ø§Ø´ØªÙ†", "Ø¯Ù‡Ø¯", "Ø¯Ù‡Ù†Ø¯", "Ù¾Ø³", "Ø§Ù…Ø§", "Ø§Ú¯Ø±", "Ø­ØªÛŒ", "Ø¯Ø±Ø¨Ø§Ø±Ù‡", "ØªØ­Øª",
+    "Ù…ÙˆØ±Ø¯", "Ø¯ÛŒÚ¯Ø±", "Ø¨Ø³ÛŒØ§Ø±", "Ø®ÛŒÙ„ÛŒ", "Ø¨Ø§ÛŒØ¯", "Ø´Ø§ÛŒØ¯", "ØªÙˆØ§Ù†Ø¯", "ØªÙˆØ§Ù†Ù†Ø¯", "Ù‡Ù…ÛŒÙ†", "Ù‡Ù…Ø§Ù†", "Ù¾ÛŒØ´", "Ø¨Ø¹Ø¯",
+    "Ù‚Ø¨Ù„", "Ø·Ø±ÛŒÙ‚", "Ù…Ø®ØªÙ„Ù", "Ø¨Ø®Ø´", "Ø¨Ø®Ø´â€ŒÙ‡Ø§ÛŒ", "Ù…Ø±Ø§Ø­Ù„", "ØªØ¹Ø¯Ø§Ø¯", "ÛŒÚ©ÛŒ", "Ø¨Ø±Ø®ÛŒ", "ØªÙ…Ø§Ù…", "Ù‡Ù…Ù‡", "Ù‡ÛŒÚ†",
+    "Ø¨Ø¯ÙˆÙ†", "Ø¨ÛŒÙ†", "Ø²ÛŒØ±", "Ù‡Ø§ÛŒ", "Ù‡Ø§", "Ù…ÛŒ", "Ù…ÛŒÚ©Ù†Ø¯", "Ù…ÛŒÚ©Ù†Ù†Ø¯", "Ø¯Ø§Ø±Ø¯", "Ø¯Ø§Ø±Ù†Ø¯", "Ø¨Ø§Ø´Ù†Ø¯", "Ø¨Ø§Ø´Ø¯",
+    "Ø´ÙˆØ¯", "Ø´ÙˆÙ†Ø¯", "Ø´Ø¯Ù‡", "Ø´Ø¯Ù‡ Ø§Ø³Øª", "Ø´Ø¯Ù‡ Ø§Ù†Ø¯", "Ù‡Ø§ÛŒÛŒ", "Ø·ÙˆØ±", "Ø¨Ø§Ø±Ù‡", "Ø«Ø§Ù†ÛŒÙ‡", "Ø¯Ù‚ÛŒÙ‚Ù‡", "Ø³Ø§Ø¹Øª", "Ù…Ú©Ø³Ø§"
 ]);
 
 const ENGLISH_STOPWORDS = new Set([
@@ -2659,40 +2590,40 @@ function generateSuggestions() {
     const subtitle = subtitleEl ? subtitleEl.value.trim() : "";
     const contentText = getEditorText();
     
-    // ترکیب متون برای استخراج کلمات
+    // ØªØ±Ú©ÛŒØ¨ Ù…ØªÙˆÙ† Ø¨Ø±Ø§ÛŒ Ø§Ø³ØªØ®Ø±Ø§Ø¬ Ú©Ù„Ù…Ø§Øª
     const combinedText = (title + " " + subtitle + " " + contentText)
-        .replace(/[\u200c-\u200f]/g, " ") // جایگزینی نیم‌فاصله‌ها
-        .replace(/[0-9۰-۹]/g, "") // حذف اعداد
-        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
+        .replace(/[\u200c-\u200f]/g, " ") // Ø¬Ø§ÛŒÚ¯Ø²ÛŒÙ†ÛŒ Ù†ÛŒÙ…â€ŒÙØ§ØµÙ„Ù‡â€ŒÙ‡Ø§
+        .replace(/[0-9Û°-Û¹]/g, "") // Ø­Ø°Ù Ø§Ø¹Ø¯Ø§Ø¯
+        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // Ù†Ú¯Ù‡ Ø¯Ø§Ø´ØªÙ† Ø­Ø±ÙˆÙ Ø§Ù„ÙØ¨Ø§ Ùˆ Ø­Ø°Ù Ø¹Ù„Ø§Ø¦Ù… Ù†Ú¯Ø§Ø±Ø´ÛŒ
         .toLowerCase();
     
-    // تبدیل به کلمات تکی و فیلتر کردن
+    // ØªØ¨Ø¯ÛŒÙ„ Ø¨Ù‡ Ú©Ù„Ù…Ø§Øª ØªÚ©ÛŒ Ùˆ ÙÛŒÙ„ØªØ± Ú©Ø±Ø¯Ù†
     const words = combinedText.split(/\s+/).map(w => {
         w = w.trim();
-        w = w.replace(/^-+|-+$/g, ""); // حذف خط تیره اول و آخر کلمه
-        w = w.replace(/ی/g, "ی").replace(/ک/g, "ک"); // نرمال‌سازی عمومی
+        w = w.replace(/^-+|-+$/g, ""); // Ø­Ø°Ù Ø®Ø· ØªÛŒØ±Ù‡ Ø§ÙˆÙ„ Ùˆ Ø¢Ø®Ø± Ú©Ù„Ù…Ù‡
+        w = w.replace(/ÛŒ/g, "ÛŒ").replace(/Ú©/g, "Ú©"); // Ù†Ø±Ù…Ø§Ù„â€ŒØ³Ø§Ø²ÛŒ Ø¹Ù…ÙˆÙ…ÛŒ
         return w;
     }).filter(w => {
         return w.length >= 3 && !PERSIAN_STOPWORDS.has(w) && !ENGLISH_STOPWORDS.has(w);
     });
     
-    // محاسبه فراوانی تکرار کلمات
+    // Ù…Ø­Ø§Ø³Ø¨Ù‡ ÙØ±Ø§ÙˆØ§Ù†ÛŒ ØªÚ©Ø±Ø§Ø± Ú©Ù„Ù…Ø§Øª
     const freq = {};
     words.forEach(w => {
         freq[w] = (freq[w] || 0) + 1;
     });
     
-    // مرتب‌سازی بر اساس تعداد تکرار
+    // Ù…Ø±ØªØ¨â€ŒØ³Ø§Ø²ÛŒ Ø¨Ø± Ø§Ø³Ø§Ø³ ØªØ¹Ø¯Ø§Ø¯ ØªÚ©Ø±Ø§Ø±
     const sortedWords = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
     
-    // استخراج ۸ کلمه اول با بیشترین تکرار
+    // Ø§Ø³ØªØ®Ø±Ø§Ø¬ Û¸ Ú©Ù„Ù…Ù‡ Ø§ÙˆÙ„ Ø¨Ø§ Ø¨ÛŒØ´ØªØ±ÛŒÙ† ØªÚ©Ø±Ø§Ø±
     const topSuggestions = sortedWords.slice(0, 8);
     
     const container = document.getElementById("suggested-chips-list");
     container.innerHTML = "";
     
     if (topSuggestions.length === 0) {
-        container.innerHTML = `<span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">کلمه کلیدی یافت نشد. متن خبر را بنویسید.</span>`;
+        container.innerHTML = `<span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">Ú©Ù„Ù…Ù‡ Ú©Ù„ÛŒØ¯ÛŒ ÛŒØ§ÙØª Ù†Ø´Ø¯. Ù…ØªÙ† Ø®Ø¨Ø± Ø±Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯.</span>`;
         return;
     }
     
@@ -2706,32 +2637,32 @@ function generateSuggestions() {
 }
 
 function addSuggestedWord(btnEl, word) {
-    // ۱. افزودن به کلمات کلیدی (Keywords)
+    // Û±. Ø§ÙØ²ÙˆØ¯Ù† Ø¨Ù‡ Ú©Ù„Ù…Ø§Øª Ú©Ù„ÛŒØ¯ÛŒ (Keywords)
     const keywordsInput = document.getElementById("keywords");
-    let keywords = keywordsInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+    let keywords = keywordsInput.value.split("ØŒ").join(",").split(",").map(k => k.trim()).filter(Boolean);
     if (!keywords.includes(word)) {
         keywords.push(word);
-        keywordsInput.value = keywords.join("، ");
+        keywordsInput.value = keywords.join("ØŒ ");
     }
     
-    // ۲. افزودن به تگ‌های سئو (Tags)
+    // Û². Ø§ÙØ²ÙˆØ¯Ù† Ø¨Ù‡ ØªÚ¯â€ŒÙ‡Ø§ÛŒ Ø³Ø¦Ùˆ (Tags)
     const tagsInput = document.getElementById("tags");
-    let tags = tagsInput.value.split("،").join(",").split(",").map(t => t.trim()).filter(Boolean);
+    let tags = tagsInput.value.split("ØŒ").join(",").split(",").map(t => t.trim()).filter(Boolean);
     if (!tags.includes(word)) {
         tags.push(word);
-        tagsInput.value = tags.join("، ");
+        tagsInput.value = tags.join("ØŒ ");
         if (typeof renderTagChips === "function") {
             renderTagChips();
         }
     }
     
-    // ۳. انطباق و انتخاب خودکار برچسب‌های موضوعی در صورت همخوانی با کلمه کلیدی
+    // Û³. Ø§Ù†Ø·Ø¨Ø§Ù‚ Ùˆ Ø§Ù†ØªØ®Ø§Ø¨ Ø®ÙˆØ¯Ú©Ø§Ø± Ø¨Ø±Ú†Ø³Ø¨â€ŒÙ‡Ø§ÛŒ Ù…ÙˆØ¶ÙˆØ¹ÛŒ Ø¯Ø± ØµÙˆØ±Øª Ù‡Ù…Ø®ÙˆØ§Ù†ÛŒ Ø¨Ø§ Ú©Ù„Ù…Ù‡ Ú©Ù„ÛŒØ¯ÛŒ
     const checkboxes = document.querySelectorAll('input[name="tag_ids[]"]');
     checkboxes.forEach(cb => {
         const labelSpan = cb.nextElementSibling;
         if (labelSpan) {
             const tagName = labelSpan.textContent.trim().toLowerCase();
-            // انطباق کامل یا انطباق جزئی
+            // Ø§Ù†Ø·Ø¨Ø§Ù‚ Ú©Ø§Ù…Ù„ ÛŒØ§ Ø§Ù†Ø·Ø¨Ø§Ù‚ Ø¬Ø²Ø¦ÛŒ
             if (tagName === word.toLowerCase() || word.toLowerCase().includes(tagName) || tagName.includes(word.toLowerCase())) {
                 cb.checked = true;
                 cb.dispatchEvent(new Event("change", { bubbles: true }));
@@ -2739,72 +2670,9 @@ function addSuggestedWord(btnEl, word) {
         }
     });
     
-    // انیمیشن کوچک حذف چیپ پیشنهادی پس از کلیک و اضافه شدن
+    // Ø§Ù†ÛŒÙ…ÛŒØ´Ù† Ú©ÙˆÚ†Ú© Ø­Ø°Ù Ú†ÛŒÙ¾ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ Ù¾Ø³ Ø§Ø² Ú©Ù„ÛŒÚ© Ùˆ Ø§Ø¶Ø§ÙÙ‡ Ø´Ø¯Ù†
     btnEl.style.transform = "scale(0.8)";
     btnEl.style.opacity = "0";
     setTimeout(() => btnEl.remove(), 200);
-    renderKeywordsChips();
 }
 
-/* =================== مدیریت کلمات کلیدی (Chips) =================== */
-function renderKeywordsChips() {
-    const hiddenInput = document.getElementById("keywords");
-    const container = document.getElementById("keywordsChips");
-    if (!hiddenInput || !container) return;
-    
-    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-    container.innerHTML = "";
-    kws.forEach((kw, index) => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.style.cssText = "background:var(--surface-2); border:1px solid var(--border-color); color:var(--text-color); font-size:12.5px; padding:4px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:6px;";
-        chip.innerHTML = `${escapeHtml(kw)} <svg onclick="removeKeyword(${index})" style="cursor:pointer; color:var(--muted-color);" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-        container.appendChild(chip);
-    });
-    hiddenInput.value = kws.join("،");
-    updateSeoWidget();
-}
-
-function removeKeyword(index) {
-    const hiddenInput = document.getElementById("keywords");
-    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-    kws.splice(index, 1);
-    hiddenInput.value = kws.join("،");
-    renderKeywordsChips();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const kwVisual = document.getElementById("keywords_visual");
-    if (kwVisual) {
-        kwVisual.addEventListener("keydown", function(e) {
-            if (e.key === "Enter" || e.key === "," || e.key === "،") {
-                e.preventDefault();
-                const val = this.value.trim();
-                if (val) {
-                    const hiddenInput = document.getElementById("keywords");
-                    let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-                    if (!kws.includes(val)) kws.push(val);
-                    hiddenInput.value = kws.join("،");
-                    this.value = "";
-                    renderKeywordsChips();
-                }
-            }
-        });
-        kwVisual.addEventListener("blur", function() {
-            const val = this.value.trim();
-            if (val) {
-                const hiddenInput = document.getElementById("keywords");
-                let kws = hiddenInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-                if (!kws.includes(val)) kws.push(val);
-                hiddenInput.value = kws.join("،");
-                this.value = "";
-                renderKeywordsChips();
-            }
-        });
-    }
-    renderKeywordsChips();
-});
-</script>
-
-</body>
-</html>
