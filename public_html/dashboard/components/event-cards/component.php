@@ -247,13 +247,13 @@
                     <div class="creative-card">
                         <img src="{{image1}}" alt="بنر تبریک">
                     </div>
-                    <a href="/stand-order.php?type=congrats-1" class="creative-action-btn">سفارش استند</a>
+                    <a href="/stand-order.php?type=congrats-1&img={{image1}}" class="creative-action-btn">سفارش استند</a>
                 </div>
                 <div class="creative-card-item">
                     <div class="creative-card">
                         <img src="{{image2}}" alt="بنر تبریک">
                     </div>
-                    <a href="/stand-order.php?type=congrats-2" class="creative-action-btn">سفارش استند</a>
+                    <a href="/stand-order.php?type=congrats-2&img={{image2}}" class="creative-action-btn">سفارش استند</a>
                 </div>
             </div>
         </div>
@@ -271,13 +271,13 @@
                     <div class="creative-card">
                         <img src="{{image3}}" alt="بنر تسلیت">
                     </div>
-                    <a href="/stand-order.php?type=condolence-1" class="creative-action-btn">سفارش استند</a>
+                    <a href="/stand-order.php?type=condolence-1&img={{image3}}" class="creative-action-btn">سفارش استند</a>
                 </div>
                 <div class="creative-card-item">
                     <div class="creative-card">
                         <img src="{{image4}}" alt="بنر تسلیت">
                     </div>
-                    <a href="/stand-order.php?type=condolence-2" class="creative-action-btn">سفارش استند</a>
+                    <a href="/stand-order.php?type=condolence-2&img={{image4}}" class="creative-action-btn">سفارش استند</a>
                 </div>
             </div>
         </div>
