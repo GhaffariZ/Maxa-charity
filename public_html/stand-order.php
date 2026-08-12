@@ -43,13 +43,21 @@ $baseImg = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false
     ? $_GET['img'] 
     : ($selectedStand['image'] ?? '/uploads/stand/happy/1.jpg');
 
-$webpPath = str_replace('.jpg', '_cutout.webp', $baseImg);
-$pngPath = str_replace('.jpg', '_cutout.png', $baseImg);
-
-if (file_exists($_SERVER['DOCUMENT_ROOT'] . $webpPath)) {
-    $imgSrc = $webpPath;
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $pngPath)) {
-    $imgSrc = $pngPath;
+$ext = pathinfo($baseImg, PATHINFO_EXTENSION);
+if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
+    $basePathWithoutExt = substr($baseImg, 0, -(strlen($ext) + 1));
+    // If original ends with _cutout, strip it to prevent _cutout_cutout
+    if (str_ends_with($basePathWithoutExt, '_cutout')) {
+        $basePathWithoutExt = substr($basePathWithoutExt, 0, -7);
+    }
+    
+    $pngPath = $basePathWithoutExt . '_cutout.png';
+    
+    if (file_exists($_SERVER['DOCUMENT_ROOT'] . $pngPath)) {
+        $imgSrc = $pngPath;
+    } else {
+        $imgSrc = $baseImg;
+    }
 } else {
     $imgSrc = $baseImg;
 }
