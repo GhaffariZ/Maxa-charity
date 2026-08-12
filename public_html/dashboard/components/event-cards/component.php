@@ -145,6 +145,7 @@
     inset: 0;
     z-index: 1;
     transition: transform 0.4s ease;
+    mix-blend-mode: multiply;
 }
 
 /* دکمه اکشن مینی‌مال پایدار با استایل لوکس */

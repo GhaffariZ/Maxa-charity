@@ -173,7 +173,8 @@ if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
     position: relative;
     z-index: 2;
     transform: translateZ(2px);
-    background: transparent; /* Transparent for cutout */
+    background: #fafbfc; /* Required for mix-blend-mode to work inside 3D context */
+    border-radius: 8px;
 }
 .so-front img {
     max-width: 100%;
@@ -181,7 +182,8 @@ if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
     width: auto;
     display: block;
     margin: 0 auto;
-    /* The image itself is a transparent PNG */
+    /* Professional shadow blending */
+    mix-blend-mode: multiply;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
 }
 .so-glass {
