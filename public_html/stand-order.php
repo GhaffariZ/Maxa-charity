@@ -8,25 +8,25 @@ $type = $_GET['type'] ?? 'congrats-1';
 $standData = [
     'congrats-1' => [
         'title' => 'استند تبریک و شادباش - طرح اول',
-        'image' => '/uploads/stand/happy/1.jpg',
+        'image' => '/dashboard/components/event-cards/images/1.png',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'با سفارش این استند، ضمن تبریک به عزیزانتان، حامی بیماران مبتلا به سرطان باشید.'
     ],
     'congrats-2' => [
         'title' => 'استند تبریک و شادباش - طرح دوم',
-        'image' => '/uploads/stand/happy/2.jpg',
+        'image' => '/dashboard/components/event-cards/images/2.png',
         'price' => '۳۵۰,۰۰۰ تومان',
         'desc' => 'شادی‌های خود را با مهربانی پیوند بزنید.'
     ],
     'condolence-1' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح اول',
-        'image' => '/uploads/stand/sad/1.jpg',
+        'image' => '/dashboard/components/event-cards/images/3.png',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'تسلی بخش دل بازماندگان و امیدی برای بیماران سرطانی.'
     ],
     'condolence-2' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح دوم',
-        'image' => '/uploads/stand/sad/2.jpg',
+        'image' => '/dashboard/components/event-cards/images/4.png',
         'price' => '۴۰۰,۰۰۰ تومان',
         'desc' => 'با اهدای هزینه تاج گل به خیریه، نامی ماندگار از عزیز از دست رفته به یادگار بگذارید.'
     ],
@@ -41,7 +41,7 @@ $isCongrats = (strpos($type, 'congrats') !== false);
 
 $baseImg = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false 
     ? $_GET['img'] 
-    : ($selectedStand['image'] ?? '/uploads/stand/happy/1.jpg');
+    : ($selectedStand['image'] ?? '/dashboard/components/event-cards/images/1.png');
 
 $ext = pathinfo($baseImg, PATHINFO_EXTENSION);
 if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
@@ -182,8 +182,6 @@ if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
     width: auto;
     display: block;
     margin: 0 auto;
-    /* Professional shadow blending */
-    mix-blend-mode: multiply;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
 }
 .so-glass {
