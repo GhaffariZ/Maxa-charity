@@ -173,7 +173,7 @@ if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
     position: relative;
     z-index: 2;
     transform: translateZ(2px);
-    background: #fafbfc; /* Required for mix-blend-mode to work inside 3D context */
+    background: transparent;
     border-radius: 8px;
 }
 .so-front img {
