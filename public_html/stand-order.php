@@ -8,25 +8,25 @@ $type = $_GET['type'] ?? 'congrats-1';
 $standData = [
     'congrats-1' => [
         'title' => 'استند تبریک و شادباش - طرح اول',
-        'image' => '/dashboard/components/event-cards/images/1.png',
+        'image' => '/dashboard/components/event-cards/images/1-removebg-preview.png',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'با سفارش این استند، ضمن تبریک به عزیزانتان، حامی بیماران مبتلا به سرطان باشید.'
     ],
     'congrats-2' => [
         'title' => 'استند تبریک و شادباش - طرح دوم',
-        'image' => '/dashboard/components/event-cards/images/2.png',
+        'image' => '/dashboard/components/event-cards/images/2-removebg-preview.png',
         'price' => '۳۵۰,۰۰۰ تومان',
         'desc' => 'شادی‌های خود را با مهربانی پیوند بزنید.'
     ],
     'condolence-1' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح اول',
-        'image' => '/dashboard/components/event-cards/images/3.png',
+        'image' => '/dashboard/components/event-cards/images/3-removebg-preview.png',
         'price' => '۳۰۰,۰۰۰ تومان',
         'desc' => 'تسلی بخش دل بازماندگان و امیدی برای بیماران سرطانی.'
     ],
     'condolence-2' => [
         'title' => 'استند تسلیت و ابراز همدردی - طرح دوم',
-        'image' => '/dashboard/components/event-cards/images/4.png',
+        'image' => '/dashboard/components/event-cards/images/4-removebg-preview.png',
         'price' => '۴۰۰,۰۰۰ تومان',
         'desc' => 'با اهدای هزینه تاج گل به خیریه، نامی ماندگار از عزیز از دست رفته به یادگار بگذارید.'
     ],
@@ -41,20 +41,13 @@ $isCongrats = (strpos($type, 'congrats') !== false);
 
 $baseImg = !empty($_GET['img']) && strpos($_GET['img'], '{{') === false 
     ? $_GET['img'] 
-    : ($selectedStand['image'] ?? '/dashboard/components/event-cards/images/1.png');
+    : ($selectedStand['image'] ?? '/dashboard/components/event-cards/images/1-removebg-preview.png');
 
-$ext = pathinfo($baseImg, PATHINFO_EXTENSION);
-if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
-    $basePathWithoutExt = substr($baseImg, 0, -(strlen($ext) + 1));
-    // If original ends with _cutout, strip it to prevent _cutout_cutout
-    if (str_ends_with($basePathWithoutExt, '_cutout')) {
-        $basePathWithoutExt = substr($basePathWithoutExt, 0, -7);
-    }
-    
-    $pngPath = $basePathWithoutExt . '_cutout.png';
-    
-    if (file_exists($_SERVER['DOCUMENT_ROOT'] . $pngPath)) {
-        $imgSrc = $pngPath;
+// Force using the specific removebg-preview files uploaded by the user
+if (preg_match('/(\d+)/', $baseImg, $matches)) {
+    $num = $matches[1];
+    if (in_array($num, ['1', '2', '3', '4'])) {
+        $imgSrc = "/dashboard/components/event-cards/images/{$num}-removebg-preview.png";
     } else {
         $imgSrc = $baseImg;
     }
