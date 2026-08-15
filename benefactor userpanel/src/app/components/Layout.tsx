@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   Bell,
-  LogOut
+  LogOut,
+  Package
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -21,6 +22,7 @@ const navItems = [
   { id: "dashboard", label: "داشبورد", icon: LayoutDashboard, path: "/" },
   { id: "payments", label: "پرداخت آنلاین", icon: CreditCard, path: "/payments" },
   { id: "history", label: "تاریخچه پرداخت", icon: History, path: "/history" },
+  { id: "orders", label: "سفارشات اخیر", icon: Package, path: "/orders" },
   { id: "campaigns", label: "کمپین‌ها", icon: Megaphone, path: "/campaigns" },
   { id: "impact", label: "اثرات کمک", icon: HeartHandshake, path: "/impact" },
   { id: "profile", label: "پروفایل", icon: UserCircle, path: "/profile" },

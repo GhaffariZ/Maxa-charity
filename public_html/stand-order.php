@@ -446,10 +446,9 @@ if (preg_match('/(\d+)/', $baseImg, $matches)) {
 
                 <button type="submit" class="so-submit">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
                     </svg>
-                    افزودن به سبد خرید
+                    نهایی کردن سفارش
                 </button>
                 <p class="so-note">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -525,20 +524,64 @@ $(document).ready(function() {
     });
 });
 
-document.getElementById('standOrderForm').addEventListener('submit', function(e) {
+// On page load, auto-fill from localStorage if present
+const savedOrder = localStorage.getItem('pendingStandOrder');
+if (savedOrder) {
+    try {
+        const data = JSON.parse(savedOrder);
+        for (const [key, value] of Object.entries(data)) {
+            const field = document.querySelector(`[name="${key}"]`);
+            if (field) field.value = value;
+        }
+    } catch(e) {}
+}
+
+document.getElementById('standOrderForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = this.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
     btn.innerHTML = 'در حال پردازش...';
     btn.disabled = true;
 
-    // Simulate an API call or adding to cart
-    setTimeout(() => {
-        alert('استند با موفقیت به سبد خرید شما افزوده شد! در حال انتقال...');
+    const fd = new FormData(this);
+    const data = Object.fromEntries(fd.entries());
+    data.image = document.getElementById('standImageFront').src.split('?')[0]; // strip ?v= param
+    data.unit_price = <?= (int)str_replace(['،', ' تومان'], '', $selectedStand['price']) ?>;
+    data.quantity = 1;
+
+    try {
+        // Check Auth
+        const authRes = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
+        if (!authRes.ok) {
+            // Not authenticated -> Save state & Redirect
+            localStorage.setItem('pendingStandOrder', JSON.stringify(data));
+            const returnUrl = encodeURIComponent(window.location.href);
+            window.location.href = '/benefactor-dashboard/?returnUrl=' + returnUrl;
+            return;
+        }
+
+        // Authenticated -> Submit Order
+        const submitRes = await fetch('/api/orders', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await submitRes.json();
+        if (submitRes.ok) {
+            localStorage.removeItem('pendingStandOrder');
+            alert('سفارش شما با موفقیت ثبت شد! کد رهگیری: ' + result.tracking_code);
+            this.reset();
+        } else {
+            alert(result.error?.message || 'خطا در ثبت سفارش');
+        }
+    } catch (err) {
+        alert('خطای ارتباط با سرور');
+    } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
-        // window.location.href = '/cart.php'; 
-    }, 1500);
+    }
 });
 
 // 360 Image Rotator

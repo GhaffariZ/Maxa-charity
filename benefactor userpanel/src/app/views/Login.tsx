@@ -56,7 +56,11 @@ function SignInPanel() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || "/";
+  
+  // Parse returnUrl from query params if available
+  const queryParams = new URLSearchParams(location.search);
+  const returnUrl = queryParams.get("returnUrl");
+  const from = returnUrl || (location.state as { from?: { pathname?: string } })?.from?.pathname || "/";
 
   const [email, setEmail] = React.useState("");
   const [pw, setPw] = React.useState("");
@@ -79,7 +83,11 @@ function SignInPanel() {
           localStorage.removeItem('redirect_to_patientintake');
           window.location.href = redirect;
         } else {
-          navigate(from, { replace: true });
+          if (from.startsWith("http") || from.startsWith("/stand-order.php")) {
+            window.location.href = from;
+          } else {
+            navigate(from, { replace: true });
+          }
         }
       }, 600);
     } catch (e) {

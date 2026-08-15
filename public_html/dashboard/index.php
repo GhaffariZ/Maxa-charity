@@ -1095,6 +1095,8 @@ body.spa-active .content{display:none}
   people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
   // اثرات کمک (Impact of Donations)
   people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
+  // سفارشات
+  people.push({single:true,label:'سفارشات',icon:'cart',href:'orders.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---

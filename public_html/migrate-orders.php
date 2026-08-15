@@ -1,0 +1,1 @@
+<?php require __DIR__.'/core/db.php'; $pdo = getPDO(); try { $pdo->exec('ALTER TABLE orders ADD COLUMN user_id INT(11) NULL AFTER id'); } catch (Exception $e) {} try { $pdo->exec('ALTER TABLE orders ADD COLUMN tracking_code VARCHAR(50) NULL AFTER user_id'); } catch (Exception $e) {} echo 'Done';

@@ -6,6 +6,7 @@ import { Campaigns } from "./views/Campaigns";
 import { Profile } from "./views/Profile";
 import { Impact } from "./views/Impact";
 import { History } from "./views/History";
+import { Orders } from "./views/Orders";
 import { Login } from "./views/Login";
 import { Forgot } from "./views/Forgot";
 import { Reset } from "./views/Reset";
@@ -36,6 +37,7 @@ export const router = createBrowserRouter(
         { path: "profile", Component: Profile },
         { path: "impact", Component: Impact },
         { path: "history", Component: History },
+        { path: "orders", Component: Orders },
       ],
     },
   ],

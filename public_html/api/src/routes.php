@@ -17,6 +17,7 @@ use Maksa\Controllers\EngagementController;
 use Maksa\Controllers\HealthController;
 use Maksa\Controllers\NotificationController;
 use Maksa\Controllers\UserController;
+use Maksa\Controllers\OrderController;
 use Maksa\Core\Router;
 
 return static function (Router $r): void {
@@ -72,4 +73,8 @@ return static function (Router $r): void {
 
     // ---- Engagement ---------------------------------------------------------
     $r->post('/tax-certificate',          [EngagementController::class, 'requestTaxCertificate'], $auth);
+
+    // ---- Orders -------------------------------------------------------------
+    $r->post('/orders',                   [OrderController::class, 'create'], $auth);
+    $r->get('/user/orders',               [OrderController::class, 'getMyOrders'], $auth);
 };
