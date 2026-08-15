@@ -544,10 +544,23 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     btn.disabled = true;
 
     const fd = new FormData(this);
-    const data = Object.fromEntries(fd.entries());
-    data.image = document.getElementById('standImageFront').src.split('?')[0]; // strip ?v= param
-    data.unit_price = <?= (int)str_replace(['،', ' تومان'], '', $selectedStand['price']) ?>;
-    data.quantity = 1;
+    const raw = Object.fromEntries(fd.entries());
+    const data = {
+        sender_name: raw.sender_name || '',
+        sender_phone: raw.sender_phone || '',
+        from_user: (raw.sender_name || '') + (raw.sender_phone ? ' (' + raw.sender_phone + ')' : ''),
+        receiver_name: raw.receiver_name || '',
+        to_user: raw.receiver_name || '',
+        event_date: raw.event_date || '',
+        event_time: raw.event_time || '',
+        order_date: (raw.event_date || '') + (raw.event_time ? ' - ' + raw.event_time : ''),
+        event_address: raw.event_address || '',
+        address: raw.event_address || '',
+        message: raw.message || '',
+        image: document.getElementById('standImageFront')?.src?.split('?')[0] || '',
+        unit_price: <?= (int)str_replace(['،', ' تومان'], '', $selectedStand['price']) ?>,
+        quantity: 1
+    };
 
     try {
         // Check Auth
