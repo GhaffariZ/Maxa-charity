@@ -233,7 +233,26 @@ export const api = {
   // engagement
   requestTaxCertificate: (payload: { year_jalali?: number; note?: string }) =>
     apiRequest<{ message: string }>("/tax-certificate", { method: "POST", body: payload }),
+
+  // orders
+  orders: () => apiRequest<{ orders: OrderDto[] }>("/user/orders"),
 };
+
+export interface OrderDto {
+  id: number;
+  user_id?: number | null;
+  tracking_code: string | null;
+  image: string;
+  order_date: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  from_user: string;
+  to_user: string;
+  message: string;
+  address: string;
+  created_at: string;
+}
 
 export interface CampaignDto {
   id: number;

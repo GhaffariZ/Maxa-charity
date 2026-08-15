@@ -4,43 +4,46 @@ declare(strict_types=1);
 
 namespace Maksa\Controllers;
 
-use Maksa\Core\Config;
-use Maksa\Core\Response;
-use Maksa\Core\Security;
 use Maksa\Core\Database;
+use Maksa\Core\Exceptions\ApiException;
+use Maksa\Core\Request;
+use Maksa\Core\Response;
+use Maksa\Core\Validator;
 
-class OrderController
+final class OrderController
 {
-    public static function create(): void
+    public function create(Request $request): void
     {
-        $user = require_auth();
+        $userId = $request->userId();
 
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data) {
-            Response::json(['error' => ['code' => 'invalid_payload', 'message' => 'Invalid JSON payload']], 400);
-        }
+        $data = (new Validator($request->body))
+            ->string('from_user', max: 255)
+            ->string('to_user', max: 255)
+            ->string('address', max: 2000)
+            ->string('message', max: 2000, required: false)
+            ->string('image', max: 500, required: false)
+            ->int('quantity', min: 1, max: 100, required: false)
+            ->int('unit_price', min: 0, required: false)
+            ->validated();
 
         $image = $data['image'] ?? '';
-        $order_date = date('Y/m/d');
+        $orderDate = date('Y/m/d');
         $quantity = (int)($data['quantity'] ?? 1);
-        $unit_price = (int)($data['unit_price'] ?? 0);
-        $total_price = $quantity * $unit_price;
-        $from_user = $data['from_user'] ?? '';
-        $to_user = $data['to_user'] ?? '';
+        $unitPrice = (int)($data['unit_price'] ?? 0);
+        $totalPrice = $quantity * $unitPrice;
+        $fromUser = $data['from_user'];
+        $toUser = $data['to_user'];
         $message = $data['message'] ?? '';
-        $address = $data['address'] ?? '';
+        $address = $data['address'];
 
-        if (empty($from_user) || empty($to_user) || empty($address)) {
-            Response::json(['error' => ['code' => 'validation_failed', 'message' => 'Required fields missing']], 400);
-        }
+        $trackingCode = 'ORD-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
 
-        $tracking_code = 'ORD-' . strtoupper(substr(uniqid(), -6));
-
-        $pdo = Database::getPDO();
+        $pdo = Database::connection();
         
         try {
-            // Auto-migrate table if needed
-            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `user_id` INT(11) NULL AFTER `id`");
+            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `user_id` BIGINT(20) UNSIGNED NULL AFTER `id`");
+        } catch (\Throwable $e) {}
+        try {
             $pdo->exec("ALTER TABLE `orders` ADD COLUMN `tracking_code` VARCHAR(50) NULL AFTER `user_id`");
         } catch (\Throwable $e) {}
 
@@ -51,40 +54,41 @@ class OrderController
         ");
 
         $stmt->execute([
-            $user['id'],
-            $tracking_code,
+            $userId,
+            $trackingCode,
             $image,
-            $order_date,
+            $orderDate,
             $quantity,
-            $unit_price,
-            $total_price,
-            $from_user,
-            $to_user,
+            $unitPrice,
+            $totalPrice,
+            $fromUser,
+            $toUser,
             $message,
             $address
         ]);
 
-        Response::json([
-            'message' => 'Order created successfully',
-            'tracking_code' => $tracking_code
-        ]);
+        Response::success([
+            'message' => 'سفارش با موفقیت ثبت شد.',
+            'tracking_code' => $trackingCode
+        ], 201);
     }
 
-    public static function getMyOrders(): void
+    public function getMyOrders(Request $request): void
     {
-        $user = require_auth();
-        $pdo = Database::getPDO();
+        $userId = $request->userId();
+        $pdo = Database::connection();
         
         try {
-            // Auto-migrate table if needed
-            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `user_id` INT(11) NULL AFTER `id`");
+            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `user_id` BIGINT(20) UNSIGNED NULL AFTER `id`");
+        } catch (\Throwable $e) {}
+        try {
             $pdo->exec("ALTER TABLE `orders` ADD COLUMN `tracking_code` VARCHAR(50) NULL AFTER `user_id`");
         } catch (\Throwable $e) {}
 
         $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `user_id` = ? ORDER BY `created_at` DESC");
-        $stmt->execute([$user['id']]);
+        $stmt->execute([$userId]);
         $orders = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        Response::json(['orders' => $orders]);
+        Response::success(['orders' => $orders]);
     }
 }

@@ -556,7 +556,16 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
             // Not authenticated -> Save state & Redirect
             localStorage.setItem('pendingStandOrder', JSON.stringify(data));
             const returnUrl = encodeURIComponent(window.location.href);
-            window.location.href = '/benefactor-dashboard/?returnUrl=' + returnUrl;
+            window.location.href = '/benefactor-dashboard/login?returnUrl=' + returnUrl;
+            return;
+        }
+
+        const authJson = await authRes.json();
+        const accessToken = authJson?.data?.access_token;
+        if (!accessToken) {
+            localStorage.setItem('pendingStandOrder', JSON.stringify(data));
+            const returnUrl = encodeURIComponent(window.location.href);
+            window.location.href = '/benefactor-dashboard/login?returnUrl=' + returnUrl;
             return;
         }
 
@@ -564,14 +573,18 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
         const submitRes = await fetch('/api/orders', {
             method: 'POST',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
             body: JSON.stringify(data)
         });
 
         const result = await submitRes.json();
-        if (submitRes.ok) {
+        if (submitRes.ok && result.success) {
             localStorage.removeItem('pendingStandOrder');
-            alert('سفارش شما با موفقیت ثبت شد! کد رهگیری: ' + result.tracking_code);
+            const trackingCode = result.data?.tracking_code || '';
+            alert('سفارش شما با موفقیت ثبت شد!\nکد رهگیری: ' + trackingCode);
             this.reset();
         } else {
             alert(result.error?.message || 'خطا در ثبت سفارش');

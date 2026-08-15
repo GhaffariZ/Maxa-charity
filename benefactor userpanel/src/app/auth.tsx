@@ -33,9 +33,19 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 /** Wrapper for auth pages: bounce already-logged-in users to the dashboard. */
 export function RedirectIfAuthed({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) return <FullScreenLoader />;
   if (isAuthenticated) {
+    const queryParams = new URLSearchParams(location.search);
+    const returnUrl = queryParams.get("returnUrl");
+    if (returnUrl) {
+      if (returnUrl.startsWith("http") || returnUrl.startsWith("/stand-order.php")) {
+        window.location.href = returnUrl;
+        return <FullScreenLoader />;
+      }
+      return <Navigate to={returnUrl} replace />;
+    }
     return <Navigate to="/" replace />;
   }
   return <>{children}</>;
