@@ -30,9 +30,9 @@ try {
     $title = trim($_POST['title']);
     $subtitle = isset($_POST['subtitle']) ? trim($_POST['subtitle']) : '';
     
-    // پاکسازی محتوا و اجازه دادن به تگ‌های ضروری ادیتور (فونت و اسپن اضافه شد)
+    // پاکسازی محتوا و اجازه دادن به تگ‌های ضروری ادیتور (شامل تصاویر، فیگور، کپشن، فونت و اسپن)
     $raw_content = $_POST['content'];
-    $allowed_tags = "<img><p><br><b><strong><i><u><a><h1><h2><h3><h4><h5><h6><ul><ol><li><div><font><span>";
+    $allowed_tags = "<img><p><br><b><strong><i><u><em><a><h1><h2><h3><h4><h5><h6><ul><ol><li><div><font><span><figure><figcaption><blockquote>";
     $content = strip_tags($raw_content, $allowed_tags);
 
     $plain_text = trim(preg_replace('/\s+/u', ' ', strip_tags($content)));

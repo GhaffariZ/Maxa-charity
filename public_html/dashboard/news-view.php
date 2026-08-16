@@ -381,6 +381,11 @@ require_once __DIR__ . '/components/header/component.php';
         color: rgba(47, 52, 55, 0.9);
         text-align: justify;
     }
+    .article-content::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
     .article-content p {
         margin-bottom: 24px;
     }
@@ -395,10 +400,96 @@ require_once __DIR__ . '/components/header/component.php';
     }
     .article-content img {
         max-width: 100%;
+        height: auto;
         border-radius: 12px;
-        margin: 28px auto;
-        display: block;
         box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        vertical-align: middle;
+    }
+    .article-content figure,
+    .article-content .article-img-wrap {
+        display: block;
+        max-width: 100%;
+        margin: 24px auto;
+        position: relative;
+        box-sizing: border-box;
+        clear: both;
+    }
+    .article-content figure.align-right,
+    .article-content .article-img-wrap.align-right,
+    .article-content img.align-right {
+        float: right !important;
+        margin: 8px 0 20px 24px !important;
+        display: block !important;
+        clear: right !important;
+        text-align: right;
+    }
+    .article-content figure.align-left,
+    .article-content .article-img-wrap.align-left,
+    .article-content img.align-left {
+        float: left !important;
+        margin: 8px 24px 20px 0 !important;
+        display: block !important;
+        clear: left !important;
+        text-align: left;
+    }
+    .article-content figure.align-center,
+    .article-content .article-img-wrap.align-center,
+    .article-content img.align-center {
+        display: block !important;
+        margin: 28px auto !important;
+        text-align: center !important;
+        float: none !important;
+        clear: both !important;
+    }
+    .article-content figure.align-full,
+    .article-content .article-img-wrap.align-full,
+    .article-content img.align-full {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 32px 0 !important;
+        float: none !important;
+        clear: both !important;
+        text-align: center;
+    }
+    .article-content figcaption,
+    .article-content .img-caption {
+        margin-top: 8px;
+        font-size: 13.5px;
+        color: var(--news-text-muted, #718096);
+        text-align: center;
+        line-height: 1.6;
+        padding: 4px 8px;
+        font-weight: 500;
+    }
+    .article-content .gallery-row {
+        display: flex;
+        gap: 14px;
+        margin: 24px 0;
+        flex-wrap: wrap;
+        clear: both;
+    }
+    .article-content .gallery-row img {
+        flex: 1;
+        min-width: 28%;
+        max-width: 100%;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+    @media (max-width: 768px) {
+        .article-content figure.align-right,
+        .article-content figure.align-left,
+        .article-content .article-img-wrap.align-right,
+        .article-content .article-img-wrap.align-left,
+        .article-content img.align-right,
+        .article-content img.align-left {
+            float: none !important;
+            margin: 20px auto !important;
+            display: block !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            text-align: center !important;
+        }
     }
 
     /* بخش تگ‌ها */
@@ -765,7 +856,7 @@ require_once __DIR__ . '/components/header/component.php';
             <?php endif; ?>
 
             <section class="article-content">
-                <?= nl2br($news['content']) ?>
+                <?= (strip_tags($news['content']) !== $news['content']) ? $news['content'] : nl2br($news['content']) ?>
             </section>
 
             <!-- تگ‌ها -->

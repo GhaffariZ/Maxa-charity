@@ -518,6 +518,10 @@ select.input { appearance: none; cursor: pointer; }
 }
 .color-box:hover { transform: scale(1.15); }
 
+.editor-shell {
+    position: relative;
+}
+
 #editor {
     min-height: 380px;
     border: 1px solid var(--border-color);
@@ -528,10 +532,530 @@ select.input { appearance: none; cursor: pointer; }
     overflow-y: auto;
     line-height: 1.9;
     font-size: 16px;
+    position: relative;
+}
+#editor::after {
+    content: "";
+    display: table;
+    clear: both;
 }
 #editor:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.10); }
 #editor:empty:before { content: attr(data-placeholder); color: var(--muted-color); opacity: 0.55; }
-#editor img { max-width: 100%; height: auto; border-radius: 10px; }
+
+/* ===== استایل و کنترل تصاویر داخل ادیتور و محتوا ===== */
+.article-img-wrap,
+figure.article-img-wrap {
+    display: block;
+    max-width: 100%;
+    margin: 20px auto;
+    position: relative;
+    box-sizing: border-box;
+    vertical-align: top;
+    clear: both;
+    transition: width 0.15s ease, margin 0.15s ease;
+}
+
+.article-img-wrap img,
+.article-inline-img,
+#editor img,
+.pv-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transition: outline 0.15s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* حالت‌های چینش تصاویر (Alignments) */
+.article-img-wrap.align-right,
+.article-inline-img.align-right,
+#editor img.align-right,
+.pv-body img.align-right,
+.pv-body figure.align-right {
+    float: right !important;
+    margin: 8px 0 20px 24px !important;
+    display: block !important;
+    clear: right !important;
+    text-align: right;
+}
+
+.article-img-wrap.align-left,
+.article-inline-img.align-left,
+#editor img.align-left,
+.pv-body img.align-left,
+.pv-body figure.align-left {
+    float: left !important;
+    margin: 8px 24px 20px 0 !important;
+    display: block !important;
+    clear: left !important;
+    text-align: left;
+}
+
+.article-img-wrap.align-center,
+.article-inline-img.align-center,
+#editor img.align-center,
+.pv-body img.align-center,
+.pv-body figure.align-center {
+    display: block !important;
+    margin: 24px auto !important;
+    text-align: center !important;
+    float: none !important;
+    clear: both !important;
+}
+
+.article-img-wrap.align-full,
+.article-inline-img.align-full,
+#editor img.align-full,
+.pv-body img.align-full,
+.pv-body figure.align-full {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 28px 0 !important;
+    float: none !important;
+    clear: both !important;
+    text-align: center;
+}
+
+/* کپشن / توضیح تصویر */
+figcaption.img-caption,
+#editor figcaption,
+.pv-body figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted-color);
+    text-align: center;
+    line-height: 1.6;
+    padding: 4px 8px;
+    font-weight: 500;
+}
+#editor figcaption:focus {
+    outline: none;
+    background: rgba(0, 125, 117, 0.08);
+    border-radius: 6px;
+}
+#editor figcaption:empty:before {
+    content: "توضیح زیر عکس (اختیاری)...";
+    color: var(--muted-color);
+    opacity: 0.6;
+}
+
+/* حالت انتخاب تصویر در ادیتور */
+#editor img.img-selected,
+#editor figure.img-selected img {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(0, 125, 117, 0.2), 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+
+/* نوار ابزار شناور اختصاصی تصویر */
+.img-float-bar {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: #1e293b;
+    color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: inherit;
+    font-size: 13px;
+    user-select: none;
+    transform: translateX(-50%);
+    pointer-events: auto;
+    animation: imgBarPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes imgBarPop {
+    from { opacity: 0; transform: translate(-50%, 6px) scale(0.96); }
+    to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+.img-float-bar::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+}
+.img-float-bar.arrow-bottom::after {
+    top: 100%;
+    border-color: #1e293b transparent transparent transparent;
+}
+.img-float-bar.arrow-top::after {
+    bottom: 100%;
+    border-color: transparent transparent #1e293b transparent;
+}
+
+.img-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #f1f5f9;
+    padding: 6px 9px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.img-btn:hover {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+.img-btn.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
+}
+.img-btn.btn-danger-light:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+.img-btn svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    flex-shrink: 0;
+}
+.img-bar-sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.18);
+    margin: 0 3px;
+    flex-shrink: 0;
+}
+
+/* لایه پوششی ریسایزر با دستگیره‌ها (Drag Resizer Overlay) */
+.img-resize-box {
+    position: absolute;
+    pointer-events: none;
+    border: 2px dashed var(--primary-color);
+    border-radius: 12px;
+    display: none;
+    z-index: 999;
+}
+.img-resize-handle {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: #ffffff;
+    border: 2.5px solid var(--primary-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    pointer-events: auto;
+    z-index: 1001;
+    transition: transform 0.1s ease, background 0.1s ease;
+}
+.img-resize-handle:hover {
+    transform: scale(1.35);
+    background: var(--primary-color);
+}
+.handle-nw { top: -6px; left: -6px; cursor: nwse-resize; }
+.handle-ne { top: -6px; right: -6px; cursor: nesw-resize; }
+.handle-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+.handle-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+
+.img-size-badge {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ===== مودال تنظیمات پیشرفته تصویر ===== */
+.img-settings-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    background: var(--modal-overlay);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.img-settings-modal.show {
+    display: flex;
+    opacity: 1;
+}
+.img-modal-box {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: cardPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.img-modal-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-2);
+}
+.img-modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--header-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.img-modal-title svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-color);
+}
+.img-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--muted-color);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    display: flex;
+}
+.img-modal-close:hover {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.08);
+}
+.img-modal-close svg {
+    width: 20px;
+    height: 20px;
+}
+.img-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.img-modal-foot {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--surface-2);
+}
+
+.img-modal-preview-box {
+    background: var(--surface-2);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    max-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.img-modal-preview-box img {
+    max-height: 120px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.img-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.img-field-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.img-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.img-range {
+    flex: 1;
+    min-width: 150px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+.img-quick-pills {
+    display: flex;
+    gap: 6px;
+}
+.pill-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+}
+.pill-btn:hover, .pill-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.img-align-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+@media (max-width: 600px) {
+    .img-align-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.img-align-card {
+    cursor: pointer;
+}
+.img-align-card input[type="radio"] {
+    display: none;
+}
+.align-card-inner {
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+.align-card-inner svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+}
+.img-align-card:hover .align-card-inner {
+    border-color: var(--primary-color);
+    background: rgba(0, 125, 117, 0.04);
+}
+.img-align-card input[type="radio"]:checked + .align-card-inner {
+    border-color: var(--primary-color);
+    background: rgba(0, 125, 117, 0.12);
+    color: var(--primary-color);
+    font-weight: 800;
+    box-shadow: 0 0 0 2px rgba(0, 125, 117, 0.25);
+}
+
+.img-style-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.pill-choice {
+    cursor: pointer;
+}
+.pill-choice input[type="radio"] {
+    display: none;
+}
+.pill-choice span {
+    display: inline-block;
+    padding: 6px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: all 0.15s ease;
+}
+.pill-choice:hover span {
+    border-color: var(--primary-color);
+}
+.pill-choice input[type="radio"]:checked + span {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+}
+
+.img-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+}
+.img-checkbox-label input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* ریسپانسیو تصاویر شناور روی صفحات کوچک */
+@media (max-width: 768px) {
+    .article-img-wrap.align-right,
+    .article-img-wrap.align-left,
+    .article-inline-img.align-right,
+    .article-inline-img.align-left,
+    #editor img.align-right,
+    #editor img.align-left,
+    .pv-body img.align-right,
+    .pv-body img.align-left {
+        float: none !important;
+        margin: 18px auto !important;
+        display: block !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+}
 
 /* ===== دکمه‌ها ===== */
 .btn {
@@ -955,8 +1479,16 @@ select.input { appearance: none; cursor: pointer; }
 .pv-body {
     line-height: 2.1; font-size: 16px; color: var(--text-color);
 }
+.pv-body::after {
+    content: "";
+    display: table;
+    clear: both;
+}
 .pv-body img { max-width: 100%; height: auto; border-radius: 10px; }
-.pv-body .gallery-row img { border-radius: 8px; }
+.pv-body figure, .pv-body .article-img-wrap { display: block; max-width: 100%; margin: 20px auto; clear: both; }
+.pv-body figcaption, .pv-body .img-caption { margin-top: 8px; font-size: 13px; color: var(--muted-color); text-align: center; }
+.pv-body .gallery-row { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; clear: both; }
+.pv-body .gallery-row img { border-radius: 8px; flex: 1; min-width: 30%; max-width: 100%; }
 .pv-empty { color: var(--muted-color); font-style: italic; }
 
 /* پنل خلاصه سئو در پیش‌نمایش */
@@ -1149,6 +1681,14 @@ select.input { appearance: none; cursor: pointer; }
                         </svg>
                     </button>
 
+                    <button type="button" onclick="uploadSingleImage()" class="tb-btn" title="درج تصویر در متن">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </button>
+
                     <button type="button" onclick="insertLink()" class="tb-btn" title="پیوند">
                         <svg width="18" viewBox="0 0 24 24">
                             <path d="M10 14a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" fill="none" stroke-width="2"/>
@@ -1212,7 +1752,63 @@ select.input { appearance: none; cursor: pointer; }
 
                 <div class="editor-shell" id="editorShell">
                     <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+
+                    <!-- نوار ابزار شناور اختصاصی تصویر در ادیتور -->
+                    <div id="imageFloatingToolbar" class="img-float-bar">
+                        <!-- دکمه‌های چینش سریع -->
+                        <button type="button" class="img-btn" id="imgBtnAlignRight" onclick="setImageAlignment('align-right')" title="راست‌چین (گردش متن دور عکس)">
+                            <svg viewBox="0 0 24 24"><line x1="21" y1="6" x2="11" y2="6"/><line x1="21" y1="12" x2="11" y2="12"/><line x1="21" y1="18" x2="3" y2="18"/><rect x="3" y="4" width="6" height="8" rx="1"/></svg>
+                            <span>راست</span>
+                        </button>
+                        <button type="button" class="img-btn" id="imgBtnAlignCenter" onclick="setImageAlignment('align-center')" title="وسط‌چین (خط مستقل)">
+                            <svg viewBox="0 0 24 24"><line x1="3" y1="3" x2="21" y2="3"/><rect x="6" y="7" width="12" height="10" rx="1.5"/><line x1="3" y1="21" x2="21" y2="21"/></svg>
+                            <span>وسط</span>
+                        </button>
+                        <button type="button" class="img-btn" id="imgBtnAlignLeft" onclick="setImageAlignment('align-left')" title="چپ‌چین (گردش متن دور عکس)">
+                            <svg viewBox="0 0 24 24"><line x1="13" y1="6" x2="3" y2="6"/><line x1="13" y1="12" x2="3" y2="12"/><line x1="21" y1="18" x2="3" y2="18"/><rect x="15" y="4" width="6" height="8" rx="1"/></svg>
+                            <span>چپ</span>
+                        </button>
+                        <button type="button" class="img-btn" id="imgBtnAlignFull" onclick="setImageAlignment('align-full')" title="تمام‌عرض (۱۰۰٪ کادر)">
+                            <svg viewBox="0 0 24 24"><line x1="3" y1="4" x2="21" y2="4"/><rect x="3" y="8" width="18" height="8" rx="1.5"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+                            <span>تمام‌عرض</span>
+                        </button>
+
+                        <div class="img-bar-sep"></div>
+
+                        <!-- دکمه‌های اندازه سریع -->
+                        <button type="button" class="img-btn" id="imgBtnSize25" onclick="setImageSize(25)" title="اندازه ۲۵٪">۲۵٪</button>
+                        <button type="button" class="img-btn" id="imgBtnSize50" onclick="setImageSize(50)" title="اندازه ۵۰٪">۵۰٪</button>
+                        <button type="button" class="img-btn" id="imgBtnSize75" onclick="setImageSize(75)" title="اندازه ۷۵٪">۷۵٪</button>
+                        <button type="button" class="img-btn" id="imgBtnSize100" onclick="setImageSize(100)" title="اندازه ۱۰۰٪">۱۰۰٪</button>
+
+                        <div class="img-bar-sep"></div>
+
+                        <!-- ابزارهای تکمیلی -->
+                        <button type="button" class="img-btn" onclick="toggleImageCaption()" title="افزودن یا ویرایش توضیح زیر عکس">
+                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span>کپشن</span>
+                        </button>
+                        <button type="button" class="img-btn" onclick="openImageSettings()" title="تنظیمات پیشرفته تصویر">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </button>
+                        <button type="button" class="img-btn" onclick="replaceSelectedImage()" title="تعویض تصویر با فایل دیگر">
+                            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        </button>
+                        <button type="button" class="img-btn btn-danger-light" onclick="deleteSelectedImage()" title="حذف تصویر">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- لایه ریسایزر و دستگیره‌های چهارگوشه -->
+                    <div id="imageResizeOverlay" class="img-resize-box">
+                        <div class="img-resize-handle handle-nw" data-handle="nw"></div>
+                        <div class="img-resize-handle handle-ne" data-handle="ne"></div>
+                        <div class="img-resize-handle handle-se" data-handle="se"></div>
+                        <div class="img-resize-handle handle-sw" data-handle="sw"></div>
+                        <div id="imgSizeBadge" class="img-size-badge">۵۰٪</div>
+                    </div>
                 </div>
+
                 <div class="field-error" id="contentError">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     <span>نوشتن متن خبر الزامی است.</span>
@@ -1228,7 +1824,7 @@ select.input { appearance: none; cursor: pointer; }
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                         درج گالری سه‌تایی
                     </button>
-                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">تصاویر در محل کرسر وارد می‌شوند.</span>
+                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">می‌توانید تصویر را با ماوس بکشید یا مستقیماً در متن پیست (Ctrl+V) کنید.</span>
                 </div>
 
             </div>
@@ -1401,6 +1997,128 @@ select.input { appearance: none; cursor: pointer; }
         </div>
         <div class="preview-scroll">
             <div id="previewContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تنظیمات پیشرفته تصویر -->
+<div id="imageSettingsModal" class="img-settings-modal" onclick="if(event.target===this) closeImageSettings()">
+    <div class="img-modal-box">
+        <div class="img-modal-head">
+            <div class="img-modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                تنظیمات پیشرفته تصویر
+            </div>
+            <button type="button" class="img-modal-close" onclick="closeImageSettings()" aria-label="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div class="img-modal-body">
+            <!-- پیش‌نمایش تصویر در مودال -->
+            <div class="img-modal-preview-box">
+                <img id="imgModalPreviewImg" src="" alt="پیش‌نمایش">
+                <div id="imgModalPreviewCaption" style="font-size:12px; color:var(--muted-color); margin-top:6px;"></div>
+            </div>
+
+            <!-- تنظیم عرض -->
+            <div class="img-field-group">
+                <label class="img-field-label">
+                    <span>عرض تصویر در متن:</span>
+                    <strong id="imgModalWidthLabel" style="color:var(--primary-color);">50%</strong>
+                </label>
+                <div class="img-slider-row">
+                    <input type="range" id="imgModalWidthSlider" min="15" max="100" step="5" value="50" class="img-range" oninput="updateImageModalWidth(this.value)">
+                    <div class="img-quick-pills">
+                        <button type="button" class="pill-btn" onclick="setImageModalWidth(25)">۲۵٪</button>
+                        <button type="button" class="pill-btn" onclick="setImageModalWidth(50)">۵۰٪</button>
+                        <button type="button" class="pill-btn" onclick="setImageModalWidth(75)">۷۵٪</button>
+                        <button type="button" class="pill-btn" onclick="setImageModalWidth(100)">۱۰۰٪</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نحوه چینش -->
+            <div class="img-field-group">
+                <label class="img-field-label">موقعیت و چینش تصویر:</label>
+                <div class="img-align-grid">
+                    <label class="img-align-card">
+                        <input type="radio" name="img_align" value="align-right">
+                        <div class="align-card-inner">
+                            <svg viewBox="0 0 24 24"><line x1="21" y1="6" x2="11" y2="6"/><line x1="21" y1="12" x2="11" y2="12"/><line x1="21" y1="18" x2="3" y2="18"/><rect x="3" y="4" width="6" height="8" rx="1"/></svg>
+                            <span>راست‌چین (شناور)</span>
+                        </div>
+                    </label>
+                    <label class="img-align-card">
+                        <input type="radio" name="img_align" value="align-center" checked>
+                        <div class="align-card-inner">
+                            <svg viewBox="0 0 24 24"><line x1="3" y1="3" x2="21" y2="3"/><rect x="6" y="7" width="12" height="10" rx="1.5"/><line x1="3" y1="21" x2="21" y2="21"/></svg>
+                            <span>وسط‌چین (مستقل)</span>
+                        </div>
+                    </label>
+                    <label class="img-align-card">
+                        <input type="radio" name="img_align" value="align-left">
+                        <div class="align-card-inner">
+                            <svg viewBox="0 0 24 24"><line x1="13" y1="6" x2="3" y2="6"/><line x1="13" y1="12" x2="3" y2="12"/><line x1="21" y1="18" x2="3" y2="18"/><rect x="15" y="4" width="6" height="8" rx="1"/></svg>
+                            <span>چپ‌چین (شناور)</span>
+                        </div>
+                    </label>
+                    <label class="img-align-card">
+                        <input type="radio" name="img_align" value="align-full">
+                        <div class="align-card-inner">
+                            <svg viewBox="0 0 24 24"><line x1="3" y1="4" x2="21" y2="4"/><rect x="3" y="8" width="18" height="8" rx="1.5"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+                            <span>تمام‌عرض</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- توضیح زیر تصویر (کپشن) -->
+            <div class="img-field-group">
+                <label class="img-field-label" for="imgModalCaption">توضیح زیر عکس (کپشن):</label>
+                <input type="text" id="imgModalCaption" class="input" placeholder="متنی که زیر عکس نمایش داده می‌شود..." oninput="document.getElementById('imgModalPreviewCaption').textContent = this.value">
+            </div>
+
+            <!-- متن جایگزین Alt -->
+            <div class="img-field-group">
+                <label class="img-field-label" for="imgModalAlt">متن جایگزین (Alt برای سئو):</label>
+                <input type="text" id="imgModalAlt" class="input" placeholder="توضیح موضوع تصویر برای موتورهای جستجو...">
+            </div>
+
+            <!-- پیوند / لینک تصویر -->
+            <div class="img-field-group">
+                <label class="img-field-label" for="imgModalLink">پیوند روی عکس (اختیاری):</label>
+                <input type="url" id="imgModalLink" class="input" placeholder="https://example.com" dir="ltr">
+                <label class="img-checkbox-label" style="margin-top:6px;">
+                    <input type="checkbox" id="imgModalLinkBlank" checked>
+                    <span>باز شدن لینک در پنجره/تب جدید</span>
+                </label>
+            </div>
+
+            <!-- سبک قاب و گردی گوشه‌ها -->
+            <div class="img-field-group">
+                <label class="img-field-label">سبک و گردی گوشه‌ها:</label>
+                <div class="img-style-pills">
+                    <label class="pill-choice">
+                        <input type="radio" name="img_radius" value="0px" onchange="document.getElementById('imgModalPreviewImg').style.borderRadius = this.value">
+                        <span>گوشه‌های تیز</span>
+                    </label>
+                    <label class="pill-choice">
+                        <input type="radio" name="img_radius" value="12px" checked onchange="document.getElementById('imgModalPreviewImg').style.borderRadius = this.value">
+                        <span>گرد معمولی</span>
+                    </label>
+                    <label class="pill-choice">
+                        <input type="radio" name="img_radius" value="24px" onchange="document.getElementById('imgModalPreviewImg').style.borderRadius = this.value">
+                        <span>بسیار گرد</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="img-modal-foot">
+            <button type="button" class="btn btn-ghost" onclick="closeImageSettings()">انصراف</button>
+            <button type="button" class="btn btn-save" onclick="applyImageSettingsModal()">اعمال تغییرات</button>
         </div>
     </div>
 </div>
@@ -1651,7 +2369,533 @@ function removeFeatured(e){
     document.getElementById("remove_featured_flag").value = "1";
 }
 
-/* ============== درج تصویر داخل متن ============== */
+/* =================================================================
+   مدیریت پیشرفته و تعاملی تصاویر داخل متن خبر (Image Controller Engine)
+   ================================================================= */
+let activeSelectedImg = null;
+let activeSelectedWrapper = null;
+let isResizingImage = false;
+
+// انتخاب تصویر با کلیک روی هر عکس در ادیتور
+editor.addEventListener("click", function(e) {
+    const targetImg = e.target.closest("img");
+    if (targetImg && editor.contains(targetImg)) {
+        e.stopPropagation();
+        selectEditorImage(targetImg);
+        return;
+    }
+    // اگر روی دکمه‌های نوار ابزار یا ریسایزر یا مودال کلیک نشده باشد، عدم انتخاب
+    if (!e.target.closest(".img-float-bar") && !e.target.closest(".img-resize-box") && !e.target.closest(".img-settings-modal")) {
+        deselectEditorImage();
+    }
+});
+
+// بستن نوار ابزار در صورت کلیک خارج از محیط ادیتور
+document.addEventListener("click", function(e) {
+    if (!editor.contains(e.target) && !e.target.closest(".img-float-bar") && !e.target.closest(".img-resize-box") && !e.target.closest(".img-settings-modal") && !e.target.closest(".tb-btn")) {
+        deselectEditorImage();
+    }
+});
+
+// همگام‌سازی مکان تولبار هنگام اسکرول ادیتور یا تغییر اندازه پنجره
+editor.addEventListener("scroll", updateFloatingToolbarPosition);
+window.addEventListener("scroll", updateFloatingToolbarPosition, true);
+window.addEventListener("resize", updateFloatingToolbarPosition);
+
+function selectEditorImage(imgEl) {
+    if (!imgEl) return;
+    deselectEditorImage();
+
+    activeSelectedImg = imgEl;
+    activeSelectedWrapper = imgEl.closest(".article-img-wrap") || imgEl.closest("figure") || null;
+
+    if (activeSelectedWrapper) {
+        activeSelectedWrapper.classList.add("img-selected");
+    } else {
+        activeSelectedImg.classList.add("img-selected");
+    }
+
+    updateFloatingToolbarPosition();
+    updateFloatingToolbarState();
+}
+
+function deselectEditorImage() {
+    if (activeSelectedImg) {
+        activeSelectedImg.classList.remove("img-selected");
+    }
+    if (activeSelectedWrapper) {
+        activeSelectedWrapper.classList.remove("img-selected");
+    }
+    activeSelectedImg = null;
+    activeSelectedWrapper = null;
+
+    const bar = document.getElementById("imageFloatingToolbar");
+    const overlay = document.getElementById("imageResizeOverlay");
+    if (bar) bar.style.display = "none";
+    if (overlay) overlay.style.display = "none";
+}
+
+function updateFloatingToolbarPosition() {
+    if (!activeSelectedImg) return;
+
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+    const editorShell = document.getElementById("editorShell");
+    if (!editorShell || !targetEl.isConnected) {
+        deselectEditorImage();
+        return;
+    }
+
+    const shellRect = editorShell.getBoundingClientRect();
+    const imgRect = targetEl.getBoundingClientRect();
+
+    const topRel = imgRect.top - shellRect.top + editorShell.scrollTop;
+    const leftRel = imgRect.left - shellRect.left + editorShell.scrollLeft;
+    const width = imgRect.width;
+    const height = imgRect.height;
+
+    // موقعیت‌دهی کادر ریسایزر
+    const overlay = document.getElementById("imageResizeOverlay");
+    if (overlay) {
+        overlay.style.display = "block";
+        overlay.style.top = topRel + "px";
+        overlay.style.left = leftRel + "px";
+        overlay.style.width = width + "px";
+        overlay.style.height = height + "px";
+
+        const badge = document.getElementById("imgSizeBadge");
+        if (badge) {
+            const editorWidth = editor.clientWidth - 32;
+            const pct = Math.round((width / editorWidth) * 100);
+            badge.textContent = toFaDigits(pct + "٪") + " • " + toFaDigits(Math.round(width) + "px");
+        }
+    }
+
+    // موقعیت‌دهی نوار ابزار شناور
+    const bar = document.getElementById("imageFloatingToolbar");
+    if (bar) {
+        bar.style.display = "flex";
+        
+        const centerX = leftRel + (width / 2);
+        bar.style.left = Math.max(160, Math.min(shellRect.width - 160, centerX)) + "px";
+
+        if (topRel > 56) {
+            bar.style.top = (topRel - 52) + "px";
+            bar.classList.add("arrow-bottom");
+            bar.classList.remove("arrow-top");
+        } else {
+            bar.style.top = (topRel + height + 12) + "px";
+            bar.classList.add("arrow-top");
+            bar.classList.remove("arrow-bottom");
+        }
+    }
+}
+
+function updateFloatingToolbarState() {
+    if (!activeSelectedImg) return;
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+
+    const isRight = targetEl.classList.contains("align-right");
+    const isLeft = targetEl.classList.contains("align-left");
+    const isFull = targetEl.classList.contains("align-full");
+    const isCenter = targetEl.classList.contains("align-center") || (!isRight && !isLeft && !isFull);
+
+    document.getElementById("imgBtnAlignRight")?.classList.toggle("active", isRight);
+    document.getElementById("imgBtnAlignCenter")?.classList.toggle("active", isCenter);
+    document.getElementById("imgBtnAlignLeft")?.classList.toggle("active", isLeft);
+    document.getElementById("imgBtnAlignFull")?.classList.toggle("active", isFull);
+
+    const wStyle = targetEl.style.width || activeSelectedImg.style.width || "";
+    const pct = parseInt(wStyle) || 0;
+    document.getElementById("imgBtnSize25")?.classList.toggle("active", pct >= 20 && pct <= 30);
+    document.getElementById("imgBtnSize50")?.classList.toggle("active", pct >= 45 && pct <= 55);
+    document.getElementById("imgBtnSize75")?.classList.toggle("active", pct >= 70 && pct <= 80);
+    document.getElementById("imgBtnSize100")?.classList.toggle("active", isFull || (pct >= 95 && pct <= 100));
+}
+
+/* تغییر چینش تصویر (راست، وسط، چپ، تمام‌عرض) */
+function setImageAlignment(alignClass) {
+    if (!activeSelectedImg) return;
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+
+    ["align-right", "align-center", "align-left", "align-full"].forEach(cls => {
+        targetEl.classList.remove(cls);
+        activeSelectedImg.classList.remove(cls);
+    });
+
+    targetEl.classList.add(alignClass);
+    if (activeSelectedWrapper) {
+        activeSelectedImg.classList.add(alignClass);
+    }
+
+    if (alignClass === "align-full") {
+        targetEl.style.width = "100%";
+        activeSelectedImg.style.width = "100%";
+    } else if (targetEl.style.width === "100%" || !targetEl.style.width) {
+        targetEl.style.width = "50%";
+        if (activeSelectedWrapper) activeSelectedImg.style.width = "100%";
+    }
+
+    updateFloatingToolbarState();
+    setTimeout(updateFloatingToolbarPosition, 40);
+}
+
+/* تغییر اندازه سریع درصدی */
+function setImageSize(percentage) {
+    if (!activeSelectedImg) return;
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+
+    if (percentage === 100) {
+        setImageAlignment("align-full");
+        return;
+    }
+
+    if (targetEl.classList.contains("align-full")) {
+        setImageAlignment("align-center");
+    }
+
+    targetEl.style.width = percentage + "%";
+    targetEl.style.maxWidth = "100%";
+    if (activeSelectedWrapper) {
+        activeSelectedImg.style.width = "100%";
+    }
+
+    updateFloatingToolbarState();
+    setTimeout(updateFloatingToolbarPosition, 40);
+}
+
+/* تغییر وضعیت و ویرایش کپشن */
+function toggleImageCaption() {
+    if (!activeSelectedImg) return;
+
+    if (!activeSelectedWrapper) {
+        const figure = document.createElement("figure");
+        figure.className = "article-img-wrap " + (activeSelectedImg.className || "align-center");
+        figure.style.cssText = activeSelectedImg.style.cssText;
+        if (!figure.style.width) figure.style.width = "60%";
+
+        activeSelectedImg.parentNode.insertBefore(figure, activeSelectedImg);
+        figure.appendChild(activeSelectedImg);
+        activeSelectedImg.style.width = "100%";
+
+        const figcap = document.createElement("figcaption");
+        figcap.className = "img-caption";
+        figcap.contentEditable = "true";
+        figcap.setAttribute("data-placeholder", "توضیح زیر عکس (اختیاری)...");
+        figcap.textContent = activeSelectedImg.alt && activeSelectedImg.alt !== "تصویر خبر" ? activeSelectedImg.alt : "";
+        figure.appendChild(figcap);
+
+        activeSelectedWrapper = figure;
+        selectEditorImage(activeSelectedImg);
+        figcap.focus();
+    } else {
+        let figcap = activeSelectedWrapper.querySelector("figcaption");
+        if (figcap) {
+            figcap.focus();
+        } else {
+            figcap = document.createElement("figcaption");
+            figcap.className = "img-caption";
+            figcap.contentEditable = "true";
+            figcap.setAttribute("data-placeholder", "توضیح زیر عکس (اختیاری)...");
+            activeSelectedWrapper.appendChild(figcap);
+            figcap.focus();
+        }
+    }
+    updateFloatingToolbarPosition();
+}
+
+/* حذف تصویر انتخاب شده */
+function deleteSelectedImage() {
+    if (!activeSelectedImg) return;
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+    targetEl.remove();
+    deselectEditorImage();
+    showStatus("تصویر حذف شد.", true);
+}
+
+/* تعویض تصویر جاری */
+function replaceSelectedImage() {
+    if (!activeSelectedImg) return;
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+        showStatus("⏳ در حال بارگذاری تصویر جدید...", true);
+        const fd = new FormData();
+        fd.append("image", file);
+        try {
+            const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });
+            const data = await res.json();
+            if (data.url && activeSelectedImg) {
+                activeSelectedImg.src = data.url;
+                showStatus("✅ تصویر جایگزین شد.", true);
+                setTimeout(updateFloatingToolbarPosition, 100);
+            }
+        } catch(err) {
+            showStatus("❌ خطا در آپلود تصویر جایگزین", false);
+        }
+    };
+    input.click();
+}
+
+/* =================================================================
+   دستگیره‌های تغییر اندازه تعاملی با ماوس (Interactive Drag-to-Resize)
+   ================================================================= */
+function initImageDragResizer() {
+    const handles = document.querySelectorAll(".img-resize-handle");
+    handles.forEach(handle => {
+        handle.addEventListener("mousedown", startImageResize);
+    });
+}
+
+function startImageResize(e) {
+    if (!activeSelectedImg) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    isResizingImage = true;
+    const handleType = e.target.getAttribute("data-handle");
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+    const initialWidth = targetEl.offsetWidth;
+    const initialX = e.clientX;
+    const editorWidth = editor.clientWidth - 32;
+
+    function onMouseMove(moveEvent) {
+        if (!isResizingImage) return;
+        moveEvent.preventDefault();
+
+        const deltaX = moveEvent.clientX - initialX;
+        let newWidth;
+
+        if (handleType === "se" || handleType === "ne") {
+            newWidth = initialWidth - deltaX;
+        } else {
+            newWidth = initialWidth + deltaX;
+        }
+
+        newWidth = Math.max(100, Math.min(editorWidth, newWidth));
+        const pct = Math.max(15, Math.min(100, Math.round((newWidth / editorWidth) * 100)));
+
+        targetEl.style.width = pct + "%";
+        targetEl.style.maxWidth = "100%";
+        if (activeSelectedWrapper) {
+            activeSelectedImg.style.width = "100%";
+        }
+
+        updateFloatingToolbarPosition();
+    }
+
+    function onMouseUp() {
+        isResizingImage = false;
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+        updateFloatingToolbarState();
+        updateFloatingToolbarPosition();
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+}
+
+// مقداردهی اولیه ریسایزر
+initImageDragResizer();
+
+/* =================================================================
+   مودال تنظیمات پیشرفته تصویر (Image Settings Modal)
+   ================================================================= */
+function openImageSettings() {
+    if (!activeSelectedImg) return;
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+
+    const prevImg = document.getElementById("imgModalPreviewImg");
+    const prevCap = document.getElementById("imgModalPreviewCaption");
+    prevImg.src = activeSelectedImg.src;
+
+    const wVal = parseInt(targetEl.style.width) || 50;
+    document.getElementById("imgModalWidthSlider").value = wVal;
+    document.getElementById("imgModalWidthLabel").textContent = wVal + "%";
+
+    let currentAlign = "align-center";
+    if (targetEl.classList.contains("align-right")) currentAlign = "align-right";
+    else if (targetEl.classList.contains("align-left")) currentAlign = "align-left";
+    else if (targetEl.classList.contains("align-full")) currentAlign = "align-full";
+
+    const alignRadios = document.querySelectorAll('input[name="img_align"]');
+    alignRadios.forEach(r => { r.checked = (r.value === currentAlign); });
+
+    const figcap = activeSelectedWrapper ? activeSelectedWrapper.querySelector("figcaption") : null;
+    const capText = figcap ? figcap.textContent.trim() : "";
+    document.getElementById("imgModalCaption").value = capText;
+    prevCap.textContent = capText;
+
+    document.getElementById("imgModalAlt").value = activeSelectedImg.alt || "";
+
+    const parentLink = activeSelectedImg.closest("a");
+    document.getElementById("imgModalLink").value = parentLink ? parentLink.getAttribute("href") : "";
+    document.getElementById("imgModalLinkBlank").checked = parentLink ? (parentLink.target === "_blank") : true;
+
+    const rVal = activeSelectedImg.style.borderRadius || "12px";
+    const radiusRadios = document.querySelectorAll('input[name="img_radius"]');
+    radiusRadios.forEach(r => { r.checked = (r.value === rVal); });
+    prevImg.style.borderRadius = rVal;
+
+    const modal = document.getElementById("imageSettingsModal");
+    modal.style.display = "flex";
+    requestAnimationFrame(() => modal.classList.add("show"));
+}
+
+function closeImageSettings() {
+    const modal = document.getElementById("imageSettingsModal");
+    modal.classList.remove("show");
+    setTimeout(() => { modal.style.display = "none"; }, 220);
+}
+
+function updateImageModalWidth(val) {
+    document.getElementById("imgModalWidthLabel").textContent = val + "%";
+}
+
+function setImageModalWidth(val) {
+    document.getElementById("imgModalWidthSlider").value = val;
+    document.getElementById("imgModalWidthLabel").textContent = val + "%";
+}
+
+function applyImageSettingsModal() {
+    if (!activeSelectedImg) return;
+
+    const wVal = document.getElementById("imgModalWidthSlider").value;
+    const alignVal = document.querySelector('input[name="img_align"]:checked')?.value || "align-center";
+    const capVal = document.getElementById("imgModalCaption").value.trim();
+    const altVal = document.getElementById("imgModalAlt").value.trim();
+    const linkVal = document.getElementById("imgModalLink").value.trim();
+    const isBlank = document.getElementById("imgModalLinkBlank").checked;
+    const radiusVal = document.querySelector('input[name="img_radius"]:checked')?.value || "12px";
+
+    if (capVal && !activeSelectedWrapper) {
+        const figure = document.createElement("figure");
+        figure.className = "article-img-wrap " + alignVal;
+        figure.style.width = wVal + "%";
+        activeSelectedImg.parentNode.insertBefore(figure, activeSelectedImg);
+        figure.appendChild(activeSelectedImg);
+        activeSelectedWrapper = figure;
+    }
+
+    const targetEl = activeSelectedWrapper || activeSelectedImg;
+
+    ["align-right", "align-center", "align-left", "align-full"].forEach(cls => {
+        targetEl.classList.remove(cls);
+        activeSelectedImg.classList.remove(cls);
+    });
+    targetEl.classList.add(alignVal);
+    if (activeSelectedWrapper) activeSelectedImg.classList.add(alignVal);
+
+    if (alignVal === "align-full") {
+        targetEl.style.width = "100%";
+        activeSelectedImg.style.width = "100%";
+    } else {
+        targetEl.style.width = wVal + "%";
+        if (activeSelectedWrapper) activeSelectedImg.style.width = "100%";
+    }
+
+    activeSelectedImg.alt = altVal;
+    activeSelectedImg.style.borderRadius = radiusVal;
+
+    if (activeSelectedWrapper) {
+        let figcap = activeSelectedWrapper.querySelector("figcaption");
+        if (capVal) {
+            if (!figcap) {
+                figcap = document.createElement("figcaption");
+                figcap.className = "img-caption";
+                figcap.contentEditable = "true";
+                figcap.setAttribute("data-placeholder", "توضیح زیر عکس (اختیاری)...");
+                activeSelectedWrapper.appendChild(figcap);
+            }
+            figcap.textContent = capVal;
+        } else if (figcap) {
+            figcap.remove();
+        }
+    }
+
+    const existingLink = activeSelectedImg.closest("a");
+    if (linkVal) {
+        if (existingLink) {
+            existingLink.href = linkVal;
+            existingLink.target = isBlank ? "_blank" : "_self";
+            if (isBlank) existingLink.rel = "noopener noreferrer";
+        } else {
+            const a = document.createElement("a");
+            a.href = linkVal;
+            a.target = isBlank ? "_blank" : "_self";
+            if (isBlank) a.rel = "noopener noreferrer";
+            activeSelectedImg.parentNode.insertBefore(a, activeSelectedImg);
+            a.appendChild(activeSelectedImg);
+        }
+    } else if (existingLink) {
+        existingLink.parentNode.insertBefore(activeSelectedImg, existingLink);
+        existingLink.remove();
+    }
+
+    closeImageSettings();
+    selectEditorImage(activeSelectedImg);
+    showStatus("✅ تنظیمات تصویر با موفقیت ذخیره شد.", true);
+}
+
+/* =================================================================
+   درج تصویر و آپلود مستقیم (Paste & Drag Drop & Gallery)
+   ================================================================= */
+// پیست مستقیم عکس (Ctrl+V) در ادیتور
+editor.addEventListener("paste", function(e) {
+    const items = (e.clipboardData || window.clipboardData)?.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+            e.preventDefault();
+            const file = items[i].getAsFile();
+            if (file) {
+                uploadAndInsertInlineFile(file);
+                return;
+            }
+        }
+    }
+});
+
+// کشیدن و رها کردن فایل عکس به داخل ادیتور (Drag & Drop)
+editor.addEventListener("dragover", function(e) {
+    if (e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
+        e.preventDefault();
+        editor.style.borderColor = "var(--primary-color)";
+    }
+});
+editor.addEventListener("dragleave", function(e) {
+    editor.style.borderColor = "";
+});
+editor.addEventListener("drop", function(e) {
+    editor.style.borderColor = "";
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (file.type.startsWith("image/")) {
+            e.preventDefault();
+            uploadAndInsertInlineFile(file);
+        }
+    }
+});
+
+async function uploadAndInsertInlineFile(file) {
+    showStatus("⏳ در حال آپلود تصویر در متن...", true);
+    const fd = new FormData();
+    fd.append("image", file);
+    try {
+        const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });
+        const data = await res.json();
+        if (data.url) {
+            insertSingleImage(data.url);
+            showStatus("✅ تصویر در متن درج شد.", true);
+        }
+    } catch (err) {
+        showStatus("❌ خطا در آپلود تصویر", false);
+    }
+}
+
 function uploadSingleImage(){
     const input = document.createElement("input");
     input.type = "file";
@@ -1661,29 +2905,60 @@ function uploadSingleImage(){
         const file = input.files[0];
         if (!file) return;
 
+        showStatus("⏳ در حال آپلود تصویر...", true);
         const fd = new FormData();
         fd.append("image", file);
 
         fetch("upload-inline-image.php", {method:"POST", body:fd})
         .then(r=>r.json())
         .then(d=>{
-            if (d.url) insertSingleImage(d.url);
-        });
+            if (d.url) {
+                insertSingleImage(d.url);
+                showStatus("✅ تصویر درج شد.", true);
+            }
+        })
+        .catch(() => showStatus("❌ خطا در ارسال تصویر", false));
     };
     input.click();
 }
 
 function insertSingleImage(url){
+    const figure = document.createElement("figure");
+    figure.className = "article-img-wrap align-center";
+    figure.style.cssText = "width:60%; max-width:100%; margin:24px auto; display:block; text-align:center;";
+
     const img = document.createElement("img");
     img.src = url;
+    img.alt = "تصویر خبر";
+    img.className = "article-inline-img align-center";
+    img.style.cssText = "width:100%; height:auto; border-radius:12px; display:block;";
+    figure.appendChild(img);
+
+    const figcap = document.createElement("figcaption");
+    figcap.className = "img-caption";
+    figcap.contentEditable = "true";
+    figcap.setAttribute("data-placeholder", "توضیح زیر عکس (اختیاری)...");
+    figure.appendChild(figcap);
+
+    const p = document.createElement("p");
+    p.innerHTML = "<br>";
 
     restoreSelection();
     const sel = window.getSelection();
     if (sel.rangeCount){
         const range = sel.getRangeAt(0);
-        range.insertNode(img);
+        range.deleteContents();
+        range.insertNode(p);
+        range.insertNode(figure);
+    } else {
+        editor.appendChild(figure);
+        editor.appendChild(p);
     }
     saveSelection();
+
+    setTimeout(() => {
+        selectEditorImage(img);
+    }, 120);
 }
 
 function uploadGalleryInline(){
@@ -1696,6 +2971,7 @@ function uploadGalleryInline(){
         const files = Array.from(input.files);
         if (!files.length) return;
 
+        showStatus("⏳ در حال آپلود گالری تصاویر...", true);
         let urls = [];
 
         Promise.all(files.map(file=>{
@@ -1704,7 +2980,10 @@ function uploadGalleryInline(){
             return fetch("upload-inline-image.php", {method:"POST", body:fd})
                 .then(r=>r.json())
                 .then(d=>{ if (d.url) urls.push(d.url); });
-        })).then(()=> insertGalleryRow(urls));
+        })).then(()=> {
+            insertGalleryRow(urls);
+            showStatus("✅ گالری تصاویر درج شد.", true);
+        }).catch(() => showStatus("❌ خطا در آپلود گالری", false));
     };
     input.click();
 }
@@ -1712,19 +2991,28 @@ function uploadGalleryInline(){
 function insertGalleryRow(urls){
     const row = document.createElement("div");
     row.className = "gallery-row";
-    row.style.cssText = "display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;";
+    row.style.cssText = "display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;clear:both;";
 
-    urls.slice(0,3).forEach(u=>{
+    urls.slice(0,4).forEach(u=>{
         const img = document.createElement("img");
         img.src = u;
-        img.style.cssText = "flex:1;min-width:30%;max-width:100%;border-radius:8px;object-fit:cover;";
+        img.style.cssText = "flex:1;min-width:30%;max-width:100%;border-radius:10px;object-fit:cover;cursor:pointer;";
         row.appendChild(img);
     });
+
+    const p = document.createElement("p");
+    p.innerHTML = "<br>";
 
     restoreSelection();
     const sel = window.getSelection();
     if (sel.rangeCount){
-        sel.getRangeAt(0).insertNode(row);
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(p);
+        range.insertNode(row);
+    } else {
+        editor.appendChild(row);
+        editor.appendChild(p);
     }
     saveSelection();
 }

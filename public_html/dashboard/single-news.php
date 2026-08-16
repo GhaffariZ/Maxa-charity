@@ -54,13 +54,28 @@ $folder = "uploads/news/" . $news_code . "/";
 body { font-family:tahoma; direction:rtl; max-width:900px; margin:auto; padding:20px; background:#f9f9f9; color:#333; }
 h1 { font-size:28px; margin-bottom:15px; }
 .article-meta { color:#666; margin-bottom:25px; font-size:14px; }
-.article-content img { max-width:100%; margin: 10px 0; }
-.gallery { display:flex; gap:10px; flex-wrap: wrap; margin:20px 0; }
+.article-content { line-height: 1.9; font-size: 16px; }
+.article-content::after { content: ""; display: table; clear: both; }
+.article-content img { max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+.article-content figure, .article-content .article-img-wrap { display: block; max-width: 100%; margin: 20px auto; clear: both; }
+.article-content figure.align-right, .article-content .article-img-wrap.align-right, .article-content img.align-right { float: right !important; margin: 8px 0 20px 24px !important; display: block !important; clear: right !important; }
+.article-content figure.align-left, .article-content .article-img-wrap.align-left, .article-content img.align-left { float: left !important; margin: 8px 24px 20px 0 !important; display: block !important; clear: left !important; }
+.article-content figure.align-center, .article-content .article-img-wrap.align-center, .article-content img.align-center { display: block !important; margin: 24px auto !important; text-align: center !important; float: none !important; clear: both !important; }
+.article-content figure.align-full, .article-content .article-img-wrap.align-full, .article-content img.align-full { display: block !important; width: 100% !important; max-width: 100% !important; margin: 28px 0 !important; float: none !important; clear: both !important; }
+.article-content figcaption, .article-content .img-caption { margin-top: 8px; font-size: 13px; color: #777; text-align: center; line-height: 1.5; }
+.gallery { display:flex; gap:10px; flex-wrap: wrap; margin:20px 0; clear: both; }
 .gallery img{ width:150px; height:auto; border-radius:5px; cursor:pointer; transition: transform 0.3s ease; }
 .gallery img:hover { transform: scale(1.1); }
 .video-container { margin-top: 20px; }
 .video-container video { max-width:100%; border-radius:5px; }
 .tag {display:inline-block; background:#007bff; color:#fff; padding:5px 12px; border-radius:3px; font-size:13px; margin-bottom:15px;}
+@media (max-width: 768px) {
+    .article-content figure.align-right, .article-content figure.align-left,
+    .article-content .article-img-wrap.align-right, .article-content .article-img-wrap.align-left,
+    .article-content img.align-right, .article-content img.align-left {
+        float: none !important; margin: 16px auto !important; display: block !important; max-width: 100% !important; width: 100% !important; text-align: center !important;
+    }
+}
 </style>
 
 </head>
