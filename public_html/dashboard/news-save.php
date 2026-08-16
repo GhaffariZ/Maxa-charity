@@ -74,31 +74,86 @@ try {
     // ایزولاسیون چندمستأجری
     $__branch = dash_active_branch_id();
 
+    // ================= بررسی و تطابق پویای ستون‌های جدول news =================
+    $existing_cols = [];
+    try {
+        $col_stmt = $pdo->query("SHOW COLUMNS FROM news");
+        $existing_cols = $col_stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Exception $e) {
+        $existing_cols = [];
+    }
+
+    // اگر ستون tags یا subtitle یا branch_id در جدول وجود نداشت، خودکار اضافه می‌کنیم
+    if (!empty($existing_cols)) {
+        if (!in_array('tags', $existing_cols)) {
+            try {
+                $pdo->exec("ALTER TABLE `news` ADD COLUMN `tags` VARCHAR(255) DEFAULT NULL");
+                $existing_cols[] = 'tags';
+            } catch (Exception $e) {}
+        }
+        if (!in_array('subtitle', $existing_cols)) {
+            try {
+                $pdo->exec("ALTER TABLE `news` ADD COLUMN `subtitle` VARCHAR(255) DEFAULT NULL AFTER `title`");
+                $existing_cols[] = 'subtitle';
+            } catch (Exception $e) {}
+        }
+        if (!in_array('branch_id', $existing_cols)) {
+            try {
+                $pdo->exec("ALTER TABLE `news` ADD COLUMN `branch_id` INT UNSIGNED NOT NULL DEFAULT 1");
+                $existing_cols[] = 'branch_id';
+            } catch (Exception $e) {}
+        }
+    }
+
+    $has_tags = empty($existing_cols) || in_array('tags', $existing_cols);
+    $has_subtitle = empty($existing_cols) || in_array('subtitle', $existing_cols);
+    $has_branch_id = empty($existing_cols) || in_array('branch_id', $existing_cols);
+    $has_read_time = empty($existing_cols) || in_array('read_time', $existing_cols);
+
     if ($id > 0) {
         // ======================== حالت ویرایش (UPDATE) ========================
-        // IDOR: خبر باید متعلق به همین شعبه باشد
-        $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ? AND branch_id = ?");
-        $stmt_check->execute([$id, $__branch]);
+        $where_clause = "WHERE id = ?";
+        $where_params = [$id];
+
+        if ($has_branch_id) {
+            $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ? AND branch_id = ?");
+            $stmt_check->execute([$id, $__branch]);
+            $where_clause = "WHERE id = ? AND branch_id = ?";
+            $where_params = [$id, $__branch];
+        } else {
+            $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ?");
+            $stmt_check->execute([$id]);
+        }
         $existing = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
         if (!$existing) throw new Exception("خبر مورد نظر برای ویرایش یافت نشد.");
         $news_code = $existing['news_code'];
 
-        // قید branch_id در WHERE برای ایمنی مضاعف
-        $sql = "UPDATE news SET
-                title = ?, subtitle = ?, content = ?, author = ?, publish_date = ?,
-                category_id = ?, keywords = ?, tags = ?, read_time = ? WHERE id = ? AND branch_id = ?";
+        $update_fields = [
+            "title = ?" => $title,
+        ];
+        if ($has_subtitle) $update_fields["subtitle = ?"] = $subtitle;
+        $update_fields["content = ?"] = $content;
+        $update_fields["author = ?"] = $author;
+        $update_fields["publish_date = ?"] = $publish_date;
+        $update_fields["category_id = ?"] = $category_id;
+        $update_fields["keywords = ?"] = $keywords;
+        if ($has_tags) $update_fields["tags = ?"] = $tags;
+        if ($has_read_time) $update_fields["read_time = ?"] = $read_time;
+
+        $set_sql = implode(", ", array_keys($update_fields));
+        $params = array_merge(array_values($update_fields), $where_params);
+
+        $sql = "UPDATE news SET $set_sql $where_clause";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id, $__branch]);
+        $stmt->execute($params);
         
         $message = "تغییرات با موفقیت به‌روزرسانی شد.";
         $record_id = $id;
 
     } else {
         // ======================== حالت ایجاد جدید (INSERT) ========================
-        // تولید news_code یکتا (با بررسی برخورد). طول نهایی ۱۸ کاراکتر است و
-        // باید در ستون varchar(30) جا شود؛ در غیر این صورت بریده شدن باعث
-        // می‌شود چند خبر کد یکسان و در نتیجه تصویر شاخصِ مشترک بگیرند.
+        // تولید news_code یکتا
         $news_code = '';
         $code_check = $pdo->prepare("SELECT 1 FROM news WHERE news_code = ? LIMIT 1");
         for ($attempt = 0; $attempt < 20; $attempt++) {
@@ -110,15 +165,31 @@ try {
             }
         }
         if ($news_code === '') {
-            // پشتیبان: در حالت بسیار نادرِ برخوردِ پیاپی، از uniqid استفاده کن (۱۹ کاراکتر، در varchar(30) جا می‌شود)
             $news_code = 'NEWS-' . date('Ymd') . '-' . substr(uniqid(), -5);
         }
 
-        $sql = "INSERT INTO news
-                (news_code, title, subtitle, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
+        $insert_data = [
+            'news_code' => $news_code,
+            'title' => $title,
+        ];
+        if ($has_subtitle) $insert_data['subtitle'] = $subtitle;
+        $insert_data['content'] = $content;
+        $insert_data['author'] = $author;
+        $insert_data['publish_date'] = $publish_date;
+        $insert_data['category_id'] = $category_id;
+        $insert_data['keywords'] = $keywords;
+        if ($has_tags) $insert_data['tags'] = $tags;
+        $insert_data['status'] = 'draft';
+        $insert_data['viewed'] = 0;
+        if ($has_read_time) $insert_data['read_time'] = $read_time;
+        if ($has_branch_id) $insert_data['branch_id'] = $__branch;
+
+        $columns_sql = implode(", ", array_keys($insert_data));
+        $placeholders_sql = implode(", ", array_fill(0, count($insert_data), "?"));
+
+        $sql = "INSERT INTO news ($columns_sql) VALUES ($placeholders_sql)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$news_code, $title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
+        $stmt->execute(array_values($insert_data));
         
         $record_id = (int)$pdo->lastInsertId();
         $message = "خبر جدید با موفقیت ثبت شد.";
@@ -126,13 +197,15 @@ try {
 
     // ذخیره برچسب‌های چندگانه (Multi-tag)
     if ($record_id > 0) {
-        $pdo->prepare("DELETE FROM news_tags_map WHERE news_id = ?")->execute([$record_id]);
-        if (!empty($_POST['tag_ids']) && is_array($_POST['tag_ids'])) {
-            $stmt_tag_ins = $pdo->prepare("INSERT INTO news_tags_map (news_id, tag_id) VALUES (?, ?)");
-            foreach ($_POST['tag_ids'] as $t_id) {
-                $stmt_tag_ins->execute([$record_id, (int)$t_id]);
+        try {
+            $pdo->prepare("DELETE FROM news_tags_map WHERE news_id = ?")->execute([$record_id]);
+            if (!empty($_POST['tag_ids']) && is_array($_POST['tag_ids'])) {
+                $stmt_tag_ins = $pdo->prepare("INSERT INTO news_tags_map (news_id, tag_id) VALUES (?, ?)");
+                foreach ($_POST['tag_ids'] as $t_id) {
+                    $stmt_tag_ins->execute([$record_id, (int)$t_id]);
+                }
             }
-        }
+        } catch (Exception $e) {}
     }
 
     // ======================== مدیریت تصاویر ========================
