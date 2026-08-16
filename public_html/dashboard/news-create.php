@@ -24,28 +24,12 @@ try {
     $categories = [];
 }
 
-// دریافت لیست تگ‌ها و تگ‌های انتخاب شده
-$all_tags = [];
-$selected_tag_ids = [];
-try {
-    $tag_stmt = $pdo->query("SELECT id, name FROM news_tags ORDER BY id ASC");
-    $all_tags = $tag_stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($id > 0) {
-        $stmt_selected_tags = $pdo->prepare("SELECT tag_id FROM news_tags_map WHERE news_id = ?");
-        $stmt_selected_tags->execute([$id]);
-        $selected_tag_ids = $stmt_selected_tags->fetchAll(PDO::FETCH_COLUMN);
-    }
-} catch (Exception $e) {
-    $all_tags = [];
-    $selected_tag_ids = [];
-}
 // بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
 $existing_image_url = '';
 if ($id > 0 && !empty($news_data['featured_image'])) {
     $existing_image_url = "/uploads/news/{$news_data['news_code']}/{$news_data['featured_image']}";
 }
 
-$tags = [];
 $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
 
 // آماده‌سازی زمان برای فرمت datetime-local مرورگر
@@ -75,9 +59,9 @@ if ($news_data && !empty($news_data['publish_date'])) {
 })();
 </script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<!-- TinyMCE 7 Enterprise Rich Text Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.3.0/tinymce.min.js" referrerpolicy="origin"></script>
 
 <style>
 :root {
@@ -1115,144 +1099,25 @@ select.input { appearance: none; cursor: pointer; }
                     متن خبر
                 </h3>
 
-                <div class="editor-toolbar">
-
-                    <button type="button" onclick="format('bold')" class="tb-btn" title="درشت">
-                        <svg width="18" viewBox="0 0 24 24"><path d="M7 5v14h6a4 4 0 0 0 0-8H7m6 0a4 4 0 0 0 0-8H7" fill="none" stroke-width="2"/></svg>
-                    </button>
-
-                    <button type="button" onclick="format('italic')" class="tb-btn" title="مورب">
-                        <svg width="18" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4" stroke-width="2"/><line x1="14" y1="20" x2="5" y2="20" stroke-width="2"/><line x1="15" y1="4" x2="9" y2="20" stroke-width="2"/></svg>
-                    </button>
-
-                    <button type="button" onclick="format('underline')" class="tb-btn" title="زیرخط">
-                        <svg width="18" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4" fill="none" stroke-width="2"/><line x1="4" y1="20" x2="20" y2="20" stroke-width="2"/></svg>
-                    </button>
-
-                    <div class="tb-sep"></div>
-
-                    <select id="fontSelect" onchange="setFont(this)" class="tb-select">
-                        <option value="">فونت</option>
-                        <option value="Tahoma">Tahoma</option>
-                        <option value="Arial">Arial</option>
-                        <option value="Vazirmatn">Vazirmatn</option>
-                        <option value="Sahel">Sahel</option>
-                        <option value="Shabnam">Shabnam</option>
-                    </select>
-
-                    <select id="fontSizeSelect" onchange="setFontSize(this)" class="tb-select small">
-                        <option value="">سایز</option>
-                        <option value="12">12</option>
-                        <option value="14">14</option>
-                        <option value="16">16</option>
-                        <option value="18">18</option>
-                        <option value="20">20</option>
-                        <option value="24">24</option>
-                        <option value="28">28</option>
-                    </select>
-
-                    <select id="headingSelect" onchange="setHeading(this)" class="tb-select small">
-                        <option value="p"> عادی </option>
-                        <option value="h2">H2</option>
-                        <option value="h3">H3</option>
-                        <option value="h4">H4</option>
-                        <option value="h5">H5</option>
-                        <option value="h6">H6</option>
-                    </select>
-
-                    <div class="tb-sep"></div>
-
-                    <button type="button" onclick="format('insertUnorderedList')" class="tb-btn" title="لیست">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <circle cx="5" cy="6" r="2" fill="#333"/>
-                            <circle cx="5" cy="12" r="2" fill="#333"/>
-                            <circle cx="5" cy="18" r="2" fill="#333"/>
-                            <line x1="10" y1="6" x2="20" y2="6" stroke-width="2"/>
-                            <line x1="10" y1="12" x2="20" y2="12" stroke-width="2"/>
-                            <line x1="10" y1="18" x2="20" y2="18" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" onclick="insertLink()" class="tb-btn" title="پیوند">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <path d="M10 14a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" fill="none" stroke-width="2"/>
-                            <path d="M14 10a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" fill="none" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" onclick="clearFormat()" class="tb-btn" title="حذف فرمت">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <path d="M3 6h18M8 6v12m8-12v12" stroke-width="2" fill="none"/>
-                            <line x1="4" y1="18" x2="20" y2="4" stroke="red" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <div class="tb-sep"></div>
-
-                    <button type="button" onclick="alignRight()" class="tb-btn" title="راست‌چین">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <line x1="21" y1="6" x2="3" y2="6" stroke-width="2"/>
-                            <line x1="21" y1="12" x2="9" y2="12" stroke-width="2"/>
-                            <line x1="21" y1="18" x2="6" y2="18" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" onclick="alignCenter()" class="tb-btn" title="وسط‌چین">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <line x1="6" y1="6" x2="18" y2="6" stroke-width="2"/>
-                            <line x1="4" y1="12" x2="20" y2="12" stroke-width="2"/>
-                            <line x1="6" y1="18" x2="18" y2="18" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" onclick="alignLeft()" class="tb-btn" title="چپ‌چین">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
-                            <line x1="3" y1="12" x2="15" y2="12" stroke-width="2"/>
-                            <line x1="3" y1="18" x2="18" y2="18" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <button type="button" onclick="alignJustify()" class="tb-btn" title="هم‌تراز">
-                        <svg width="18" viewBox="0 0 24 24">
-                            <line x1="3" y1="6"  x2="21" y2="6"  stroke-width="2"/>
-                            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
-                            <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
-                        </svg>
-                    </button>
-
-                    <div class="color-row">
-                        <div class="color-box" style="background:#000" onclick="applyColor('#000')"></div>
-                        <div class="color-box" style="background:#333" onclick="applyColor('#333')"></div>
-                        <div class="color-box" style="background:#007D75" onclick="applyColor('#007D75')"></div>
-                        <div class="color-box" style="background:#009688" onclick="applyColor('#009688')"></div>
-                        <div class="color-box" style="background:#1565c0" onclick="applyColor('#1565c0')"></div>
-                        <div class="color-box" style="background:#c62828" onclick="applyColor('#c62828')"></div>
-                        <div class="color-box" style="background:#F79F1F" onclick="applyColor('#F79F1F')"></div>
-                        <div class="color-box" style="background:#6a1b9a" onclick="applyColor('#6a1b9a')"></div>
-                    </div>
-
-                </div>
-
-                <div class="editor-shell" id="editorShell">
-                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                <div class="editor-shell" id="editorShell" style="margin-top: 12px;">
+                    <textarea id="editor" name="content" style="width:100%; min-height:480px;"><?= $news_data ? htmlspecialchars($news_data['content']) : '' ?></textarea>
                 </div>
                 <div class="field-error" id="contentError">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     <span>نوشتن متن خبر الزامی است.</span>
                 </div>
 
-                <!-- درج تصویر در متن -->
+                <!-- دکمه‌های درج سریع تصویر و گالری -->
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
                     <button type="button" class="btn-insert" onclick="uploadSingleImage()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        درج تصویر تکی
+                        درج سریع تصویر (آپلود / Drag & Drop)
                     </button>
                     <button type="button" class="btn-insert" onclick="uploadGalleryInline()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                        درج گالری سه‌تایی
+                        درج گالری تصاویر شبکه
                     </button>
-                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">تصاویر در محل کرسر وارد می‌شوند.</span>
+                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">شما همچنین می‌توانید تصاویر را مستقیماً بکشید و داخل متن رها کنید (Drag & Drop) یا Copy-Paste کنید.</span>
                 </div>
 
             </div>
@@ -1353,11 +1218,15 @@ select.input { appearance: none; cursor: pointer; }
                 </div>
 
                 <div class="input-group">
-                    <label class="field-label" for="keywords">
+                    <label class="field-label" for="keywords_visual">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><circle cx="12" cy="12" r="2"/></svg>
                         کلمات کلیدی
                     </label>
-                    <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="کلمات کلیدی را وارد کنید">
+                    <div class="keywords-container" id="keywordsContainer">
+                        <div id="keywordsChips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
+                        <input type="text" class="input" id="keywords_visual" placeholder="کلمه کلیدی را بنویسید و Enter یا ویرگول بزنید" style="border:1px dashed var(--border-color); box-shadow:none;">
+                    </div>
+                    <input type="hidden" id="keywords" name="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>">
                 </div>
 
                 <!-- پیشنهاد هوشمند کلمات کلیدی -->
@@ -1376,29 +1245,7 @@ select.input { appearance: none; cursor: pointer; }
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label class="field-label" for="tags">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        تگ‌های سئو
-                    </label>
-                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
-                    <div class="chips" id="tagsChips"></div>
-                </div>
 
-                <div class="input-group">
-                    <label class="field-label">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                        برچسب‌های موضوعی خبر (چند انتخابی)
-                    </label>
-                    <div class="tags-checklist" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                        <?php foreach ($all_tags as $t): ?>
-                            <label class="tag-checkbox-label">
-                                <input type="checkbox" name="tag_ids[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $selected_tag_ids) ? 'checked' : '' ?>>
-                                <span><?= htmlspecialchars($t['name']) ?></span>
-                            </label>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
 
             </div>
 
@@ -1769,25 +1616,6 @@ function insertGalleryRow(urls){
     saveSelection();
 }
 
-/* =================== چیپ تگ‌ها (نمایشی) =================== */
-const tagsInput = document.getElementById("tags");
-const tagsChips = document.getElementById("tagsChips");
-function renderTagChips(){
-    const parts = tagsInput.value.split("،").join(",").split(",").map(t=>t.trim()).filter(Boolean);
-    tagsChips.innerHTML = "";
-    parts.forEach((t, idx) => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.textContent = t;
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("، "); renderTagChips(); };
-        chip.appendChild(btn);
-        tagsChips.appendChild(chip);
-    });
-}
-tagsInput.addEventListener("input", renderTagChips);
 
 /* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
 const TOAST_ICONS = {
@@ -2224,10 +2052,172 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTitleCounter();
     updateSubtitleCounter();
     renderTagChips();
-    updateSeoWidget();
+    initTinyMCEEditor();
     enhanceSelect(document.getElementById("category_id"));
 });
 /* ======================== */
+
+/* =================== راه‌اندازی ادیتور پیشرفته TinyMCE 7 =================== */
+function initTinyMCEEditor() {
+    if (typeof tinymce === 'undefined') {
+        console.error("TinyMCE not loaded!");
+        return;
+    }
+
+    tinymce.init({
+        selector: '#editor',
+        directionality: 'rtl',
+        language: 'fa',
+        language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.7.29/langs/fa.js',
+        min_height: 520,
+        max_height: 850,
+        autoresize_bottom_margin: 20,
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'directionality'
+        ],
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | ltr rtl | bullist numlist outdent indent | table image media link | removeformat fullscreen code',
+        content_style: `
+            @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap');
+            body {
+                font-family: 'Vazirmatn', Tahoma, sans-serif;
+                font-size: 16px;
+                line-height: 1.95;
+                color: #333333;
+                direction: rtl;
+                text-align: right;
+                padding: 16px;
+                margin: 0;
+            }
+            body[data-theme="dark"] {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+            }
+            img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 18px auto; box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+            figure { display: table; margin: 20px auto; max-width: 100%; text-align: center; }
+            figure img { margin: 0 auto; }
+            figcaption { font-size: 13.5px; color: #666; margin-top: 8px; font-style: italic; font-weight: 600; }
+            table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 15px; }
+            table th, table td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: right; }
+            table th { background: #f8fafc; font-weight: 700; color: #007D75; }
+            blockquote { border-right: 4px solid #007D75; margin: 20px 0; padding: 14px 20px; background: rgba(0,125,117,0.05); border-radius: 0 10px 10px 0; font-style: italic; font-size: 16.5px; line-height: 2; }
+            iframe { max-width: 100%; border-radius: 12px; margin: 18px auto; display: block; }
+        `,
+        image_title: true,
+        automatic_uploads: true,
+        images_upload_url: '/dashboard/upload-inline-image.php',
+        images_upload_handler: function (blobInfo, progress) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/dashboard/upload-inline-image.php');
+
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        progress(e.loaded / e.total * 100);
+                    }
+                };
+
+                xhr.onload = function () {
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        reject('خطا در آپلود تصویر: HTTP ' + xhr.status);
+                        return;
+                    }
+                    var json;
+                    try {
+                        json = JSON.parse(xhr.responseText);
+                    } catch (err) {
+                        reject('پاسخ نامعتبر سرور: ' + xhr.responseText);
+                        return;
+                    }
+                    if (!json || typeof json.location !== 'string') {
+                        reject(json && json.message ? json.message : 'پاسخ نامعتبر از سرور.');
+                        return;
+                    }
+                    resolve(json.location);
+                };
+
+                xhr.onerror = function () {
+                    reject('خطای ارتباط با سرور در هنگام آپلود تصویر.');
+                };
+
+                var formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            });
+        },
+        setup: function (editor) {
+            editor.on('init', function () {
+                updateSeoWidget();
+            });
+            editor.on('change input keyup NodeChange SetContent', function () {
+                editor.save();
+                updateSeoWidget();
+                setFieldError("editorShell", "contentError", false);
+            });
+        }
+    });
+}
+
+function getEditorHTML() {
+    if (window.tinymce && tinymce.get("editor")) {
+        tinymce.get("editor").save();
+        return tinymce.get("editor").getContent();
+    }
+    const el = document.getElementById("editor");
+    return el ? el.value : "";
+}
+
+function getEditorText() {
+    if (window.tinymce && tinymce.get("editor")) {
+        return tinymce.get("editor").getContent({ format: "text" });
+    }
+    const el = document.getElementById("editor");
+    return el ? (el.value || el.innerText || "") : "";
+}
+
+function uploadSingleImage() {
+    if (window.tinymce && tinymce.get("editor")) {
+        tinymce.get("editor").execCommand('mceImage');
+    }
+}
+
+function uploadGalleryInline() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = async function () {
+        if (!this.files || this.files.length === 0) return;
+        const files = Array.from(this.files).slice(0, 6);
+        showStatus("در حال آپلود گالری تصاویر...", true);
+        const imgUrls = [];
+        for (const file of files) {
+            const fd = new FormData();
+            fd.append('file', file);
+            try {
+                const res = await fetch('/dashboard/upload-inline-image.php', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data && data.location) imgUrls.push(data.location);
+            } catch(e) {}
+        }
+        if (imgUrls.length > 0) {
+            const galleryHtml = `
+                <div class="news-gallery" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 24px 0;">
+                    ${imgUrls.map((url, i) => `<figure style="margin:0;"><img src="${url}" alt="تصویر ${i+1}" style="width:100%;height:auto;border-radius:10px;"><figcaption style="text-align:center;font-size:12.5px;color:#666;margin-top:4px;">تصویر ${i+1}</figcaption></figure>`).join('')}
+                </div><p></p>
+            `;
+            if (window.tinymce && tinymce.get("editor")) {
+                tinymce.get("editor").insertContent(galleryHtml);
+                tinymce.get("editor").save();
+                updateSeoWidget();
+            }
+            showStatus("گالری تصاویر با موفقیت در متن درج شد.", true);
+        }
+    };
+    input.click();
+}
 
 /* ====== فشرده‌سازی هوشمند تصویر شاخص (حفظ کیفیت، کاهش حجم) ====== */
 // فقط در صورت نیاز فشرده می‌کند: اگر فایل کوچک باشد دست‌نخورده برمی‌گردد.
@@ -2297,22 +2287,21 @@ function setFieldError(boxId, errId, on){
     const err = document.getElementById(errId);
     if (box) box.classList.toggle("field-invalid", on);
     if (err) err.classList.toggle("show", on);
-    // لیبلِ گروهِ والد را هم قرمز کن (برای فیلدهای داخل .input-group)
     const grp = box ? box.closest(".input-group") : null;
     if (grp) grp.classList.toggle("has-error", on);
-    // اگر فیلد یک <select>‌ ارتقایافته باشد، حالتِ خطا را به دراپ‌داون سفارشی منتقل کن
     if (box && box._mselSync) box._mselSync();
 }
 
 /* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
 document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
-document.getElementById("editor").addEventListener("input", () => setFieldError("editorShell", "contentError", false));
 document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
 
 function validateNewsForm(){
+    if (window.tinymce && tinymce.get("editor")) {
+        tinymce.get("editor").save();
+    }
     const title = document.getElementById("title").value.trim();
-    const editorEl = document.getElementById("editor");
-    const contentText = editorEl.innerText.trim();
+    const contentText = getEditorText().trim();
     const categoryVal = document.getElementById("category_id").value;
 
     const titleBad = !title;
@@ -2323,23 +2312,24 @@ function validateNewsForm(){
     setFieldError("editorShell", "contentError", contentBad);
     setFieldError("category_id", "categoryError", categoryBad);
 
-    // اسکرول و فوکوس به اولین فیلدِ خطادار
     let firstBad = null;
     if (titleBad) firstBad = document.getElementById("title");
-    else if (contentBad) firstBad = editorEl;
+    else if (contentBad && window.tinymce && tinymce.get("editor")) firstBad = tinymce.get("editor").getContainer();
     else if (categoryBad) firstBad = document.getElementById("category_id");
 
     if (firstBad) {
         firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
-        try { firstBad.focus({ preventScroll: true }); } catch (_) { firstBad.focus(); }
     }
 
     return !(titleBad || contentBad || categoryBad);
 }
 
 async function saveNews() {
+    if (window.tinymce && tinymce.get("editor")) {
+        tinymce.get("editor").save();
+    }
     const title = document.getElementById("title").value.trim();
-    const content = document.getElementById("editor").innerHTML.trim();
+    const content = getEditorHTML().trim();
 
     if (!validateNewsForm()) {
         showStatus("لطفاً فیلدهای مشخص‌شده را پر کنید.", false);
@@ -2350,7 +2340,6 @@ async function saveNews() {
     const originalBtnText = saveBtn.innerHTML;
 
     try {
-        // تغییر وضعیت دکمه به لودینگ
         saveBtn.disabled = true;
         saveBtn.innerHTML = 'در حال ذخیره...';
         showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
@@ -2364,13 +2353,7 @@ async function saveNews() {
         fd.append("category_id", document.getElementById("category_id").value);
         fd.append("keywords", document.getElementById("keywords").value);
         fd.append("publish_date", document.getElementById("publish_date").value);
-        fd.append("tags", document.getElementById("tags").value);
         fd.append("remove_featured_flag", document.getElementById("remove_featured_flag").value);
-
-        const checkedTags = document.querySelectorAll('input[name="tag_ids[]"]:checked');
-        checkedTags.forEach(cb => {
-            fd.append("tag_ids[]", cb.value);
-        });
 
         let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {
@@ -2379,7 +2362,6 @@ async function saveNews() {
             fd.append("featured_image", featuredFile);
         }
 
-        // استفاده از XMLHttpRequest برای نمایش درصد پیشرفت آپلود
         const data = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "news-save.php", true);
@@ -2421,7 +2403,6 @@ async function saveNews() {
         hideUploadProgress();
         showStatus("❌ خطایی رخ داد: " + err.message, false);
     } finally {
-        // بازگشت دکمه به حالت عادی در صورت خطا
         saveBtn.disabled = false;
         saveBtn.innerHTML = originalBtnText;
     }
@@ -2435,21 +2416,19 @@ function openPreview(){
     const title = document.getElementById("title").value.trim();
     const author = document.getElementById("author").value.trim();
     const date = document.getElementById("publish_date_display").value.trim();
-    const content = document.getElementById("editor").innerHTML;
+    const content = getEditorHTML();
     const catSelect = document.getElementById("category_id");
     const category = catSelect.value ? catSelect.options[catSelect.selectedIndex].text.trim() : "";
     const featured = featuredInput.files[0]
         ? URL.createObjectURL(featuredInput.files[0])
         : (dzImg.getAttribute("src") || "");
 
-    const contentHasText = editor.innerText.trim().length > 0;
+    const contentHasText = getEditorText().trim().length > 0;
     const titleSafe = escapeHtml(title || "بدون عنوان");
 
-    /* آیکون‌های متادیتا */
     const icAuthor = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
     const icDate = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
 
-    /* هیرو: اگر تصویر بود عنوان روی تصویر، وگرنه عنوان معمولی */
     let heroHtml;
     if (featured) {
         heroHtml = `
@@ -2498,11 +2477,12 @@ function closePreview(){
 function computeSeoScore(){
     let score = 0;
     const title = document.getElementById("title").value.trim();
-    const contentText = editor.innerText.trim();
+    const contentText = getEditorText().trim();
+    const contentHtml = getEditorHTML();
     const wordCount = contentText ? contentText.split(/\s+/).length : 0;
-    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show") || contentHtml.includes("<img");
     const keywords = document.getElementById("keywords").value.trim();
-    const hasH2 = editor.querySelector("h2");
+    const hasH2 = contentHtml.includes("<h2");
 
     if(title.length > 5) score += 20;
     if(wordCount > 300) score += 25;
@@ -2524,39 +2504,43 @@ function updateSeoWidget(){
     if (score >= 70) { color = "#00b894"; label = "خوب"; tip = "محتوای شما برای سئو مناسب است."; }
     else if (score >= 40) { color = "#F79F1F"; label = "متوسط"; tip = "تصویر، کلمات کلیدی یا تیتر H2 اضافه کنید."; }
 
-    fill.setAttribute("stroke-dasharray", score + ", 100");
-    fill.setAttribute("stroke", color);
-    num.textContent = toFaDigits(score);
-    stateEl.textContent = label;
-    stateEl.style.color = color;
-    tipEl.textContent = tip;
+    if (fill) {
+        fill.setAttribute("stroke-dasharray", score + ", 100");
+        fill.setAttribute("stroke", color);
+    }
+    if (num) num.textContent = toFaDigits(score);
+    if (stateEl) {
+        stateEl.textContent = label;
+        stateEl.style.color = color;
+    }
+    if (tipEl) tipEl.textContent = tip;
 }
 
 /* به‌روزرسانی زنده ویجت با تغییر ورودی‌ها */
 ["title","keywords"].forEach(id => {
-    document.getElementById(id).addEventListener("input", updateSeoWidget);
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", updateSeoWidget);
 });
-editor.addEventListener("input", updateSeoWidget);
-featuredInput.addEventListener("change", updateSeoWidget);
+if (featuredInput) featuredInput.addEventListener("change", updateSeoWidget);
 
 function calculateSEO(){
     const score = computeSeoScore();
+    const contentHtml = getEditorHTML();
 
     let color = "#e74c3c", label = "ضعیف";
     if(score >= 70) { color = "#00b894"; label = "خوب"; }
     else if(score >= 40) { color = "#F79F1F"; label = "متوسط"; }
 
-    /* وضعیت هر معیار برای چک‌لیست */
     const title = document.getElementById("title").value.trim();
-    const wordCount = editor.innerText.trim() ? editor.innerText.trim().split(/\s+/).length : 0;
-    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const wordCount = getEditorText().trim() ? getEditorText().trim().split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show") || contentHtml.includes("<img");
     const keywords = document.getElementById("keywords").value.trim();
-    const hasH2 = !!editor.querySelector("h2");
+    const hasH2 = contentHtml.includes("<h2");
 
     const checks = [
         { ok: title.length > 5,   text: "عنوان مناسب" },
         { ok: wordCount > 300,    text: "طول متن کافی" },
-        { ok: !!hasImage,         text: "تصویر شاخص" },
+        { ok: !!hasImage,         text: "تصویر شاخص یا درون‌متنی" },
         { ok: keywords.length > 3,text: "کلمات کلیدی" },
         { ok: hasH2,              text: "تیتر H2 در متن" },
     ];
@@ -2568,31 +2552,27 @@ function calculateSEO(){
         `<div class="pv-check ${c.ok ? "ok" : "no"}">${c.ok ? icOk : icNo}<span>${c.text}</span></div>`
     ).join("");
 
-    document.getElementById("seoScoreBox").innerHTML = `
-        <div class="pv-seo-head">
-            <h3 class="card-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                امتیاز سئو
-            </h3>
-            <span class="pv-seo-badge" style="background:${color}">${label}</span>
-        </div>
-        <div class="pv-seo-bar-track">
-            <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
-        </div>
-        <div class="pv-seo-foot">
-            <span>امتیاز کلی</span>
-            <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
-        </div>
-        <div class="pv-checks">${checksHtml}</div>
-    `;
-}
-
-document.getElementById("editor").addEventListener("keydown", function(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        document.execCommand("insertLineBreak");
+    const seoBox = document.getElementById("seoScoreBox");
+    if (seoBox) {
+        seoBox.innerHTML = `
+            <div class="pv-seo-head">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    امتیاز سئو
+                </h3>
+                <span class="pv-seo-badge" style="background:${color}">${label}</span>
+            </div>
+            <div class="pv-seo-bar-track">
+                <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
+            </div>
+            <div class="pv-seo-foot">
+                <span>امتیاز کلی</span>
+                <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
+            </div>
+            <div class="pv-checks">${checksHtml}</div>
+        `;
     }
-});
+}
 
 /* =================== سیستم هوشمند پیشنهاد برچسب و کلمات کلیدی =================== */
 const PERSIAN_STOPWORDS = new Set([
@@ -2614,13 +2594,13 @@ function generateSuggestions() {
     const title = document.getElementById("title").value.trim();
     const subtitleEl = document.getElementById("subtitle");
     const subtitle = subtitleEl ? subtitleEl.value.trim() : "";
-    const contentText = editor.innerText || editor.textContent || "";
+    const contentText = getEditorText();
     
     // ترکیب متون برای استخراج کلمات
     const combinedText = (title + " " + subtitle + " " + contentText)
         .replace(/[\u200c-\u200f]/g, " ") // جایگزینی نیم‌فاصله‌ها
         .replace(/[0-9۰-۹]/g, "") // حذف اعداد
-        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
+        .replace(/[^\u0600-\u06FFa-zA-Z\s-]/g, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
         .toLowerCase();
     
     // تبدیل به کلمات تکی و فیلتر کردن
@@ -2665,42 +2645,79 @@ function generateSuggestions() {
 function addSuggestedWord(btnEl, word) {
     // ۱. افزودن به کلمات کلیدی (Keywords)
     const keywordsInput = document.getElementById("keywords");
-    let keywords = keywordsInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-    if (!keywords.includes(word)) {
-        keywords.push(word);
-        keywordsInput.value = keywords.join("، ");
+    let kws = keywordsInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+    if (!kws.includes(word)) {
+        kws.push(word);
+        keywordsInput.value = kws.join("، ");
     }
     
-    // ۲. افزودن به تگ‌های سئو (Tags)
-    const tagsInput = document.getElementById("tags");
-    let tags = tagsInput.value.split("،").join(",").split(",").map(t => t.trim()).filter(Boolean);
-    if (!tags.includes(word)) {
-        tags.push(word);
-        tagsInput.value = tags.join("، ");
-        if (typeof renderTagChips === "function") {
-            renderTagChips();
-        }
-    }
-    
-    // ۳. انطباق و انتخاب خودکار برچسب‌های موضوعی در صورت همخوانی با کلمه کلیدی
-    const checkboxes = document.querySelectorAll('input[name="tag_ids[]"]');
-    checkboxes.forEach(cb => {
-        const labelSpan = cb.nextElementSibling;
-        if (labelSpan) {
-            const tagName = labelSpan.textContent.trim().toLowerCase();
-            // انطباق کامل یا انطباق جزئی
-            if (tagName === word.toLowerCase() || word.toLowerCase().includes(tagName) || tagName.includes(word.toLowerCase())) {
-                cb.checked = true;
-                cb.dispatchEvent(new Event("change", { bubbles: true }));
-            }
-        }
-    });
+    renderKeywordsChips();
     
     // انیمیشن کوچک حذف چیپ پیشنهادی پس از کلیک و اضافه شدن
     btnEl.style.transform = "scale(0.8)";
     btnEl.style.opacity = "0";
     setTimeout(() => btnEl.remove(), 200);
+    renderKeywordsChips();
 }
+
+/* =================== مدیریت کلمات کلیدی (Chips) =================== */
+function renderKeywordsChips() {
+    const hiddenInput = document.getElementById("keywords");
+    const container = document.getElementById("keywordsChips");
+    if (!hiddenInput || !container) return;
+    
+    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+    container.innerHTML = "";
+    kws.forEach((kw, index) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.style.cssText = "background:var(--surface-2); border:1px solid var(--border-color); color:var(--text-color); font-size:12.5px; padding:4px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:6px;";
+        chip.innerHTML = `${escapeHtml(kw)} <svg onclick="removeKeyword(${index})" style="cursor:pointer; color:var(--muted-color);" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+        container.appendChild(chip);
+    });
+    hiddenInput.value = kws.join("،");
+    updateSeoWidget();
+}
+
+function removeKeyword(index) {
+    const hiddenInput = document.getElementById("keywords");
+    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+    kws.splice(index, 1);
+    hiddenInput.value = kws.join("،");
+    renderKeywordsChips();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const kwVisual = document.getElementById("keywords_visual");
+    if (kwVisual) {
+        kwVisual.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" || e.key === "," || e.key === "،") {
+                e.preventDefault();
+                const val = this.value.trim();
+                if (val) {
+                    const hiddenInput = document.getElementById("keywords");
+                    let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+                    if (!kws.includes(val)) kws.push(val);
+                    hiddenInput.value = kws.join("،");
+                    this.value = "";
+                    renderKeywordsChips();
+                }
+            }
+        });
+        kwVisual.addEventListener("blur", function() {
+            const val = this.value.trim();
+            if (val) {
+                const hiddenInput = document.getElementById("keywords");
+                let kws = hiddenInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+                if (!kws.includes(val)) kws.push(val);
+                hiddenInput.value = kws.join("،");
+                this.value = "";
+                renderKeywordsChips();
+            }
+        });
+    }
+    renderKeywordsChips();
+});
 </script>
 
 </body>

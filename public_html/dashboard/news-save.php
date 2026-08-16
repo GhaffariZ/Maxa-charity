@@ -30,9 +30,9 @@ try {
     $title = trim($_POST['title']);
     $subtitle = isset($_POST['subtitle']) ? trim($_POST['subtitle']) : '';
     
-    // پاکسازی محتوا و اجازه دادن به تگ‌های ضروری ادیتور (فونت و اسپن اضافه شد)
+    // پاکسازی محتوا و اجازه دادن به تگ‌های غنی ادیتور پیشرفته (شامل عکس، زیرنویس، جدول، ویدیو و...)
     $raw_content = $_POST['content'];
-    $allowed_tags = "<img><p><br><b><strong><i><u><a><h1><h2><h3><h4><h5><h6><ul><ol><li><div><font><span>";
+    $allowed_tags = "<img><figure><figcaption><p><br><b><strong><i><u><s><em><a><h1><h2><h3><h4><h5><h6><ul><ol><li><div><font><span><table><thead><tbody><tr><th><td><iframe><blockquote><code><pre><sub><sup><hr>";
     $content = strip_tags($raw_content, $allowed_tags);
 
     $plain_text = trim(preg_replace('/\s+/u', ' ', strip_tags($content)));
@@ -87,9 +87,9 @@ try {
         // قید branch_id در WHERE برای ایمنی مضاعف
         $sql = "UPDATE news SET
                 title = ?, subtitle = ?, content = ?, author = ?, publish_date = ?,
-                category_id = ?, keywords = ?, tags = ?, read_time = ? WHERE id = ? AND branch_id = ?";
+                category_id = ?, keywords = ?, read_time = ? WHERE id = ? AND branch_id = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $id, $__branch]);
+        $stmt->execute([$title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $read_time, $id, $__branch]);
         
         $message = "تغییرات با موفقیت به‌روزرسانی شد.";
         $record_id = $id;
@@ -115,24 +115,13 @@ try {
         }
 
         $sql = "INSERT INTO news
-                (news_code, title, subtitle, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
+                (news_code, title, subtitle, content, author, publish_date, category_id, keywords, status, viewed, read_time, branch_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$news_code, $title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
+        $stmt->execute([$news_code, $title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $read_time, $__branch]);
         
         $record_id = (int)$pdo->lastInsertId();
         $message = "خبر جدید با موفقیت ثبت شد.";
-    }
-
-    // ذخیره برچسب‌های چندگانه (Multi-tag)
-    if ($record_id > 0) {
-        $pdo->prepare("DELETE FROM news_tags_map WHERE news_id = ?")->execute([$record_id]);
-        if (!empty($_POST['tag_ids']) && is_array($_POST['tag_ids'])) {
-            $stmt_tag_ins = $pdo->prepare("INSERT INTO news_tags_map (news_id, tag_id) VALUES (?, ?)");
-            foreach ($_POST['tag_ids'] as $t_id) {
-                $stmt_tag_ins->execute([$record_id, (int)$t_id]);
-            }
-        }
     }
 
     // ======================== مدیریت تصاویر ========================
