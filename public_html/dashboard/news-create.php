@@ -359,30 +359,6 @@ body {
     color: var(--primary-color);
 }
 
-/* ===== پیشنهاد کلمات کلیدی هوشمند ===== */
-.suggestion-chip {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 12px;
-    background: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all var(--anim-fast);
-    color: var(--text-color);
-    user-select: none;
-}
-.suggestion-chip:hover {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
-    transform: translateY(-1.5px);
-    box-shadow: 0 4px 8px rgba(0, 125, 117, 0.15);
-}
-
 /* ===== فیلدهای عمومی ===== */
 .input-group { margin-bottom: 18px; }
 .input-group:last-child { margin-bottom: 0; }
@@ -1358,22 +1334,6 @@ select.input { appearance: none; cursor: pointer; }
                         کلمات کلیدی
                     </label>
                     <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="کلمات کلیدی را وارد کنید">
-                </div>
-
-                <!-- پیشنهاد هوشمند کلمات کلیدی -->
-                <div class="input-group" id="suggestion-container" style="margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="font-size: 12px; font-weight: 700; color: var(--primary-color); display: inline-flex; align-items: center; gap: 4px;">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            کلمات کلیدی پیشنهادی از متن
-                        </span>
-                        <button type="button" onclick="generateSuggestions()" class="btn-insert" style="border-style: solid; padding: 4px 10px; border-radius: 999px; font-size: 11px; cursor: pointer;">
-                            ✨ اسکن و پیشنهاد
-                        </button>
-                    </div>
-                    <div id="suggested-chips-list" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); min-height: 44px; align-items: center; background: var(--surface-2);">
-                        <span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">برای استخراج کلمات کلیدی، روی دکمه اسکن کلیک کنید.</span>
-                    </div>
                 </div>
 
                 <div class="input-group">
@@ -2593,114 +2553,6 @@ document.getElementById("editor").addEventListener("keydown", function(e) {
         document.execCommand("insertLineBreak");
     }
 });
-
-/* =================== سیستم هوشمند پیشنهاد برچسب و کلمات کلیدی =================== */
-const PERSIAN_STOPWORDS = new Set([
-    "از", "به", "با", "که", "در", "را", "و", "این", "آن", "برای", "ما", "شما", "آنها", "او", "من", "تو",
-    "است", "هست", "بود", "شد", "یک", "دو", "سه", "کار", "خود", "هم", "روی", "تا", "کند", "کنند", "کرد",
-    "کردن", "بودن", "شدن", "داشت", "داشتن", "دهد", "دهند", "پس", "اما", "اگر", "حتی", "درباره", "تحت",
-    "مورد", "دیگر", "بسیار", "خیلی", "باید", "شاید", "تواند", "توانند", "همین", "همان", "پیش", "بعد",
-    "قبل", "طریق", "مختلف", "بخش", "بخش‌های", "مراحل", "تعداد", "یکی", "برخی", "تمام", "همه", "هیچ",
-    "بدون", "بین", "زیر", "های", "ها", "می", "میکند", "میکنند", "دارد", "دارند", "باشند", "باشد",
-    "شود", "شوند", "شده", "شده است", "شده اند", "هایی", "طور", "باره", "ثانیه", "دقیقه", "ساعت", "مکسا"
-]);
-
-const ENGLISH_STOPWORDS = new Set([
-    "the", "and", "a", "of", "to", "in", "is", "that", "it", "on", "for", "as", "with", "was", "by",
-    "an", "be", "this", "are", "from", "at"
-]);
-
-function generateSuggestions() {
-    const title = document.getElementById("title").value.trim();
-    const subtitleEl = document.getElementById("subtitle");
-    const subtitle = subtitleEl ? subtitleEl.value.trim() : "";
-    const contentText = editor.innerText || editor.textContent || "";
-    
-    // ترکیب متون برای استخراج کلمات
-    const combinedText = (title + " " + subtitle + " " + contentText)
-        .replace(/[\u200c-\u200f]/g, " ") // جایگزینی نیم‌فاصله‌ها
-        .replace(/[0-9۰-۹]/g, "") // حذف اعداد
-        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
-        .toLowerCase();
-    
-    // تبدیل به کلمات تکی و فیلتر کردن
-    const words = combinedText.split(/\s+/).map(w => {
-        w = w.trim();
-        w = w.replace(/^-+|-+$/g, ""); // حذف خط تیره اول و آخر کلمه
-        w = w.replace(/ی/g, "ی").replace(/ک/g, "ک"); // نرمال‌سازی عمومی
-        return w;
-    }).filter(w => {
-        return w.length >= 3 && !PERSIAN_STOPWORDS.has(w) && !ENGLISH_STOPWORDS.has(w);
-    });
-    
-    // محاسبه فراوانی تکرار کلمات
-    const freq = {};
-    words.forEach(w => {
-        freq[w] = (freq[w] || 0) + 1;
-    });
-    
-    // مرتب‌سازی بر اساس تعداد تکرار
-    const sortedWords = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
-    
-    // استخراج ۸ کلمه اول با بیشترین تکرار
-    const topSuggestions = sortedWords.slice(0, 8);
-    
-    const container = document.getElementById("suggested-chips-list");
-    container.innerHTML = "";
-    
-    if (topSuggestions.length === 0) {
-        container.innerHTML = `<span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">کلمه کلیدی یافت نشد. متن خبر را بنویسید.</span>`;
-        return;
-    }
-    
-    topSuggestions.forEach(word => {
-        const btn = document.createElement("span");
-        btn.className = "suggestion-chip";
-        btn.innerHTML = `+ ${word}`;
-        btn.onclick = () => addSuggestedWord(btn, word);
-        container.appendChild(btn);
-    });
-}
-
-function addSuggestedWord(btnEl, word) {
-    // ۱. افزودن به کلمات کلیدی (Keywords)
-    const keywordsInput = document.getElementById("keywords");
-    let keywords = keywordsInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-    if (!keywords.includes(word)) {
-        keywords.push(word);
-        keywordsInput.value = keywords.join("، ");
-    }
-    
-    // ۲. افزودن به تگ‌های سئو (Tags)
-    const tagsInput = document.getElementById("tags");
-    let tags = tagsInput.value.split("،").join(",").split(",").map(t => t.trim()).filter(Boolean);
-    if (!tags.includes(word)) {
-        tags.push(word);
-        tagsInput.value = tags.join("، ");
-        if (typeof renderTagChips === "function") {
-            renderTagChips();
-        }
-    }
-    
-    // ۳. انطباق و انتخاب خودکار برچسب‌های موضوعی در صورت همخوانی با کلمه کلیدی
-    const checkboxes = document.querySelectorAll('input[name="tag_ids[]"]');
-    checkboxes.forEach(cb => {
-        const labelSpan = cb.nextElementSibling;
-        if (labelSpan) {
-            const tagName = labelSpan.textContent.trim().toLowerCase();
-            // انطباق کامل یا انطباق جزئی
-            if (tagName === word.toLowerCase() || word.toLowerCase().includes(tagName) || tagName.includes(word.toLowerCase())) {
-                cb.checked = true;
-                cb.dispatchEvent(new Event("change", { bubbles: true }));
-            }
-        }
-    });
-    
-    // انیمیشن کوچک حذف چیپ پیشنهادی پس از کلیک و اضافه شدن
-    btnEl.style.transform = "scale(0.8)";
-    btnEl.style.opacity = "0";
-    setTimeout(() => btnEl.remove(), 200);
-}
 </script>
 
 </body>
