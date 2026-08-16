@@ -24,28 +24,12 @@ try {
     $categories = [];
 }
 
-// دریافت لیست تگ‌ها و تگ‌های انتخاب شده
-$all_tags = [];
-$selected_tag_ids = [];
-try {
-    $tag_stmt = $pdo->query("SELECT id, name FROM news_tags ORDER BY id ASC");
-    $all_tags = $tag_stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($id > 0) {
-        $stmt_selected_tags = $pdo->prepare("SELECT tag_id FROM news_tags_map WHERE news_id = ?");
-        $stmt_selected_tags->execute([$id]);
-        $selected_tag_ids = $stmt_selected_tags->fetchAll(PDO::FETCH_COLUMN);
-    }
-} catch (Exception $e) {
-    $all_tags = [];
-    $selected_tag_ids = [];
-}
 // بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
 $existing_image_url = '';
 if ($id > 0 && !empty($news_data['featured_image'])) {
     $existing_image_url = "/uploads/news/{$news_data['news_code']}/{$news_data['featured_image']}";
 }
 
-$tags = [];
 $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
 
 // آماده‌سازی زمان برای فرمت datetime-local مرورگر
@@ -1632,25 +1616,6 @@ function insertGalleryRow(urls){
     saveSelection();
 }
 
-/* =================== چیپ تگ‌ها (نمایشی) =================== */
-const tagsInput = document.getElementById("tags");
-const tagsChips = document.getElementById("tagsChips");
-function renderTagChips(){
-    const parts = tagsInput.value.split("،").join(",").split(",").map(t=>t.trim()).filter(Boolean);
-    tagsChips.innerHTML = "";
-    parts.forEach((t, idx) => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.textContent = t;
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("، "); renderTagChips(); };
-        chip.appendChild(btn);
-        tagsChips.appendChild(chip);
-    });
-}
-tagsInput.addEventListener("input", renderTagChips);
 
 /* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
 const TOAST_ICONS = {
@@ -2388,13 +2353,7 @@ async function saveNews() {
         fd.append("category_id", document.getElementById("category_id").value);
         fd.append("keywords", document.getElementById("keywords").value);
         fd.append("publish_date", document.getElementById("publish_date").value);
-        fd.append("tags", document.getElementById("tags").value);
         fd.append("remove_featured_flag", document.getElementById("remove_featured_flag").value);
-
-        const checkedTags = document.querySelectorAll('input[name="tag_ids[]"]:checked');
-        checkedTags.forEach(cb => {
-            fd.append("tag_ids[]", cb.value);
-        });
 
         let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {
@@ -2686,36 +2645,13 @@ function generateSuggestions() {
 function addSuggestedWord(btnEl, word) {
     // ۱. افزودن به کلمات کلیدی (Keywords)
     const keywordsInput = document.getElementById("keywords");
-    let keywords = keywordsInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
-    if (!keywords.includes(word)) {
-        keywords.push(word);
-        keywordsInput.value = keywords.join("، ");
+    let kws = keywordsInput.value.split(/,|،|٬|؛|;/).map(k => k.trim()).filter(Boolean);
+    if (!kws.includes(word)) {
+        kws.push(word);
+        keywordsInput.value = kws.join("، ");
     }
     
-    // ۲. افزودن به تگ‌های سئو (Tags)
-    const tagsInput = document.getElementById("tags");
-    let tags = tagsInput.value.split("،").join(",").split(",").map(t => t.trim()).filter(Boolean);
-    if (!tags.includes(word)) {
-        tags.push(word);
-        tagsInput.value = tags.join("، ");
-        if (typeof renderTagChips === "function") {
-            renderTagChips();
-        }
-    }
-    
-    // ۳. انطباق و انتخاب خودکار برچسب‌های موضوعی در صورت همخوانی با کلمه کلیدی
-    const checkboxes = document.querySelectorAll('input[name="tag_ids[]"]');
-    checkboxes.forEach(cb => {
-        const labelSpan = cb.nextElementSibling;
-        if (labelSpan) {
-            const tagName = labelSpan.textContent.trim().toLowerCase();
-            // انطباق کامل یا انطباق جزئی
-            if (tagName === word.toLowerCase() || word.toLowerCase().includes(tagName) || tagName.includes(word.toLowerCase())) {
-                cb.checked = true;
-                cb.dispatchEvent(new Event("change", { bubbles: true }));
-            }
-        }
-    });
+    renderKeywordsChips();
     
     // انیمیشن کوچک حذف چیپ پیشنهادی پس از کلیک و اضافه شدن
     btnEl.style.transform = "scale(0.8)";
