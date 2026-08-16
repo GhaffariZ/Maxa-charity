@@ -1,34 +1,36 @@
 -- ============================================================================
--- Migration 009 — بازگردانی ساختار دیتابیس اخبار به حالت قبل از تغییرات
+-- Migration 009 — بازگردانی ساختار دیتابیس اخبار به حالت اصلی و اولیه
 -- ----------------------------------------------------------------------------
--- این میگریشن ستون‌های لازم در جدول news و جدول‌های تگ‌ها (news_tags_map و news_tags)
--- را برای سازگاری کامل با کدهای قبلی بازگردانی و تضمین می‌کند.
+-- این میگریشن ستون‌های لازم در جدول news و جدول‌های تگ‌ها (news_tags و news_tags_map)
+-- را دقیقاً مطابق با اسکیما و کدهای اصلی دیتابیس بازگردانی می‌کند.
 -- ============================================================================
 
 SET NAMES utf8mb4;
 
--- ۱. اطمینان از وجود ستون‌های subtitle، tags، keywords و read_time در جدول news
+-- ۱. اطمینان از وجود ستون‌های subtitle، keywords، tags و read_time در جدول news
 ALTER TABLE `news` ADD COLUMN IF NOT EXISTS `subtitle` VARCHAR(255) DEFAULT NULL AFTER `title`;
 ALTER TABLE `news` ADD COLUMN IF NOT EXISTS `keywords` TEXT DEFAULT NULL AFTER `category_id`;
 ALTER TABLE `news` ADD COLUMN IF NOT EXISTS `tags` VARCHAR(255) DEFAULT NULL AFTER `keywords`;
 ALTER TABLE `news` ADD COLUMN IF NOT EXISTS `read_time` INT(11) DEFAULT 1 AFTER `viewed`;
 
--- ۲. ساخت جدول تگ‌های اخبار (news_tags) در صورت عدم وجود
+-- ۲. ساخت جدول تگ‌های اخبار (news_tags) دقیقاً مطابق اسکیمای اصلی
 CREATE TABLE IF NOT EXISTS `news_tags` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
-  `name_fa` VARCHAR(100) DEFAULT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ۳. درج تگ‌های پیش‌فرض در صورت خالی بودن جدول
-INSERT IGNORE INTO `news_tags` (`id`, `name`, `name_fa`) VALUES
-(1, 'health', 'سلامت'),
-(2, 'charity', 'خیریه'),
-(3, 'medical', 'پزشکی'),
-(4, 'events', 'رویدادها'),
-(5, 'cancer', 'سرطان');
+-- ۳. درج تگ‌های اصلی و اولیه
+INSERT IGNORE INTO `news_tags` (`id`, `name`) VALUES
+(1, 'medical'),
+(2, 'palliative_care'),
+(3, 'technology'),
+(4, 'economic'),
+(5, 'international'),
+(6, 'cultural'),
+(7, 'social'),
+(8, 'education'),
+(9, 'research');
 
 -- ۴. ساخت جدول اتصال چندبه‌چند برچسب‌های اخبار (news_tags_map)
 CREATE TABLE IF NOT EXISTS `news_tags_map` (
