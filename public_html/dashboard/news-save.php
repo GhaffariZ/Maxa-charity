@@ -116,7 +116,7 @@ try {
 
         $sql = "INSERT INTO news
                 (news_code, title, subtitle, content, author, publish_date, category_id, keywords, tags, status, viewed, read_time, branch_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 0, ?, ?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$news_code, $title, $subtitle, $content, $author, $publish_date, $category_id, $keywords, $tags, $read_time, $__branch]);
         
