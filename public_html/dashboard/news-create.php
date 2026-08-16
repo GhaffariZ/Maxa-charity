@@ -1,35 +1,21 @@
 <?php
-/**
- * ============================================================================
- * Enterprise Newsroom - Editorial & Media Studio CMS
- * ============================================================================
- * High-performance editorial suite for professional journalists and editors.
- * Features multi-tiered headlines, Cropper.js studio, Persian typography normalizer,
- * modular journalistic blocks, real-time SEO radar, multi-device live preview,
- * and silent auto-save crash recovery.
- */
-
 require_once __DIR__ . '/_guard.php';
 dash_require('news');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $news_data = null;
-$ACTIVE_BRANCH = dash_active_branch_id();
 
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ? AND branch_id = ? LIMIT 1");
-    $stmt->execute([$id, $ACTIVE_BRANCH]);
+    $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ?");
+    $stmt->execute([$id]);
     $news_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$news_data) {
-        die("<div style='font-family:Tahoma,sans-serif;padding:40px;text-align:center;direction:rtl;'>" .
-            "<h2>خبر یافت نشد!</h2><p>خبر مورد نظر وجود ندارد یا شما به آن دسترسی ندارید.</p>" .
-            "<a href='news-list.php' style='color:#007D75;font-weight:bold;text-decoration:none;'>بازگشت به فهرست اخبار</a></div>");
+        die("خبر یافت نشد.");
     }
 }
-
-// Fetch active categories
+// دریافت لیست دسته‌بندی‌ها از جدول جدید
 $categories = [];
 try {
     $cat_stmt = $pdo->query("SELECT id, name FROM news_categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC");
@@ -38,31 +24,35 @@ try {
     $categories = [];
 }
 
-// Prepare Existing Featured Image URL
+// دریافت لیست تگ‌ها و تگ‌های انتخاب شده
+$all_tags = [];
+$selected_tag_ids = [];
+try {
+    $tag_stmt = $pdo->query("SELECT id, name FROM news_tags ORDER BY id ASC");
+    $all_tags = $tag_stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($id > 0) {
+        $stmt_selected_tags = $pdo->prepare("SELECT tag_id FROM news_tags_map WHERE news_id = ?");
+        $stmt_selected_tags->execute([$id]);
+        $selected_tag_ids = $stmt_selected_tags->fetchAll(PDO::FETCH_COLUMN);
+    }
+} catch (Exception $e) {
+    $all_tags = [];
+    $selected_tag_ids = [];
+}
+// بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
 $existing_image_url = '';
 if ($id > 0 && !empty($news_data['featured_image'])) {
     $existing_image_url = "/uploads/news/{$news_data['news_code']}/{$news_data['featured_image']}";
 }
 
+$tags = [];
 $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
 
-// Prepare Publish Date for datetime-local
+// آماده‌سازی زمان برای فرمت datetime-local مرورگر
 $pub_val = '';
 if ($news_data && !empty($news_data['publish_date'])) {
     $pub_val = date('Y-m-d\TH:i', strtotime($news_data['publish_date']));
-} else {
-    $pub_val = date('Y-m-d\TH:i');
 }
-
-// Extract Subtitle / Kicker / Lead / Tags if present
-$current_title    = $news_data['title'] ?? '';
-$current_subtitle = $news_data['subtitle'] ?? '';
-$current_content  = $news_data['content'] ?? '';
-$current_author   = $news_data['author'] ?? ($DASH_USER['name'] ?? 'تحریریه مکسا');
-$current_keywords = $news_data['keywords'] ?? '';
-$current_status   = $news_data['status'] ?? 'draft';
-$current_tags     = $news_data['tags'] ?? '';
-$news_code        = $news_data['news_code'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -70,9 +60,9 @@ $news_code        = $news_data['news_code'] ?? '';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= $id > 0 ? 'ویرایش خبر: ' . htmlspecialchars($current_title) : 'استودیو نگارش و تحریریه خبر' ?> | مکسا</title>
+<title><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر' ?></title>
 
-<!-- Dark / Light Theme Synced with Dashboard -->
+<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
 <script>
 (function(){
   function applyMaxaTheme(){
@@ -89,2253 +79,2629 @@ $news_code        = $news_data['news_code'] ?? '';
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
 
-<!-- TinyMCE 7 Enterprise Rich Text Editor -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.6.0/tinymce.min.js" referrerpolicy="origin"></script>
-
-<!-- Cropper.js for Featured Image Studio -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
-
 <style>
 :root {
-    --primary-color: #007D75;
+    /* پالت رنگی لایت مود (برگرفته از لوگو مکسا) */
+    --primary-color: #007D75;       /* سبز-آبی مکسا */
     --primary-dark: #006159;
-    --primary-light: #00a89d;
-    --secondary-color: #F79F1F;
+    --secondary-color: #F79F1F;     /* نارنجی مکسا */
     --bg-color: #f4f7f6;
-    --text-color: #2f3437;
-    --muted-color: #7a878b;
+    --text-color: #333333;
+    --muted-color: #6b7674;
     --panel-bg: #ffffff;
-    --surface-2: #f8faf9;
-    --border-color: #e2e8e7;
+    --surface-2: #f7faf9;
+    --border-color: #e3e9e8;
     --input-bg: #ffffff;
     --header-text: #007D75;
-    --modal-overlay: rgba(14, 30, 30, 0.65);
-    --shadow-sm: 0 2px 8px rgba(0, 40, 40, 0.05);
-    --shadow-md: 0 8px 24px rgba(0, 40, 40, 0.08);
-    --shadow-lg: 0 16px 40px rgba(0, 40, 40, 0.14);
+    --btn-hover-opacity: 0.92;
+    --modal-overlay: rgba(0,0,0,0.6);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.07);
     --radius: 16px;
     --radius-sm: 10px;
-    --radius-lg: 22px;
-    --danger: #e0556b;
-    --success: #16a37a;
-    --warning: #f79f1f;
-    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --anim-fast: 220ms;
+    --anim-mid: 420ms;
+    --anim-slow: 700ms;
 }
 
 [data-theme="dark"] {
+    /* پالت رنگی دارک مود */
     --primary-color: #00a89d;
     --primary-dark: #00897e;
-    --primary-light: #4fb2b0;
     --secondary-color: #ffb142;
     --bg-color: #121212;
-    --text-color: #e7ecee;
-    --muted-color: #8e9a9e;
+    --text-color: #e0e0e0;
+    --muted-color: #9aa3a1;
     --panel-bg: #1e1e1e;
     --surface-2: #262626;
     --border-color: #383838;
-    --input-bg: #282828;
+    --input-bg: #2d2d2d;
     --header-text: #00a89d;
-    --modal-overlay: rgba(0, 0, 0, 0.85);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+    --modal-overlay: rgba(0,0,0,0.8);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.35);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.45);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; }
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
-    min-height: 100vh;
+    font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
     padding: 0;
-    line-height: 1.7;
+    min-height: 100vh;
 }
 
-/* ===== Sticky Newsroom Glassmorphic Header ===== */
-.studio-header {
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+    animation: pageRise var(--anim-slow) cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* ===== هدر چسبان ویرایشگر ===== */
+.editor-header {
     position: sticky;
     top: 0;
-    z-index: 50;
-    background: color-mix(in srgb, var(--panel-bg) 90%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg-color) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 24px;
+    margin: 0 -16px 24px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    box-shadow: var(--shadow-sm);
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.sh-info {
+.eh-title {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     min-width: 0;
 }
 
-.sh-icon {
+.ph-ic {
     width: 44px;
     height: 44px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    color: #fff;
-    display: grid;
-    place-items: center;
     flex-shrink: 0;
-    box-shadow: 0 8px 18px -6px rgba(0, 125, 117, 0.6);
-}
-
-.sh-title h1 {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--header-text);
-    margin: 0;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    box-shadow: var(--shadow-sm);
 }
 
-.sh-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: rgba(0, 125, 117, 0.12);
-    color: var(--primary-color);
+.ph-ic svg { width: 22px; height: 22px; }
+
+.eh-title h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--header-text);
 }
 
-.autosave-pill {
+.eh-title p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--muted-color);
+}
+
+.draft-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--surface-2);
     color: var(--muted-color);
-    margin-top: 2px;
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
 }
 
-.pulse-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 0 0 rgba(22, 163, 122, 0.7);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 122, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(22, 163, 122, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 122, 0); }
-}
-
-.sh-actions {
+.eh-actions {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    height: 42px;
-    padding: 0 18px;
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s var(--ease);
-    text-decoration: none;
-    white-space: nowrap;
-    user-select: none;
-}
-
-.btn svg { width: 17px; height: 17px; }
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    color: #fff;
-    box-shadow: 0 8px 18px -4px rgba(0, 125, 117, 0.5);
-}
-.btn-primary:hover {
-    transform: translateY(-1.5px);
-    box-shadow: 0 12px 24px -4px rgba(0, 125, 117, 0.7);
-}
-
-.btn-secondary {
-    background: var(--surface-2);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-}
-.btn-secondary:hover {
-    background: var(--panel-bg);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.btn-accent {
-    background: linear-gradient(135deg, var(--secondary-color), #d8850b);
-    color: #fff;
-    box-shadow: 0 8px 18px -4px rgba(247, 159, 31, 0.45);
-}
-.btn-accent:hover {
-    transform: translateY(-1.5px);
-    box-shadow: 0 12px 24px -4px rgba(247, 159, 31, 0.6);
-}
-
-.btn-danger {
-    background: rgba(224, 85, 107, 0.1);
-    color: var(--danger);
-    border: 1px solid rgba(224, 85, 107, 0.25);
-}
-.btn-danger:hover {
-    background: var(--danger);
-    color: #fff;
-}
-
-.btn-sm { height: 34px; padding: 0 12px; font-size: 12px; border-radius: 8px; }
-
-/* ===== Main Container & Layout ===== */
-.studio-container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 24px 20px 60px;
-}
-
-.editorial-grid {
+/* ===== شبکه اصلی ===== */
+.layout {
     display: grid;
-    grid-template-columns: minmax(0, 2.3fr) minmax(320px, 1fr);
+    grid-template-columns: 2fr 1fr;
     gap: 24px;
     align-items: start;
 }
 
-@media (max-width: 1040px) {
-    .editorial-grid {
-        grid-template-columns: 1fr;
-    }
-}
+.col-main { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.col-side { display: flex; flex-direction: column; gap: 24px; }
 
+/* ===== کارت‌ها ===== */
 .card {
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
-    padding: 22px;
     box-shadow: var(--shadow-sm);
-    margin-bottom: 24px;
     position: relative;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    animation: cardPop var(--anim-mid) cubic-bezier(.2,.8,.2,1) both;
 }
 
-.card:hover {
-    box-shadow: var(--shadow-md);
-}
+.card-pad { padding: 20px; }
 
-.card-head {
+.card-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.card-head h2 {
+    gap: 8px;
     font-size: 15px;
     font-weight: 800;
     color: var(--header-text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    margin: 0 0 16px;
 }
 
-.card-head h2 svg {
-    width: 19px;
-    height: 19px;
-    color: var(--primary-color);
-}
+.card-title svg { width: 19px; height: 19px; color: var(--primary-color); }
 
-/* ===== Module A: Multi-Tiered Headline Suite ===== */
-.headline-suite {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+/* ===== عنوان خبر ===== */
+.title-card { padding: 20px; transition: box-shadow var(--anim-fast), border-color var(--anim-fast); }
+.title-card:focus-within { border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-color)); box-shadow: 0 0 0 4px rgba(0,125,117,0.08); }
 
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.field-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.field-label .rec-badge {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--muted-color);
-}
-
-.input-kicker {
+#title {
     width: 100%;
-    height: 42px;
-    background: var(--surface-2);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 0 14px;
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--text-color);
-    transition: all 0.2s var(--ease);
-}
-.input-kicker:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.12);
-    background: var(--panel-bg);
-}
-
-.input-hero-title {
-    width: 100%;
-    min-height: 56px;
-    border: 1.5px solid var(--border-color);
-    background: var(--panel-bg);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    font-family: inherit;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text-color);
-    line-height: 1.5;
-    resize: none;
-    transition: all 0.2s var(--ease);
-}
-.input-hero-title:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(0, 125, 117, 0.14);
-}
-
-.title-counter-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11.5px;
-    color: var(--muted-color);
-    margin-top: 2px;
-}
-
-.counter-progress {
-    height: 4px;
-    background: var(--border-color);
-    border-radius: 99px;
-    overflow: hidden;
-    flex: 1;
-    margin-right: 12px;
-}
-.counter-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--primary-color);
-    transition: width 0.2s, background-color 0.2s;
-}
-.counter-fill.good { background: var(--success); }
-.counter-fill.warning { background: var(--warning); }
-.counter-fill.danger { background: var(--danger); }
-
-.input-subtitle {
-    width: 100%;
-    height: 44px;
-    background: var(--surface-2);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 0 14px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-color);
-    transition: all 0.2s var(--ease);
-}
-.input-subtitle:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.12);
-    background: var(--panel-bg);
-}
-
-.lead-box {
-    background: rgba(0, 125, 117, 0.04);
-    border: 1.5px dashed color-mix(in srgb, var(--primary-color) 40%, var(--border-color));
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-.lead-box textarea {
-    width: 100%;
-    min-height: 70px;
     border: none;
     background: transparent;
-    font-family: inherit;
-    font-size: 14.5px;
-    font-weight: 500;
     color: var(--text-color);
-    line-height: 1.7;
-    resize: vertical;
+    font-family: inherit;
+    font-size: 26px;
+    font-weight: 800;
+    padding: 0;
+    line-height: 1.5;
 }
-.lead-box textarea:focus { outline: none; }
+#title:focus { outline: none; }
+#title::placeholder { color: var(--muted-color); opacity: 0.55; }
 
-/* ===== Module B: Professional Featured Image Studio ===== */
-.image-studio {
+.title-meta {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.dropzone-box {
-    border: 2px dashed var(--border-color);
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.22s var(--ease);
-    position: relative;
-    overflow: hidden;
-}
-.dropzone-box:hover, .dropzone-box.drag-over {
-    border-color: var(--primary-color);
-    background: rgba(0, 125, 117, 0.05);
-    transform: scale(1.005);
-}
-
-.dz-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.dz-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
-    background: rgba(0, 125, 117, 0.1);
-    color: var(--primary-color);
-    display: grid;
-    place-items: center;
-}
-.dz-icon svg { width: 28px; height: 28px; }
-
-.dz-title { font-size: 15px; font-weight: 700; color: var(--text-color); }
-.dz-sub { font-size: 12px; color: var(--muted-color); }
-
-.preview-container {
-    display: none;
-    position: relative;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    background: #000;
-    border: 1px solid var(--border-color);
-}
-.preview-container.active { display: block; }
-.preview-image {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    display: block;
-}
-
-.focal-crosshair {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(0,0,0,0.6);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    display: none;
-}
-.focal-crosshair::before, .focal-crosshair::after {
-    content: '';
-    position: absolute;
-    background: #fff;
-}
-.focal-crosshair::before { top: 50%; left: -6px; right: -6px; height: 2px; transform: translateY(-50%); }
-.focal-crosshair::after { left: 50%; top: -6px; bottom: -6px; width: 2px; transform: translateX(-50%); }
-
-.preview-toolbar {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    display: flex;
-    align-items: center;
     justify-content: space-between;
-    background: rgba(0,0,0,0.72);
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-    padding: 8px 12px;
-    color: #fff;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.img-meta-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 14px;
-}
-@media (max-width: 768px) {
-    .img-meta-grid { grid-template-columns: 1fr; }
-}
-
-.input-text {
-    width: 100%;
-    height: 40px;
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 0 12px;
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-color);
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-.input-text:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.12);
-}
-
-/* ===== Module C: Modular Journalistic Inserter Bar ===== */
-.blocks-bar {
-    display: flex;
     align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+    color: var(--muted-color);
 }
-.blocks-bar::-webkit-scrollbar { height: 5px; }
-.blocks-bar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+#titleCounter.over { color: #e74c3c; font-weight: 700; }
 
-.block-chip {
+/* ===== زیرعنوان خبر ===== */
+.subtitle-card {
+    background: var(--panel-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--anim-fast);
+}
+.subtitle-card:focus-within {
+    border-color: var(--primary-color);
+    background: var(--panel-bg);
+    box-shadow: 0 0 0 4px rgba(0, 125, 117, 0.08);
+}
+#subtitle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0;
+    line-height: 1.6;
+    resize: none;
+}
+#subtitle:focus {
+    outline: none;
+}
+#subtitle::placeholder {
+    color: var(--muted-color);
+    opacity: 0.65;
+}
+.subtitle-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+    font-size: 11px;
+    color: var(--muted-color);
+}
+#subtitleCounter.over { color: #e74c3c; font-weight: 700; }
+
+/* ===== برچسب‌های خبر (چند انتخابی) ===== */
+.tag-checkbox-label {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
+    gap: 8px;
+    padding: 6px 14px;
     background: var(--surface-2);
     border: 1px solid var(--border-color);
     border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-color);
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.18s var(--ease);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--anim-fast);
+    user-select: none;
+    color: var(--text-color);
+}
+.tag-checkbox-label:hover {
+    border-color: var(--primary-color);
+    background: rgba(0, 125, 117, 0.04);
+}
+.tag-checkbox-label input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+.tag-checkbox-label:has(input[type="checkbox"]:checked) {
+    background: rgba(0, 125, 117, 0.08);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* ===== پیشنهاد کلمات کلیدی هوشمند ===== */
+.suggestion-chip {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all var(--anim-fast);
+    color: var(--text-color);
     user-select: none;
 }
-.block-chip:hover {
+.suggestion-chip:hover {
     background: var(--primary-color);
     color: #fff;
     border-color: var(--primary-color);
     transform: translateY(-1.5px);
-    box-shadow: 0 4px 12px rgba(0, 125, 117, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 125, 117, 0.15);
 }
-.block-chip svg { width: 15px; height: 15px; }
 
-/* ===== Metrics & Word Bar ===== */
-.metrics-bar {
+/* ===== فیلدهای عمومی ===== */
+.input-group { margin-bottom: 18px; }
+.input-group:last-child { margin-bottom: 0; }
+
+label.field-label {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    background: var(--surface-2);
-    border: 1px solid var(--border-color);
-    border-top: none;
-    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-    padding: 10px 16px;
-    font-size: 12.5px;
-    color: var(--muted-color);
-    flex-wrap: wrap;
-    gap: 12px;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-color);
 }
+label.field-label svg { width: 16px; height: 16px; }
 
-.metrics-group {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.metric-item { display: flex; align-items: center; gap: 5px; }
-.metric-val { font-weight: 800; color: var(--text-color); }
-
-/* ===== Module F: Real-Time SEO Radar Widget ===== */
-.seo-radar {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.seo-score-circle {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 14px;
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
-}
-
-.score-gauge {
-    position: relative;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: conic-gradient(var(--success) 0deg, var(--border-color) 0deg);
-    flex-shrink: 0;
-}
-.score-inner {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--panel-bg);
-    display: grid;
-    place-items: center;
-    font-size: 17px;
-    font-weight: 900;
+.input {
+    width: 100%;
+    background: var(--input-bg);
     color: var(--text-color);
-}
-
-.score-meta h3 { font-size: 14px; font-weight: 800; color: var(--text-color); margin-bottom: 2px; }
-.score-meta p { font-size: 11.5px; color: var(--muted-color); }
-
-.seo-checklist {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-.seo-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12.5px;
-    color: var(--text-color);
-}
-.seo-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--danger);
-    flex-shrink: 0;
-}
-.seo-item.pass .seo-dot { background: var(--success); }
-.seo-item.pass { color: var(--text-color); }
-
-/* ===== Google SERP Simulator ===== */
-.serp-box {
-    background: var(--surface-2);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    padding: 14px;
-    font-family: Arial, sans-serif;
-    direction: rtl;
+    padding: 11px 12px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
 }
-.serp-url { font-size: 12px; color: #202124; display: flex; align-items: center; gap: 6px; }
-[data-theme="dark"] .serp-url { color: #bdc1c6; }
-.serp-title { font-size: 17px; color: #1a0dab; font-weight: 600; margin: 4px 0; line-height: 1.4; word-break: break-word; }
-[data-theme="dark"] .serp-title { color: #8ab4f8; }
-.serp-desc { font-size: 13px; color: #4d5156; line-height: 1.5; word-break: break-word; }
-[data-theme="dark"] .serp-desc { color: #bdc1c6; }
+.input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.14);
+}
+select.input { appearance: none; cursor: pointer; }
 
-/* ===== Interactive Tags Input ===== */
-.tags-wrapper {
+/* ===== دراپ‌داون سفارشی مدرن ===== */
+.msel { position: relative; width: 100%; font-family: inherit; }
+.msel-trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: var(--input-bg); color: var(--text-color);
+    border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+    padding: 11px 12px; font-size: 15px; font-family: inherit; cursor: pointer; text-align: right;
+    transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
+}
+.msel-trigger:hover { border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color)); }
+.msel.open .msel-trigger { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.14); }
+.msel-trigger .msel-value { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msel-trigger.is-placeholder .msel-value { color: var(--muted-color); }
+.msel-caret { color: var(--muted-color); transition: transform var(--anim-fast); flex-shrink: 0; display: flex; }
+.msel-caret svg { width: 18px; height: 18px; }
+.msel.open .msel-caret { transform: rotate(180deg); color: var(--primary-color); }
+
+.msel-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--panel-bg); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    padding: 6px; max-height: 240px; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--anim-fast), transform var(--anim-fast), visibility var(--anim-fast);
+}
+.msel.open .msel-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.msel-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--text-color);
+    transition: background var(--anim-fast); user-select: none;
+}
+.msel-opt:hover, .msel-opt.is-active { background: rgba(0,125,117,0.10); }
+.msel-opt.is-selected { color: var(--primary-color); font-weight: 700; }
+.msel-opt .msel-check { opacity: 0; color: var(--primary-color); display: flex; flex-shrink: 0; }
+.msel-opt .msel-check svg { width: 16px; height: 16px; }
+.msel-opt.is-selected .msel-check { opacity: 1; }
+.msel.field-invalid .msel-trigger { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.14) !important; }
+
+/* ===== حالت خطای فیلدها ===== */
+.input.field-invalid,
+.title-card.field-invalid,
+.editor-shell.field-invalid #editor {
+    border-color: var(--danger, #e74c3c) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.14) !important;
+}
+.title-card.field-invalid { animation: fieldShake 0.32s ease; }
+.input.field-invalid { animation: fieldShake 0.32s ease; }
+/* لیبل فیلدِ خطادار قرمز شود تا سریع دیده شود */
+.input-group.has-error label.field-label { color: var(--danger, #e74c3c); }
+
+.field-error {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger, #e74c3c);
+}
+.field-error.show { display: flex; animation: toastSlide 0.28s ease; }
+.field-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+@keyframes fieldShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* ===== ادیتور ===== */
+.editor-toolbar {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 8px 10px;
-    background: var(--input-bg);
+    align-items: center;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tb-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 7px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--anim-fast);
+}
+.tb-btn:hover {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+.tb-btn svg { stroke: currentColor; }
+.tb-btn:hover svg { stroke: #fff; }
+.tb-btn svg circle, .tb-btn svg path[fill="#333"] { fill: currentColor; stroke: none; }
+.tb-btn:hover svg circle, .tb-btn:hover svg path[fill="#333"] { fill: #fff; }
+
+.tb-sep { width: 1px; height: 24px; background: var(--border-color); margin: 0 2px; }
+
+.tb-select {
+    background: var(--surface-2);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 7px 6px;
+    font-family: inherit;
+    cursor: pointer;
+}
+.tb-select.small { width: 72px; }
+
+.color-row { display: flex; gap: 5px; margin-right: auto; }
+.color-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.12);
+    transition: transform var(--anim-fast);
+}
+.color-box:hover { transform: scale(1.15); }
+
+#editor {
+    min-height: 380px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    min-height: 44px;
-    align-items: center;
+    padding: 16px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    overflow-y: auto;
+    line-height: 1.9;
+    font-size: 16px;
 }
-.tag-chip {
+#editor:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.10); }
+#editor:empty:before { content: attr(data-placeholder); color: var(--muted-color); opacity: 0.55; }
+#editor img { max-width: 100%; height: auto; border-radius: 10px; }
+
+/* ===== دکمه‌ها ===== */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: transform var(--anim-fast), box-shadow var(--anim-fast), opacity var(--anim-fast), background var(--anim-fast);
+}
+.btn svg { width: 17px; height: 17px; }
+.btn:hover { transform: translateY(-2px); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-save {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+}
+.btn-save:hover { box-shadow: var(--shadow-md); }
+
+.btn-ghost {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.btn-ghost:hover { background: rgba(0,125,117,0.06); }
+
+.btn-insert {
+    background: transparent;
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--anim-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-insert:hover { background: var(--primary-color); color: #fff; }
+
+/* ===== آپلود تصویر شاخص (Dropzone) ===== */
+.dropzone {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: all var(--anim-fast);
+    overflow: hidden;
+}
+.dropzone:hover, .dropzone.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(0,125,117,0.05);
+}
+.dropzone .dz-icon { color: var(--muted-color); transition: color var(--anim-fast); }
+.dropzone:hover .dz-icon { color: var(--primary-color); }
+.dropzone .dz-icon svg { width: 38px; height: 38px; }
+.dropzone .dz-main { font-size: 14px; font-weight: 600; color: var(--text-color); margin-top: 8px; }
+.dropzone .dz-hint { font-size: 12px; color: var(--muted-color); margin-top: 4px; }
+
+.dz-preview {
+    position: absolute;
+    inset: 0;
+    display: none;
+}
+.dz-preview.show { display: block; }
+.dz-preview img { width: 100%; height: 100%; object-fit: cover; }
+.dz-remove {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(231,76,60,0.92);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.dz-remove svg { width: 16px; height: 16px; }
+
+/* ===== ویجت امتیاز سئو ===== */
+.seo-widget { display: flex; align-items: center; gap: 16px; }
+.seo-ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.seo-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.seo-ring .ring-track { stroke: var(--border-color); }
+.seo-ring .ring-fill { transition: stroke-dasharray var(--anim-mid) ease, stroke var(--anim-mid) ease; }
+.seo-ring .ring-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800; color: var(--text-color);
+}
+.seo-info { flex: 1; min-width: 0; }
+.seo-state { font-size: 14px; color: var(--text-color); }
+.seo-state b { font-weight: 800; }
+.seo-tip { font-size: 12px; color: var(--muted-color); margin-top: 4px; }
+
+/* ===== چیپ تگ‌ها ===== */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px;
-    background: rgba(0, 125, 117, 0.09);
-    color: var(--primary-color);
+    padding: 5px 10px;
+    background: var(--surface-2);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 700;
 }
-.tag-chip-remove {
-    cursor: pointer;
-    width: 14px;
-    height: 14px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(0, 125, 117, 0.15);
+.chip button {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted-color); padding: 0; display: flex;
+    line-height: 1;
 }
-.tag-chip-remove:hover { background: var(--danger); color: #fff; }
-.tags-input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-color);
-    flex: 1;
-    min-width: 90px;
-}
+.chip button:hover { color: #e74c3c; }
+.chip button svg { width: 13px; height: 13px; }
 
-/* ===== Select / Dropdowns ===== */
-.select-input {
-    width: 100%;
-    height: 42px;
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 0 12px;
-    font-family: inherit;
-    font-size: 13.5px;
-    color: var(--text-color);
-    cursor: pointer;
-}
-.select-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.12);
-}
+/* بخش‌بندی کارت تنظیمات */
+.settings-card { overflow: visible; }   /* تا منوی دراپ‌داون سفارشی بریده نشود */
+.settings-card .input-group { padding: 16px; margin: 0; border-bottom: 1px solid var(--border-color); position: relative; }
+.settings-card .input-group:last-child { border-bottom: none; }
 
-/* ===== Zen Mode Fullscreen Styles ===== */
-body.zen-mode .studio-header {
-    background: var(--panel-bg);
-    border-bottom: 1px solid var(--border-color);
-}
-body.zen-mode .editorial-grid {
-    grid-template-columns: 1fr;
-    max-width: 900px;
-    margin: 0 auto;
-}
-body.zen-mode .sidebar-column {
-    display: none;
-}
-body.zen-mode .card {
-    border: none;
-    box-shadow: none;
-    background: transparent;
-    padding: 0;
-}
+.publish-date-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.publish-date-row .input { flex: 1; min-width: 140px; }
 
-/* ===== Modals (Cropper & Responsive Preview) ===== */
-.modal-backdrop {
+/* ===== توست وضعیت (موفقیت / خطا / در حال انجام) ===== */
+.toast {
     position: fixed;
-    inset: 0;
-    background: var(--modal-overlay);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.25s, visibility 0.25s;
-}
-.modal-backdrop.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-dialog {
+    bottom: 22px;
+    left: 22px;
+    z-index: 10001;
+    width: min(380px, calc(100vw - 44px));
+    display: none;
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    width: 100%;
-    max-width: 960px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
-    transform: translateY(16px) scale(0.97);
-    transition: transform 0.25s var(--ease);
 }
-.modal-backdrop.open .modal-dialog {
-    transform: translateY(0) scale(1);
-}
+.toast.show { display: block; animation: toastSlide 360ms cubic-bezier(.2,.8,.2,1) both; }
+.toast.hide { animation: toastOut 260ms ease both; }
 
-.modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 22px;
-    border-bottom: 1px solid var(--border-color);
+/* نوار رنگی کناری بر اساس نوع پیام */
+.toast::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;     /* در RTL سمت چپ کارت */
+    width: 5px;
+    background: var(--primary-color);
 }
-.modal-header h3 { font-size: 16px; font-weight: 800; color: var(--header-text); }
-.modal-close {
+.toast.is-error::before  { background: var(--danger, #e74c3c); }
+.toast.is-success::before { background: #00b894; }
+.toast.is-info::before    { background: var(--secondary-color); }
+
+.toast-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+}
+.toast-ic {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+}
+.toast-ic svg { width: 20px; height: 20px; }
+.toast.is-error  .toast-ic { background: var(--danger, #e74c3c); }
+.toast.is-success .toast-ic { background: #00b894; }
+.toast.is-info    .toast-ic { background: var(--secondary-color); }
+/* اسپینر چرخان برای حالت در حال انجام */
+.toast.is-info .toast-ic.spin svg { animation: toastSpin 0.9s linear infinite; }
+
+.toast-body { flex: 1; min-width: 0; padding-top: 1px; }
+.toast-title { font-size: 14px; font-weight: 800; color: var(--text-color); margin: 0 0 2px; }
+.toast-msg { font-size: 13px; color: var(--muted-color); line-height: 1.7; word-break: break-word; }
+
+.toast-close {
+    flex-shrink: 0;
     background: transparent;
     border: none;
     color: var(--muted-color);
     cursor: pointer;
-    font-size: 20px;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 26px; height: 26px;
     border-radius: 8px;
-    transition: background 0.15s, color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
 }
-.modal-close:hover { background: rgba(224, 85, 107, 0.1); color: var(--danger); }
+.toast-close:hover { background: var(--surface-2); color: var(--text-color); }
+.toast-close svg { width: 16px; height: 16px; }
 
-.modal-body {
-    padding: 20px 22px;
-    overflow-y: auto;
-    flex: 1;
-}
-
-.modal-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 14px 22px;
-    border-top: 1px solid var(--border-color);
-    background: var(--surface-2);
+/* نوار پیشرفت داخل توست */
+.toast-progress { display: none; padding: 0 16px 14px; }
+.toast-progress.active { display: block; }
+.toast-progress .bar-track { width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; }
+.toast-progress .bar-fill {
+    height: 100%; width: 0%; border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    transition: width 0.15s ease;
 }
 
-/* Cropper Modal Controls */
-.cropper-stage {
-    max-height: 480px;
-    background: #111;
-    border-radius: var(--radius-sm);
+@keyframes toastSlide { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut   { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+@keyframes toastSpin  { to { transform: rotate(360deg); } }
+
+/* ===== مودال‌ها ===== */
+.date-modal {
+    position: fixed; inset: 0;
+    background: var(--modal-overlay);
+    display: none; align-items: center; justify-content: center;
+    z-index: 10000; padding: 12px;
+}
+.date-modal.show { display: flex; }
+.date-modal.show .date-modal-box { transform: translateY(0) scale(1); opacity: 1; }
+.date-modal-box {
+    background: var(--panel-bg);
+    color: var(--text-color);
+    width: 100%; max-width: 380px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    box-shadow: var(--shadow-md);
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+    transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
+}
+.date-modal-box { max-width: 360px; }
+.date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.date-modal-title { margin: 0; color: var(--primary-color); font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.date-modal-title svg { width: 18px; height: 18px; }
+.dp-close {
+    width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--muted-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
+}
+.dp-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.dp-close svg { width: 15px; height: 15px; }
+
+/* ===== تقویم گرید ===== */
+.dp-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.dp-nav-btn {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast); flex-shrink: 0;
+}
+.dp-nav-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-nav-btn svg { width: 17px; height: 17px; }
+.dp-month-label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.dp-label-btn {
+    border: none; background: transparent; color: var(--text-color); cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 800; padding: 5px 10px; border-radius: 8px;
+    transition: background var(--anim-fast), color var(--anim-fast);
+}
+.dp-label-btn:hover { background: rgba(0,125,117,0.10); color: var(--primary-color); }
+
+/* پنل انتخاب ماه/سال */
+.dp-grid-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px 0; max-height: 252px; overflow-y: auto; }
+.dp-pick-item {
+    border: 1px solid var(--border-color); background: var(--surface-2); color: var(--text-color);
+    border-radius: 10px; padding: 12px 6px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700;
+    transition: all var(--anim-fast);
+}
+.dp-pick-item:hover { background: rgba(0,125,117,0.10); border-color: var(--primary-color); }
+.dp-pick-item.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; border-color: transparent; }
+.dp-pick-item.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); }
+
+.dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+.dp-weekdays span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted-color); padding: 4px 0; }
+.dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.dp-day {
+    aspect-ratio: 1; border: none; background: transparent; color: var(--text-color);
+    border-radius: 10px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; transition: background var(--anim-fast), color var(--anim-fast), transform var(--anim-fast);
+}
+.dp-day:hover { background: rgba(0,125,117,0.10); }
+.dp-day.is-empty { background: transparent; cursor: default; pointer-events: none; }
+.dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--secondary-color); color: var(--secondary-color); }
+.dp-day.is-selected { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); transform: scale(1.04); }
+
+/* ===== انتخاب زمان ===== */
+.dp-time { margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px; }
+.dp-time-head { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+.dp-time-head svg { width: 15px; height: 15px; }
+.dp-time-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.dp-stepper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dp-step-btn {
+    width: 30px; height: 24px; border-radius: 7px; border: 1px solid var(--border-color);
+    background: var(--surface-2); color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--anim-fast);
+}
+.dp-step-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dp-step-btn svg { width: 14px; height: 14px; }
+.dp-time-val {
+    width: 56px; text-align: center; font-size: 22px; font-weight: 800; color: var(--text-color);
+    background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 0; font-family: inherit;
+}
+.dp-time-colon { font-size: 22px; font-weight: 800; color: var(--primary-color); }
+
+.date-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+#previewModal {
+    position: fixed; inset: 0;
+    background: var(--modal-overlay);
+    display: none; z-index: 9999; overflow-y: auto;
+    padding: 24px 16px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.modal-content {
+    max-width: 880px; margin: 0 auto;
+    background: var(--panel-bg); color: var(--text-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    position: relative;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transform: translateY(14px) scale(0.98);
+    opacity: 0;
+    transition: transform var(--anim-mid) ease, opacity var(--anim-mid) ease;
 }
-.cropper-stage img { max-width: 100%; }
+#previewModal.show .modal-content { transform: translateY(0) scale(1); opacity: 1; }
 
-.cropper-tools {
+/* نوار بالای مودال پیش‌نمایش */
+.preview-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-}
-.ratio-tabs {
-    display: flex;
-    gap: 6px;
-}
-.ratio-btn {
-    padding: 6px 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
     background: var(--surface-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.preview-bar-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 800; color: var(--header-text);
+}
+.preview-bar-title .ph-ic { width: 34px; height: 34px; border-radius: 10px; }
+.preview-bar-title .ph-ic svg { width: 17px; height: 17px; }
+.preview-close {
+    background: transparent;
+    color: var(--muted-color);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-color);
+    width: 34px; height: 34px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--anim-fast);
+    font-family: inherit;
 }
-.ratio-btn.active, .ratio-btn:hover {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
-}
+.preview-close:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.preview-close svg { width: 18px; height: 18px; }
 
-/* Responsive Preview Frame */
-.preview-device-bar {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 16px;
-}
-.device-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
+.preview-scroll { padding: 22px; }
+
+/* مقاله پیش‌نمایش */
+.pv-article { animation: toastIn 380ms ease both; }
+.pv-hero {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
     background: var(--surface-2);
+}
+.pv-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 55%);
+}
+.pv-hero-cat {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff; font-size: 12px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+}
+.pv-hero-title {
+    position: absolute; right: 18px; left: 18px; bottom: 16px; z-index: 2;
+    color: #fff; font-size: 26px; font-weight: 800; line-height: 1.5;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    margin: 0;
+}
+.pv-title-fallback {
+    font-size: 26px; font-weight: 800; color: var(--header-text);
+    margin: 0 0 14px; line-height: 1.5;
+}
+.pv-meta {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+}
+.pv-meta .chip { background: var(--surface-2); }
+.pv-meta .chip svg { width: 14px; height: 14px; color: var(--primary-color); }
+.pv-body {
+    line-height: 2.1; font-size: 16px; color: var(--text-color);
+}
+.pv-body img { max-width: 100%; height: auto; border-radius: 10px; }
+.pv-body .gallery-row img { border-radius: 8px; }
+.pv-empty { color: var(--muted-color); font-style: italic; }
+
+/* پنل خلاصه سئو در پیش‌نمایش */
+.pv-seo {
+    margin-top: 26px;
     border: 1px solid var(--border-color);
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-color);
-    cursor: pointer;
-}
-.device-btn.active {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
-}
-.preview-viewport-wrapper {
+    border-radius: var(--radius);
     background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    min-height: 480px;
-    overflow-x: auto;
+    padding: 18px;
 }
-.preview-viewport {
+.pv-seo-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.pv-seo-head .card-title { margin: 0; }
+.pv-seo-badge {
+    font-size: 13px; font-weight: 800;
+    padding: 4px 12px; border-radius: 999px; color: #fff;
+}
+.pv-seo-bar-track {
+    height: 12px; background: var(--border-color);
+    border-radius: 999px; overflow: hidden;
+}
+.pv-seo-bar-fill { height: 100%; border-radius: 999px; transition: width .5s ease, background .5s ease; }
+.pv-seo-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px; font-size: 13px; color: var(--muted-color);
+}
+.pv-seo-foot b { color: var(--text-color); }
+.pv-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px; }
+.pv-check {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-color);
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: var(--shadow-md);
-    transition: width 0.3s var(--ease);
-    width: 100%;
-    padding: 24px;
-    font-family: 'Vazirmatn', sans-serif;
-    color: var(--text-color);
-    line-height: 1.8;
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
 }
-.preview-viewport.desktop { width: 100%; max-width: 920px; }
-.preview-viewport.tablet { width: 768px; }
-.preview-viewport.mobile { width: 375px; }
+.pv-check svg { width: 16px; height: 16px; flex-shrink: 0; }
+.pv-check.ok svg { color: #00b894; }
+.pv-check.no { color: var(--muted-color); }
+.pv-check.no svg { color: var(--muted-color); opacity: 0.7; }
 
-/* Toast Notifications */
-.studio-toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--text-color);
-    color: var(--panel-bg);
-    padding: 12px 22px;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 700;
-    box-shadow: var(--shadow-lg);
-    z-index: 120;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.25s var(--ease);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* ===== ریسپانسیو ===== */
+@media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
 }
-.studio-toast.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
+@media (max-width: 600px) {
+    #title { font-size: 22px; }
+    .eh-actions { width: 100%; }
+    .eh-actions .btn { flex: 1; }
+    .tb-btn { flex: 1 1 calc(16.66% - 6px); }
 }
-.studio-toast.success { background: #107a5b; color: #fff; }
-.studio-toast.error { background: #c33850; color: #fff; }
+
+/* ===== انیمیشن‌ها ===== */
+.col-side > .card { animation-delay: 90ms; }
+.col-side > .card:nth-child(2) { animation-delay: 150ms; }
+.col-side > .card:nth-child(3) { animation-delay: 210ms; }
+
+@keyframes pageRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cardPop { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 </style>
 </head>
+
 <body>
 
-<!-- ===== Sticky Newsroom Glassmorphic Header ===== -->
-<header class="studio-header">
-    <div class="sh-info">
-        <a href="news-list.php" class="btn btn-secondary btn-sm" title="بازگشت به فهرست اخبار">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            فهرست
-        </a>
-        <div class="sh-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-        </div>
-        <div class="sh-title">
-            <h1>
-                <?= $id > 0 ? 'ویرایش خبر' : 'استودیو نگارش خبر' ?>
-                <?php if ($id > 0): ?>
-                    <span class="sh-badge"><?= htmlspecialchars($news_code) ?></span>
-                <?php endif; ?>
-            </h1>
-            <div class="autosave-pill">
-                <span class="pulse-dot"></span>
-                <span id="autoSaveStatus">آماده برای نگارش</span>
+<div class="container">
+
+    <!-- هدر چسبان -->
+    <div class="editor-header">
+        <div class="eh-title">
+            <span class="ph-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </span>
+            <div>
+                <h1><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر جدید' ?></h1>
+                <p>مدیریت محتوای دیجیتال</p>
             </div>
+            <span class="draft-badge">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                پیش‌نویس ذخیره نشده
+            </span>
+        </div>
+        <div class="eh-actions">
+            <button type="button" class="btn btn-ghost" onclick="openPreview()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                پیش‌نمایش
+            </button>
+            <button type="button" class="btn btn-save" onclick="saveNews()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <?= $id > 0 ? 'ذخیره ویرایش' : 'ثبت خبر نهایی' ?>
+            </button>
         </div>
     </div>
 
-    <div class="sh-actions">
-        <!-- Persian Normalizer Button -->
-        <button type="button" class="btn btn-secondary" id="btnNormalizeText" title="پاکسازی خودکار نیم‌فاصله‌ها، ارقام فارسی و نشانه‌گذاری">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            ویراستار فارسی
-        </button>
+    <div class="layout">
 
-        <!-- Zen Mode Toggle -->
-        <button type="button" class="btn btn-secondary" id="btnToggleZen" title="حالت تمرکز و نگارش بدون حواس‌پرتی (Alt+Z)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-            تمرکز
-        </button>
+        <!-- ستون اصلی: عنوان + ادیتور -->
+        <div class="col-main">
 
-        <!-- Multi-Device Responsive Live Preview -->
-        <button type="button" class="btn btn-secondary" id="btnOpenPreview" title="پیش‌نمایش زنده در اندازه‌های مختلف">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            پیش‌نمایش
-        </button>
+            <!-- عنوان خبر -->
+            <div class="card title-card" id="titleCard">
+                <input type="text" class="" id="title" maxlength="120" placeholder="عنوان خبر را اینجا بنویسید..." value="<?= $news_data ? htmlspecialchars($news_data['title']) : '' ?>">
+                <div class="title-meta">
+                    <span>حداکثر ۱۲۰ کاراکتر</span>
+                    <span id="titleCounter">0/120</span>
+                </div>
+                <div class="field-error" id="titleError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>وارد کردن عنوان خبر الزامی است.</span>
+                </div>
+            </div>
 
-        <!-- Save Draft Button -->
-        <button type="button" class="btn btn-secondary" id="btnSaveDraft">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            ذخیره پیش‌نویس
-        </button>
+            <!-- زیرعنوان خبر -->
+            <div class="subtitle-card" id="subtitleCard">
+                <textarea id="subtitle" maxlength="200" rows="2" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..."><?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?></textarea>
+                <div class="subtitle-meta">
+                    <span>حداکثر ۲۰۰ کاراکتر</span>
+                    <span id="subtitleCounter">0/200</span>
+                </div>
+            </div>
 
-        <!-- Final Submit / Publish Button -->
-        <button type="button" class="btn btn-primary" id="btnPublishFinal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <?= $id > 0 ? 'به‌روزرسانی خبر' : 'ثبت و انتشار' ?>
-        </button>
-    </div>
-</header>
+            <!-- متن خبر -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    متن خبر
+                </h3>
 
-<!-- ===== Main Newsroom Editorial Workspace ===== -->
-<div class="studio-container">
-    <form id="newsForm" method="POST" action="news-save.php" enctype="multipart/form-data">
-        <input type="hidden" name="id" id="newsId" value="<?= $id ?>">
-        <input type="hidden" name="status" id="newsStatus" value="<?= htmlspecialchars($current_status) ?>">
-        <input type="hidden" name="featured_image_base64" id="featuredImageBase64">
-        <input type="hidden" name="remove_featured_flag" id="removeFeaturedFlag" value="0">
-        <input type="hidden" name="focal_x" id="focalX" value="50">
-        <input type="hidden" name="focal_y" id="focalY" value="50">
+                <div class="editor-toolbar">
 
-        <div class="editorial-grid">
-            <!-- Main Content Column -->
-            <div class="main-column">
+                    <button type="button" onclick="format('bold')" class="tb-btn" title="درشت">
+                        <svg width="18" viewBox="0 0 24 24"><path d="M7 5v14h6a4 4 0 0 0 0-8H7m6 0a4 4 0 0 0 0-8H7" fill="none" stroke-width="2"/></svg>
+                    </button>
 
-                <!-- Module A: Multi-Tiered Headline Card -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h14"/></svg>
-                            تیتر و معماری پیام
-                        </h2>
-                        <span style="font-size:12px;color:var(--muted-color);">ساختار استاندارد خبر</span>
+                    <button type="button" onclick="format('italic')" class="tb-btn" title="مورب">
+                        <svg width="18" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4" stroke-width="2"/><line x1="14" y1="20" x2="5" y2="20" stroke-width="2"/><line x1="15" y1="4" x2="9" y2="20" stroke-width="2"/></svg>
+                    </button>
+
+                    <button type="button" onclick="format('underline')" class="tb-btn" title="زیرخط">
+                        <svg width="18" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4" fill="none" stroke-width="2"/><line x1="4" y1="20" x2="20" y2="20" stroke-width="2"/></svg>
+                    </button>
+
+                    <div class="tb-sep"></div>
+
+                    <select id="fontSelect" onchange="setFont(this)" class="tb-select">
+                        <option value="">فونت</option>
+                        <option value="Tahoma">Tahoma</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Vazirmatn">Vazirmatn</option>
+                        <option value="Sahel">Sahel</option>
+                        <option value="Shabnam">Shabnam</option>
+                    </select>
+
+                    <select id="fontSizeSelect" onchange="setFontSize(this)" class="tb-select small">
+                        <option value="">سایز</option>
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                        <option value="18">18</option>
+                        <option value="20">20</option>
+                        <option value="24">24</option>
+                        <option value="28">28</option>
+                    </select>
+
+                    <select id="headingSelect" onchange="setHeading(this)" class="tb-select small">
+                        <option value="p"> عادی </option>
+                        <option value="h2">H2</option>
+                        <option value="h3">H3</option>
+                        <option value="h4">H4</option>
+                        <option value="h5">H5</option>
+                        <option value="h6">H6</option>
+                    </select>
+
+                    <div class="tb-sep"></div>
+
+                    <button type="button" onclick="format('insertUnorderedList')" class="tb-btn" title="لیست">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <circle cx="5" cy="6" r="2" fill="#333"/>
+                            <circle cx="5" cy="12" r="2" fill="#333"/>
+                            <circle cx="5" cy="18" r="2" fill="#333"/>
+                            <line x1="10" y1="6" x2="20" y2="6" stroke-width="2"/>
+                            <line x1="10" y1="12" x2="20" y2="12" stroke-width="2"/>
+                            <line x1="10" y1="18" x2="20" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="insertLink()" class="tb-btn" title="پیوند">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <path d="M10 14a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" fill="none" stroke-width="2"/>
+                            <path d="M14 10a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" fill="none" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="clearFormat()" class="tb-btn" title="حذف فرمت">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <path d="M3 6h18M8 6v12m8-12v12" stroke-width="2" fill="none"/>
+                            <line x1="4" y1="18" x2="20" y2="4" stroke="red" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <div class="tb-sep"></div>
+
+                    <button type="button" onclick="alignRight()" class="tb-btn" title="راست‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="21" y1="6" x2="3" y2="6" stroke-width="2"/>
+                            <line x1="21" y1="12" x2="9" y2="12" stroke-width="2"/>
+                            <line x1="21" y1="18" x2="6" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignCenter()" class="tb-btn" title="وسط‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="6" y1="6" x2="18" y2="6" stroke-width="2"/>
+                            <line x1="4" y1="12" x2="20" y2="12" stroke-width="2"/>
+                            <line x1="6" y1="18" x2="18" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignLeft()" class="tb-btn" title="چپ‌چین">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+                            <line x1="3" y1="12" x2="15" y2="12" stroke-width="2"/>
+                            <line x1="3" y1="18" x2="18" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" onclick="alignJustify()" class="tb-btn" title="هم‌تراز">
+                        <svg width="18" viewBox="0 0 24 24">
+                            <line x1="3" y1="6"  x2="21" y2="6"  stroke-width="2"/>
+                            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
+                            <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
+                        </svg>
+                    </button>
+
+                    <div class="color-row">
+                        <div class="color-box" style="background:#000" onclick="applyColor('#000')"></div>
+                        <div class="color-box" style="background:#333" onclick="applyColor('#333')"></div>
+                        <div class="color-box" style="background:#007D75" onclick="applyColor('#007D75')"></div>
+                        <div class="color-box" style="background:#009688" onclick="applyColor('#009688')"></div>
+                        <div class="color-box" style="background:#1565c0" onclick="applyColor('#1565c0')"></div>
+                        <div class="color-box" style="background:#c62828" onclick="applyColor('#c62828')"></div>
+                        <div class="color-box" style="background:#F79F1F" onclick="applyColor('#F79F1F')"></div>
+                        <div class="color-box" style="background:#6a1b9a" onclick="applyColor('#6a1b9a')"></div>
                     </div>
 
-                    <div class="headline-suite">
-                        <!-- Kicker / Overline (روتیتر) -->
-                        <div class="field-group">
-                            <label class="field-label" for="kicker">
-                                <span>روتیتر (موضوع، جغرافیا یا دسته‌بندی تکمیلی)</span>
-                                <span class="rec-badge">اختیاری</span>
-                            </label>
-                            <input type="text" class="input-kicker" id="kicker" name="kicker" placeholder="مثال: گزارش اختصاصی / اصفهان / دستاورد پزشکی درمان تسکینی" autocomplete="off">
-                        </div>
-
-                        <!-- Main Headline (تیتر اصلی) -->
-                        <div class="field-group">
-                            <label class="field-label" for="title">
-                                <span>تیتر اصلی خبر (Headline) <strong style="color:var(--danger)">*</strong></span>
-                                <span class="rec-badge" id="titleLengthHint">طول ایده‌آل سئو: ۵۰ تا ۷۰ کاراکتر</span>
-                            </label>
-                            <textarea class="input-hero-title" id="title" name="title" rows="2" placeholder="تیتر جذاب، رسا و گویای خبر را اینجا بنویسید..." required><?= htmlspecialchars($current_title) ?></textarea>
-                            <div class="title-counter-bar">
-                                <div class="counter-progress">
-                                    <div class="counter-fill" id="titleProgress"></div>
-                                </div>
-                                <span id="titleCounter">۰ کاراکتر</span>
-                            </div>
-                        </div>
-
-                        <!-- Subtitle (زیرتیتر) -->
-                        <div class="field-group">
-                            <label class="field-label" for="subtitle">
-                                <span>زیرتیتر (توضیح تکمیلی زاویه دید خبر)</span>
-                                <span class="rec-badge">اختیاری</span>
-                            </label>
-                            <input type="text" class="input-subtitle" id="subtitle" name="subtitle" value="<?= htmlspecialchars($current_subtitle) ?>" placeholder="جزئیات تکمیلی، نقل‌قول کوتاه یا پیام فرعی خبر" autocomplete="off">
-                        </div>
-
-                        <!-- Lead Paragraph (لید خبر) -->
-                        <div class="field-group">
-                            <label class="field-label" for="lead">
-                                <span>لید و مقدمه خبر (Lead Paragraph)</span>
-                                <span class="rec-badge">پاسخ به ۵W+1H در ۱ تا ۲ جمله</span>
-                            </label>
-                            <div class="lead-box">
-                                <textarea id="lead" name="lead" placeholder="مهم‌ترین پیام، خلاصه و لید خبر را اینجا وارد کنید. این متن در پیش‌نمایش کارت‌ها و کارت شبکه‌های اجتماعی نمایش داده می‌شود..."></textarea>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Module B: Professional Featured Image Studio -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                            استودیوی تصویر شاخص (Photo Studio)
-                        </h2>
-                        <span style="font-size:12px;color:var(--muted-color);">بهینه‌سازی، برش هوشمند و سئو</span>
-                    </div>
-
-                    <div class="image-studio">
-                        <!-- Dropzone Upload Area -->
-                        <div class="dropzone-box" id="imageDropzone" tabindex="0">
-                            <input type="file" id="featuredFileInput" name="featured_image" accept="image/jpeg,image/png,image/webp" style="display:none;">
-                            <div class="dz-content">
-                                <div class="dz-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                </div>
-                                <div class="dz-title">تصویر شاخص را اینجا بکشید و رها کنید یا کلیک کنید</div>
-                                <div class="dz-sub">پشتیبانی از فرمت‌های WebP، JPG و PNG | قابلیت چسباندن تصویر از کلیپ‌بورد (Ctrl+V)</div>
-                            </div>
-                        </div>
-
-                        <!-- Live Preview & Focal Point Stage -->
-                        <div class="preview-container <?= !empty($existing_image_url) ? 'active' : '' ?>" id="previewContainer">
-                            <img src="<?= htmlspecialchars($existing_image_url) ?>" class="preview-image" id="featuredPreviewImg" alt="پیش‌نمایش تصویر شاخص">
-                            <div class="focal-crosshair" id="focalCrosshair"></div>
-
-                            <div class="preview-toolbar">
-                                <div style="display:flex;align-items:center;gap:8px;">
-                                    <button type="button" class="btn btn-secondary btn-sm" id="btnOpenCropper">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg>
-                                        برش و تنظیم کادر
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" id="btnSetFocalPoint" title="تعیین نقطه تمرکز تصویر برای نمایش متناسب در موبایل">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
-                                        نقطه کانونی
-                                    </button>
-                                </div>
-                                <button type="button" class="btn btn-danger btn-sm" id="btnRemoveImage">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    حذف تصویر
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Image SEO & Metadata Fields -->
-                        <div class="img-meta-grid">
-                            <div class="field-group">
-                                <label class="field-label" for="imgAlt">متن جایگزین (Alt Text سئو)</label>
-                                <input type="text" class="input-text" id="imgAlt" name="img_alt" placeholder="توضیح موضوع تصویر برای موتورهای جستجو">
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label" for="imgCaption">زیرنویس تصویر (Caption)</label>
-                                <input type="text" class="input-text" id="imgCaption" name="img_caption" placeholder="توضیحات کوتاه زیر تصویر در صفحه خبر">
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label" for="imgCredit">عکاس / منبع تصویر</label>
-                                <input type="text" class="input-text" id="imgCredit" name="img_credit" placeholder="مثال: روابط عمومی مکسا / ایرنا">
-                            </div>
-                        </div>
-                    </div>
+                <div class="editor-shell" id="editorShell">
+                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                </div>
+                <div class="field-error" id="contentError">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>نوشتن متن خبر الزامی است.</span>
                 </div>
 
-                <!-- Module C: Modular Journalistic Inserter & Rich Text Editor -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                            بدنه اصلی خبر و المان‌های ژورنالیستی
-                        </h2>
-                        <span style="font-size:12px;color:var(--muted-color);">بلوک‌های چندرسانه‌ای پیشرفته</span>
-                    </div>
-
-                    <!-- Quick Inserter Chips Bar -->
-                    <div class="blocks-bar">
-                        <div class="block-chip" id="insPullQuote" title="درج سوتیتر و نقل‌قول ویژه">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zM15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></svg>
-                            سوتیتر و نقل‌قول
-                        </div>
-                        <div class="block-chip" id="insCallout" title="درج کادرهای ویژه خبری">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            کادر ویژه / هشدار
-                        </div>
-                        <div class="block-chip" id="insFigure" title="تصویر درون‌متنی چندحالته با کپشن">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                            تصویر درون‌متنی
-                        </div>
-                        <div class="block-chip" id="insBeforeAfter" title="اسلایدر مقایسه قبل و بعد">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="7 8 3 12 7 16"/><polyline points="17 8 21 12 17 16"/></svg>
-                            مقایسه قبل و بعد
-                        </div>
-                        <div class="block-chip" id="insVideo" title="ویدیو و پخش‌کننده آپارات / یوتیوب">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                            ویدیو / آپارات
-                        </div>
-                        <div class="block-chip" id="insAudio" title="پادکست و فایل صوتی">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                            پادکست صوتی
-                        </div>
-                        <div class="block-chip" id="insDownload" title="کارت دانلود فایل و اسناد">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            پیوست دانلود
-                        </div>
-                        <div class="block-chip" id="insTimeline" title="خط زمانی وقایع و رویدادها">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            خط زمانی
-                        </div>
-                    </div>
-
-                    <!-- TinyMCE 7 Host Textarea -->
-                    <textarea id="editor" name="content"><?= htmlspecialchars($current_content) ?></textarea>
-
-                    <!-- Real-Time Metrics Bar -->
-                    <div class="metrics-bar">
-                        <div class="metrics-group">
-                            <div class="metric-item">تعداد کلمات: <span class="metric-val" id="metricWords">۰</span></div>
-                            <div class="metric-item">کاراکتر: <span class="metric-val" id="metricChars">۰</span></div>
-                            <div class="metric-item">پاراگراف: <span class="metric-val" id="metricParas">۰</span></div>
-                        </div>
-                        <div class="metrics-group">
-                            <div class="metric-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--primary-color)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                زمان تقریبی مطالعه: <span class="metric-val" id="metricReadTime">۱ دقیقه</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- درج تصویر در متن -->
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+                    <button type="button" class="btn-insert" onclick="uploadSingleImage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        درج تصویر تکی
+                    </button>
+                    <button type="button" class="btn-insert" onclick="uploadGalleryInline()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        درج گالری سه‌تایی
+                    </button>
+                    <span style="font-size:12px;color:var(--muted-color);align-self:center;">تصاویر در محل کرسر وارد می‌شوند.</span>
                 </div>
 
             </div>
 
-            <!-- Sidebar Taxonomy & SEO Radar Column -->
-            <div class="sidebar-column">
-
-                <!-- Publishing & Editorial Workflow Card -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            تنظیمات انتشار و تاکسونومی
-                        </h2>
-                    </div>
-
-                    <div class="headline-suite">
-                        <!-- Editorial Status -->
-                        <div class="field-group">
-                            <label class="field-label" for="statusSelect">وضعیت انتشار</label>
-                            <select class="select-input" id="statusSelect">
-                                <option value="draft" <?= $current_status === 'draft' ? 'selected' : '' ?>>پیش‌نویس (ذخیره داخلی)</option>
-                                <option value="review" <?= $current_status === 'review' ? 'selected' : '' ?>>ارسال به سردبیر جهت بررسی</option>
-                                <option value="published" <?= $current_status === 'published' ? 'selected' : '' ?>>منتشر شده در سایت</option>
-                            </select>
-                        </div>
-
-                        <!-- Category Selector -->
-                        <div class="field-group">
-                            <label class="field-label" for="categorySelect">دسته‌بندی موضوعی <strong style="color:var(--danger)">*</strong></label>
-                            <select class="select-input" id="categorySelect" name="category_id" required>
-                                <option value="">-- انتخاب دسته‌بندی --</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= $cat['id'] ?>" <?= $selectedCategoryId === (int)$cat['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($cat['name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <!-- Author / Reporter Byline -->
-                        <div class="field-group">
-                            <label class="field-label" for="author">نویسنده / خبرنگار</label>
-                            <input type="text" class="input-text" id="author" name="author" value="<?= htmlspecialchars($current_author) ?>" placeholder="نام خبرنگار یا تحریریه">
-                        </div>
-
-                        <!-- Publish Schedule Date -->
-                        <div class="field-group">
-                            <label class="field-label" for="publishDate">تاریخ و زمان انتشار</label>
-                            <input type="datetime-local" class="input-text" id="publishDate" name="publish_date" value="<?= $pub_val ?>">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Interactive Tags Card -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                            برچسب‌ها و کلیدواژه‌ها
-                        </h2>
-                    </div>
-
-                    <div class="field-group">
-                        <label class="field-label">کلیدواژه کانونی سئو</label>
-                        <input type="text" class="input-text" id="keywords" name="keywords" value="<?= htmlspecialchars($current_keywords) ?>" placeholder="کلمه کلیدی اصلی مقاله را وارد کنید">
-                    </div>
-
-                    <div class="field-group" style="margin-top:14px;">
-                        <label class="field-label">تگ‌های موضوعی</label>
-                        <div class="tags-wrapper" id="tagsWrapper">
-                            <input type="text" class="tags-input" id="tagsInput" placeholder="تگ را بنویسید و Enter بزنید...">
-                        </div>
-                        <input type="hidden" name="tags" id="hiddenTags" value="<?= htmlspecialchars($current_tags) ?>">
-                    </div>
-                </div>
-
-                <!-- Module F: Real-Time SEO Radar Widget -->
-                <div class="card">
-                    <div class="card-head">
-                        <h2>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-                            رادار سلامت سئو و ارزیابی هوشمند
-                        </h2>
-                    </div>
-
-                    <div class="seo-radar">
-                        <div class="seo-score-circle">
-                            <div class="score-gauge" id="seoGauge">
-                                <div class="score-inner" id="seoScoreText">۰</div>
-                            </div>
-                            <div class="score-meta">
-                                <h3 id="seoScoreTitle">در حال تحلیل محتوا...</h3>
-                                <p id="seoScoreSummary">شاخص‌های نگارشی و بهینه‌سازی موتورهای جستجو</p>
-                            </div>
-                        </div>
-
-                        <ul class="seo-checklist" id="seoChecklist">
-                            <li class="seo-item" id="seoChkKeyword"><span class="seo-dot"></span> کلیدواژه کانونی تعریف شده است</li>
-                            <li class="seo-item" id="seoChkTitle"><span class="seo-dot"></span> کلیدواژه در تیتر اصلی وجود دارد</li>
-                            <li class="seo-item" id="seoChkLead"><span class="seo-dot"></span> کلیدواژه در لید خبر آمده است</li>
-                            <li class="seo-item" id="seoChkContent"><span class="seo-dot"></span> کلیدواژه در ۱۰۰ کلمه اول متن آمده است</li>
-                            <li class="seo-item" id="seoChkHeadings"><span class="seo-dot"></span> وجود زیرعنوان‌ها (H2 / H3) در متن</li>
-                            <li class="seo-item" id="seoChkWordCount"><span class="seo-dot"></span> حجم محتوا بیش از ۳۰۰ کلمه است</li>
-                            <li class="seo-item" id="seoChkImage"><span class="seo-dot"></span> تصویر شاخص بارگذاری شده است</li>
-                        </ul>
-
-                        <!-- Google SERP Snippet Simulator -->
-                        <div style="margin-top:8px;">
-                            <label class="field-label" style="margin-bottom:8px;">پیش‌نمایش در نتایج جستجوی گوگل</label>
-                            <div class="serp-box">
-                                <div class="serp-url">https://macsa.ir › news › <span id="serpSlug">news-article</span></div>
-                                <div class="serp-title" id="serpTitle">عنوان خبر در نتایج گوگل</div>
-                                <div class="serp-desc" id="serpDesc">توضیحات و لید خبر در نتایج جستجوی گوگل به این شکل برای کاربران نمایش داده خواهد شد...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </div>
-    </form>
+
+        <!-- ستون کناری: متادیتا -->
+        <div class="col-side">
+
+            <!-- تصویر شاخص -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    تصویر شاخص
+                </h3>
+
+                <input type="file" id="featured_image" name="featured_image" accept="image/*" style="display:none;">
+                <input type="hidden" id="remove_featured_flag" name="remove_featured_flag" value="0">
+
+                <div class="dropzone" id="dropzone">
+                    <div class="dz-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="dz-main">تصویر را اینجا بکشید یا کلیک کنید</div>
+                    <div class="dz-hint">PNG, JPG حداکثر ۵ مگابایت</div>
+
+                    <div class="dz-preview <?= !empty($existing_image_url) ? 'show' : '' ?>" id="dzPreview">
+                        <img id="dzImg" src="<?= htmlspecialchars($existing_image_url) ?>" alt="پیش‌نمایش تصویر">
+                        <button class="dz-remove" type="button" onclick="removeFeatured(event)" title="حذف تصویر">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- امتیاز سئو -->
+            <div class="card card-pad">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    امتیاز سئو
+                </h3>
+                <div class="seo-widget">
+                    <div class="seo-ring">
+                        <svg viewBox="0 0 36 36">
+                            <path class="ring-track" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"/>
+                            <path class="ring-fill" id="seoRingFill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F79F1F" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                        <span class="ring-num" id="seoRingNum">۰</span>
+                    </div>
+                    <div class="seo-info">
+                        <div class="seo-state">وضعیت: <b id="seoState" style="color:var(--muted-color)">—</b></div>
+                        <div class="seo-tip" id="seoTip">با پر کردن فیلدها امتیاز محاسبه می‌شود.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنظیمات -->
+            <div class="card settings-card">
+
+                <div class="input-group">
+                    <label class="field-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        تاریخ و زمان انتشار
+                    </label>
+                    <div class="publish-date-row">
+                        <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
+                        <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
+                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
+                        <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
+                    </div>
+                </div>
+
+                <div class="input-group" id="categoryGroup">
+                    <label class="field-label" for="category_id">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        دسته خبر
+                    </label>
+                    <select id="category_id" name="category_id" class="input" required>
+                        <option value="">انتخاب دسته</option>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= (int)$category['id'] ?>" <?= $selectedCategoryId === (int)$category['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($category['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="field-error" id="categoryError">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>انتخاب دسته‌بندی الزامی است.</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="author">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        نویسنده
+                    </label>
+                    <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>" placeholder="نام نویسنده">
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="keywords">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><circle cx="12" cy="12" r="2"/></svg>
+                        کلمات کلیدی
+                    </label>
+                    <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="کلمات کلیدی را وارد کنید">
+                </div>
+
+                <!-- پیشنهاد هوشمند کلمات کلیدی -->
+                <div class="input-group" id="suggestion-container" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--primary-color); display: inline-flex; align-items: center; gap: 4px;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            کلمات کلیدی پیشنهادی از متن
+                        </span>
+                        <button type="button" onclick="generateSuggestions()" class="btn-insert" style="border-style: solid; padding: 4px 10px; border-radius: 999px; font-size: 11px; cursor: pointer;">
+                            ✨ اسکن و پیشنهاد
+                        </button>
+                    </div>
+                    <div id="suggested-chips-list" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); min-height: 44px; align-items: center; background: var(--surface-2);">
+                        <span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">برای استخراج کلمات کلیدی، روی دکمه اسکن کلیک کنید.</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="tags">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        تگ‌های سئو
+                    </label>
+                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
+                    <div class="chips" id="tagsChips"></div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        برچسب‌های موضوعی خبر (چند انتخابی)
+                    </label>
+                    <div class="tags-checklist" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                        <?php foreach ($all_tags as $t): ?>
+                            <label class="tag-checkbox-label">
+                                <input type="checkbox" name="tag_ids[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $selected_tag_ids) ? 'checked' : '' ?>>
+                                <span><?= htmlspecialchars($t['name']) ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- ===== Live Image Cropper Modal (Cropper.js) ===== -->
-<div class="modal-backdrop" id="cropperModal">
-    <div class="modal-dialog" style="max-width:860px;">
-        <div class="modal-header">
-            <h3>تنظیم کادر و برش تصویر شاخص</h3>
-            <button type="button" class="modal-close" id="btnCloseCropper">&times;</button>
+<!-- توست وضعیت (موفقیت / خطا / در حال انجام) -->
+<div id="statusToast" class="toast" role="status" aria-live="polite">
+    <div class="toast-row">
+        <div class="toast-ic" id="toastIcon"></div>
+        <div class="toast-body">
+            <p class="toast-title" id="toastTitle"></p>
+            <div class="toast-msg" id="toastMsg"></div>
         </div>
-        <div class="modal-body">
-            <div class="cropper-stage">
-                <img id="cropperImage" src="" alt="برش تصویر">
+        <button type="button" class="toast-close" onclick="hideStatus()" aria-label="بستن">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div id="uploadProgress" class="toast-progress">
+        <div class="bar-track"><div id="uploadBarFill" class="bar-fill"></div></div>
+    </div>
+</div>
+
+<!-- مودال پیش‌نمایش -->
+<div id="previewModal">
+    <div class="modal-content">
+        <div class="preview-bar">
+            <div class="preview-bar-title">
+                <span class="ph-ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </span>
+                پیش‌نمایش خبر
             </div>
-            <div class="cropper-tools">
-                <div class="ratio-tabs">
-                    <button type="button" class="ratio-btn active" data-ratio="1.7777777777777777">16:9 (اسلایدر)</button>
-                    <button type="button" class="ratio-btn" data-ratio="1.3333333333333333">4:3 (آرشیو)</button>
-                    <button type="button" class="ratio-btn" data-ratio="1">1:1 (مربع)</button>
-                    <button type="button" class="ratio-btn" data-ratio="0.5625">9:16 (استوری)</button>
-                    <button type="button" class="ratio-btn" data-ratio="NaN">برش آزاد</button>
-                </div>
-                <div style="display:flex;gap:6px;">
-                    <button type="button" class="btn btn-secondary btn-sm" id="cropRotateL" title="چرخش ۹۰- درجه">↺</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="cropRotateR" title="چرخش ۹۰+ درجه">↻</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="cropFlipH" title="آینه افقی">⇆</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="cropReset" title="بازنشانی">بازنشانی</button>
-                </div>
-            </div>
+            <button onclick="closePreview()" class="preview-close" title="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="btnCancelCrop">انصراف</button>
-            <button type="button" class="btn btn-primary" id="btnApplyCrop">اعمال برش و بهینه‌سازی</button>
+        <div class="preview-scroll">
+            <div id="previewContent"></div>
         </div>
     </div>
 </div>
 
-<!-- ===== Multi-Device Responsive Live Preview Modal ===== -->
-<div class="modal-backdrop" id="previewModal">
-    <div class="modal-dialog" style="max-width:1100px;height:90vh;">
-        <div class="modal-header">
-            <h3>پیش‌نمایش زنده در دستگاه‌های مختلف</h3>
-            <button type="button" class="modal-close" id="btnClosePreview">&times;</button>
+<!-- مودال انتخاب تاریخ (تقویم شمسی مدرن) -->
+<div id="dateModal" class="date-modal" onclick="if(event.target===this) closeDatePicker()">
+    <div class="date-modal-box">
+        <div class="date-header">
+            <h4 class="date-modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                تقویم شمسی
+            </h4>
+            <button type="button" class="dp-close" onclick="closeDatePicker()" aria-label="بستن">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-        <div class="modal-body" style="background:var(--surface-2);">
-            <div class="preview-device-bar">
-                <button type="button" class="device-btn active" data-device="desktop">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    رایانه (Desktop)
-                </button>
-                <button type="button" class="device-btn" data-device="tablet">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                    تبلت (Tablet)
-                </button>
-                <button type="button" class="device-btn" data-device="mobile">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                    موبایل (Mobile)
-                </button>
-            </div>
 
-            <div class="preview-viewport-wrapper">
-                <div class="preview-viewport desktop" id="previewViewport">
-                    <div id="pvKicker" style="color:var(--primary-color);font-weight:800;font-size:14px;margin-bottom:6px;"></div>
-                    <h1 id="pvTitle" style="font-size:28px;font-weight:900;line-height:1.4;margin-bottom:12px;color:var(--text-color);"></h1>
-                    <div id="pvSubtitle" style="font-size:16px;font-weight:600;color:var(--muted-color);margin-bottom:16px;line-height:1.6;"></div>
-                    <div id="pvMeta" style="font-size:12.5px;color:var(--muted-color);margin-bottom:20px;border-bottom:1px solid var(--border-color);padding-bottom:12px;"></div>
-                    <div id="pvLead" style="background:rgba(0,125,117,0.06);border-right:4px solid var(--primary-color);padding:14px 18px;border-radius:8px;font-weight:600;font-size:15.5px;line-height:1.8;margin-bottom:24px;"></div>
-                    <div id="pvFeaturedImgWrap" style="margin-bottom:24px;border-radius:12px;overflow:hidden;display:none;">
-                        <img id="pvFeaturedImg" src="" alt="" style="width:100%;max-height:450px;object-fit:cover;display:block;">
-                        <div id="pvCaption" style="font-size:12px;color:var(--muted-color);padding:6px 10px;text-align:center;"></div>
-                    </div>
-                    <div id="pvContent" style="font-size:15px;line-height:1.9;"></div>
+        <!-- ناوبری ماه -->
+        <div class="dp-nav">
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(1)" aria-label="ماه بعد">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="dp-month-label">
+                <button type="button" class="dp-label-btn" id="dpMonthBtn" onclick="dpToggleView('months')">—</button>
+                <button type="button" class="dp-label-btn" id="dpYearBtn" onclick="dpToggleView('years')">—</button>
+            </div>
+            <button type="button" class="dp-nav-btn" onclick="dpChangeMonth(-1)" aria-label="ماه قبل">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+
+        <!-- نمای روز -->
+        <div class="dp-view" id="dpDayView">
+            <div class="dp-weekdays">
+                <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+            </div>
+            <div class="dp-days" id="dpDays"></div>
+        </div>
+        <!-- نمای ماه -->
+        <div class="dp-view dp-grid-pick" id="dpMonthView" style="display:none;"></div>
+        <!-- نمای سال -->
+        <div class="dp-view dp-grid-pick" id="dpYearView" style="display:none;"></div>
+
+        <!-- انتخاب زمان -->
+        <div class="dp-time">
+            <div class="dp-time-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                انتخاب زمان
+            </div>
+            <div class="dp-time-row">
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', 1)" aria-label="ساعت بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpHourVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('hh', -1)" aria-label="ساعت کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </div>
+                <span class="dp-time-colon">:</span>
+                <div class="dp-stepper">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', 1)" aria-label="دقیقه بیشتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <input type="text" class="dp-time-val" id="dpMinuteVal" value="۰۰" readonly inputmode="numeric">
+                    <button type="button" class="dp-step-btn" onclick="dpStepTime('mm', -1)" aria-label="دقیقه کمتر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="btnClosePreviewBottom">بستن پیش‌نمایش</button>
+
+        <div class="date-actions">
+            <button type="button" class="btn-insert" onclick="setPickerNow()">اکنون</button>
+            <button type="button" class="btn-insert" onclick="closeDatePicker()">انصراف</button>
+            <button type="button" class="btn btn-save" style="padding:10px 16px;" onclick="applyDatePicker()">تایید</button>
         </div>
+
+        <!-- state مخفی که توابع تبدیل از آن می‌خوانند/می‌نویسند -->
+        <input type="hidden" id="jy"><input type="hidden" id="jm"><input type="hidden" id="jd">
+        <input type="hidden" id="hh"><input type="hidden" id="mm">
     </div>
 </div>
 
-<!-- Studio Toast Notification -->
-<div class="studio-toast" id="studioToast"></div>
-
-<!-- JavaScript Controllers -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+/* ذخیره محدوده انتخاب */
+let savedRange = null;
+const editor = document.getElementById("editor");
 
-    // =========================================================================
-    // 1. TinyMCE 7 Enterprise Initializer
-    // =========================================================================
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+editor.addEventListener("mouseup", saveSelection);
+editor.addEventListener("keyup", saveSelection);
+editor.addEventListener("focus", saveSelection);
 
-    tinymce.init({
-        selector: '#editor',
-        directionality: 'rtl',
-        language: 'fa',
-        min_height: 520,
-        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | alignright aligncenter alignleft alignjustify | numlist bullist outdent indent | forecolor backcolor | link image media table | blockquote removeformat | code fullscreen',
-        content_style: `
-            body {
-                font-family: 'Vazirmatn', Tahoma, sans-serif;
-                font-size: 15px;
-                line-height: 1.85;
-                color: ${isDark ? '#e7ecee' : '#2f3437'};
-                background-color: ${isDark ? '#1e1e1e' : '#ffffff'};
-                padding: 18px;
-                direction: rtl;
-            }
-            figure { margin: 20px 0; text-align: center; }
-            figure img { max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
-            figcaption { font-size: 12.5px; color: #889397; margin-top: 8px; font-weight: 600; }
-            blockquote.quote-card {
-                border-right: 4px solid #007D75;
-                background: rgba(0,125,117,0.06);
-                padding: 16px 20px;
-                border-radius: 8px;
-                margin: 20px 0;
-                font-style: normal;
-            }
-            .callout-box {
-                padding: 16px 20px;
-                border-radius: 10px;
-                margin: 20px 0;
-                border: 1px solid rgba(0,0,0,0.08);
-            }
-            .callout-box.note { background: rgba(0,125,117,0.07); border-right: 4px solid #007D75; }
-            .callout-box.alert { background: rgba(224,85,107,0.08); border-right: 4px solid #e0556b; }
-            .callout-box.fact { background: rgba(247,159,31,0.08); border-right: 4px solid #f79f1f; }
-            table { width: 100%; border-collapse: collapse; margin: 18px 0; }
-            table th, table td { border: 1px solid ${isDark ? '#383838' : '#e2e8e7'}; padding: 10px 14px; text-align: right; }
-            table th { background: ${isDark ? '#262626' : '#f8faf9'}; font-weight: 800; color: #007D75; }
-        `,
-        skin: isDark ? 'oxide-dark' : 'oxide',
-        content_css: isDark ? 'dark' : 'default',
-        images_upload_url: 'upload-inline-image.php',
-        automatic_uploads: true,
-        setup: function(editor) {
-            editor.on('input change keyup SetContent', function() {
-                updateMetrics();
-                runSeoAudit();
-            });
-        }
-    });
-
-    // =========================================================================
-    // 2. Metrics & Character Counters
-    // =========================================================================
-    const titleInput = document.getElementById('title');
-    const titleCounter = document.getElementById('titleCounter');
-    const titleProgress = document.getElementById('titleProgress');
-
-    function updateTitleMetrics() {
-        const len = (titleInput.value || '').trim().length;
-        titleCounter.textContent = len + ' کاراکتر';
-        const pct = Math.min(100, Math.round((len / 70) * 100));
-        titleProgress.style.width = pct + '%';
-
-        titleProgress.className = 'counter-fill';
-        if (len >= 50 && len <= 70) {
-            titleProgress.classList.add('good');
-        } else if (len > 70) {
-            titleProgress.classList.add('danger');
-        } else if (len > 30) {
-            titleProgress.classList.add('warning');
-        }
-
-        updateSerpSimulator();
-        runSeoAudit();
+function saveSelection(){
+    const sel = window.getSelection();
+    if(sel.rangeCount > 0){
+        savedRange = sel.getRangeAt(0);
     }
-    titleInput.addEventListener('input', updateTitleMetrics);
-    updateTitleMetrics();
+}
 
-    function updateMetrics() {
-        let text = '';
-        if (tinymce.get('editor')) {
-            text = tinymce.get('editor').getContent({ format: 'text' }) || '';
-        }
-        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-        const chars = text.length;
-        const paras = text.trim() ? (tinymce.get('editor').getContent().match(/<p>/gi) || []).length : 0;
-        const readTime = Math.max(1, Math.ceil(words / 200));
-
-        document.getElementById('metricWords').textContent = words;
-        document.getElementById('metricChars').textContent = chars;
-        document.getElementById('metricParas').textContent = Math.max(1, paras);
-        document.getElementById('metricReadTime').textContent = readTime + ' دقیقه';
+function restoreSelection(){
+    if(savedRange){
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
     }
+}
 
-    // =========================================================================
-    // 3. Persian Typography & Punctuation Normalizer (Module D)
-    // =========================================================================
-    function normalizePersianText(str) {
-        if (!str) return '';
+/* ===================== ابزارهای پایه ===================== */
+function format(cmd,val=null){
+    editor.focus();
+    restoreSelection();
+    document.execCommand(cmd,false,val);
+    saveSelection();
+}
 
-        // Standardize Arabic characters to Persian
-        str = str.replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/ة/g, 'ه');
+/* ===================== رنگ متن ===================== */
+function applyColor(color){
+    restoreSelection();
+    document.execCommand("foreColor", false, color);
+    saveSelection();
+}
 
-        // Convert English and Arabic digits to Persian numerals
-        const enDigits = ['0','1','2','3','4','5','6','7','8','9'];
-        const arDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-        const faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-
-        for (let i = 0; i < 10; i++) {
-            str = str.replace(new RegExp(enDigits[i], 'g'), faDigits[i]);
-            str = str.replace(new RegExp(arDigits[i], 'g'), faDigits[i]);
-        }
-
-        // Standardize Quotes, Commas, Question marks, Semicolons
-        str = str.replace(/"([^"]*)"/g, '«$1»');
-        str = str.replace(/,/g, '،');
-        str = str.replace(/\?/g, '؟');
-        str = str.replace(/;/g, '؛');
-
-        // ZWNJ (نیم‌فاصله) rules
-        const zwnj = '\u200c';
-
-        // Prefixes: می / نمی
-        str = str.replace(/\b(می|نمی)\s+/g, '$1' + zwnj);
-
-        // Suffixes: ها / های / هایم / تر / ترین / ام / ات / اش
-        str = str.replace(/\s+(ها|های|هایم|هایت|هایش|هایمان|هایتان|هایشان|تر|ترین|ام|ات|اش|مان|تان|شان|ای)\b/g, zwnj + '$1');
-
-        // Common compound words
-        const compounds = [
-            'بین المللی', 'بین الملل', 'بی شمار', 'فوق العاده', 'گفت و گو', 'دست اندرکاران',
-            'علاقه مند', 'بهره مند', 'صرفه جویی', 'یکدیگر', 'پیش بینی', 'رو به رو'
-        ];
-        compounds.forEach(function(cp) {
-            const normalizedCp = cp.replace(/\s+/g, zwnj);
-            str = str.replace(new RegExp(cp, 'g'), normalizedCp);
-        });
-
-        // Clean redundant spaces and punctuation spacing
-        str = str.replace(/ {2,}/g, ' ');
-        str = str.replace(/\s+([،.؟!؛:])/g, '$1');
-        str = str.replace(/([،.؟!؛:])(?=[^\s\d،.؟!؛:])/g, '$1 ');
-
-        return str;
+/* ===================== هدینگ ===================== */
+function setHeading(selectEl){
+    editor.focus();
+    restoreSelection();
+    const tag = selectEl.value;
+    if(tag==="p"){
+        document.execCommand("formatBlock",false,"p");
+    }else{
+        document.execCommand("formatBlock",false,tag);
     }
+    saveSelection();
+}
 
-    document.getElementById('btnNormalizeText').addEventListener('click', function() {
-        titleInput.value = normalizePersianText(titleInput.value);
-        document.getElementById('kicker').value = normalizePersianText(document.getElementById('kicker').value);
-        document.getElementById('subtitle').value = normalizePersianText(document.getElementById('subtitle').value);
-        document.getElementById('lead').value = normalizePersianText(document.getElementById('lead').value);
+/* ===================== فونت ===================== */
+function setFont(selectEl){
+    const font = selectEl.value;
+    if(!font) return;
+    editor.focus();
+    restoreSelection();
+    document.execCommand("fontName",false,font);
+    selectEl.value="";
+    saveSelection();
+}
 
-        if (tinymce.get('editor')) {
-            const rawContent = tinymce.get('editor').getContent();
-            tinymce.get('editor').setContent(normalizePersianText(rawContent));
-        }
-
-        updateTitleMetrics();
-        updateMetrics();
-        showToast('پاکسازی و ویراستاری نیم‌فاصله‌های فارسی انجام شد.', 'success');
+/* ===================== سایز فونت ===================== */
+function setFontSize(selectEl){
+    const size = selectEl.value;
+    if(!size) return;
+    editor.focus();
+    restoreSelection();
+    document.execCommand("fontSize",false,"7");
+    const fonts = editor.querySelectorAll("font[size='7']");
+    fonts.forEach(f=>{
+        f.removeAttribute("size");
+        f.style.fontSize = size + "px";
     });
+    selectEl.value="";
+    saveSelection();
+}
 
-    // =========================================================================
-    // 4. Featured Image Studio & Cropper.js (Module B)
-    // =========================================================================
-    const dropzone = document.getElementById('imageDropzone');
-    const fileInput = document.getElementById('featuredFileInput');
-    const previewContainer = document.getElementById('previewContainer');
-    const previewImg = document.getElementById('featuredPreviewImg');
-    const cropperModal = document.getElementById('cropperModal');
-    const cropperImg = document.getElementById('cropperImage');
-    let cropperInstance = null;
-    let currentRawImageSrc = '';
-
-    dropzone.addEventListener('click', function() { fileInput.click(); });
-
-    dropzone.addEventListener('dragover', function(e) { e.preventDefault(); dropzone.classList.add('drag-over'); });
-    dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('drag-over'); });
-    dropzone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        dropzone.classList.remove('drag-over');
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            processSelectedImage(e.dataTransfer.files[0]);
-        }
-    });
-
-    fileInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            processSelectedImage(this.files[0]);
-        }
-    });
-
-    // Clipboard Paste Handler (Ctrl+V)
-    window.addEventListener('paste', function(e) {
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') === 0) {
-                const blob = items[i].getAsFile();
-                processSelectedImage(blob);
-                showToast('تصویر از کلیپ‌بورد بارگذاری شد.', 'success');
-                break;
-            }
-        }
-    });
-
-    function processSelectedImage(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentRawImageSrc = e.target.result;
-            openCropper(currentRawImageSrc);
-        };
-        reader.readAsDataURL(file);
+/* ===================== لینک ===================== */
+function insertLink(){
+    editor.focus();
+    restoreSelection();
+    const url = prompt("آدرس لینک:");
+    if(url){
+        document.execCommand("createLink",false,url);
     }
-
-    function openCropper(imgSrc) {
-        cropperImg.src = imgSrc;
-        cropperModal.classList.add('open');
-
-        if (cropperInstance) {
-            cropperInstance.destroy();
-        }
-
-        cropperInstance = new Cropper(cropperImg, {
-            aspectRatio: 16 / 9,
-            viewMode: 1,
-            autoCropArea: 1,
-            responsive: true,
-            restore: false,
-            checkCrossOrigin: false
-        });
-    }
-
-    document.querySelectorAll('.ratio-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const ratio = parseFloat(this.getAttribute('data-ratio'));
-            if (cropperInstance) {
-                cropperInstance.setAspectRatio(isNaN(ratio) ? NaN : ratio);
-            }
-        });
-    });
-
-    document.getElementById('cropRotateL').addEventListener('click', function() { if (cropperInstance) cropperInstance.rotate(-90); });
-    document.getElementById('cropRotateR').addEventListener('click', function() { if (cropperInstance) cropperInstance.rotate(90); });
-    document.getElementById('cropFlipH').addEventListener('click', function() {
-        if (cropperInstance) {
-            const data = cropperInstance.getData();
-            cropperInstance.scaleX(data.scaleX === -1 ? 1 : -1);
-        }
-    });
-    document.getElementById('cropReset').addEventListener('click', function() { if (cropperInstance) cropperInstance.reset(); });
-
-    document.getElementById('btnApplyCrop').addEventListener('click', function() {
-        if (!cropperInstance) return;
-
-        // Export cropped canvas with max dimension constraint (1920px)
-        const canvas = cropperInstance.getCroppedCanvas({
-            maxWidth: 1920,
-            maxHeight: 1080,
-            imageSmoothingEnabled: true,
-            imageSmoothingQuality: 'high'
-        });
-
-        const base64WebP = canvas.toDataURL('image/webp', 0.85);
-        document.getElementById('featuredImageBase64').value = base64WebP;
-        document.getElementById('removeFeaturedFlag').value = '0';
-
-        previewImg.src = base64WebP;
-        previewContainer.classList.add('active');
-        closeCropperModal();
-        runSeoAudit();
-        showToast('تصویر شاخص با موفقیت بهینه‌سازی و برش داده شد.', 'success');
-    });
-
-    function closeCropperModal() {
-        cropperModal.classList.remove('open');
-        if (cropperInstance) {
-            cropperInstance.destroy();
-            cropperInstance = null;
-        }
-    }
-
-    document.getElementById('btnCloseCropper').addEventListener('click', closeCropperModal);
-    document.getElementById('btnCancelCrop').addEventListener('click', closeCropperModal);
-    document.getElementById('btnOpenCropper').addEventListener('click', function() {
-        if (previewImg.src) openCropper(previewImg.src);
-    });
-
-    // Remove Image Action
-    document.getElementById('btnRemoveImage').addEventListener('click', function() {
-        previewImg.src = '';
-        previewContainer.classList.remove('active');
-        document.getElementById('featuredImageBase64').value = '';
-        document.getElementById('removeFeaturedFlag').value = '1';
-        fileInput.value = '';
-        runSeoAudit();
-        showToast('تصویر شاخص حذف شد.', 'info');
-    });
-
-    // Focal Point Selector
-    let isSettingFocal = false;
-    const focalCrosshair = document.getElementById('focalCrosshair');
-    document.getElementById('btnSetFocalPoint').addEventListener('click', function() {
-        isSettingFocal = !isSettingFocal;
-        this.classList.toggle('btn-primary', isSettingFocal);
-        focalCrosshair.style.display = isSettingFocal ? 'block' : 'none';
-        if (isSettingFocal) {
-            showToast('روی نقطه اصلی تصویر کلیک کنید تا در موبایل برش نخورد.', 'info');
-        }
-    });
-
-    previewContainer.addEventListener('click', function(e) {
-        if (!isSettingFocal) return;
-        const rect = previewImg.getBoundingClientRect();
-        const x = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
-        const y = Math.max(0, Math.min(100, Math.round(((e.clientY - rect.top) / rect.height) * 100)));
-
-        document.getElementById('focalX').value = x;
-        document.getElementById('focalY').value = y;
-
-        focalCrosshair.style.left = x + '%';
-        focalCrosshair.style.top = y + '%';
-        previewImg.style.objectPosition = `${x}% ${y}%`;
-        showToast(`نقطه کانونی تنظیم شد: X: ${x}% | Y: ${y}%`, 'success');
-    });
-
-    // =========================================================================
-    // 5. Modular Journalistic Content Inserters (Module C)
-    // =========================================================================
-    function insertIntoEditor(html) {
-        if (tinymce.get('editor')) {
-            tinymce.get('editor').insertContent(html);
-            updateMetrics();
-            runSeoAudit();
-        }
-    }
-
-    document.getElementById('insPullQuote').addEventListener('click', function() {
-        const quote = prompt('متن نقل‌قول یا سوتیتر برجسته:', 'این یک دستاورد بزرگ در حوزه مراقبت‌های تسکینی کشور است.');
-        if (!quote) return;
-        const speaker = prompt('نام گوینده / مقام مسئول:', 'دکتر محمد رضایی');
-        const role = prompt('سمت یا عنوان رسمی:', 'مدیرعامل بنیاد مکسا');
-        const html = `
-            <blockquote class="quote-card">
-                <p style="font-size:17px;font-weight:700;line-height:1.7;margin-bottom:8px;">«${quote}»</p>
-                <div style="font-size:13px;color:#007D75;font-weight:800;">— ${speaker || ''} <span style="font-weight:normal;color:#7a878b;">(${role || ''})</span></div>
-            </blockquote><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insCallout').addEventListener('click', function() {
-        const type = prompt('نوع کادر را انتخاب کنید (1: نکته مهم، 2: فوری و هشدار، 3: جعبه آمار و فکت):', '1');
-        const text = prompt('متن کادر ویژه:', 'ارائه کلیه خدمات حمایتی و درمانی مکسا برای بیماران مبتلا به سرطان کاملاً رایگان است.');
-        if (!text) return;
-        let className = 'note';
-        let title = '📌 نکته مهم';
-        if (type === '2') { className = 'alert'; title = '🚨 خبر فوری و اطلاعیه'; }
-        if (type === '3') { className = 'fact'; title = '📊 آمار و اطلاعات کلیدی'; }
-
-        const html = `
-            <div class="callout-box ${className}">
-                <div style="font-weight:800;font-size:14px;margin-bottom:6px;">${title}</div>
-                <div>${text}</div>
-            </div><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insFigure').addEventListener('click', function() {
-        const url = prompt('آدرس اینترنتی تصویر (Image URL):', 'https://macsa.ir/uploads/placeholder.jpg');
-        if (!url) return;
-        const caption = prompt('زیرنویس و شرح تصویر (Caption):', 'مراسم افتتاح بخش جدید مراقبت‌های تسکینی');
-        const credit = prompt('عکاس یا منبع:', 'عکاس: روابط عمومی مکسا');
-
-        const html = `
-            <figure>
-                <img src="${url}" alt="${caption}">
-                <figcaption>${caption} ${credit ? `<span style="opacity:0.8;">(${credit})</span>` : ''}</figcaption>
-            </figure><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insBeforeAfter').addEventListener('click', function() {
-        const beforeUrl = prompt('آدرس تصویر قبل (Before URL):', 'https://macsa.ir/uploads/before.jpg');
-        const afterUrl = prompt('آدرس تصویر بعد (After URL):', 'https://macsa.ir/uploads/after.jpg');
-        if (!beforeUrl || !afterUrl) return;
-
-        const html = `
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;">
-                <div style="text-align:center;">
-                    <img src="${beforeUrl}" style="width:100%;border-radius:8px;" alt="قبل">
-                    <div style="font-size:12px;font-weight:700;color:#e0556b;margin-top:4px;">وضعیت قبل از بازسازی</div>
-                </div>
-                <div style="text-align:center;">
-                    <img src="${afterUrl}" style="width:100%;border-radius:8px;" alt="بعد">
-                    <div style="font-size:12px;font-weight:700;color:#16a37a;margin-top:4px;">وضعیت پس از بازسازی و تجهیز</div>
-                </div>
-            </div><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insVideo').addEventListener('click', function() {
-        const aparatId = prompt('کد یا لینک ویدیو در آپارات (مثال: x1Y2z):', '');
-        if (aparatId) {
-            const cleanId = aparatId.replace(/https?:\/\/www\.aparat\.com\/v\//, '').trim();
-            const html = `
-                <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:20px 0;box-shadow:0 4px 14px rgba(0,0,0,0.1);">
-                    <iframe src="https://www.aparat.com/video/video/embed/videohash/${cleanId}/vt/frame" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowFullScreen="true"></iframe>
-                </div><p></p>
-            `;
-            insertIntoEditor(html);
-        }
-    });
-
-    document.getElementById('insAudio').addEventListener('click', function() {
-        const audioUrl = prompt('آدرس فایل صوتی / پادکست (MP3 URL):', 'https://macsa.ir/uploads/podcast.mp3');
-        if (!audioUrl) return;
-        const title = prompt('عنوان پادکست یا مصاحبه:', 'گفت‌وگوی رادیویی پیرامون طب تسکینی');
-
-        const html = `
-            <div style="background:rgba(0,125,117,0.06);border:1px solid #007D75;border-radius:12px;padding:16px;margin:20px 0;display:flex;flex-direction:column;gap:10px;">
-                <div style="font-weight:800;font-size:14px;color:#007D75;">🎧 ${title}</div>
-                <audio controls style="width:100%;"><source src="${audioUrl}" type="audio/mpeg">مرورگر شما از پخش صدا پشتیبانی نمی‌کند.</audio>
-            </div><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insDownload').addEventListener('click', function() {
-        const fileUrl = prompt('لینک دانلود فایل ضمیمه:', 'https://macsa.ir/uploads/report.pdf');
-        if (!fileUrl) return;
-        const title = prompt('عنوان فایل:', 'گزارش عملکرد مالی و درمانی سالانه');
-        const size = prompt('حجم فایل (اختیاری):', '۲.۴ مگابایت');
-
-        const html = `
-            <div style="display:flex;align-items:center;justify-content:space-between;background:#f8faf9;border:1px solid #e2e8e7;border-radius:12px;padding:14px 18px;margin:20px 0;">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <span style="font-size:24px;">📄</span>
-                    <div>
-                        <div style="font-weight:800;font-size:14px;">${title}</div>
-                        <div style="font-size:11.5px;color:#7a878b;">فرمت PDF ${size ? `| حجم: ${size}` : ''}</div>
-                    </div>
-                </div>
-                <a href="${fileUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#007D75;color:#fff;border-radius:8px;font-weight:700;font-size:12.5px;text-decoration:none;">دانلود فایل</a>
-            </div><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    document.getElementById('insTimeline').addEventListener('click', function() {
-        const html = `
-            <div style="border-right:2px solid #007D75;padding-right:16px;margin:24px 0;">
-                <div style="margin-bottom:16px;position:relative;">
-                    <div style="font-weight:800;color:#007D75;font-size:13px;">مرحله اول: پذیرش و تریاژ بیمار</div>
-                    <p style="font-size:13.5px;margin:3px 0;">بررسی پرونده پزشکی و تعیین نیازمندی‌های مراقبت در منزل.</p>
-                </div>
-                <div style="margin-bottom:16px;position:relative;">
-                    <div style="font-weight:800;color:#007D75;font-size:13px;">مرحله دوم: اعزام تیم تخصصی</div>
-                    <p style="font-size:13.5px;margin:3px 0;">ویزیت پزشک، پرستار و روانشناس در محل زندگی بیمار.</p>
-                </div>
-            </div><p></p>
-        `;
-        insertIntoEditor(html);
-    });
-
-    // =========================================================================
-    // 6. Interactive Tags Manager
-    // =========================================================================
-    const tagsWrapper = document.getElementById('tagsWrapper');
-    const tagsInput = document.getElementById('tagsInput');
-    const hiddenTags = document.getElementById('hiddenTags');
-    let tagsList = (hiddenTags.value || '').split(',').map(t => t.trim()).filter(Boolean);
-
-    function renderTags() {
-        tagsWrapper.querySelectorAll('.tag-chip').forEach(el => el.remove());
-        tagsList.forEach((tag, idx) => {
-            const chip = document.createElement('div');
-            chip.className = 'tag-chip';
-            chip.innerHTML = `<span>${tag}</span><span class="tag-chip-remove" data-index="${idx}">&times;</span>`;
-            tagsWrapper.insertBefore(chip, tagsInput);
-        });
-        hiddenTags.value = tagsList.join(',');
-    }
-
-    tagsInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            const val = this.value.trim().replace(/^,|,$/g, '');
-            if (val && !tagsList.includes(val)) {
-                tagsList.push(val);
-                renderTags();
-            }
-            this.value = '';
-        }
-    });
-
-    tagsWrapper.addEventListener('click', function(e) {
-        if (e.target.classList.contains('tag-chip-remove')) {
-            const idx = parseInt(e.target.getAttribute('data-index'));
-            tagsList.splice(idx, 1);
-            renderTags();
-        }
-    });
-    renderTags();
-
-    // =========================================================================
-    // 7. Real-Time SEO Radar & Quality Audit (Module F)
-    // =========================================================================
-    const keywordInput = document.getElementById('keywords');
-    keywordInput.addEventListener('input', runSeoAudit);
-
-    function updateSerpSimulator() {
-        const title = (titleInput.value || '').trim() || 'عنوان خبر در نتایج جستجو';
-        const lead = (document.getElementById('lead').value || '').trim() ||
-                     (tinymce.get('editor') ? tinymce.get('editor').getContent({format:'text'}).substring(0, 150) : '');
-
-        document.getElementById('serpTitle').textContent = title;
-        document.getElementById('serpDesc').textContent = lead ? lead.substring(0, 160) + '...' : 'توضیحات کوتاه این خبر در این قسمت نمایش می‌یابد.';
-    }
-
-    function runSeoAudit() {
-        const keyword = (keywordInput.value || '').trim().toLowerCase();
-        const title = (titleInput.value || '').trim().toLowerCase();
-        const lead = (document.getElementById('lead').value || '').trim().toLowerCase();
-        let contentText = '';
-        let contentHtml = '';
-
-        if (tinymce.get('editor')) {
-            contentText = (tinymce.get('editor').getContent({format:'text'}) || '').toLowerCase();
-            contentHtml = tinymce.get('editor').getContent() || '';
-        }
-
-        const words = contentText.trim() ? contentText.trim().split(/\s+/).length : 0;
-        let score = 0;
-
-        // Rule 1: Keyword defined
-        const hasKw = keyword.length >= 2;
-        toggleCheck('seoChkKeyword', hasKw);
-        if (hasKw) score += 15;
-
-        // Rule 2: Keyword in Title
-        const kwInTitle = hasKw && title.includes(keyword);
-        toggleCheck('seoChkTitle', kwInTitle);
-        if (kwInTitle) score += 20;
-
-        // Rule 3: Keyword in Lead
-        const kwInLead = hasKw && lead.includes(keyword);
-        toggleCheck('seoChkLead', kwInLead);
-        if (kwInLead) score += 15;
-
-        // Rule 4: Keyword in first 100 words
-        const first100 = contentText.split(/\s+/).slice(0, 100).join(' ');
-        const kwInFirst100 = hasKw && first100.includes(keyword);
-        toggleCheck('seoChkContent', kwInFirst100);
-        if (kwInFirst100) score += 15;
-
-        // Rule 5: Subheadings present
-        const hasHeadings = /<h[2-4][^>]*>/i.test(contentHtml);
-        toggleCheck('seoChkHeadings', hasHeadings);
-        if (hasHeadings) score += 10;
-
-        // Rule 6: Word count > 300
-        const has300Words = words >= 300;
-        toggleCheck('seoChkWordCount', has300Words);
-        if (has300Words) score += 15;
-
-        // Rule 7: Featured image
-        const hasImage = previewContainer.classList.contains('active');
-        toggleCheck('seoChkImage', hasImage);
-        if (hasImage) score += 10;
-
-        // Update Score Gauge
-        document.getElementById('seoScoreText').textContent = score;
-        const gauge = document.getElementById('seoGauge');
-        gauge.style.background = `conic-gradient(${score >= 70 ? 'var(--success)' : score >= 40 ? 'var(--warning)' : 'var(--danger)'} ${score * 3.6}deg, var(--border-color) 0deg)`;
-
-        const scoreTitle = document.getElementById('seoScoreTitle');
-        if (score >= 80) scoreTitle.textContent = 'عالی و آماده انتشار ✅';
-        else if (score >= 50) scoreTitle.textContent = 'قابل قبول (نیاز به بهبود)';
-        else scoreTitle.textContent = 'نیازمند بهینه‌سازی ⚠️';
-    }
-
-    function toggleCheck(id, passed) {
-        const el = document.getElementById(id);
-        if (el) {
-            el.classList.toggle('pass', !!passed);
-        }
-    }
-
-    // =========================================================================
-    // 8. Zen Mode (Distraction-Free Mode)
-    // =========================================================================
-    const btnToggleZen = document.getElementById('btnToggleZen');
-    function toggleZenMode() {
-        document.body.classList.toggle('zen-mode');
-        const isZen = document.body.classList.contains('zen-mode');
-        btnToggleZen.classList.toggle('btn-primary', isZen);
-        showToast(isZen ? 'حالت تمرکز فعال شد (Alt+Z برای خروج)' : 'حالت عادی فعال شد', 'info');
-    }
-    btnToggleZen.addEventListener('click', toggleZenMode);
-
-    window.addEventListener('keydown', function(e) {
-        if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
-            e.preventDefault();
-            toggleZenMode();
-        }
-    });
-
-    // =========================================================================
-    // 9. Multi-Device Live Preview Modal (Module G)
-    // =========================================================================
-    const previewModal = document.getElementById('previewModal');
-    const previewViewport = document.getElementById('previewViewport');
-
-    document.getElementById('btnOpenPreview').addEventListener('click', function() {
-        document.getElementById('pvKicker').textContent = document.getElementById('kicker').value;
-        document.getElementById('pvTitle').textContent = titleInput.value || 'بدون عنوان';
-        document.getElementById('pvSubtitle').textContent = document.getElementById('subtitle').value;
-        document.getElementById('pvMeta').textContent = `نویسنده: ${document.getElementById('author').value || 'تحریریه'} | تاریخ انتشار: ${document.getElementById('publishDate').value}`;
-
-        const leadVal = document.getElementById('lead').value;
-        const pvLead = document.getElementById('pvLead');
-        if (leadVal) {
-            pvLead.textContent = leadVal;
-            pvLead.style.display = 'block';
-        } else {
-            pvLead.style.display = 'none';
-        }
-
-        const pvImgWrap = document.getElementById('pvFeaturedImgWrap');
-        if (previewImg.src && previewContainer.classList.contains('active')) {
-            document.getElementById('pvFeaturedImg').src = previewImg.src;
-            document.getElementById('pvCaption').textContent = document.getElementById('imgCaption').value;
-            pvImgWrap.style.display = 'block';
-        } else {
-            pvImgWrap.style.display = 'none';
-        }
-
-        const content = tinymce.get('editor') ? tinymce.get('editor').getContent() : '';
-        document.getElementById('pvContent').innerHTML = content || '<p style="color:#888;">بدون محتوا...</p>';
-
-        previewModal.classList.add('open');
-    });
-
-    function closePreviewModal() { previewModal.classList.remove('open'); }
-    document.getElementById('btnClosePreview').addEventListener('click', closePreviewModal);
-    document.getElementById('btnClosePreviewBottom').addEventListener('click', closePreviewModal);
-
-    document.querySelectorAll('.device-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const dev = this.getAttribute('data-device');
-            previewViewport.className = 'preview-viewport ' + dev;
-        });
-    });
-
-    // =========================================================================
-    // 10. Auto-Save & Crash Recovery Engine (Module E)
-    // =========================================================================
-    const draftKey = 'maxa_news_draft_' + (document.getElementById('newsId').value || 'new');
-    const autoSaveStatus = document.getElementById('autoSaveStatus');
-
-    function performAutoSave() {
-        if (!titleInput.value.trim() && (!tinymce.get('editor') || !tinymce.get('editor').getContent().trim())) {
-            return;
-        }
-
-        const draftData = {
-            title: titleInput.value,
-            kicker: document.getElementById('kicker').value,
-            subtitle: document.getElementById('subtitle').value,
-            lead: document.getElementById('lead').value,
-            content: tinymce.get('editor') ? tinymce.get('editor').getContent() : '',
-            keywords: keywordInput.value,
-            author: document.getElementById('author').value,
-            category_id: document.getElementById('categorySelect').value,
-            tags: hiddenTags.value,
-            savedAt: new Date().toLocaleTimeString('fa-IR')
-        };
-
-        try {
-            localStorage.setItem(draftKey, JSON.stringify(draftData));
-            autoSaveStatus.textContent = 'ذخیره در مرورگر: ' + draftData.savedAt;
-        } catch(e) {}
-    }
-
-    // Auto-save every 30 seconds
-    setInterval(performAutoSave, 30000);
-
-    // Crash Recovery Check on Load
-    try {
-        const savedDraftRaw = localStorage.getItem(draftKey);
-        if (savedDraftRaw) {
-            const draft = JSON.parse(savedDraftRaw);
-            if (draft && draft.title && !document.getElementById('newsId').value) {
-                if (confirm(`یک پیش‌نویس ذخیره‌شده از ساعت ${draft.savedAt} یافت شد. آیا مایل به بازیابی آن هستید؟`)) {
-                    titleInput.value = draft.title || '';
-                    document.getElementById('kicker').value = draft.kicker || '';
-                    document.getElementById('subtitle').value = draft.subtitle || '';
-                    document.getElementById('lead').value = draft.lead || '';
-                    keywordInput.value = draft.keywords || '';
-                    document.getElementById('author').value = draft.author || '';
-                    if (draft.category_id) document.getElementById('categorySelect').value = draft.category_id;
-                    if (draft.tags) {
-                        tagsList = draft.tags.split(',');
-                        renderTags();
-                    }
-                    setTimeout(() => {
-                        if (tinymce.get('editor') && draft.content) {
-                            tinymce.get('editor').setContent(draft.content);
-                        }
-                        updateTitleMetrics();
-                        updateMetrics();
-                        runSeoAudit();
-                    }, 800);
-                    showToast('پیش‌نویس قبلی بازیابی شد.', 'info');
-                }
-            }
-        }
-    } catch(e) {}
-
-    // =========================================================================
-    // 11. Form Submission via AJAX (Save Draft & Final Publish)
-    // =========================================================================
-    const newsForm = document.getElementById('newsForm');
-
-    function submitNews(targetStatus) {
-        if (targetStatus) {
-            document.getElementById('newsStatus').value = targetStatus;
-            document.getElementById('statusSelect').value = targetStatus;
-        }
-
-        // Sync TinyMCE Content
-        if (tinymce.get('editor')) {
-            tinymce.get('editor').save();
-        }
-
-        // Validation
-        if (!titleInput.value.trim()) {
-            titleInput.focus();
-            showToast('لطفاً عنوان اصلی خبر را وارد کنید.', 'error');
-            return;
-        }
-
-        const catSelect = document.getElementById('categorySelect');
-        if (!catSelect.value) {
-            catSelect.focus();
-            showToast('لطفاً دسته‌بندی موضوعی خبر را انتخاب کنید.', 'error');
-            return;
-        }
-
-        const formData = new FormData(newsForm);
-        const submitBtn = targetStatus === 'published' ? document.getElementById('btnPublishFinal') : document.getElementById('btnSaveDraft');
-        const origBtnText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'در حال ذخیره‌سازی...';
-
-        fetch('news-save.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnText;
-
-            if (data.status === 'success') {
-                showToast(data.message || 'خبر با موفقیت ذخیره شد.', 'success');
-                try { localStorage.removeItem(draftKey); } catch(e) {}
-
-                if (!document.getElementById('newsId').value && data.id) {
-                    setTimeout(() => {
-                        window.location.href = 'news-create.php?id=' + data.id;
-                    }, 1000);
-                }
-            } else {
-                showToast(data.message || 'خطا در ذخیره خبر رخ داد.', 'error');
-            }
-        })
-        .catch(err => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnText;
-            showToast('خطا در ارتباط با سرور رخ داد.', 'error');
-        });
-    }
-
-    document.getElementById('btnSaveDraft').addEventListener('click', function() {
-        submitNews('draft');
-    });
-
-    document.getElementById('btnPublishFinal').addEventListener('click', function() {
-        const st = document.getElementById('statusSelect').value || 'published';
-        submitNews(st === 'draft' ? 'published' : st);
-    });
-
-    // =========================================================================
-    // 12. Toast Helper
-    // =========================================================================
-    function showToast(msg, type) {
-        const toast = document.getElementById('studioToast');
-        toast.textContent = msg;
-        toast.className = 'studio-toast ' + (type || '');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
-    }
-
+    saveSelection();
+}
+
+/* ===================== حذف فرمت ===================== */
+function clearFormat(){
+    editor.focus();
+    restoreSelection();
+    document.execCommand("removeFormat");
+    saveSelection();
+}
+
+/* ===================== چینش متن ===================== */
+function alignRight(){ format("justifyRight"); }
+function alignLeft(){ format("justifyLeft"); }
+function alignCenter(){ format("justifyCenter"); }
+function alignJustify(){ format("justifyFull"); }
+
+/* =================== شمارنده عنوان و زیرعنوان =================== */
+const titleInput = document.getElementById("title");
+const titleCounter = document.getElementById("titleCounter");
+function updateTitleCounter(){
+    const len = titleInput.value.length;
+    titleCounter.textContent = len + "/120";
+    titleCounter.classList.toggle("over", len > 100);
+}
+titleInput.addEventListener("input", updateTitleCounter);
+
+const subtitleInput = document.getElementById("subtitle");
+const subtitleCounter = document.getElementById("subtitleCounter");
+function updateSubtitleCounter(){
+    const len = subtitleInput.value.length;
+    subtitleCounter.textContent = len + "/200";
+    subtitleCounter.classList.toggle("over", len > 180);
+}
+subtitleInput.addEventListener("input", updateSubtitleCounter);
+
+/* =================== تصویر شاخص (Dropzone) =================== */
+const featuredInput = document.getElementById("featured_image");
+const dropzone = document.getElementById("dropzone");
+const dzPreview = document.getElementById("dzPreview");
+const dzImg = document.getElementById("dzImg");
+
+dropzone.addEventListener("click", (e) => {
+    if (e.target.closest(".dz-remove")) return;
+    featuredInput.click();
 });
+
+["dragenter","dragover","dragleave","drop"].forEach(ev => {
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); });
+});
+["dragenter","dragover"].forEach(ev => {
+    dropzone.addEventListener(ev, () => dropzone.classList.add("drag-over"));
+});
+["dragleave","drop"].forEach(ev => {
+    dropzone.addEventListener(ev, () => dropzone.classList.remove("drag-over"));
+});
+dropzone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+        featuredInput.files = files;
+        showFeaturedPreview(files[0]);
+    }
+});
+
+featuredInput.onchange = function(){
+    document.getElementById("remove_featured_flag").value = "0";
+    if (this.files[0]) showFeaturedPreview(this.files[0]);
+};
+
+function showFeaturedPreview(file){
+    document.getElementById("remove_featured_flag").value = "0";
+    const reader = new FileReader();
+    reader.onload = e => {
+        dzImg.src = e.target.result;
+        dzPreview.classList.add("show");
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeFeatured(e){
+    if (e) e.stopPropagation();
+    featuredInput.value = "";
+    dzImg.src = "";
+    dzPreview.classList.remove("show");
+    document.getElementById("remove_featured_flag").value = "1";
+}
+
+/* ============== درج تصویر داخل متن ============== */
+function uploadSingleImage(){
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.onchange = ()=>{
+        const file = input.files[0];
+        if (!file) return;
+
+        const fd = new FormData();
+        fd.append("image", file);
+
+        fetch("upload-inline-image.php", {method:"POST", body:fd})
+        .then(r=>r.json())
+        .then(d=>{
+            if (d.url) insertSingleImage(d.url);
+        });
+    };
+    input.click();
+}
+
+function insertSingleImage(url){
+    const img = document.createElement("img");
+    img.src = url;
+
+    restoreSelection();
+    const sel = window.getSelection();
+    if (sel.rangeCount){
+        const range = sel.getRangeAt(0);
+        range.insertNode(img);
+    }
+    saveSelection();
+}
+
+function uploadGalleryInline(){
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+
+    input.onchange = ()=>{
+        const files = Array.from(input.files);
+        if (!files.length) return;
+
+        let urls = [];
+
+        Promise.all(files.map(file=>{
+            const fd = new FormData();
+            fd.append("image", file);
+            return fetch("upload-inline-image.php", {method:"POST", body:fd})
+                .then(r=>r.json())
+                .then(d=>{ if (d.url) urls.push(d.url); });
+        })).then(()=> insertGalleryRow(urls));
+    };
+    input.click();
+}
+
+function insertGalleryRow(urls){
+    const row = document.createElement("div");
+    row.className = "gallery-row";
+    row.style.cssText = "display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;";
+
+    urls.slice(0,3).forEach(u=>{
+        const img = document.createElement("img");
+        img.src = u;
+        img.style.cssText = "flex:1;min-width:30%;max-width:100%;border-radius:8px;object-fit:cover;";
+        row.appendChild(img);
+    });
+
+    restoreSelection();
+    const sel = window.getSelection();
+    if (sel.rangeCount){
+        sel.getRangeAt(0).insertNode(row);
+    }
+    saveSelection();
+}
+
+/* =================== چیپ تگ‌ها (نمایشی) =================== */
+const tagsInput = document.getElementById("tags");
+const tagsChips = document.getElementById("tagsChips");
+function renderTagChips(){
+    const parts = tagsInput.value.split("،").join(",").split(",").map(t=>t.trim()).filter(Boolean);
+    tagsChips.innerHTML = "";
+    parts.forEach((t, idx) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = t;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        btn.onclick = () => { parts.splice(idx,1); tagsInput.value = parts.join("، "); renderTagChips(); };
+        chip.appendChild(btn);
+        tagsChips.appendChild(chip);
+    });
+}
+tagsInput.addEventListener("input", renderTagChips);
+
+/* =================== توست وضعیت (موفقیت / خطا / در حال انجام) =================== */
+const TOAST_ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'
+};
+const TOAST_TITLES = { success: "انجام شد", error: "خطا", info: "در حال انجام" };
+
+let toastHideTimer = null;
+
+/*
+ * نمایش توست وضعیت.
+ *   showStatus(msg)               → اطلاع‌رسانی (info)
+ *   showStatus(msg, true)         → موفقیت (success)
+ *   showStatus(msg, false)        → خطا (error)
+ *   showStatus(msg, "info")       → حالت در حال انجام با اسپینر
+ * برای سازگاری با فراخوانی‌های قبلی، ایموجی‌های ابتدای پیام حذف می‌شوند.
+ */
+function showStatus(msg, type){
+    let kind = "info";
+    if (type === true) kind = "success";
+    else if (type === false) kind = "error";
+    else if (typeof type === "string") kind = type;
+
+    const cleanMsg = String(msg).replace(/^[✅❌⏳⚡🗜🔼⬆\s]+/u, "").trim();
+
+    const toast = document.getElementById("statusToast");
+    const iconEl = document.getElementById("toastIcon");
+    toast.classList.remove("is-success", "is-error", "is-info", "hide");
+    toast.classList.add("is-" + kind, "show");
+
+    iconEl.className = "toast-ic" + (kind === "info" ? " spin" : "");
+    iconEl.innerHTML = TOAST_ICONS[kind];
+    document.getElementById("toastTitle").textContent = TOAST_TITLES[kind];
+    document.getElementById("toastMsg").textContent = cleanMsg;
+
+    // نوار پیشرفت فقط در حالتِ «در حال انجام» معنا دارد
+    if (kind !== "info") {
+        document.getElementById("uploadProgress").classList.remove("active");
+    }
+
+    // پیام موفقیت/خطا پس از چند ثانیه خودکار بسته می‌شود؛ حالت در حال انجام باز می‌ماند.
+    clearTimeout(toastHideTimer);
+    if (kind !== "info") {
+        toastHideTimer = setTimeout(hideStatus, kind === "error" ? 6000 : 3500);
+    }
+}
+
+function hideStatus(){
+    const toast = document.getElementById("statusToast");
+    if (!toast.classList.contains("show")) return;
+    clearTimeout(toastHideTimer);
+    toast.classList.add("hide");
+    setTimeout(() => {
+        toast.classList.remove("show", "hide", "is-success", "is-error", "is-info");
+        hideUploadProgress();
+    }, 250);
+}
+
+/* توابع مربوط به زمان‌بندی */
+function setNow() {
+    setDateFromGregorianDate(new Date());
+}
+
+function toFaDigits(value) {
+    return String(value).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+function pad2(num) {
+    return String(num).padStart(2, '0');
+}
+
+function gregorianToJalali(gy, gm, gd) {
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let jy;
+    if (gy > 1600) {
+        jy = 979;
+        gy -= 1600;
+    } else {
+        jy = 0;
+        gy -= 621;
+    }
+    const gy2 = gm > 2 ? gy + 1 : gy;
+    let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100)
+        + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+    jy += 33 * Math.floor(days / 12053);
+    days %= 12053;
+    jy += 4 * Math.floor(days / 1461);
+    days %= 1461;
+    if (days > 365) {
+        jy += Math.floor((days - 1) / 365);
+        days = (days - 1) % 365;
+    }
+    let jm, jd;
+    if (days < 186) {
+        jm = 1 + Math.floor(days / 31);
+        jd = 1 + (days % 31);
+    } else {
+        jm = 7 + Math.floor((days - 186) / 30);
+        jd = 1 + ((days - 186) % 30);
+    }
+    return [jy, jm, jd];
+}
+
+function jalaliToGregorian(jy, jm, jd) {
+    let gy;
+    if (jy > 979) {
+        gy = 1600;
+        jy -= 979;
+    } else {
+        gy = 621;
+    }
+    let days = (365 * jy) + (Math.floor(jy / 33) * 8) + Math.floor(((jy % 33) + 3) / 4) + 78 + jd
+        + (jm < 7 ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+    gy += 400 * Math.floor(days / 146097);
+    days %= 146097;
+    if (days > 36524) {
+        gy += 100 * Math.floor(--days / 36524);
+        days %= 36524;
+        if (days >= 365) days++;
+    }
+    gy += 4 * Math.floor(days / 1461);
+    days %= 1461;
+    if (days > 365) {
+        gy += Math.floor((days - 1) / 365);
+        days = (days - 1) % 365;
+    }
+    let gd = days + 1;
+    const sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let gm;
+    for (gm = 1; gm <= 12; gm++) {
+        if (gd <= sal_a[gm]) break;
+        gd -= sal_a[gm];
+    }
+    return [gy, gm, gd];
+}
+
+function getJalaliMonthDays(jy, jm) {
+    if (jm <= 6) return 31;
+    if (jm <= 11) return 30;
+    const leap = (((jy + 38) * 682) % 2816) < 682;
+    return leap ? 30 : 29;
+}
+
+function renderPublishDisplay(jy, jm, jd, hh, mm) {
+    const formatted = `${jy}/${pad2(jm)}/${pad2(jd)} - ${pad2(hh)}:${pad2(mm)}`;
+    document.getElementById("publish_date_display").value = toFaDigits(formatted);
+}
+
+function setDateFromGregorianDate(dateObj) {
+    const gy = dateObj.getFullYear();
+    const gm = dateObj.getMonth() + 1;
+    const gd = dateObj.getDate();
+    const hh = dateObj.getHours();
+    const mm = dateObj.getMinutes();
+    const [jy, jm, jd] = gregorianToJalali(gy, gm, gd);
+    document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
+    renderPublishDisplay(jy, jm, jd, hh, mm);
+    setPickerValues(jy, jm, jd, hh, mm);
+}
+
+/* ===== دیت‌پیکر شمسی مدرن (تقویم گرید) ===== */
+const PERSIAN_MONTHS = [
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+];
+// ماهی که اکنون در گرید نمایش داده می‌شود (ممکن است با روزِ انتخاب‌شده فرق کند)
+let dpViewYear = 0, dpViewMonth = 1;
+
+function dpGet(id){ return parseInt(document.getElementById(id).value || "0", 10); }
+function dpSet(id, v){ document.getElementById(id).value = String(v); }
+
+// روزِ هفته‌ی اولِ ماهِ شمسی (شنبه=0 ... جمعه=6)
+function jalaliFirstDow(jy, jm) {
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
+    const js = new Date(gy, gm - 1, gd).getDay(); // یکشنبه=0 ... شنبه=6
+    return (js + 1) % 7;                          // شنبه=0 ... جمعه=6
+}
+
+// state کامل پیکر را ست می‌کند (روزِ انتخاب‌شده + زمان) و گرید را روی همان ماه می‌برد
+function setPickerValues(jy, jm, jd, hh, mm) {
+    dpSet("jy", jy); dpSet("jm", jm); dpSet("jd", jd);
+    dpSet("hh", hh); dpSet("mm", mm);
+    dpViewYear = jy; dpViewMonth = jm;
+    dpRenderTime();
+    dpRenderCalendar();
+}
+
+// نمای فعالِ پیکر: 'days' | 'months' | 'years'
+let dpView = 'days';
+
+function dpToggleView(which) {
+    dpView = (dpView === which) ? 'days' : which;
+    dpApplyView();
+}
+function dpApplyView() {
+    document.getElementById("dpDayView").style.display   = dpView === 'days'   ? '' : 'none';
+    document.getElementById("dpMonthView").style.display = dpView === 'months' ? 'grid' : 'none';
+    document.getElementById("dpYearView").style.display  = dpView === 'years'  ? 'grid' : 'none';
+    if (dpView === 'months') dpRenderMonths();
+    else if (dpView === 'years') dpRenderYears();
+}
+
+// رندرِ شبکه‌ی روزها برای ماهِ جاریِ نمایش
+function dpRenderCalendar() {
+    const mBtn = document.getElementById("dpMonthBtn");
+    const yBtn = document.getElementById("dpYearBtn");
+    if (mBtn) mBtn.textContent = PERSIAN_MONTHS[dpViewMonth - 1];
+    if (yBtn) yBtn.textContent = toFaDigits(dpViewYear);
+
+    const grid = document.getElementById("dpDays");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const lead = jalaliFirstDow(dpViewYear, dpViewMonth);
+    const days = getJalaliMonthDays(dpViewYear, dpViewMonth);
+
+    // روزِ امروز (شمسی) برای هایلایت
+    const now = new Date();
+    const [tjy, tjm, tjd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+    const selJy = dpGet("jy"), selJm = dpGet("jm"), selJd = dpGet("jd");
+
+    // خانه‌های خالیِ ابتدای ماه
+    for (let i = 0; i < lead; i++) {
+        const sp = document.createElement("span");
+        sp.className = "dp-day is-empty";
+        grid.appendChild(sp);
+    }
+    for (let d = 1; d <= days; d++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dp-day";
+        btn.textContent = toFaDigits(d);
+        if (dpViewYear === tjy && dpViewMonth === tjm && d === tjd) btn.classList.add("is-today");
+        if (dpViewYear === selJy && dpViewMonth === selJm && d === selJd) btn.classList.add("is-selected");
+        btn.addEventListener("click", () => dpSelectDay(d));
+        grid.appendChild(btn);
+    }
+}
+
+function dpSelectDay(d) {
+    dpSet("jy", dpViewYear);
+    dpSet("jm", dpViewMonth);
+    dpSet("jd", d);
+    dpRenderCalendar();
+}
+
+// شبکه‌ی ۱۲ ماه برای انتخابِ سریع
+function dpRenderMonths() {
+    const wrap = document.getElementById("dpMonthView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy, tjm] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    for (let m = 1; m <= 12; m++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = PERSIAN_MONTHS[m - 1];
+        if (m === dpViewMonth) b.classList.add("is-selected");
+        if (dpViewYear === tjy && m === tjm) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickMonth(m));
+        wrap.appendChild(b);
+    }
+}
+
+// شبکه‌ی سال‌ها (۱۰ سال قبل تا ۱۰ سال بعدِ سالِ نمایش)
+function dpRenderYears() {
+    const wrap = document.getElementById("dpYearView");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    const now = new Date();
+    const [tjy] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    const start = dpViewYear - 10, end = dpViewYear + 10;
+    for (let y = start; y <= end; y++) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "dp-pick-item"; b.textContent = toFaDigits(y);
+        if (y === dpViewYear) b.classList.add("is-selected");
+        if (y === tjy) b.classList.add("is-today");
+        b.addEventListener("click", () => dpPickYear(y));
+        wrap.appendChild(b);
+    }
+}
+
+function dpPickMonth(m) {
+    dpViewMonth = m;
+    dpView = 'days'; dpApplyView();
+    dpRenderCalendar();
+}
+function dpPickYear(y) {
+    dpViewYear = y;
+    dpView = 'months'; dpApplyView();   // پس از سال، به انتخابِ ماه برو
+    dpRenderCalendar();
+}
+
+function dpChangeMonth(dir) {
+    // dir=+1 یعنی ماهِ بعد، dir=-1 یعنی ماهِ قبل
+    dpViewMonth += dir;
+    if (dpViewMonth > 12) { dpViewMonth = 1; dpViewYear++; }
+    else if (dpViewMonth < 1) { dpViewMonth = 12; dpViewYear--; }
+    dpRenderCalendar();
+}
+
+function dpRenderTime() {
+    document.getElementById("dpHourVal").value = toFaDigits(pad2(dpGet("hh")));
+    document.getElementById("dpMinuteVal").value = toFaDigits(pad2(dpGet("mm")));
+}
+
+function dpStepTime(unit, dir) {
+    let v = dpGet(unit) + dir;
+    const max = unit === "hh" ? 24 : 60;
+    v = (v + max) % max;            // چرخشی
+    dpSet(unit, v);
+    dpRenderTime();
+}
+
+function openDatePicker() {
+    dpView = 'days'; dpApplyView();   // همیشه با نمای روز باز شود
+    document.getElementById("dateModal").classList.add("show");
+}
+
+function closeDatePicker() {
+    document.getElementById("dateModal").classList.remove("show");
+}
+
+function setPickerNow() {
+    const now = new Date();
+    const [jy, jm, jd] = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    setPickerValues(jy, jm, jd, now.getHours(), now.getMinutes());
+}
+
+function applyDatePicker() {
+    const jy = dpGet("jy"), jm = dpGet("jm"), jd = dpGet("jd");
+    const hh = dpGet("hh"), mm = dpGet("mm");
+    if (!jy || !jm || !jd) { closeDatePicker(); return; }
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
+    document.getElementById("publish_date").value = `${gy}-${pad2(gm)}-${pad2(gd)} ${pad2(hh)}:${pad2(mm)}:00`;
+    renderPublishDisplay(jy, jm, jd, hh, mm);
+    closeDatePicker();
+}
+
+function initDatePicker() {
+    const now = new Date();
+    const savedGregorian = `<?= $pub_val ? htmlspecialchars(str_replace('T', ' ', $pub_val) . ':00') : '' ?>`;
+    if (savedGregorian) {
+        const parsed = new Date(savedGregorian.replace(' ', 'T'));
+        setDateFromGregorianDate(Number.isNaN(parsed.getTime()) ? now : parsed);
+    } else {
+        setDateFromGregorianDate(now);
+    }
+}
+
+/* ===== ارتقای <select> به دراپ‌داون سفارشی مدرن ===== */
+const MSEL_CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+const MSEL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function enhanceSelect(select){
+    if (!select || select.dataset.enhanced) return;
+    select.dataset.enhanced = "1";
+
+    const placeholderText = (select.options[0] && select.options[0].value === "") ? select.options[0].textContent : "";
+
+    const wrap = document.createElement("div");
+    wrap.className = "msel";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "msel-trigger";
+    trigger.innerHTML = '<span class="msel-value"></span><span class="msel-caret">' + MSEL_CARET + '</span>';
+
+    const menu = document.createElement("div");
+    menu.className = "msel-menu";
+    menu.setAttribute("role", "listbox");
+
+    // ساختِ گزینه‌ها از روی <option>ها
+    Array.from(select.options).forEach(opt => {
+        if (opt.value === "" && placeholderText) return; // placeholder را گزینه نکن
+        const o = document.createElement("div");
+        o.className = "msel-opt";
+        o.setAttribute("role", "option");
+        o.dataset.value = opt.value;
+        o.innerHTML = '<span>' + opt.textContent + '</span><span class="msel-check">' + MSEL_CHECK + '</span>';
+        o.addEventListener("click", () => {
+            select.value = opt.value;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            syncMsel();
+            closeMenu();
+        });
+        menu.appendChild(o);
+    });
+
+    // مخفی‌کردنِ select بومی و درج کامپوننت
+    select.style.display = "none";
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+    wrap.appendChild(select); // select داخلِ wrap بماند تا fieldها سالم بمانند
+
+    function syncMsel(){
+        const valEl = trigger.querySelector(".msel-value");
+        const sel = select.options[select.selectedIndex];
+        const isPlaceholder = !select.value && placeholderText;
+        valEl.textContent = isPlaceholder ? placeholderText : (sel ? sel.textContent : "");
+        trigger.classList.toggle("is-placeholder", !!isPlaceholder);
+        menu.querySelectorAll(".msel-opt").forEach(o => {
+            o.classList.toggle("is-selected", o.dataset.value === select.value);
+        });
+        // انتقالِ حالتِ خطا از select به wrap
+        wrap.classList.toggle("field-invalid", select.classList.contains("field-invalid"));
+    }
+
+    function openMenu(){ wrap.classList.add("open"); }
+    function closeMenu(){ wrap.classList.remove("open"); }
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // بستنِ سایر دراپ‌داون‌های باز
+        document.querySelectorAll(".msel.open").forEach(m => { if (m !== wrap) m.classList.remove("open"); });
+        wrap.classList.toggle("open");
+    });
+    // وقتی خطای فیلد پاک/ست می‌شود، ظاهرِ دراپ‌داون را همگام کن
+    select.addEventListener("change", syncMsel);
+    select._mselSync = syncMsel;
+
+    syncMsel();
+}
+
+// بستنِ دراپ‌داون‌ها با کلیک بیرون یا Esc
+document.addEventListener("click", () => document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".msel.open").forEach(m => m.classList.remove("open")); });
+
+document.addEventListener("DOMContentLoaded", () => {
+    initDatePicker();
+    updateTitleCounter();
+    updateSubtitleCounter();
+    renderTagChips();
+    updateSeoWidget();
+    enhanceSelect(document.getElementById("category_id"));
+});
+/* ======================== */
+
+/* ====== فشرده‌سازی هوشمند تصویر شاخص (حفظ کیفیت، کاهش حجم) ====== */
+// فقط در صورت نیاز فشرده می‌کند: اگر فایل کوچک باشد دست‌نخورده برمی‌گردد.
+async function compressFeaturedImage(file) {
+    const MAX_DIMENSION = 1920;   // حداکثر عرض/ارتفاع
+    const QUALITY = 0.85;         // کیفیت بالا
+    const SIZE_THRESHOLD = 1.5 * 1024 * 1024; // زیر ۱.۵ مگ نیازی به فشرده‌سازی نیست
+
+    // فایل‌های غیرتصویری یا PNG شفاف را دست‌نخورده برمی‌گردانیم تا کیفیت/شفافیت حفظ شود
+    if (!file.type.startsWith("image/")) return file;
+    if (file.size <= SIZE_THRESHOLD) return file;
+
+    try {
+        const dataUrl = await new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = rej;
+            r.readAsDataURL(file);
+        });
+
+        const img = await new Promise((res, rej) => {
+            const i = new Image();
+            i.onload = () => res(i);
+            i.onerror = rej;
+            i.src = dataUrl;
+        });
+
+        let { width, height } = img;
+        if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+            const scale = MAX_DIMENSION / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", QUALITY));
+        if (!blob || blob.size >= file.size) return file; // اگر فشرده‌سازی سود نداشت، اصل را نگه‌دار
+
+        const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+        return new File([blob], newName, { type: "image/jpeg" });
+    } catch (e) {
+        console.warn("Image compression skipped:", e);
+        return file; // در صورت خطا، فایل اصلی ارسال می‌شود
+    }
+}
+
+/* ====== کنترل نوار پیشرفت آپلود (داخل توست) ====== */
+function setUploadProgress(percent, label) {
+    document.getElementById("uploadProgress").classList.add("active");
+    document.getElementById("uploadBarFill").style.width = percent + "%";
+    // متنِ پیشرفت در همان توستِ «در حال انجام» نمایش داده می‌شود
+    if (label) showStatus(label, "info");
+}
+function hideUploadProgress() {
+    document.getElementById("uploadProgress").classList.remove("active");
+    document.getElementById("uploadBarFill").style.width = "0%";
+}
+
+/* =================== اعتبارسنجی فیلدها (علامت‌گذاری بصری) =================== */
+function setFieldError(boxId, errId, on){
+    const box = document.getElementById(boxId);
+    const err = document.getElementById(errId);
+    if (box) box.classList.toggle("field-invalid", on);
+    if (err) err.classList.toggle("show", on);
+    // لیبلِ گروهِ والد را هم قرمز کن (برای فیلدهای داخل .input-group)
+    const grp = box ? box.closest(".input-group") : null;
+    if (grp) grp.classList.toggle("has-error", on);
+    // اگر فیلد یک <select>‌ ارتقایافته باشد، حالتِ خطا را به دراپ‌داون سفارشی منتقل کن
+    if (box && box._mselSync) box._mselSync();
+}
+
+/* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
+document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
+document.getElementById("editor").addEventListener("input", () => setFieldError("editorShell", "contentError", false));
+document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
+
+function validateNewsForm(){
+    const title = document.getElementById("title").value.trim();
+    const editorEl = document.getElementById("editor");
+    const contentText = editorEl.innerText.trim();
+    const categoryVal = document.getElementById("category_id").value;
+
+    const titleBad = !title;
+    const contentBad = contentText === "";
+    const categoryBad = !categoryVal;
+
+    setFieldError("titleCard", "titleError", titleBad);
+    setFieldError("editorShell", "contentError", contentBad);
+    setFieldError("category_id", "categoryError", categoryBad);
+
+    // اسکرول و فوکوس به اولین فیلدِ خطادار
+    let firstBad = null;
+    if (titleBad) firstBad = document.getElementById("title");
+    else if (contentBad) firstBad = editorEl;
+    else if (categoryBad) firstBad = document.getElementById("category_id");
+
+    if (firstBad) {
+        firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { firstBad.focus({ preventScroll: true }); } catch (_) { firstBad.focus(); }
+    }
+
+    return !(titleBad || contentBad || categoryBad);
+}
+
+async function saveNews() {
+    const title = document.getElementById("title").value.trim();
+    const content = document.getElementById("editor").innerHTML.trim();
+
+    if (!validateNewsForm()) {
+        showStatus("لطفاً فیلدهای مشخص‌شده را پر کنید.", false);
+        return;
+    }
+
+    const saveBtn = document.querySelector('.btn-save');
+    const originalBtnText = saveBtn.innerHTML;
+
+    try {
+        // تغییر وضعیت دکمه به لودینگ
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = 'در حال ذخیره...';
+        showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
+
+        const fd = new FormData();
+        fd.append("id", "<?= $id ?>");
+        fd.append("title", title);
+        fd.append("subtitle", document.getElementById("subtitle").value.trim());
+        fd.append("content", content);
+        fd.append("author", document.getElementById("author").value);
+        fd.append("category_id", document.getElementById("category_id").value);
+        fd.append("keywords", document.getElementById("keywords").value);
+        fd.append("publish_date", document.getElementById("publish_date").value);
+        fd.append("tags", document.getElementById("tags").value);
+        fd.append("remove_featured_flag", document.getElementById("remove_featured_flag").value);
+
+        const checkedTags = document.querySelectorAll('input[name="tag_ids[]"]:checked');
+        checkedTags.forEach(cb => {
+            fd.append("tag_ids[]", cb.value);
+        });
+
+        let featuredFile = document.getElementById("featured_image").files[0];
+        if (featuredFile) {
+            showStatus("🗜️ در حال بهینه‌سازی تصویر...", true);
+            featuredFile = await compressFeaturedImage(featuredFile);
+            fd.append("featured_image", featuredFile);
+        }
+
+        // استفاده از XMLHttpRequest برای نمایش درصد پیشرفت آپلود
+        const data = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "news-save.php", true);
+            xhr.setRequestHeader("Accept", "application/json");
+
+            if (featuredFile) {
+                showStatus("⏫ در حال آپلود به سرور...", true);
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round((e.loaded / e.total) * 100);
+                        setUploadProgress(pct, `در حال آپلود... ${pct}%`);
+                    }
+                };
+                xhr.upload.onload = () => setUploadProgress(100, "آپلود کامل شد، در حال پردازش...");
+            }
+
+            xhr.onload = () => {
+                let parsed;
+                try { parsed = JSON.parse(xhr.responseText); }
+                catch (_) { return reject(new Error("پاسخ نامعتبر از سرور دریافت شد.")); }
+                if (xhr.status >= 200 && xhr.status < 300 && parsed.status === "success") {
+                    resolve(parsed);
+                } else {
+                    reject(new Error(parsed.message || "خطایی در پردازش اطلاعات رخ داد."));
+                }
+            };
+            xhr.onerror = () => reject(new Error("ارتباط با سرور برقرار نشد."));
+            xhr.send(fd);
+        });
+
+        setUploadProgress(100, "✅ با موفقیت ذخیره شد");
+        showStatus(`✅ ${data.message} در حال انتقال...`, true);
+        setTimeout(() => {
+            window.location.href = "news-list.php";
+        }, 1000);
+
+    } catch (err) {
+        console.error("Save Error:", err);
+        hideUploadProgress();
+        showStatus("❌ خطایی رخ داد: " + err.message, false);
+    } finally {
+        // بازگشت دکمه به حالت عادی در صورت خطا
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnText;
+    }
+}
+
+function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function openPreview(){
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const date = document.getElementById("publish_date_display").value.trim();
+    const content = document.getElementById("editor").innerHTML;
+    const catSelect = document.getElementById("category_id");
+    const category = catSelect.value ? catSelect.options[catSelect.selectedIndex].text.trim() : "";
+    const featured = featuredInput.files[0]
+        ? URL.createObjectURL(featuredInput.files[0])
+        : (dzImg.getAttribute("src") || "");
+
+    const contentHasText = editor.innerText.trim().length > 0;
+    const titleSafe = escapeHtml(title || "بدون عنوان");
+
+    /* آیکون‌های متادیتا */
+    const icAuthor = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    const icDate = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+    /* هیرو: اگر تصویر بود عنوان روی تصویر، وگرنه عنوان معمولی */
+    let heroHtml;
+    if (featured) {
+        heroHtml = `
+            <div class="pv-hero">
+                ${category ? `<span class="pv-hero-cat">${escapeHtml(category)}</span>` : ""}
+                <img src="${featured}" alt="تصویر شاخص">
+                <h1 class="pv-hero-title">${titleSafe}</h1>
+            </div>`;
+    } else {
+        heroHtml = `<h1 class="pv-title-fallback">${titleSafe}</h1>`;
+    }
+
+    const metaChips = [];
+    if (author) metaChips.push(`<span class="chip">${icAuthor}${escapeHtml(author)}</span>`);
+    if (date) metaChips.push(`<span class="chip">${icDate}${escapeHtml(date)}</span>`);
+    if (category && !featured) metaChips.push(`<span class="chip">${escapeHtml(category)}</span>`);
+
+    const html = `
+        <div class="pv-article">
+            ${heroHtml}
+            ${metaChips.length ? `<div class="pv-meta">${metaChips.join("")}</div>` : ""}
+            <div class="pv-body">
+                ${contentHasText ? content : '<p class="pv-empty">هنوز متنی برای این خبر نوشته نشده است.</p>'}
+            </div>
+            <div id="seoScoreBox" class="pv-seo"></div>
+        </div>
+    `;
+
+    document.getElementById("previewContent").innerHTML = html;
+    calculateSEO();
+    const modal = document.getElementById("previewModal");
+    modal.style.display = "block";
+    requestAnimationFrame(() => modal.classList.add("show"));
+    document.querySelector(".preview-scroll").scrollTop = 0;
+}
+
+function closePreview(){
+    const modal = document.getElementById("previewModal");
+    modal.classList.remove("show");
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 260);
+}
+
+/* محاسبه امتیاز سئو (مشترک بین ویجت و پیش‌نمایش) */
+function computeSeoScore(){
+    let score = 0;
+    const title = document.getElementById("title").value.trim();
+    const contentText = editor.innerText.trim();
+    const wordCount = contentText ? contentText.split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const keywords = document.getElementById("keywords").value.trim();
+    const hasH2 = editor.querySelector("h2");
+
+    if(title.length > 5) score += 20;
+    if(wordCount > 300) score += 25;
+    if(hasImage) score += 15;
+    if(keywords.length > 3) score += 20;
+    if(hasH2) score += 20;
+    return score;
+}
+
+/* به‌روزرسانی ویجت حلقه‌ای امتیاز سئو در ستون کناری */
+function updateSeoWidget(){
+    const score = computeSeoScore();
+    const fill = document.getElementById("seoRingFill");
+    const num = document.getElementById("seoRingNum");
+    const stateEl = document.getElementById("seoState");
+    const tipEl = document.getElementById("seoTip");
+
+    let color = "#e74c3c", label = "ضعیف", tip = "عنوان و متن را کامل‌تر کنید.";
+    if (score >= 70) { color = "#00b894"; label = "خوب"; tip = "محتوای شما برای سئو مناسب است."; }
+    else if (score >= 40) { color = "#F79F1F"; label = "متوسط"; tip = "تصویر، کلمات کلیدی یا تیتر H2 اضافه کنید."; }
+
+    fill.setAttribute("stroke-dasharray", score + ", 100");
+    fill.setAttribute("stroke", color);
+    num.textContent = toFaDigits(score);
+    stateEl.textContent = label;
+    stateEl.style.color = color;
+    tipEl.textContent = tip;
+}
+
+/* به‌روزرسانی زنده ویجت با تغییر ورودی‌ها */
+["title","keywords"].forEach(id => {
+    document.getElementById(id).addEventListener("input", updateSeoWidget);
+});
+editor.addEventListener("input", updateSeoWidget);
+featuredInput.addEventListener("change", updateSeoWidget);
+
+function calculateSEO(){
+    const score = computeSeoScore();
+
+    let color = "#e74c3c", label = "ضعیف";
+    if(score >= 70) { color = "#00b894"; label = "خوب"; }
+    else if(score >= 40) { color = "#F79F1F"; label = "متوسط"; }
+
+    /* وضعیت هر معیار برای چک‌لیست */
+    const title = document.getElementById("title").value.trim();
+    const wordCount = editor.innerText.trim() ? editor.innerText.trim().split(/\s+/).length : 0;
+    const hasImage = featuredInput.files[0] || dzPreview.classList.contains("show");
+    const keywords = document.getElementById("keywords").value.trim();
+    const hasH2 = !!editor.querySelector("h2");
+
+    const checks = [
+        { ok: title.length > 5,   text: "عنوان مناسب" },
+        { ok: wordCount > 300,    text: "طول متن کافی" },
+        { ok: !!hasImage,         text: "تصویر شاخص" },
+        { ok: keywords.length > 3,text: "کلمات کلیدی" },
+        { ok: hasH2,              text: "تیتر H2 در متن" },
+    ];
+
+    const icOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const icNo = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="12" x2="15" y2="12"/></svg>';
+
+    const checksHtml = checks.map(c =>
+        `<div class="pv-check ${c.ok ? "ok" : "no"}">${c.ok ? icOk : icNo}<span>${c.text}</span></div>`
+    ).join("");
+
+    document.getElementById("seoScoreBox").innerHTML = `
+        <div class="pv-seo-head">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                امتیاز سئو
+            </h3>
+            <span class="pv-seo-badge" style="background:${color}">${label}</span>
+        </div>
+        <div class="pv-seo-bar-track">
+            <div class="pv-seo-bar-fill" style="width:${score}%;background:${color}"></div>
+        </div>
+        <div class="pv-seo-foot">
+            <span>امتیاز کلی</span>
+            <span><b>${toFaDigits(score)}</b> از ${toFaDigits(100)}</span>
+        </div>
+        <div class="pv-checks">${checksHtml}</div>
+    `;
+}
+
+document.getElementById("editor").addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        document.execCommand("insertLineBreak");
+    }
+});
+
+/* =================== سیستم هوشمند پیشنهاد برچسب و کلمات کلیدی =================== */
+const PERSIAN_STOPWORDS = new Set([
+    "از", "به", "با", "که", "در", "را", "و", "این", "آن", "برای", "ما", "شما", "آنها", "او", "من", "تو",
+    "است", "هست", "بود", "شد", "یک", "دو", "سه", "کار", "خود", "هم", "روی", "تا", "کند", "کنند", "کرد",
+    "کردن", "بودن", "شدن", "داشت", "داشتن", "دهد", "دهند", "پس", "اما", "اگر", "حتی", "درباره", "تحت",
+    "مورد", "دیگر", "بسیار", "خیلی", "باید", "شاید", "تواند", "توانند", "همین", "همان", "پیش", "بعد",
+    "قبل", "طریق", "مختلف", "بخش", "بخش‌های", "مراحل", "تعداد", "یکی", "برخی", "تمام", "همه", "هیچ",
+    "بدون", "بین", "زیر", "های", "ها", "می", "میکند", "میکنند", "دارد", "دارند", "باشند", "باشد",
+    "شود", "شوند", "شده", "شده است", "شده اند", "هایی", "طور", "باره", "ثانیه", "دقیقه", "ساعت", "مکسا"
+]);
+
+const ENGLISH_STOPWORDS = new Set([
+    "the", "and", "a", "of", "to", "in", "is", "that", "it", "on", "for", "as", "with", "was", "by",
+    "an", "be", "this", "are", "from", "at"
+]);
+
+function generateSuggestions() {
+    const title = document.getElementById("title").value.trim();
+    const subtitleEl = document.getElementById("subtitle");
+    const subtitle = subtitleEl ? subtitleEl.value.trim() : "";
+    const contentText = editor.innerText || editor.textContent || "";
+    
+    // ترکیب متون برای استخراج کلمات
+    const combinedText = (title + " " + subtitle + " " + contentText)
+        .replace(/[\u200c-\u200f]/g, " ") // جایگزینی نیم‌فاصله‌ها
+        .replace(/[0-9۰-۹]/g, "") // حذف اعداد
+        .replace(/[^\p{Arabic}\p{L}\s-]/gu, " ") // نگه داشتن حروف الفبا و حذف علائم نگارشی
+        .toLowerCase();
+    
+    // تبدیل به کلمات تکی و فیلتر کردن
+    const words = combinedText.split(/\s+/).map(w => {
+        w = w.trim();
+        w = w.replace(/^-+|-+$/g, ""); // حذف خط تیره اول و آخر کلمه
+        w = w.replace(/ی/g, "ی").replace(/ک/g, "ک"); // نرمال‌سازی عمومی
+        return w;
+    }).filter(w => {
+        return w.length >= 3 && !PERSIAN_STOPWORDS.has(w) && !ENGLISH_STOPWORDS.has(w);
+    });
+    
+    // محاسبه فراوانی تکرار کلمات
+    const freq = {};
+    words.forEach(w => {
+        freq[w] = (freq[w] || 0) + 1;
+    });
+    
+    // مرتب‌سازی بر اساس تعداد تکرار
+    const sortedWords = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
+    
+    // استخراج ۸ کلمه اول با بیشترین تکرار
+    const topSuggestions = sortedWords.slice(0, 8);
+    
+    const container = document.getElementById("suggested-chips-list");
+    container.innerHTML = "";
+    
+    if (topSuggestions.length === 0) {
+        container.innerHTML = `<span style="font-size: 11.5px; color: var(--muted-color); font-style: italic; padding: 0 4px;">کلمه کلیدی یافت نشد. متن خبر را بنویسید.</span>`;
+        return;
+    }
+    
+    topSuggestions.forEach(word => {
+        const btn = document.createElement("span");
+        btn.className = "suggestion-chip";
+        btn.innerHTML = `+ ${word}`;
+        btn.onclick = () => addSuggestedWord(btn, word);
+        container.appendChild(btn);
+    });
+}
+
+function addSuggestedWord(btnEl, word) {
+    // ۱. افزودن به کلمات کلیدی (Keywords)
+    const keywordsInput = document.getElementById("keywords");
+    let keywords = keywordsInput.value.split("،").join(",").split(",").map(k => k.trim()).filter(Boolean);
+    if (!keywords.includes(word)) {
+        keywords.push(word);
+        keywordsInput.value = keywords.join("، ");
+    }
+    
+    // ۲. افزودن به تگ‌های سئو (Tags)
+    const tagsInput = document.getElementById("tags");
+    let tags = tagsInput.value.split("،").join(",").split(",").map(t => t.trim()).filter(Boolean);
+    if (!tags.includes(word)) {
+        tags.push(word);
+        tagsInput.value = tags.join("، ");
+        if (typeof renderTagChips === "function") {
+            renderTagChips();
+        }
+    }
+    
+    // ۳. انطباق و انتخاب خودکار برچسب‌های موضوعی در صورت همخوانی با کلمه کلیدی
+    const checkboxes = document.querySelectorAll('input[name="tag_ids[]"]');
+    checkboxes.forEach(cb => {
+        const labelSpan = cb.nextElementSibling;
+        if (labelSpan) {
+            const tagName = labelSpan.textContent.trim().toLowerCase();
+            // انطباق کامل یا انطباق جزئی
+            if (tagName === word.toLowerCase() || word.toLowerCase().includes(tagName) || tagName.includes(word.toLowerCase())) {
+                cb.checked = true;
+                cb.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }
+    });
+    
+    // انیمیشن کوچک حذف چیپ پیشنهادی پس از کلیک و اضافه شدن
+    btnEl.style.transform = "scale(0.8)";
+    btnEl.style.opacity = "0";
+    setTimeout(() => btnEl.remove(), 200);
+}
 </script>
+
 </body>
 </html>
