@@ -56,9 +56,9 @@
   </span>
   <span class="mql-item">
     <span class="mql-dot mql-dot--cover"></span>
-    سایر استان‌های تحت پوشش
+    سایر استان‌های کشور
   </span>
-  <a href="/branches.php" class="mql-link">مشاهده شعب مکسا &larr;</a>
+  <a href="/branches.php" class="mql-link">مشاهده شعب و مراکز مکسا &larr;</a>
 </div>
 
 </div>
@@ -209,44 +209,37 @@ filter:drop-shadow(0 8px 20px rgba(0,123,122,.06));
 }
 
 /* Map SVG styling */
-.iran-map-box #Iran a path,
-.iran-map-box #Iran a polygon{
-fill:#f4a61e;
-stroke:#d98c0a;
-stroke-width:0.9;
-transition:fill .2s ease, filter .2s ease, transform .2s ease;
-transform-box:fill-box;
-transform-origin:center;
-cursor:pointer;
+.iran-map-box #Iran .province-shape.is-inactive,
+.iran-map-box #Iran path.province-shape.is-inactive,
+.iran-map-box #Iran polygon.province-shape.is-inactive {
+fill: #e6ebec !important;
+stroke: #c8d3d5 !important;
+stroke-width: 0.85 !important;
+cursor: default !important;
+pointer-events: none !important;
+filter: none !important;
 }
 
-.iran-map-box #Iran a path.is-active,
-.iran-map-box #Iran path.is-active{
-fill:#10aeb8;
-stroke:#006665;
+.iran-map-box #Iran a.province-link {
+cursor: pointer;
+outline: none;
 }
 
-.iran-map-box #Iran a:hover path,
-.iran-map-box #Iran a:hover polygon{
-fill:#e0900c;
-filter:drop-shadow(0 4px 8px rgba(217,140,10,.45));
+.iran-map-box #Iran path.province-shape.is-active,
+.iran-map-box #Iran polygon.province-shape.is-active {
+fill: #007b7a;
+stroke: #004d4c;
+stroke-width: 1.2;
+transition: all 0.25s ease;
+cursor: pointer;
 }
 
-.iran-map-box #Iran a:hover path.is-active{
-fill:#007b7a;
-filter:drop-shadow(0 4px 8px rgba(0,102,101,.35));
+.iran-map-box #Iran a.province-link:hover path.province-shape.is-active,
+.iran-map-box #Iran a.province-link:hover polygon.province-shape.is-active {
+fill: #10aeb8;
+filter: drop-shadow(0 6px 14px rgba(0,123,122,.4));
 }
 
-.iran-map-box #Iran text{
-font-family:'Vazirmatn', sans-serif;
-fill:#004d4c;
-font-weight:600;
-pointer-events:none;
-}
-
-.iran-map-box #Iran line{
-stroke:#006665;
-}
 
 /* Quick Legend */
 .map-quick-legend{

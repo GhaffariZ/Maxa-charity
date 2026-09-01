@@ -173,9 +173,69 @@
      y="112.08791"
      width="101.0989"
      height="58.241756"
-     id="rect347" /></defs>&#10;<style
-   type="text/css"
-   id="style1">&#10;/* Maxa clickable-styles */&#10;a { cursor: pointer; }&#10;a path, a polygon { transition: fill 0.2s ease; }&#10;a:hover path, a:hover polygon { fill: #e0900c; }&#10;a:active path, a:active polygon { fill: #007b7a; }&#10;a path, a polygon { stroke: #006665; stroke-width: 0.9; }&#10;&#10;</style><g
+     id="rect347" /></defs>&#10;<style type="text/css">
+/* Base SVG Province Styles */
+.province-shape {
+  transition: fill 0.25s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.25s ease, filter 0.25s ease;
+  transform-origin: center;
+}
+
+/* Inactive Provinces: Soft elegant neutral, no hover, no pointer */
+.province-shape.is-inactive {
+  fill: #e6ebec;
+  stroke: #c8d3d5;
+  stroke-width: 0.85;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Active Provinces: Vibrant Maxa brand teal, interactive */
+.province-link {
+  cursor: pointer;
+  outline: none;
+}
+.province-shape.is-active {
+  fill: #007b7a;
+  stroke: #004d4c;
+  stroke-width: 1.2;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.25));
+}
+.province-link:hover .province-shape.is-active,
+.province-link:focus-visible .province-shape.is-active {
+  fill: #10aeb8;
+  stroke: #003837;
+  stroke-width: 1.6;
+  filter: drop-shadow(0 6px 14px rgba(0, 123, 122, 0.45));
+}
+.province-link:active .province-shape.is-active {
+  fill: #005958;
+}
+
+/* Labels */
+.map-labels text {
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+.map-labels .lbl-inactive {
+  fill: #607274;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.map-labels .lbl-active {
+  fill: #ffffff;
+  font-weight: 800;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+.map-labels .lbl-active-dot {
+  fill: #f4a61e;
+  stroke: #ffffff;
+  stroke-width: 1.2;
+}
+</style><g
    id="layercountry"
    inkscape:groupmode="layer"
    sodipodi:insensitive="true"
@@ -630,352 +690,57 @@
    fill="#f4a61e"
    d="m 432.023,705.089 c 3.243,0.324 6.19,-0.239 7.512,-1.436 0.439,-0.397 0.663,-0.843 0.663,-1.318 0,-2.528 0.968,-8.847 1.009,-9.114 0.288,-1.164 1.804,-6.636 4.741,-6.636 1.85,0 6.579,-1.973 8.493,-2.843 1.941,-2.963 4.212,-7.607 3.363,-9.021 -1.36,-2.268 -3.423,-8.623 -4.303,-11.337 l -0.406,-1.222 c -0.786,-2.257 -1.54,-4.782 -0.536,-6.196 0.286,-0.4 0.846,-0.881 1.889,-0.881 3.497,0 5.195,1.965 6.671,4.915 1.378,2.756 5.178,6.085 7.829,6.085 0.714,0 1.484,-0.059 2.301,-0.121 2.666,-0.202 5.424,-0.414 6.799,1.421 1.198,1.599 3.388,3.148 5.622,2.254 2.184,-0.873 4.028,-3.072 4.028,-4.804 v -7.434 l -1.104,-6.149 c -2.168,-1.679 -17.666,-13.69 -20.814,-16.524 -2.997,-2.698 -4.581,-6.811 -4.581,-11.893 0,-1.084 -0.292,-3.626 -0.704,-6.71 l -4.875,-0.859 c -0.425,0.086 -1.896,0.426 -2.888,1.17 -0.348,0.261 -0.699,0.697 -1.106,1.205 -0.984,1.226 -2.208,2.748 -4.515,3.262 -0.275,0.061 -0.542,0.091 -0.801,0.091 -3.156,0 -5.122,-4.377 -6.729,-8.554 -1.003,-2.61 -1.707,-2.458 -3.254,-2.129 -0.599,0.13 -1.275,0.274 -2.045,0.274 -2.882,0 -5.408,-1.69 -7.947,-5.32 l -0.461,-0.659 c -1.584,-2.271 -1.584,-2.271 -2.858,-2.899 l -0.401,-0.199 c -1.615,-0.806 -4.913,0.289 -7.292,1.648 -2.184,1.245 -4.317,2.258 -6.425,0.991 -1.217,-0.729 -3.96,-2.479 -5.412,-3.408 -0.763,4.218 -1.716,8.229 -3.453,9.39 -2.068,1.378 -2.91,2.707 -3.412,3.711 -0.77,1.535 -3.981,1.747 -7.338,1.747 -0.533,0 -1.232,-0.033 -1.974,-0.067 -1.364,-0.064 -3.236,-0.155 -3.789,0.028 -0.138,0.091 -0.463,0.758 -0.339,1.543 0.112,0.713 0.544,1.168 1.283,1.354 2.99,0.746 3.679,3.71 3.213,5.575 -0.063,0.255 -0.084,0.737 -0.106,1.25 -0.083,1.903 -0.21,4.78 -2.503,6.502 -1.221,0.915 -2.636,2.102 -2.76,3.163 -0.052,0.448 0.128,0.915 0.553,1.423 1.694,2.034 3.072,4.102 4.095,6.146 0.835,1.67 3.279,1.919 4.662,1.919 l 0.428,0.006 c 0.204,0.003 0.459,0.01 0.52,-0.016 0.151,-0.092 0.529,-0.856 0.969,-1.743 l 0.413,-0.832 c 1.273,-2.549 2.854,-3.154 3.685,-3.29 0.947,-0.15 1.887,0.132 2.518,0.762 1.217,1.217 1.591,4.204 1.181,5.436 -0.163,0.49 -0.378,2.349 0.413,3.687 0.435,0.733 1.092,1.172 2.01,1.339 0.732,0.134 1.357,0.226 1.895,0.306 2.152,0.319 3.34,0.495 4.017,2.527 0.777,2.334 1.708,3.625 2.768,3.836 1.457,0.292 3.078,2.312 3.273,4.077 0.149,1.343 -0.5,2.438 -1.782,3.01 -3.105,1.381 -3.888,1.876 -3.888,2.981 0,1.466 1.251,3.876 3.999,5.708 2.212,1.476 3.334,3.815 3.334,6.958 0,0.978 0.329,11.207 0.333,11.311 0.003,0.062 0.344,7.182 1.906,9.992 0.848,1.524 1.362,2.97 1.776,4.13 0.38,1.063 0.708,1.98 1.099,2.372 0.636,0.636 2.61,1.453 3.707,1.817 l 0.153,0.072 c 0.025,0.016 0.159,0.099 0.363,0.245 0.056,-0.776 0.299,-1.956 1.19,-2.857 0.934,-0.956 2.323,-1.347 4.125,-1.168 z"
    xlink:href="javascript:void(0)"
-   id="path51" />&#10;</a>&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="420.59976"
-   y1="625.04443"
-   x2="328.86874"
-   y2="745.62543"
-   id="line342" />&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="424.74774"
-   y1="551.52344"
-   x2="181.54074"
-   y2="692.0094"
-   id="line343" />&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="467.56476"
-   y1="801.37744"
-   x2="432.18677"
-   y2="843.37744"
-   id="line344" />&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="422.26776"
-   y1="262.47745"
-   x2="460.23474"
-   y2="162.61143"
-   id="line345" />&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="263.57474"
-   y1="92.365448"
-   x2="314.10275"
-   y2="63.711445"
-   id="line346" />&#10;<line
-   fill="none"
-   stroke="#006665"
-   stroke-width="0.5044"
-   x1="80.769745"
-   y1="149.04443"
-   x2="52.368744"
-   y2="262.47745"
-   id="line347" />&#10;<text
-   xml:space="preserve"
-   id="text347"
-   style="line-height:0%;white-space:pre;shape-inside:url(#rect347);fill:#ffffff"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="135.16406"
-     y="123.03585"
-     id="tspan2"><tspan
-       style="font-size:12px;line-height:1.25"
-       id="tspan1"> </tspan></tspan></text><text
-   xml:space="preserve"
-   style="line-height:0%;text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:1.19434"
-   x="216.15797"
-   y="85.139275"
-   id="text348"
-   transform="scale(0.83728047,1.1943429)"><tspan
-     sodipodi:role="line"
-     id="tspan348"
-     x="216.15797"
-     y="85.139275"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a;
-stroke-width:1.19434">آذربایجان شرقی</tspan></text><text
-   xml:space="preserve"
-   id="text349"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect349);fill:#1a1a1a"
-   transform="translate(-9.9620406,-23.004344)"><tspan
-     x="340"
-     y="82.079025"
-     id="tspan4"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan3">اردبیل</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text382"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect382);fill:#1a1a1a"
-   transform="translate(-12.918851,-9.6987115)"><tspan
-     x="380.55562"
-     y="201.83098"
-     id="tspan6"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan5">گیلان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text383"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect383);fill:#1a1a1a"
-   transform="translate(-12.918851,-17.090729)"><tspan
-     x="500.52013"
-     y="175.21965"
-     id="tspan8"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan7">البرز</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text384"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect384);fill:#1a1a1a"
-   transform="translate(-11.440448,-20.047537)"><tspan
-     x="530.20042"
-     y="263.92277"
-     id="tspan10"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan9">مازندران</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text385"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect385);fill:#1a1a1a"
-   transform="translate(-11.440448,-11.177115)"><tspan
-     x="700.59888"
-     y="197.39543"
-     id="tspan12"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan11">گلستان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text386"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect386);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="850.47391"
-     y="181.13371"
-     id="tspan14"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan13">خراسان شمالی</tspan></tspan><tspan
-     x="764.85083"
-     y="204.46709"
-     id="tspan16"></tspan></text><text
-   xml:space="preserve"
-   id="text387"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect387);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="940.9289"
-     y="297.92668"
-     id="tspan18"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan17">خراسان رضوی</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text388"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect388);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="700.75709"
-     y="334.88762"
-     id="tspan20"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan19">سمنان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text389"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect389);fill:#1a1a1a"
-   transform="translate(-17.354062,-23.004344)"><tspan
-     x="500.58816"
-     y="315.66692"
-     id="tspan22"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan21">تهران</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text390"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect390);fill:#1a1a1a"
-   transform="translate(-4.0484299,-24.482747)"><tspan
-     x="390.97195"
-     y="283.14348"
-     id="tspan24"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan23">قزوین</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text391"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect391);fill:#1a1a1a"
-   transform="translate(-12.918851,-21.52594)"><tspan
-     x="300.40814"
-     y="244.70402"
-     id="tspan26"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan25">زنجان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text392"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect392);fill:#1a1a1a"
-   transform="translate(-12.918851,-20.047537)"><tspan
-     x="160.176717"
-     y="240.31926"
-     id="tspan28"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan27">آذربایجان غربی</tspan></tspan><tspan
-     x="12.681872"
-     y="328.65263"
-     id="tspan30"></tspan></text><text
-   xml:space="preserve"
-   id="text393"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect393);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="230.81372"
-     y="308.27629"
-     id="tspan32"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan31">کردستان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text394"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect394);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="240.58811"
-     y="389.58879"
-     id="tspan34"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan33">کرمانشاه</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text395"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect395);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="210.10706"
-     y="485.68449"
-     id="tspan36"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan35">ایلام</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text396"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect396);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="330.91985"
-     y="361.49895"
-     id="tspan38"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan37">همدان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text397"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect397);fill:#1a1a1a"
-   transform="translate(-9.9620442,-24.482747)"><tspan
-     x="445.90979"
-     y="377.76067"
-     id="tspan40"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan39">قم</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text398"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect398);fill:#1a1a1a"
-   transform="translate(-4.0484299,5.0853235)"><tspan
-     x="370.37852"
-     y="350.54387"
-     id="tspan42"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan41">مرکزی</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text399"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect399);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="300.22551"
-     y="464.98723"
-     id="tspan44"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan43">لرستان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text400"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect400);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="520.38861"
-     y="479.77043"
-     id="tspan46"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan45">اصفهان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text401"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect401);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="350.42179"
-     y="595.08684"
-     id="tspan48"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan47">خوزستان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text402"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect402);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="200.90287"
-     y="734.05559"
-     id="tspan50"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan49">چهارمحال و بختیاری</tspan></tspan><tspan
-     x="144.45696"
-     y="757.38896"
-     id="tspan52"></tspan></text><text
-   xml:space="preserve"
-   id="text403"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect403);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="340.32639"
-     y="794.67082"
-     id="tspan54"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan53">کهگیلویه و بویراحمد</tspan></tspan></tspan></text><text
-   xml:space="preserve"
-   id="text404"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect404);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="450.30234"
-     y="884.85246"
-     id="tspan58"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan57">بوشهر</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text405"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect405);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="580.61032"
-     y="754.75285"
-     id="tspan60"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan59">فارس</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text406"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect406);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="780.04938"
-     y="877.46184"
-     id="tspan62"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan61">هرمزگان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text407"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect407);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="637.00908"
-     y="556.64738"
-     id="tspan64"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan63">یزد</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text408"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect408);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="790.86159"
-     y="704.48723"
-     id="tspan66"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan65">کرمان</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text409"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect409);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="900.73554"
-     y="496.03215"
-     id="tspan68"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan67">خراسان جنوبی</tspan></tspan></text><text
-   xml:space="preserve"
-   id="text410"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Vazirmatn',sans-serif;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect410);fill:#1a1a1a"
-   transform="translate(-14.397255,-27.439554)"><tspan
-     x="1070.71378"
-     y="824.23918"
-     id="tspan70"><tspan
-       style="font-size:18.6667px;line-height:1.25"
-       id="tspan69">سیستان و بلوچستان</tspan></tspan></text></svg>
+   id="path51" />&#10;</a>&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;&#10;
+
+<g id="layerlabels" class="map-labels">
+  <text x="100.4" y="144.2" font-size="13.5px" class="lbl-inactive">آذربایجان غربی</text>
+  <text x="264.1" y="90.9" font-size="13.5px" class="lbl-inactive">اردبیل</text>
+  <text x="421.2" y="258.2" font-size="12.5px" class="lbl-inactive">البرز</text>
+  <text x="195.5" y="458.8" font-size="13.5px" class="lbl-inactive">ایلام</text>
+  <text x="459.0" y="759.3" font-size="14px" class="lbl-inactive">بوشهر</text>
+  <text x="407.0" y="531.1" font-size="12.5px" class="lbl-inactive">چهارمحال و بختیاری</text>
+  <text x="865.1" y="467.7" font-size="15px" class="lbl-inactive">خراسان جنوبی</text>
+  <text x="793.9" y="163.9" font-size="13.5px" class="lbl-inactive">خراسان شمالی</text>
+  <text x="278.7" y="224.2" font-size="14px" class="lbl-inactive">زنجان</text>
+  <text x="649.8" y="298.4" font-size="16px" class="lbl-inactive">سمنان</text>
+  <text x="1002.7" y="818.3" font-size="16px" class="lbl-inactive">سیستان و بلوچستان</text>
+  <text x="565.8" y="727.0" font-size="16px" class="lbl-inactive">فارس</text>
+  <text x="359.7" y="254.1" font-size="13.5px" class="lbl-inactive">قزوین</text>
+  <text x="195.9" y="279.9" font-size="14px" class="lbl-inactive">کردستان</text>
+  <text x="802.0" y="692.6" font-size="17px" class="lbl-inactive">کرمان</text>
+  <text x="178.9" y="366.6" font-size="14px" class="lbl-inactive">کرمانشاه</text>
+  <text x="418.6" y="620.3" font-size="12.5px" class="lbl-inactive">کهگیلویه و بویراحمد</text>
+  <text x="673.7" y="170.1" font-size="14px" class="lbl-inactive">گلستان</text>
+  <text x="346.7" y="174.5" font-size="14px" class="lbl-inactive">گیلان</text>
+  <text x="282.6" y="434.5" font-size="14px" class="lbl-inactive">لرستان</text>
+  <text x="514.9" y="234.5" font-size="14.5px" class="lbl-inactive">مازندران</text>
+  <text x="369.6" y="364.3" font-size="14px" class="lbl-inactive">مرکزی</text>
+  <text x="758.0" y="878.8" font-size="15px" class="lbl-inactive">هرمزگان</text>
+  <text x="290.9" y="335.5" font-size="14px" class="lbl-inactive">همدان</text>
+  <text x="644.0" y="540.3" font-size="16px" class="lbl-inactive">یزد</text>
+  <g class="active-label-group" data-province="تهران">
+    <circle cx="475.4" cy="280.3" r="3.2" class="lbl-active-dot" />
+    <text x="475.4" y="295.3" font-size="16px" class="lbl-active">تهران</text>
+  </g>
+  <g class="active-label-group" data-province="اصفهان">
+    <circle cx="518.8" cy="442.3" r="3.2" class="lbl-active-dot" />
+    <text x="518.8" y="457.3" font-size="17px" class="lbl-active">اصفهان</text>
+  </g>
+  <g class="active-label-group" data-province="خوزستان">
+    <circle cx="315.4" cy="562.9" r="3.2" class="lbl-active-dot" />
+    <text x="315.4" y="577.9" font-size="16px" class="lbl-active">خوزستان</text>
+  </g>
+  <g class="active-label-group" data-province="آذربایجان شرقی">
+    <circle cx="180.6" cy="110.4" r="3.2" class="lbl-active-dot" />
+    <text x="180.6" y="123.4" font-size="14.5px" class="lbl-active">آذربایجان شرقی</text>
+  </g>
+  <g class="active-label-group" data-province="قم">
+    <circle cx="433.5" cy="338.6" r="3.2" class="lbl-active-dot" />
+    <text x="433.5" y="353.6" font-size="15px" class="lbl-active">قم</text>
+  </g>
+  <g class="active-label-group" data-province="خراسان رضوی">
+    <circle cx="907.9" cy="267.3" r="3.2" class="lbl-active-dot" />
+    <text x="907.9" y="282.3" font-size="17px" class="lbl-active">خراسان رضوی</text>
+  </g>
+</g>
+</svg>
