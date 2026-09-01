@@ -171,19 +171,20 @@
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.06));
 }
 
-/* مرزها و شکل استان‌ها */
+/* مرزها و شکل استان‌ها — طراحی ملایم و چشم‌نواز */
 #Iran .province-shape {
-  stroke: #ffffff !important;
-  stroke-width: 1.5 !important;
   stroke-linejoin: round !important;
   stroke-linecap: round !important;
+  transition: fill 0.2s ease, filter 0.2s ease, stroke 0.2s ease;
 }
 
-/* استان‌های غیرفعال (زرد / خردلی ملایم برند مکسا) — بدون هاور و بدون کلیک */
+/* استان‌های غیرفعال (زرد گرم برند مکسا) — بدون هاور و بدون کلیک با مرز نرم */
 #Iran .province-shape.is-inactive,
 #Iran g.is-inactive path,
 #Iran g.is-inactive polygon {
   fill: #f4a61e !important;
+  stroke: #d9820a !important;
+  stroke-width: 0.75 !important;
   cursor: default !important;
   pointer-events: none !important;
   filter: none !important;
@@ -197,22 +198,22 @@
 
 #Iran a.province-link .province-shape.is-active {
   fill: #007b7a !important;
-  stroke: #ffffff !important;
-  stroke-width: 1.8 !important;
+  stroke: #004d4c !important;
+  stroke-width: 1.1 !important;
   cursor: pointer !important;
-  transition: fill 0.2s ease, filter 0.2s ease, stroke-width 0.2s ease;
-  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.35));
+  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.28));
 }
 
 #Iran a.province-link:hover .province-shape.is-active,
 #Iran a.province-link:focus-visible .province-shape.is-active {
-  fill: #0ea5e9 !important;
-  stroke-width: 2.5 !important;
-  filter: drop-shadow(0 8px 18px rgba(14, 165, 233, 0.6)) !important;
+  fill: #10aeb8 !important;
+  stroke: #003635 !important;
+  stroke-width: 1.3 !important;
+  filter: drop-shadow(0 6px 14px rgba(0, 123, 122, 0.45)) !important;
 }
 
 #Iran a.province-link:active .province-shape.is-active {
-  fill: #0284c7 !important;
+  fill: #005958 !important;
 }
 
 /* نوار پایین نقشه: لژاند و ۳ دکمه کوچک */
