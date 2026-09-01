@@ -1,3 +1,21 @@
+<?php
+$allStories = [];
+try {
+    if (!isset($pdo) || !$pdo) {
+        $dbCfg = require __DIR__ . '/../../../core/db-config.php';
+        $pdo = new PDO("mysql:host={$dbCfg['host']};dbname={$dbCfg['name']};charset=utf8mb4", $dbCfg['user'], $dbCfg['pass'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+    }
+    $stStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status`='published' ORDER BY `sort_order` ASC, `id` DESC");
+    if ($stStmt) {
+        $allStories = $stStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (Throwable $e) {
+    $allStories = [];
+}
+?>
 <section class="pro-stories" dir="rtl">
 
   <div class="ps-global-bg"></div>
@@ -13,131 +31,107 @@
     <!-- FILTERS -->
     <div class="ps-filters">
       <button class="active" data-filter="all">همه</button>
-      <button data-filter="diagnosis">زندگی پس از تشخیص بیماری</button>
-      <button data-filter="treatment">مسیر درمان</button>
-      <button data-filter="recovery">زندگی پس از بهبودی</button>
-      <button data-filter="family">تجربه همراهان</button>
-      <button data-filter="staff">روایت کادر درمان</button>
+      <button data-filter="کادر درمان">روایت کادر درمان</button>
+      <button data-filter="بهبودی">زندگی پس از بهبودی</button>
+      <button data-filter="تشخیص">زندگی پس از تشخیص بیماری</button>
+      <button data-filter="درمان">مسیر درمان</button>
+      <button data-filter="همراهان">تجربه همراهان</button>
     </div>
 
     <!-- STORIES GRID -->
     <div class="ps-grid">
-
-      <!-- STORY CARD -->
-      <div class="ps-card" data-category="staff">
+      <?php if (!empty($allStories)): ?>
+        <?php foreach ($allStories as $story): ?>
+          <div class="ps-card" data-category="<?= htmlspecialchars($story['tag']) ?>">
+            <span class="ps-tag"><?= htmlspecialchars($story['tag'] ?: 'روایت امید') ?></span>
+            <h3><?= htmlspecialchars($story['title']) ?></h3>
+            <div style="font-size:13px;color:#0899A9;font-weight:700;margin-bottom:8px">
+              <?= htmlspecialchars($story['narrator_name']) ?>
+              <?php if (!empty($story['narrator_role'])): ?>
+                <span style="font-weight:400;color:#777;font-size:11.5px"> - <?= htmlspecialchars($story['narrator_role']) ?></span>
+              <?php endif; ?>
+            </div>
+            <p><?= htmlspecialchars($story['excerpt'] ?: mb_substr(strip_tags($story['content']), 0, 150, 'UTF-8') . '...') ?></p>
+            <div class="ps-footer">
+              <span class="ps-time"><?= htmlspecialchars($story['read_time'] ?: '۴ دقیقه مطالعه') ?></span>
+              <a href="/macsa-story.php?id=<?= $story['id'] ?>" class="ps-read">
+                خواندن روایت
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="ps-card" data-category="کادر درمان">
           <span class="ps-tag">روایت کادر درمان</span>
           <h3>از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی</h3>
           <p>سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود ...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>وقتی نوشتن، درمان است</h3>
-          <p>در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>زندگی تا آخرین لحظه</h3>
-          <p>خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="recovery">
-          <span class="ps-tag">پس از بهبودی</span>
-          <h3>بازگشت به زندگی</h3>
-          <p>تجربه بیمار در دوران پس از درمان...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">کادر درمان</span>
-          <h3>از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی</h3>
-          <p>روایتی از تلاش کادر درمان برای بیماران...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-      <div class="ps-card" data-category="treatment">
-          <span class="ps-tag">مسیر درمان</span>
-          <h3>عنوان داستان اینجاست</h3>
-          <p>خلاصه‌ای از روایت بیمار در این قسمت قرار می‌گیرد...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
+          <div class="ps-footer">
+            <span class="ps-time">۴ دقیقه مطالعه</span>
+            <a href="/macsa-story.php" class="ps-read">
+              خواندن روایت
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
 
   </div>
 </section>
 
+<!-- Public Reader Modal -->
+<div id="psStoryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:24px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:32px;box-shadow:0 20px 50px rgba(0,0,0,0.3);position:relative;font-family:'Vazirmatn',sans-serif;direction:rtl;text-align:right;">
+    <button type="button" onclick="closeFullStoryModal()" style="position:absolute;top:20px;left:20px;background:none;border:none;cursor:pointer;font-size:24px;color:#888;">✕</button>
+    <span id="mTag" style="display:inline-block;padding:4px 12px;border-radius:12px;background:#f3a21b;color:#fff;font-size:12px;font-weight:700;margin-bottom:12px"></span>
+    <h2 id="mTitle" style="font-size:22px;font-weight:800;color:#1d2b2d;margin-bottom:8px;line-height:1.5"></h2>
+    <div id="mAuthor" style="font-size:13.5px;color:#0899A9;font-weight:700;margin-bottom:20px"></div>
+    <div id="mContent" style="font-size:15px;line-height:2.2;color:#444;white-space:pre-wrap;border-top:1px solid #eee;padding-top:18px"></div>
+    <div style="margin-top:24px;text-align:left">
+      <button type="button" onclick="closeFullStoryModal()" style="padding:10px 24px;border-radius:12px;background:#0899A9;color:#fff;border:none;font-family:inherit;font-weight:700;cursor:pointer;">بستن روایت</button>
+    </div>
+  </div>
+</div>
+
 <script>
+  function showFullStoryModal(story) {
+    document.getElementById('mTag').textContent = story.tag || 'روایت امید';
+    document.getElementById('mTitle').textContent = story.title || '';
+    document.getElementById('mAuthor').textContent = (story.narrator_name || '') + (story.narrator_role ? ' (' + story.narrator_role + ')' : '');
+    document.getElementById('mContent').textContent = story.content || story.excerpt || '';
+    document.getElementById('psStoryModal').style.display = 'flex';
+  }
+  function closeFullStoryModal() {
+    document.getElementById('psStoryModal').style.display = 'none';
+  }
+
   // Filtering Logic
-  const buttons = document.querySelectorAll(".ps-filters button");
-  const cards = document.querySelectorAll(".ps-card");
+  const filterBtns = document.querySelectorAll(".ps-filters button");
+  const pCards = document.querySelectorAll(".ps-card");
 
-  buttons.forEach(btn => {
+  filterBtns.forEach(btn => {
     btn.addEventListener("click", () => {
-
-      buttons.forEach(b => b.classList.remove("active"));
+      filterBtns.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
       const filter = btn.dataset.filter;
 
-      cards.forEach(card => {
-        if(filter === "all" || card.dataset.category === filter){
+      pCards.forEach(card => {
+        const cat = card.dataset.category || '';
+        if(filter === "all" || cat.includes(filter)){
           card.style.display = "flex";
         } else {
           card.style.display = "none";
         }
+      });
+    });
+  });
+</script>
       });
 
     });

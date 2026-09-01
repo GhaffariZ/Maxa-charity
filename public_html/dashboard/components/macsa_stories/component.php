@@ -1,3 +1,22 @@
+<?php
+// Load stories from DB with fallback
+$homeStories = [];
+try {
+    if (!isset($pdo) || !$pdo) {
+        $dbCfg = require __DIR__ . '/../../../core/db-config.php';
+        $pdo = new PDO("mysql:host={$dbCfg['host']};dbname={$dbCfg['name']};charset=utf8mb4", $dbCfg['user'], $dbCfg['pass'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+    }
+    $hStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status`='published' ORDER BY `sort_order` ASC, `id` DESC LIMIT 12");
+    if ($hStmt) {
+        $homeStories = $hStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (Throwable $e) {
+    $homeStories = [];
+}
+?>
 <section class="maxsa-glass">
 
 <h2 class="maxsa-title">
@@ -15,43 +34,55 @@
 
 <div class="maxsa-testimonial-track">
 
-<!-- CARD -->
-<div class="maxsa-card">
-<div class="maxsa-author">دکتر زهرا جعفری</div>
-<div class="maxsa-role">روانشناس مراقبت درمنزل شعبه تهران</div>
-<p>
-یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود ...</p>
-</div>
+<?php if (!empty($homeStories)): ?>
+  <?php foreach ($homeStories as $st): ?>
+    <a href="/macsa-story.php?id=<?= $st['id'] ?>" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700"><?= htmlspecialchars($st['tag'] ?: 'روایت امید') ?></span>
+        <?php if (!empty($st['read_time'])): ?>
+          <span style="font-size:11px;color:#888"><?= htmlspecialchars($st['read_time']) ?></span>
+        <?php endif; ?>
+      </div>
+      <div class="maxsa-author"><?= htmlspecialchars($st['narrator_name']) ?></div>
+      <div class="maxsa-role"><?= htmlspecialchars($st['narrator_role'] ?: 'همراه مکسا') ?></div>
+      <p><?= htmlspecialchars($st['excerpt'] ?: mb_substr(strip_tags($st['content']), 0, 160, 'UTF-8') . '...') ?></p>
+    </a>
+  <?php endforeach; ?>
 
-<div class="maxsa-card">
-<div class="maxsa-author">آقای جواد چنگی</div>
-<div class="maxsa-role">روانشناس مراقبت در منزل شعبه تهران</div>
-<p>
-در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد و....</p>
-</div>
+  <!-- Duplicate for seamless infinite loop scroll -->
+  <?php foreach ($homeStories as $st): ?>
+    <a href="/macsa-story.php?id=<?= $st['id'] ?>" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700"><?= htmlspecialchars($st['tag'] ?: 'روایت امید') ?></span>
+        <?php if (!empty($st['read_time'])): ?>
+          <span style="font-size:11px;color:#888"><?= htmlspecialchars($st['read_time']) ?></span>
+        <?php endif; ?>
+      </div>
+      <div class="maxsa-author"><?= htmlspecialchars($st['narrator_name']) ?></div>
+      <div class="maxsa-role"><?= htmlspecialchars($st['narrator_role'] ?: 'همراه مکسا') ?></div>
+      <p><?= htmlspecialchars($st['excerpt'] ?: mb_substr(strip_tags($st['content']), 0, 160, 'UTF-8') . '...') ?></p>
+    </a>
+  <?php endforeach; ?>
+<?php else: ?>
+  <!-- Fallback static cards -->
+  <div class="maxsa-card">
+    <div class="maxsa-author">دکتر زهرا جعفری</div>
+    <div class="maxsa-role">روانشناس مراقبت درمنزل شعبه تهران</div>
+    <p>یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود ...</p>
+  </div>
 
-<div class="maxsa-card">
-<div class="maxsa-author">آقای علی یزدانی</div>
-<div class="maxsa-role">مددکار اجتماعی مراقبت در منزل شعبه تهران</div>
-<p>
-سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود و متاسفانه دچار زخم بستر هم شده بود. توان انجام هیچ فعالیتی را نداشت و....</p>
-</div>
+  <div class="maxsa-card">
+    <div class="maxsa-author">آقای جواد چنگی</div>
+    <div class="maxsa-role">روانشناس مراقبت در منزل شعبه تهران</div>
+    <p>در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد و....</p>
+  </div>
 
-<!-- DUPLICATE FOR LOOP -->
-
-<div class="maxsa-card">
-<div class="maxsa-author">آقای جواد چنگی</div>
-<div class="maxsa-role">روانشناس مراقبت در منزل شعبه تهران</div>
-<p>
-در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد و....</p>
-</div>
-
-<div class="maxsa-card">
-<div class="maxsa-author">آقای علی یزدانی</div>
-<div class="maxsa-role">مددکار اجتماعی مراقبت در منزل شعبه تهران</div>
-<p>
-سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود و متاسفانه دچار زخم بستر هم شده بود. توان انجام هیچ فعالیتی را نداشت و....</p>
-</div>
+  <div class="maxsa-card">
+    <div class="maxsa-author">آقای علی یزدانی</div>
+    <div class="maxsa-role">مددکار اجتماعی مراقبت در منزل شعبه تهران</div>
+    <p>سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود و متاسفانه دچار زخم بستر هم شده بود. توان انجام هیچ فعالیتی را نداشت و....</p>
+  </div>
+<?php endif; ?>
 
 
 </div>

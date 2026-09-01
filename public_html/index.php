@@ -8,6 +8,11 @@ if ($slug === 'under-construction') {
     exit;
 }
 
+if ($slug === 'macsa-story') {
+    include __DIR__ . "/macsa-story.php";
+    exit;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug=? AND status='published'");
 $stmt->execute([$slug]);
 $page = $stmt->fetch();
