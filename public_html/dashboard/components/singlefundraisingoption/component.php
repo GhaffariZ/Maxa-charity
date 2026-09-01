@@ -5,7 +5,7 @@
     <div class="container">
         <div class="support-grid">
             
-            <a href="onlinedonation.html" class="support-card">
+            <a href="/onlinedonation" class="support-card">
                 <div class="card-icon heart"><i class="fa-solid fa-hand-holding-heart"></i></div>
                 <h3>حمایت مالی آنلاین</h3>
                 <p>هرکمک، نوری در دل تاریکی است</p>
