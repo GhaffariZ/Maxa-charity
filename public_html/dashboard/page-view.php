@@ -70,64 +70,135 @@ exit;
 
 function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $branchSlug = '', string $branchName = ''): void
 {
+    // ۱) جستجوی صفحه با branch_id و slug
     $st = $pdo->prepare("SELECT * FROM pages WHERE branch_id = ? AND slug = ? AND status = 'published' LIMIT 1");
     $st->execute([$branchId, $slug]);
     $page = $st->fetch();
 
+    // ۲) اگر صفحه برای این شعبه پیدا نشد و این یک شعبه است، جستجو با slug شعبه (مانند ikhc)
+    if (!$page && $branchSlug !== '') {
+        $st2 = $pdo->prepare("SELECT * FROM pages WHERE slug = ? AND status = 'published' LIMIT 1");
+        $st2->execute([$branchSlug]);
+        $page = $st2->fetch();
+    }
+
+    // ۳) اگر برای شعبه صفحه‌ای در جدول pages تعریف نشده باشد، از قالب پیش‌فرض شعبه استفاده می‌کنیم
     if (!$page) {
+        if ($branchSlug !== '') {
+            $branchTitle = $branchName !== '' ? 'شعبه ' . $branchName : 'شعبه مکسا';
+            render_branch_components($pdo, ['header', 'branch-home', 'branch-partners', 'footer'], $branchSlug, $branchName, $branchTitle);
+            return;
+        }
+
         http_response_code(404);
-        include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
+        $notFoundFile = dirname(__DIR__) . '/404.html';
+        if (file_exists($notFoundFile)) {
+            include $notFoundFile;
+        } elseif (isset($_SERVER['DOCUMENT_ROOT']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/404.html')) {
+            include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
+        } else {
+            echo '<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>صفحه پیدا نشد</title></head><body><h1>۴۰۴ | صفحه مورد نظر یافت نشد</h1></body></html>';
+        }
         exit;
     }
 
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
 
-    echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
-    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-    echo '<title>' . htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8') . "</title>\n";
-    // ریستِ پایه تا حاشیه‌ی پیش‌فرضِ مرورگر (margin: 8px روی body) دورِ صفحه نیفتد.
-    echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
-    echo "</head>\n<body>\n";
-    // شعبه‌ی جاری برای کامپوننت‌ها (هیرو/خبر/کمپین/...) تا فیدهای عمومی را scope کنند
+    $pageTitle = htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8');
+
+    $hasHeader = false;
+    foreach ($components as $c) {
+        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
+            $hasHeader = true;
+            break;
+        }
+    }
+
+    if (!$hasHeader) {
+        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+        echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+        echo '<title>' . $pageTitle . "</title>\n";
+        echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
+        echo "</head>\n<body>\n";
+    }
+
+    // شعبه‌ی جاری برای کامپوننت‌ها
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
-    echo_components($components);
+    echo_components($components, $pageTitle);
 
-    echo "\n</body>\n</html>";
+    if (!$hasHeader) {
+        echo "\n</body>\n</html>";
+    }
 }
 
 /**
  * رندرِ یک فهرستِ صریح از کامپوننت‌ها (بدونِ نیاز به ردیفِ pages) — برای مسیرهای
- * ویژه‌ی شعبه مثلِ /{branch}/network که محتوایشان از pages نمی‌آید.
+ * ویژه‌ی شعبه یا حالت فال‌بکِ هوشمند
  */
 function render_branch_components(PDO $pdo, array $components, string $branchSlug, string $branchName, string $title): void
 {
-    echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
-    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-    echo '<title>' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . "</title>\n";
-    echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
-    echo "</head>\n<body>\n";
+    $pageTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+
+    $hasHeader = false;
+    foreach ($components as $c) {
+        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
+            $hasHeader = true;
+            break;
+        }
+    }
+
+    if (!$hasHeader) {
+        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+        echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+        echo '<title>' . $pageTitle . "</title>\n";
+        echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
+        echo "</head>\n<body>\n";
+    }
+
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
-    echo_components($components);
-    echo "\n</body>\n</html>";
+
+    echo_components($components, $pageTitle);
+
+    if (!$hasHeader) {
+        echo "\n</body>\n</html>";
+    }
 }
 
-/** حلقه‌ی مشترکِ echo‌کردنِ کامپوننت‌ها (با جایگزینیِ {{imageN}}). */
-function echo_components(array $components): void
+/** حلقه‌ی مشترکِ رندر کردنِ کامپوننت‌ها (با اجرای صحیح PHP و جایگزینی {{imageN}}). */
+function echo_components(array $components, string $pageTitle = 'مکسا'): void
 {
+    global $pdo;
     foreach ($components as $component) {
-        $componentPath = __DIR__ . '/components/' . $component . '/component.php';
-        if (is_string($component) && file_exists($componentPath)) {
-            $code = file_get_contents($componentPath);
-            $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) use ($component) {
-                return '/dashboard/components/' . rawurlencode($component) . '/images/' . $m[1] . '.png';
+        $cleanComponent = trim((string)$component);
+        $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
+
+        // حل نام‌های چندکلمه‌ای مانند "heroindex ikhc"
+        if (!file_exists($componentPath) && strpos($cleanComponent, ' ') !== false) {
+            $parts = explode(' ', $cleanComponent);
+            if (file_exists(__DIR__ . '/components/' . $parts[1] . $parts[0] . '/component.php')) {
+                $cleanComponent = $parts[1] . $parts[0];
+                $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
+            } elseif (file_exists(__DIR__ . '/components/' . $parts[0] . '/component.php')) {
+                $cleanComponent = $parts[0];
+                $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
+            }
+        }
+
+        if (file_exists($componentPath)) {
+            ob_start();
+            include $componentPath;
+            $code = ob_get_clean();
+
+            $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) use ($cleanComponent) {
+                return '/dashboard/components/' . rawurlencode($cleanComponent) . '/images/' . $m[1] . '.png';
             }, $code);
             echo $code;
         } else {
-            echo '<!-- Component not found -->';
+            echo '<!-- Component not found: ' . htmlspecialchars($cleanComponent, ENT_QUOTES, 'UTF-8') . ' -->';
         }
     }
 }

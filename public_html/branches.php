@@ -147,8 +147,8 @@ require __DIR__ . '/dashboard/components/header/component.php';
             $isHq  = !empty($b['is_hq']);
             $name  = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
             $slug  = trim((string)($b['slug'] ?? ''));
-            // شعب (غیر از دفتر مرکزی) به صفحه‌ی خانه‌ی شعبه لینک می‌شوند.
-            $href  = (!$isHq && $slug !== '') ? '/' . rawurlencode($slug) : '';
+            // شعب به صفحه‌ی خانه‌ی شعبه و دفتر مرکزی به صفحه‌ی اصلی لینک می‌شوند.
+            $href  = $isHq ? '/home' : ($slug !== '' ? '/' . rawurlencode($slug) : '');
             $tag   = $isHq ? 'دفتر مرکزی' : 'شعبه';
             $tagCls = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
             $el    = $href !== '' ? 'a' : 'div';
