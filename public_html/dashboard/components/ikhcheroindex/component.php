@@ -1378,6 +1378,7 @@
                       <a href="/organizationalchart">چارت سازمانی</a>
                       <a href="/headdirectors.html">شورای عالی</a>
                       <a href="/directors.html">هیئت مدیره</a>
+<<<<<<< HEAD
                       <a href="/CEOoffice">مدیرعامل</a>
                     </div>
                     <div class="mega-col">
@@ -1390,6 +1391,11 @@
                       <a href="/dietitianspage.html">متخصصین تغذیه</a>
                       <a href="/physiotherapistspage.html">متخصصین توانبخشی</a>
                       <a href="/geneticistspage.html">مشاوران ژنتیک و غربالگری</a>
+=======
+                      <a href="/CEOoffice.html">مدیرعامل</a>
+                      <a href="/geneticistspage.html">کادر اداری</a>
+                      <a href="/doctorspage.html">کادر درمان</a>
+>>>>>>> f0a5aa7 (feat: add header, heroindex, and ikhcheroindex dashboard components)
                     </div>
                     <div class="mega-col">
                       <h6>مراکز تابعه مکسا</h6>
