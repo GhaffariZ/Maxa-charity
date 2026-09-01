@@ -1,20 +1,4 @@
-<?php
-$allStories = [];
-try {
-    if (!isset($pdo) || !$pdo) {
-        require_once __DIR__ . '/../../core/database.php';
-    }
-    if (isset($pdo) && $pdo) {
-        $stStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status`='published' ORDER BY `sort_order` ASC, `id` DESC");
-        if ($stStmt) {
-            $allStories = $stStmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-    }
-} catch (Throwable $e) {
-    $allStories = [];
-}
-?>
-<section class="pro-stories" dir="rtl">
+<section class="pro-stories" dir="rtl" data-component="macsa-stories-details">
 
   <div class="ps-global-bg"></div>
 
@@ -27,7 +11,7 @@ try {
     </h2>
 
     <!-- FILTERS -->
-    <div class="ps-filters">
+    <div class="ps-filters" id="psFilters">
       <button class="active" data-filter="all">همه</button>
       <button data-filter="کادر درمان">روایت کادر درمان</button>
       <button data-filter="بهبودی">زندگی پس از بهبودی</button>
@@ -37,38 +21,47 @@ try {
     </div>
 
     <!-- STORIES GRID -->
-    <div class="ps-grid">
-      <?php if (!empty($allStories)): ?>
-        <?php foreach ($allStories as $story): ?>
-          <div class="ps-card" data-category="<?= htmlspecialchars($story['tag']) ?>">
-            <span class="ps-tag"><?= htmlspecialchars($story['tag'] ?: 'روایت امید') ?></span>
-            <h3><?= htmlspecialchars($story['title']) ?></h3>
-            <div style="font-size:13px;color:#0899A9;font-weight:700;margin-bottom:8px">
-              <?= htmlspecialchars($story['narrator_name']) ?>
-              <?php if (!empty($story['narrator_role'])): ?>
-                <span style="font-weight:400;color:#777;font-size:11.5px"> - <?= htmlspecialchars($story['narrator_role']) ?></span>
-              <?php endif; ?>
-            </div>
-            <p><?= htmlspecialchars($story['excerpt'] ?: mb_substr(strip_tags($story['content']), 0, 150, 'UTF-8') . '...') ?></p>
-            <div class="ps-footer">
-              <span class="ps-time"><?= htmlspecialchars($story['read_time'] ?: '۴ دقیقه مطالعه') ?></span>
-              <a href="/macsa-story.php?id=<?= $story['id'] ?>" class="ps-read">
-                خواندن روایت
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-                </svg>
-              </a>
-            </div>
+    <div class="ps-grid" id="psStoriesGrid">
+      <div class="ps-loading">در حال بارگذاری روایت‌های امید مکسا...</div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function(){
+  const grid = document.getElementById("psStoriesGrid");
+  const filterContainer = document.getElementById("psFilters");
+  if (!grid) return;
+
+  let allStoriesData = [];
+  let activeFilter = "all";
+
+  function renderStories(stories) {
+    if (!stories || stories.length === 0) {
+      grid.innerHTML = '<div class="ps-empty">روایتی در این دسته‌بندی یافت نشد.</div>';
+      return;
+    }
+
+    grid.innerHTML = stories.map(story => {
+      const excerpt = (story.excerpt || story.content || '').trim();
+      const shortExcerpt = excerpt.length > 150 ? excerpt.slice(0, 150) + '...' : excerpt;
+      const roleText = story.narrator_role ? `<span class="ps-narrator-role"> - ${escapeHtml(story.narrator_role)}</span>` : '';
+      const readTime = story.read_time || '۴ دقیقه مطالعه';
+      const tagText = story.tag || 'روایت امید';
+
+      return `
+        <div class="ps-card" data-category="${escapeHtml(tagText)}">
+          <span class="ps-tag">${escapeHtml(tagText)}</span>
+          <h3>${escapeHtml(story.title)}</h3>
+          <div class="ps-narrator-info">
+            <span class="ps-narrator-name">${escapeHtml(story.narrator_name)}</span>
+            ${roleText}
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="ps-card" data-category="کادر درمان">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی</h3>
-          <p>سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود ...</p>
+          <p>${escapeHtml(shortExcerpt)}</p>
           <div class="ps-footer">
-            <span class="ps-time">۴ دقیقه مطالعه</span>
-            <a href="/macsa-story.php" class="ps-read">
+            <span class="ps-time">${escapeHtml(readTime)}</span>
+            <a href="/macsa-story.php?id=${story.id}" class="ps-read">
               خواندن روایت
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -76,66 +69,89 @@ try {
             </a>
           </div>
         </div>
-      <?php endif; ?>
-    </div>
-
-  </div>
-</section>
-
-<!-- Public Reader Modal -->
-<div id="psStoryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:24px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:32px;box-shadow:0 20px 50px rgba(0,0,0,0.3);position:relative;font-family:'Vazirmatn',sans-serif;direction:rtl;text-align:right;">
-    <button type="button" onclick="closeFullStoryModal()" style="position:absolute;top:20px;left:20px;background:none;border:none;cursor:pointer;font-size:24px;color:#888;">✕</button>
-    <span id="mTag" style="display:inline-block;padding:4px 12px;border-radius:12px;background:#f3a21b;color:#fff;font-size:12px;font-weight:700;margin-bottom:12px"></span>
-    <h2 id="mTitle" style="font-size:22px;font-weight:800;color:#1d2b2d;margin-bottom:8px;line-height:1.5"></h2>
-    <div id="mAuthor" style="font-size:13.5px;color:#0899A9;font-weight:700;margin-bottom:20px"></div>
-    <div id="mContent" style="font-size:15px;line-height:2.2;color:#444;white-space:pre-wrap;border-top:1px solid #eee;padding-top:18px"></div>
-    <div style="margin-top:24px;text-align:left">
-      <button type="button" onclick="closeFullStoryModal()" style="padding:10px 24px;border-radius:12px;background:#0899A9;color:#fff;border:none;font-family:inherit;font-weight:700;cursor:pointer;">بستن روایت</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  function showFullStoryModal(story) {
-    document.getElementById('mTag').textContent = story.tag || 'روایت امید';
-    document.getElementById('mTitle').textContent = story.title || '';
-    document.getElementById('mAuthor').textContent = (story.narrator_name || '') + (story.narrator_role ? ' (' + story.narrator_role + ')' : '');
-    document.getElementById('mContent').textContent = story.content || story.excerpt || '';
-    document.getElementById('psStoryModal').style.display = 'flex';
-  }
-  function closeFullStoryModal() {
-    document.getElementById('psStoryModal').style.display = 'none';
+      `;
+    }).join('');
   }
 
-  // Filtering Logic
-  const filterBtns = document.querySelectorAll(".ps-filters button");
-  const pCards = document.querySelectorAll(".ps-card");
+  function applyFilter() {
+    if (activeFilter === "all") {
+      renderStories(allStoriesData);
+    } else {
+      const filtered = allStoriesData.filter(s => {
+        const tag = (s.tag || '');
+        return tag.includes(activeFilter);
+      });
+      renderStories(filtered);
+    }
+  }
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+  function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
-      const filter = btn.dataset.filter;
+  // Fetch stories from API
+  fetch('/api-stories.php')
+    .then(res => res.json())
+    .then(json => {
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        allStoriesData = json.data;
+      } else {
+        allStoriesData = [
+          {
+            id: 1,
+            title: "زندگی تا آخرین لحظه",
+            narrator_name: "دکتر زهرا جعفری",
+            narrator_role: "روانشناس مراقبت درمنزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...",
+            read_time: "۴ دقیقه مطالعه"
+          },
+          {
+            id: 2,
+            title: "وقتی نوشتن، درمان است",
+            narrator_name: "آقای جواد چنگی",
+            narrator_role: "روانشناس مراقبت در منزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد...",
+            read_time: "۴ دقیقه مطالعه"
+          },
+          {
+            id: 3,
+            title: "از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی",
+            narrator_name: "آقای علی یزدانی",
+            narrator_role: "مددکار اجتماعی مراقبت در منزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود...",
+            read_time: "۵ دقیقه مطالعه"
+          }
+        ];
+      }
+      applyFilter();
+    })
+    .catch(() => {
+      grid.innerHTML = '<div class="ps-empty">خطا در برقراری ارتباط با پایگاه داده روایات.</div>';
+    });
 
-      pCards.forEach(card => {
-        const cat = card.dataset.category || '';
-        if(filter === "all" || cat.includes(filter)){
-          card.style.display = "flex";
-        } else {
-          card.style.display = "none";
-        }
+  // Filter Buttons
+  if (filterContainer) {
+    const btns = filterContainer.querySelectorAll("button");
+    btns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        btns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter || "all";
+        applyFilter();
       });
     });
-  });
+  }
+})();
 </script>
-      });
-
-    });
-  });
-</script>
-
 
 <style>
 /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -232,7 +248,7 @@ try {
 /* GRID */
 .ps-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
   gap:28px;
 }
 
@@ -240,8 +256,8 @@ try {
 .ps-card {
   backdrop-filter:blur(22px);
   -webkit-backdrop-filter:blur(22px);
-  background:rgba(255,255,255,.55);
-  border:1px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(255,255,255,.6);
   padding:26px;
   border-radius:20px;
 
@@ -294,12 +310,26 @@ try {
   z-index:1;
 }
 
+.ps-narrator-info {
+  font-size: 13px;
+  color: #0899A9;
+  font-weight: 700;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+.ps-narrator-role {
+  font-weight: 400;
+  color: #6b7c80;
+  font-size: 12px;
+}
+
 /* CONTENT */
 .ps-card h3 {
   font-size:18px;
   line-height:1.7;
   color:#1d2b2d;
-  margin-bottom:10px;
+  margin-bottom:8px;
   position:relative;
   z-index:1;
 }
@@ -350,6 +380,14 @@ try {
 .ps-time{
   font-size:13px;
   color:#889;
+}
+
+.ps-loading, .ps-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #889;
+  font-size: 14px;
+  grid-column: 1 / -1;
 }
 
 /* responsive */
