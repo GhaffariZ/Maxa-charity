@@ -1,7 +1,6 @@
-<section class="travel-stats-section">
+<section class="travel-stats-section" dir="rtl">
 
 <div class="travel-box">
-
 
 <div class="travel-stats-container">
 
@@ -17,25 +16,25 @@
 </p>
 </div>
 
-<div class="travel-stats-top">
+<div class="travel-stats-grid">
 
 <div class="travel-stat">
-<div class="travel-number" data-target="110392">0</div>
+<div class="travel-number" data-target="110392">۰</div>
 <div class="travel-label">جذب کمک های مردمی</div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="16">0</div>
+<div class="travel-number" data-target="16">۰</div>
 <div class="travel-label">سال فعالیت</div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="690000">0</div>
+<div class="travel-number" data-target="690000">۰</div>
 <div class="travel-label">خدمات مکسا</div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="59000">0</div>
+<div class="travel-number" data-target="59000">۰</div>
 <div class="travel-label">تعداد کل بیماران</div>
 </div>
 
@@ -43,28 +42,30 @@
 </div>
 
 
-<!-- LEFT SIDE -->
+<!-- LEFT SIDE: Responsive SVG Map of Iran -->
 <div class="travel-left">
 
 <div class="iran-map-box">
 
-<img src="{{image1}}">
+<?php require __DIR__ . '/../branches/map-svg.php'; ?>
 
-<div class="map-marker m1"><span class="marker-label">تهران</span></div>
-<div class="map-marker m2"><span class="marker-label">مشهد</span></div>
-<div class="map-marker m3"><span class="marker-label">اصفهان</span></div>
-<div class="map-marker m4"><span class="marker-label">تبریز</span></div>
-<div class="map-marker m5"><span class="marker-label">کرمان</span></div>
-<div class="map-marker m6"><span class="marker-label">قم</span></div>
-<div class="map-marker m7"><span class="marker-label">اهواز</span></div>
-<div class="map-marker m8"><span class="marker-label">مرکز ارتباطات کشوری</span></div>
-<div class="map-marker m9"><span class="marker-label">شعبه کاشان</span></div>
-
-
+<div class="map-quick-legend">
+  <span class="mql-item">
+    <span class="mql-dot mql-dot--active"></span>
+    استان‌های دارای شعبه فعال
+  </span>
+  <span class="mql-item">
+    <span class="mql-dot mql-dot--cover"></span>
+    سایر استان‌های تحت پوشش
+  </span>
+  <a href="/branches.php" class="mql-link">مشاهده شعب مکسا &larr;</a>
 </div>
 
 </div>
 
+</div>
+
+</div>
 </div>
 </div>
 
@@ -82,302 +83,338 @@ font-weight: 100 900;
 font-style: normal;
 font-display: swap;
 }
+
 .travel-stats-section{
-padding:90px 20px;
+padding:70px 20px 80px;
 background:transparent;
 font-family:'Vazirmatn', Tahoma, sans-serif;
+direction:rtl;
 }
 
 /* box */
-
 .travel-box{
-
-max-width:1250px;
+max-width:1280px;
 margin:auto;
 position:relative;
 overflow:hidden;
-background:rgba(255,255,255,0.15);
-
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-
-border:1px solid rgba(255,255,255,0.35);
-
-padding:35px 30px 20px 30px;
-
-border-radius:22px;
-
+background:#ffffff;
+border:1px solid rgba(16,174,184,0.16);
+padding:46px 40px;
+border-radius:28px;
 box-shadow:
-0 20px 40px rgba(0,0,0,.08),
-inset 0 1px 0 rgba(255,255,255,.6);
-
+0 20px 50px rgba(0,0,0,.04),
+0 2px 8px rgba(0,0,0,.02);
 color:#0f5f63;
-
 }
 
-.travel-box::before{
-content:"";
-position:absolute;
-top:0;
-left:0;
-right:0;
-height:60px;
-
-background:linear-gradient(
-to bottom,
-rgba(255,255,255,.45),
-rgba(255,255,255,0)
-);
-
-border-radius:22px 22px 0 0;
-pointer-events:none;
-}
-/* header */
-.travel-header{
-text-align:center;
-margin-bottom:55px;   /* قبلا 35 بود */
-}
-
-.travel-header h2{
-font-size:40px;
-margin-bottom:8px;
-font-weight:700;
-}
-
-.travel-header p{
-opacity:.9;
-font-size:22px;
-color:#0F6F73;   /* teal تیره */
-font-weight:500;
-
-text-align:center;
-max-width:820px;   /* باعث می‌شود متن در دو خط قرار بگیرد */
-margin:10px auto 0 auto;
-line-height:1.8;
-}
-
-/* stats */
-
-.travel-stats-top{
-display:flex;
-justify-content:center;
-gap:60px;
-text-align:center;
-flex-wrap:wrap;
-
-margin-top:10px;
-margin-bottom:25px;
-}
-
-.travel-stat{
-min-width:160px;
-}
-
-.travel-number{
-font-size:38px;
-font-weight:700;
-color:#0f6e72;
-}
-
-.travel-label{
-font-size:14px;
-color:#3c6e71;
-}
-
-/* map */
-
-.iran-map-box{
-position:relative;
-max-width:1000px;   /* بین 900 و 1100 */
-margin:0 auto -15px auto;
-}
-
-.iran-map-img{
-width:100%;
-opacity:.22;
-transform:scale(1.04);   /* قبلا 1.15 بود */
-transform-origin:center;
-}
-
-/* markers */
-
-.map-marker{
-position:absolute;
-width:14px;
-height:14px;
-background:#FFBF00;
-border-radius:50%;
-box-shadow:0 0 0 8px rgba(255,255,255,.15);
-}
-
-.map-marker::after{
-content:"";
-position:absolute;
-width:30px;
-height:30px;
-border-radius:50%;
-border:1px solid rgba(255,255,255,.4);
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-animation:pulse 3s infinite;
-}
-
-/* label */
-
-.marker-label{
-position:absolute;
-top:-38px;
-left:50%;
-transform:translateX(-50%);
-background:#fff;
-color:#333;
-padding:6px 12px;
-border-radius:8px;
-font-size:13px;
-white-space:nowrap;
-box-shadow:0 4px 12px rgba(0,0,0,.15);
-}
-
-.marker-label::after{
-content:"";
-position:absolute;
-bottom:-6px;
-left:50%;
-transform:translateX(-50%);
-border-width:6px;
-border-style:solid;
-border-color:#fff transparent transparent transparent;
-}
 .travel-content{
 display:flex;
 align-items:center;
 justify-content:space-between;
-gap:40px;
+gap:48px;
 }
 
 .travel-right{
-flex:1;
+flex:1 1 500px;
+min-width:0;
 text-align:right;
 }
 
 .travel-left{
-flex:1;
+flex:1 1 560px;
+min-width:0;
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
+}
+
+/* header */
+.travel-header{
+margin-bottom:34px;
+}
+
+.travel-header h2{
+font-size:clamp(26px, 3.2vw, 36px);
+margin:0 0 14px 0;
+font-weight:900;
+color:#063a3c;
+line-height:1.3;
+}
+
+.travel-header p{
+font-size:15.5px;
+line-height:1.9;
+color:#4a6b6d;
+font-weight:500;
+margin:0;
+max-width:580px;
+}
+
+/* stats grid */
+.travel-stats-grid{
+display:grid;
+grid-template-columns:repeat(2, minmax(0, 1fr));
+gap:18px;
+margin-top:20px;
+}
+
+.travel-stat{
+background:#f8fbfb;
+border:1px solid #e2f0ef;
+border-radius:18px;
+padding:22px 20px;
 text-align:center;
+transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
-
-/* animation */
-
-@keyframes pulse{
-0%{transform:translate(-50%,-50%) scale(.5);opacity:.7}
-100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}
+.travel-stat:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 28px rgba(0,123,122,.09);
+border-color:#10aeb8;
 }
 
-/* marker positions */
-
-.m1{top:35%;left:40%;}
-.m2{top:30%;left:70%;}
-.m3{top:50%;left:50%;}
-.m4{top:20%;left:15%;}
-.m5{top:58%;left:62%;}
-.m6{top:40%;left:35%;}
-.m7{top:55%;left:25%;}
-.m8{top:68%;left:17%;}
-.m9{top:42%;left:45%;}
-
-/* responsive */
-
-@media(max-width:900px){
-
-.travel-stats-top{
-gap:30px;
+.travel-number{
+font-size:clamp(28px, 3vw, 38px);
+font-weight:900;
+color:#007b7a;
+line-height:1.2;
+margin-bottom:6px;
+letter-spacing:-0.5px;
 }
 
+.travel-label{
+font-size:14px;
+font-weight:600;
+color:#5a7375;
+}
+
+/* map */
 .iran-map-box{
 width:100%;
+position:relative;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.iran-map-box #Iran{
+display:block;
+width:100%;
+max-width:560px;
+height:auto;
+margin:0 auto;
+transform:none;
+filter:drop-shadow(0 8px 20px rgba(0,123,122,.06));
+}
+
+/* Map SVG styling */
+.iran-map-box #Iran a path,
+.iran-map-box #Iran a polygon{
+fill:#f4a61e;
+stroke:#d98c0a;
+stroke-width:0.9;
+transition:fill .2s ease, filter .2s ease, transform .2s ease;
+transform-box:fill-box;
+transform-origin:center;
+cursor:pointer;
+}
+
+.iran-map-box #Iran a path.is-active,
+.iran-map-box #Iran path.is-active{
+fill:#10aeb8;
+stroke:#006665;
+}
+
+.iran-map-box #Iran a:hover path,
+.iran-map-box #Iran a:hover polygon{
+fill:#e0900c;
+filter:drop-shadow(0 4px 8px rgba(217,140,10,.45));
+}
+
+.iran-map-box #Iran a:hover path.is-active{
+fill:#007b7a;
+filter:drop-shadow(0 4px 8px rgba(0,102,101,.35));
+}
+
+.iran-map-box #Iran text{
+font-family:'Vazirmatn', sans-serif;
+fill:#004d4c;
+font-weight:600;
+pointer-events:none;
+}
+
+.iran-map-box #Iran line{
+stroke:#006665;
+}
+
+/* Quick Legend */
+.map-quick-legend{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:16px 22px;
+flex-wrap:wrap;
+margin-top:16px;
+padding-top:14px;
+border-top:1px dashed #e2e8ea;
+width:100%;
+font-size:13px;
+color:#4a6b6d;
+}
+
+.mql-item{
+display:inline-flex;
+align-items:center;
+gap:7px;
+font-weight:600;
+}
+
+.mql-dot{
+width:13px;
+height:13px;
+border-radius:4px;
+display:inline-block;
+}
+
+.mql-dot--active{
+background:#10aeb8;
+border:1px solid #007b7a;
+}
+
+.mql-dot--cover{
+background:#f4a61e;
+border:1px solid #d98c0a;
+}
+
+.mql-link{
+color:#007b7a;
+text-decoration:none;
+font-weight:700;
+transition:color .2s, transform .2s;
+display:inline-flex;
+align-items:center;
+gap:4px;
+}
+
+.mql-link:hover{
+color:#f4a61e;
+transform:translateX(-3px);
+}
+
+/* Responsive */
+@media(max-width:992px){
+.travel-box{
+padding:36px 24px;
+border-radius:22px;
 }
 
 .travel-content{
 flex-direction:column;
+gap:36px;
 }
 
 .travel-right{
 text-align:center;
+flex:1 1 100%;
+width:100%;
 }
 
-.travel-stats-top{
-justify-content:center;
+.travel-header p{
+margin:0 auto;
 }
 
-  .marker-label{
-    display:inline-block !important;
-    width:auto !important;
-    max-width:none !important;
-    white-space:nowrap !important;
-    font-size:14px !important;
-    padding:8px 14px !important;
-    border-radius:10px !important;
-  }
-
-  .marker-label::after{
-    bottom:-8px !important;
-    border-width:7px !important;
-  }
-
+.travel-left{
+flex:1 1 100%;
+width:100%;
 }
-  body {
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
 
+.iran-map-box #Iran{
+max-width:480px;
+}
+}
+
+@media(max-width:600px){
+.travel-stats-section{
+padding:40px 14px 60px;
+}
+
+.travel-box{
+padding:26px 16px;
+border-radius:18px;
+}
+
+.travel-stats-grid{
+grid-template-columns:repeat(2, minmax(0, 1fr));
+gap:12px;
+}
+
+.travel-stat{
+padding:16px 10px;
+border-radius:14px;
+}
+
+.travel-number{
+font-size:24px;
+}
+
+.travel-label{
+font-size:12px;
+}
+
+.iran-map-box #Iran{
+max-width:100%;
+}
+
+.map-quick-legend{
+font-size:12px;
+gap:10px 14px;
+}
+}
 </style>
+
 <script>
-document.addEventListener("DOMContentLoaded",function(){
+document.addEventListener("DOMContentLoaded", function(){
+  const counters = document.querySelectorAll(".travel-stats-section .travel-number");
+  if (!counters.length) return;
 
-const counters=document.querySelectorAll(".travel-number");
+  const startCounter = (counter) => {
+    const target = parseInt(counter.dataset.target, 10);
+    if (isNaN(target)) return;
 
-const startCounter=(counter)=>{
+    const duration = 1800; // ms
+    const startTime = performance.now();
 
-const target=parseInt(counter.dataset.target);
-let count=0;
+    const updateCount = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentVal = Math.floor(ease * target);
+      
+      counter.innerText = currentVal.toLocaleString('fa-IR');
 
-const speed=20;
-const step=Math.ceil(target/120);
+      if (progress < 1) {
+        requestAnimationFrame(updateCount);
+      } else {
+        counter.innerText = target.toLocaleString('fa-IR');
+      }
+    };
 
-const timer=setInterval(()=>{
+    requestAnimationFrame(updateCount);
+  };
 
-count+=step;
+  const section = document.querySelector(".travel-stats-section");
+  if (!section) return;
 
-if(count>=target){
-counter.innerText=target;
-clearInterval(timer);
-}else{
-counter.innerText=count;
-}
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        counters.forEach((counter) => startCounter(counter));
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
 
-},speed);
-
-};
-
-const observer=new IntersectionObserver(entries=>{
-entries.forEach(entry=>{
-if(entry.isIntersecting){
-
-counters.forEach(counter=>{
-startCounter(counter);
-});
-
-observer.disconnect();
-
-}
-});
-});
-
-observer.observe(document.querySelector(".travel-stats-section"));
-
+  observer.observe(section);
 });
 </script>
