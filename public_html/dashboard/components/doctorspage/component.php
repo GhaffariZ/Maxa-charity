@@ -666,7 +666,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 0;
         }
 
         .rpw-item {
@@ -1083,10 +1083,6 @@
                                 <span class="rpw-item-tag">تیم جامع MDT</span>
                             </div>
                         </div>
-
-                        <a href="/network.php?role=treatment" class="rpw-footer-link">
-                            <span>ورود به سامانه و مرور رزومه‌ها ←</span>
-                        </a>
                     </div>
                 </div>
             </section>
