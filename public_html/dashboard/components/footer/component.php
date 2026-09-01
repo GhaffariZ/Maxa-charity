@@ -85,15 +85,10 @@
       </svg>
     </a>
     <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="gf-social-bale" aria-label="بله">
-      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2.1 21.9l4.98-1.24C8.52 21.48 10.2 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1.65 4.8c1.3 0 2.35 1.05 2.35 2.35 0 .88-.49 1.64-1.21 2.03.4.45.66 1.04.66 1.7 0 1.41-1.14 2.55-2.55 2.55s-2.55-1.14-2.55-2.55c0-1.23.87-2.26 2.03-2.49-.08-.43.08-.88.42-1.17.47-.41.65-.96.65-1.42 0-.55-.45-1-.8-1-.44 0-.8.36-.8.8 0 .44-.36.8-.8.8s-.8-.36-.8-.8c0-1.33 1.07-2.4 2.4-2.4z"/>
-        <circle cx="10.8" cy="14.8" r="1.6"/>
-      </svg>
+      <img src="/dashboard/components/footer/images/bale.png" alt="بله">
     </a>
     <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="gf-social-aparat" aria-label="آپارات">
-      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
-        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2.4a7.6 7.6 0 1 1 0 15.2 7.6 7.6 0 0 1 0-15.2zm-3.6 3.6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7.2 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-3.6 3.6a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4zm-3.6 3.6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7.2 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-      </svg>
+      <img src="/dashboard/components/footer/images/aparat.png" alt="آپارات">
     </a>
     <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="gf-social-linkedin" aria-label="لینکدین">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -101,9 +96,7 @@
       </svg>
     </a>
     <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="gf-social-eitaa" aria-label="ایتا">
-      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
-        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.6 6.3c-.2.8-1 3.2-2.9 5.3-1.8 2-3.8 3-5.8 3-1.6 0-2.8-.8-2.8-2.2 0-2 2.1-4 5.2-4.9 1.4-.4 2.7-.6 3.9-.7.1-.7.2-1.3.2-1.8 0-1.5-.8-2.3-2.2-2.3-1.1 0-2.2.4-3.1 1.2-.3.2-.7.2-.9-.1-.2-.3-.2-.7.1-.9 1.1-1 2.5-1.5 4.1-1.5 2.3 0 3.5 1.2 3.5 3.5 0 .7-.1 1.4-.2 2.1zm-2.4 2.2c-1 .1-2.1.3-3.2.6-2.4.8-3.8 2.1-3.8 3.4 0 .7.5 1.1 1.4 1.1 1.5 0 3.2-.9 4.7-2.5.9-1 1.5-2 1.7-2.9-.3.1-.5.2-.8.3z"/>
-      </svg>
+      <img src="/dashboard/components/footer/images/eitaa.png" alt="ایتا">
     </a>
   </div>
 
@@ -485,6 +478,14 @@ body {
   transition: transform 0.25s ease;
 }
 
+.gf-social a img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
 .gf-social a:hover {
   transform: translateY(-4px);
   color: #ffffff;
@@ -492,7 +493,8 @@ body {
   box-shadow: 0 12px 26px rgba(0,0,0,0.18);
 }
 
-.gf-social a:hover svg {
+.gf-social a:hover svg,
+.gf-social a:hover img {
   transform: scale(1.12);
 }
 
