@@ -16,10 +16,10 @@
 <div class="gf-col">
 <h4>آشنایی با مکسا</h4>
 <ul>
-<li><a href="index.html">صفحه اصلی</a></li>
-<li><a href="history.html">درباره ما</a></li>
-<li><a href="MACSAservices.html">صفحات خدمات</a></li>
-<li><a href="publicparticipation.html">روش های حمایت</a></li>
+<li><a href="/home">صفحه اصلی</a></li>
+<li><a href="/history">درباره ما</a></li>
+<li><a href="/MACSAservices.html">صفحات خدمات</a></li>
+<li><a href="/single-fundraising-option">روش های حمایت</a></li>
 </ul>
 </div>
 
@@ -28,8 +28,8 @@
 <div class="gf-col">
 <h4>ارتباط با مکسا</h4>
 <ul>
-<li><a href="branches.html">شعب</a></li>
-<li><a href="#">مرکز ارتباطات کشوری</a></li>
+<li><a href="/branches.php">شعب</a></li>
+<li><a href="/contact-center">مرکز ارتباطات کشوری</a></li>
 <li><a href="/contactus">تماس با ما</a></li>
 
 </ul>
