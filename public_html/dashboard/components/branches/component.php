@@ -171,26 +171,26 @@
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.06));
 }
 
-/* مرزها و شکل استان‌ها — طراحی ملایم و چشم‌نواز */
+/* مرزها و شکل استان‌ها — تفکیک واضح و چشم‌نواز */
 #Iran .province-shape {
   stroke-linejoin: round !important;
   stroke-linecap: round !important;
-  transition: fill 0.2s ease, filter 0.2s ease, stroke 0.2s ease;
+  transition: fill 0.2s ease, filter 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
 }
 
-/* استان‌های غیرفعال (زرد گرم برند مکسا) — بدون هاور و بدون کلیک با مرز نرم */
+/* استان‌های غیرفعال (زرد اصیل مکسا) — بدون هاور و بدون کلیک با خط مرزی واضح */
 #Iran .province-shape.is-inactive,
 #Iran g.is-inactive path,
 #Iran g.is-inactive polygon {
   fill: #f4a61e !important;
-  stroke: #d9820a !important;
-  stroke-width: 0.75 !important;
+  stroke: #b86a00 !important;
+  stroke-width: 1.05 !important;
   cursor: default !important;
   pointer-events: none !important;
   filter: none !important;
 }
 
-/* استان‌های فعال (آبی فیروزه‌ای شاخص مکسا) — دارای هاور و کلیک */
+/* استان‌های فعال (فیروزه‌ای شاخص مکسا) — دارای هاور و کلیک با خط مرزی مشخص */
 #Iran a.province-link {
   cursor: pointer;
   outline: none;
@@ -198,18 +198,18 @@
 
 #Iran a.province-link .province-shape.is-active {
   fill: #007b7a !important;
-  stroke: #004d4c !important;
-  stroke-width: 1.1 !important;
+  stroke: #004544 !important;
+  stroke-width: 1.25 !important;
   cursor: pointer !important;
-  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.28));
+  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3));
 }
 
 #Iran a.province-link:hover .province-shape.is-active,
 #Iran a.province-link:focus-visible .province-shape.is-active {
   fill: #10aeb8 !important;
-  stroke: #003635 !important;
-  stroke-width: 1.3 !important;
-  filter: drop-shadow(0 6px 14px rgba(0, 123, 122, 0.45)) !important;
+  stroke: #002d2c !important;
+  stroke-width: 1.6 !important;
+  filter: drop-shadow(0 8px 18px rgba(16, 174, 184, 0.5)) !important;
 }
 
 #Iran a.province-link:active .province-shape.is-active {

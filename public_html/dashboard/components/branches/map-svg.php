@@ -10,28 +10,28 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg">
 <style type="text/css">
-/* Map Base & Soft Refined Separations */
+/* Map Base & Clear Refined Separations */
 .province-shape {
   stroke-linejoin: round !important;
   stroke-linecap: round !important;
-  transition: fill 0.22s ease, stroke 0.22s ease, filter 0.22s ease;
+  transition: fill 0.22s ease, stroke 0.22s ease, stroke-width 0.22s ease, filter 0.22s ease;
 }
 
-/* Inactive Provinces: Warm Amber Yellow — Soft Subtle Border with Ideal Contrast */
+/* Inactive Provinces: Authentic Maxa Amber Yellow with Clear Distinct Border */
 .province-shape.is-inactive,
 g.is-inactive,
 g.is-inactive path,
 g.is-inactive polygon {
   fill: #f4a61e !important;
-  stroke: #d07d07 !important;
-  stroke-width: 0.8 !important;
+  stroke: #b86a00 !important;
+  stroke-width: 1.05 !important;
   cursor: default !important;
   pointer-events: none !important;
   user-select: none !important;
   filter: none !important;
 }
 
-/* Active Provinces: Vibrant Maxa Teal/Blue — Soft Border, Interactive with Hover */
+/* Active Provinces: Authentic Maxa Turquoise/Teal with Clear Border */
 a.province-link {
   cursor: pointer !important;
   pointer-events: auto !important;
@@ -40,20 +40,20 @@ a.province-link {
 }
 a.province-link .province-shape.is-active {
   fill: #007b7a !important;
-  stroke: #004b4a !important;
-  stroke-width: 1.0 !important;
+  stroke: #004544 !important;
+  stroke-width: 1.25 !important;
   cursor: pointer !important;
-  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.28));
+  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3));
 }
 a.province-link:hover .province-shape.is-active,
 a.province-link:focus-visible .province-shape.is-active {
-  fill: #0ea5e9 !important;
-  stroke: #003635 !important;
-  stroke-width: 1.3 !important;
-  filter: drop-shadow(0 6px 14px rgba(14, 165, 233, 0.55)) !important;
+  fill: #10aeb8 !important;
+  stroke: #002d2c !important;
+  stroke-width: 1.6 !important;
+  filter: drop-shadow(0 8px 18px rgba(16, 174, 184, 0.5)) !important;
 }
 a.province-link:active .province-shape.is-active {
-  fill: #0284c7 !important;
+  fill: #005958 !important;
 }
 
 /* Typography on Map */
