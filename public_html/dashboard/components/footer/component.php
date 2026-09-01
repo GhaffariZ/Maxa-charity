@@ -79,14 +79,35 @@
 <!-- پایین فوتر -->
 <div class="gf-bottom">
   <div class="gf-social">
-    <a href="#"><img src="{{ API_GET("/pigi","footer","A1").data[1].image | raw }}" alt="instagram"></a>
-    <a href="#"><img src="{{ API_GET("/pigi","footer","A1").data[2].image | raw }}" alt="eitaa"></a>
-    <a href="#"><img src="{{ API_GET("/pigi","footer","A1").data[3].image | raw }}" alt="bale"></a>
-    <a href="#"><img src="{{ API_GET("/pigi","footer","A1").data[4].image | raw }}" alt="whatsapp"></a>
+    <a href="https://www.instagram.com/macsacharity?igsi=OWlla2VxbWZqdDJl" target="_blank" rel="noopener noreferrer" class="gf-social-instagram" aria-label="اینستاگرام">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+    <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="gf-social-bale" aria-label="بله">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2.1 21.9l4.98-1.24C8.52 21.48 10.2 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 3.2c1.77 0 3.2 1.43 3.2 3.2 0 1.25-.72 2.33-1.76 2.86.34.61.56 1.3.56 2.04 0 2.32-1.88 4.2-4.2 4.2s-4.2-1.88-4.2-4.2c0-2.1 1.54-3.84 3.56-4.14C9.56 8.5 10.68 7.38 12 5.2z"/>
+      </svg>
+    </a>
+    <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="gf-social-aparat" aria-label="آپارات">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3.2c3.756 0 6.8 3.044 6.8 6.8s-3.044 6.8-6.8 6.8-6.8-3.044-6.8-6.8 3.044-6.8 6.8-6.8zm-2.8 4.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zm5.6 0a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zm-2.8 4.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6z"/>
+      </svg>
+    </a>
+    <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="gf-social-linkedin" aria-label="لینکدین">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.25c-.9 0-1.63.73-1.63 1.63 0 .9.73 1.63 1.63 1.63.9 0 1.63-.73 1.63-1.63 0-.9-.73-1.63-1.63-1.63z"/>
+      </svg>
+    </a>
+    <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="gf-social-eitaa" aria-label="ایتا">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.8 6.5l-1.95 9.2c-.15.66-.54.82-1.09.51l-2.96-2.18-1.43 1.37c-.16.16-.29.29-.6.29l.21-3.02 5.49-4.96c.24-.21-.05-.33-.37-.12l-6.79 4.28-2.92-.92c-.64-.2-.65-.64.13-.95l11.43-4.4c.53-.2 1 .12.84.86z"/>
+      </svg>
+    </a>
   </div>
 
 <div class="gf-copy">
-تمامی حقوق مادی و معنوی متعلق به موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) است.
+ تمامی حقوق مادی و معنوی متعلق به موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) است.
 </div>
 </div>
 
@@ -438,40 +459,60 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 
   border-radius: 16px;
   background: rgba(255,255,255,0.13);
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.18);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.14),
     0 10px 22px rgba(0,0,0,0.08);
 
   transition:
-    transform 0.22s ease,
-    background 0.22s ease,
-    border-color 0.22s ease;
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  color: #ffffff;
+}
+
+.gf-social a svg {
+  width: 21px;
+  height: 21px;
+  fill: currentColor;
+  display: block;
+  transition: transform 0.25s ease;
 }
 
 .gf-social a:hover {
-  transform: translateY(-3px);
-  background: rgba(255,255,255,0.20);
-  border-color: rgba(255,255,255,0.28);
+  transform: translateY(-4px);
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.45);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.18);
 }
 
-.gf-social a img {
-  width: 23px;
-  height: 23px;
-  margin: 0;
-  display: block;
-  object-fit: contain;
-  transition:
-    transform 0.22s ease,
-    opacity 0.22s ease;
+.gf-social a:hover svg {
+  transform: scale(1.12);
 }
 
-.gf-social a:hover img {
-  transform: scale(1.08);
-  opacity: 0.92;
+.gf-social a.gf-social-instagram:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+
+.gf-social a.gf-social-bale:hover {
+  background: #00B175;
+}
+
+.gf-social a.gf-social-aparat:hover {
+  background: #EA1D5D;
+}
+
+.gf-social a.gf-social-linkedin:hover {
+  background: #0077B5;
+}
+
+.gf-social a.gf-social-eitaa:hover {
+  background: #E67E22;
 }
 
 .gf-copy {

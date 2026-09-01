@@ -247,13 +247,6 @@ function getFooterHTML() {
     if (file_exists($footerFile)) {
         $code = file_get_contents($footerFile);
         $code = str_replace('{{image1}}', '/dashboard/components/footer/images/1.png', $code);
-        $socialIcons = '
-          <a href="https://instagram.com/macsacharity" target="_blank" rel="noopener" aria-label="اینستاگرام"><i class="fab fa-instagram" style="font-size: 20px; color: white;"></i></a>
-          <a href="#" aria-label="ایتا"><i class="fa-solid fa-paper-plane" style="font-size: 18px; color: white;"></i></a>
-          <a href="#" aria-label="بله"><i class="fa-solid fa-comment" style="font-size: 18px; color: white;"></i></a>
-          <a href="https://wa.me/982191092030" target="_blank" rel="noopener" aria-label="واتساپ"><i class="fab fa-whatsapp" style="font-size: 20px; color: white;"></i></a>
-        ';
-        $code = preg_replace('/<div class="gf-social">.*?<\/div>/s', '<div class="gf-social">' . $socialIcons . '</div>', $code);
         return $code;
     }
     return '';
