@@ -9,6 +9,7 @@ $csrfToken = csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>انتخاب طرح و ثبت اطلاعات</title>
+    <link rel="stylesheet" href="/font.css">
     <style>
         :root {
             --color-primary: #007b7a;
@@ -26,7 +27,7 @@ $csrfToken = csrf_token();
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
         }
 
         body {
@@ -327,20 +328,20 @@ $csrfToken = csrf_token();
     <label>طرح‌ها</label>
     <div class="image-list-vertical">
         
-        <div class="image-card" data-id="design1.jpg" data-price="150000" data-full="./happy1.jpg">
-            <img src="./happy1.jpg" alt="طرح ۱">
+        <div class="image-card" data-id="design1.jpg" data-price="150000" data-full="/dashboard/stand/happy1.jpg">
+            <img src="/dashboard/stand/happy1.jpg" alt="طرح ۱">
         </div>
         
-        <div class="image-card" data-id="design2.jpg" data-price="180000" data-full="./happy2.jpg">
-            <img src="./happy2.jpg" alt="طرح ۲"> 
+        <div class="image-card" data-id="design2.jpg" data-price="180000" data-full="/dashboard/stand/happy2.jpg">
+            <img src="/dashboard/stand/happy2.jpg" alt="طرح ۲"> 
         </div>
         
-        <div class="image-card" data-id="design3.jpg" data-price="200000" data-full="./sad1.jpg">
-            <img src="./sad1.jpg" alt="طرح ۳">
+        <div class="image-card" data-id="design3.jpg" data-price="200000" data-full="/dashboard/stand/sad1.jpg">
+            <img src="/dashboard/stand/sad1.jpg" alt="طرح ۳">
         </div>
         
-        <div class="image-card" data-id="design4.jpg" data-price="250000" data-full="./sad3.jpg">
-            <img src="./sad3.jpg" alt="طرح ۴">
+        <div class="image-card" data-id="design4.jpg" data-price="250000" data-full="/dashboard/stand/sad3.jpg">
+            <img src="/dashboard/stand/sad3.jpg" alt="طرح ۴">
         </div>
 
     </div>

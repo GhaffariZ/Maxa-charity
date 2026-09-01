@@ -97,6 +97,18 @@ RewriteCond %{THE_REQUEST} \s/+branches\.html[\s?] [NC]
 RewriteRule ^branches\.html$ /branches.php [R=301,L]
 
 # ---------------------------------------------------------
+# 0.9) سفارش استند (Stand Customize) clean URL
+#      /stand-sell-section                  -> dashboard/stand/stand-customize.php
+#      /dashboard/stand/stand-customize.php -> 301 به /stand-sell-section
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/dashboard/stand/stand-customize\.php[\s?] [NC]
+RewriteRule ^dashboard/stand/stand-customize\.php$ /stand-sell-section [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^stand-sell-section/?$ dashboard/stand/stand-customize.php [L,QSA]
+
+# ---------------------------------------------------------
 # 1) Redirect old URL
 # /dashboard/news-view.php?id=12  ->  /12/
 # ---------------------------------------------------------
