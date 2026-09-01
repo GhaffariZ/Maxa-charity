@@ -1497,7 +1497,7 @@
                     </div>
                     <div class="mega-col">
                       <h6>مراکز تابعه مکسا</h6>
-                      <a href="/CDSTMACSA.html">مرکز رویش استعدادهای دانشجویی مکسا</a>
+                      <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
                       <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
                     </div>
                     <div class="mega-col">

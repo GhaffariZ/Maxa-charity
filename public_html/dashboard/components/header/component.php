@@ -977,7 +977,6 @@
                       <a href="/headdirectors.html">شورای عالی</a>
                       <a href="/directors.html">هیئت مدیره</a>
                       <a href="/CEOoffice">مدیرعامل</a>
-                      <a href="/geneticistspage.html">کادر اداری</a>
                     </div>
                     <div class="mega-col">
                       <h6>کادر درمان</h6>
@@ -992,7 +991,7 @@
                     </div>
                     <div class="mega-col">
                       <h6>مراکز تابعه مکسا</h6>
-                      <a href="/CDSTMACSA.html">مرکز رویش استعدادهای دانشجویی مکسا</a>
+                      <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
                       <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
                     </div>
                     <div class="mega-col">
