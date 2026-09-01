@@ -1378,24 +1378,9 @@
                       <a href="/organizationalchart">چارت سازمانی</a>
                       <a href="/headdirectors.html">شورای عالی</a>
                       <a href="/directors.html">هیئت مدیره</a>
-<<<<<<< HEAD
-                      <a href="/CEOoffice">مدیرعامل</a>
-                    </div>
-                    <div class="mega-col">
-                      <h6>کادر درمان</h6>
-                      <a href="/doctorspage.html">پزشکان</a>
-                      <a href="/nursespage.html">پرستاران</a>
-                      <a href="/psychologistspage.html">روانشناسان</a>
-                      <a href="/socialworkerspage.html">مددکاران اجتماعی</a>
-                      <a href="/chaplainspage.html">مراقبین معنوی</a>
-                      <a href="/dietitianspage.html">متخصصین تغذیه</a>
-                      <a href="/physiotherapistspage.html">متخصصین توانبخشی</a>
-                      <a href="/geneticistspage.html">مشاوران ژنتیک و غربالگری</a>
-=======
                       <a href="/CEOoffice.html">مدیرعامل</a>
-                      <a href="/geneticistspage.html">کادر اداری</a>
-                      <a href="/doctorspage.html">کادر درمان</a>
->>>>>>> f0a5aa7 (feat: add header, heroindex, and ikhcheroindex dashboard components)
+                      <a href="/doctorspage">کادر درمان</a>
+                      <a href="/network.php">شبکه همکاران</a>
                     </div>
                     <div class="mega-col">
                       <h6>مراکز تابعه مکسا</h6>
