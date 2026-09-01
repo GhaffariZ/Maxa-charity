@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>صفحه در حال ساخت است | خیریه مکسا</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-teal: #007A78;
+            --primary-dark: #0A4D4C;
+            --primary-light: #169B99;
+            --accent-gold: #F2A104;
+            --accent-gold-hover: #ffb41a;
+            --accent-orange: #FF7A00;
+            --bg-gradient-start: #063837;
+            --bg-gradient-mid: #084947;
+            --bg-gradient-end: #0B5C5A;
+            --text-white: #FFFFFF;
+            --text-muted: #D1ECEB;
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif !important;
+            background: radial-gradient(circle at 50% 20%, #0d5452 0%, var(--bg-gradient-start) 60%, #042423 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            padding: 24px 16px;
+            position: relative;
+        }
+
+        /* Ambient floating orbs & grid */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: floatOrb 12s ease-in-out infinite alternate;
+        }
+        .orb-1 {
+            width: 380px;
+            height: 380px;
+            top: -80px;
+            left: -100px;
+            background: #007A78;
+        }
+        .orb-2 {
+            width: 420px;
+            height: 420px;
+            bottom: -120px;
+            right: -120px;
+            background: rgba(242, 161, 4, 0.22);
+            animation-delay: -6s;
+        }
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            top: 40%;
+            left: 65%;
+            background: rgba(22, 155, 153, 0.25);
+            animation-delay: -3s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.15); }
+        }
+
+        /* Subtle grid overlay */
+        .bg-grid-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Main Glassmorphic Container */
+        .construct-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(140%);
+            -webkit-backdrop-filter: blur(20px) saturate(140%);
+            border: 1px solid var(--glass-border);
+            padding: 44px 34px;
+            border-radius: 28px;
+            text-align: center;
+            max-width: 620px;
+            width: 100%;
+            margin: auto;
+            box-shadow: 
+                0 24px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+            z-index: 10;
+            position: relative;
+            animation: fadeInUp 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(242, 161, 4, 0.14);
+            border: 1px solid rgba(242, 161, 4, 0.35);
+            color: #FFC247;
+            font-size: 12.5px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 12px rgba(242, 161, 4, 0.1);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-gold);
+            box-shadow: 0 0 8px var(--accent-gold);
+            position: relative;
+        }
+        .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            opacity: 0.6;
+            animation: pulseWave 1.8s infinite ease-out;
+        }
+        @keyframes pulseWave {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        /* Creative Construction Illustration */
+        .visual-scene {
+            position: relative;
+            width: 180px;
+            height: 140px;
+            margin: 0 auto 24px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scene-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+        }
+
+        /* Animated SVG elements */
+        .gear-rotate-cw {
+            transform-origin: 50px 48px;
+            animation: rotateCW 10s linear infinite;
+        }
+        .gear-rotate-ccw {
+            transform-origin: 130px 45px;
+            animation: rotateCCW 8s linear infinite;
+        }
+        .helmet-bounce {
+            animation: helmetFloat 3.6s ease-in-out infinite;
+        }
+        .cone-wobble {
+            animation: coneSway 4s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+        .crane-arm {
+            transform-origin: 90px 20px;
+            animation: craneSwing 6s ease-in-out infinite alternate;
+        }
+        .crane-hook {
+            animation: hookBob 3s ease-in-out infinite;
+        }
+        .hazard-glow {
+            animation: hazardBlink 2s ease-in-out infinite;
+        }
+
+        @keyframes rotateCW {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes rotateCCW {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        @keyframes helmetFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        @keyframes coneSway {
+            0% { transform: rotate(-3deg); }
+            100% { transform: rotate(3deg); }
+        }
+        @keyframes craneSwing {
+            0% { transform: rotate(-6deg); }
+            100% { transform: rotate(6deg); }
+        }
+        @keyframes hookBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+        @keyframes hazardBlink {
+            0%, 100% { opacity: 0.9; filter: drop-shadow(0 0 6px rgba(242, 161, 4, 0.7)); }
+            50% { opacity: 0.4; filter: drop-shadow(0 0 2px rgba(242, 161, 4, 0.2)); }
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(1.45rem, 4vw, 1.95rem);
+            font-weight: 900;
+            margin-bottom: 14px;
+            color: var(--text-white);
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: clamp(0.92rem, 2.6vw, 1.05rem);
+            color: var(--text-muted);
+            line-height: 1.85;
+            margin-bottom: 28px;
+            font-weight: 400;
+        }
+
+        /* Progress Bar Preview */
+        .progress-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 30px;
+            text-align: right;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .progress-title {
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .progress-percent {
+            color: var(--accent-gold);
+            font-family: inherit;
+            direction: ltr;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 78%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary-teal), var(--accent-gold));
+            position: relative;
+            animation: fillProgress 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        @keyframes fillProgress {
+            from { width: 0%; }
+            to { width: 78%; }
+        }
+
+        .feature-pills {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .pill {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 26px;
+            border-radius: 50px;
+            font-size: 0.96rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-gold);
+            color: var(--primary-dark);
+            box-shadow: 0 6px 20px rgba(242, 161, 4, 0.32);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(242, 161, 4, 0.52);
+            background-color: var(--accent-gold-hover);
+        }
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.16);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #e53935, #c62828);
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.3);
+        }
+        .btn-accent:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(198, 40, 40, 0.45);
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(32px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 540px) {
+            body {
+                padding: 16px 12px;
+            }
+            .construct-container {
+                padding: 32px 20px;
+                border-radius: 22px;
+            }
+            .visual-scene {
+                width: 150px;
+                height: 120px;
+                margin-bottom: 18px;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                padding: 13px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient background glows -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+    <div class="bg-grid-pattern"></div>
+
+    <div class="construct-container">
+        
+        <!-- Status badge -->
+        <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span>در حال توسعه و ارتقای سامانه</span>
+        </div>
+
+        <!-- Creative Construction Scene SVG -->
+        <div class="visual-scene">
+            <svg class="scene-svg" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background Rotating Gears -->
+                <g class="gear-rotate-cw" opacity="0.45">
+                    <circle cx="50" cy="48" r="22" stroke="#169B99" stroke-width="5" stroke-dasharray="6 4" />
+                    <circle cx="50" cy="48" r="10" fill="#0A4D4C" stroke="#169B99" stroke-width="3" />
+                </g>
+                <g class="gear-rotate-ccw" opacity="0.35">
+                    <circle cx="130" cy="45" r="17" stroke="#F2A104" stroke-width="4.5" stroke-dasharray="5 3" />
+                    <circle cx="130" cy="45" r="7" fill="#0A4D4C" stroke="#F2A104" stroke-width="2.5" />
+                </g>
+
+                <!-- Construction Barrier / Floor Base -->
+                <rect x="25" y="128" width="150" height="8" rx="4" fill="#0A4D4C" stroke="rgba(255,255,255,0.15)" />
+                
+                <!-- Left Traffic Cone -->
+                <g class="cone-wobble" transform="translate(26, 88)">
+                    <!-- Cone Base -->
+                    <rect x="2" y="34" width="28" height="5" rx="2.5" fill="#E65100" />
+                    <!-- Cone Body -->
+                    <path d="M16 2 L26 34 H6 L16 2 Z" fill="#F57C00" />
+                    <!-- White Stripes -->
+                    <path d="M12.5 12 L19.5 12 L21.5 20 L10.5 20 Z" fill="#FFFFFF" opacity="0.95" />
+                    <path d="M9.5 23 L22.5 23 L24.5 29 L7.5 29 Z" fill="#FFFFFF" opacity="0.95" />
+                    <circle cx="16" cy="3" r="2" fill="#FFE082" />
+                </g>
+
+                <!-- Right Traffic Cone -->
+                <g class="cone-wobble" style="animation-delay: -2s;" transform="translate(144, 94)">
+                    <rect x="2" y="28" width="24" height="4.5" rx="2" fill="#E65100" />
+                    <path d="M14 2 L22 28 H6 L14 2 Z" fill="#F57C00" />
+                    <path d="M11 10 L17 10 L18.8 17 L9.2 17 Z" fill="#FFFFFF" opacity="0.95" />
+                    <circle cx="14" cy="3" r="1.8" fill="#FFE082" />
+                </g>
+
+                <!-- Center: Creative Worker Helmet & Modern Badge -->
+                <!-- Glowing Shield / Warning Beacon -->
+                <polygon points="100,16 138,36 138,82 100,104 62,82 62,36" fill="rgba(242,161,4,0.12)" stroke="#F2A104" stroke-width="2.5" class="hazard-glow" />
+                
+                <!-- Construction Hard Hat / Helmet -->
+                <g class="helmet-bounce">
+                    <!-- Helmet Base Arch -->
+                    <path d="M78 68 C78 48, 122 48, 122 68 C122 73, 116 76, 100 76 C84 76, 78 73, 78 68 Z" fill="#F2A104" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.3))" />
+                    <!-- Helmet Dome -->
+                    <path d="M82 66 C82 50, 118 50, 118 66 Z" fill="#FFB72B" />
+                    <!-- Helmet Crest -->
+                    <path d="M97 49 H103 V66 H97 Z" fill="#E59000" rx="1.5" />
+                    <!-- Helmet Rim -->
+                    <path d="M74 68 C74 66, 126 66, 126 68 C126 71, 74 71, 74 68 Z" fill="#FFA000" />
+                    
+                    <!-- Crossed Tools (Hammer & Wrench) -->
+                    <g transform="translate(100, 86)" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Hammer -->
+                        <line x1="-12" y1="12" x2="12" y2="-12" />
+                        <rect x="7" y="-16" width="8" height="5" rx="1" fill="#FFFFFF" transform="rotate(45 11 -13.5)" />
+                        <!-- Wrench -->
+                        <line x1="12" y1="12" x2="-12" y2="-12" stroke="#FFC247" />
+                        <circle cx="-12" cy="-12" r="3.5" fill="none" stroke="#FFC247" />
+                    </g>
+                </g>
+
+                <!-- Crane Hook Wire (Top right) -->
+                <g class="crane-hook">
+                    <line x1="165" y1="0" x2="165" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="3 2" />
+                    <path d="M165 40 C165 48, 158 48, 158 43 C158 39, 162 39, 162 42" stroke="#F2A104" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- Main Headings -->
+        <h1>این بخش در حال ساخت و توسعه است</h1>
+        <p>
+            تیم فنی و توسعه خیریه مکسا در حال آماده‌سازی و ارتقای امکانات این بخش از سایت هستند. به زودی با دسترسی کامل و خدماتی شایسته در خدمت شما نیکوکاران و همراهان گرامی خواهیم بود.
+        </p>
+
+        <!-- Progress Box -->
+        <div class="progress-box">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2A104" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <span>میزان پیشرفت آماده‌سازی:</span>
+                </div>
+                <span class="progress-percent">85%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="feature-pills">
+                <span class="pill">⚡ توسعه زیرساخت</span>
+                <span class="pill">🔒 امنیت و حفظ حریم خصوصی</span>
+                <span class="pill">✨ رابط کاربری یکپارچه</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <a href="/home" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>بازگشت به صفحه اصلی</span>
+            </a>
+
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>صفحه قبلی</span>
+            </a>
+
+            <a href="/onlinedonation" class="btn btn-accent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span>کمک و حمایت آنلاین</span>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

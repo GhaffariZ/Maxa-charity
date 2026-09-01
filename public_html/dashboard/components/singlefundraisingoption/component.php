@@ -11,49 +11,49 @@
                 <p>هرکمک، نوری در دل تاریکی است</p>
             </a>
 
-            <a href="Vows.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon vow"><i class="fa-solid fa-dove"></i></div>
                 <h3>نذورات</h3>
                 <p>با هر نذری، همراهی و امید می‌بارد</p>
             </a>
 
-            <a href="/dashboard/stand/stand-customize.php" class="support-card">
+            <a href="/stand-sell-section.php" class="support-card">
                 <div class="card-icon flower"><i class="fa-solid fa-seedling"></i></div>
                 <h3>استند تبریک و تسلیت</h3>
                 <p>هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان</p>
             </a>
 
-            <a href="piggybank.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon pig"><i class="fa-solid fa-piggy-bank"></i></div>
                 <h3>قلک مکسا</h3>
                 <p>هر سکه، رویانِ امید در دل بیماران</p>
             </a>
 
-            <a href="professionalaid.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon science"><i class="fa-solid fa-dna"></i></div>
                 <h3>حمایت های علمی و تخصصی</h3>
                 <p>با دانش، مسیر درمان را تغییر دهیم</p>
             </a>
 
-            <a href="csr.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon handshake"><i class="fa-solid fa-handshake"></i></div>
                 <h3>مسئولیت اجتماعی</h3>
                 <p>دست در دست برند شما برای همراهی بیماران مبتلا به سرطان</p>
             </a>
 
-            <a href="onlinedonation.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon art"><i class="fa-solid fa-palette"></i></div>
                 <h3>حمایت خلاقانه و هنری</h3>
                 <p>خرید کن، هدیه بده، زندگی ببخش</p>
             </a>
 
-            <a href="getinvolved.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon volunteer"><i class="fa-solid fa-people-group"></i></div>
                 <h3>حامیان و داوطلبان</h3>
                 <p>با هر قدم داوطلبانه، داستانی از شفا نوشته می‌شود</p>
             </a>
 
-            <a href="equipmentaid.html" class="support-card">
+            <a href="/under-construction.html" class="support-card">
                 <div class="card-icon medical"><i class="fa-solid fa-hospital"></i></div>
                 <h3>اهدای تجهیزات پزشکی</h3>
                 <p>ایستگاه همدلی: اهدای تجهیزات، پشتیبانی بدون کلام</p>

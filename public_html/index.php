@@ -3,6 +3,11 @@ require_once __DIR__ . "/config/database.php";
 
 $slug = trim($_GET['page'] ?? 'home');
 
+if ($slug === 'under-construction') {
+    include __DIR__ . "/under-construction.html";
+    exit;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug=? AND status='published'");
 $stmt->execute([$slug]);
 $page = $stmt->fetch();

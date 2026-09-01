@@ -1049,24 +1049,24 @@
                     <div class="mega-col">
                       <h6>همیاری مالی</h6>
                       <a href="/onlinedonation">حمایت مالی آنلاین</a>
-                      <a href="/Vows.html">نذورات</a>
-                      <a href="/piggybank.html">قلک مکسا</a>
-                      <a href="#">پرداخت مستمر هدایای نقدی</a>
+                      <a href="/under-construction.html">نذورات</a>
+                      <a href="/under-construction.html">قلک مکسا</a>
+                      <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
                     </div>
                     <div class="mega-col">
                       <h6>همیاری اجتماعی و فرهنگی</h6>
-                      <a href="/csr.html">مسئولیت اجتماعی</a>
-                      <a href="#">حمایت های خلاقانه و هنری</a>
+                      <a href="/under-construction.html">مسئولیت اجتماعی</a>
+                      <a href="/under-construction.html">حمایت های خلاقانه و هنری</a>
                     </div>
                     <div class="mega-col">
                       <h6>همیاری علمی و تخصصی</h6>
-                      <a href="/professionalaid.html">حمایت علمی و تخصصی</a>
-                      <a href="/equipmentaid.html">اهدای تجهیزات پزشکی</a>
+                      <a href="/under-construction.html">حمایت علمی و تخصصی</a>
+                      <a href="/under-construction.html">اهدای تجهیزات پزشکی</a>
                     </div>
                     <div class="mega-col">
                       <h6>مشارکت داوطلبی</h6>
-                      <a href="/getinvolved.html">همکاری داوطلبانه</a>
-                      <a href="#">شرایط جذب داوطلبان</a>
+                      <a href="/under-construction.html">همکاری داوطلبانه</a>
+                      <a href="/under-construction.html">شرایط جذب داوطلبان</a>
                     </div>
                   </div>
                 </div>
