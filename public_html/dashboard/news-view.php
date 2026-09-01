@@ -5,6 +5,7 @@ if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/../config/database.php")) {
 } else {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/core/database.php";
 }
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 /* -----------------------------------------
    دریافت id و slug از آدرس /id/slug/
@@ -856,7 +857,7 @@ require_once __DIR__ . '/components/header/component.php';
             <?php endif; ?>
 
             <section class="article-content">
-                <?= (strip_tags($news['content']) !== $news['content']) ? $news['content'] : nl2br($news['content']) ?>
+                <?= HtmlSanitizer::sanitize($news['content']) ?>
             </section>
 
             <!-- تگ‌ها -->

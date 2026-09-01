@@ -3,6 +3,7 @@ require_once __DIR__ . '/_guard.php';
 dash_require('campaigns');
 header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 /* ── SECURITY: Secure file upload helper functions ────────────────────────── */
 
@@ -113,7 +114,7 @@ try {
         throw new Exception("Title and target amount are required.");
     }
     $title = $_POST['title'];
-    $description = isset($_POST['description']) ? strip_tags($_POST['description'], "<img><p><br><b><strong><i><u><a><h1><h2><h3>") : '';
+    $description = isset($_POST['description']) ? HtmlSanitizer::sanitize($_POST['description']) : '';
     $target_amount = (float)$_POST['target_amount'];
     $allowed_categories = ['food', 'drug', 'education'];
     $category = isset($_POST['category']) ? $_POST['category'] : 'food';

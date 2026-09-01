@@ -6,5 +6,5 @@
 <?php endif; ?>
 
 <div class="news-content">
-  <?= $news['content'] ?>
+  <?= HtmlSanitizer::sanitize($news['content']) ?>
 </div>

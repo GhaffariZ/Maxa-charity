@@ -12,6 +12,7 @@
  * ========================================================================== */
 
 require_once __DIR__ . '/../core/dashboard-auth.php';   // فقط برای dash_pdo() و ابزارها
+require_once __DIR__ . '/../core/html-sanitizer.php';
 $pdo = dash_pdo();
 
 $HQ_BRANCH = 1;
@@ -208,7 +209,7 @@ CSS;
     if ($featured !== '') {
         echo '<img class="na-cover" src="' . $e($folder . rawurlencode($featured)) . '" alt="' . $e($title) . '">';
     }
-    echo '<div class="na-body">' . $content;
+    echo '<div class="na-body">' . HtmlSanitizer::sanitize($content);
 
     if ($images) {
         echo '<div class="na-gallery">';

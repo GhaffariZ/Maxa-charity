@@ -3,7 +3,8 @@ require_once __DIR__ . '/_guard.php';
 dash_require('news');
 // news-save.php
 header('Content-Type: application/json; charset=utf-8');
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php"; 
+require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 try {
     // تنظیم حالت خطای PDO به استثنا (Exception)
@@ -32,8 +33,7 @@ try {
     
     // پاکسازی محتوا و اجازه دادن به تگ‌های ضروری ادیتور (شامل تصاویر، فیگور، کپشن، فونت و اسپن)
     $raw_content = $_POST['content'];
-    $allowed_tags = "<img><p><br><b><strong><i><u><em><a><h1><h2><h3><h4><h5><h6><ul><ol><li><div><font><span><figure><figcaption><blockquote>";
-    $content = strip_tags($raw_content, $allowed_tags);
+    $content = HtmlSanitizer::sanitize($raw_content);
 
     $plain_text = trim(preg_replace('/\s+/u', ' ', strip_tags($content)));
     $word_count = $plain_text === '' ? 0 : count(preg_split('/\s+/u', $plain_text));

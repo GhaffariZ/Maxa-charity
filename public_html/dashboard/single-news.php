@@ -1,5 +1,6 @@
 <?php
 require "../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 $news_code = $_GET['news_code'] ?? "";
 $slug = $_GET['slug'] ?? "";
@@ -119,7 +120,7 @@ h1 { font-size:28px; margin-bottom:15px; }
     <?php endif; ?>
 
     <div class="article-content">
-        <?php echo $content; ?>
+        <?php echo HtmlSanitizer::sanitize($content); ?>
     </div>
 
     <?php if(!empty($images)): ?>
