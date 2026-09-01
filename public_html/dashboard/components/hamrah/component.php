@@ -22,7 +22,7 @@
     <span class="macsa-btn">شعب مکسا</span>
   </a>
 
-  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
+  <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
       <img src="{{image2}}">
     </div>
