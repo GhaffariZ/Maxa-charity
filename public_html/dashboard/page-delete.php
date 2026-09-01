@@ -3,39 +3,47 @@ require_once __DIR__ . '/_guard.php';
 dash_require('pages');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+// ── Enforce POST method ────────────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
 
-if ($id > 0) {
+// ── CSRF validation ────────────────────────────────────────────────────────
+csrf_check();
 
-    // گرفتن اطلاعات صفحه برای لاگ
-    $pageStmt = $pdo->prepare("SELECT title FROM pages WHERE id = ?");
-    $pageStmt->execute([$id]);
-    $page = $pageStmt->fetch(PDO::FETCH_ASSOC);
+$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
-    // حذف واقعی از دیتابیس
-    $stmt = $pdo->prepare("DELETE FROM pages WHERE id = ?");
-    $stmt->execute([$id]);
+if ($id <= 0) {
+    // Generic response — do not reveal whether the page exists
+    header("Location: page-list.php");
+    exit;
+}
 
-    // ثبت لاگ
+// ── Branch-scoped authorization: only delete pages belonging to this branch ─
+$pageStmt = $pdo->prepare("SELECT id, title FROM pages WHERE id = ? AND branch_id = ? LIMIT 1");
+$pageStmt->execute([$id, $ACTIVE_BRANCH]);
+$page = $pageStmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$page) {
+    // Generic not-found — do not reveal whether another branch owns this page
+    header("Location: page-list.php");
+    exit;
+}
+
+// ── Atomic branch-scoped delete ────────────────────────────────────────────
+$stmt = $pdo->prepare("DELETE FROM pages WHERE id = ? AND branch_id = ?");
+$stmt->execute([$id, $ACTIVE_BRANCH]);
+
+if ($stmt->rowCount() > 0) {
+    // Log the action
     $logStmt = $pdo->prepare("
         INSERT INTO page_logs (page_id, action, user_name, created_at)
         VALUES (?, ?, ?, NOW())
     ");
     $actionText = "حذف صفحه (" . ($page['title'] ?? '') . ")";
-    $logStmt->execute([$id, $actionText, 'admin']);
-}
-?>
-
-<script>
-// قرمز کردن ردیف در صفحه قبلی
-if (window.opener) {
-    const row = window.opener.document.querySelector('a[href="page-delete.php?id=<?=$id?>"]')?.closest("tr");
-    if(row){
-        row.style.background = "#ffebee";
-        row.style.color = "#c62828";
-    }
+    $logStmt->execute([$id, $actionText, $DASH_USER['username'] ?? 'admin']);
 }
 
-// رفرش صفحه لیست
-window.location.href = "page-list.php";
-</script>
+header("Location: page-list.php");
+exit;

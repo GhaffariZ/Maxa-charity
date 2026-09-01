@@ -1,38 +1,42 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('pages');
-require_once __DIR__ . "/../../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+// ── Enforce POST method ────────────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
 
-if ($id > 0) {
+// ── CSRF validation ────────────────────────────────────────────────────────
+csrf_check();
 
-    // گرفتن اطلاعات صفحه
-    $stmt = $pdo->prepare("SELECT id, title, status FROM pages WHERE id=? LIMIT 1");
-    $stmt->execute([$id]);
-    $page = $stmt->fetch(PDO::FETCH_ASSOC);
+$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
-    if ($page) {
+if ($id <= 0) {
+    header("Location: page-list.php");
+    exit;
+}
 
-        // اگر پیش‌نویس بود منتشر شود
-        if ($page['status'] === 'draft') {
+// ── Branch-scoped authorization + atomic publish ───────────────────────────
+// Only publish pages belonging to the current branch that are in 'draft' status.
+$update = $pdo->prepare(
+    "UPDATE pages SET status = 'published' WHERE id = ? AND branch_id = ? AND status = 'draft'"
+);
+$update->execute([$id, $ACTIVE_BRANCH]);
 
-            $update = $pdo->prepare("UPDATE pages SET status='published' WHERE id=?");
-            $update->execute([$id]);
+if ($update->rowCount() > 0) {
+    // Log the action
+    $page = $pdo->prepare("SELECT title FROM pages WHERE id = ? AND branch_id = ? LIMIT 1");
+    $page->execute([$id, $ACTIVE_BRANCH]);
+    $title = $page->fetchColumn() ?: '';
 
-            // ثبت لاگ
-            $log = $pdo->prepare("
-                INSERT INTO page_logs (page_id, action, user_name)
-                VALUES (?, ?, ?)
-            ");
-
-            $log->execute([
-                $id,
-                "انتشار صفحه",
-                "admin"
-            ]);
-        }
-    }
+    $log = $pdo->prepare("
+        INSERT INTO page_logs (page_id, action, user_name)
+        VALUES (?, ?, ?)
+    ");
+    $log->execute([$id, "انتشار صفحه", $DASH_USER['username'] ?? 'admin']);
 }
 
 header("Location: page-list.php");

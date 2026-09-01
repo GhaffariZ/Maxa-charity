@@ -296,7 +296,11 @@ td button:active{transform:scale(.95)}
         <span style="color:#c62828;font-weight:bold;">حذف شده</span>
     <?php else: ?>
         <a class="edit" href="template-create.php?id=<?= (int)$p["id"] ?>">ویرایش</a>
-        <a class="delete" href="page-delete.php?id=<?= (int)$p["id"] ?>" onclick="return confirm('آیا از حذف مطمئن هستید؟')">حذف</a>
+        <form method="POST" action="page-delete.php" style="display:inline" onsubmit="return confirm('آیا از حذف مطمئن هستید؟')">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="id" value="<?= (int)$p["id"] ?>">
+            <button type="submit" class="delete" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;font:inherit;">حذف</button>
+        </form>
     <?php endif; ?>
 </td>
 
@@ -320,11 +324,15 @@ td button:active{transform:scale(.95)}
 </div>
 
 <script>
+var PAGE_CSRF = <?= json_encode(csrf_token()) ?>;
 function changeStatus(id, status) {
     fetch("page-status-update.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: id, status: status })
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": PAGE_CSRF
+        },
+        body: JSON.stringify({ id: id, status: status, csrf_token: PAGE_CSRF })
     })
     .then(res => res.json())
     .then(data => {
