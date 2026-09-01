@@ -4,7 +4,7 @@
       <span class="branches__eyebrow">گستره خدمت‌رسانی مکسا در سراسر کشور</span>
       <h2 class="branches__title">شبکه شعب و مراکز تخصصی مکسا</h2>
       <p class="branches__subtitle">
-        شبکه‌ای یکپارچه از متخصصان، داوطلبان و مراکز مراقبت تسکینی در استان‌های فعال در کنار بیماران مبتلا به سرطان و خانواده‌های آنان است.
+        برای مشاهده اطلاعات هر شعبه، روی استان‌های فعال (آبی‌رنگ) کلیک کنید.
       </p>
     </header>
 
@@ -12,112 +12,60 @@
       <?php require __DIR__ . '/map-svg.php'; ?>
     </div>
 
-    <!-- راهنمای رنگ نقشه -->
-    <div class="branches__legend">
-      <div class="branches__legend-item branches__legend-item--active">
-        <span class="branches__swatch branches__swatch--active">
-          <span class="branches__swatch-dot"></span>
-        </span>
-        <span class="branches__legend-text">
-          <strong>استان‌های دارای شعبه فعال</strong>
-          <small>(تهران، اصفهان، خوزستان، آذربایجان شرقی، قم، خراسان رضوی)</small>
-        </span>
-      </div>
-      <div class="branches__legend-item">
-        <span class="branches__swatch branches__swatch--inactive"></span>
-        <span class="branches__legend-text">سایر استان‌های کشور</span>
-      </div>
-    </div>
-
-    <!-- ۳ مرکز و دفتر ویژه زیر نقشه کشور -->
-    <div class="branches__special-centers">
-      <div class="bsc-header">
-        <span class="bsc-badge">واحدهای ستادی و راهبردی</span>
-        <h3 class="bsc-title">مراکز ملی و توسعه خدمات مکسا</h3>
-      </div>
-
-      <div class="bsc-grid">
-        <!-- ۱. دفتر ستاد مرکزی -->
-        <div class="bsc-card bsc-card--hq">
-          <div class="bsc-card__top">
-            <div class="bsc-icon bsc-icon--hq">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 21h18"/>
-                <path d="M9 8h1"/>
-                <path d="M9 12h1"/>
-                <path d="M9 16h1"/>
-                <path d="M14 8h1"/>
-                <path d="M14 12h1"/>
-                <path d="M14 16h1"/>
-                <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
-              </svg>
-            </div>
-            <span class="bsc-tag bsc-tag--hq">ستاد مرکزی</span>
-          </div>
-          <div class="bsc-card__body">
-            <h4 class="bsc-name">دفتر ستاد مرکزی</h4>
-            <p class="bsc-desc">
-              سیاست‌گذاری کلان، مدیریت یکپارچه شبکه شعب سراسر کشور، نظارت بر استانداردهای مراقبت تسکینی و راهبری راهبردی موسسه.
-            </p>
-          </div>
-          <div class="bsc-card__footer">
-            <span class="bsc-meta">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              تهران، ستاد مرکزی مکسا
-            </span>
-          </div>
+    <!-- راهنمای نقشه و ۳ مرکز ویژه زیر نقشه -->
+    <div class="branches__bottom-bar">
+      <!-- راهنمای رنگ‌ها -->
+      <div class="branches__legend">
+        <div class="branches__legend-item branches__legend-item--active">
+          <span class="branches__swatch branches__swatch--active"></span>
+          <span class="branches__legend-text">
+            <strong>استان‌های فعال (دارای شعبه)</strong>
+          </span>
         </div>
+        <div class="branches__legend-item">
+          <span class="branches__swatch branches__swatch--inactive"></span>
+          <span class="branches__legend-text">سایر استان‌ها</span>
+        </div>
+      </div>
+
+      <!-- ۳ آیکون-دکمه جمع‌وجور برای مراکز ویژه -->
+      <div class="branches__quick-centers">
+        <!-- ۱. دفتر ستاد مرکزی -->
+        <a href="/home" class="bqc-pill bqc-pill--hq" title="دفتر ستاد مرکزی مکسا (تهران)">
+          <span class="bqc-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/>
+              <path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/>
+              <path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/>
+              <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
+            </svg>
+          </span>
+          <span class="bqc-label">دفتر ستاد مرکزی</span>
+        </a>
 
         <!-- ۲. مرکز ارتباطات و دورپزشکی -->
-        <div class="bsc-card bsc-card--telemed">
-          <div class="bsc-card__top">
-            <div class="bsc-icon bsc-icon--telemed">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-            </div>
-            <span class="bsc-tag bsc-tag--telemed">تله‌مدیسین و پایش</span>
-          </div>
-          <div class="bsc-card__body">
-            <h4 class="bsc-name">مرکز ارتباطات و دورپزشکی</h4>
-            <p class="bsc-desc">
-              ارائه مشاوره‌های تخصصی پزشکی، تریاژ تلفنی و دورپزشکی ۲۴ ساعته جهت ارائه خدمات تسکینی به بیماران در اقصی‌نقاط کشور.
-            </p>
-          </div>
-          <div class="bsc-card__footer">
-            <span class="bsc-meta">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              پشتیبانی و مشاوره ۲۴ ساعته
-            </span>
-          </div>
+        <div class="bqc-pill bqc-pill--telemed" title="مرکز ارتباطات و دورپزشکی (تله‌مدیسین ۲۴ ساعته)">
+          <span class="bqc-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
+          <span class="bqc-label">مرکز ارتباطات و دورپزشکی</span>
         </div>
 
         <!-- ۳. مرکز رویش استعدادهای دانشجویی -->
-        <div class="bsc-card bsc-card--student">
-          <div class="bsc-card__top">
-            <div class="bsc-icon bsc-icon--student">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
-            </div>
-            <span class="bsc-tag bsc-tag--student">جوانان و نوآوری</span>
-          </div>
-          <div class="bsc-card__body">
-            <h4 class="bsc-name">مرکز رویش استعدادهای دانشجویی</h4>
-            <p class="bsc-desc">
-              شناسایی، آموزش و توانمندسازی دانشجویان داوطلب و نخبه دانشگاهی در عرصه‌های بهداشت، مراقبت تسکینی، مددکاری و نوآوری اجتماعی.
-            </p>
-          </div>
-          <div class="bsc-card__footer">
-            <span class="bsc-meta">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              شبکه دانشجویان داوطلب مکسا
-            </span>
-          </div>
+        <div class="bqc-pill bqc-pill--student" title="مرکز رویش استعدادهای دانشجویی مکسا">
+          <span class="bqc-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </span>
+          <span class="bqc-label">مرکز رویش استعدادهای دانشجویی</span>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -126,20 +74,17 @@
 .branches {
   --color-primary: #007b7a;
   --color-primary-dark: #004d4c;
-  --color-primary-light: #10aeb8;
+  --color-primary-light: #0ea5e9;
   --color-primary-soft: rgba(0, 123, 122, 0.08);
   --color-secondary: #f4a61e;
-  --color-secondary-dark: #d98c0a;
+  --color-secondary-dark: #d97706;
   --color-text: #1e293b;
   --color-muted: #64748b;
   --color-border: #e2e8f0;
-  --color-bg-card: #ffffff;
-  --color-inactive-shape: #e6ebec;
-  --color-inactive-stroke: #c8d3d5;
 
   box-sizing: border-box;
   width: 100%;
-  padding: 30px 16px 50px;
+  padding: 24px 12px 36px;
   background: transparent;
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--color-text);
@@ -154,36 +99,36 @@
 
 /* کارت اصلی */
 .branches__card {
-  max-width: 1100px;
+  max-width: 1050px;
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid rgba(0, 123, 122, 0.12);
-  border-radius: 28px;
-  padding: clamp(24px, 4vw, 48px);
-  box-shadow: 0 12px 36px rgba(0, 77, 76, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+  border-radius: 24px;
+  padding: clamp(20px, 3.5vw, 36px);
+  box-shadow: 0 10px 30px rgba(0, 77, 76, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 /* سربرگ */
 .branches__head {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .branches__eyebrow {
   display: inline-block;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--color-primary);
   background: var(--color-primary-soft);
   border: 1px solid rgba(0, 123, 122, 0.15);
-  padding: 6px 18px;
+  padding: 5px 16px;
   border-radius: 999px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .branches__title {
-  margin: 0 0 12px;
-  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  margin: 0 0 10px;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 900;
   line-height: 1.35;
   color: #0f172a;
@@ -192,18 +137,18 @@
 .branches__title::after {
   content: "";
   display: block;
-  width: 60px;
+  width: 50px;
   height: 4px;
-  margin: 12px auto 0;
+  margin: 10px auto 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(90deg, #007b7a, #f4a61e);
 }
 
 .branches__subtitle {
-  max-width: 640px;
+  max-width: 580px;
   margin: 0 auto;
-  font-size: 0.98rem;
-  line-height: 1.9;
+  font-size: 0.94rem;
+  line-height: 1.85;
   color: var(--color-muted);
 }
 
@@ -212,382 +157,218 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px auto 14px;
+  margin: 16px auto 10px;
   position: relative;
-  overflow: visible;
 }
 
 #Iran {
   display: block;
   width: 100%;
-  max-width: 820px;
+  max-width: 780px;
   height: auto;
   margin: 0 auto;
   transform: none;
-  filter: drop-shadow(0 10px 24px rgba(0, 77, 76, 0.06));
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.06));
 }
 
-/* استایل استان‌های فعال */
-#Iran a.province-link {
-  cursor: pointer;
-  outline: none;
+/* مرزها و شکل استان‌ها */
+#Iran .province-shape {
+  stroke: #ffffff !important;
+  stroke-width: 1.5 !important;
+  stroke-linejoin: round !important;
+  stroke-linecap: round !important;
 }
 
-#Iran path.province-shape.is-active,
-#Iran polygon.province-shape.is-active {
-  fill: var(--color-primary);
-  stroke: var(--color-primary-dark);
-  stroke-width: 1.3;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3));
-}
-
-#Iran a.province-link:hover path.province-shape.is-active,
-#Iran a.province-link:hover polygon.province-shape.is-active,
-#Iran a.province-link:focus-visible path.province-shape.is-active {
-  fill: var(--color-primary-light);
-  stroke: #002b2a;
-  stroke-width: 1.8;
-  filter: drop-shadow(0 8px 18px rgba(0, 123, 122, 0.45));
-}
-
-#Iran a.province-link:active path.province-shape.is-active {
-  fill: #005958;
-}
-
-/* استایل استان‌های غیرفعال: بدون هاور و بدون کلیک */
+/* استان‌های غیرفعال (زرد / خردلی ملایم برند مکسا) — بدون هاور و بدون کلیک */
 #Iran .province-shape.is-inactive,
-#Iran path.province-shape.is-inactive,
-#Iran polygon.province-shape.is-inactive {
-  fill: var(--color-inactive-shape) !important;
-  stroke: var(--color-inactive-stroke) !important;
-  stroke-width: 0.85 !important;
+#Iran g.is-inactive path,
+#Iran g.is-inactive polygon {
+  fill: #f4a61e !important;
   cursor: default !important;
   pointer-events: none !important;
   filter: none !important;
 }
 
-/* برچسب‌های متنی روی نقشه */
-#Iran .map-labels text {
-  font-family: 'Vazirmatn', sans-serif;
-  text-anchor: middle;
-  dominant-baseline: central;
-  pointer-events: none;
-  user-select: none;
+/* استان‌های فعال (آبی فیروزه‌ای شاخص مکسا) — دارای هاور و کلیک */
+#Iran a.province-link {
+  cursor: pointer;
+  outline: none;
 }
 
-#Iran .map-labels .lbl-inactive {
-  fill: #64748b;
-  font-weight: 600;
-  opacity: 0.85;
+#Iran a.province-link .province-shape.is-active {
+  fill: #007b7a !important;
+  stroke: #ffffff !important;
+  stroke-width: 1.8 !important;
+  cursor: pointer !important;
+  transition: fill 0.2s ease, filter 0.2s ease, stroke-width 0.2s ease;
+  filter: drop-shadow(0 2px 5px rgba(0, 123, 122, 0.35));
 }
 
-#Iran .map-labels .lbl-active {
-  fill: #ffffff;
-  font-weight: 900;
-  filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.85));
+#Iran a.province-link:hover .province-shape.is-active,
+#Iran a.province-link:focus-visible .province-shape.is-active {
+  fill: #0ea5e9 !important;
+  stroke-width: 2.5 !important;
+  filter: drop-shadow(0 8px 18px rgba(14, 165, 233, 0.6)) !important;
 }
 
-#Iran .map-labels .lbl-active-dot {
-  fill: var(--color-secondary);
-  stroke: #ffffff;
-  stroke-width: 1.4;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+#Iran a.province-link:active .province-shape.is-active {
+  fill: #0284c7 !important;
 }
 
-/* راهنمای رنگ‌ها */
+/* نوار پایین نقشه: لژاند و ۳ دکمه کوچک */
+.branches__bottom-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 18px;
+  border-top: 1px solid #edf2f7;
+}
+
+/* لژاند نقشه */
 .branches__legend {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
-  gap: 16px 36px;
-  margin: 16px auto 36px;
-  padding: 16px 20px;
-  background: #f8fafc;
-  border: 1px solid #edf2f7;
-  border-radius: 16px;
-  max-width: 760px;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .branches__legend-item {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.92rem;
+  gap: 8px;
+  font-size: 0.88rem;
   color: #334155;
 }
 
-.branches__legend-item--active {
-  color: var(--color-primary-dark);
-}
-
 .branches__swatch {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  display: inline-block;
   flex-shrink: 0;
 }
 
 .branches__swatch--active {
-  background: var(--color-primary);
-  border: 1.5px solid var(--color-primary-dark);
-  box-shadow: 0 2px 6px rgba(0, 123, 122, 0.3);
-}
-
-.branches__swatch-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-secondary);
+  background: #007b7a;
 }
 
 .branches__swatch--inactive {
-  background: var(--color-inactive-shape);
-  border: 1px solid var(--color-inactive-stroke);
+  background: #f4a61e;
 }
 
 .branches__legend-text strong {
-  display: inline-block;
-  font-weight: 800;
-}
-
-.branches__legend-text small {
-  display: inline-block;
-  color: var(--color-muted);
-  font-weight: 500;
-  margin-right: 4px;
-}
-
-/* === ۳ مرکز ویژه زیر نقشه =============================================== */
-.branches__special-centers {
-  margin-top: 40px;
-  padding-top: 36px;
-  border-top: 1.5px dashed #e2e8f0;
-}
-
-.bsc-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.bsc-badge {
-  display: inline-block;
-  font-size: 0.78rem;
   font-weight: 700;
-  color: #c2410c;
-  background: rgba(249, 115, 22, 0.1);
-  padding: 4px 14px;
-  border-radius: 999px;
-  margin-bottom: 8px;
 }
 
-.bsc-title {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #1e293b;
-}
-
-.bsc-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.bsc-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  overflow: hidden;
-}
-
-.bsc-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 4px;
-  background: transparent;
-  transition: background 0.25s ease;
-}
-
-.bsc-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 32px rgba(0, 123, 122, 0.08);
-}
-
-.bsc-card--hq:hover {
-  border-color: #f4a61e;
-}
-.bsc-card--hq::before {
-  background: linear-gradient(90deg, #f4a61e, #d98c0a);
-}
-
-.bsc-card--telemed:hover {
-  border-color: #007b7a;
-}
-.bsc-card--telemed::before {
-  background: linear-gradient(90deg, #007b7a, #10aeb8);
-}
-
-.bsc-card--student:hover {
-  border-color: #2563eb;
-}
-.bsc-card--student::before {
-  background: linear-gradient(90deg, #2563eb, #38bdf8);
-}
-
-.bsc-card__top {
+/* ۳ آیکون-دکمه جمع‌وجور زیر نقشه */
+.branches__quick-centers {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.bsc-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+.bqc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.bqc-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.bqc-pill--hq {
+  border-color: rgba(244, 166, 30, 0.3);
+  background: #fffdfa;
+}
+.bqc-pill--hq:hover {
+  background: #fff8eb;
+  border-color: #f4a61e;
+  color: #b45309;
+}
+.bqc-pill--hq .bqc-icon {
+  color: #d97706;
+}
+
+.bqc-pill--telemed {
+  border-color: rgba(0, 123, 122, 0.25);
+  background: #f8fdfd;
+}
+.bqc-pill--telemed:hover {
+  background: #edfafa;
+  border-color: #007b7a;
+  color: #007b7a;
+}
+.bqc-pill--telemed .bqc-icon {
+  color: #007b7a;
+}
+
+.bqc-pill--student {
+  border-color: rgba(37, 99, 235, 0.25);
+  background: #f8faff;
+}
+.bqc-pill--student:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+.bqc-pill--student .bqc-icon {
+  color: #2563eb;
+}
+
+.bqc-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.bsc-icon--hq {
-  background: rgba(244, 166, 30, 0.14);
-  color: #b45309;
-}
-
-.bsc-icon--telemed {
-  background: rgba(0, 123, 122, 0.12);
-  color: #007b7a;
-}
-
-.bsc-icon--student {
-  background: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
-}
-
-.bsc-tag {
-  font-size: 0.76rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.bsc-tag--hq {
-  background: rgba(244, 166, 30, 0.12);
-  color: #b45309;
-}
-
-.bsc-tag--telemed {
-  background: rgba(0, 123, 122, 0.12);
-  color: #007b7a;
-}
-
-.bsc-tag--student {
-  background: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
-}
-
-.bsc-card__body {
-  flex: 1 1 auto;
-}
-
-.bsc-name {
-  margin: 0 0 10px;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.4;
-}
-
-.bsc-desc {
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.85;
-  color: var(--color-muted);
-}
-
-.bsc-card__footer {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.bsc-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #475569;
-}
-
-.bsc-meta svg {
-  color: var(--color-primary);
   flex-shrink: 0;
 }
 
-/* فونت وزیرمتن */
-@font-face {
-  font-family: 'Vazirmatn';
-  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
-       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
+.bqc-label {
+  white-space: nowrap;
 }
 
 /* واکنش‌گرایی */
-@media (max-width: 992px) {
-  .bsc-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .bsc-card--student {
-    grid-column: span 2;
-  }
-}
-
 @media (max-width: 768px) {
   .branches {
-    padding: 20px 10px 40px;
+    padding: 16px 8px 30px;
   }
   .branches__card {
-    padding: 20px 14px;
-    border-radius: 20px;
+    padding: 18px 12px;
+    border-radius: 18px;
   }
-  #Iran {
-    width: 98%;
-  }
-  .branches__legend {
+  .branches__quick-centers {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: stretch;
   }
-  .bsc-grid {
-    grid-template-columns: 1fr;
-  }
-  .bsc-card--student {
-    grid-column: auto;
+  .bqc-pill {
+    justify-content: center;
+    padding: 10px 14px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   #Iran a path,
-  #Iran a polygon,
-  .bsc-card {
+  .bqc-pill {
     transition: none !important;
   }
 }
