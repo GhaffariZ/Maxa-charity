@@ -500,22 +500,32 @@ body {
 
 .gf-social a.gf-social-instagram:hover {
   background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 10px 24px rgba(214, 36, 159, 0.4);
 }
 
 .gf-social a.gf-social-bale:hover {
-  background: #00B175;
+  background: #ffffff;
+  border-color: #00B175;
+  box-shadow: 0 10px 24px rgba(0, 177, 117, 0.45);
 }
 
 .gf-social a.gf-social-aparat:hover {
-  background: #EA1D5D;
+  background: #ffffff;
+  border-color: #EA1D5D;
+  box-shadow: 0 10px 24px rgba(234, 29, 93, 0.45);
 }
 
 .gf-social a.gf-social-linkedin:hover {
   background: #0077B5;
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 10px 24px rgba(0, 119, 181, 0.4);
 }
 
 .gf-social a.gf-social-eitaa:hover {
-  background: #E67E22;
+  background: #ffffff;
+  border-color: #E67E22;
+  box-shadow: 0 10px 24px rgba(230, 126, 34, 0.45);
 }
 
 .gf-copy {
