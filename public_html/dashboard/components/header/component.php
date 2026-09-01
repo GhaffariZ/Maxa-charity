@@ -976,7 +976,7 @@
                       <a href="/organizationalchart">چارت سازمانی</a>
                       <a href="/headdirectors">شورای عالی</a>
                       <a href="/directors">هیئت مدیره</a>
-                      <a href="/CEOoffice.html">مدیرعامل</a>
+                      <a href="/CEOoffice">مدیرعامل</a>
                       <a href="/doctorspage">کادر درمان</a>
                       <a href="/network.php">شبکه همکاران</a>
                     </div>
