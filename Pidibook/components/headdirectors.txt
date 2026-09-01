@@ -1,0 +1,587 @@
+    <!-- Page Team Start -->
+     <div class="page-team">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="#">
+                                <figure class="image-anime">
+                                    <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="#">محمدرضا دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.2s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="# data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="#">عباس دیانی </a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="# data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href=#>علی دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.6s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="# data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href=#>حسن ابوالقاسمی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.8s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="# data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href=#>مجتبی چیت ساز اصفهانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="1s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[2].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمد جهانگیری</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="1.2s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">امین منانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="1.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمدصالحی طیب نیا</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمدرضا شعربافچی زاده</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">زینب دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محسن حاج کاظمیان</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">سید امیر علی فتحی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">منصوره مظاهری</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">فاطمه دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">نعیمه دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمد کریمیان</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">کوثر دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمدمهدی دیانی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمد باقر بکائی جزی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">محمد مسعود مرندی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">پیمان ادیبی سده</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                   <img src="{{ API_GET("/pigi","headdirectors","A1").data[0].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="doctor-single.html">غلامحسین کسائی</a></h3>
+                                <p>عضو هیئت امناء</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+            </div>
+        </div>
+     </div>
+    <!-- Page Team End -->

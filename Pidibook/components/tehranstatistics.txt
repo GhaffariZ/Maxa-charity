@@ -1,0 +1,92 @@
+<!-- Stats Section Start -->
+<div class="stats-section">
+  <div class="container">
+    <div class="stats-title">
+      <h2>آمار شعبه تهران</h2>
+    </div>
+
+    <div class="stats-boxes">
+      <div class="stat-item">
+        <h2 class="counter">110392</h2>
+        <p>جذب کمک های مردمی</p>
+      </div>
+      <div class="stat-item">
+        <h2 class="counter">16</h2>
+        <p>سال فعالیت</p>
+      </div>
+      <div class="stat-item">
+        <h2 class="counter">690000</h2>
+        <p>خدمات مکسا</p>
+      </div>
+      <div class="stat-item">
+        <h2 class="counter">52043</h2>
+        <p>تعداد کل بیماران</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Stats Section End -->
+
+<style>
+/* کل بخش آمار ایزوله شده با کلاس stats-section */
+.stats-section {
+  position: relative;
+  width: 100%;
+  background-color: #FFFFFF; /* رنگ زمینه ساده */
+  padding: 100px 20px;
+  text-align: center;
+}
+
+/* محدود کردن عرض محتوا */
+.stats-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* فقط تیتر داخل بخش آمار */
+.stats-section .stats-title h2 {
+  font-size: 2rem;
+  margin-bottom: 60px;
+  font-weight: 700;
+  color: #008B8B; /* رنگ تیتر بخش آمار */
+}
+
+/* باکس‌های آمار */
+.stats-section .stats-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* هر باکس آمار */
+.stats-section .stat-item {
+  flex: 1 1 220px;
+  max-width: 260px;
+  background-color: #008B8B;
+  border: 2px solid #008B8B;
+  border-radius: 12px;
+  padding: 30px 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.stats-section .stat-item:hover {
+  transform: translateY(-10px);
+}
+
+/* عدد داخل باکس */
+.stats-section .stat-item h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #FFFFFF;
+}
+
+/* توضیح زیر عدد */
+.stats-section .stat-item p {
+  font-size: 1.1rem;
+  margin-top: 10px;
+  color: #FFFFFF;
+}
+</style>

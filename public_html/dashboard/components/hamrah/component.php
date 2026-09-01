@@ -36,7 +36,7 @@
     <span class="macsa-btn">حامیان و داوطلبان</span>
   </a>
 
-  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
+  <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
       <img src="{{image4}}">
     </div>

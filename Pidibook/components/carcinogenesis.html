@@ -1,0 +1,93 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="cancer2.html">ژن های دخیل رد سرطان</a></li>
+                                <li><a href="understandingcancer.html">عوامل خطر در بروز سرطان</a></li>
+                                <li><a href="tissuealterations.html">نوجوانان و جوانان مبتلا به سرطان</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","carcinogenesis","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">سرطان چگونه ایجاد می‌شود؟</h2>
+                                <p class="wow fadeInUp">
+سرطان یک بیماری ژنتیکی است - یعنی در اثر تغییرات در ژن‌هایی که نحوه عملکرد سلول‌های ما، به ویژه نحوه رشد و تقسیم آنها را کنترل می‌کنند، ایجاد می‌شود.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+تغییرات ژنتیکی که باعث سرطان می‌شوند می‌توانند به دلایل مختلف رخ دهند: 1. خطاهایی که هنگام تقسیم سلول‌ها رخ می‌دهند. 2. آسیب به DNA ناشی از مواد مضر در محیط، مانند مواد شیمیایی موجود در دود تنباکو و اشعه ماوراء بنفش خورشید.  3. آنها از والدین ما به ارث رسیده‌اند.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+بدن معمولاً سلول‌های دارای DNA آسیب دیده را قبل از سرطانی شدن از بین می‌برد. اما توانایی بدن برای انجام این کار با افزایش سن کاهش می‌یابد. این بخشی از دلیل افزایش خطر ابتلا به سرطان در مراحل بعدی زندگی است.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+سرطان هر فرد ترکیبی منحصر به فرد از تغییرات ژنتیکی دارد. با ادامه رشد سرطان، تغییرات اضافی رخ خواهد داد. حتی در یک تومور مشابه، سلول‌های مختلف ممکن است تغییرات ژنتیکی متفاوتی داشته باشند.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+</style>

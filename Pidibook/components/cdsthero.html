@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CTA Hero Slider</title>
+
+  <style>
+    :root{
+      --cta-orange:#f5a623;
+      --cta-orange-2:#f39a20;
+      --cta-text:#ffffff;
+      --cta-muted: rgba(255,255,255,.78);
+      --cta-container: 1180px;
+      --cta-nav-h: 78px;
+
+      --cta-shadow: 0 10px 22px rgba(0,0,0,.14);
+      --cta-shadow-soft: 0 8px 18px rgba(0,0,0,.12);
+      --cta-radius: 14px;
+      --cta-edge-gap: 10px;
+    }
+
+    .cta {
+      font-family: inherit;
+     }
+    .cta a{ color:inherit; text-decoration:none; }
+    .cta button, .cta input{ font-family: inherit; }
+
+    .cta-container{
+    width:min(var(--cta-container), calc(100% - 32px));
+    margin-inline:auto;
+    }
+
+    /* ===== HERO ===== */
+    .cta-hero{
+      position:relative;
+      width:100%;
+      min-height: 520px;
+      isolation:isolate;
+      overflow:hidden;
+      background:#111;
+    }
+
+    .cta-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 35%),
+              radial-gradient(circle at 80% 10%, rgba(255,255,255,.06), transparent 40%),
+              linear-gradient(to bottom, rgba(0,0,0,.12), rgba(0,0,0,.12));
+  mix-blend-mode: overlay;
+  opacity:.55;
+  pointer-events:none;
+  z-index:2;
+}
+
+    /* ===== TOP BAR ===== */
+    .cta-topbar{
+      position:absolute;
+      top:0; left:0; right:0;
+      height: var(--cta-nav-h);
+      z-index:50;
+      display:flex;
+      align-items:center;
+      overflow: visible;
+    }
+
+    .cta-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      position: relative;
+      z-index: 60;
+    }
+
+    /* راست: لوگو */
+    .cta-right{
+      display:flex;
+      align-items:center;
+      flex:0 0 auto;
+      margin-right: calc(-1 * var(--cta-edge-gap)); /* نزدیک‌تر به لبه */
+      padding-right: var(--cta-edge-gap);
+    }
+
+    .cta-brand{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .cta-brand img{
+      height: 34px;
+      width: auto;
+      display:block;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.18));
+    }
+
+    /* وسط: منو */
+    .cta-center{
+      display:flex;
+      justify-content:center;
+      flex:1 1 auto;
+      min-width: 0;
+      padding-inline: 8px;
+    }
+
+    /* باکس دور منو مثل سرچ/ثبت‌نام */
+.cta-navbox{
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: 10px;
+
+  padding: 6px 14px;   /* فقط فاصله بده */
+}
+.cta-glass {
+  backdrop-filter: blur(6px);
+  box-shadow: var(--cta-shadow-soft);
+}
+    /* ✅ منو افقی (حل عمودی شدن) */
+    .cta-menu{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display:flex;
+      align-items:center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-wrap: nowrap;
+    }
+
+    .cta-menu > li{
+      position: relative;
+      display:flex;
+      align-items:center;
+    }
+
+    .cta-menu > li > a{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:10px;
+      transition: .2s ease;
+      outline: none;
+      font-size: 14px;
+      color: rgba(255,255,255,.92);
+    }
+
+    .cta-menu > li > a:hover{
+      background: rgba(255,255,255,.10);
+    }
+
+    .cta-menu > li > a:focus-visible{
+      box-shadow: 0 0 0 3px rgba(245,166,35,.25);
+      background: rgba(255,255,255,.10);
+    }
+
+    .highlighted-menu > a{
+      background: rgba(245,166,35,.18);
+      border: 1px solid rgba(245,166,35,.35);
+    }
+    .highlighted-menu > a:hover{
+      background: rgba(245,166,35,.26);
+    }
+
+    /* چپ: سرچ + ورود/ثبت‌نام */
+    .cta-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:0 0 auto;
+      margin-left: calc(-1 * var(--cta-edge-gap)); /* نزدیک‌تر به لبه */
+      padding-left: var(--cta-edge-gap);
+    }
+
+    .cta-search{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .cta-search input{
+      width: 170px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.28);
+      color: #fff;
+      padding: 0 12px;
+      outline: none;
+      transition: .2s ease;
+    }
+
+.cta-glass {
+  backdrop-filter: blur(6px);
+  box-shadow: var(--cta-shadow-soft);
+}
+    .cta-search input::placeholder{
+      color: rgba(255,255,255,.65);
+    }
+
+    .cta-search input:focus{
+      border-color: rgba(245,166,35,.55);
+      box-shadow: 0 0 0 3px rgba(245,166,35,.18);
+      background: rgba(0,0,0,.34);
+    }
+
+    .cta-auth{
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.28);
+      color:#fff;
+      padding: 0 12px;
+      cursor:pointer;
+      transition:.2s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space: nowrap;
+    }
+.cta-glass {
+  backdrop-filter: blur(6px);
+  box-shadow: var(--cta-shadow-soft);
+}
+
+    .cta-auth:hover{
+      background: rgba(0,0,0,.38);
+      transform: translateY(-1px);
+    }
+    .cta-auth:active{ transform: translateY(0px); }
+    .cta-auth:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(245,166,35,.18), var(--cta-shadow-soft);
+      border-color: rgba(245,166,35,.55);
+    }
+
+    /* ===== Mega Menu (از نمونه شما) ===== */
+  .mega-menu{
+    position: relative;
+  }
+
+/* ✅ مگا منو با عرض کامل صفحه */
+.mega-menu .mega-menu-content {
+  display: none;
+  position: fixed;
+  top: calc(var(--cta-nav-h) + 10px);
+  right: 0;
+  left: 0; /* به جای 16px، از 0 استفاده می‌کنیم تا عرض کامل صفحه باشد */
+  width: 100vw; /* برای اطمینان از پوشش کامل عرض صفحه */
+  max-width: 100%;
+  background: #0899A9;
+  padding: 28px 20px;
+  box-shadow: var(--cta-shadow);
+  z-index: 9999;
+  direction: rtl;
+  text-align: right;
+  border-radius: 12px;
+  overflow: hidden; /* جلوگیری از بیرون زدن محتوا */
+  box-sizing: border-box;
+}
+
+/* باز شدن مگا منو */
+.mega-menu.open .mega-menu-content {
+  display: block;
+}
+
+/* ساختار ردیف و چهار ستون */
+.mega-menu-content .mega-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* چهار ستون در یک ردیف */
+  gap: 20px; /* فاصله بین ستون‌ها */
+  width: 100%; /* عرض کامل صفحه */
+}
+
+/* هر ستون (مگا کال) */
+.mega-menu-content .mega-col {
+  padding: 0 16px;
+  border-left: 1px solid rgba(255,255,255,0.55);
+}
+
+/* حذف مرز از آخرین ستون */
+.mega-menu-content .mega-col:last-child {
+  border-left: none;
+}
+
+/* استایل متن‌ها */
+.mega-menu-content h6 {
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  color: #fff;
+  font-size: 15px;
+}
+
+.mega-menu-content a {
+  display: block;
+  color: #f9f9f9;
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: all .25s ease;
+}
+
+.mega-menu-content a:hover {
+  color: #FFD700;
+  padding-right: 5px;
+}
+@media (max-width: 1024px){
+  .mega-menu-content{
+    width: calc(100vw - 32px); /* هم‌چنان با حاشیه‌ها هم‌خوانی داشته باشه */
+  }
+}
+@media (max-width: 1200px){
+  .mega-menu-content .mega-row{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px){
+  .mega-menu-content .mega-row{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px){
+  .mega-menu-content .mega-row{
+    grid-template-columns: 1fr;
+  }
+}
+/* ===== HAMBURGER ICON ===== */
+.menu-icon{
+  width: 28px;
+  height: 20px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.menu-icon div{
+  height: 3px;
+  background: #fff;
+  border-radius: 3px;
+  transition: .3s ease;
+}
+
+/* فقط موبایل */
+@media (max-width: 720px){
+  .menu-icon{ display:flex; }
+}
+
+/* ===== MOBILE MENU (SAME AS DESKTOP) ===== */
+.mobile-menu-sidebar{
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: rgba(0,0,0,.28);
+  border-left: 1px solid rgba(255,255,255,.20);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--cta-shadow);
+  z-index: 99999;
+  padding: 16px;
+  overflow-y: auto;
+  transition: right .35s ease;
+  direction: rtl;
+}
+
+.mobile-menu-sidebar.open{
+  right: 0;
+}
+
+.mobile-menu{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu > li{
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.mobile-menu a{
+  display: block;
+  padding: 14px 8px;
+  color: rgba(255,255,255,.92);
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.mobile-menu a:hover{
+  background: rgba(255,255,255,.10);
+}
+
+/* مگا منو در موبایل */
+.mobile-menu .mega-menu-content{
+  display: none;
+  position: static;
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  margin: 8px 0 12px;
+  padding: 12px;
+}
+
+.mobile-menu .mega-menu-content.active{
+  display: block;
+}
+
+.mobile-menu .mega-row{
+  display: block;
+}
+
+.mobile-menu .mega-col{
+  border: none;
+  padding: 0;
+  margin-bottom: 14px;
+}
+
+.mobile-menu .mega-col h6{
+  color: #FFD700;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.mobile-menu .mega-col a{
+  font-size: 13px;
+  padding: 6px 0;
+  color: #fff;
+}
+/* ===== SUB MENU ===== */
+.mobile-menu-sidebar .sub-menu{
+  display: none;
+  padding-right: 10px;
+  background: rgba(255,255,255,.04);
+}
+
+.mobile-menu-sidebar .sub-menu.active{
+  display: block;
+}
+
+.toggle-sub{
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-sub::after{
+  content: "▾";
+  position: absolute;
+  left: 0;
+  transition: .3s;
+}
+
+.sub-menu.active ~ .toggle-sub::after{
+  transform: rotate(180deg);
+}
+
+/* ===== BACKDROP ===== */
+.mobile-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99998;
+  opacity: 0;
+  pointer-events: none;
+  transition: .3s;
+}
+
+.mobile-backdrop.show{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+    /* ===== Slider ===== */
+    .cta-slider{ position:absolute; inset:0; z-index:1; }
+    .cta-track{
+      height:100%;
+      display:flex;
+      width:100%;
+      transition: transform 650ms cubic-bezier(.2,.8,.2,1);
+      will-change: transform;
+    }
+    .cta-slide{
+      position:relative;
+      min-width:100%;
+      height:100%;
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.02) contrast(1.03);
+    }
+    .cta-slide::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(to left, rgba(0,0,0,.40), rgba(0,0,0,.18) 55%, rgba(0,0,0,.08)),
+        radial-gradient(circle at 15% 30%, rgba(0,0,0,.08), transparent 55%);
+      z-index:0;
+    }
+
+    /* ===== hero content ===== */
+    .cta-content{
+      position:relative;
+      z-index:6;
+      padding-top: calc(var(--cta-nav-h) + 44px);
+      padding-bottom: 54px;
+      min-height: 520px;
+      display:flex;
+      align-items:center;
+    }
+
+    .cta-content .cta-container{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    .cta-text{
+      width:min(560px, 100%);
+      color: var(--cta-text);
+      text-align:right;
+    }
+
+    .cta-kicker{
+      font-size:13px;
+      color: rgba(255,255,255,.7);
+      margin-bottom:10px;
+    }
+    .cta-title{
+      font-size:42px;
+      line-height:1.15;
+      margin:0 0 14px 0;
+      font-weight:800;
+      text-shadow: 0 10px 18px rgba(0,0,0,.20);
+    }
+    .cta-desc{
+      margin:0 0 18px 0;
+      color: var(--cta-muted);
+      font-size:15px;
+      line-height:1.9;
+      max-width: 58ch;
+    }
+
+    .cta-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border:none;
+      cursor:pointer;
+      background: var(--cta-orange);
+      color:#111;
+      font-weight:800;
+      padding:11px 16px;
+      border-radius:10px;
+      box-shadow: 0 10px 20px rgba(245,166,35,.22);
+      transition:.2s ease;
+    }
+    .cta-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .cta-btn:active{ transform: translateY(0px); }
+    .cta-btn:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(245,166,35,.20), 0 10px 20px rgba(245,166,35,.22);
+    }
+
+    /* arrows */
+    .cta-arrow{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      z-index:7;
+      width:44px; height:44px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.26);
+      color:#fff;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+.cta-glass {
+  backdrop-filter: blur(6px);
+  box-shadow: var(--cta-shadow-soft);
+}
+    .cta-arrow:hover{ background: rgba(0,0,0,.40); }
+    .cta-arrow.prev{ left:16px; }
+    .cta-arrow.next{ right:16px; }
+    .cta-arrow svg{ width:18px; height:18px; opacity:.9; }
+
+    /* dots */
+    .cta-dots{
+      position:absolute;
+      bottom: 18px;
+      left:50%;
+      transform: translateX(-50%);
+      z-index:7;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .cta-dot{
+      width:9px; height:9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.60);
+      background: rgba(255,255,255,.15);
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .cta-dot.active{
+      width:20px;
+      background: var(--cta-orange);
+      border-color: transparent;
+    }
+
+    /* ===== ORANGE BAND ===== */
+    .cta-band{
+      position:relative;
+      background: linear-gradient(180deg, var(--cta-orange) 0%, var(--cta-orange-2) 100%);
+      padding: 26px 0 64px 0;
+    }
+
+    .cta-band .cta-container{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      color:#fff;
+    }
+
+    .cta-band h3{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      text-align:right;
+    }
+
+    .cta-band p{
+      margin:6px 0 0 0;
+      opacity:.92;
+      font-size:13px;
+      line-height:1.7;
+      max-width: 58ch;
+      text-align:right;
+    }
+
+    .cta-band-cta{
+      display:inline-flex;
+      align-items:center;
+      gap:15px;
+      background: rgba(0,0,0,.22);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.22);
+      padding:20px 15px;
+      border-radius:10px;
+      cursor:pointer;
+      transition:.2s ease;
+      white-space:nowrap;
+      box-shadow: var(--cta-shadow-soft);
+    }
+    .cta-band-cta:hover{ background: rgba(0,0,0,.30); transform: translateY(-1px); }
+
+    /* ===== Cards (همون قبلی) ===== */
+    .cta-cards-wrap{
+      position:relative;
+      margin-top: -42px;
+      padding-bottom: 38px;
+    }
+
+    .cta-cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:22px;
+    }
+
+    .cta-card{
+      background:#fff;
+      border-radius: 10px;
+      box-shadow: var(--cta-shadow);
+      padding:18px 18px 16px;
+      border:1px solid rgba(0,0,0,.06);
+      text-align:center;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      position:relative;
+      outline:none;
+    }
+
+    .cta-card:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(0,0,0,.16);
+      border-color: rgba(245,166,35,.30);
+    }
+
+    .cta-card.is-active{
+      border-color: rgba(245,166,35,.55);
+      box-shadow: 0 14px 30px rgba(245,166,35,.16), 0 0 0 3px rgba(245,166,35,.12);
+      transform: translateY(-3px);
+    }
+
+    .cta-icon{
+      width:44px; height:44px;
+      margin:0 auto 10px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: rgba(245,166,35,.15);
+      border:1px solid rgba(245,166,35,.25);
+      transition: .18s ease;
+      color:#111;
+    }
+
+    .cta-card:hover .cta-icon,
+    .cta-card.is-active .cta-icon{
+      background: rgba(245,166,35,.22);
+      border-color: rgba(245,166,35,.40);
+      transform: scale(1.03);
+    }
+
+    .cta-card h4{
+      margin:6px 0 6px 0;
+      font-size:15px;
+      font-weight:900;
+      color:#1a1a1a;
+    }
+
+    .cta-card p{
+      margin:0 auto 10px;
+      color:#666;
+      font-size:12.8px;
+      line-height:1.75;
+      max-width: 42ch;
+    }
+
+    .cta-card a{
+      color: var(--cta-orange-2);
+      font-weight:800;
+      font-size:13px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1200px){
+      .cta-search input{ width: 170px; }
+      .cta-menu{ gap:4px; }
+      .cta-menu > li > a{ padding:8px 7px; font-size:13.5px; }
+    }
+
+    @media (max-width: 960px){
+      .cta-title{ font-size:28px; }
+      .cta-band .cta-container{ flex-direction:column; align-items:flex-start; }
+      .cta-band-cta{ align-self:flex-start; }
+      .cta-cards{ grid-template-columns: 1fr; }
+      .cta-arrow.prev{ left:10px; }
+      .cta-arrow.next{ right:10px; }
+      .cta-search input{ width: 150px; }
+    }
+
+    @media (max-width: 720px){
+      .cta-center{ display:none; }
+      .cta-search input{ width: 160px; }
+    }
+@media (max-width: 720px){
+  .menu-icon{ order: 3; }
+  .cta-auth{ order: 2; }
+  .cta-search{ order: 1; }
+}
+
+    @media (max-width: 420px){
+      .cta-search input{ width: 120px; }
+      .cta-auth{ padding: 0 10px; }
+    }
+.menu-icon{
+  position: relative;
+  z-index: 1000;
+}
+  </style>
+</head>
+
+<body>
+
+  <section class="cta">
+
+    <section class="cta-hero" aria-label="CTA Hero Slider">
+
+      <div class="cta-slider" id="ctaSlider">
+         <div class="cta-track" id="ctaTrack">
+           <div class="cta-slide" style="background-image: url('{{ API_GET("/pigi","cdsthero","A1").data[1].image | raw }}');"></div>
+        </div>
+      </div>
+
+      <div class="cta-topbar">
+        <div class="cta-container cta-header">
+
+          <div class="cta-right">
+            <a class="cta-brand" href="/" aria-label="Home">
+              <img src="{{ API_GET("/pigi","heroindex","A1").data[0].image | raw }}" alt="">
+            </a>
+          </div>
+
+          <!-- ✅ منوی افقی + مگا منو -->
+          <div class="cta-center">
+            <nav class="cta-navbox" aria-label="منوی بالا">
+              <ul class="cta-menu" id="menu">
+
+                <li>
+                  <a href="/index.html">خانه</a>
+                </li>
+
+                <li class="mega-menu">
+                  <a class="mega-toggle" href="/ashnaei.html">آشنایی با مکسا</a>
+                  <div class="mega-menu-content">
+                    <div class="mega-row">
+                      <div class="mega-col">
+                        <h6>معرفی</h6>
+                        <a href="/history.html">تاریخچه و نحوه تاسیس</a>
+                        <a href="/mission-vision.html">ماموریت و چشم انداز</a>
+                        <a href="/association.html">اساسنامه</a>
+                        <a href="/organizationalchart.html">چارت سازمانی</a>
+                        <a href="/headdirectors.html">هیئت امنا</a>
+                        <a href="/directors.html">هیئت مدیره</a>
+                        <a href="/CEOoffice.html">مدیرعامل</a>
+                        <a href="/geneticistspage.html">کادر اداری</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>کادر درمان</h6>
+                        <a href="/doctorspage.html">پزشکان</a>
+                        <a href="/nursespage.html">پرستاران</a>
+                        <a href="/psychologistspage.html">روانشناسان</a>
+                        <a href="/socialworkerspage.html">مددکاران اجتماعی</a>
+                        <a href="/chaplainspage.html">مراقبین معنوی</a>
+                        <a href="/dietitianspage.html">متخصصین تغذیه</a>
+                        <a href="/physiotherapistspage.html">متخصصین توانبخشی</a>
+                        <a href="/geneticistspage.html">مشاوران ژنتیک و غربالگری</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>مراکز تابعه مکسا</h6>
+                        <a href="/CDSTMACSA.html">مرکز رویش استعدادهای دانشجویی مکسا</a>
+                        <a href="/case-study-single.html">مرکز آموزش مهارتی مکسا</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>گزارش‌ها</h6>
+                        <a href="/image-gallery.html">گزارش‌های سالانه</a>
+                        <a href="/video-gallery.html">صورت‌های مالی</a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="mega-menu">
+                  <a class="mega-toggle" href="/MACSAservices.html">خدمات مکسا</a>
+                  <div class="mega-menu-content">
+                    <div class="mega-row">
+                      <div class="mega-col">
+                        <h6>مراقبت های حمایتی و تسکینی</h6>
+                        <a href="supportive_and_palliative_care.html">مفهوم مراقبت های حمایتی و تسکینی</a>
+                        <a href="supportive_and_palliative_care_team.html">اعضای تیم حمایتی و تسکینی</a>
+                        <a href="end_of_life_care.html">مراقبت‌های پایان زندگی</a>
+                        <a href="iran-situation-in-palliative.html">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>مراقبت های حمایتی و تسکینی</h6>
+                        <a href="medicalcare.html">مراقبت های پزشکی تسکینی</a>
+                        <a href="nursecare.html">مراقبت های پرستاری تسکینی</a>
+                        <a href="psychologicalcare.html">مراقبت های روانشناختی</a>
+                        <a href="socialworkcare.html">مددکاری اجتماعی</a>
+                        <a href="spritualcare.html">مراقبت های معنوی</a>
+                        <a href="nutritioncare.html">مراقبت های تغذیه</a>
+                        <a href="physiotherapycare.html">مراقبت های بازتوانی و توانبخشی</a>
+                        <a href="genetic_conseuling.html">مشاوره ژنتیک و غربالگری</a>
+                        <a href="medical_equipments.html">تامین تجهیزات پزشکی</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>بخش‌ها</h6>
+                        <a href="#">مراقبت در منزل</a>
+                        <a href="#">بستری</a>
+                        <a href="#">سرپایی</a>
+                        <a href="#">کلینیک</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>پذیرش بیمار</h6>
+                        <a href="#">نوبت دهی</a>
+                        <a href="#">مدارک موردنیاز</a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="mega-menu">
+                  <a class="mega-toggle" href="publicparticipation.html">روش های حمایت</a>
+                  <div class="mega-menu-content">
+                    <div class="mega-row">
+                      <div class="mega-col">
+                        <h6>همیاری مالی</h6>
+                        <a href="/onlinedonation.html">حمایت مالی آنلاین</a>
+                        <a href="/Vows.html">نذورات</a>
+                        <a href="/piggybank.html">قلک مکسا</a>
+                        <a href="#">پرداخت مستمر هدایای نقدی</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>همیاری اجتماعی و فرهنگی</h6>
+                        <a href="/stands.html">استندها و کارتهای دیجیتال تبریک و تسلیت</a>
+                        <a href="/csr.html">مسئولیت اجتماعی</a>
+                        <a href="#">حمایت های خلاقانه و هنری</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>همیاری علمی و تخصصی</h6>
+                        <a href="/professionalaid.html">حمایت علمی و تخصصی</a>
+                        <a href="/equipmentaid.html">اهدای تجهیزات پزشکی</a>
+                      </div>
+                      <div class="mega-col">
+                        <h6>مشارکت داوطلبی</h6>
+                        <a href="/getinvolved.html">همکاری داوطلبانه</a>
+                        <a href="#">شرایط جذب داوطلبان</a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li><a href="/branches.html">شعب</a></li>
+                <li><a href="/newslist.html">اخبار</a></li>
+                <li><a href="/macsapedia.html">مکساپدیا</a></li>
+                <li><a href="contactus.html">تماس با ما</a></li>
+              </ul>
+            </nav>
+          </div>
+
+          <div class="cta-left">
+<div class="menu-icon" id="menuToggle" aria-label="منوی موبایل">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+            <form class="cta-search" action="#" method="get" role="search" aria-label="جستجو">
+              <input type="search" name="q" placeholder="جستجو..." />
+            </form>
+
+            <a class="cta-auth" href="#auth" aria-label="ورود یا ثبت نام">
+              ورود / ثبت‌نام
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="cta-content">
+        <div class="cta-container">
+          <div class="cta-text">
+            <div class="cta-kicker">جایگاهی برای رشد و کشف استعدادهای جوانان</div>
+            <h1 class="cta-title">مرکز رویش استعدادهای دانشجویی مکسا</h1>
+            <p class="cta-desc">
+              برای امروز می‌تونیم یک قدم کوچک برداریم؛
+              همین قدم‌ها در نهایت، آینده‌ای بهتر می‌سازند.
+              همراه ما باشید تا آینده را شکل دهیم.
+            </p>
+              <span aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <button class="cta-arrow prev" id="ctaPrev" aria-label="اسلاید قبلی" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M14.5 5L8 12l6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button class="cta-arrow next" id="ctaNext" aria-label="اسلاید بعدی" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9.5 5L16 12l-6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="cta-dots" id="ctaDots" aria-label="نشانگر اسلایدها"></div>
+
+    </section>
+
+    <section class="cta-band" aria-label="Band">
+      <div class="cta-container">
+        <a class="cta-band-cta" href="onlinedonation.html">❤ همین حالا کمک کنید</a>
+        <div style="text-align:right">
+          <h3>با هم برای جهانی بهتر</h3>
+          <p>
+            مشارکت شما می‌تونه یک تغییر واقعی بسازه؛
+            کافی‌ست مسیر درست رو انتخاب کنیم و کنار هم ادامه بدیم.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-cards-wrap" aria-label="Cards">
+      <div class="cta-container">
+        <div class="cta-cards" id="ctaCards">
+
+          <div class="cta-card" role="button" tabindex="0" aria-pressed="false" data-link="support_projects.html">
+            <div class="cta-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M8 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3.5 13.5c1.5-2 3.5-3 6-3h5c2.5 0 4.5 1 6 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h4>مشارکت کنید</h4>
+            <p>یک قدم کوچک شما، برای یک خانواده می‌تونه بزرگ‌ترین امید باشه.</p>
+          </div>
+
+          <div class="cta-card" role="button" tabindex="0" aria-pressed="false" data-link="support_projects.html">
+            <div class="cta-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M12 21s-7-4.6-9.3-8.7C.6 8.9 2.6 6 6 6c1.9 0 3.1 1 4 2 0 0 1.5-2 4-2 3.4 0 5.4 2.9 3.3 6.3C19 16.4 12 21 12 21z" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <h4>همین حالا اهدا کنید</h4>
+            <p>کمک سریع، شفاف و قابل پیگیری—همین حالا اثرش رو می‌بینید.</p>
+          </div>
+
+          <div class="cta-card" role="button" tabindex="0" aria-pressed="false" data-link="support_projects.html">
+            <div class="cta-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h4>تلاش‌های داوطلبانه</h4>
+            <p>اگر دوست دارید نقش فعال‌تری داشته باشید، به تیم داوطلبان بپیوندید.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </section>
+<nav class="mobile-menu-sidebar cta-glass" id="mobileMenu" aria-label="منوی موبایل">
+</nav>
+<div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+  <script>
+ (function(){
+    const track = document.getElementById("ctaTrack");
+    const slides = track ? Array.from(track.children) : [];
+    const prevBtn = document.getElementById("ctaPrev");
+    const nextBtn = document.getElementById("ctaNext");
+    const dotsWrap = document.getElementById("ctaDots");
+
+    const AUTOPLAY_MS = 3000;
+    let index = 0;
+    let timer = null;
+
+    if(!track || slides.length === 0){ return; }
+
+    slides.forEach(function(_, i){
+      const b = document.createElement("button");
+      b.className = "cta-dot" + (i === 0 ? " active" : "");
+      b.type = "button";
+      b.setAttribute("aria-label", "رفتن به اسلاید " + (i + 1));
+      b.addEventListener("click", function(){ goTo(i, true); });
+      dotsWrap.appendChild(b);
+    });
+
+    const dots = Array.from(dotsWrap.children);
+
+    function setActiveDot(i){
+      dots.forEach(function(d, di){
+        d.classList.toggle("active", di === i);
+      });
+    }
+
+    function applyTransform(){
+      track.style.transform = "translateX(" + (-index * 100) + "%)";
+    }
+
+    function goTo(i, userAction){
+      index = (i + slides.length) % slides.length;
+      applyTransform();
+      setActiveDot(index);
+      if(userAction){ restartAutoplay(); }
+    }
+
+    function next(userAction){ goTo(index + 1, userAction); }
+    function prev(userAction){ goTo(index - 1, userAction); }
+
+    if(prevBtn){ prevBtn.addEventListener("click", function(){ prev(true); }); }
+    if(nextBtn){ nextBtn.addEventListener("click", function(){ next(true); }); }
+
+    function startAutoplay(){
+      stopAutoplay();
+      timer = setInterval(function(){ next(false); }, AUTOPLAY_MS);
+    }
+
+    function stopAutoplay(){
+      if(timer){ clearInterval(timer); }
+      timer = null;
+    }
+
+    function restartAutoplay(){ startAutoplay(); }
+
+    const hero = document.querySelector(".cta-hero");
+    if(hero){
+      hero.addEventListener("mouseenter", stopAutoplay);
+      hero.addEventListener("mouseleave", startAutoplay);
+
+      let startX = 0;
+      let dragging = false;
+
+      hero.addEventListener("touchstart", function(e){
+        if(!e.touches || !e.touches.length){ return; }
+        dragging = true;
+        startX = e.touches[0].clientX;
+        stopAutoplay();
+      }, {passive:true});
+
+      hero.addEventListener("touchend", function(e){
+        if(!dragging){ return; }
+        dragging = false;
+        const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
+        const dx = endX - startX;
+        if(Math.abs(dx) > 40){
+          if(dx < 0){ next(true); }
+          else{ prev(true); }
+        }
+        startAutoplay();
+      }, {passive:true});
+    }
+
+    window.addEventListener("keydown", function(e){
+      if(e.key === "ArrowLeft"){ next(true); }
+      if(e.key === "ArrowRight"){ prev(true); }
+    });
+
+    applyTransform();
+    startAutoplay();
+
+    const cardsWrap = document.getElementById("ctaCards");
+    if(!cardsWrap){ return; }
+    const cards = Array.from(cardsWrap.querySelectorAll(".cta-card"));
+
+    function setActiveCard(card){
+      cards.forEach(function(c){
+        const isActive = (c === card);
+        c.classList.toggle("is-active", isActive);
+        c.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    }
+
+function activate(card){
+  setActiveCard(card);
+  const link = card.getAttribute("data-link");
+  if(!link){ return; }
+
+  if(link.indexOf("#") === 0){
+    const el = document.querySelector(link);
+    if(el){
+      el.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  } else {
+    window.location.href = link;
+  }
+}
+
+
+    cards.forEach(function(card){
+      card.addEventListener("click", function(){ activate(card); });
+      card.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          activate(card);
+        }
+      });
+    });
+  })();
+
+(function(){
+  const toggleBtn = document.getElementById("menuToggle");
+  const menu = document.getElementById("mobileMenu");
+  const backdrop = document.getElementById("mobileBackdrop");
+
+  if(!toggleBtn || !menu) return;
+
+  function openMenu(){
+    menu.classList.add("open");
+    backdrop.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu(){
+    menu.classList.remove("open");
+    backdrop.classList.remove("show");
+    document.body.style.overflow = "";
+  }
+
+  toggleBtn.addEventListener("click", function(e){
+    e.stopPropagation();
+    menu.classList.contains("open") ? closeMenu() : openMenu();
+  });
+
+  backdrop.addEventListener("click", closeMenu);
+
+  document.querySelectorAll(".toggle-sub").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      const sub = btn.nextElementSibling;
+      if(sub) sub.classList.toggle("active");
+    });
+  });
+(function () {
+  const DELAY = 250; // مدت ماندگاری (ms)
+
+  document.querySelectorAll(".mega-menu").forEach(function (menu) {
+    let closeTimer = null;
+
+    function openMenu() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      menu.classList.add("open");
+    }
+
+    function closeMenu() {
+      closeTimer = setTimeout(function () {
+        menu.classList.remove("open");
+      }, DELAY);
+    }
+
+    const toggle = menu.querySelector(".mega-toggle");
+    const content = menu.querySelector(".mega-menu-content");
+
+    if (toggle) {
+      toggle.addEventListener("mouseenter", openMenu);
+      toggle.addEventListener("mouseleave", closeMenu);
+    }
+
+    if (content) {
+      content.addEventListener("mouseenter", openMenu);
+      content.addEventListener("mouseleave", closeMenu);
+    }
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  const desktopMenu = document.querySelector(".cta-menu");
+  const mobileMenu = document.getElementById("mobileMenu");
+
+  if(!desktopMenu || !mobileMenu) return;
+
+  // کپی کامل منو
+  const clonedMenu = desktopMenu.cloneNode(true);
+  clonedMenu.classList.remove("cta-menu");
+  clonedMenu.classList.add("mobile-menu");
+
+  mobileMenu.appendChild(clonedMenu);
+
+  // تبدیل مگا منو به آکاردئون
+  mobileMenu.querySelectorAll(".mega-menu").forEach(function(item){
+    const toggle = item.querySelector(".mega-toggle");
+    const content = item.querySelector(".mega-menu-content");
+
+    if(toggle && content){
+      toggle.addEventListener("click", function(e){
+        e.preventDefault();
+        content.classList.toggle("active");
+      });
+    }
+  });
+
+});
+})();
+
+  </script>
+
+
+</body>
+</html>

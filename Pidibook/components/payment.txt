@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GoPay Landing</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="container nav-content">
+        <div class="logo">Go<span>Pay</span></div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Pricing</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </nav>
+        <button class="btn">Sign Up</button>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-text">
+            <h1>Pay Simply,<br>Get Easily</h1>
+            <p>
+                One unified platform to manage your payments,
+                cards and business transactions easily.
+            </p>
+            <button class="btn light">Get Started</button>
+        </div>
+
+        <div class="hero-illustration">
+            <div class="card big">YOUR<br>BANK</div>
+            <div class="card small"></div>
+            <div class="person"></div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+    <div class="container">
+        <h2>Get To Know About GoPay</h2>
+
+        <div class="feature-grid">
+            <div class="feature">Request Payment</div>
+            <div class="feature">Financial Reporting</div>
+            <div class="feature">Fast Banking</div>
+            <div class="feature">Refund Policy</div>
+            <div class="feature">Pay Your VAT</div>
+            <div class="feature">Withdraw Earnings</div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps">
+    <div class="container steps-grid">
+        <div>
+            <h2>How to get your card?</h2>
+            <ul>
+                <li><strong>Online Application</strong><br>Apply from anywhere</li>
+                <li class="active"><strong>Get an Approval</strong><br>Fast verification</li>
+                <li><strong>Card Delivery</strong><br>Delivered to you</li>
+            </ul>
+        </div>
+
+        <div class="card-illustration"></div>
+    </div>
+</section>
+
+<!-- COMPANIES -->
+<section class="companies">
+    <div class="container">
+        <h2>We Helped Over 100 Companies</h2>
+        <div class="logos">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #f9f9ff;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* NAVBAR */
+.navbar {
+    background: white;
+    padding: 20px 0;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #7b5cff;
+}
+
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #555;
+}
+
+.btn {
+    background: #ff6b3d;
+    border: none;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn.light {
+    background: white;
+    color: #7b5cff;
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(180deg, #8a6bff, #6c55f5);
+    color: white;
+    padding: 80px 0;
+    border-bottom-left-radius: 300px;
+    border-bottom-right-radius: 300px;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+
+.hero-text h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero-text p {
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+/* Illustration */
+.hero-illustration {
+    position: relative;
+    height: 300px;
+}
+
+.card {
+    position: absolute;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff8aa1, #ff5e78);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card.big {
+    width: 180px;
+    height: 120px;
+    top: 40px;
+    left: 80px;
+}
+
+.card.small {
+    width: 140px;
+    height: 90px;
+    top: 120px;
+    left: 20px;
+    background: linear-gradient(135deg, #ffc371, #ff9f1c);
+}
+
+.person {
+    width: 120px;
+    height: 200px;
+    background: #ffd6c9;
+    border-radius: 60px 60px 20px 20px;
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+}
+
+/* FEATURES */
+.features {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.features h2 {
+    margin-bottom: 40px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.feature {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* STEPS */
+.steps {
+    padding: 100px 0;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+
+.steps ul {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.steps li {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.steps li.active {
+    background: #e9e6ff;
+}
+
+.card-illustration {
+    width: 280px;
+    height: 180px;
+    background: linear-gradient(135deg, #7b5cff, #9d88ff);
+    border-radius: 18px;
+    margin: auto;
+}
+
+/* COMPANIES */
+.companies {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.logos {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.logos span {
+    width: 60px;
+    height: 40px;
+    background: #ddd;
+    border-radius: 8px;
+}
+
+</style>

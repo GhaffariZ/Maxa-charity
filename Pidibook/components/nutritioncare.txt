@@ -1,0 +1,183 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>مراقبت های نغذیه</h3>
+                            <ul>
+                                <li><a href="cancer1.html">تعریف سرطان</a></li>
+                                <li><a href="understandingcancer.html">درک سرطان</a></li>
+                                <li><a href="tissuealterations.html">تغییرات بافتی که سرطان نیستند</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","socialcare","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">مراقبت های تغذیه</h2>
+                                <p class="wow fadeInUp">
+یکی از مهم‌ترین سوالات بیماران، شیـوه صحیح تغـذیه در حیـن انجام شیمی درمانی و پرتو درمانی و همچنین در دوران نقاهت بعد از آن می‌باشد. همچنین در شرایط بیمار یپیشرفته معمولاً تغذیۀ بیمار به شدت دچار مشکل شده و تأمین انرژی کافی برای بیمار به چالش بزرگی تبدیل می‌شود. از طرفی می‌دانیم که امروزه چاقی، اضافه وزن و پیروی از الگوی غذایی ناسالم به عنوان یکی از عوامل مهم در بروز و عود سرطان مطرح است.
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">واحد مشاوره تغذیه مکسا به عنوان بخشی از برنامه مراقبتی حمایتی و تسکینی، خدمات زیر را ارائه می دهد:</h2>
+                            <ul class="wow fadeInUp" data-wow-delay="1.2s">
+                                <li>مشاوره تغذیه برای بیماران در دوران شیمی درمانی و پرتو درمانی؛</li>
+                                <li>مشاوره تغذیه برای بیماران در دوران نقاهت بیماری؛</li>
+                                <li>مشاوره تغذیه به خانواده بیماران برای تأمین تغذیۀ مناسب برای بیمار بستری در منزل با استفاده از مکمل‌های غذایی خوراکی یا وریدی؛</li>
+                                <li>مشاوره به پزشکان در خصوص تنظیم رژیم تغذیه‌ای مناسب برای بیماران بستری و تحت مراقبت در منزل؛</li>
+                                <li>مشاوره به خانواده در راستای کاهش احتمال ابتلا به سرطان.</li>
+                            </ul>
+
+                   </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+<style>
+.providing-services h2 {
+  font-size: 24px;
+  color: #222;
+}
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+/* حذف کامل ستون‌بندی و محدودیت */
+.service-entry ul {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+
+    /* نابودی ستون و گرید */
+    column-count: auto !important;
+    columns: auto !important;
+    column-gap: normal !important;
+
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+
+    /* اگر قالب flex یا grid داده باشد */
+    grid-template-columns: none !important;
+    flex-direction: column !important;
+}
+
+/* هر آیتم = یک خط کامل */
+.service-entry ul li {
+    width: 100% !important;
+    max-width: none !important;
+
+    display: block !important;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+    margin-bottom: 10px;
+
+    position: relative;
+    padding-right: 30px;
+
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+.service-entry ul li {
+    position: relative;
+    padding-right: 40px; /* فاصله برای دایره */
+    margin-bottom: 15px;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+
+    display: block;
+}
+
+/* دایره با تیک سفید */
+.service-entry ul li::before {
+    content: "✔";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%); /* وسط چین عمودی */
+    
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* دایره */
+    background-color: #00CED1; /* رنگ دایره */
+    
+    color: #fff; /* تیک سفید */
+    font-weight: bold;
+    text-align: center;
+    line-height: 24px; /* برای وسط چین کردن تیک داخل دایره */
+    font-size: 14px;
+}
+
+
+.source-link {
+    margin-top: 30px;
+    font-size: 15px;
+    direction: rtl;
+}
+
+.source-link a {
+    color: #00CED1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.source-link a:hover {
+    color: #ffc107;
+    text-decoration: underline;
+}
+
+</style>

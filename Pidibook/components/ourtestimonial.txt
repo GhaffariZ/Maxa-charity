@@ -1,0 +1,234 @@
+<!-- Our Testimonial Start -->
+<div class="our-testimonial">
+    <div class="container">
+        <div class="row section-row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2 data-cursor="-opaque">صدای شما</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Testimonial Slider Start -->
+                <div class="testimonial-slider">
+                    <div class="swiper">
+                        <div class="swiper-wrapper" data-cursor-text="بکشید">
+                            <!-- Testimonial Slide Start -->
+                            <div class="swiper-slide">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+
+                                    <div class="testimonial-content">
+                                        <p>
+                                            با عرض سلام و ادب  
+                                            خیلی متشکرم از لطفتون.  
+                                            در این مدت واقعاً دست یاری شما به سوی ما دراز بود و در تمام مدت شبانه‌روز که من با پزشکان تماس می‌گرفتم، همه با خوش‌رویی و صبر بسیار من را راهنمایی می‌کردند.  
+                                            خدا خیرتان بدهد.  
+                                            از خداوند متعال برای شما و همه افراد مرکز عمر با عزت و سلامتی و تندرستی خواستارم.
+                                        </p>
+                                    </div>
+
+                                    <div class="testimonial-footer">
+                                        <div class="author-image">
+                                            <figure class="image-anime">
+                                                <img src="{{ API_GET("/pigi","ourtestimonial","A1").data[0].image | raw }}" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="author-content">
+                                            <h3>خانواده محترم خزایی</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Testimonial Slide End -->
+
+                            <div class="swiper-slide">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+
+                                    <div class="testimonial-content">
+                                        <p>
+                                            سلام  
+                                            ممنون از ابراز همدردی امروزتان و تلاش‌های روزهای قبل که بی‌شک اگر شما فرشته‌سیرتان نبودید رنج آن روزها صدها برابر می‌شد.  
+                                            من متواضعانه جلوی شما تعظیم می‌کنم و بر دستان تک‌تک شما بوسه می‌زنم.  
+                                            مادرم بانویی بزرگوار و صبور و باایمان بودند که به قطع دعای خیرشان تا همیشه بدرقۀ راه شما خواهد بود و صد البته تک‌تک ما خانواده دعاگو و مدیون لطف شما خواهیم بود.  
+                                            صمیمانه از شما سپاس‌گزارم.
+                                        </p>
+                                    </div>
+
+                                    <div class="testimonial-footer">
+                                        <div class="author-image">
+                                            <figure class="image-anime">
+                                                <img src="{{ API_GET("/pigi","ourtestimonial","A1").data[0].image | raw }}" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="author-content">
+                                            <h3>خانواده افیونی زاده</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+
+                                    <div class="testimonial-content">
+                                        <p>
+                                            سلام  
+                                            تشکر از ابراز همدردی شما  
+                                            خیلی لطف کردید، ان‌شاءالله خداوند همه گذشتگان شما را قرین رحمت قرار بده.  
+                                            درودی خالصانه و ارادتی خاضعانه محضر شما که مظهر مهر هستید.  
+                                            توفیق قرین اعمال خداپسندانه و مصلحانۀ شما باشد.  
+                                            تشکر از مدیریت مکسا جناب ناجی بزرگوار و کارکنان دلسوز مرکز.
+                                        </p>
+                                    </div>
+
+                                    <div class="testimonial-footer">
+                                        <div class="author-image">
+                                            <figure class="image-anime">
+                                                <img src="{{ API_GET("/pigi","ourtestimonial","A1").data[0].image | raw }}" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="author-content">
+                                            <h3>خانواده عمرانی</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testimonial-btn">
+                            <div class="testimonial-btn-prev"></div>
+                            <div class="testimonial-btn-next"></div>
+                        </div>
+
+                        <div class="testimonial-actions">
+                            <a href="contactus.html" class="btn-default">ثبت نظرات شما</a>
+                            <a href="onlinedonation.html" class="btn-default">کمک به بیماران</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonial Slider End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Our Testimonial End -->
+
+
+<!-- ✅ CSS -->
+<style>
+.testimonial-item {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    height: 580px; /* 🔹 ارتفاع ثابت ولی بلندتر تا کل متن جا شود */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonial-content {
+    flex: 1;
+    margin: 10px 0;
+    overflow: visible; /* ✅ نمایش کامل متن */
+}
+
+.testimonial-content p {
+    line-height: 1.9;
+    margin: 0;
+    text-align: justify;
+    font-size: 16px;
+    color: #333;
+}
+
+.testimonial-rating {
+    color: #f2b01e;
+}
+
+.testimonial-footer {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.author-image img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 10px;
+}
+
+.testimonial-btn {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.testimonial-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-default {
+    display: inline-block;
+    background: #00a5a5;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn-default:hover {
+    background: #008b8b;
+}
+
+@media (max-width: 768px) {
+    .testimonial-item {
+        height: 700px; /* 🔹 بلندتر برای موبایل */
+    }
+
+    .testimonial-content p {
+        font-size: 15px;
+    }
+}
+</style>
+
+<!-- ✅ JS -->
+<script>
+var swiper = new Swiper('.swiper', {
+    loop: true,
+    autoHeight: false, // جلوگیری از تغییر ارتفاع خودکار
+    slidesPerView: 1,
+    spaceBetween: 30,
+    navigation: {
+        nextEl: '.testimonial-btn-next',
+        prevEl: '.testimonial-btn-prev',
+    },
+});
+</script>

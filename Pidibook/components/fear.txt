@@ -1,0 +1,248 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="cancer1.html">تعریف سرطان</a></li>
+                                <li><a href="understandingcancer.html">درک سرطان</a></li>
+                                <li><a href="tissuealterations.html">تغییرات بافتی که سرطان نیستند</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","fear","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">مدیریت ترس از عوارض جانبی درمان سرطان</h2>
+                                <p class="wow fadeInUp">
+احساس ترس و نگرانی از عوارض جانبی هنگام آغاز درمان سرطان کاملاً طبیعی است. ممکن است از اطرافیان خود که تجربه سرطان داشته‌اند، داستان‌هایی شنیده باشید یا از طریق فیلم‌ها و مطالب مختلف، با دشواری‌های درمان آشنا شده باشید. با این حال، باید به خاطر داشت که تجربه درمان سرطان در هر فرد متفاوت است و عوامل متعددی در آن نقش دارند. امروزه تیم‌های مراقبت سلامت نسبت به گذشته، ابزارها و روش‌های مؤثرتری برای پیشگیری و کاهش عوارض جانبی درمان سرطان در اختیار دارند.
+</p>
+                            <h2 class="wow fadeInUp" data-wow-delay="0.8s">نگرانی‌های رایج بیماران شامل موارد زیر است:</h2>
+
+                            <ul class="wow fadeInUp" data-wow-delay="1.2s">
+                                <li>ندانستن اینکه چه اتفاقی خواهد افتاد یا احساس کلی عدم‌اطمینان</li>
+                                <li>عوارض جسمی مانند درد، تهوع، استفراغ و خستگی</li>
+                                <li>ناتوانی در انجام فعالیت‌های روزمره مانند مراقبت از خانواده، اشتغال، تحصیل یا ورزش</li>
+                                <li>نگرانی از تحمیل فشار یا مسئولیت اضافی به خانواده و احساس گناه</li>
+                                <li>تغییرات ظاهری مانند ریزش مو</li>
+                                <li>مشکلات جنسی یا اختلالات مربوط به باروری</li>
+                                <li>نگرانی درباره یک روش یا درمان خاص</li>
+
+                            </ul>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+از صحبت کردن با تیم درمانی خود درباره عوارض جانبی احتمالی و نوع درمانی که قرار است دریافت کنید، واهمه نداشته باشید. اعضای تیم درمان می‌توانند به شما کمک کنند تا برنامه‌ای برای کنترل و مدیریت این عوارض تدوین شود. آگاهی از عوارض احتمالی، دانستن زمان بروز آنها و داشتن یک برنامه مشخص، می‌تواند احساس آمادگی و کنترل شما را افزایش دهد.
+</p>
+                                <h2 class="">چگونه می‌توان با ترس از عوارض جانبی کنار آمد؟</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+به یاد داشته باشید که هدف نهایی درمان، کمک به بهبود شماست. بسیاری از درمان‌های امروزی سرطان نسبت به گذشته ملایم‌تر هستند، مدت زمان کوتاه‌تری دارند و اغلب عوارض جانبی آن‌ها موقتی است. در بیشتر موارد، این عوارض چند هفته یا چند ماه پس از پایان درمان برطرف می‌شوند. دانستن اینکه چه انتظاری باید داشته باشید، به شما کمک می‌کند بهتر برنامه‌ریزی کنید و احساس کنترل بیشتری بر شرایط خود داشته باشید.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+همچنین لازم است بدانید که بسیاری از عوارض جانبی را می‌توان پیش از شروع درمان پیشگیری کرد. یکی از اهداف اصلی درمان‌های امروزی، افزایش راحتی بیمار در طول درمان است. گزینه‌های درمانی و دارویی جدیدی وجود دارند که تا چند سال پیش در دسترس نبودند؛ برای مثال، داروهای مؤثرتری برای پیشگیری از تهوع و استفراغ. حتماً با تیم درمانی خود درباره عوارض شایع درمان و راه‌های پیشگیری از آن‌ها گفت‌وگو کنید.
+</p>
+
+
+                            <h2 class="wow fadeInUp" data-wow-delay="0.8s">راهکارهایی برای کاهش ترس از عوارض جانبی</h2>
+
+                            <ul class="wow fadeInUp" data-wow-delay="1.2s">
+                                <li>نقش فعالی در تصمیم‌گیری‌های درمانی خود داشته باشید؛ این رویکرد «تصمیم‌گیری مشترک» نام دارد و شامل گفت‌وگو درباره عوارض جانبی و گزینه‌های مختلف درمانی است.</li>
+                                <li>از پزشک بپرسید عوارض جانبی چه زمانی ممکن است ظاهر شوند؛ در طول درمان یا پس از آن، تا آمادگی لازم را داشته باشید.</li>
+                                <li>از اعضای تیم درمان بخواهید فهرستی از علائمی که نیاز به مراقبت فوری پزشکی دارند در اختیار شما قرار دهند و بپرسید در شرایط اورژانسی چگونه می‌توانید تماس بگیرید.</li>
+                                <li>تمام سؤالات و نگرانی‌های خود را یادداشت کنید، حتی مواردی که به نظر ساده یا نامطمئن می‌رسند. پاسخ‌ها را بنویسید یا از یکی از نزدیکانتان بخواهید در ویزیت‌ها همراه شما باشد.</li>
+                                <li>در طول درمان، ارتباط خود را با تیم پزشکی حفظ کنید و آن‌ها را از احساسات و تجربیاتتان مطلع سازید.</li>
+                                <li>اگر درباره باروری پس از درمان نگران هستید، پیش از شروع درمان درباره مراجعه به متخصص باروری سؤال کنید.</li>
+                                <li>یک دفترچه برای ثبت احساسات، علائم و تجربیات روزانه خود داشته باشید.</li>
+                                <li>از روش‌های آرام‌سازی مانند تنفس عمیق، گوش دادن به موسیقی، یوگا یا مدیتیشن استفاده کنید؛ این روش‌ها می‌توانند اضطراب را کاهش دهند و تمرکز شما را افزایش دهند.</li>
+                                <li>به خود فرصت دهید تا با تغییرات ظاهری کنار بیایید. طبیعی است که نسبت به این تغییرات احساس ناراحتی داشته باشید. از تیم درمانی بخواهید راهکارهایی برای سازگاری با این تغییرات پیشنهاد دهند.</li>
+                            </ul>
+
+                                <h2 class="">صحبت کردن درباره ترس از عوارض جانبی</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+علاوه بر تیم درمان، صحبت با دیگران نیز می‌تواند بسیار کمک‌کننده باشد. احساسات و نگرانی‌های خود را با خانواده و عزیزانتان در میان بگذارید. حمایت آن‌ها می‌تواند اضطراب شما را کاهش دهد و به درک بهتر شرایطتان کمک کند. اطلاعاتی که از تیم درمان دریافت می‌کنید را با اطرافیانتان به اشتراک بگذارید تا بتوانید با همکاری یکدیگر، برای نیازهای مراقبتی یا برنامه‌های احتمالی آینده تصمیم‌گیری کنید.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+همچنین ممکن است مفید باشد با مدیر یا مسئول منابع انسانی محل کار خود درباره درمان و عوارض احتمالی صحبت کنید تا در صورت لزوم، برنامه کاری شما متناسب با درمان تنظیم شود.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+از تیم درمانی خود درباره امکان ملاقات با مددکار اجتماعی سؤال کنید. مددکار می‌تواند در زمینه برنامه‌ریزی شغلی، مسائل اجتماعی و ارتباط با افرادی که تجربه درمان مشابه داشته‌اند، به شما کمک کند. البته به یاد داشته باشید که تجربه دیگران الزاماً مشابه تجربه شما نخواهد بود. همچنین می‌توانید درباره گروه‌های حمایتی حضوری یا آنلاین اطلاعات کسب کنید.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+دریافت کمک از یک مشاور حرفه‌ای نیز می‌تواند نقش مؤثری در کاهش اضطراب ناشی از عوارض جانبی داشته باشد. مشاوران فضایی امن برای بیان نگرانی‌ها فراهم می‌کنند و به شما کمک می‌کنند با ترس‌های خود بهتر کنار بیایید.
+</p>
+ 
+                            <h2 class="wow fadeInUp" data-wow-delay="0.8s">سؤالاتی که می‌توانید از تیم مراقبت سلامت بپرسید</h2>
+
+                            <ul class="wow fadeInUp" data-wow-delay="1.2s">
+                                <li>با توجه به نوع و مرحله سرطان من، چه علائمی ممکن است بروز کند؟</li>
+                                <li>عوارض جانبی شایع هر یک از درمان‌های برنامه درمانی من چیست؟</li>
+                                <li>این عوارض معمولاً چه زمانی ظاهر می‌شوند و چه مدت ادامه دارند؟</li>
+                                <li>آیا می‌توانم از قبل برای مقابله با این عوارض آماده شوم؟</li>
+                                <li>تیم درمان برای پیشگیری یا کاهش عوارض جانبی چه اقداماتی انجام می‌دهد؟</li>
+                                <li>در صورت بروز عوارض جانبی، باید با چه کسی و در چه زمانی تماس بگیرم؟</li>
+                                <li>کدام علائم اورژانسی محسوب می‌شوند؟</li>
+                                <li>خارج از ساعات کاری کلینیک، در صورت بروز مشکل با چه کسی تماس بگیرم؟</li>
+                                <li>آیا گروه حمایتی خاصی وجود دارد که بتواند به من کمک کند؟</li>
+                                <li>چه راه‌های دیگری برای کنار آمدن با ترس از عوارض درمان وجود دارد؟</li>
+                                <li>آیا می‌توانید یک مددکار اجتماعی، مشاور یا متخصص مراقبت حمایتی یا تسکینی به من معرفی کنید؟</li>
+
+
+                            </ul>
+
+<p class="wow fadeInUp source-link" data-wow-delay="0.2s">
+منبع:
+<a href="https://behirah.org" target="_blank" rel="noopener">
+behirah.org
+</a>
+</p>
+
+                     </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+/* حذف کامل ستون‌بندی و محدودیت */
+.service-entry ul {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+
+    /* نابودی ستون و گرید */
+    column-count: auto !important;
+    columns: auto !important;
+    column-gap: normal !important;
+
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+
+    /* اگر قالب flex یا grid داده باشد */
+    grid-template-columns: none !important;
+    flex-direction: column !important;
+}
+
+/* هر آیتم = یک خط کامل */
+.service-entry ul li {
+    width: 100% !important;
+    max-width: none !important;
+
+    display: block !important;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+    margin-bottom: 10px;
+
+    position: relative;
+    padding-right: 30px;
+
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+.service-entry ul li {
+    position: relative;
+    padding-right: 40px; /* فاصله برای دایره */
+    margin-bottom: 15px;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+
+    display: block;
+}
+
+/* دایره با تیک سفید */
+.service-entry ul li::before {
+    content: "✔";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%); /* وسط چین عمودی */
+    
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* دایره */
+    background-color: #00CED1; /* رنگ دایره */
+    
+    color: #fff; /* تیک سفید */
+    font-weight: bold;
+    text-align: center;
+    line-height: 24px; /* برای وسط چین کردن تیک داخل دایره */
+    font-size: 14px;
+}
+
+
+.source-link {
+    margin-top: 30px;
+    font-size: 15px;
+    direction: rtl;
+}
+
+.source-link a {
+    color: #00CED1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.source-link a:hover {
+    color: #ffc107;
+    text-decoration: underline;
+}
+
+</style>

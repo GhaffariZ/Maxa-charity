@@ -1,0 +1,132 @@
+<!-- Our Faqs Section Start -->
+<div class="our-faqs">
+    <div class="container">
+        <div class="row">
+
+            <!-- سمت چپ: توضیحات و CTA -->
+            <div class="col-lg-6">
+                <div class="our-faqs-content">
+
+                    <!-- Section Title Start -->
+                    <div class="section-title">
+                        <h3 class="wow fadeInUp">سوالات متداول</h3>
+                        <h2 class="" data-cursor="-opaque">سوالات پرتکرار همراهان مکسا در همکاری داوطلبی</h2>
+                        <p class="wow fadeInUp" data-wow-delay="0.25s">
+                            در این بخش به متداول‌ترین پرسش‌های شما درباره ثبت اطلاعات و همکاری داوطلبانه با مکسا پرداخته ایم
+                        </p>
+                    </div>
+                    <!-- Section Title End -->
+
+                    <!-- Faq CTA Box Start -->
+                    <div class="faq-cta-box wow fadeInUp" data-wow-delay="0.5s">
+                        <div class="icon-box">
+                            <img src="images/icon-faq-cta.svg" alt="">
+                        </div>
+                        <div class="faq-cta-content">
+                            <p>ما همیشه مراقب لبخند شما هستیم</p>
+                            <h3>پاسخگویی آنلاین</h3>
+                            <p><a href="tel:0938-1234567">0938-1234567</a></p>
+                        </div>
+                    </div>
+                    <!-- Faq CTA Box End -->
+
+                </div>
+            </div>
+
+            <!-- سمت راست: آکاردئون سوالات -->
+            <div class="col-lg-6">
+                <!-- FAQ Accordion Start -->
+                <div class="faq-accordion" id="faqaccordion">
+
+                    <!-- FAQ Item 1 -->
+                    <div class="accordion-item wow fadeInUp">
+                        <h2 class="accordion-header" id="heading1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                چه کسانی می‌توانند به عنوان داوطلب در مکسا فعالیت کنند؟
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+دانشجویان، متخصصان حوزه سلامت، مددکاران اجتماعی، طراحان، عکاسان، مترجمان، مربیان هنری و افراد علاقه‌مند به خدمات اجتماعی.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.2s">
+                        <h2 class="accordion-header" id="heading2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                آیا فعالیت داوطلبانه در مکسا نیاز به مدرک یا تخصص خاصی دارد؟
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+خیر، اما در برخی حوزه‌ها داشتن تخصص و مهارت (مثلاً پرستاری یا روان‌شناسی) امتیاز محسوب می‌شود.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.4s">
+                        <h2 class="accordion-header" id="heading3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                               نحوه ثبت‌نام به عنوان داوطلب چگونه است؟
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>   
+با تکمیل فرم موجود در این صفحه، اطلاعات شما ثبت می‌شود و پس از بررسی اولیه، با شما تماس گرفته می‌شود.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.6s">
+                        <h2 class="accordion-header" id="heading4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                               آیا می‌توانم زمان و نحوه مشارکتم را خودم تعیین کنم؟
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+بله، مکسا برنامه‌ریزی انعطاف‌پذیری برای داوطلبان دارد و زمان و نوع خدمت بر اساس توافق مشخص می‌شود.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Accordion End -->
+
+                <!-- دکمه ارسال پیام -->
+                <div class="testimonial-btn mt-3">
+                    <a href="contact.html" class="btn-default">ارسال پیام و نظرات شما</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Our Faqs Section End -->
+
+<style>
+/* حذف هرگونه پس‌زمینه و باکس */
+.our-faqs {
+    background: none !important;
+    box-shadow: none !important;
+}
+</style>

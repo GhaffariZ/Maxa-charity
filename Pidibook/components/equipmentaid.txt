@@ -1,0 +1,103 @@
+<!-- Page Single Post Start -->
+<div class="page-single-post compact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Post Featured Image Start -->
+                <div class="post-image">
+                    <figure class="image-anime reveal">
+                        <img src="{{ API_GET("/pigi","equipmentaid","A1").data[0].image | raw }}" alt="">
+                    </figure>
+                </div>
+                <!-- Post Featured Image End -->
+
+                <!-- Post Single Content Start -->
+                <div class="post-content">
+                    <!-- Post Entry Start -->
+                    <div class="post-entry">
+
+                        <h2 class="wow fadeInUp" data-wow-delay="0.8s">تجهیز برای زندگی، همراه برای سلامت</h2>
+
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">بعضی از بیماران، فقط یک دارو نمی‌خواهند؛
+گاهی یک ویلچر، یک تخت، یک کپسول اکسیژن یا دستگاه ساده، می‌تواند زندگی‌شان را دگرگون کند.
+اهدای تجهیزات پزشکی، یعنی ساختن فرصتی دوباره برای تنفس، برای حرکت، برای ادامه دادن...
+</p>
+
+                        <h2 class="wow fadeInUp" data-wow-delay="0.8s">چرا اهدای تجهیزات مهم است؟</h2>
+
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">در مسیر درمان بیماران مبتلا به سرطان، به تجهیزات پزشکی بسیاری نیاز داریم. تجهیزاتی که شاید در خانه شما بی‌استفاده مانده یا بتوانید تهیه‌اش کنید، اما برای بیماری دیگر یعنی تفاوت بین درمان و رنج.</p>
+                        <h2 class="wow fadeInUp" data-wow-delay="0.8s">اهدای تجهیزات پزشکی به مکسا، یعنی:</h2>
+
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">استفاده‌ی دوباره از اقلام سالم برای تسکین درد  بیماران</p>
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">کمک به کاهش هزینه‌های سنگین درمانی خانواده‌ها</p>
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">مشارکت مستقیم در بهبود شرایط زندگی یک بیمار</p>
+
+                        <!-- Client Challenge Box Satrt -->
+                        <div class="client-challenge-box">
+                            <h2 class="">چه چیزهایی می‌تونم اهدا کنم؟</h2>
+
+                            <!-- Case Study List Video Start -->
+                            <div class="case-study-list-video">
+                                <!-- Case Study List Start -->
+                                <div class="case-study-list wow fadeInUp" data-wow-delay="0.4s">
+                                    <ul>
+                                        <li>ویلچر، واکر، عصا</li>
+                                        <li>تخت بیمار، تشک مواج</li>
+                                        <li>کپسول یا دستگاه اکسیژن</li>
+                                        <li>دستگاه ساکشن، فشارسنج، تب‌سنج دیجیتال</li>
+                                        <li>تجهیزات مراقبت خانگی و کمک‌درمانی</li>
+                                        <li>سایر اقلام سالم و قابل استفاده پزشکی</li>
+                                    </ul>
+                                </div>
+                                <!-- Case Study List End -->
+
+                                <!-- Case Study Image Video Start -->
+                                <div class="case-study-image-video">
+                                    <!-- Video Image Start -->
+                                    <div class="video-image">
+                                        <a href="https://www.youe.com/watch?v=Y-x0efG1seA" class="popup-video"
+                                            data-cursor-text="پخش">
+                                            <figure class="image-anime">
+                                                <img src="images/case-study-video-bg.jpg" alt="">
+                                            </figure>
+                                        </a>
+                                    </div>
+                                    <!-- Video Image End -->
+
+                                    <!-- Video Play Button Start -->
+                                    <div class="video-play-button">
+                                        <a href="https://www.youe.com/watch?v=Y-x0efG1seA" class="popup-video"
+                                            data-cursor-text="پخش">
+                                            <i class="fa-solid fa-play"></i>
+                                        </a>
+                                    </div>
+                                    <!-- Video Play Button End -->
+                                </div>
+                                <!-- Case Study Image Video End -->
+                            </div>
+                            <!-- Case Study List Video End -->
+                        </div>
+                        <!-- Client Challenge Box End -->
+                    </div>
+                </div>
+                <!-- Post Single Content End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Single Post End -->
+
+<!-- استایل اختصاصی -->
+<style>
+/* حذف خط زرد و کنترل فاصله پایین */
+.page-single-post.compact,
+.page-single-post.compact::after,
+.page-single-post.compact::before {
+    border: none !important;
+}
+
+.page-single-post.compact {
+    margin-bottom: 10px !important; /* فاصله پایین - قابل تغییر */
+    padding-bottom: 0 !important;   /* حذف فضای داخلی اضافی */
+}
+</style>

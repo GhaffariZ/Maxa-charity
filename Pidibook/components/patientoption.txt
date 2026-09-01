@@ -1,0 +1,276 @@
+<!-- ========================= -->
+<!-- 1. ردیف سه‌تایی بدون عکس با لینک‌ها زیر هم -->
+<section class="link-cards-section">
+  <div class="container link-cards-container">
+    <div class="card-row link-card-row">
+
+      <div class="link-card">
+        <h3>شناخت و درک سرطان</h3>
+        <div class="links">
+          <a href="cancer1.html">تعریف سرطان</a>
+          <a href="cancer2.html">تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی</a>
+          <a href="understandingcancer.html">درک سرطان</a>
+          <a href="tissuealterations.html">تغییرات بافتی که سرطان نیستند</a>
+        </div>
+      </div>
+
+      <div class="link-card">
+        <h3>علل، عوامل و فرآیند ایجاد سرطان</h3>
+        <div class="links">
+          <a href="carcinogenesis.html">نحوه ایجاد سرطان</a>
+          <a href="cancergenes.html">ژن های دخیل در سرطان</a>
+          <a href="riskfactors.html">عوامل خطر در بروز سرطان</a>
+          <a href="AYAcancer.html">نوجوانان و جوانان مبتلا به سرطان</a>
+        </div>
+      </div>
+
+      <div class="link-card">
+        <h3>تشخیص، پیشرفت و گسترش سرطان</h3>
+        <div class="links">
+          <a href="diagnosis.html">تشخیص و مرحله‌بندی</a>
+          <a href="metastasis.html">متاستاز سرطان</a>
+          <a href="cancerspread.html">محل و نحوه گسترش سرطان</a>
+          <a href="cancertypes.html">انواع سرطان</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================= -->
+<!-- 2. ردیف سه‌تایی کارت‌ها با عکس (مربعی و هم‌اندازه) -->
+<section class="cards-section">
+  <div class="container cards-container">
+    <h2 class="section-title cards-title">مراقبت های حمایتی و تسکینی</h2>
+
+    <div class="cards-row">
+
+      <a href="fear.html" class="card-link">
+        <div class="card">
+          <img src="{{ API_GET("/pigi","patientoption","A1").data[0].image | raw }}" alt="">
+          <div class="card-content">
+            <h3>مدیریت ترس از عوارض جانبی ناشی از درمان سرطان</h3>
+          </div>
+        </div>
+      </a>
+
+      <a href="link2.html" class="card-link">
+        <div class="card">
+          <img src="{{ API_GET("/pigi","patientoption","A1").data[1].image | raw }}" alt="">
+          <div class="card-content">
+            <h3>مدیریت استرس ناشی از روند بیماری</h3>
+          </div>
+        </div>
+      </a>
+
+      <a href="link3.html" class="card-link">
+        <div class="card">
+          <img src="{{ API_GET("/pigi","patientoption","A1").data[2].image | raw }}" alt="">
+          <div class="card-content">
+            <h3>مدیریت و مدارا با خشم </h3>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================= -->
+<!-- 3. ردیف تک تصویر + متن کنار هم -->
+<section class="image-text-section">
+  <div class="container image-text-container">
+    <h2 class="section-title image-text-title">عنوان کلی بخش</h2>
+
+    <div class="image-text-box">
+      <div class="text-content">
+        <h3>عنوان بزرگ سمت چپ</h3>
+        <p>
+          توضیح کامل‌تر درباره این بخش و اطلاعات مهمی که میخوای نمایش بدی.
+        </p>
+      </div>
+
+      <div class="image-content">
+        <img src="image4.jpg" alt="تصویر سمت راست">
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ========================= */
+/* 1. ردیف سه‌تایی بدون عکس با لینک‌ها زیر هم */
+.link-cards-section {
+  padding: 50px 20px;
+  background-color: #ffffff;
+}
+
+.link-cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.link-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.link-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+  flex: 1 1 calc(33.333% - 20px);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.link-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.link-card .links {
+  display: flex;
+  flex-direction: column; /* گزینه‌ها زیر هم */
+  gap: 10px;
+}
+
+.link-card .links a {
+  background-color: #00CED1; /* سبز */
+  color: #fff;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.link-card .links a:hover {
+  background-color: #ffc107; /* زرد هاور */
+  color: #333;
+}
+
+/* ========================= */
+/* 2. کارت‌های مربعی */
+
+.cards-section {
+  padding: 50px 20px;
+}
+
+.cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cards-title {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  aspect-ratio: 1 / 1;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
+}
+
+.card img {
+  height: 70%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.card-content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+/* ========================= */
+/* 3. تصویر + متن */
+
+.image-text-section {
+  padding: 50px 20px;
+}
+
+.image-text-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.image-text-title {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.image-text-box {
+  display: flex;
+  gap: 30px;
+  background: #f0f0f0;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.text-content,
+.image-content {
+  flex: 1;
+}
+
+.image-content img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* ========================= */
+/* ریسپانسیو */
+
+@media (max-width: 900px) {
+  .link-card,
+  .cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .image-text-box {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 600px) {
+  .cards-row {
+    grid-template-columns: 1fr;
+  }
+
+  .link-card {
+    flex: 1 1 100%;
+  }
+}
+</style>

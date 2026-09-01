@@ -1,0 +1,325 @@
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<div class="courses-section">
+
+<style>
+
+.courses-section{
+font-family:'Vazirmatn',sans-serif;
+padding:60px;
+direction:rtl;
+}
+
+/* tabs */
+
+.course-tabs{
+text-align:center;
+margin-bottom:40px;
+}
+
+.course-tabs button{
+border:none;
+background:none;
+font-size:16px;
+margin:0 10px;
+cursor:pointer;
+padding:10px 15px;
+color:#555;
+border-bottom:3px solid transparent;
+}
+
+.course-tabs button.active{
+color:#000;
+border-bottom:3px solid #f2c94c;
+font-weight:600;
+}
+
+/* grid */
+
+.course-grid{
+display:flex;
+gap:30px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+/* card */
+
+.course-card{
+background:white;
+width:300px;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+display:flex;
+flex-direction:column;
+}
+
+/* image */
+
+.course-img{
+position:relative;
+}
+
+.course-img img{
+width:100%;
+height:190px;
+object-fit:cover;
+}
+
+/* badge */
+
+.badge{
+position:absolute;
+top:15px;
+left:15px;
+background:#1e7f63;
+color:#fff;
+padding:5px 12px;
+border-radius:8px;
+font-size:13px;
+}
+
+/* body */
+
+.course-body{
+padding:20px;
+display:flex;
+flex-direction:column;
+flex:1;
+}
+
+.price{
+display:flex;
+gap:10px;
+margin-bottom:10px;
+}
+
+.price .new{
+color:#f2a900;
+font-weight:700;
+}
+
+.price .old{
+text-decoration:line-through;
+color:#888;
+font-size:14px;
+}
+
+.course-title{
+font-size:16px;
+line-height:1.8;
+margin-bottom:15px;
+}
+
+.meta{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+color:#777;
+margin-bottom:20px;
+}
+
+/* button fixed bottom */
+
+.preview-btn{
+margin-top:auto;
+display:block;
+text-align:center;
+background:#f2c94c;
+color:#333;
+padding:10px;
+border-radius:10px;
+text-decoration:none;
+font-size:14px;
+transition:0.3s;
+}
+
+.preview-btn:hover{
+background:#0b6b53;
+color:#fff;
+}
+
+/* all courses fixed */
+
+.all-courses{
+margin-top:40px;
+text-align:center;
+}
+
+.all-courses a{
+background:#f2c94c;
+padding:12px 25px;
+border-radius:25px;
+text-decoration:none;
+color:#333;
+font-weight:600;
+}
+
+</style>
+
+
+<div class="course-tabs">
+<button class="active" onclick="filterCourses('all',this)">همه دوره ها</button>
+<button onclick="filterCourses('business',this)">تجارت</button>
+<button onclick="filterCourses('design',this)">طراحی</button>
+<button onclick="filterCourses('popular',this)">محبوبیت</button>
+</div>
+
+
+<div class="course-grid">
+
+<div class="course-card" data-category="business">
+
+<div class="course-img">
+<img src="1.jpg">
+<span class="badge">تجارت</span>
+</div>
+
+<div class="course-body">
+
+<div class="price">
+<span class="new">$9.00</span>
+<span class="old">$70.00</span>
+</div>
+
+<div class="course-title">
+دانش خود را با دوره های تخصصی ارتقا دهید
+</div>
+
+<div class="meta">
+<span>۵۰ دانش آموز</span>
+<span>۲۰ درس</span>
+</div>
+
+<a href="#" class="preview-btn">← همین حالا ثبت نام کنید</a>
+
+</div>
+</div>
+
+
+<div class="course-card" data-category="popular">
+
+<div class="course-img">
+<img src="2.jpg">
+</div>
+
+<div class="course-body">
+
+<div class="price">
+<span class="new">$9.00</span>
+<span class="old">$70.00</span>
+</div>
+
+<div class="course-title">
+آموزش پیشرفته مدیریت کسب و کار آنلاین
+</div>
+
+<div class="meta">
+<span>۵۰ دانش آموز</span>
+<span>۲۰ درس</span>
+</div>
+
+<a href="#" class="preview-btn">← همین حالا ثبت نام کنید</a>
+
+</div>
+</div>
+
+
+<div class="course-card" data-category="design">
+
+<div class="course-img">
+<img src="3.jpg">
+<span class="badge">طراحی</span>
+</div>
+
+<div class="course-body">
+
+<div class="price">
+<span class="new">$9.00</span>
+<span class="old">$70.00</span>
+</div>
+
+<div class="course-title">
+آموزش طراحی حرفه ای رابط کاربری
+</div>
+
+<div class="meta">
+<span>۵۰ دانش آموز</span>
+<span>۲۰ درس</span>
+</div>
+
+<a href="#" class="preview-btn">← همین حالا ثبت نام کنید</a>
+
+</div>
+</div>
+
+
+<div class="course-card" data-category="business">
+
+<div class="course-img">
+<img src="4.jpg">
+</div>
+
+<div class="course-body">
+
+<div class="price">
+<span class="new">$9.00</span>
+<span class="old">$70.00</span>
+</div>
+
+<div class="course-title">
+دوره کامل رشد و توسعه استارتاپ
+</div>
+
+<div class="meta">
+<span>۷۰ دانش آموز</span>
+<span>۲۵ درس</span>
+</div>
+
+<a href="#" class="preview-btn">← همین حالا ثبت نام کنید</a>
+
+</div>
+</div>
+
+</div>
+
+
+<div class="all-courses">
+<a href="courses.html">← مشاهده همه دوره ها</a>
+</div>
+
+</div>
+
+
+<script>
+
+function filterCourses(category,btn){
+
+let cards=document.querySelectorAll(".courses-section .course-card");
+
+cards.forEach(card=>{
+
+if(category==="all"){
+card.style.display="flex";
+}else{
+
+if(card.dataset.category===category){
+card.style.display="flex";
+}else{
+card.style.display="none";
+}
+
+}
+
+});
+
+document.querySelectorAll(".course-tabs button").forEach(b=>{
+b.classList.remove("active");
+});
+
+btn.classList.add("active");
+
+}
+
+</script>

@@ -1,0 +1,89 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="#">تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی</a></li>
+                                <li><a href="#">درک سرطان</a></li>
+                                <li><a href="#">تغییرات بافتی که سرطان نیستند</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","understandingcancer","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">درک سرطان</h2>
+                                <p class="wow fadeInUp">
+سرطان بیماری است که در آن برخی از سلول‌های بدن به طور غیرقابل کنترل رشد می‌کنند و به سایر قسمت‌های بدن گسترش می‌یابند.سرطان می‌تواند تقریباً در هر جایی از بدن انسان که از تریلیون‌ها سلول تشکیل شده است، شروع شود. به طور معمول، سلول‌های انسان رشد می‌کنند و تکثیر می‌شوند (از طریق فرآیندی به نام تقسیم سلولی) تا سلول‌های جدیدی را که بدن به آنها نیاز دارد، تشکیل دهند. وقتی سلول‌ها پیر می‌شوند یا آسیب می‌بینند، می‌میرند و سلول‌های جدید جای آنها را می‌گیرند.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+گاهی اوقات این فرآیند منظم از کار می‌افتد و سلول‌های غیرطبیعی یا آسیب دیده در زمانی که نباید، رشد و تکثیر می‌شوند. این سلول‌ها ممکن است تومور تشکیل دهند که توده‌هایی از بافت هستند. تومورها می‌توانند سرطانی یا غیرسرطانی (خوش‌خیم) باشند. تومورهای سرطانی به بافت‌های مجاور گسترش می‌یابند یا به آنها حمله می‌کنند و می‌توانند به نقاط دوردست بدن سفر کنند تا تومورهای جدیدی تشکیل دهند (فرآیندی به نام متاستاز). تومورهای سرطانی را می‌توان تومورهای بدخیم نیز نامید. بسیاری از سرطان‌ها تومورهای جامد تشکیل می‌دهند، اما سرطان‌های خون، مانند لوسمی، معمولاً این کار را نمی‌کنند.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+تومورهای خوش‌خیم به بافت‌های مجاور گسترش نمی‌یابند یا به آنها حمله نمی‌کنند. تومورهای خوش‌خیم معمولاً پس از برداشتن، دوباره رشد نمی‌کنند، در حالی که تومورهای سرطانی گاهی اوقات دوباره رشد می‌کنند. با این حال، تومورهای خوش‌خیم گاهی اوقات می‌توانند بسیار بزرگ باشند. برخی از آنها می‌توانند علائم جدی ایجاد کنند یا تهدیدکننده زندگی باشند، مانند تومورهای خوش‌خیم در مغز.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+</style>

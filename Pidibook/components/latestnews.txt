@@ -1,0 +1,140 @@
+   <!-- Latest News Section Start -->
+    <div class="latest-news">
+        <div class="container">
+            <div class="row section-row align-items-center">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title">
+                        <h2 class="" data-cursor="-opaque">آخرین اخبار</h2>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <!-- Post Item Start -->
+                    <div class="post-item wow fadeInUp">
+                        <!-- Post Featured Image Start-->
+                        <div class="post-featured-image">
+                            <a href="blog-single.html"  data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                    <img src="{{ API_GET("/pigi","latestnews","A1").data[0].image | raw }}" alt="">                                
+                                </figure>    
+                            </a>                            
+                        </div>
+                        <!-- Post Featured Image End -->
+
+                        <!-- Post Item Body Start -->
+                        <div class="post-item-body">
+                            <!-- Post Item Tag Start -->
+                            <div class="post-item-meta">
+                                <ul>
+                                    <li><a href="blog-single.html">توسط روابط عمومی</a></li>
+                                    <li> آبان 1404</li>
+                                </ul>
+                            </div>
+                            <!-- Post Item Tag End -->
+
+                            <!-- Post Item Content Start -->
+                            <div class="post-item-content">
+                                <h2><a href="blog-single.html">نکوداشت روز پرستار در مکسا</a></h2>
+                            </div>
+                            <!-- Post Item Content End -->
+
+                            <!-- Post Item Button Start-->
+                            <div class="post-item-btn">
+                                <a href="blog-single.html" class="readmore-btn">ادامه مطلب</a>
+                            </div>
+                            <!-- Post Item Button End-->
+                        </div>
+                        <!-- Post Item Body End -->
+                    </div>
+                    <!-- Post Item End -->
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <!-- Post Item Start -->
+                    <div class="post-item wow fadeInUp" data-wow-delay="0.2s">
+                        <!-- Post Featured Image Start-->
+                        <div class="post-featured-image">
+                            <a href="blog-single.html"  data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                    <img src="{{ API_GET("/pigi","latestnews","A1").data[1].image | raw }}" alt="">                                
+                                </figure>    
+                            </a>
+                        </div>
+                        <!-- Post Featured Image End -->
+
+                        <!-- Post Item Body Start -->
+                        <div class="post-item-body">
+                            <!-- Post Item Tag Start -->
+                            <div class="post-item-meta">
+                                <ul>
+                                    <li><a href="blog-single.html">توسط روابط عمومی</a></li>
+                                    <li> آبان 1404</li>
+                                </ul>
+                            </div>
+                            <!-- Post Item Tag End -->
+
+                            <!-- Post Item Content Start -->
+                            <div class="post-item-content">
+                                <h2><a href="blog-single.html">نشست هماهنگی برای راه‌اندازی شعبه مؤسسه مکسا در بجنورد برگزار شد</a></h2>
+                            </div>
+                            <!-- Post Item Content End -->
+
+                            <!-- Post Item Button Start-->
+                            <div class="post-item-btn">
+                                <a href="blog-single.html" class="readmore-btn">ادامه مطلب</a>
+                            </div>
+                            <!-- Post Item Button End-->
+                        </div>
+                        <!-- Post Item Body End -->
+                    </div>
+                    <!-- Post Item End -->
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <!-- Post Item Start -->
+                    <div class="post-item wow fadeInUp" data-wow-delay="0.4s">
+                        <!-- Post Featured Image Start-->
+                        <div class="post-featured-image">
+                            <a href="blog-single.html"  data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                    <img src="{{ API_GET("/pigi","latestnews","A1").data[2].image | raw }}" alt="">                                
+                                </figure>    
+                            </a>
+                        </div>
+                        <!-- Post Featured Image End -->
+
+                        <!-- Post Item Body Start -->
+                        <div class="post-item-body">
+                            <!-- Post Item Tag Start -->
+                            <div class="post-item-meta">
+                                <ul>
+                                    <li><a href="blog-single.html">توسط روابط عمومی</a></li>
+                                    <li> آبان 1404</li>
+                                </ul>
+                            </div>
+                            <!-- Post Item Tag End -->
+
+                            <!-- Post Item Content Start -->
+                            <div class="post-item-content">
+                                <h2><a href="blog-single.html">جلسه معاونین و مدیران مکسا در مشهد مقدس با حضور هیئت‌مدیره و اعضای مؤسس برگزار شد</a></h2>
+                            </div>
+                            <!-- Post Item Content End -->
+
+                            <!-- Post Item Button Start-->
+                            <div class="post-item-btn">
+                                <a href="blog-single.html" class="readmore-btn">ادامه مطلب</a>
+                            </div>
+                            <!-- Post Item Button End-->
+                        </div>
+                        <!-- Post Item Body End -->
+                    </div>
+                    <!-- Post Item End -->
+                </div>
+            </div>
+        </div>
+     </div>
+    <!-- Latest News Section End -->

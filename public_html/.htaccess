@@ -97,6 +97,19 @@ RewriteCond %{THE_REQUEST} \s/+branches\.html[\s?] [NC]
 RewriteRule ^branches\.html$ /branches.php [R=301,L]
 
 # ---------------------------------------------------------
+# 0.85) شورای عالی و هیئت مدیره (Supreme Council & Board of Directors)
+#       هدایت لینک‌های قدیمی .html به مسیرهای تمیز
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+headdirectors\.html[\s?] [NC]
+RewriteRule ^headdirectors\.html$ /headdirectors [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+directors\.html[\s?] [NC]
+RewriteRule ^directors\.html$ /directors [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+doctorspage\.html[\s?] [NC]
+RewriteRule ^doctorspage\.html$ /doctorspage [R=301,L]
+
+# ---------------------------------------------------------
 # 0.9) سفارش استند (Stand Customize) clean URL
 #      /stand-sell-section                  -> dashboard/stand/stand-customize.php
 #      /dashboard/stand/stand-customize.php -> 301 به /stand-sell-section

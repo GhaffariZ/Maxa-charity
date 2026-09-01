@@ -1376,8 +1376,8 @@
                       <a href="/mission-vision">ماموریت و چشم انداز</a>
                       <a href="/association">اساسنامه</a>
                       <a href="/organizationalchart">چارت سازمانی</a>
-                      <a href="/headdirectors.html">شورای عالی</a>
-                      <a href="/directors.html">هیئت مدیره</a>
+                      <a href="/headdirectors">شورای عالی</a>
+                      <a href="/directors">هیئت مدیره</a>
                       <a href="/CEOoffice.html">مدیرعامل</a>
                       <a href="/doctorspage">کادر درمان</a>
                       <a href="/network.php">شبکه همکاران</a>

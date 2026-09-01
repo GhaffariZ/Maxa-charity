@@ -1,0 +1,220 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>مراقبت های حمایتی و تسکینی</h3>
+                            <ul>
+                                <li><a href="cancer1.html">تعریف سرطان</a></li>
+                                <li><a href="understandingcancer.html">درک سرطان</a></li>
+                                <li><a href="tissuealterations.html">تغییرات بافتی که سرطان نیستند</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","medical_equipments","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">تأمین تجهیزات پزشکی</h2>
+                                <p class="wow fadeInUp">
+یکی از دغدغه‌های مهم بیمار و خانوادۀ او، در مراحل مختلف بیماری و درمان، تأمین و خرید تجهیزات پزشکی موردِ نیاز بیمار است. از مهم‌ترین و البته پر هزینه‌ترینِ این مراحل، زمانی‌ست که قرار است بیمار برای مدتی در خانه بستری شود. در این زمان، تنوع عملکرد و پیچیدگی فنی این تجهیزات، نگرانی از کیفیت آنها و تعدد وسایل مورد نیاز بصورت همزمان از یک سو و هزینه‌های بالای این تجهیزات از سوی دیگر، باعث تحمیل فشار روانی و اقتصادی بر خانواده می‌گردد.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+مکسا با تهیه و امانت دادن این تجهیزات بصورت کاملاً رایگان، تلاش می‌کند با حذف این دغدغه، باری را از دوش بیمار و خانوادۀ او بر‌دارد. این تجهیزات کاملاً استاندارد بوده و مشخصات فنی آنها، طبق نظر تخصصی پزشکِ طب تسکینی و بر اساس نیاز‌های بیمار تعیین می‌شود. همچنین شیوۀ راه‌اندازی، تنظیمات دستگاه‌ها و شیوۀ نگه‌داری آنها نیز؛ در زمان تحویل به بیمار یا مراقبین او آموزش داده می‌شود.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+در اینجا می‌توانید لیستی از تجهیزات قابل دریافت از مکسا را مشاهده نمایید:
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">دستگاه اکسیژن‌ساز:</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+این دستگاه، اکسیژن موجود در هوا را گرفته و آنرا تغلیظ می‌کند. مزیت این دستگاه نسبت به کپسول اکسیژن، بی نیاز بودن آن از پر کردنِ مجدد کپسول است
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">کپسول اکسیژن و تِرالی حمل کپسول:</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+کپسول اکسیژن حاوی اکسیژن خالص می‌باشد که به بیماران دارای مشکلات تنفسی کمک می‌کند که در هر مرتبه دم و بازدم، مقدار اکسیژن بیشتری را دریافت کنند. مزیت کپسول اکسیژن نسبت به دستگاه اکسیژن‌ساز، فشار بالاتر اکسیژن آن است.
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">تشک مواج:</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+یکی از مشکلات بسیار شایع و البته جدی در میان بیماران وابسته به تخت، ابتلا به زخم بستر است. تشک مواج با ایجاد نقاط اتکای مختلف و تغییر متناوب آنها در سطح بدن، مانع از تمرکز فشار بر بدن و در نتیجه زخم بستر می‌شود.
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">ساکشن:</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+دستگاه مَکشی است که برای خارج کردن مایعات، ترشحات و مُخاط اضافی از بدنِ بیمار، خصوصاً مسیر تنفسی) مورد استفاده قرار می‌گیرد.
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">پالس اکسی‌متر:</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+این وسیله به سر انگشتان متصل شده و به کمک نور، میزان اکسیژن خون (درصد اشباع اکسیژن خون) و تعداد ضربان قلب در ثانیه را ارزیابی می‌کند. استفاده از پالس اُکْسی‌متر درد ندارد.
+</p>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">تخت بیمارستانی و برانکار</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">ویلچیر، عصا و واکر</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">دستگاه تسهیل کننده گردش خون (به آن پمپ IPC و یا پمپ DVT نیز گفته می شود):</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+این وسیله با ایجاد فشار متناوب در اندام های مختلف (دست، پا، و شکم)، گردش خون را در این اندام ها تسهیل می کند.
+</p>         
+                                <h class="wow fadeInUp" data-wow-delay="0.8s">مکسا امکان امانت دستگاه های ونتیلاتور، سی پپ (CPAP) و بای پپ (BIPAP) را ندارد.</h2>
+
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">نکات قابل توجه:</h2>
+                            <ul class="wow fadeInUp" data-wow-delay="1.2s">
+                                <li>ارائۀ تجهیزات صرفاً پس از تشکیل پرونده، در مکسا ممکن است.</li>
+                                <li>امانت تجهیزات صرفاً مختص بیماران مبتلا به سرطان و در محدودۀ مناطق ۱۵گانۀ شهر اصفهان امکان‌پذیر است.</li>
+                                <li>برای دریافت تجهیزات لازم است؛ ۲ عدد کارت ملی یا شناسنامۀ معتبر از بستگان بیمار نزد مکسا به امانت باقی بماند.</li>
+                                <li>پُر کردن کپسول اکسیژن در طول مدت امانت بر عهدۀ امانت‌گیرنده است.</li>
+                                <li>کپسول‌های اکسیژن بصورت پُر تحویل شما می‌گردد، لذا لطفاً قبل از تحویل به مکسا، مجدداً آنرا پُر نمایید. (امکان پرداخت هزینۀ پر کردن کپسول نیز وجود دارد.)</li>
+                                <li>وسایلی را که با بدن بیمار یا ترشحات در تماس بوده است (مانند تشک مواج و ساکشن ) قبل از بازگرداندن به مکسا، حتماً با آب و صابون شسته و ضد عفونی نمایید.</li>
+                                <li>درصورت آسیب رساندن به تجهیزات، جبران هرگونه خسارت برعهدۀ امانت گیرنده است.</li>
+                                <li>کلیۀ تجهیزات مکسا، وقف استفادۀ بیماران مبتلا به سرطان می‌باشد، بنابراین امکان در اختیار قرار دادن آن برای دیگران بیماران، امکان‌پذیر نمی‌باشد.</li>
+                            </ul>
+
+                   </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+<style>
+.providing-services h2 {
+  font-size: 24px;
+  color: #222;
+}
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+/* حذف کامل ستون‌بندی و محدودیت */
+.service-entry ul {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+
+    /* نابودی ستون و گرید */
+    column-count: auto !important;
+    columns: auto !important;
+    column-gap: normal !important;
+
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+
+    /* اگر قالب flex یا grid داده باشد */
+    grid-template-columns: none !important;
+    flex-direction: column !important;
+}
+
+/* هر آیتم = یک خط کامل */
+.service-entry ul li {
+    width: 100% !important;
+    max-width: none !important;
+
+    display: block !important;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+    margin-bottom: 10px;
+
+    position: relative;
+    padding-right: 30px;
+
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+.service-entry ul li {
+    position: relative;
+    padding-right: 40px; /* فاصله برای دایره */
+    margin-bottom: 15px;
+
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+
+    display: block;
+}
+
+/* دایره با تیک سفید */
+.service-entry ul li::before {
+    content: "✔";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%); /* وسط چین عمودی */
+    
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* دایره */
+    background-color: #00CED1; /* رنگ دایره */
+    
+    color: #fff; /* تیک سفید */
+    font-weight: bold;
+    text-align: center;
+    line-height: 24px; /* برای وسط چین کردن تیک داخل دایره */
+    font-size: 14px;
+}
+
+
+.source-link {
+    margin-top: 30px;
+    font-size: 15px;
+    direction: rtl;
+}
+
+.source-link a {
+    color: #00CED1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.source-link a:hover {
+    color: #ffc107;
+    text-decoration: underline;
+}
+
+</style>

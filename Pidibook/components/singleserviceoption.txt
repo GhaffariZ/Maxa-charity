@@ -1,0 +1,178 @@
+    <!-- Page Case Study Start -->
+     <div class="page-case-study">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Choose Our Project Nav start -->
+                    <div class="ps-filters" data-wow-delay="0.25s">
+                          <button class="active" data-filter="all">همه</button>
+                          <button data-filter="diagnosis">زندگی پس از تشخیص بیماری</button>
+                          <button data-filter="treatment">مسیر درمان</button>
+                          <button data-filter="recovery">زندگی پس از بهبودی</button>
+                          <button data-filter="family">تجربه همراهان</button>
+                          <button data-filter="staff">روایت کادر درمان</button>
+                  </div>
+                    <!-- Choose Our Project Nav End -->
+                </div>
+
+                <div class="col-lg-12">
+                    <div class="row case-study-item-boxes align-items-center">
+                        <div class="col-lg-4 col-md-6 case-study-item-box Medical-Nursing-Care specialized_care">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp">
+                                <div class="case-study-image">
+                                    <a href="medicalcare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[0].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>
+                                <div class="case-study-content">
+                                    <h3><a href="medicalcare.html">مراقبت های پزشکی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Medical-Nursing-Care emergency_services">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="0.2s">
+                                <div class="case-study-image">
+                                    <a href="nursecare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[1].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                               
+                                <div class="case-study-content">
+                                    <h3><a href="nursecare.html">مراقبت های پرستاری</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Psychosocial-Spiritual-Care immunizations">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="0.4s">
+                                <div class="case-study-image">
+                                    <a href="psychologicalcare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[2].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="psychologicalcare.html">مشاوره و حمایت روانشناختی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box diagnostics Psychosocial-Spiritual-Care emergency_services">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="0.6s">
+                                <div class="case-study-image">
+                                    <a href="socialworkcare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[3].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="socialworkcare.html">مددکاری اجتماعی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box diagnostics Psychosocial-Spiritual-Care specialized_care">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="0.8s">
+                                <div class="case-study-image">
+                                    <a href="spritualcare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[4].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="spritualcare.html">مراقبت معنوی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Rehabilitation-Recovery specialized_care">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="1s">
+                                <div class="case-study-image">
+                                    <a href="physiotherapycare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[5].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="physiotherapycare.html">خدمات بازتوانی و توانبخشی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Specialized-Counseling emergency_services">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="1.2s">
+                                <div class="case-study-image">
+                                    <a href="nutritioncare.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[6].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="nutritioncare.html">مشاوره تغذیه</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Rehabilitation-Recovery specialized_care">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="1.4s">
+                                <div class="case-study-image">
+                                    <a href="medical_equipments.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[7].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="medical_equipments.html">تامین تجهیزات پزشکی</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 case-study-item-box Specialized-Counseling specialized_care">
+                            <!-- Case Study Item Start -->
+                            <div class="case-study-item wow fadeInUp" data-wow-delay="1.6s">
+                                <div class="case-study-image">
+                                    <a href="genetic_conseuling.html"  data-cursor-text="مشاهده">
+                                        <figure class="image-anime">
+                                            <img src="{{ API_GET("/pigi","singleserviceoption","A1").data[8].image | raw }}" alt="">
+                                        </figure>
+                                    </a>
+                                </div>                                
+                                <div class="case-study-content">
+                                    <h3><a href="genetic_conseuling.html">مشاوره ژنتیک و غربالگری</a></h3>
+                                </div>
+                            </div>
+                            <!-- Case Study Item End -->
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+    <!-- Page Case Study End -->

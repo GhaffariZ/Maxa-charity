@@ -1,0 +1,119 @@
+<!-- Intro Video Section Start -->
+<div class="intro-video">
+    <div class="container">
+        
+        <!-- Section Title Full Width Start -->
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title fullwidth-text">
+                    <h2 data-cursor="-opaque">
+                        با صدقه‌ی روزانه، هم زندگی خودت رو بیمه کن، هم زندگی بیماران رو
+                    </h2>
+                    <p class="wow fadeInUp" data-wow-delay="0.25s">
+                        در مکسا، با پرداخت روزانه‌ی مبلغی کوچک (از 2 هزار تومان به بالا)،
+                        می‌تونی در کاهش درد بیماران مبتلا به سرطان نقش داشته باشی. صدقه‌ات رو می‌تونی برای سلامتی، رفع گرفتاری، یا 
+                        حتی به نیت درگذشتگان اختصاص بدی. 
+                        گزارش شفاف کمک‌ها بهت داده می‌شه، 
+                        و هر روز ثواب صدقه‌ات جاری خواهد بود. همین امروز شروع کن.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Section Title Full Width End -->
+
+        <!-- Video + Why Choose Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Intro Video Image Start -->
+                <div class="intro-video-box">
+                    <!-- Intro Image Start -->
+                    <div class="intro-video-image">
+                        <figure>
+                            <img src="{{ API_GET("/pigi","csr","A1").data[0].image | raw }}" alt="">
+                        </figure>
+                    </div>
+                    <!-- Intro Image End -->
+
+                    <!-- Video Play Button Start -->
+                    <div class="video-play-button">
+                        <a href="https://www.youtube.com/watch?v=Y-x0efG1seA" class="popup-video" data-cursor-text="Play">
+                            <img src="images/icon-play.svg" alt="">
+                        </a>
+                    </div>
+                    <!-- Video Play Button End -->
+
+                    <div class="why-choose-box">
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp">
+                            <div class="icon-box">
+                                <img src="images/icon-why-choose-1.svg" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>50+ دکتر متخصص</h3>
+                                <p>تیم ما شامل بیش از 50 پزشک متخصص است.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp" data-wow-delay="0.25s">
+                            <div class="icon-box">
+                                <img src="images/icon-why-choose-2.svg" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>پشتیبانی فوری 24/7</h3>
+                                <p>تیم ما شامل بیش از 50 پزشک متخصص است.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp" data-wow-delay="0.5s">
+                            <div class="icon-box">
+                                <img src="images/icon-why-choose-3.svg" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>تیم پزشکی متخصص</h3>
+                                <p>تیم ما شامل بیش از 50 پزشک متخصص است.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+                    </div>
+                </div>
+                <!-- Intro Video Btn End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Intro Video Section End -->
+
+
+
+<!-- Custom CSS -->
+<style>
+/* وسط‌چین کردن کل متن‌های این بخش */
+.intro-video,
+.intro-video .section-title,
+.intro-video .section-title h2,
+.intro-video .section-title p,
+.intro-video .why-choose-item,
+.intro-video .why-choose-item-content {
+    text-align: center !important;
+}
+
+/* آیکون‌ها هم وسط‌چین باشن */
+.intro-video .icon-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* اطمینان از اینکه why-choose آیتم‌ها زیر هم منظم می‌مونن */
+.why-choose-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+</style>

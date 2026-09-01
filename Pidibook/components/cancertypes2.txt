@@ -1,0 +1,177 @@
+<disease-finder></disease-finder>
+
+<script>
+class DiseaseFinder extends HTMLElement {
+  constructor() {
+    super();
+    const shadow = this.attachShadow({mode:"open"});
+
+   shadow.innerHTML =
+  '<style>
+' +
+  '  :host { font-family: inherit; display:block; padding:20px; }
+' +
+  '  .disease-finder { display:flex; flex-direction:column; align-items:center; width:100%; max-width:700px; margin:0 auto; }
+' +
+  '  h2 { margin-bottom:20px; text-align:center; }
+' +
+  '  .alphabet { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+' +
+  '  .letter { width: 52px; height: 52px; border:2px solid teal; border-radius:50%; color:teal; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:18px; transition:0.2s; }
+' +
+  '  .letter:hover:not(.disabled) { background: gold; color:#000; }
+' +
+  '  .letter.disabled { opacity:0.3; cursor:not-allowed; }
+' +
+  '  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999; }
+' +
+  '  .modal { background:#fff; width:90%; max-width:400px; max-height:70vh; overflow-y:auto; padding:20px; border-radius:8px; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+' +
+  '  .modal h3 { text-align:center; margin-top:0; }
+' +
+  '  .close { position:absolute; top:10px; right:12px; cursor:pointer; font-size:18px; }
+' +
+  '  .disease-list li { margin-bottom:8px; }
+' +
+  '  .disease-list li a { color:teal; text-decoration:none; }
+' +
+  '  .disease-list li a:hover { color:gold; text-decoration:underline; }
+' +
+  '  .search-box { width:100%; max-width:500px; display:flex; flex-direction:column; margin:15px auto; position:relative; }
+' +
+  '  .search-box input { padding:12px; border-radius:20px; border:2px solid teal; font-size:16px; }
+' +
+  '  .suggestions { border:1px solid teal; border-radius:12px; max-height:250px; overflow-y:auto; margin-top:5px; display:none; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+' +
+  '  .suggestions div { padding:10px; cursor:pointer; border-bottom:1px solid #eee; }
+' +
+  '  .suggestions div:last-child { border-bottom:none; }
+' +
+  '  .suggestions div:hover { background:gold; color:#000; }
+' +
+  '</style>
+' +
+  '
+' +
+  '<div class="disease-finder">
+' +
+  '  <h2>جستجوی نام بیماری بر اساس حرف اول</h2>
+' +
+  '  <div class="alphabet"></div>
+' +
+  '  <div class="search-box">
+' +
+  '    <input type="text" placeholder="جستجوی بیماری..." />
+' +
+  '    <div class="suggestions"></div>
+' +
+  '  </div>
+' +
+  '</div>
+' +
+  '
+' +
+  '<div class="overlay">
+' +
+  '  <div class="modal">
+' +
+  '    <span class="close">✖</span>
+' +
+  '    <h3></h3>
+' +
+  '    <ul class="disease-list"></ul>
+' +
+  '  </div>
+' +
+  '</div>';
+
+    const diseases = {
+      "ا": ["استخوان (Bone cancer)","اپیتلیال تخمدان (Ovarian epithelial cancer)","آلت تناسلی (Penile cancer)"],
+      "ب": ["بیضه (Testicular cancer)","بیماری تروفوبلاستیک بارداری (Gestational trophoblastic disease)"],
+      "پ": ["پستان (Breast cancer)","پروستات (Prostate cancer)", "پانکراس (Pancreatic cancer)","پوست (Skin cancer)" ],
+      "ت": ["تومورهای مغز و نخاع (Brain & spinal cord tumors)","تومورهای سلول زایا خارج جمجمه‌ای (Extracranial germ cell tumors)","تومورهای سلول زایای خارج غدد جنسی (Extragonadal germ cell tumors)","تومورهای نورواندوکرین دستگاه گوارش (Neuroendocrine tumors of GI)","تومورهای پاراتیروئید (Parathyroid tumors)","تومورهای هیپوفیز (Pituitary tumors)"],
+      "د": ["دهانه رحم (Cervical cancer)","دوران کودکی (Childhood cancers)"],
+      "ر": ["رتینوبلاستوما (Retinoblastoma)","روده بزرگ (Colorectal cancer)","رحم (Uterine cancer)","ریه (Lung cancer)","روده کوچک (Small intestine cancer)"],
+      "س": ["سارکوم (Sarcoma)","سر و گردن (Head & neck cancers)","سینه مردان (Male breast cancer)"],
+      "ع": ["عفونت با ویروس پاپیلومای انسانی (HPV infection)"],
+      "ف": ["فئوکروموسیتوما و پاراگانگلیوما (Pheochromocytoma & Paraganglioma)"],
+      "ق": ["قشر فوق کلیوی (Adrenal cortex cancer)"],
+      "ک": ["کبد (Liver cancer)","کیسه صفرا (Gallbladder cancer)","کلیه (Kidney cancer)"],
+      "ل": ["لوسمی (Leukemia)","لنفوم (Lymphoma)","لنفوم هوچکین (HL)","لنفوم غیر هوچکین (NHL)"],
+      "م": ["مثانه (Bladder cancer)","ملانوم داخل چشمی (Uveal melanoma)","معده (Stomach cancer)","مری (Esophageal cancer)"],
+      "ن": ["نئوپلاسم‌های پلاسما سل (Plasma cell neoplasms)","نئوپلاسم‌های میلوپرولیفراتیو (Myeloproliferative neoplasms)","نوروبلاستوما (Neuroblastoma)"],
+      "ی": ["واژن (Vaginal cancer)"]
+    };
+
+    const diseaseLinks = {
+      "پستان (Breast cancer)": "/breastcancer_pv.html",
+      "پروستات (Prostate cancer)": "/cancers/prostate-cancer",
+      "ریه (Lung cancer)": "/cancers/lung-cancer",
+      "لوسمی (Leukemia)": "/cancers/leukemia"
+      // لینک بقیه بیماری‌ها میتونی اینجا اضافه کنی
+    };
+
+    const alphabetOrder = ["ا","ب","پ","ت","ث","ج","چ","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ک","گ","ل","م","ن","و","ه","ی"];
+
+    const alphabetContainer = shadow.querySelector(".alphabet");
+    const overlay = shadow.querySelector(".overlay");
+    const modalTitle = shadow.querySelector(".modal h3");
+    const diseaseList = shadow.querySelector(".disease-list");
+    const closeBtn = shadow.querySelector(".close");
+    const searchInput = shadow.querySelector(".search-box input");
+    const suggestions = shadow.querySelector(".suggestions");
+
+    const allDiseases = [];
+    for (const key in diseases) allDiseases.push(...diseases[key]);
+
+    alphabetOrder.forEach(letter => {
+      const btn = document.createElement("div");
+      btn.className = "letter";
+      btn.textContent = letter;
+      if (!diseases[letter] || diseases[letter].length === 0) btn.classList.add("disabled");
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("disabled")) return;
+        modalTitle.textContent = "بیماری‌های با حرف " + letter;
+        diseaseList.innerHTML = "";
+        diseases[letter].forEach(d => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.textContent = d;
+          a.href = diseaseLinks[d] || "/diseases/" + encodeURIComponent(d);
+          a.target = "_blank";
+          a.rel = "noopener";
+          li.appendChild(a);
+          diseaseList.appendChild(li);
+        });
+        overlay.style.display = "flex";
+      });
+      alphabetContainer.appendChild(btn);
+    });
+
+    closeBtn.addEventListener("click", () => overlay.style.display = "none");
+
+    searchInput.addEventListener("input", () => {
+      const val = searchInput.value.trim();
+      suggestions.innerHTML = "";
+      if (!val) { suggestions.style.display = "none"; return; }
+      const matches = allDiseases.filter(d => d.includes(val));
+      matches.forEach(m => {
+        const div = document.createElement("div");
+        div.textContent = m;
+        div.addEventListener("click", () => {
+          searchInput.value = m;
+          suggestions.style.display = "none";
+          const firstChar = m[0];
+          const letterBtn = Array.from(alphabetContainer.children).find(b => b.textContent === firstChar);
+          if (letterBtn && !letterBtn.classList.contains("disabled")) letterBtn.click();
+        });
+        suggestions.appendChild(div);
+      });
+      suggestions.style.display = matches.length ? "block" : "none";
+    });
+
+  }
+}
+
+customElements.define("disease-finder", DiseaseFinder);
+</script>

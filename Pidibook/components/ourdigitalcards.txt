@@ -1,0 +1,126 @@
+    <!-- Our Stands Section Start -->
+    <div class="our-team">
+        <div class="container">
+            <div class="row section-row">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title">
+                        <!-- <h3 class="wow fadeInUp"> سفارش کارت های دیجیتال تبریک وتسلیت</h3> -->
+                        <h2 class="" data-cursor="-opaque"> سفارش کارت های دیجیتال تبریک وتسلیت</h2>
+                        <!-- <p class="wow fadeInUp" data-wow-delay="0.25s">مرکـز نیکـوکاری کنتـرل سـرطان ایرانیـان، فعـال در حـوزه مرکـز نیکـوکاری کنتـرل سـرطان ایرانیـان، فعـال در حـوزه مرکـز 
+نیکـوکاری کنتـرل سـرطان ایرانیـان، فعـال در حـوزه مرکـز نیکـوکاری کنتـرل سـرطان ایرانیـان</p> -->
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                 <img src="{{ API_GET("/pigi","ourdigitalcards","A1").data[0].image | raw }}" alt="">    
+                            </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <!-- <div class="team-body"> -->
+                           <!-- Team Content Start -->
+                            <!-- <div class="team-content">
+                                <h3><a href="doctor-single.html">حامیان</a></h3>
+                                <p>اطلاعات مورد نیاز داوطلبان</p>
+                            </div> -->
+                            <!-- Team Content End -->
+                        <!-- </div> -->
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                 <img src="{{ API_GET("/pigi","ourdigitalcards","A1").data[1].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <!-- <div class="team-body"> -->
+                           <!-- Team Content Start -->
+                            <!-- <div class="team-content">
+                                <h3><a href="doctor-single.html">حامیان</a></h3>
+                                <p>اطلاعات مورد نیاز داوطلبان</p>
+                            </div> -->
+                            <!-- Team Content End -->
+                        <!-- </div> -->
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                 <img src="{{ API_GET("/pigi","ourdigitalcards","A1").data[2].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <!-- <div class="team-body"> -->
+                           <!-- Team Content Start -->
+                            <!-- <div class="team-content">
+                                <h3><a href="doctor-single.html">حامیان</a></h3>
+                                <p>اطلاعات مورد نیاز داوطلبان</p>
+                            </div> -->
+                            <!-- Team Content End -->
+                        <!-- </div> -->
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctor-single.html" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                 <img src="{{ API_GET("/pigi","ourdigitalcards","A1").data[3].image | raw }}" alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <!-- <div class="team-body"> -->
+                           <!-- Team Content Start -->
+                            <!-- <div class="team-content">
+                                <h3><a href="doctor-single.html">حامیان</a></h3>
+                                <p>اطلاعات مورد نیاز داوطلبان</p>
+                            </div> -->
+                            <!-- Team Content End -->
+                        <!-- </div> -->
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Our Stands Section End -->

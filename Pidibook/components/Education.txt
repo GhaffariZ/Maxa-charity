@@ -1,0 +1,184 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>انواع سرطان ها</h3>
+                            <ul>
+                                <li><a href="#">سرطان پستان</a></li>
+                                <li><a href="#">سرطان پروستات</a></li>
+                                <li><a href="#">سرطان های دستگاه گوارشی</a></li>
+                                <li><a href="#">سرطان معده</a></li>
+                                <li><a href="#">سرطان ریه</a></li>
+                                <li><a href="#">سرطان کبد</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                                <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>نیاز به مشاوره دارید؟</h3>
+                                <p>مرکز تماس 24  ساعته در خدمت شماست</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="images/video-gallery-img-6.jpg" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">سرطان به زبان ساده</h2>
+                                <p class="wow fadeInUp">سرطان به زبان ساده، رشد غیرطبیعی و خارج از کنترل سلول‌های بدن است. در شرایط عادی، سلول‌های ما چرخه‌ی مشخصی برای تقسیم، رشد و مرگ دارند؛ اما در سرطان، این چرخه دچار اختلال می‌شود و سلول‌ها بدون توقف شروع به تقسیم شدن می‌کنند. این سلول‌های سرطانی به مرور زمان یک توده یا تومور تشکیل می‌دهند.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+
+                            <!-- Services Comfort Start -->
+                            <div class="services-comfort">
+                                <h2 class="">راحتی و آسایش</h2>
+                                <p class="wow fadeInUp">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
+                                <ul class="wow fadeInUp" data-wow-delay="0.2s">
+                                    <li>پزشکان متخصص در خدمت شما هستند</li>
+                                    <li>ابزارهای نوآورانه برای سلامتی بهتر</li>
+                                    <li>مراقبت جامع برای هر نیاز</li>
+                                    <li>همیشه آماده، همیشه مراقب</li>
+                                </ul>
+                            </div>
+                            <!-- Services Comfort End -->
+
+                            <!-- Service Entry Images Start -->
+                            <div class="service-entry-images">
+                                <!-- Service Entry Image Start -->
+                                <div class="service-entry-img">
+                                    <figure class="image-anime reveal">
+                                        <img src="images/post-5.jpg" alt="">
+                                    </figure>
+                                </div>
+                                <!-- Service Entry Image End -->
+
+                                <!-- Service Entry Image Start -->
+                                <div class="service-entry-img">
+                                    <figure class="image-anime reveal">
+                                        <img src="images/video-gallery-img-7.jpg" alt="">
+                                    </figure>
+                                </div>
+                                <!-- Service Entry Image End -->
+                            </div>
+                            <!-- Service Entry Images End -->
+                        </div>
+                        <!-- Service Entry End -->
+
+                        <!-- Page Single FAQs Start -->
+                        <div class="page-single-faqs">
+                            <!-- Section Title Start -->
+                            <div class="section-title">
+                                <h3 class="wow fadeInUp">سوالات متداول</h3>
+                                <h2 class="" data-cursor="-opaque">کمک به درک مراقبت های بهداشتی</h2>
+                            </div>
+                            <!-- Section Title End -->
+
+                            <!-- FAQ Accordion Start -->
+                            <div class="faq-accordion" id="accordion">
+                                <!-- FAQ Item Start -->
+                                <div class="accordion-item wow fadeInUp">
+                                    <h2 class="accordion-header" id="heading1">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                            سرطان چقدر خطرناکه؟
+                                        </button>
+                                    </h2>
+                                    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#accordion">
+                                        <div class="accordion-body">
+                                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- FAQ Item End -->
+                
+                                <!-- FAQ Item Start -->
+                                <div class="accordion-item wow fadeInUp" data-wow-delay="0.2s">
+                                    <h2 class="accordion-header" id="heading2">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                            آیا میتونه خانواده من رو هم درگیر کنه؟
+                                        </button>
+                                    </h2>
+                                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#accordion">
+                                        <div class="accordion-body">
+                                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- FAQ Item End -->
+                
+                                <!-- FAQ Item Start -->
+                                <div class="accordion-item wow fadeInUp" data-wow-delay="0.4s">
+                                    <h2 class="accordion-header" id="heading3">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                            په جوری میتونم این مسیر رو راحت تر طی کنم؟
+                                        </button>
+                                    </h2>
+                                    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#accordion">
+                                        <div class="accordion-body">
+                                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- FAQ Item End -->
+                
+                                <!-- FAQ Item Start -->
+                                <div class="accordion-item wow fadeInUp" data-wow-delay="0.6s">
+                                    <h2 class="accordion-header" id="heading4">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                            آیا سرطان کشنده است؟
+                                        </button>
+                                    </h2>
+                                    <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordion">
+                                        <div class="accordion-body">
+                                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- FAQ Item End -->
+                            </div>
+                            <!-- FAQ Accordion End -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->

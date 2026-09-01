@@ -1,0 +1,89 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="cancer2.html">ژن های دخیل رد سرطان</a></li>
+                                <li><a href="understandingcancer.html">عوامل خطر در بروز سرطان</a></li>
+                                <li><a href="tissuealterations.html">نوجوانان و جوانان مبتلا به سرطان</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","AYAcancer","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">نوجوانان و جوانان مبتلا به سرطان</h2>
+                                <p class="wow fadeInUp">
+تخمین زده می‌شود که در سال ۲۰۲۵، ۸۵۴۸۰ نوجوان و جوان بین ۱۵ تا ۳۹ سال در ایالات متحده به سرطان مبتلا خواهند شد. این رقم حدود ۴.۲٪ از کل تشخیص‌های سرطان را تشکیل می‌دهد.
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+بر اساس داده‌های موجود در ۱۰ سال گذشته، میزان موارد جدید سرطان در هر محل در بین نوجوانان و جوانان بین سال‌های ۲۰۱۳ تا ۲۰۲۲، به طور متوسط سالانه ۰.۳٪ افزایش یافته است. بر اساس آمار سرطان: سرطان در بین نوجوانان و جوانان (۱۵ تا ۳۹ سال)، برنامه نظارت، اپیدمیولوژی و نتایج نهایی NCI که از مدل‌های آماری برای تجزیه و تحلیل استفاده می‌کند، میزان مرگ و میر در بین سال‌های ۲۰۱۴ تا ۲۰۲۳ به طور متوسط سالانه ۰.۹٪ کاهش یافته است. شایع‌ترین سرطان‌ها در نوجوانان و بزرگسالان جوان (۱۵ تا ۳۹ سال) عبارتند از:سرطان سینه، سرطان تیروئید، سرطان بیضه و ملانوما
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+سایر سرطان‌ها در نوجوانان و بزرگسالان جوان شامل تومورهای مغز و سایر تومورهای سیستم عصبی مرکزی، سرطان دهانه رحم، سرطان روده بزرگ، لوسمی، لنفوم و سارکوم‌ها (از جمله سرطان استخوان و سارکوم بافت نرم) است.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+</style>

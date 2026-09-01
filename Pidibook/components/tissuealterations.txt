@@ -1,0 +1,89 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="cancer1.html">تعریف سرطان</a></li>
+                                <li><a href="cancer2.html">تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی</a></li>
+                                <li><a href="understandingcancer.html">درک سرطان</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contact.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","tissuealterations","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">تغییرات بافتی که سرطان نیستند</h2>
+                                <p class="wow fadeInUp">
+هر تغییری در بافت‌های بدن سرطان نیست. با این حال، برخی از تغییرات بافتی در صورت عدم درمان ممکن است به سرطان تبدیل شوند. در اینجا چند نمونه از تغییرات بافتی که سرطان نیستند اما در برخی موارد، به دلیل احتمال تبدیل شدن به سرطان، تحت نظر قرار می‌گیرند، آورده شده است:
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+هیپرپلازی زمانی رخ می‌دهد که سلول‌های درون یک بافت سریع‌تر از حالت عادی تکثیر می‌شوند و سلول‌های اضافی ایجاد می‌شوند. با این حال، سلول‌ها و نحوه سازماندهی بافت هنوز در زیر میکروسکوپ طبیعی به نظر می‌رسند. هایپرپلازی می‌تواند توسط عوامل یا شرایط مختلفی از جمله التهاب مزمن ایجاد شود.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+دیسپلازی یک بیماری پیشرفته‌تر از هایپرپلازی است. در دیسپلازی، تجمع سلول‌های اضافی نیز وجود دارد. اما سلول‌ها غیرطبیعی به نظر می‌رسند و تغییراتی در نحوه سازماندهی بافت وجود دارد. به طور کلی، هرچه سلول‌ها و بافت غیرطبیعی‌تر به نظر برسند، احتمال تشکیل سرطان بیشتر است. برخی از انواع دیسپلازی ممکن است نیاز به نظارت یا درمان داشته باشند، اما برخی دیگر نیازی به نظارت یا درمان ندارند. نمونه‌ای از دیسپلازی، یک خال غیرطبیعی (به نام خال دیسپلاستیک) است که روی پوست تشکیل می‌شود. خال دیسپلاستیک می‌تواند به ملانوما تبدیل شود، اگرچه اکثر آنها این کار را نمی‌کنند. کارسینوم درجا (Carcinoma in situ) حتی یک بیماری پیشرفته‌تر است. اگرچه گاهی اوقات سرطان مرحله 0 نامیده می‌شود، اما سرطان نیست زیرا سلول‌های غیرطبیعی مانند سلول‌های سرطانی به بافت‌های اطراف حمله نمی‌کنند. اما از آنجا که برخی از کارسینوم‌های درجا ممکن است به سرطان تبدیل شوند، معمولاً درمان می‌شوند.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+</style>

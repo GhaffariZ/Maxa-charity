@@ -12,11 +12,11 @@
 <div class="mex-chart-container" id="chart-container">
 
 <div class="mex-level mex-level-single" id="level-0">
-<div class="mex-node mex-node-trustees" data-href="headdirectors.html">هیئت امناء</div>
+<div class="mex-node mex-node-trustees" data-href="/headdirectors">هیئت امناء و شورای عالی</div>
 </div>
 
 <div class="mex-level mex-level-single" id="level-0-1">
-<div class="mex-node mex-node-board" data-href="directors.html">هیئت مدیره</div>
+<div class="mex-node mex-node-board" data-href="/directors">هیئت مدیره</div>
 </div>
 
 <div class="mex-level mex-level-single" id="level-1">

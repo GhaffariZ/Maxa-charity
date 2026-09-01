@@ -1,0 +1,95 @@
+<!-- Page Single Post Start -->
+<div class="page-single-post compact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Post Featured Image Start -->
+                <div class="post-image">
+                    <figure class="image-anime reveal">
+                        <img src="{{ API_GET("/pigi","csr","A1").data[0].image | raw }}" alt="">
+                    </figure>
+                </div>
+                <!-- Post Featured Image End -->
+
+                <!-- Post Single Content Start -->
+                <div class="post-content">
+                    <!-- Post Entry Start -->
+                    <div class="post-entry">
+
+                        <h2 class="wow fadeInUp" data-wow-delay="0.8s">همراهی با مکسا؛ تصویر تازه‌ای از برند شما میسازد</h2>
+
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">مشارکت با مکسا، فقط یک کار خیر نیست؛ فرصتی است برای ساختن تصویری ماندگار، انسانی و اثرگذار از برند شما در ذهن جامعه </p>
+
+                        <h2 class="wow fadeInUp" data-wow-delay="0.8s">چرا مشارکت با مکسا؟</h2>
+
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">مؤسسه نیکوکاری کنترل سرطان مکسا، با بیش از یک دهه تجربه در مراقبت، درمان و حمایت از بیماران مبتلا به سرطان، آماده‌ی همراهی با برندها و شرکت‌هایی است که به مسئولیت اجتماعی (CSR) خود متعهدند.</p>
+                        <p class="wow fadeInUp" data-wow-delay="0.6s">همکاری شما، نه‌تنها گره‌ای از کار بیماران باز می‌کند، بلکه ارزش اجتماعی برندتان را در ذهن مخاطبان تقویت می‌کند.</p>
+
+                        <!-- Client Challenge Box Satrt -->
+                        <div class="client-challenge-box">
+                            <h2 class="">چه فرصت‌هایی برای مشارکت وجود دارد؟</h2>
+
+                            <!-- Case Study List Video Start -->
+                            <div class="case-study-list-video">
+                                <!-- Case Study List Start -->
+                                <div class="case-study-list wow fadeInUp" data-wow-delay="0.4s">
+                                    <ul>
+                                        <li>حمایت مالی از خدمات مکسا</li>
+                                        <li>برگزاری کمپین مشترک برند با مکسا</li>
+                                        <li>اختصاص درصدی از فروش محصولات یا خدمات</li>
+                                        <li>پذیرش مسئولیت تأمین خدمات خاص</li>
+                                        <li>درگیر کردن کارکنان شرکت در فعالیت‌های داوطلبانه</li>
+                                    </ul>
+                                </div>
+                                <!-- Case Study List End -->
+
+                                <!-- Case Study Image Video Start -->
+                                <div class="case-study-image-video">
+                                    <!-- Video Image Start -->
+                                    <div class="video-image">
+                                        <a href="https://www.youe.com/watch?v=Y-x0efG1seA" class="popup-video"
+                                            data-cursor-text="پخش">
+                                            <figure class="image-anime">
+                                                <img src="images/case-study-video-bg.jpg" alt="">
+                                            </figure>
+                                        </a>
+                                    </div>
+                                    <!-- Video Image End -->
+
+                                    <!-- Video Play Button Start -->
+                                    <div class="video-play-button">
+                                        <a href="https://www.youe.com/watch?v=Y-x0efG1seA" class="popup-video"
+                                            data-cursor-text="پخش">
+                                            <i class="fa-solid fa-play"></i>
+                                        </a>
+                                    </div>
+                                    <!-- Video Play Button End -->
+                                </div>
+                                <!-- Case Study Image Video End -->
+                            </div>
+                            <!-- Case Study List Video End -->
+                        </div>
+                        <!-- Client Challenge Box End -->
+                    </div>
+                </div>
+                <!-- Post Single Content End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Single Post End -->
+
+<!-- استایل اختصاصی -->
+<style>
+/* حذف خط زرد و کنترل فاصله پایین */
+.page-single-post.compact,
+.page-single-post.compact::after,
+.page-single-post.compact::before {
+    border: none !important;
+}
+
+.page-single-post.compact {
+    margin-bottom: 10px !important; /* فاصله پایین - قابل تغییر */
+    padding-bottom: 0 !important;   /* حذف فضای داخلی اضافی */
+}
+</style>

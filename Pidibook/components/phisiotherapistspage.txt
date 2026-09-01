@@ -1,0 +1,54 @@
+    <!-- Page Team Start -->
+     <div class="page-team">
+        <div class="container">
+            <div class="row">
+{{ A:= API_GET("/pidij","PHYSIOTRAPIST","PHYSIOTRAPIST").data }}
+
+
+{{ range k := A }}
+{{ B:= JSONTOMAP(A[k].data) }}
+
+
+                <div class="col-lg-3 col-md-6">
+                    <!-- Team Member Item Start -->
+                    <div class="team-member-item wow fadeInUp">
+                        <!-- Team Image Start -->
+                        <div class="team-image">
+                            <a href="doctors.portal/info/{{ B._NAME }}" data-cursor-text="مشاهده">
+                                <figure class="image-anime">
+                                    <img src='{{ JSONTOMAP(B.binary).filecontent }}' alt="">
+                                </figure>
+                            </a>                           
+                        </div>
+                        <!-- Team Image End -->
+
+                        <!-- Tema Body Start -->
+                        <div class="team-body">
+                            <!-- Team Social Icon Start -->
+                            <div class="team-social-icon">
+                                <ul>
+                                    <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+                                    <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                    <li><a href="#"><i class="fa-brands fa-dribbble"></i></a></li>
+                                </ul>
+                            </div>
+                            <!-- Team Social Icon End -->
+                            <!-- Team Content Start -->
+                            <div class="team-content">
+                                <h3><a href="portal.html">دکتر {{ B.NAME }}
+</a></h3>
+                                <p>{{ B.TITLE }}</p>
+                            </div>
+                            <!-- Team Content End -->
+                        </div>
+                        <!-- Tema Body End -->
+                    </div>
+                    <!-- Team Member Item End -->
+                </div>
+{{ end }}
+
+
+            </div>
+        </div>
+     </div>
+    <!-- Page Team End -->

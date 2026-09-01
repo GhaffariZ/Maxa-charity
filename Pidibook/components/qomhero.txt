@@ -1,0 +1,133 @@
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Hero Section Start -->
+<div class="hero-section">
+  <div class="swiper hero-swiper">
+    <div class="swiper-wrapper">
+      
+      <!-- Slide 1 (تنها اسلاید موجود) -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ API_GET("/pigi","qomhero","A1").data[0].image | raw }}');">
+        <div class="container">
+          <div class="hero-content">
+            <h1>شعبه قم</h1>
+            <h2>موسسه نیکوکاری کنترل سرطان ایرانیان</h2>
+            <p>فعال در حوزه مراقبتهای حمایتی تسکینی سرطان در کشور</p>
+            <a href="book-appointment.html" class="btn-default">اطلاعات بیشتر</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- اگر اسلاید دیگری بود باید حذف میشد، اما چون فقط یک مورد هست، نیازی به حذف نیست -->
+      
+    </div>
+    <!-- اگر دکمه های ناوبری نیاز دارید در اینجا اضافه شوند (در حالت تک اسلاید معمولا غیرفعال میشوند) -->
+    <!-- <div class="swiper-button-next"></div> -->
+    <!-- <div class="swiper-button-prev"></div> -->
+    <!-- <div class="swiper-pagination"></div> -->
+  </div>
+</div>
+<!-- Hero Section End -->
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  var swiper = new Swiper(".hero-swiper", {
+    // loop: true, // برای تک اسلاید معمولا نیازی نیست
+    autoplay: {
+      delay: 3000, // هر ۳ ثانیه
+      disableOnInteraction: false,
+    },
+    effect: "fade", // تغییر نرم بین عکس‌ها
+    // pagination و navigation به دلیل تک اسلاید غیرفعال شدند یا نیاز به تنظیمات خاص دارند
+    // pagination: { el: ".swiper-pagination", clickable: true },
+    // navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+    
+    // اطمینان از اینکه فقط یک اسلاید نمایش داده شود (اگر در HTML اسلایدهای دیگری نباشد)
+    slidesPerView: 1,
+    loop: false, // حلقه کردن غیرفعال شد
+  });
+</script>
+
+<style>
+:root {
+  --hero-text-color: #ffffff;
+  --hero-h1-color:   #ffffff;
+  --hero-button-bg:  #ff6600;
+  --padding-horizontal: 5%; /* ۲.۵٪ در هر طرف برای حاشیه ۲۰ سانتی‌متری (تقریبی/واکنش‌گرا) */
+}
+
+.hero-section {
+  width: 100%;
+  height: 80vh;
+  position: relative;
+  /* Padding برای ایجاد فاصله از چپ و راست کل صفحه (به جای ۲۰ سانتی‌متر که واحد ثابتی نیست) */
+  padding-left: var(--padding-horizontal);
+  padding-right: var(--padding-horizontal);
+  box-sizing: border-box; /* برای اینکه padding به عرض اضافه نشود */
+}
+
+.hero-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  /* برای اعمال گردی گوشه‌ها روی تصویر پایه */
+  border-radius: 15px; 
+  overflow: hidden; /* برای محدود کردن محتوای داخلی به شعاع گردی */
+}
+
+.hero-content {
+  color: var(--hero-text-color);
+  z-index: 2;
+  position: relative;
+  
+  /* انتقال متن به سمت چپ و تنظیم عرض */
+  text-align: center; /* تراز متن به چپ */
+  align-self: center; /* تنظیم عمودی محتوا در مرکز (برای حفظ ارتفاع مورد نظر) */
+  width: 50%; /* تنظیم عرض ناحیه نوشته (قابل تغییر توسط شما) */
+  min-width: 300px; /* حداقل عرض برای جلوگیری از فشرده شدن بیش از حد */
+  padding-left: 40px; /* فاصله از لبه چپ ظرف خود (برای تفکیک از حاشیه کلی) */
+  box-sizing: border-box;
+}
+
+.hero-content h1 {
+  color: var(--hero-h1-color);
+}
+
+.btn-default {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--hero-button-bg);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 20px;
+  position: relative;
+  z-index: 3; /* برای اطمینان بالای سایه باشد */
+}
+.hero-content h1 {
+  font-size: 3.5em; /* اندازه بسیار بزرگتر برای H1 */
+  margin-bottom: 10px;
+}
+
+.hero-content h2 {
+  font-size: 1.8em; /* اندازه کوچکتر برای H2 */
+  margin-bottom: 15px;
+}
+
+/* اطمینان از اینکه تگ P نیز اندازه مناسبی دارد */
+.hero-content p {
+  font-size: 1.1em;
+}
+
+
+</style>

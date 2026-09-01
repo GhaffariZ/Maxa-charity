@@ -1,0 +1,151 @@
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Hero Section Start -->
+<div class="hero-section">
+  <div class="swiper hero-swiper">
+    <div class="swiper-wrapper">
+      
+      <!-- Slide 1 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ API_GET("/pigi","hero","A1").data[0].image | raw }}');">
+        <div class="container">
+          <div class="hero-content text-center">
+            <h1>موسسه نیکوکاری کنترل سرطان ایرانیان</h1>
+            <h1>مکسا</h1>
+            <p>فعال در حوزه مراقبتهای حمایتی تسکینی سرطان در کشور</p>
+            <a href="book-appointment.html" class="btn-default">اطلاعات بیشتر</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ API_GET("/pigi","hero","A1").data[1].image | raw }}');">
+        <div class="container">
+          <div class="hero-content text-center">
+            <h3>{{ GET_VALUE(API_GET("/pidi","hero","A1").data[1].data,"title") | raw }}</h3>
+            <h1>امید</h1>
+            <p>پشتیبانی از بیماران و خانواده‌ها</p>
+            <a href="about.html" class="btn-default">کمک آنلاین</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ API_GET("/pigi","hero","A1").data[2].image | raw }}');">
+        <div class="container">
+          <div class="hero-content text-center">
+            <h3>{{ GET_VALUE(API_GET("/pidi","hero","A1").data[2].data,"title") | raw }}</h3>
+            <h1>سلامت</h1>
+            <p>بهبود کیفیت زندگی بیماران</p>
+            <a href="contact.html" class="btn-default">تماس با ما</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pagination & Navigation -->
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</div>
+<!-- Hero Section End -->
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  var swiper = new Swiper(".hero-swiper", {
+    loop: true,
+    autoplay: {
+      delay: 3000, // هر ۳ ثانیه
+      disableOnInteraction: false,
+    },
+    effect: "fade", // تغییر نرم بین عکس‌ها
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+</script>
+
+<style>
+.hero-section {
+  width: 100%;
+  height: 80vh;         /* ارتفاع کل صفحه */
+  position: relative;
+}
+
+.hero-swiper {
+  width: 100%;
+  height: 100%;          /* پر کنه hero-section رو */
+}
+
+.hero-slide {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  color: #fff;
+  text-align: center;
+  z-index: 2;
+}
+
+.btn-default {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #ff6600;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 20px;
+}
+.hero-slide::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.35); /* رنگ و شدت سایه */
+  z-index: 1;
+}
+:root {
+  --hero-text-color: #ffffff;   /* رنگ عمومی متن */
+  --hero-h1-color:   #ffffff;   /* رنگ اختصاصی h1 */
+  --hero-h3-color:   #ffffff;   /* رنگ اختصاصی h1 */
+  --hero-button-bg:  #ff6600;   /* رنگ دکمه */
+}
+
+.hero-content {
+  color: var(--hero-text-color);
+  text-align: center;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-content h1 {
+  color: var(--hero-h1-color); /* رنگ مخصوص H1 */
+}
+
+.btn-default {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--hero-button-bg);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+</style>

@@ -1,0 +1,117 @@
+    <!-- Page Contact Us Start -->
+    <div class="page-contact-us">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Contact Us Box Start -->
+                    <div class="contact-us-box">
+                        <!-- Contact Info Box Start -->
+                        <div class="contact-info-box">
+                            <!-- Contact Info List Start -->
+                            <div class="contact-info-list">
+                                <!-- Contact Info Item Start -->
+                                <div class="contact-info-item wow fadeInUp">
+                                    <div class="icon-box">
+                                        <img src="images/icon-phone.svg" alt="">
+                                    </div>
+
+                                    <div class="contact-info-content">
+                                        <h3>اطلاعات تماس</h3>
+                                        <p>021-91092030</p>
+                                        <p>021-86015342</p>
+                                    </div>
+                                </div>
+                                <!-- Contact Info Item End -->
+
+                                <!-- Contact Info Item Start -->
+                                <div class="contact-info-item wow fadeInUp" data-wow-delay="0.25s">
+                                    <div class="icon-box">
+                                        <img src="images/icon-location.svg" alt="">
+                                    </div>
+
+                                    <div class="contact-info-content">
+                                        <h3>آدرس</h3>
+                                        <p> تهران، بزرگراه جلال‌آل‌احمد(شرق به غرب)، بعد از کوی نصر(گیشا)، پلاک ۱۳۹، طبقه دوم</p>
+                                    </div>
+                                </div>
+                                <!-- Contact Info Item End -->
+
+                                <!-- Contact Info Item Start -->
+                                <div class="contact-info-item wow fadeInUp" data-wow-delay="0.5s">
+                                    <div class="icon-box">
+                                        <img src="images/icon-mail.svg" alt="">
+                                    </div>
+
+                                    <div class="contact-info-content">
+                                        <h3>ایمیل</h3>
+                                        <p>info@macsa.ir</p>
+                                    </div>
+                                </div>
+                                <!-- Contact Info Item End -->
+                            </div>
+                            <!-- Contact Info List End -->
+
+                            <!-- Contact Social List Start -->
+                            <div class="contact-social-list wow fadeInUp" data-wow-delay="0.75s">
+                                <span>شبکه اجتماعی:</span>
+                                    <ul>
+                                        <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-pinterest-p"></i></a></li>
+                                    </ul>
+                            </div>
+                            <!-- Contact Social List End -->
+                        </div>
+                        <!-- Contact Info Box End -->
+
+                        <!-- Contact Us Form Start -->
+                        <div class="contact-us-form">
+                            <!-- Section Title Start -->
+                            <div class="section-title">
+                                <h2 class="" data-cursor="-opaque">با ما در تماس باشید</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.25s">نظرات ، سوالات و انتقادات خود را به ما ارسال کنید.</p>
+                            </div>
+                            <!-- Section Title End -->
+
+                            <!-- Contact Form Start -->
+                            <div class="contact-form">
+                                <form id="contactForm" action="#" method="POST" data-toggle="validator" class="wow fadeInUp" data-wow-delay="0.25s">
+                                    <div class="row">
+                                        <div class="form-group col-md-12 mb-4">
+                                            <input type="text" name="name" class="form-control" id="name" placeholder="نام خود را وارد کنید" required>
+                                            
+                                        </div>
+
+                                        <div class="form-group col-md-6 mb-4">
+                                            <input type="email" name ="email" class="form-control" id="email" placeholder="ایمیل خود را وارد کنید" required>
+                                            
+                                        </div>
+
+                                        <div class="form-group col-md-6 mb-4">
+                                            <input type="text" name="phone" class="form-control" id="phone" placeholder="شماره خود را وارد کنید" required>
+                                            
+                                        </div>
+
+                                        <div class="form-group col-md-12 mb-5">
+                                            <textarea name="message" class="form-control" id="message" rows="4" placeholder="پیام.."></textarea>
+                                            
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn-default">ارسال پیام</button>
+                                            <div id="msgSubmit" class="h3 hidden"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Contact Form Start -->
+                        </div>
+                        <!-- Contact Us Form End -->
+                    </div>
+                    <!-- Contact Us Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Contact Us End -->

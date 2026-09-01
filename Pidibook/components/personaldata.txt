@@ -1,0 +1,123 @@
+{{ P := API_GET("/ppidi", parts[2]).data[0] }}
+{{ PP := JSONTOMAP(P.data) }}
+
+    <!-- Page Team Single Start -->
+    <div class="page-doctor-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Team Single Sidebar Start -->
+                    <div class="doctor-single-sidebar">
+                        <!-- Team Sidebar Box Start -->
+                        <div class="doctor-sidebar-box wow fadeInUp">
+                            <!-- Team Sidebar Image Start -->
+                            <div class="doctor-sidebar-image">
+                                <figure class="image-anime">
+                                    <img src="{{ JSONTOMAP(PP.binary).filecontent }}" alt="">
+                                </figure>
+                            </div>
+                            <!-- Team Sidebar Image End -->
+
+                            <!-- Team Sidebar Body Start -->
+                            <div class="doctor-sidebar-body">
+                                <ul>
+                                    <li><span>نام:</span>{{ PP.NAME }}</li>
+                                    <li><span>تخصص:</span>{{ PP.TITLE }}</li>
+                                    <li><span>تلفن:</span>{{ PP.PHONE }}</li>
+                                    <li><span>ایمیل:</span>{{ PP.EMAIL }}</li>
+                                    <li><span>تجربه:</span>{{ PP.EXPERIENCE }}</li>
+                                </ul>
+                            </div>
+                            <!-- Team Sidebar Body End -->
+
+                            <!-- Team Sidebar Footer Start -->
+                            <div class="doctor-sidebar-footer">
+                                <span>شبکه اجتماعی:</span>
+                                <ul>
+                                    <li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                                    <li><a href="#"><i class="fa-brands fa-pinterest-p"></i></a></li>
+                                </ul>
+                            </div>
+                            <!-- Team Sidebar Footer End -->
+                        </div>
+                        <!-- Team Sidebar Box End -->
+                    </div>
+                    <!-- Team Member Sidebar End -->
+                </div>
+
+                <div class="col-lg-8">
+                    <!-- Team Single Content Start -->
+                    <div class="doctor-single-content">
+                        <div class="doctor-single-entry">
+                            <!-- Team Member Info Start -->
+                            <div class="doctor-member-info">
+                                <h2 class="" data-cursor="-opaque">بیوگرافی پزشک</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">{{ PP.BIO }}</p>
+                            </div>
+                            <!-- Team Member Info End -->
+
+                            <!-- Team Member Experience Start -->
+                            <div class="doctor-member-experience">
+                                <!-- Member Experience Info Start -->
+                                <div class="member-experience-info">
+                                    <h2 class="" data-cursor="-opaque">تجربیات</h2>
+{{ range line := SPLIT(PP.EXPERIENCES,"
+") }}
+{{ L:=SPLIT(.,":") }}
+<div class="member-experience-info-item wow fadeInUp">   
+<h3>{{ L[0] }}</h3>
+<p>{{ L[1] }}</p>
+</div>
+{{ end }}
+                                </div>
+                                <!-- Member Experience Info End -->
+
+                                <!-- Team Member Skills Start -->
+                                <div class="doctor-member-skills">
+                                    <h2 class="" data-cursor="-opaque">مهارت ها</h2>
+{{ range line := SPLIT(PP.SKILLS,"
+") }}
+{{ S:=SPLIT(.,":") }}
+                                    <!-- Skills Progress Bar Start -->
+                                    <div class="skills-progress-bar">
+                                        <!-- Skill Item Start -->
+                                        <div class="skillbar" data-percent="{{ S[1] }}">
+                                            <div class="skill-data">
+                                                <div class="skill-title">{{ S[0] }}</div>
+                                                <div class="skill-no">{{ S[1] }}</div>
+                                            </div>
+                                            <div class="skill-progress">
+                                                <div class="count-bar"></div>
+                                            </div>
+                                        </div>
+                                        <!-- Skill Item End -->
+                                    </div>
+                                    <!-- Skills Progress Bar End -->
+{{ end }}
+                                </div>
+                                <!-- Team Member Skills End -->
+                            </div>
+                            <!-- Team Member Experience End -->
+
+                            <!-- Team Member Expertice Start -->
+                            <div class="doctor-member-expertise">
+                                <h2 class="" data-cursor="-opaque">حوزه تخصصی و درمان من</h2>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">{{ PP.PROFESSIONCY }}</p>
+
+                                <ul class="wow fadeInUp" data-wow-delay="0.4s">
+{{ range line := SPLIT(PP.FIELDS,"
+") }}
+<li>{{ . }}</li>
+{{ end }}
+                                </ul>
+                            </div>
+                            <!-- Team Member Expertice End -->
+                        </div>
+                    </div>
+                    <!-- Team Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Team Single End -->

@@ -1,0 +1,93 @@
+    <!-- Page Service Single Start -->
+    <div class="page-service-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Service Sidebar Start -->
+                    <div class="service-sidebar">
+                        <!-- Service Category List Start -->
+                        <div class="service-catagery-list wow fadeInUp">
+                            <h3>شناخت و درک سرطان</h3>
+                            <ul>
+                                <li><a href="cancer2.html">ژن های دخیل رد سرطان</a></li>
+                                <li><a href="understandingcancer.html">عوامل خطر در بروز سرطان</a></li>
+                                <li><a href="tissuealterations.html">نوجوانان و جوانان مبتلا به سرطان</a></li>
+                            </ul>
+                        </div>
+                        <!-- Service Category List End -->
+
+                        <!-- Sidebar Cta Box Start -->
+                        <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
+                            <!-- Icon Box Start -->
+                            <div class="icon-box">
+                              <img src="images/icon-cta.svg" alt="">
+                            </div>
+                            <!-- Icon Box Start -->
+
+                            <!-- CTA Contact Content Start -->
+                            <div class="cta-contact-content">
+                                <h3>برای مشاروه نیاز به کمک دارید؟</h3>
+                                <p>با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید</p>
+                            </div>
+                            <!-- CTA Contact Content End -->
+
+                            <!-- CTA Contact Button Start -->
+                            <div class="cta-contact-btn">
+                                <a href="contactus.html" class="btn-default btn-phone">تماس با ما</a>
+                            </div>
+                            <!-- CTA Contact Button End -->
+                        </div>
+                        <!-- Sidebar Cta Box End -->
+                    </div>
+                    <!-- Service Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ API_GET("/pigi","riskfactors","A1").data[0].image | raw }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <!-- Proving Services Start -->
+                            <div class="providing-services">
+                                <h2 class="">عوامل خطر در ایجاد سرطان</h2>
+                                <p class="wow fadeInUp">
+معمولاً نمی‌توان دقیقاً فهمید که چرا یک نفر به سرطان مبتلا می‌شود و دیگری نمی‌شود. اما تحقیقات نشان داده است که برخی عوامل خطر ممکن است احتمال ابتلا به سرطان را در فرد افزایش دهند. (همچنین عواملی وجود دارند که با کاهش خطر ابتلا به سرطان مرتبط هستند. این عوامل گاهی اوقات عوامل خطر محافظتی یا فقط عوامل محافظتی نامیده می‌شوند.)
+</p>
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+عوامل خطر سرطان شامل قرار گرفتن در معرض مواد شیمیایی یا سایر مواد و همچنین رفتارهای خاص است. آنها همچنین شامل مواردی هستند که افراد نمی‌توانند کنترل کنند، مانند سن و سابقه خانوادگی. سابقه خانوادگی سرطان‌های خاص می‌تواند نشانه یک سندرم سرطان ارثی احتمالی باشد.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+بیشتر عوامل خطر (و محافظتی) سرطان در ابتدا در مطالعات اپیدمیولوژی شناسایی می‌شوند. در این مطالعات، دانشمندان گروه‌های بزرگی از افراد را بررسی می‌کنند و افرادی را که به سرطان مبتلا می‌شوند با افرادی که به سرطان مبتلا نمی‌شوند مقایسه می‌کنند. این مطالعات ممکن است نشان دهند که افرادی که به سرطان مبتلا می‌شوند، نسبت به افرادی که به سرطان مبتلا نمی‌شوند، احتمال بیشتری دارد که به روش‌های خاصی رفتار کنند یا در معرض مواد خاصی قرار بگیرند.
+</p>
+
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">
+چنین مطالعاتی، به خودی خود، نمی‌توانند ثابت کنند که یک رفتار یا ماده باعث سرطان می‌شود. برای مثال، این یافته می‌تواند نتیجه‌ی شانس باشد، یا عامل خطر واقعی می‌تواند چیزی غیر از عامل خطر مشکوک باشد. اما یافته‌هایی از این نوع گاهی اوقات در رسانه‌ها مورد توجه قرار می‌گیرند و این می‌تواند منجر به ایده‌های نادرست در مورد چگونگی شروع و گسترش سرطان شود.
+</p>
+                            </div>
+                            <!-- Proving Services Start -->
+                        </div>
+                        <!-- Page Single FAQs End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End -->
+
+<style>
+.service-entry p {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2;
+}
+</style>

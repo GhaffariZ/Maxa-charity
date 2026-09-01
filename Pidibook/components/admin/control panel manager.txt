@@ -1,0 +1,47 @@
+📌 ۲) روش استفاده در صفحات مختلف
+از الان، هر صفحه‌ای که می‌خواهی دسترسی‌اش محدود باشد، فقط این را بالا اضافه می‌کنی:
+
+مثال: صفحه مدیریت کاربران — فقط owner و admin اجازه دارند:
+
+php
+<?php
+$allowed_roles = [1, 2]; // owner=1 ، admin=2
+require_once "auth_check.php";
+require_once "role_check.php";
+?>
+مثال: صفحه مدیریت صفحات — فقط admin + editor:
+
+php
+<?php
+$allowed_roles = [2, 3]; // admin + editor
+require_once "auth_check.php";
+require_once "role_check.php";
+?>
+مثال: صفحه نوشتن پست — author + editor + admin:
+
+php
+<?php
+$allowed_roles = [2, 3, 4];
+require_once "auth_check.php";
+require_once "role_check.php";
+?>
+مثال: صفحه فقط مشاهده — viewer هم می‌تواند ببیند:
+
+php
+<?php
+$allowed_roles = [1, 2, 3, 4, 5];
+require_once "auth_check.php";
+require_once "role_check.php";
+?>
+
+
+
+
+برای یادآوری:
+
+role_id	نقش	توضیح
+1	owner	دسترسی کامل
+2	admin	مدیریت کل
+3	editor	ویرایشگر
+4	author	نویسنده
+5	viewer	فقط مشاهده

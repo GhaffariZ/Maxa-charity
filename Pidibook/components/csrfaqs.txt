@@ -1,0 +1,169 @@
+<!-- Our Faqs Section Start -->
+<div class="our-faqs">
+    <div class="container">
+        <div class="row">
+
+            <!-- سمت چپ: توضیحات و CTA -->
+            <div class="col-lg-6">
+                <div class="our-faqs-content">
+
+                    <!-- Section Title Start -->
+                    <div class="section-title">
+                        <h3 class="wow fadeInUp">سوالات متداول</h3>
+                        <h2 class="" data-cursor="-opaque">سوالات پرتکرار همراهان مکسا در مشارکت اجتماعی</h2>
+                        <p class="wow fadeInUp" data-wow-delay="0.25s">
+                            در این بخش به متداول‌ترین پرسش‌های شما درباره ثبت اطلاعات و مشارکت اجتماعی با مکسا پرداخته ایم
+                        </p>
+                    </div>
+                    <!-- Section Title End -->
+
+                    <!-- Faq CTA Box Start -->
+                    <div class="faq-cta-box wow fadeInUp" data-wow-delay="0.5s">
+                        <div class="icon-box">
+                            <img src="images/icon-faq-cta.svg" alt="">
+                        </div>
+                        <div class="faq-cta-content">
+                            <p>ما همیشه مراقب لبخند شما هستیم</p>
+                            <h3>پاسخگویی آنلاین</h3>
+                            <p><a href="tel:0938-1234567">0938-1234567</a></p>
+                        </div>
+                    </div>
+                    <!-- Faq CTA Box End -->
+
+                </div>
+            </div>
+
+            <!-- سمت راست: آکاردئون سوالات -->
+            <div class="col-lg-6">
+                <!-- FAQ Accordion Start -->
+                <div class="faq-accordion" id="faqaccordion">
+
+                    <!-- FAQ Item 1 -->
+                    <div class="accordion-item wow fadeInUp">
+                        <h2 class="accordion-header" id="heading1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                شرکت ما چگونه می‌تواند با مکسا همکاری مسئولیت اجتماعی داشته باشد؟
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+با مراجعه به فرم درخواست همکاری در این صفحه و تکمیل اطلاعات، تیم مکسا با شما تماس خواهد گرفت و فرصت‌های مشارکت متناسب با اهداف برندتان ارائه می‌شود.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.2s">
+                        <h2 class="accordion-header" id="heading2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                چه مدارکی برای ثبت نام نیاز است؟
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+شما می‌توانید مدارک هویتی، رزومه، مدارک تحصیلی و گواهی‌های مرتبط خود را آپلود کنید. این اطلاعات فقط برای بررسی صلاحیت تخصصی شما استفاده می‌شود و محفوظ است.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.4s">
+                        <h2 class="accordion-header" id="heading3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                چه نوع پروژه‌هایی برای همکاری CSR با مکسا تعریف شده‌اند؟
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>   
+پروژه‌هایی نظیر حمایت از خرید تجهیزات پزشکی، راه‌اندازی واحدهای مراقبت خانگی، آموزش عمومی سرطان، کمپین‌های آگاهی‌بخشی و... از جمله فرصت‌های مشارکت هستند.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.6s">
+                        <h2 class="accordion-header" id="heading4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                . آیا امکان درج لوگوی برند ما در صفحات مکسا وجود دارد؟
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+بله، در صورت تحقق مشارکت معنادار، برند شما در صفحه «حامیان ما» معرفی خواهد شد.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="0.8s">
+                        <h2 class="accordion-header" id="heading5">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse5" aria-expanded="true" aria-controls="collapse5">
+                                آیا همکاری ما با مکسا از نظر قانونی و مالی شفاف است؟
+                            </button>
+                        </h2>
+                        <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+بله، کلیه همکاری‌ها دارای قرارداد رسمی، گزارش‌های مالی شفاف و امکان حسابرسی مستقل هستند.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="accordion-item wow fadeInUp" data-wow-delay="1s">
+                        <h2 class="accordion-header" id="heading6">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                                آیا شرکت‌ها می‌توانند نوع مشارکت خود را به‌صورت اختصاصی تعریف کنند؟
+                            </button>
+                        </h2>
+                        <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6"
+                             data-bs-parent="#faqaccordion">
+                            <div class="accordion-body">
+                                <p>
+بله، مکسا امکان تعریف پروژه‌های اختصاصی برای هر برند را با توجه به ظرفیت و علاقه‌مندی آن شرکت فراهم می‌کند.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- FAQ Accordion End -->
+
+                <!-- دکمه ارسال پیام -->
+                <div class="testimonial-btn mt-3">
+                    <a href="contact.html" class="btn-default">ارسال پیام و نظرات شما</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Our Faqs Section End -->
+
+<style>
+/* حذف هرگونه پس‌زمینه و باکس */
+.our-faqs {
+    background: none !important;
+    box-shadow: none !important;
+}
+</style>

@@ -844,7 +844,10 @@ INSERT INTO `pages` (`id`, `title`, `slug`, `components`, `status`, `created_at`
 (77, 'macsa-stories-details', 'macsa-stories-details', '[\"topbar\",\"header\",\"macsa_stories_details\",\"footer\"]', 'published', '2026-06-06 17:50:57', '2026-06-06 17:50:59'),
 (78, 'ikhc', 'ikhc', '[\"heroindex ikhc\",\"hamrah\",\"macsa_stories\",\"ourexcellence\",\"recent-news-hero-v2\",\"singlefundraisingoption\",\"footer\"]', 'published', '2026-06-07 14:26:54', '2026-06-07 22:15:01'),
 (79, 'branches', 'branches', '[\"topbar\",\"header\",\"branches\",\"footer\"]', 'published', '2026-06-10 08:52:46', '2026-06-10 08:52:48'),
-(80, 'macsa', 'macsa', '[\"macsa\"]', 'published', '2026-06-14 09:01:14', '2026-06-14 09:01:17');
+(80, 'macsa', 'macsa', '[\"macsa\"]', 'published', '2026-06-14 09:01:14', '2026-06-14 09:01:17'),
+(81, 'headdirectors', 'headdirectors', '[\"topbar\",\"header\",\"headdirectors\",\"footer\"]', 'published', '2026-06-14 10:00:00', '2026-06-14 10:00:00'),
+(82, 'directors', 'directors', '[\"topbar\",\"header\",\"directors\",\"footer\"]', 'published', '2026-06-14 10:00:00', '2026-06-14 10:00:00'),
+(83, 'doctorspage', 'doctorspage', '[\"topbar\",\"header\",\"doctorspage\",\"footer\"]', 'published', '2026-06-14 10:00:00', '2026-06-14 10:00:00');
 
 -- --------------------------------------------------------
 

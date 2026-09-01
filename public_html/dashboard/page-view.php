@@ -90,6 +90,23 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
             return;
         }
 
+        // ۴) اگر کامپوننتی به همین نام در مسیر کامپوننت‌ها وجود داشته باشد، آن را رندر می‌کنیم
+        $directComponent = __DIR__ . '/components/' . $slug . '/component.php';
+        if (file_exists($directComponent)) {
+            $titles = [
+                'headdirectors'       => 'شورای عالی مکسا',
+                'directors'           => 'هیئت مدیره مکسا',
+                'doctorspage'         => 'کادر درمان و متخصصان مکسا',
+                'history'             => 'تاریخچه و نحوه تاسیس',
+                'mission-vision'      => 'ماموریت و چشم انداز',
+                'association'         => 'اساسنامه',
+                'organizationalchart' => 'چارت سازمانی',
+            ];
+            $autoTitle = $titles[$slug] ?? 'مکسا';
+            render_branch_components($pdo, ['topbar', 'header', $slug, 'footer'], '', '', $autoTitle);
+            return;
+        }
+
         http_response_code(404);
         $notFoundFile = dirname(__DIR__) . '/404.html';
         if (file_exists($notFoundFile)) {

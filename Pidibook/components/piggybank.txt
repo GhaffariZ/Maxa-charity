@@ -1,0 +1,117 @@
+<!-- Piggy Bank Section Start -->
+<section class="mexa-piggy-section">
+  <h2>سکه را به داخل قلک بینداز و شادی را هدیه کن</h2>
+  <div class="mexa-piggy-container">
+    <!-- تصویر سمت چپ -->
+    <img 
+      src="{{ API_GET("/pigi","piggybank","A1").data[2].image | raw }}" 
+      alt="تصویر چپ" 
+      class="mexa-side-image left" 
+      id="left-image">
+
+    <!-- سکه -->
+    <img 
+      src="{{ API_GET("/pigi","piggybank","A1").data[0].image | raw }}" 
+      alt="سکه" 
+      class="mexa-coin" 
+      id="mexa-coin">
+
+    <!-- قلک -->
+    <img 
+      src="{{ API_GET("/pigi","piggybank","A1").data[1].image | raw }}" 
+      alt="قلک" 
+      class="mexa-piggybank" 
+      id="mexa-piggybank">
+
+    <!-- تصویر سمت راست -->
+    <img 
+      src="{{ API_GET("/pigi","piggybank","A1").data[3].image | raw }}" 
+      alt="تصویر راست" 
+      class="mexa-side-image right" 
+      id="right-image">
+  </div>
+</section>
+<!-- Piggy Bank Section End -->
+
+<style>
+.mexa-piggy-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* مرکزچین کردن افقی */
+  justify-content: center; /* مرکزچین کردن عمودی */
+  min-height: 100vh; /* ارتفاع کل صفحه */
+  text-align: center;
+  padding: 80px 20px;
+  background: none;
+}
+
+.mexa-piggy-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* قلک وسط container */
+}
+
+/* قلک */
+.mexa-piggybank {
+  max-width: 500px;
+  height: auto;
+  position: relative; /* با flex container وسط قرار می‌گیرد */
+  transition: filter 0.3s ease;
+  z-index: 1;
+}
+
+/* سکه */
+.mexa-coin {
+  width: 100px;
+  height: auto;
+  position: absolute;
+  /* قرار دادن سکه به چپ قلک */
+  top: 50%; 
+  left: calc(50% - 300px - 10px); /* 400px نصف عرض قلک + 20px فاصله */
+  transform: translateY(-80%); /* وسط ارتفاع قلک */
+  cursor: grab;
+  z-index: 10; /* جلوتر از قلک */
+  user-select: none;
+}
+.mexa-coin.dragging {
+  cursor: grabbing;
+}
+
+/* افکت هایلایت قلک */
+.mexa-piggybank.over {
+  filter: drop-shadow(0 0 20px gold);
+}
+
+</style>
+
+<script>
+const coin = document.querySelector('.mexa-coin');
+const piggybank = document.getElementById('mexa-piggybank');
+
+// وقتی کشیده میشه
+coin.addEventListener('dragstart', (e) => {
+  e.dataTransfer.setData('coin', 'dragging');
+});
+
+// وقتی میره روی قلک
+piggybank.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  piggybank.classList.add('over');
+});
+
+// وقتی میره بیرون
+piggybank.addEventListener('dragleave', () => {
+  piggybank.classList.remove('over');
+});
+
+// وقتی بندازن داخل قلک
+piggybank.addEventListener('drop', () => {
+  piggybank.classList.remove('over');
+  // 👉 انتقال به صفحه پرداخت
+  window.location.href = "onlinedonation.html"; 
+});
+</script>
