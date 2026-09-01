@@ -416,6 +416,320 @@
             transform: translateY(-2px);
         }
 
+        /* ---------------- بخش معرفی و رزومه کادر درمان (Resume Showcase Section) ---------------- */
+        .resume-showcase-box {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefce8 100%);
+            border: 1.5px solid #ccfbf1;
+            border-radius: 28px;
+            padding: 38px 36px;
+            margin: 45px 0 50px;
+            box-shadow: 0 16px 36px -12px rgba(13, 148, 136, 0.12);
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s ease;
+        }
+
+        .resume-showcase-box::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(0, 168, 168, 0.15) 0%, rgba(0, 168, 168, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .resume-showcase-box:hover {
+            box-shadow: 0 22px 48px -12px rgba(13, 148, 136, 0.20);
+            border-color: var(--primary-teal);
+            transform: translateY(-2px);
+        }
+
+        .resume-showcase-content {
+            flex: 1.35;
+        }
+
+        .resume-badge-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .resume-badge-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-teal));
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            box-shadow: 0 3px 10px rgba(0, 168, 168, 0.25);
+        }
+
+        .resume-badge-tag {
+            display: inline-block;
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--accent-gold-dark);
+            border: 1px solid rgba(245, 166, 35, 0.35);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .resume-title {
+            font-size: 1.65rem;
+            color: var(--primary-dark);
+            margin: 0 0 14px 0;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .resume-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.85;
+            margin: 0 0 22px 0;
+            text-align: justify;
+        }
+
+        .resume-features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .resume-feature-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(6px);
+            transition: all 0.25s ease;
+        }
+
+        .resume-feature-card:hover {
+            border-color: var(--primary-teal);
+            background: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .resume-feature-icon {
+            font-size: 1.35rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .resume-feature-text strong {
+            display: block;
+            font-size: 0.88rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .resume-feature-text small {
+            display: block;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .resume-action-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-resume-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-dark) 100%);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 13px 26px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px -4px rgba(0, 168, 168, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .btn-resume-cta:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #004d4c 100%);
+            color: #ffffff;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 26px -4px rgba(0, 102, 101, 0.45);
+        }
+
+        .btn-resume-cta svg {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-resume-cta:hover svg {
+            transform: translateX(-4px);
+        }
+
+        .resume-action-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .resume-showcase-visual {
+            flex: 0.95;
+            display: flex;
+            justify-content: center;
+        }
+
+        .resume-preview-widget {
+            width: 100%;
+            max-width: 380px;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.07);
+            position: relative;
+        }
+
+        .rpw-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .rpw-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .rpw-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            border: 2px solid #ffffff;
+            margin-right: -10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .rpw-avatar:first-child {
+            margin-right: 0;
+        }
+
+        .rpw-av1 { background: #e0f2fe; }
+        .rpw-av2 { background: #fef3c7; }
+        .rpw-av3 { background: #dcfce7; }
+        .rpw-av4 { background: var(--primary-teal); color: #fff; font-size: 14px; font-weight: 800; }
+
+        .rpw-stat-pill {
+            text-align: left;
+        }
+
+        .rpw-stat-pill strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .rpw-stat-pill span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .rpw-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .rpw-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .rpw-item:hover {
+            border-color: var(--card-border);
+            background: #f1f5f9;
+        }
+
+        .rpw-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-teal);
+            flex-shrink: 0;
+        }
+
+        .rpw-item-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            flex-grow: 1;
+        }
+
+        .rpw-item-tag {
+            font-size: 0.72rem;
+            background: #ffffff;
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        .rpw-footer-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .rpw-footer-link:hover {
+            background: var(--primary-teal);
+            color: #ffffff;
+        }
+
         /* ---------------- انیمیشن‌های ورودی ---------------- */
         @keyframes maxaFadeInUp {
             from { opacity: 0; transform: translateY(24px); }
@@ -428,6 +742,8 @@
         [data-wow-delay="0.2s"] { animation-delay: 0.2s; }
         [data-wow-delay="0.4s"] { animation-delay: 0.4s; }
         [data-wow-delay="0.6s"] { animation-delay: 0.6s; }
+        [data-wow-delay="0.65s"] { animation-delay: 0.65s; }
+        [data-wow-delay="0.7s"] { animation-delay: 0.7s; }
         [data-wow-delay="0.8s"] { animation-delay: 0.8s; }
         [data-wow-delay="1.0s"] { animation-delay: 1.0s; }
 
@@ -442,6 +758,10 @@
             .doctor-cards-grid { grid-template-columns: repeat(2, 1fr); }
             .science-highlight-box { flex-direction: column-reverse; padding: 24px; }
             .science-image-wrap { width: 100%; height: 220px; }
+            .resume-showcase-box { flex-direction: column; padding: 28px 24px; }
+            .resume-showcase-visual { width: 100%; }
+            .resume-preview-widget { max-width: 100%; }
+            .resume-features-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
@@ -453,6 +773,10 @@
             .article-content p { font-size: 1rem; }
             .doctor-cards-grid { grid-template-columns: 1fr; gap: 20px; }
             .teams-grid { grid-template-columns: 1fr; }
+            .resume-showcase-box { padding: 22px 18px; border-radius: 20px; }
+            .resume-title { font-size: 1.35rem; }
+            .btn-resume-cta { width: 100%; justify-content: center; }
+            .resume-action-area { flex-direction: column; align-items: stretch; }
         }
 
         @media (max-width: 380px) {
@@ -659,6 +983,114 @@
 
             </div>
 
+            <!-- ========================================================= -->
+            <!-- بخش اختصاصی معرفی و دسترسی به رزومه کادر درمان مکسا -->
+            <!-- ========================================================= -->
+            <section class="resume-showcase-box wow fadeInUp" data-wow-delay="0.65s" aria-label="سامانه رزومه کادر درمان مکسا">
+                <div class="resume-showcase-content">
+                    <div class="resume-badge-group">
+                        <span class="resume-badge-main">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            سامانه معرفی و رزومه
+                        </span>
+                        <span class="resume-badge-tag">پزشکان و درمانگران مکسا</span>
+                    </div>
+
+                    <h2 class="resume-title">آشنایی با پزشکان، درمانگران و کادر تخصصی مکسا</h2>
+
+                    <p class="resume-desc">
+                        تیم درمان مکسا متشکل از برجسته‌ترین متخصصان انکولوژی، طب تسکینی، پرستاران بالینی، روانشناسان سلامت، مددکاران، متخصصان تغذیه و توانبخشی است. با مراجعه به سامانه رزومه کادر درمان، می‌توانید سوابق علمی، مدارک دانشگاهی، تجارب بالینی، حوزه‌های تخصصی و شعب محل خدمت هر یک از اعضای کادر درمان را مشاهده فرمایید.
+                    </p>
+
+                    <div class="resume-features-grid">
+                        <div class="resume-feature-card">
+                            <span class="resume-feature-icon">🎓</span>
+                            <div class="resume-feature-text">
+                                <strong>سوابق علمی و دانشگاهی</strong>
+                                <small>مدارک تخصصی و فلوشیپ‌ها</small>
+                            </div>
+                        </div>
+                        <div class="resume-feature-card">
+                            <span class="resume-feature-icon">🏥</span>
+                            <div class="resume-feature-text">
+                                <strong>شعب و دپارتمان‌های خدمت</strong>
+                                <small>درمانگاه‌ها و مراقبت در منزل</small>
+                            </div>
+                        </div>
+                        <div class="resume-feature-card">
+                            <span class="resume-feature-icon">🩺</span>
+                            <div class="resume-feature-text">
+                                <strong>حوزه‌های تخصصی و بالینی</strong>
+                                <small>طب تسکینی، درد و انکولوژی</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resume-action-area">
+                        <a href="/personal-resume-list" class="btn-resume-cta" id="btn-view-doctor-resumes">
+                            <span>مشاهده رزومه و سوابق کادر درمان مکسا</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </a>
+                        <span class="resume-action-note">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            امکان فیلتر بر اساس شعبه، تخصص و رشته درمانی
+                        </span>
+                    </div>
+                </div>
+
+                <div class="resume-showcase-visual">
+                    <div class="resume-preview-widget">
+                        <div class="rpw-top">
+                            <div class="rpw-avatars">
+                                <div class="rpw-avatar rpw-av1" title="پزشک متخصص">🩺</div>
+                                <div class="rpw-avatar rpw-av2" title="پرستار بالینی">💉</div>
+                                <div class="rpw-avatar rpw-av3" title="روانشناس سلامت">🧠</div>
+                                <div class="rpw-avatar rpw-av4">+</div>
+                            </div>
+                            <div class="rpw-stat-pill">
+                                <strong>۱۰۰+ همکار</strong>
+                                <span>کادر درمان و سلامت</span>
+                            </div>
+                        </div>
+
+                        <div class="rpw-list">
+                            <div class="rpw-item">
+                                <div class="rpw-dot"></div>
+                                <span class="rpw-item-title">پزشکان متخصص و فلوشیپ طب تسکینی</span>
+                                <span class="rpw-item-tag">درمانگاه و ستاد</span>
+                            </div>
+                            <div class="rpw-item">
+                                <div class="rpw-dot"></div>
+                                <span class="rpw-item-title">پرستاران بالینی و مراقبت در منزل</span>
+                                <span class="rpw-item-tag">شبکه هوم‌کر</span>
+                            </div>
+                            <div class="rpw-item">
+                                <div class="rpw-dot"></div>
+                                <span class="rpw-item-title">روانشناسان، مددکاران و مشاوران سلامت</span>
+                                <span class="rpw-item-tag">تیم جامع MDT</span>
+                            </div>
+                        </div>
+
+                        <a href="/personal-resume-list" class="rpw-footer-link">
+                            <span>ورود به سامانه و مرور رزومه‌ها ←</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
             <div class="quote-capsule wow fadeInUp" data-wow-delay="0.7s">
                 «مکسا پلی استوار میان جامعه پزشکی و بیماران نیازمند؛ جایی که تخصص بالینی با ایثار و محبت درمی‌آمیزد تا هیچ بیماری در مواجهه با سرطان احساس تنهایی و درماندگی نکند.»
             </div>
@@ -671,6 +1103,7 @@
                 </p>
                 <div class="cta-buttons-wrap">
                     <a href="/contactus" class="cta-btn-primary">همکاری با کادر درمان مکسا</a>
+                    <a href="/personal-resume-list" class="cta-btn-outline">رزومه و پروفایل کادر درمان</a>
                     <a href="/courses" class="cta-btn-outline">مشاهده دوره‌های آموزشی</a>
                 </div>
             </div>
