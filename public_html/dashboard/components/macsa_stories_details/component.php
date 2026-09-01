@@ -2,15 +2,13 @@
 $allStories = [];
 try {
     if (!isset($pdo) || !$pdo) {
-        $dbCfg = require __DIR__ . '/../../../core/db-config.php';
-        $pdo = new PDO("mysql:host={$dbCfg['host']};dbname={$dbCfg['name']};charset=utf8mb4", $dbCfg['user'], $dbCfg['pass'], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        require_once __DIR__ . '/../../core/database.php';
     }
-    $stStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status`='published' ORDER BY `sort_order` ASC, `id` DESC");
-    if ($stStmt) {
-        $allStories = $stStmt->fetchAll(PDO::FETCH_ASSOC);
+    if (isset($pdo) && $pdo) {
+        $stStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status`='published' ORDER BY `sort_order` ASC, `id` DESC");
+        if ($stStmt) {
+            $allStories = $stStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 } catch (Throwable $e) {
     $allStories = [];

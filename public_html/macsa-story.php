@@ -4,15 +4,7 @@
  * Single Macsa Story Detail Page
  */
 
-$dbCfg = require __DIR__ . '/core/db-config.php';
-try {
-    $pdo = new PDO("mysql:host={$dbCfg['host']};dbname={$dbCfg['name']};charset=utf8mb4", $dbCfg['user'], $dbCfg['pass'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-} catch (Throwable $e) {
-    die("خطا در اتصال به پایگاه داده: " . $e->getMessage());
-}
+require_once __DIR__ . '/core/database.php';
 
 $id = (int)($_GET['id'] ?? 0);
 $story = null;
