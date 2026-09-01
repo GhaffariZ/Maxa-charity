@@ -43,7 +43,7 @@
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
-  <a href="javascript:void(0)" class="gallery-item" aria-disabled="true">
+  <a href="/patient-option" class="gallery-item" aria-disabled="true">
     <div class="card card-lg">
       <img src="{{image5}}">
     </div>
