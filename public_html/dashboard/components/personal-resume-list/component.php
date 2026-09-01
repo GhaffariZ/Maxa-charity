@@ -192,7 +192,7 @@ body { font-family: 'Vazirmatn',sans-serif; background-color: var(--bg-global); 
             <label for="filter-role">سمت شغلی</label>
             <select id="filter-role" class="filter-select">
                 <option value="all">همه سمت‌ها</option>
-                <option value="administrative">سمت‌های اداری</option>
+                <option value="treatment">کادر درمان</option>
                 <option value="doctors">پزشک متخصص</option>
                 <option value="nurses">کادر پرستاری</option>
                 <option value="psychologists">روانشناس سلامت</option>
@@ -201,6 +201,7 @@ body { font-family: 'Vazirmatn',sans-serif; background-color: var(--bg-global); 
                 <option value="nutritionists">متخصص تغذیه</option>
                 <option value="rehabilitation">متخصص توانبخشی</option>
                 <option value="genetic_counselors">مشاور ژنتیک و غربالگری</option>
+                <option value="administrative">سمت‌های اداری</option>
             </select>
         </div>
     </div>
@@ -296,7 +297,7 @@ function buildCard(emp, index) {
         </div>
         <div class="action-drawer">
             <button class="btn-more-info"
-                onclick="event.stopPropagation(); window.location.href='/dashboard/personal-resume-detail/${slug}';">
+                onclick="event.stopPropagation(); window.location.href='/personal-resume-detail.php?name=${slug}';">
                 <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 اطلاعات بیشتر
             </button>
@@ -366,6 +367,37 @@ function empInBranch(emp) {
     return false;
 }
 
+// ─── منطق تشخیص کادر درمان ───
+const NON_TREATMENT_ROLES = ['administrative', 'admin', 'ceo_office', 'deputies'];
+const TREATMENT_ROLES = ['doctors', 'nurses', 'psychologists', 'social_workers', 'spiritual_care', 'nutritionists', 'rehabilitation', 'genetic_counselors'];
+
+function isTreatmentRole(roleKey) {
+    if (!roleKey) return false;
+    return TREATMENT_ROLES.includes(roleKey) || !NON_TREATMENT_ROLES.includes(roleKey);
+}
+
+function applyCurrentFilters() {
+    const branchSelect = document.getElementById('filter-branch');
+    const roleSelect   = document.getElementById('filter-role');
+    if (!branchSelect || !roleSelect) return;
+
+    const b = branchSelect.value;
+    const r = roleSelect.value;
+    const filtered = allEmployees.filter(emp => {
+        const okB = b === 'all' || emp.branch === b;
+        const rawRole = emp.role || '';
+        const rawCat  = emp.job_category || '';
+        const filterRole = ROLES[rawRole] ? rawRole : (ROLES[rawCat] ? rawCat : rawRole);
+        const okR = r === 'all' 
+            ? true 
+            : (r === 'treatment' 
+                ? isTreatmentRole(filterRole) 
+                : filterRole === r);
+        return okB && okR;
+    });
+    renderCards(filtered);
+}
+
 async function loadEmployees() {
     renderSkeletons();
     try {
@@ -378,7 +410,14 @@ async function loadEmployees() {
             const ht = document.querySelector('.header-title');
             if (ht && BRANCH_NAME) ht.textContent = 'همکاران ' + BRANCH_NAME;
         }
-        renderCards(allEmployees);
+
+        const roleSelect = document.getElementById('filter-role');
+        const branchSelect = document.getElementById('filter-branch');
+        if ((roleSelect && roleSelect.value !== 'all') || (branchSelect && branchSelect.value !== 'all')) {
+            applyCurrentFilters();
+        } else {
+            renderCards(allEmployees);
+        }
     } catch (err) {
         document.getElementById('cards-grid').innerHTML =
             `<div class="error-msg">خطا در بارگذاری داده‌ها.<br><small>${err.message}</small></div>`;
@@ -387,6 +426,22 @@ async function loadEmployees() {
 
 // ─── فیلتر ───
 document.addEventListener('DOMContentLoaded', () => {
+    const branchSelect  = document.getElementById('filter-branch');
+    const roleSelect    = document.getElementById('filter-role');
+    const roleGroup     = document.getElementById('filter-role-group');
+
+    // بررسی پارامترهای آدرس مثل ?role=treatment
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialRole = urlParams.get('role');
+    const initialBranch = urlParams.get('branch');
+
+    if (initialRole && roleSelect) {
+        roleSelect.value = initialRole;
+    }
+    if (initialBranch && branchSelect) {
+        branchSelect.value = initialBranch;
+    }
+
     loadEmployees();
 
     const filterBtn     = document.getElementById('filter-toggle-btn');
@@ -395,44 +450,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn      = document.getElementById('close-drawer-btn');
     const applyBtn      = document.getElementById('apply-filter-btn');
     const resetBtn      = document.getElementById('reset-filter-btn');
-    const branchSelect  = document.getElementById('filter-branch');
-    const roleSelect    = document.getElementById('filter-role');
-    const roleGroup     = document.getElementById('filter-role-group');
 
     const openDrawer  = () => { filterSidebar.classList.add('is-open');    drawerOverlay.classList.add('is-active'); };
     const closeDrawer = () => { filterSidebar.classList.remove('is-open'); drawerOverlay.classList.remove('is-active'); };
 
-    filterBtn.addEventListener('click', openDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
+    if (filterBtn) filterBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
-    branchSelect.addEventListener('change', () => {
-        roleGroup.style.display = branchSelect.value === 'setad_markazi' ? 'none' : 'flex';
-        if (branchSelect.value === 'setad_markazi') roleSelect.value = 'all';
-    });
-
-    applyBtn.addEventListener('click', () => {
-        const b = branchSelect.value;
-        const r = roleSelect.value;
-        const filtered = allEmployees.filter(emp => {
-            const okB = b === 'all' || emp.branch === b;
-            const rawRole = emp.role || '';
-            const rawCat  = emp.job_category || '';
-            const filterRole = ROLES[rawRole] ? rawRole : (ROLES[rawCat] ? rawCat : rawRole);
-            const okR = r === 'all' || filterRole === r;
-            return okB && okR;
+    if (branchSelect) {
+        branchSelect.addEventListener('change', () => {
+            if (roleGroup) roleGroup.style.display = branchSelect.value === 'setad_markazi' ? 'none' : 'flex';
+            if (branchSelect.value === 'setad_markazi' && roleSelect) roleSelect.value = 'all';
         });
-        renderCards(filtered);
-        closeDrawer();
-    });
+    }
 
-    resetBtn.addEventListener('click', () => {
-        branchSelect.value = 'all';
-        roleSelect.value   = 'all';
-        roleGroup.style.display = 'flex';
-        renderCards(allEmployees);
-        closeDrawer();
-    });
+    if (applyBtn) {
+        applyBtn.addEventListener('click', () => {
+            applyCurrentFilters();
+            closeDrawer();
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (branchSelect) branchSelect.value = 'all';
+            if (roleSelect) roleSelect.value = 'all';
+            if (roleGroup) roleGroup.style.display = 'flex';
+            renderCards(allEmployees);
+            closeDrawer();
+        });
+    }
 
     // تم
     const toggleWrapper = document.getElementById('theme-toggle-wrapper');

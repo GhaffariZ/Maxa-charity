@@ -1070,8 +1070,7 @@ body.spa-active .content{display:none}
   }
   if (CAN.partners)  content.push({label:'همکاران',icon:'users',children:[
                        {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
-                       {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'},
-                       {label:'شبکه همکاران مکسا',icon:'network',href:'personal-resume-list.php'}]});
+                       {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'}]});
   if (CAN.campaigns) content.push({label:'کمپین‌ها',icon:'flag',children:[
                        {label:'ساخت کمپین جدید',icon:'plus',href:'campaign-create.php'},
                        {label:'مدیریت کمپین‌ها',icon:'list',href:'campaign-status.php'}]});

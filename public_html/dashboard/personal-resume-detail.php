@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/_guard.php';
-dash_require('partners');
 // --- Database Configuration (from config file outside git) ---
 $DB = require __DIR__ . '/../core/db-config.php';
 $servername = $DB['host'];
@@ -317,16 +315,14 @@ $conn->close();
 <body>
 
 <header class="premium-header">
-    <a href="../personal-resume-list.php" class="brand-section">
+    <a href="/network.php" class="brand-section">
         <div class="brand-dot"></div>
         <h1 class="header-title">شبکه همکاران مکسا</h1>
     </a>
-    <!-- سوییچ تغییر تم حذف شد — تم از «داشبورد مدیریت» کنترل می‌شود -->
 </header>
 
 <div class="main-container">
-    <!-- تصحیح آدرس بازگشت برای جلوگیری از خطای ۵۰۰ -->
-    <a href="../personal-resume-list.php" class="btn-back">
+    <a href="/network.php" class="btn-back">
         <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg> بازگشت به شبکه همکاران
     </a>
 

@@ -1033,7 +1033,7 @@
                     </div>
 
                     <div class="resume-action-area">
-                        <a href="/personal-resume-list" class="btn-resume-cta" id="btn-view-doctor-resumes">
+                        <a href="/network.php?role=treatment" class="btn-resume-cta" id="btn-view-doctor-resumes">
                             <span>مشاهده رزومه و سوابق کادر درمان مکسا</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -1084,7 +1084,7 @@
                             </div>
                         </div>
 
-                        <a href="/personal-resume-list" class="rpw-footer-link">
+                        <a href="/network.php?role=treatment" class="rpw-footer-link">
                             <span>ورود به سامانه و مرور رزومه‌ها ←</span>
                         </a>
                     </div>
@@ -1103,7 +1103,7 @@
                 </p>
                 <div class="cta-buttons-wrap">
                     <a href="/contactus" class="cta-btn-primary">همکاری با کادر درمان مکسا</a>
-                    <a href="/personal-resume-list" class="cta-btn-outline">رزومه و پروفایل کادر درمان</a>
+                    <a href="/network.php?role=treatment" class="cta-btn-outline">رزومه و پروفایل کادر درمان</a>
                     <a href="/courses" class="cta-btn-outline">مشاهده دوره‌های آموزشی</a>
                 </div>
             </div>

@@ -13,6 +13,11 @@ if ($slug === 'macsa-story') {
     exit;
 }
 
+if ($slug === 'network' || $slug === 'personal-resume-list') {
+    include __DIR__ . "/network.php";
+    exit;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug=? AND status='published'");
 $stmt->execute([$slug]);
 $page = $stmt->fetch();
