@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../_guard.php';
+dash_require('pages');
+$csrfToken = csrf_token();
+?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -470,9 +475,7 @@
         const formData = {
             image: selectedImage,
             date: document.getElementById('date').value,
-            quantity: quantityInput.value,
-            unit_price: currentUnitPrice,
-            total_price: currentUnitPrice * parseInt(quantityInput.value),
+            quantity: parseInt(quantityInput.value) || 1,
             from_user: document.getElementById('from_user').value,
             to_user: document.getElementById('to_user').value,
             message: document.getElementById('message').value,
@@ -480,9 +483,12 @@
         };
 
         try {
-            const response = await fetch('api_save.php', {
+            const response = await fetch('stand-order-save.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': <?= json_encode($csrfToken) ?>
+                },
                 body: JSON.stringify(formData)
             });
 
