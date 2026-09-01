@@ -1482,8 +1482,7 @@
                       <a href="/organizationalchart">چارت سازمانی</a>
                       <a href="/headdirectors.html">شورای عالی</a>
                       <a href="/directors.html">هیئت مدیره</a>
-                      <a href="/CEOoffice.html">مدیرعامل</a>
-                      <a href="/geneticistspage.html">کادر اداری</a>
+                      <a href="/CEOoffice">مدیرعامل</a>
                     </div>
                     <div class="mega-col">
                       <h6>کادر درمان</h6>
