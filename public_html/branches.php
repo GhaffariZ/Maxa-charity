@@ -5,17 +5,81 @@
 
 require_once __DIR__ . '/core/database.php';
 
-$branches = [];
-try {
-    $stmt = $pdo->query(
-        "SELECT name, slug, is_hq FROM branches
-         WHERE status = 'active'
-         ORDER BY is_hq DESC, name ASC"
-    );
-    $branches = $stmt->fetchAll();
-} catch (Throwable $e) {
-    $branches = [];
-}
+// فهرست استاندارد شعب و مراکز به ترتیب درخواستی (مشهد بالاتر در کنار بقیه شهرها)
+$defaultBranches = [
+    [
+        'name' => 'دفتر ستاد مرکزی مکسا',
+        'href' => '/home',
+        'is_hq' => true,
+        'tag' => 'دفتر مرکزی',
+        'icon' => '🏛️'
+    ],
+    [
+        'name' => 'شعبه تهران',
+        'href' => '/tehran-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه اصفهان',
+        'href' => '/esfahan-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه مشهد',
+        'href' => '/mashhad-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه اهواز (خوزستان)',
+        'href' => '/ahvaz-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه تبریز (آذربایجان شرقی)',
+        'href' => '/tabriz-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه قم',
+        'href' => '/qom-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'شعبه کاشان',
+        'href' => '/kashan-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال',
+        'icon' => '📍'
+    ],
+    [
+        'name' => 'مرکز ارتباطات و دورپزشکی',
+        'href' => '/contact-center',
+        'is_hq' => false,
+        'tag' => 'مرکز تخصصی',
+        'icon' => '🎧'
+    ],
+    [
+        'name' => 'مرکز رویش استعدادهای دانشجویی (CDST)',
+        'href' => '/cdst',
+        'is_hq' => false,
+        'tag' => 'مرکز نوآوری',
+        'icon' => '🎓'
+    ]
+];
+
+$branches = $defaultBranches;
 
 $pageTitle = 'شعب مکسا';
 require __DIR__ . '/dashboard/components/header/component.php';
@@ -25,7 +89,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .br-wrap {
     max-width: var(--cta-container, 1440px);
     margin: 0 auto;
-    padding: 56px 20px 40px;
+    padding: 40px 20px 50px;
     font-family: 'Vazirmatn', sans-serif;
     direction: rtl;
   }
@@ -34,11 +98,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .br-layout {
     display: flex;
     align-items: flex-start;
-    gap: 36px;
+    gap: 32px;
   }
   .br-side {           /* ستون راست */
-    flex: 0 0 360px;
-    max-width: 360px;
+    flex: 0 0 380px;
+    max-width: 380px;
   }
   .br-map {            /* ستون چپ (نقشه) */
     flex: 1 1 auto;
@@ -49,66 +113,74 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .br-map #Iran { width: 100%; max-width: none; }
 
   .br-head {
-    text-align: center;
-    margin-bottom: 28px;
+    text-align: right;
+    margin-bottom: 24px;
   }
   .br-head h1 {
-    font-size: clamp(28px, 4vw, 44px);
+    font-size: clamp(24px, 3.2vw, 36px);
     font-weight: 900;
-    color: #2f3437;
-    margin: 0 0 12px;
+    color: #0f172a;
+    margin: 0 0 10px;
+    line-height: 1.35;
   }
   .br-head p {
-    color: #6b7280;
-    font-size: 16px;
-    line-height: 2;
-    max-width: 720px;
-    margin: 0 auto;
+    color: #64748b;
+    font-size: 14.5px;
+    line-height: 1.9;
+    margin: 0;
   }
 
   /* فهرست شعب — ستونی (عمودی) */
   .br-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 10px;
     margin: 0;
   }
   .br-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    background: #fff;
-    border: 1px solid #ecedf0;
-    border-radius: 16px;
-    padding: 18px 20px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.04);
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.02);
     text-decoration: none;
     color: inherit;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
   }
   a.br-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px rgba(7,130,142,.12);
-    border-color: #10aeb8;
+    transform: translateX(-4px);
+    box-shadow: 0 10px 24px rgba(0,123,122,.1);
+    border-color: #007b7a;
+    background: #f8fdfd;
   }
   .br-icon {
-    flex: 0 0 46px;
-    width: 46px; height: 46px;
+    flex: 0 0 40px;
+    width: 40px; height: 40px;
     display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 14px;
-    font-size: 22px;
-    background: rgba(16,174,184,.12);
-    color: #07828e;
+    border-radius: 10px;
+    font-size: 20px;
+    background: rgba(0,123,122,.08);
+    color: #007b7a;
+    flex-shrink: 0;
   }
-  .br-item h3 { margin: 0; font-size: 16px; font-weight: 800; color: #2f3437; }
+  .br-item h3 { margin: 0; font-size: 15px; font-weight: 800; color: #1e293b; line-height: 1.4; }
   .br-item .br-tag {
     display: inline-block;
-    margin-top: 6px;
-    font-size: 12.5px;
+    margin-top: 4px;
+    font-size: 11.5px;
     font-weight: 700;
-    color: #07828e;
+    color: #007b7a;
+    background: rgba(0,123,122,.08);
+    padding: 2px 8px;
+    border-radius: 6px;
   }
-  .br-item .br-tag--hq { color: #d9820a; }
+  .br-item .br-tag--hq {
+    color: #b45309;
+    background: rgba(244,166,30,.14);
+  }
 
   .br-empty {
     text-align: center;
@@ -121,13 +193,13 @@ require __DIR__ . '/dashboard/components/header/component.php';
   }
 
   /* روی صفحه‌های کوچک: ستون‌ها زیر هم بچینند (عنوان+فهرست، سپس نقشه) */
-  @media (max-width: 920px) {
+  @media (max-width: 992px) {
     .br-layout { flex-direction: column; }
     .br-side { flex-basis: auto; max-width: none; width: 100%; }
+    .br-head { text-align: center; }
     .br-list {
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
-    .br-map #Iran { width: 78%; max-width: 760px; }
   }
 </style>
 
@@ -137,29 +209,27 @@ require __DIR__ . '/dashboard/components/header/component.php';
     <!-- ستون راست: عنوان + فهرست شعب -->
     <div class="br-side">
       <div class="br-head">
-        <h1>شعب مکسا</h1>
-        <p>شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. در فهرست زیر شعب فعال را ببینید و روی نقشه، استان‌های دارای شعبه را مشاهده کنید.</p>
+        <h1>شعب و مراکز مکسا</h1>
+        <p>شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. با انتخاب هر شعبه، به صفحه اختصاصی آن هدایت می‌شوید.</p>
       </div>
 
       <?php if (!empty($branches)): ?>
         <div class="br-list">
           <?php foreach ($branches as $b):
-            $isHq  = !empty($b['is_hq']);
-            $name  = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
-            $slug  = trim((string)($b['slug'] ?? ''));
-            // شعب به صفحه‌ی خانه‌ی شعبه و دفتر مرکزی به صفحه‌ی اصلی لینک می‌شوند.
-            $href  = $isHq ? '/home' : ($slug !== '' ? '/' . rawurlencode($slug) : '');
-            $tag   = $isHq ? 'دفتر مرکزی' : 'شعبه';
+            $isHq   = !empty($b['is_hq']);
+            $name   = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
+            $href   = htmlspecialchars($b['href'] ?? '#', ENT_QUOTES, 'UTF-8');
+            $tag    = htmlspecialchars($b['tag'] ?? 'شعبه', ENT_QUOTES, 'UTF-8');
+            $icon   = $b['icon'] ?? '📍';
             $tagCls = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
-            $el    = $href !== '' ? 'a' : 'div';
           ?>
-            <<?= $el ?> class="br-item"<?= $href !== '' ? ' href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
-              <span class="br-icon">📍</span>
+            <a class="br-item" href="<?= $href ?>" title="<?= $name ?>">
+              <span class="br-icon"><?= $icon ?></span>
               <div>
                 <h3><?= $name ?></h3>
                 <span class="<?= $tagCls ?>"><?= $tag ?></span>
               </div>
-            </<?= $el ?>>
+            </a>
           <?php endforeach; ?>
         </div>
       <?php else: ?>
@@ -167,7 +237,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
       <?php endif; ?>
     </div>
 
-    <!-- ستون چپ: نقشه‌ی ایران با شعب رنگی (همان کامپوننت صفحه‌ی شعب) -->
+    <!-- ستون چپ: نقشه‌ی ایران با شعب رنگی و دکمه‌های ویژه -->
     <div class="br-map">
       <?php require __DIR__ . '/dashboard/components/branches/component.php'; ?>
     </div>

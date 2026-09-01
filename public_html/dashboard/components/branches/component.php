@@ -44,17 +44,17 @@
         </a>
 
         <!-- ۲. مرکز ارتباطات و دورپزشکی -->
-        <div class="bqc-pill bqc-pill--telemed" title="مرکز ارتباطات و دورپزشکی (تله‌مدیسین ۲۴ ساعته)">
+        <a href="/contact-center" class="bqc-pill bqc-pill--telemed" title="مرکز ارتباطات و دورپزشکی (تله‌مدیسین ۲۴ ساعته)">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
             </svg>
           </span>
           <span class="bqc-label">مرکز ارتباطات و دورپزشکی</span>
-        </div>
+        </a>
 
         <!-- ۳. مرکز رویش استعدادهای دانشجویی -->
-        <div class="bqc-pill bqc-pill--student" title="مرکز رویش استعدادهای دانشجویی مکسا">
+        <a href="/cdst" class="bqc-pill bqc-pill--student" title="مرکز رویش استعدادهای دانشجویی مکسا (CDST)">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
@@ -62,7 +62,7 @@
             </svg>
           </span>
           <span class="bqc-label">مرکز رویش استعدادهای دانشجویی</span>
-        </div>
+        </a>
       </div>
     </div>
 
