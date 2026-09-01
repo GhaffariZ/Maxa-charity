@@ -1,16 +1,37 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# SECURITY: Block direct web access to component files.
-# Component PHP files should ONLY be included by trusted server-side code
-# (index.php, branches.php, etc.) — never accessed directly via URL.
-# This prevents exploitation of any component.php that might contain
-# user-authored content.
+# SECURITY: Block direct web access to PHP/code files while allowing static assets (images, fonts, css).
+# Component PHP files should ONLY be included by trusted server-side code (page-view.php, index.php, etc.)
 # ──────────────────────────────────────────────────────────────────────────────
 
-# Deny all direct HTTP access to files in this directory tree
-<IfModule mod_authz_core.c>
-    Require all denied
+# 1. Deny direct web access to server-side scripts, template code, and config files
+<FilesMatch "\.(?i:php|php[34578s]?|phtml|phar|inc|json|lock|sql|sh|bash|htaccess|htpasswd|ini)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 2. Disable PHP execution engine in this directory
+<IfModule mod_php.c>
+    php_flag engine off
 </IfModule>
-<IfModule !mod_authz_core.c>
-    Order Deny,Allow
-    Deny from all
+<IfModule mod_php7.c>
+    php_flag engine off
 </IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# 3. Allow public access to static media files and assets (images, fonts)
+<FilesMatch "\.(?i:png|jpe?g|gif|webp|svg|ico|css|js|woff2?|ttf|eot|otf)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
