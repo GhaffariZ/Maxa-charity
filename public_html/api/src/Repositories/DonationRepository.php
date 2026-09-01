@@ -71,24 +71,41 @@ final class DonationRepository
         return $row ?: null;
     }
 
-    public function markSuccess(int $donationId, ?string $refId, ?string $trackId): string
+    /**
+     * Atomically transition a donation from 'pending' to 'success'.
+     *
+     * The WHERE clause includes `status = 'pending'` so only the first caller
+     * that reaches this UPDATE will see rowCount() === 1. Concurrent or
+     * repeated calls for the same donation will see rowCount() === 0.
+     *
+     * @return array{row_count:int,receipt:string}
+     */
+    public function markSuccess(int $donationId, ?string $refId, ?string $trackId): array
     {
         $receipt = 'RC-' . str_pad((string) $donationId, 6, '0', STR_PAD_LEFT);
-        $this->db->prepare(
+        $stmt = $this->db->prepare(
             "UPDATE panel_donations
                 SET status = 'success', gateway_ref_id = :ref, gateway_track_id = :trk,
                     receipt_number = :rc, paid_at = UTC_TIMESTAMP()
               WHERE id = :id AND status = 'pending'"
-        )->execute([':ref' => $refId, ':trk' => $trackId, ':rc' => $receipt, ':id' => $donationId]);
-        return $receipt;
+        );
+        $stmt->execute([':ref' => $refId, ':trk' => $trackId, ':rc' => $receipt, ':id' => $donationId]);
+        return ['row_count' => $stmt->rowCount(), 'receipt' => $receipt];
     }
 
-    public function markFailed(int $donationId, string $reason): void
+    /**
+     * Atomically transition a donation from 'pending' to 'failed'.
+     *
+     * @return int Number of rows affected (0 = already processed or invalid).
+     */
+    public function markFailed(int $donationId, string $reason): int
     {
-        $this->db->prepare(
+        $stmt = $this->db->prepare(
             "UPDATE panel_donations SET status = 'failed', failure_reason = :r
               WHERE id = :id AND status = 'pending'"
-        )->execute([':r' => mb_substr($reason, 0, 255), ':id' => $donationId]);
+        );
+        $stmt->execute([':r' => mb_substr($reason, 0, 255), ':id' => $donationId]);
+        return $stmt->rowCount();
     }
 
     /**

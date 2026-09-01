@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Maksa\Services;
 
 use Maksa\Core\Config;
+use Maksa\Core\Database;
 use Maksa\Core\Exceptions\ApiException;
 use Maksa\Repositories\CampaignRepository;
 use Maksa\Repositories\DonationRepository;
@@ -76,6 +77,17 @@ final class DonationService
     /**
      * Verifies a gateway callback. Returns the final status string and the
      * donation reference so the caller can redirect the browser appropriately.
+     *
+     * Concurrency model:
+     *  1. READ the donation (no lock needed — we just check the current state).
+     *  2. Verify with the gateway (external HTTP — keep outside any transaction).
+     *  3. CLAIM the donation inside a short DB transaction using an atomic
+     *     UPDATE … WHERE status = 'pending'.  Only the first concurrent
+     *     request that reaches this UPDATE will see rowCount() === 1 and
+     *     become responsible for all side effects (campaign total, points,
+     *     notifications).  Any subsequent concurrent or duplicate request
+     *     sees rowCount() === 0 and returns immediately.
+     *
      * @param array<string,string> $params
      * @return array{status:string,reference:?string}
      */
@@ -97,37 +109,62 @@ final class DonationService
         $result = $gateway->verify($authority, $params, $amount);
 
         if (!$result->success) {
+            // Mark failed — the atomic WHERE ensures only one request transitions.
             $this->donations->markFailed((int) $donation['id'], $result->failureReason ?? 'پرداخت ناموفق بود.');
             return ['status' => 'failed', 'reference' => $reference];
         }
 
-        $this->finalizeSuccess($donation, $result);
-        return ['status' => 'success', 'reference' => $reference];
-    }
-
-    private function finalizeSuccess(array $donation, GatewayResult $result): void
-    {
+        // ── Atomic claim + side-effects inside a single transaction ──────
         $donationId = (int) $donation['id'];
-        $amount     = (int) $donation['amount'];
+        $campaignId = $donation['campaign_id'] !== null ? (int) $donation['campaign_id'] : null;
         $userId     = $donation['user_id'] !== null ? (int) $donation['user_id'] : null;
+        $points     = (int) floor($amount * self::POINTS_PER_TOMAN);
 
-        $this->donations->markSuccess($donationId, $result->refId, $result->trackId);
+        try {
+            $finalStatus = Database::transaction(function () use (
+                $donationId, $campaignId, $userId, $amount, $points, $result
+            ): string {
+                // Atomic claim: only one concurrent request sees rowCount === 1.
+                $mark = $this->donations->markSuccess($donationId, $result->refId, $result->trackId);
 
-        if ($donation['campaign_id'] !== null) {
-            $this->campaigns->applySuccessfulDonation((int) $donation['campaign_id'], $amount);
+                if ($mark['row_count'] !== 1) {
+                    // Already processed by another concurrent request — rollback
+                    // (nothing was written beyond the status flip which is harmless
+                    // to re-apply, but rolling back keeps the transaction atomic).
+                    return 'duplicate';
+                }
+
+                // Side-effect: bump campaign collected_amount.
+                if ($campaignId !== null) {
+                    $this->campaigns->applySuccessfulDonation($campaignId, $amount);
+                }
+
+                // Side-effect: award kindness points + tier recomputation.
+                if ($userId !== null && $points > 0) {
+                    (new ProfileRepository())->addPointsAndRecomputeTier($userId, $points);
+                }
+
+                // Side-effect: send success notification.
+                if ($userId !== null) {
+                    (new NotificationRepository())->create(
+                        $userId,
+                        'donation_success',
+                        'پرداخت شما با موفقیت انجام شد',
+                        'از مشارکت شما سپاسگزاریم. رسید این کمک در بخش تاریخچه در دسترس است.',
+                        '/history'
+                    );
+                }
+
+                return 'success';
+            });
+        } catch (\Throwable $e) {
+            // Transaction failed or was rolled back — donation stays 'pending'
+            // and can be retried.  Log for visibility.
+            error_log('[DonationService] Callback transaction failed: ' . $e->getMessage());
+            return ['status' => 'failed', 'reference' => $reference];
         }
 
-        if ($userId !== null) {
-            $points = (int) floor($amount * self::POINTS_PER_TOMAN);
-            (new ProfileRepository())->addPointsAndRecomputeTier($userId, $points);
-            (new NotificationRepository())->create(
-                $userId,
-                'donation_success',
-                'پرداخت شما با موفقیت انجام شد',
-                'از مشارکت شما سپاسگزاریم. رسید این کمک در بخش تاریخچه در دسترس است.',
-                '/history'
-            );
-        }
+        return ['status' => $finalStatus, 'reference' => $reference];
     }
 
     private static function originOf(string $url): string
