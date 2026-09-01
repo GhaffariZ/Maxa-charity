@@ -73,8 +73,16 @@ if(is_dir($images_dir)){
     $images = array_values($images);
 }
 
-if(file_exists($dir.'/component.php')){
-$code=file_get_contents($dir.'/component.php');
+// SECURITY: Prefer data.json (safe data-driven format) over component.php
+if(file_exists($dir.'/data.json')){
+    $raw=file_get_contents($dir.'/data.json');
+    $d=json_decode($raw,true);
+    if(is_array($d) && isset($d['content']) && is_string($d['content'])){
+        $code=$d['content'];
+    }
+}
+if($code==='' && file_exists($dir.'/component.php')){
+    $code=file_get_contents($dir.'/component.php');
 }
 
 if(file_exists($dir.'/meta.json')){

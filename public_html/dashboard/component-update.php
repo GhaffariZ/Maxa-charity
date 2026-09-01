@@ -14,13 +14,9 @@ if (!isset($_POST['component_name'], $_POST['component_tag'])) {
 
 $component_name = trim($_POST['component_name']);
 
-// فقط جلوگیری از خروج از مسیر
-if (
-    strpos($component_name, '..') !== false ||
-    strpos($component_name, '/') !== false ||
-    strpos($component_name, '\\') !== false
-) {
-    die("نام کامپوننت نامعتبر است.");
+// SECURITY: Validate component name — only alphanumeric, hyphens, underscores
+if ($component_name === '' || !preg_match('/^[a-zA-Z0-9_-]+$/', $component_name)) {
+    die("Invalid component name. Only letters, numbers, hyphens and underscores are allowed.");
 }
 
 $tag = trim($_POST['component_tag']);
@@ -31,196 +27,165 @@ if (!is_dir($path)) {
     mkdir($path, 0755, true);
 }
 
-/*
-|--------------------------------------------------------------------------
-| ذخیره کد کامپوننت
-|--------------------------------------------------------------------------
-| چون textarea در حالت عادی disabled است، ممکن است component_code ارسال نشود.
-| پس فقط وقتی ارسال شده بود ذخیره می‌کنیم.
-*/
+/* ── SECURITY: Store component content as JSON data, NOT as executable PHP ── */
 if (isset($_POST['component_code'])) {
     $code = $_POST['component_code'];
-    file_put_contents($path . "component.php", $code);
+
+    $componentData = [
+        'version' => 2,
+        'content' => $code,
+        'tag'     => $tag,
+    ];
+
+    file_put_contents(
+        $path . "data.json",
+        json_encode($componentData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+    );
+
+    // SECURITY: Also update meta.json for backward compatibility
+    file_put_contents(
+        $path . "meta.json",
+        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
 }
 
-/*
-|--------------------------------------------------------------------------
-| ذخیره meta.json
-|--------------------------------------------------------------------------
-*/
-file_put_contents(
-    $path . "meta.json",
-    json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-);
+/* ── SECURITY: meta.json always gets the tag update ───────────────────────── */
+if (!isset($_POST['component_code'])) {
+    file_put_contents(
+        $path . "meta.json",
+        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
+}
 
-/*
-|--------------------------------------------------------------------------
-| مسیر تصاویر کامپوننت
-|--------------------------------------------------------------------------
-*/
+/* ── SECURITY: Validate component name for path traversal (images section) ── */
 $images_path = $path . "images/";
 
 if (!is_dir($images_path)) {
     mkdir($images_path, 0755, true);
 }
 
-/*
-|--------------------------------------------------------------------------
-| حذف تصاویر انتخاب‌شده
-|--------------------------------------------------------------------------
-| داخل فرم ادیت باید checkbox هایی با name="delete_images[]" داشته باشی.
-*/
+/* ── SECURITY: Safe image deletion ────────────────────────────────────────── */
 if (!empty($_POST['delete_images']) && is_array($_POST['delete_images'])) {
-
     foreach ($_POST['delete_images'] as $image) {
-
+        // SECURITY: Use basename() to strip any path components
         $image = basename($image);
+        // SECURITY: Only allow safe image extensions for deletion targets
+        $ext = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) continue;
+        // SECURITY: Validate the filename contains only safe characters
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $image)) continue;
 
         $image_file = $images_path . $image;
-
         if (is_file($image_file)) {
             unlink($image_file);
         }
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| آپلود تصاویر جدید
-|--------------------------------------------------------------------------
-| داخل فرم ادیت باید input file با name="new_component_images[]" داشته باشی.
-*/
+/* ── SECURITY: Secure image upload ────────────────────────────────────────── */
 if (
     isset($_FILES['new_component_images']) &&
     isset($_FILES['new_component_images']['name']) &&
     is_array($_FILES['new_component_images']['name'])
 ) {
-
-    $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    // Extension blocklist
+    $forbidden_exts = [
+        'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps',
+        'phtml', 'pht', 'phar', 'php-s', 'php2', 'inc', 'hphp', 'ctp',
+        'cgi', 'perl', 'pl', 'py', 'pyc', 'pyo', 'rb', 'gem',
+        'jsp', 'jspx', 'asp', 'aspx', 'ascx', 'ashx', 'asmx',
+        'htaccess', 'htpasswd', 'ini', 'env', 'config',
+        'exe', 'msi', 'bat', 'cmd', 'sh', 'bash',
+    ];
+    $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $safeExtMap = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
 
     foreach ($_FILES['new_component_images']['name'] as $index => $original_name) {
-
-        if (empty($original_name)) {
-            continue;
-        }
-
-        if ($_FILES['new_component_images']['error'][$index] !== UPLOAD_ERR_OK) {
-            continue;
-        }
+        if (empty($original_name)) continue;
+        if ($_FILES['new_component_images']['error'][$index] !== UPLOAD_ERR_OK) continue;
 
         $tmp_name = $_FILES['new_component_images']['tmp_name'][$index];
+        $fileSize = $_FILES['new_component_images']['size'][$index];
 
+        // Check file size (max 2 MB per image)
+        if ($fileSize > 2 * 1024 * 1024) continue;
+        if ($fileSize === 0) continue;
+
+        // Validate extension
         $extension = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+        if (in_array($extension, $forbidden_exts, true)) continue;
 
-        if (!in_array($extension, $allowed_extensions)) {
+        // Validate MIME type using finfo (not client-provided type)
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($tmp_name);
+        if ($mimeType === false || !in_array($mimeType, $allowedMimes, true)) continue;
+
+        // Validate with GD that it is a real image
+        $image = @imagecreatefromstring(file_get_contents($tmp_name));
+        if (!$image) continue;
+
+        // Re-encode through GD to strip embedded payloads and malicious metadata
+        $safeExt = $safeExtMap[$mimeType] ?? 'jpg';
+        $temp_image_name = "__new_" . bin2hex(random_bytes(8)) . "." . $safeExt;
+        $target = $images_path . $temp_image_name;
+
+        switch ($mimeType) {
+            case 'image/jpeg': $result = @imagejpeg($image, $target, 85); break;
+            case 'image/png':  $result = @imagepng($image, $target, 6); break;
+            case 'image/gif':  $result = @imagegif($image, $target); break;
+            case 'image/webp': $result = @imagewebp($image, $target, 85); break;
+            default: $result = false;
+        }
+        imagedestroy($image);
+
+        if (!$result || !is_file($target) || filesize($target) === 0) {
+            @unlink($target);
             continue;
         }
-
-        /*
-         * فعلاً با نام موقت ذخیره می‌کنیم.
-         * پایین‌تر همه تصاویر دوباره مرتب و شماره‌گذاری می‌شوند.
-        */
-        $temp_image_name = "__new_" . uniqid('', true) . "." . $extension;
-
-        move_uploaded_file($tmp_name, $images_path . $temp_image_name);
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| مرتب‌سازی و شماره‌گذاری مجدد تصاویر
-|--------------------------------------------------------------------------
-| خروجی نهایی مثلاً:
-| 1.png
-| 2.jpg
-| 3.webp
-|--------------------------------------------------------------------------
-| این کار باعث می‌شود {{image1}} همیشه تصویر اول باشد،
-| {{image2}} تصویر دوم و ...
-*/
+/* ── Renumber images ──────────────────────────────────────────────────────── */
 $image_files = [];
-
 if (is_dir($images_path)) {
-
     $files = scandir($images_path);
-
     foreach ($files as $file) {
-
-        if ($file === '.' || $file === '..') {
-            continue;
-        }
-
+        if ($file === '.' || $file === '..') continue;
         $file_path = $images_path . $file;
-
-        if (!is_file($file_path)) {
-            continue;
-        }
-
+        if (!is_file($file_path)) continue;
         $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-
         if (in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
             $image_files[] = $file;
         }
     }
 }
-
 natsort($image_files);
 $image_files = array_values($image_files);
 
-/*
-|--------------------------------------------------------------------------
-| مرحله اول: تغییر نام همه تصاویر به نام موقت
-|--------------------------------------------------------------------------
-| برای جلوگیری از تداخل نام‌ها مثل 1.png و 2.png
-*/
+// Phase 1: Rename to temporary names to avoid conflicts
 $temp_files = [];
-
 foreach ($image_files as $file) {
-
     $old_path = $images_path . $file;
-
-    if (!is_file($old_path)) {
-        continue;
-    }
-
+    if (!is_file($old_path)) continue;
     $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-
-    $temporary_name = "__tmp_" . uniqid('', true) . "." . $extension;
-
+    $temporary_name = "__tmp_" . bin2hex(random_bytes(8)) . "." . $extension;
     $temporary_path = $images_path . $temporary_name;
-
     if (rename($old_path, $temporary_path)) {
         $temp_files[] = $temporary_name;
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| مرحله دوم: شماره‌گذاری نهایی تصاویر
-|--------------------------------------------------------------------------
-*/
+// Phase 2: Renumber to final names
 $counter = 1;
-
 foreach ($temp_files as $file) {
-
     $old_path = $images_path . $file;
-
-    if (!is_file($old_path)) {
-        continue;
-    }
-
+    if (!is_file($old_path)) continue;
     $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-
     $new_name = $counter . "." . $extension;
-
     $new_path = $images_path . $new_name;
-
     rename($old_path, $new_path);
-
     $counter++;
 }
 
 header("Location: component-create.php?updated=1");
 exit;
-
-?>

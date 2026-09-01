@@ -1,0 +1,16 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# SECURITY: Block direct web access to component files.
+# Component PHP files should ONLY be included by trusted server-side code
+# (index.php, branches.php, etc.) — never accessed directly via URL.
+# This prevents exploitation of any component.php that might contain
+# user-authored content.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Deny all direct HTTP access to files in this directory tree
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order Deny,Allow
+    Deny from all
+</IfModule>

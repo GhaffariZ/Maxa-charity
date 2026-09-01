@@ -1,0 +1,27 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# SECURITY: Deny execution of server-side scripts in the uploads directory.
+# This is a defense-in-depth layer — even if a malicious file with a PHP
+# extension is uploaded, Apache will refuse to execute it.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Block all server-side scripting engines
+<FilesMatch "\.(?i:php|php[3457s]?|phtml|phar|inc|php-s|php7|php8|cgi|pl|py|asp|aspx|jsp|jspx|htaccess|htpasswd|ini|sh|bash)$">
+    # Apache 2.4
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    # Apache 2.2 fallback
+    <IfModule !mod_authz_core.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Also disable the PHP engine entirely for this directory
+php_flag engine off
+
+# Prevent .htaccess overrides from being uploaded and taking effect
+# (defense-in-depth: combined with the FilesMatch above)
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>

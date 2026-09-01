@@ -18,9 +18,28 @@ $components = json_decode($page['components'], true);
 
 if (is_array($components)) {
     foreach ($components as $c) {
-        $file = __DIR__ . "/dashboard/components/$c/component.php";
-        if (file_exists($file)) {
-            include $file;
+        // SECURITY: Validate component name to prevent path traversal
+        if (!is_string($c) || !preg_match('/^[a-zA-Z0-9_-]+$/', $c)) {
+            continue;
+        }
+
+        $base = __DIR__ . "/dashboard/components/$c/";
+
+        // SECURITY: Prefer data.json (safe data-driven format) over component.php
+        $dataFile = $base . 'data.json';
+        if (file_exists($dataFile)) {
+            $raw = file_get_contents($dataFile);
+            $data = json_decode($raw, true);
+            if (is_array($data) && isset($data['content']) && is_string($data['content'])) {
+                echo $data['content'];
+                continue;
+            }
+        }
+
+        // Backward compatibility: fall back to component.php for existing components
+        $phpFile = $base . 'component.php';
+        if (file_exists($phpFile)) {
+            include $phpFile;
         }
     }
 }
