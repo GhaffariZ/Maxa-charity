@@ -11,22 +11,10 @@
                 <p>هرکمک، نوری در دل تاریکی است</p>
             </a>
 
-            <a href="/under-construction.html" class="support-card">
-                <div class="card-icon vow"><i class="fa-solid fa-dove"></i></div>
-                <h3>نذورات</h3>
-                <p>با هر نذری، همراهی و امید می‌بارد</p>
-            </a>
-
             <a href="/stand-sell-section.php" class="support-card">
                 <div class="card-icon flower"><i class="fa-solid fa-seedling"></i></div>
                 <h3>استند تبریک و تسلیت</h3>
                 <p>هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان</p>
-            </a>
-
-            <a href="/under-construction.html" class="support-card">
-                <div class="card-icon pig"><i class="fa-solid fa-piggy-bank"></i></div>
-                <h3>قلک مکسا</h3>
-                <p>هر سکه، رویانِ امید در دل بیماران</p>
             </a>
 
             <a href="/under-construction.html" class="support-card">

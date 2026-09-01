@@ -1555,8 +1555,6 @@
                     <div class="mega-col">
                       <h6>همیاری مالی</h6>
                       <a href="/onlinedonation">حمایت مالی آنلاین</a>
-                      <a href="/under-construction.html">نذورات</a>
-                      <a href="/under-construction.html">قلک مکسا</a>
                       <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
                     </div>
                     <div class="mega-col">
