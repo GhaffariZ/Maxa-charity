@@ -1,10 +1,15 @@
 <?php
-require_once __DIR__ . "/config/database.php";
+require_once __DIR__ . "/core/database.php";
 
 $slug = trim($_GET['page'] ?? 'home');
 
 if ($slug === 'under-construction') {
     include __DIR__ . "/under-construction.html";
+    exit;
+}
+
+if ($slug === 'macsa-story') {
+    include __DIR__ . "/macsa-story.php";
     exit;
 }
 

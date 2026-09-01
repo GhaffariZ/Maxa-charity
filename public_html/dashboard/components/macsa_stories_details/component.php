@@ -1,4 +1,4 @@
-<section class="pro-stories" dir="rtl">
+<section class="pro-stories" dir="rtl" data-component="macsa-stories-details">
 
   <div class="ps-global-bg"></div>
 
@@ -11,139 +11,147 @@
     </h2>
 
     <!-- FILTERS -->
-    <div class="ps-filters">
+    <div class="ps-filters" id="psFilters">
       <button class="active" data-filter="all">همه</button>
-      <button data-filter="diagnosis">زندگی پس از تشخیص بیماری</button>
-      <button data-filter="treatment">مسیر درمان</button>
-      <button data-filter="recovery">زندگی پس از بهبودی</button>
-      <button data-filter="family">تجربه همراهان</button>
-      <button data-filter="staff">روایت کادر درمان</button>
+      <button data-filter="کادر درمان">روایت کادر درمان</button>
+      <button data-filter="بهبودی">زندگی پس از بهبودی</button>
+      <button data-filter="تشخیص">زندگی پس از تشخیص بیماری</button>
+      <button data-filter="درمان">مسیر درمان</button>
+      <button data-filter="همراهان">تجربه همراهان</button>
     </div>
 
     <!-- STORIES GRID -->
-    <div class="ps-grid">
-
-      <!-- STORY CARD -->
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی</h3>
-          <p>سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود ...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>وقتی نوشتن، درمان است</h3>
-          <p>در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">روایت کادر درمان</span>
-          <h3>زندگی تا آخرین لحظه</h3>
-          <p>خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="recovery">
-          <span class="ps-tag">پس از بهبودی</span>
-          <h3>بازگشت به زندگی</h3>
-          <p>تجربه بیمار در دوران پس از درمان...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
-      <div class="ps-card" data-category="staff">
-          <span class="ps-tag">کادر درمان</span>
-          <h3>از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی</h3>
-          <p>روایتی از تلاش کادر درمان برای بیماران...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-      <div class="ps-card" data-category="treatment">
-          <span class="ps-tag">مسیر درمان</span>
-          <h3>عنوان داستان اینجاست</h3>
-          <p>خلاصه‌ای از روایت بیمار در این قسمت قرار می‌گیرد...</p>
-<div class="ps-footer">
-<span class="ps-time">۴ دقیقه مطالعه</span>
-<a href="#" class="ps-read">
-خواندن روایت
-<svg width="16" height="16" viewBox="0 0 24 24">
-<path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
-</svg>
-</a>
-</div>
-      </div>
-
+    <div class="ps-grid" id="psStoriesGrid">
+      <div class="ps-loading">در حال بارگذاری روایت‌های امید مکسا...</div>
     </div>
 
   </div>
 </section>
 
 <script>
-  // Filtering Logic
-  const buttons = document.querySelectorAll(".ps-filters button");
-  const cards = document.querySelectorAll(".ps-card");
+(function(){
+  const grid = document.getElementById("psStoriesGrid");
+  const filterContainer = document.getElementById("psFilters");
+  if (!grid) return;
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
+  let allStoriesData = [];
+  let activeFilter = "all";
 
-      buttons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+  function renderStories(stories) {
+    if (!stories || stories.length === 0) {
+      grid.innerHTML = '<div class="ps-empty">روایتی در این دسته‌بندی یافت نشد.</div>';
+      return;
+    }
 
-      const filter = btn.dataset.filter;
+    grid.innerHTML = stories.map(story => {
+      const excerpt = (story.excerpt || story.content || '').trim();
+      const shortExcerpt = excerpt.length > 150 ? excerpt.slice(0, 150) + '...' : excerpt;
+      const roleText = story.narrator_role ? `<span class="ps-narrator-role"> - ${escapeHtml(story.narrator_role)}</span>` : '';
+      const readTime = story.read_time || '۴ دقیقه مطالعه';
+      const tagText = story.tag || 'روایت امید';
 
-      cards.forEach(card => {
-        if(filter === "all" || card.dataset.category === filter){
-          card.style.display = "flex";
-        } else {
-          card.style.display = "none";
-        }
+      return `
+        <div class="ps-card" data-category="${escapeHtml(tagText)}">
+          <span class="ps-tag">${escapeHtml(tagText)}</span>
+          <h3>${escapeHtml(story.title)}</h3>
+          <div class="ps-narrator-info">
+            <span class="ps-narrator-name">${escapeHtml(story.narrator_name)}</span>
+            ${roleText}
+          </div>
+          <p>${escapeHtml(shortExcerpt)}</p>
+          <div class="ps-footer">
+            <span class="ps-time">${escapeHtml(readTime)}</span>
+            <a href="/macsa-story.php?id=${story.id}" class="ps-read">
+              خواندن روایت
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function applyFilter() {
+    if (activeFilter === "all") {
+      renderStories(allStoriesData);
+    } else {
+      const filtered = allStoriesData.filter(s => {
+        const tag = (s.tag || '');
+        return tag.includes(activeFilter);
       });
+      renderStories(filtered);
+    }
+  }
 
+  function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Fetch stories from API
+  fetch('/api-stories.php')
+    .then(res => res.json())
+    .then(json => {
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        allStoriesData = json.data;
+      } else {
+        allStoriesData = [
+          {
+            id: 1,
+            title: "زندگی تا آخرین لحظه",
+            narrator_name: "دکتر زهرا جعفری",
+            narrator_role: "روانشناس مراقبت درمنزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...",
+            read_time: "۴ دقیقه مطالعه"
+          },
+          {
+            id: 2,
+            title: "وقتی نوشتن، درمان است",
+            narrator_name: "آقای جواد چنگی",
+            narrator_role: "روانشناس مراقبت در منزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد...",
+            read_time: "۴ دقیقه مطالعه"
+          },
+          {
+            id: 3,
+            title: "از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی",
+            narrator_name: "آقای علی یزدانی",
+            narrator_role: "مددکار اجتماعی مراقبت در منزل شعبه تهران",
+            tag: "روایت کادر درمان",
+            excerpt: "سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود...",
+            read_time: "۵ دقیقه مطالعه"
+          }
+        ];
+      }
+      applyFilter();
+    })
+    .catch(() => {
+      grid.innerHTML = '<div class="ps-empty">خطا در برقراری ارتباط با پایگاه داده روایات.</div>';
     });
-  });
-</script>
 
+  // Filter Buttons
+  if (filterContainer) {
+    const btns = filterContainer.querySelectorAll("button");
+    btns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        btns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter || "all";
+        applyFilter();
+      });
+    });
+  }
+})();
+</script>
 
 <style>
 /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -240,7 +248,7 @@
 /* GRID */
 .ps-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
   gap:28px;
 }
 
@@ -248,8 +256,8 @@
 .ps-card {
   backdrop-filter:blur(22px);
   -webkit-backdrop-filter:blur(22px);
-  background:rgba(255,255,255,.55);
-  border:1px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(255,255,255,.6);
   padding:26px;
   border-radius:20px;
 
@@ -302,12 +310,26 @@
   z-index:1;
 }
 
+.ps-narrator-info {
+  font-size: 13px;
+  color: #0899A9;
+  font-weight: 700;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+.ps-narrator-role {
+  font-weight: 400;
+  color: #6b7c80;
+  font-size: 12px;
+}
+
 /* CONTENT */
 .ps-card h3 {
   font-size:18px;
   line-height:1.7;
   color:#1d2b2d;
-  margin-bottom:10px;
+  margin-bottom:8px;
   position:relative;
   z-index:1;
 }
@@ -358,6 +380,14 @@
 .ps-time{
   font-size:13px;
   color:#889;
+}
+
+.ps-loading, .ps-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #889;
+  font-size: 14px;
+  grid-column: 1 / -1;
 }
 
 /* responsive */
