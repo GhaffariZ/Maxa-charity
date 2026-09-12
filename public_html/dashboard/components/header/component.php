@@ -1411,6 +1411,10 @@
         .then(function(j){
           var token = j && j.data && j.data.access_token;
           if(!token) return null;
+          try {
+            window.__maxa_access_token = token;
+            sessionStorage.setItem('maxa_access_token', token);
+          } catch(e) {}
           return fetch('/api/user/me', {
             headers:{ 'Authorization':'Bearer '+token, 'Accept':'application/json' },
             credentials:'include'
