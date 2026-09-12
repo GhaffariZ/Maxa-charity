@@ -9,6 +9,7 @@ declare(strict_types=1);
  */
 
 use Maksa\Auth\AuthMiddleware;
+use Maksa\Auth\OptionalAuthMiddleware;
 use Maksa\Controllers\AuthController;
 use Maksa\Controllers\CampaignController;
 use Maksa\Controllers\ContactController;
@@ -23,6 +24,7 @@ use Maksa\Core\Router;
 
 return static function (Router $r): void {
     $auth = [new AuthMiddleware()];
+    $optionalAuth = [new OptionalAuthMiddleware()];
 
     // ---- Health -------------------------------------------------------------
     $r->get('/', [HealthController::class, 'ping']);
@@ -80,6 +82,6 @@ return static function (Router $r): void {
     $r->get('/stands',                    [StandController::class, 'getStandsByProvince']);
 
     // ---- Orders -------------------------------------------------------------
-    $r->post('/orders',                   [OrderController::class, 'create'], $auth);
+    $r->post('/orders',                   [OrderController::class, 'create'], $optionalAuth);
     $r->get('/user/orders',               [OrderController::class, 'getMyOrders'], $auth);
 };

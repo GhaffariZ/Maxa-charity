@@ -80,14 +80,17 @@ $user = dash_user();
 
 $trackingCode = 'ORD-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
 
+$activeBranchId = dash_active_branch_id();
+
 $stmt = $pdo->prepare("
-    INSERT INTO orders (user_id, tracking_code, image, order_date, quantity, unit_price, total_price, from_user, to_user, message, address, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    INSERT INTO orders (user_id, tracking_code, branch_id, image, order_date, quantity, unit_price, total_price, from_user, to_user, message, address, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
 ");
 
 $stmt->execute([
     $user['id'] ?? null,
     $trackingCode,
+    $activeBranchId > 0 ? $activeBranchId : null,
     $image,
     $date,
     $quantity,

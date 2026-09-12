@@ -488,18 +488,19 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
         try {
             const res = await fetch('/api/stands/provinces');
             const data = await res.json();
-            if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            const provList = Array.isArray(data.data) ? data.data : (data.data?.provinces || []);
+            if (data.success && provList.length > 0) {
                 const currentVal = branchSelect.value;
                 branchSelect.innerHTML = '';
-                data.data.forEach(item => {
+                provList.forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = item.province;
                     opt.textContent = 'شعبه ' + item.province + (item.cities && item.cities[0] ? ' (' + item.cities[0] + ')' : '');
                     if (item.province === currentVal) opt.selected = true;
                     branchSelect.appendChild(opt);
                 });
-                if (!branchSelect.value && data.data[0]) {
-                    branchSelect.value = data.data[0].province;
+                if (!branchSelect.value && provList[0]) {
+                    branchSelect.value = provList[0].province;
                 }
             }
         } catch (e) {
@@ -515,9 +516,10 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
         try {
             const res = await fetch('/api/stands?province=' + encodeURIComponent(province));
             const data = await res.json();
+            const standsList = Array.isArray(data.data) ? data.data : (data.data?.stands || []);
 
-            if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-                renderStands(data.data, province);
+            if (data.success && standsList.length > 0) {
+                renderStands(standsList, province);
             } else {
                 renderEmpty();
             }

@@ -138,9 +138,7 @@ final class StandController
             }
         }
 
-        Response::success([
-            'provinces' => array_values($provincesMap)
-        ]);
+        Response::success(array_values($provincesMap));
     }
 
     /**

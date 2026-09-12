@@ -31,9 +31,9 @@ if (!$isSuper && !dash_can('stands')) {
     exit('۴۰۳ | دسترسی به کارتابل سفارشات برای این شعبه مجاز نمی‌باشد.');
 }
 
-// Branches list for Super Admin dropdown filter
+// Branches list for Super Admin dropdown filter (only in HQ view)
 $filterBranches = [];
-if ($isSuper) {
+if ($isSuper && $isHq) {
     try {
         $st = $pdo->query("SELECT id, name, province, city FROM branches WHERE is_hq = 0 AND status = 'active' ORDER BY name ASC");
         $filterBranches = $st->fetchAll(PDO::FETCH_ASSOC);
@@ -48,12 +48,16 @@ $where = [];
 $params = [];
 
 $selectedBranchFilter = trim((string)($_GET['branch'] ?? 'all'));
-if (!$isSuper) {
-    // Non-superadmin: strictly locked to active branch
+
+// STRICT MULTI-TENANT ISOLATION:
+// Each branch can ONLY and EXCLUSIVELY see orders placed for its own branch.
+// Branch admins or users viewing within a specific branch context cannot see other branches' orders.
+// Only Super Admin in Central HQ view can view all branches or filter across branches.
+if (!$isSuper || !$isHq) {
     $where[] = "o.branch_id = ?";
     $params[] = $activeBranchId;
 } else {
-    // Super admin
+    // Super admin in Central HQ overview
     if ($selectedBranchFilter !== 'all' && is_numeric($selectedBranchFilter)) {
         $where[] = "o.branch_id = ?";
         $params[] = (int)$selectedBranchFilter;
@@ -266,15 +270,15 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
     </div>
     <div>
-      <?php if ($isSuper): ?>
+      <?php if ($isSuper && $isHq): ?>
         <span class="branch-scope-badge">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           نمای مدیر مرکزی (سراسر شعب)
         </span>
       <?php else: ?>
-        <span class="branch-scope-badge">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/></svg>
-          شعبه: <?= htmlspecialchars($currentBranchRow['name'] ?? 'نامشخص') ?> (<?= htmlspecialchars($currentBranchRow['province'] ?? '') ?>)
+        <span class="branch-scope-badge" style="background:rgba(22,163,122,.12);border-color:rgba(22,163,122,.3);color:var(--success)">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          سفارشات اختصاصی شعبه: <?= htmlspecialchars($currentBranchRow['name'] ?? 'شعبه فعال') ?> (<?= htmlspecialchars($currentBranchRow['province'] ?? $currentBranchRow['city'] ?? '') ?>)
         </span>
       <?php endif; ?>
     </div>
@@ -300,7 +304,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <div class="stat-lbl">مجموع مبالغ اهدایی سفارشات</div>
       </div>
     </div>
-    <?php if ($isSuper): ?>
+    <?php if ($isSuper && $isHq): ?>
       <div class="stat-card">
         <div class="stat-ic branch">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
@@ -318,7 +322,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <form method="GET" action="orders.php" class="filter-form">
       <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="جستجو بر اساس کد رهگیری، فرستنده، گیرنده، استان یا شهر..." class="filter-input">
 
-      <?php if ($isSuper): ?>
+      <?php if ($isSuper && $isHq): ?>
         <select name="branch" class="filter-select" onchange="this.form.submit()">
           <option value="all" <?= ($selectedBranchFilter === 'all') ? 'selected' : '' ?>>همه شعب مکسا</option>
           <?php foreach ($filterBranches as $fb): ?>
@@ -340,7 +344,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         فیلتر
       </button>
 
-      <?php if ($search !== '' || ($isSuper && $selectedBranchFilter !== 'all') || $typeFilter !== 'all'): ?>
+      <?php if ($search !== '' || ($isSuper && $isHq && $selectedBranchFilter !== 'all') || $typeFilter !== 'all'): ?>
         <a href="orders.php" class="btn-filter-reset">پاکسازی فیلتر</a>
       <?php endif; ?>
     </form>
@@ -373,7 +377,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                   کد رهگیری: <?= htmlspecialchars($order['tracking_code'] ?: 'ثبت نشده') ?>
                 </div>
 
-                <?php if ($isSuper || !empty($order['branch_name'])): ?>
+                <?php if ($isSuper && $isHq && !empty($order['branch_name'])): ?>
                   <span class="badge-branch">
                     شعبه: <?= htmlspecialchars($order['branch_name'] ?: 'مرکزی/ثبت قدیمی') ?>
                   </span>
