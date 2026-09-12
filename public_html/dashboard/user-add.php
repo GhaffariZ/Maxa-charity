@@ -21,7 +21,7 @@ $old = ['full_name' => '', 'username' => '', 'role_mode' => 'existing', 'role_id
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
+    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];
 // دسترسی‌های ویژه‌ی ستاد مرکزی فقط آن‌جا قابل‌واگذاری‌اند.
 if (dash_is_hq_view()) {

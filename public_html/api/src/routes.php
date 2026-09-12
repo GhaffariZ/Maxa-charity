@@ -18,6 +18,7 @@ use Maksa\Controllers\HealthController;
 use Maksa\Controllers\NotificationController;
 use Maksa\Controllers\UserController;
 use Maksa\Controllers\OrderController;
+use Maksa\Controllers\StandController;
 use Maksa\Core\Router;
 
 return static function (Router $r): void {
@@ -73,6 +74,10 @@ return static function (Router $r): void {
 
     // ---- Engagement ---------------------------------------------------------
     $r->post('/tax-certificate',          [EngagementController::class, 'requestTaxCertificate'], $auth);
+
+    // ---- Stands Catalog (public) --------------------------------------------
+    $r->get('/stands/provinces',          [StandController::class, 'getProvinces']);
+    $r->get('/stands',                    [StandController::class, 'getStandsByProvince']);
 
     // ---- Orders -------------------------------------------------------------
     $r->post('/orders',                   [OrderController::class, 'create'], $auth);

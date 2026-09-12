@@ -20,18 +20,26 @@ dash_require_hq();
 $err = '';
 $ok  = '';
 $created = null;  // پس از ساختِ موفق پر می‌شود تا مودالِ اعتبارنامه نمایش داده شود
-$old = ['name' => '', 'slug' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
+$old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $name      = trim((string)($_POST['name'] ?? ''));
-    $slugRaw   = (string)($_POST['slug'] ?? '');
-    $slug      = dash_sanitize_slug($slugRaw);
+    $slug      = dash_sanitize_slug((string)($_POST['slug'] ?? ''));
+    $province  = trim((string)($_POST['province'] ?? ''));
+    $city      = trim((string)($_POST['city'] ?? ''));
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
     $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
 
-    $old = ['name' => $name, 'slug' => $slug, 'admin_user' => $adminUser, 'features' => $features];
+    $old = [
+        'name'       => $name,
+        'slug'       => $slug,
+        'province'   => $province,
+        'city'       => $city,
+        'admin_user' => $adminUser,
+        'features'   => $features,
+    ];
 
     // ---- اعتبارسنجی ----
     if ($name === '' || mb_strlen($name) > 150) {
@@ -58,8 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             // 1) ردیف شعبه
-            $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
-            $st->execute([$name, $slug]);
+            try {
+                $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, is_hq, status) VALUES (?,?,?,?,0,'active')");
+                $st->execute([$name, $slug, $province, $city]);
+            } catch (Throwable $e) {
+                // اگر ستون‌های province/city هنوز به جدول اضافه نشده باشند
+                $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
+                $st->execute([$name, $slug]);
+            }
             $branchId = (int)$pdo->lastInsertId();
 
             // 2) قابلیت‌ها
@@ -117,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
+    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];
 
 $PANEL_TITLE = 'تعریف شعبه‌ی جدید';
@@ -146,6 +160,14 @@ require __DIR__ . '/_panel_head.php';
           <label>تگ شعبه (slug)</label>
           <input type="text" name="slug" value="<?= e($old['slug']) ?>" placeholder="tabriz-branch" required dir="ltr">
           <div class="sub">فقط حروف انگلیسی کوچک، عدد و خط تیره. به‌صورت خودکار پاکسازی می‌شود.</div>
+        </div>
+        <div class="field">
+          <label>استان تحت پوشش</label>
+          <input type="text" name="province" value="<?= e($old['province']) ?>" placeholder="مثلاً: اصفهان">
+        </div>
+        <div class="field">
+          <label>شهر تحت پوشش</label>
+          <input type="text" name="city" value="<?= e($old['city']) ?>" placeholder="مثلاً: اصفهان">
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ dash_require_hq();
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
+    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];
 
 $branchId = (int)($_GET['id'] ?? ($_POST['branch_id'] ?? 0));
@@ -52,6 +52,8 @@ $newPassForModal = '';
 $old = [
     'name'       => $branch['name'],
     'slug'       => $branch['slug'],
+    'province'   => $branch['province'] ?? '',
+    'city'       => $branch['city'] ?? '',
     'admin_user' => $adminRow['username'] ?? '',
     'features'   => $curFeatures,
 ];
@@ -60,11 +62,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $name      = trim((string)($_POST['name'] ?? ''));
     $slug      = $isHq ? $branch['slug'] : dash_sanitize_slug((string)($_POST['slug'] ?? ''));
+    $province  = trim((string)($_POST['province'] ?? ''));
+    $city      = trim((string)($_POST['city'] ?? ''));
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
     $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
 
-    $old = ['name' => $name, 'slug' => $slug, 'admin_user' => $adminUser, 'features' => $features];
+    $old = [
+        'name'       => $name,
+        'slug'       => $slug,
+        'province'   => $province,
+        'city'       => $city,
+        'admin_user' => $adminUser,
+        'features'   => $features,
+    ];
 
     // ---- اعتبارسنجی ----
     if ($name === '' || mb_strlen($name) > 150) {
@@ -90,11 +101,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $oldSlug = $branch['slug'];
 
-            // 1) نام + slug
+            // 1) نام + slug + استان + شهر
             if ($isHq) {
-                $pdo->prepare('UPDATE branches SET name = ? WHERE id = ?')->execute([$name, $branchId]);
+                try {
+                    $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $province, $city, $branchId]);
+                } catch (Throwable $e) {
+                    $pdo->prepare('UPDATE branches SET name = ? WHERE id = ?')->execute([$name, $branchId]);
+                }
             } else {
-                $pdo->prepare('UPDATE branches SET name = ?, slug = ? WHERE id = ?')->execute([$name, $slug, $branchId]);
+                try {
+                    $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $branchId]);
+                } catch (Throwable $e) {
+                    $pdo->prepare('UPDATE branches SET name = ?, slug = ? WHERE id = ?')->execute([$name, $slug, $branchId]);
+                }
             }
 
             // 2) قابلیت‌ها — diff (افزودن جدیدها، حذفِ برداشته‌شده‌ها؛ محتوا پاک نمی‌شود)
@@ -197,6 +216,14 @@ require __DIR__ . '/_panel_head.php';
           <label>تگ شعبه (slug)</label>
           <input type="text" name="slug" value="<?= e($old['slug']) ?>" dir="ltr" <?= $isHq ? 'readonly' : 'required' ?>>
           <div class="sub"><?= $isHq ? 'تگِ ستاد مرکزی قابل تغییر نیست.' : 'تغییرِ تگ، نامِ پوشه‌ی فایل‌های شعبه را هم تغییر می‌دهد.' ?></div>
+        </div>
+        <div class="field">
+          <label>استان تحت پوشش</label>
+          <input type="text" name="province" value="<?= e($old['province']) ?>" placeholder="مثلاً: اصفهان">
+        </div>
+        <div class="field">
+          <label>شهر تحت پوشش</label>
+          <input type="text" name="city" value="<?= e($old['city']) ?>" placeholder="مثلاً: اصفهان">
         </div>
       </div>
     </div>

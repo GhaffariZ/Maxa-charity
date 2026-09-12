@@ -19,7 +19,7 @@ $me        = (int)$DASH_USER['id'];
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
+    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];
 if (dash_is_hq_view()) {
     $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';

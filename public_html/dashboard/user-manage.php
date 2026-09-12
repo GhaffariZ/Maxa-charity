@@ -61,6 +61,7 @@ $users = $st->fetchAll();
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'صفحات', 'financial' => 'مالی', 'feedback' => 'انتقادات', 'medical' => 'پزشکی',
+    'stands' => 'استندها و سفارشات',
 ];
 $branchRow = dash_load_branch($BRANCH_ID);
 

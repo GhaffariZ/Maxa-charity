@@ -21,3 +21,5 @@ error_log
 /node_modules/
 # Untracked app folder
 /public_html/eo/
+# Local markdown documentation and prompt files
+Markdowns/

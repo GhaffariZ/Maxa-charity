@@ -313,6 +313,7 @@ $MENU = [
     'financial' => $visible('financial'),
     'feedback'  => $visible('feedback'),
     'medical'   => $visible('medical'),
+    'stands'    => $visible('stands'),
   ],
   'isSuper'       => $isSuper,
   'isBranchAdmin' => dash_is_branch_admin(),
@@ -1099,9 +1100,15 @@ body.spa-active .content{display:none}
   people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
   // اثرات کمک (Impact of Donations)
   people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
-  // سفارشات
-  people.push({single:true,label:'سفارشات',icon:'cart',href:'orders.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
+
+  // --- استندها و سفارشات ---
+  if (CAN.stands || MENU.isSuper){
+    NAV.push({title:'استندها و سفارشات'});
+    NAV.push({label:'استندها و سفارشات',icon:'cart',children:[
+      {label:'سفارشات استند',icon:'list',href:'orders.php'},
+      {label:'مدیریت استندها',icon:'award',href:'stands.php'}]});
+  }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
   if (MENU.isBranchAdmin || MENU.isSuper){
