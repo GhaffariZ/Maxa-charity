@@ -110,16 +110,17 @@ RewriteCond %{THE_REQUEST} \s/+doctorspage\.html[\s?] [NC]
 RewriteRule ^doctorspage\.html$ /doctorspage [R=301,L]
 
 # ---------------------------------------------------------
-# 0.9) سفارش استند (Stand Customize) clean URL
-#      /stand-sell-section                  -> dashboard/stand/stand-customize.php
-#      /dashboard/stand/stand-customize.php -> 301 به /stand-sell-section
+# 0.9) سفارش استند (Stand Order) clean URLs
+#      /stand-order        -> stand-order.php
+#      /stand-sell-section -> stand-order.php
 # ---------------------------------------------------------
-RewriteCond %{THE_REQUEST} \s/dashboard/stand/stand-customize\.php[\s?] [NC]
-RewriteRule ^dashboard/stand/stand-customize\.php$ /stand-sell-section [R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^stand-order/?$ stand-order.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^stand-sell-section/?$ dashboard/stand/stand-customize.php [L,QSA]
+RewriteRule ^stand-sell-section/?$ stand-order.php [L,QSA]
 
 # ---------------------------------------------------------
 # 1) Redirect old URL

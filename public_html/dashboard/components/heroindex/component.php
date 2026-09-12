@@ -1471,7 +1471,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/ashnaei.html">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);">آشنایی با مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1501,7 +1501,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/MACSAservices.html">خدمات مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);">خدمات مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1735,7 +1735,7 @@
     <p>برای دریافت مشاوره تخصصی و بررسی پرونده درمانی، فرم مجازی را تکمیل کنید.</p>
   </div>
 
-  <div class="cta-card" role="link" tabindex="0" data-link="/stand-sell-section" aria-label="سفارش استند و کارت دیجیتال تبریک و تسلیت">
+  <div class="cta-card" role="link" tabindex="0" data-link="/stand-order.php" aria-label="سفارش استند و کارت دیجیتال تبریک و تسلیت">
     <div class="cta-icon" aria-hidden="true">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

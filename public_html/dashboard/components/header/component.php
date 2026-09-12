@@ -965,7 +965,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/ashnaei.html">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);">آشنایی با مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -995,7 +995,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/MACSAservices.html">خدمات مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);">خدمات مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">

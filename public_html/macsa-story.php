@@ -531,7 +531,7 @@ body {
       </div>
       <div class="story-cta-btns">
         <a href="/onlinedonation" class="cta-btn-gold">کمک و حمایت آنلاین</a>
-        <a href="/stand-sell-section.php" class="cta-btn-outline">استند تبریک و تسلیت</a>
+        <a href="/stand-order.php" class="cta-btn-outline">استند تبریک و تسلیت</a>
       </div>
     </div>
 

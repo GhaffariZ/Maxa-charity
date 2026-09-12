@@ -18,6 +18,11 @@ if ($slug === 'network' || $slug === 'personal-resume-list') {
     exit;
 }
 
+if ($slug === 'stand-order' || $slug === 'stand-sell-section') {
+    include __DIR__ . "/stand-order.php";
+    exit;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug=? AND status='published'");
 $stmt->execute([$slug]);
 $page = $stmt->fetch();

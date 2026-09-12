@@ -11,7 +11,7 @@
                 <p>هرکمک، نوری در دل تاریکی است</p>
             </a>
 
-            <a href="/stand-sell-section.php" class="support-card">
+            <a href="/stand-order.php" class="support-card">
                 <div class="card-icon flower"><i class="fa-solid fa-seedling"></i></div>
                 <h3>استند تبریک و تسلیت</h3>
                 <p>هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان</p>

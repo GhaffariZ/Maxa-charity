@@ -94,6 +94,8 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
         $directComponent = __DIR__ . '/components/' . $slug . '/component.php';
         if (file_exists($directComponent)) {
             $titles = [
+                'stand-order'         => 'سفارش استند و کارت دیجیتال | خیریه مکسا',
+                'stand-sell-section'  => 'سفارش استند و کارت دیجیتال | خیریه مکسا',
                 'headdirectors'       => 'شورای عالی مکسا',
                 'directors'           => 'هیئت مدیره مکسا',
                 'doctorspage'         => 'کادر درمان و متخصصان مکسا',
