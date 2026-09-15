@@ -26,6 +26,15 @@ final class UserRepository
     }
 
     /** @return array<string,mixed>|null */
+    public function findByPhone(string $phone): ?array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM panel_users WHERE phone = :phone LIMIT 1');
+        $stmt->execute([':phone' => $phone]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    /** @return array<string,mixed>|null */
     public function findById(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM panel_users WHERE id = :id LIMIT 1');
@@ -38,6 +47,13 @@ final class UserRepository
     {
         $stmt = $this->db->prepare('SELECT 1 FROM panel_users WHERE email = :email LIMIT 1');
         $stmt->execute([':email' => mb_strtolower($email)]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public function phoneExists(string $phone): bool
+    {
+        $stmt = $this->db->prepare('SELECT 1 FROM panel_users WHERE phone = :phone LIMIT 1');
+        $stmt->execute([':phone' => $phone]);
         return (bool) $stmt->fetchColumn();
     }
 
@@ -82,6 +98,86 @@ final class UserRepository
         $this->db->prepare(
             "UPDATE panel_users SET email_verified_at = UTC_TIMESTAMP(), status = 'active' WHERE id = :id"
         )->execute([':id' => $userId]);
+    }
+
+    public function markPhoneVerified(int $userId): void
+    {
+        $this->db->prepare(
+            "UPDATE panel_users
+                SET phone_verified_at = COALESCE(phone_verified_at, UTC_TIMESTAMP()),
+                    status = 'active'
+              WHERE id = :id"
+        )->execute([':id' => $userId]);
+    }
+
+    /**
+     * Atomically creates or retrieves a donor by phone number.
+     * Updates profile name/national_code if provided.
+     *
+     * @return array{id: int, is_new: bool}
+     */
+    public function createOrGetDonorByPhone(
+        string $phone,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $nationalCode = null
+    ): array {
+        $existing = $this->findByPhone($phone);
+        if ($existing !== null) {
+            $userId = (int) $existing['id'];
+
+            $updates = [];
+            $params = [':uid' => $userId];
+            if ($firstName !== null && $firstName !== '') {
+                $updates[] = 'first_name = :fn';
+                $params[':fn'] = $firstName;
+            }
+            if ($lastName !== null && $lastName !== '') {
+                $updates[] = 'last_name = :ln';
+                $params[':ln'] = $lastName;
+            }
+            if ($nationalCode !== null && $nationalCode !== '') {
+                $updates[] = 'national_code = :nc';
+                $params[':nc'] = $nationalCode;
+            }
+
+            if (!empty($updates)) {
+                $sql = 'UPDATE user_profiles SET ' . implode(', ', $updates) . ' WHERE user_id = :uid';
+                $this->db->prepare($sql)->execute($params);
+            }
+
+            $this->markPhoneVerified($userId);
+
+            return ['id' => $userId, 'is_new' => false];
+        }
+
+        return (array) Database::transaction(function (PDO $db) use ($phone, $firstName, $lastName, $nationalCode) {
+            $stmt = $db->prepare(
+                "INSERT INTO panel_users (phone, status, phone_verified_at)
+                 VALUES (:phone, 'active', UTC_TIMESTAMP())"
+            );
+            $stmt->execute([':phone' => $phone]);
+            $userId = (int) $db->lastInsertId();
+
+            $bronze = $db->query("SELECT id FROM donor_tiers WHERE slug = 'bronze' LIMIT 1")->fetchColumn();
+
+            $db->prepare(
+                'INSERT INTO user_profiles (user_id, first_name, last_name, phone, national_code, donor_tier_id)
+                 VALUES (:uid, :fn, :ln, :phone, :nc, :tier)'
+            )->execute([
+                ':uid'   => $userId,
+                ':fn'    => $firstName,
+                ':ln'    => $lastName,
+                ':phone' => $phone,
+                ':nc'    => $nationalCode,
+                ':tier'  => $bronze !== false ? (int) $bronze : null,
+            ]);
+
+            $db->prepare('INSERT INTO user_notification_prefs (user_id) VALUES (:uid)')
+               ->execute([':uid' => $userId]);
+
+            return ['id' => $userId, 'is_new' => true];
+        });
     }
 
     public function recordSuccessfulLogin(int $userId, string $ip): void

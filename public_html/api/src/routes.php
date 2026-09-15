@@ -39,6 +39,7 @@ return static function (Router $r): void {
     $r->post('/auth/verify-email',        [AuthController::class, 'verifyEmail']);
     $r->post('/auth/resend-verification', [AuthController::class, 'resendVerification']);
     $r->post('/auth/login',               [AuthController::class, 'login']);
+    $r->post('/auth/login-otp',           [AuthController::class, 'loginWithOtp']);
     $r->post('/auth/refresh',             [AuthController::class, 'refresh']);
     $r->post('/auth/logout',              [AuthController::class, 'logout']);
     $r->post('/auth/forgot-password',     [AuthController::class, 'forgotPassword']);
