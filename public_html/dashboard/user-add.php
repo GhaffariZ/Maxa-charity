@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // نقش‌های موجودِ همین شعبه
+dash_ensure_financial_role($BRANCH_ID);
 $roleStmt = $pdo->prepare('SELECT id, name, permissions, is_preset FROM dashboard_roles WHERE branch_id = ? ORDER BY is_preset DESC, name ASC');
 $roleStmt->execute([$BRANCH_ID]);
 $roles = $roleStmt->fetchAll();
