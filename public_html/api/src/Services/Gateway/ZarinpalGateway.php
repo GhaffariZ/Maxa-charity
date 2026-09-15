@@ -27,14 +27,16 @@ final class ZarinpalGateway implements PaymentGateway
         $this->sandbox    = Config::bool('ZARINPAL_SANDBOX', true);
     }
 
-    public function request(int $amountToman, string $reference, string $callbackUrl, string $description): array
+    public function request(int $amountToman, string $reference, string $callbackUrl, string $description, array $metadata = []): array
     {
+        $reqMetadata = array_merge(['order_id' => $reference], $metadata);
+
         $res = $this->post($this->base() . 'request.json', [
             'merchant_id'  => $this->merchantId,
             'amount'       => $amountToman * 10, // Toman → Rial
             'callback_url' => $callbackUrl,
             'description'  => mb_substr($description, 0, 255),
-            'metadata'     => ['order_id' => $reference],
+            'metadata'     => $reqMetadata,
         ]);
 
         $authority = $res['data']['authority'] ?? null;
