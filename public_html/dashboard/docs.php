@@ -208,6 +208,8 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
   --shadow-lg: 0 16px 36px rgba(0,0,0,0.12);
 
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 :root[data-theme="dark"] {
@@ -1398,6 +1400,423 @@ body::before {
   color: var(--color-primary);
 }
 
+/* ==========================================================================
+   کامپوننت‌های مدرن و تعاملی برگرفته از libraries.dev
+   ========================================================================== */
+
+/* ۱. افکت پرتو نوری متحرک کادرها (Border Beam Effect) */
+@keyframes borderBeamRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.border-beam-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 123, 122, 0.18);
+}
+:root[data-theme="dark"] .border-beam-card {
+  border-color: rgba(79, 178, 176, 0.22);
+}
+
+.border-beam-card::before {
+  content: '';
+  position: absolute;
+  inset: -150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(0, 123, 122, 0.25) 300deg,
+    rgba(79, 178, 176, 0.95) 345deg,
+    transparent 360deg
+  );
+  animation: borderBeamRotate 6.5s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+:root[data-theme="dark"] .border-beam-card::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(79, 178, 176, 0.25) 300deg,
+    rgba(119, 211, 209, 0.95) 345deg,
+    transparent 360deg
+  );
+}
+
+.border-beam-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.border-beam-card::after {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  background: var(--color-surface);
+  border-radius: calc(var(--radius-md) - 1.5px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ۲. نوار دسترسی سریع و چیپ کپی مسیر سند (Command & Quick Resource Bar) */
+.doc-quick-bar {
+  margin-bottom: 24px;
+  padding: 11px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(196,196,196,0.05);
+  transition: transform 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth);
+}
+.doc-quick-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.doc-quick-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+.doc-quick-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--primary-08);
+  color: var(--color-primary);
+  border: 1px solid var(--primary-14);
+  flex-shrink: 0;
+}
+.doc-quick-snippet {
+  font-family: 'JetBrains Mono', 'Rooyin', monospace;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  background: var(--code-bg);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: ltr;
+  text-align: left;
+  max-width: clamp(140px, 35vw, 320px);
+}
+.doc-quick-copy-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.doc-quick-copy-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--primary-08);
+}
+.doc-quick-copy-btn span {
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+}
+
+/* ۳. آکاردئون‌های فوق‌روان پرسش و پاسخ (Smooth FAQ Accordion) با CSS Grid */
+.doc-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 24px 0;
+}
+.doc-accordion-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition: border-color 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.doc-accordion-item:hover {
+  border-color: rgba(0, 123, 122, 0.35);
+}
+:root[data-theme="dark"] .doc-accordion-item:hover {
+  border-color: rgba(79, 178, 176, 0.45);
+}
+.doc-accordion-item[data-open="true"] {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(0, 123, 122, 0.08);
+}
+.doc-accordion-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: right;
+  direction: rtl;
+  user-select: none;
+}
+.doc-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.doc-accordion-q-badge {
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--primary-08);
+  color: var(--color-primary);
+  border: 1px solid var(--primary-14);
+  flex-shrink: 0;
+}
+.doc-accordion-chev {
+  display: inline-flex;
+  color: var(--color-text-muted);
+  transition: transform 0.3s var(--ease-smooth);
+  flex-shrink: 0;
+}
+.doc-accordion-item[data-open="true"] .doc-accordion-chev {
+  transform: rotate(180deg);
+  color: var(--color-primary);
+}
+.doc-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease-smooth);
+}
+.doc-accordion-item[data-open="true"] .doc-accordion-panel {
+  grid-template-rows: 1fr;
+}
+.doc-accordion-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(4px);
+  transition: opacity 0.25s var(--ease-smooth), filter 0.25s var(--ease-smooth);
+}
+.doc-accordion-item[data-open="true"] .doc-accordion-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+.doc-accordion-panel-inner p {
+  margin: 14px 0 0;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+/* استایل مدرن تگ‌های HTML بومی details و summary */
+.markdown-body details {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  margin: 20px 0;
+  padding: 14px 18px;
+  transition: border-color 0.2s var(--ease-smooth);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.markdown-body details[open] {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(0, 123, 122, 0.08);
+}
+.markdown-body summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--color-text);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.markdown-body summary::-webkit-details-marker {
+  display: none;
+}
+
+/* ۴. کارت‌های مراحل گام‌به‌گام با نشان هاله نوری (How-To Step Cards) */
+.doc-step-card {
+  position: relative;
+  margin: 18px 0;
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(196,196,196,0.05);
+  transition: transform 0.25s var(--ease-smooth), border-color 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth);
+}
+.doc-step-card:hover {
+  transform: translateY(-2.5px);
+  border-color: rgba(0, 123, 122, 0.4);
+  box-shadow: var(--shadow-md);
+}
+:root[data-theme="dark"] .doc-step-card:hover {
+  border-color: rgba(79, 178, 176, 0.45);
+}
+.doc-step-badge {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007b7a, #005c5b);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  isolation: isolate;
+  box-shadow: 0 2px 8px rgba(0, 123, 122, 0.3);
+}
+:root[data-theme="dark"] .doc-step-badge {
+  background: linear-gradient(135deg, #007b7a, #4fb2b0);
+}
+/* هاله نورانی دور نشانگر عدد (Glowing Ambient Halo) */
+.doc-step-badge::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: 0.35;
+  filter: blur(8px);
+  z-index: -1;
+}
+.doc-step-content {
+  flex: 1;
+  min-width: 0;
+}
+.doc-step-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif;
+}
+.doc-step-body {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+.doc-step-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ۵. ویجت تعاملی بازخورد کاربران در انتهای هر سند (Doc Feedback Card) */
+.doc-feedback-card {
+  margin-top: 42px;
+  padding: 18px 22px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.doc-feedback-question {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-feedback-question svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+.doc-feedback-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.doc-feedback-btn {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s var(--ease-smooth);
+}
+.doc-feedback-btn:hover {
+  background: var(--primary-08);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+.doc-feedback-btn.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff !important;
+}
+.doc-feedback-btn.selected svg {
+  color: #ffffff !important;
+}
+.doc-feedback-btn span {
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+}
+.doc-feedback-toast {
+  font-size: 12.5px;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  color: #16a37a;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeInToast 0.3s ease;
+}
+@keyframes fadeInToast {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ستون فهرست مطالب صفحه (On this page TOC) */
 .docs-toc-sidebar {
   width: var(--toc-width);
@@ -1748,6 +2167,21 @@ body::before {
         </div>
       </div>
 
+      <!-- نوار دسترسی سریع و چیپ کپی مسیر سند (Quick Resource & Command Bar با افکت Border Beam) -->
+      <div class="doc-quick-bar border-beam-card" id="docQuickBar">
+        <div class="doc-quick-info">
+          <span class="doc-quick-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>شناسه سند</span>
+          </span>
+          <span class="doc-quick-snippet font-rooyin" id="docQuickPath"><?= htmlspecialchars($currentDoc, ENT_QUOTES, 'UTF-8') ?></span>
+        </div>
+        <button class="doc-quick-copy-btn font-rooyin" id="docQuickCopyBtn" type="button" title="کپی مسیر سریع این سند">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span class="font-rooyin">کپی مسیر سند</span>
+        </button>
+      </div>
+
       <!-- جعبه آکاردئونی فهرست مطالب درون مقاله برای موبایل و تبلت -->
       <div class="mobile-inline-toc" id="mobileInlineToc">
         <div class="mobile-inline-toc-header" id="mobileInlineTocHeader">
@@ -1764,6 +2198,24 @@ body::before {
 
       <!-- بدنه اصلی مارک‌داون -->
       <article class="markdown-body" id="markdownContent"></article>
+
+      <!-- ویجت تعاملی بازخورد کاربران در انتهای هر سند (Doc Feedback Card) -->
+      <div class="doc-feedback-card" id="docFeedbackCard">
+        <div class="doc-feedback-question">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <span>آیا این راهنما برای شما مفید و کاربردی بود؟</span>
+        </div>
+        <div class="doc-feedback-actions" id="docFeedbackActions">
+          <button class="doc-feedback-btn font-rooyin" type="button" data-feedback="yes" title="راهنما مفید بود">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            <span class="font-rooyin">بله، عالی بود</span>
+          </button>
+          <button class="doc-feedback-btn font-rooyin" type="button" data-feedback="no" title="نیاز به تکمیل دارد">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
+            <span class="font-rooyin">نیاز به بازنگری دارد</span>
+          </button>
+        </div>
+      </div>
 
       <!-- ناوبری صفحه قبلی و بعدی -->
       <nav class="article-pagination" id="articlePagination">
@@ -2261,7 +2713,118 @@ function processCustomMarkdownElements(html, currentDocId) {
     }
   });
 
-  // ۷. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
+  // ۷. تبدیل خودکار پرسش و پاسخ‌ها (الگوی س۱: ... یا سوال...:) به آکاردئون‌های فوق‌روان libraries.dev
+  const h3List = Array.from(container.querySelectorAll('h3'));
+  h3List.forEach(h3 => {
+    const hText = h3.textContent.trim();
+    const qMatch = hText.match(/^(س\s*\d+|پرسش\s*\d*|سوال\s*\d*):\s*(.*)$/i);
+    if (qMatch) {
+      const qBadge = qMatch[1];
+      const qTitle = qMatch[2] || hText;
+      const answerNodes = [];
+      let next = h3.nextElementSibling;
+      while (next && next.tagName !== 'H3' && next.tagName !== 'H2' && next.tagName !== 'H1' && next.tagName !== 'HR') {
+        const cur = next;
+        next = next.nextElementSibling;
+        answerNodes.push(cur);
+      }
+      if (next && next.tagName === 'HR') {
+        const hr = next;
+        next = next.nextElementSibling;
+        hr.remove();
+      }
+
+      const accItem = document.createElement('div');
+      accItem.className = 'doc-accordion-item';
+      accItem.setAttribute('data-open', 'false');
+
+      const headBtn = document.createElement('button');
+      headBtn.type = 'button';
+      headBtn.className = 'doc-accordion-head';
+      headBtn.innerHTML = `
+        <div class="doc-accordion-title">
+          <span class="doc-accordion-q-badge font-rooyin">${qBadge}</span>
+          <span class="font-rooyin">${qTitle}</span>
+        </div>
+        <span class="doc-accordion-chev">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      `;
+
+      const panel = document.createElement('div');
+      panel.className = 'doc-accordion-panel';
+
+      const panelInner = document.createElement('div');
+      panelInner.className = 'doc-accordion-panel-inner';
+      answerNodes.forEach(node => panelInner.appendChild(node));
+      panel.appendChild(panelInner);
+
+      accItem.appendChild(headBtn);
+      accItem.appendChild(panel);
+
+      h3.replaceWith(accItem);
+    }
+  });
+
+  // ۸. تبدیل لیست‌های ترتیبی ساختاریافته به کارت‌های گام‌به‌گام با نشان هاله نوری (How-To Step Cards)
+  container.querySelectorAll('ol').forEach(ol => {
+    const items = Array.from(ol.children).filter(c => c.tagName === 'LI');
+    if (!items.length) return;
+    const hasStructuredSteps = items.some(li => {
+      const firstEl = li.firstElementChild;
+      return (firstEl && (firstEl.tagName === 'STRONG' || (firstEl.tagName === 'P' && firstEl.firstElementChild && firstEl.firstElementChild.tagName === 'STRONG')));
+    });
+
+    if (hasStructuredSteps) {
+      const stepsWrapper = document.createElement('div');
+      stepsWrapper.className = 'doc-steps-container';
+
+      items.forEach((li, idx) => {
+        const stepCard = document.createElement('div');
+        stepCard.className = 'doc-step-card';
+
+        const stepBadge = document.createElement('div');
+        stepBadge.className = 'doc-step-badge font-rooyin';
+        const farsiDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+        const numStr = String(idx + 1).replace(/[0-9]/g, d => farsiDigits[d]);
+        stepBadge.textContent = numStr;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'doc-step-content';
+
+        let strongEl = null;
+        if (li.firstElementChild && li.firstElementChild.tagName === 'STRONG') {
+          strongEl = li.firstElementChild;
+        } else if (li.firstElementChild && li.firstElementChild.tagName === 'P' && li.firstElementChild.firstElementChild && li.firstElementChild.firstElementChild.tagName === 'STRONG') {
+          strongEl = li.firstElementChild.firstElementChild;
+        }
+
+        if (strongEl) {
+          const titleText = strongEl.textContent.replace(/[:：]\s*$/, '').trim();
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'doc-step-title font-rooyin';
+          titleDiv.textContent = titleText;
+          contentDiv.appendChild(titleDiv);
+          strongEl.remove();
+        }
+
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'doc-step-body';
+        while (li.firstChild) {
+          bodyDiv.appendChild(li.firstChild);
+        }
+        contentDiv.appendChild(bodyDiv);
+
+        stepCard.appendChild(stepBadge);
+        stepCard.appendChild(contentDiv);
+        stepsWrapper.appendChild(stepCard);
+      });
+
+      ol.replaceWith(stepsWrapper);
+    }
+  });
+
+  // ۹. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
   let rawHtml = container.innerHTML;
 
   rawHtml = rawHtml.replace(/\[(فعال|تأیید)\]/g, 
@@ -2411,6 +2974,26 @@ function updateDocMetadata(docId, rawMarkdown) {
     nextCard.onclick = (e) => { e.preventDefault(); loadDoc(nextDoc.id); };
   } else {
     nextCard.style.display = 'none';
+  }
+
+  // به‌روزرسانی مسیر در نوار دسترسی سریع (Quick Resource Bar)
+  const quickPathEl = document.getElementById('docQuickPath');
+  if (quickPathEl) {
+    quickPathEl.textContent = docId;
+  }
+
+  // هماهنگی وضعیت ویجت بازخورد برای این سند (Doc Feedback)
+  const feedbackCard = document.getElementById('docFeedbackCard');
+  if (feedbackCard) {
+    const savedVote = safeStorage.get('maxa-doc-vote-' + docId, null);
+    feedbackCard.querySelectorAll('.doc-feedback-btn').forEach(btn => {
+      btn.classList.remove('selected');
+      if (savedVote && btn.getAttribute('data-feedback') === savedVote) {
+        btn.classList.add('selected');
+      }
+    });
+    const toast = feedbackCard.querySelector('.doc-feedback-toast');
+    if (toast) toast.remove();
   }
 }
 
@@ -2728,7 +3311,60 @@ function setupMarkdownContentDelegation() {
       }
       return;
     }
+
+    // ۵. کلیک روی هدر آکاردئون‌های فوق‌روان پرسش و پاسخ (Smooth FAQ Accordion)
+    const accHead = e.target.closest('.doc-accordion-head');
+    if (accHead) {
+      e.preventDefault();
+      const item = accHead.closest('.doc-accordion-item');
+      if (item) {
+        const isOpen = item.getAttribute('data-open') === 'true';
+        item.setAttribute('data-open', isOpen ? 'false' : 'true');
+      }
+      return;
+    }
   });
+
+  // کپی مسیر سریع سند در نوار دسترسی سریع (Quick Resource Bar)
+  const quickCopyBtn = document.getElementById('docQuickCopyBtn');
+  if (quickCopyBtn) {
+    quickCopyBtn.addEventListener('click', () => {
+      const pathText = document.getElementById('docQuickPath') ? document.getElementById('docQuickPath').textContent.trim() : activeDocId;
+      navigator.clipboard.writeText(pathText).then(() => {
+        const prevHtml = quickCopyBtn.innerHTML;
+        quickCopyBtn.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="font-rooyin" style="color:#2ea043">مسیر کپی شد!</span>
+        `;
+        setTimeout(() => { quickCopyBtn.innerHTML = prevHtml; }, 2000);
+      });
+    });
+  }
+
+  // ثبت بازخورد تعاملی کاربران (Doc Feedback Card)
+  const feedbackActions = document.getElementById('docFeedbackActions');
+  if (feedbackActions) {
+    feedbackActions.addEventListener('click', (e) => {
+      const btn = e.target.closest('.doc-feedback-btn');
+      if (!btn) return;
+      const type = btn.getAttribute('data-feedback');
+      safeStorage.set('maxa-doc-vote-' + activeDocId, type);
+
+      feedbackActions.querySelectorAll('.doc-feedback-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      const existingToast = document.querySelector('.doc-feedback-toast');
+      if (existingToast) existingToast.remove();
+
+      const toast = document.createElement('span');
+      toast.className = 'doc-feedback-toast font-rooyin';
+      toast.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>با تشکر، بازخورد شما ثبت شد!</span>
+      `;
+      feedbackActions.appendChild(toast);
+    });
+  }
 }
 
 window.addEventListener('popstate', () => {
