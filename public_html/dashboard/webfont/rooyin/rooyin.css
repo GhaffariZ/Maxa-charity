@@ -29,45 +29,29 @@
   font-display: swap;
 }
 
-/* کلاس‌های کمکی برای اعمال مستقیم فونت رویین */
-.font-rooyin,
-.font-rooyin * {
+/* کلاس‌های کمکی برای اعمال مستقیم فونت رویین (مختص موارد کد و برنامه‌نویسی) */
+.font-rooyin {
   font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
   font-feature-settings: "liga" 1, "calt" 1;
   letter-spacing: 0 !important;
   word-spacing: normal !important;
 }
 
-.font-rooyin-dots2,
-.font-rooyin-dots2 * {
+.font-rooyin-dots2 {
   font-family: 'RooyinDots2', 'Vazirmatn', -apple-system, sans-serif !important;
 }
 
-/* دکمه‌ها و پیل‌های ابزار و کپی پیوند */
-.tool-pill,
-#copyPageLinkBtn,
-#readingTimePill,
-.code-copy-btn,
-.status-badge {
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
-  word-spacing: normal !important;
-}
-
-.tool-pill *,
-#copyPageLinkBtn *,
-#readingTimePill *,
-.code-copy-btn *,
-.status-badge * {
-  font-family: inherit !important;
-}
-
-/* اعمال در استایل‌های کد فارسی */
+/* اعمال اختصاصی در استایل‌ها و بلوک‌های کد فارسی */
 .code-persian,
 code[data-persian="true"],
 code.has-persian,
-.code-inline-persian {
+.code-inline-persian,
+code .font-rooyin,
+pre code .font-rooyin,
+.markdown-body code .font-rooyin,
+.markdown-body pre code .font-rooyin,
+.markdown-body pre code .hljs-string.font-rooyin,
+.markdown-body pre code .hljs-comment.font-rooyin {
   font-family: 'JetBrains Mono', 'Rooyin', 'Vazirmatn', monospace !important;
   font-feature-settings: "liga" 1, "calt" 1;
   letter-spacing: 0 !important;

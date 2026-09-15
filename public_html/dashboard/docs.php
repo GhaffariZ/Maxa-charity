@@ -719,7 +719,6 @@ body::before {
 #copyPageLinkBtn,
 #readingTimePill {
   font-size: 12px;
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   color: var(--color-text-muted);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -731,9 +730,6 @@ body::before {
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s;
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
-  word-spacing: normal !important;
   line-height: 1.4;
   -webkit-appearance: none;
   appearance: none;
@@ -742,15 +738,6 @@ body::before {
 #copyPageLinkBtn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-}
-.tool-pill span,
-.tool-pill button,
-#copyPageLinkBtn span,
-#readingTimePill span {
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
-  word-spacing: normal !important;
 }
 
 /* جعبه سرفصل درون-صفحه برای موبایل و تبلت (In-Article Mobile TOC Accordion) */
@@ -1118,26 +1105,17 @@ body::before {
   border-radius: 7px;
   color: #c9d1d9;
   font-size: 11.5px;
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   padding: 4px 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   transition: all 0.2s var(--ease);
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
-  word-spacing: normal !important;
 }
 .code-copy-btn:hover {
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.25);
-}
-.code-copy-btn span {
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
 }
 
 .markdown-body pre {
@@ -1275,7 +1253,6 @@ body::before {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--color-primary);
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif;
 }
 
 .mermaid-diagram-actions {
@@ -1290,7 +1267,6 @@ body::before {
   border-radius: 6px;
   color: var(--color-text-muted);
   font-size: 11px;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   padding: 3px 9px;
   cursor: pointer;
   display: inline-flex;
@@ -1327,15 +1303,13 @@ body::before {
 .mermaid-render-container svg {
   max-width: 100% !important;
   height: auto !important;
-  font-family: 'Vazirmatn', 'Rooyin', sans-serif !important;
+  font-family: 'Vazirmatn', -apple-system, sans-serif !important;
 }
 
 .mermaid-render-container .node .label,
 .mermaid-render-container .label text,
 .mermaid-render-container text {
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
-  font-feature-settings: "liga" 1, "calt" 1;
-  letter-spacing: 0 !important;
+  font-family: 'Vazirmatn', -apple-system, sans-serif !important;
 }
 
 .mermaid-source-wrapper {
@@ -1348,7 +1322,7 @@ body::before {
   margin: 0;
   padding: 0;
   background: transparent !important;
-  font-family: 'JetBrains Mono', 'Rooyin', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
   color: #79c0ff;
   line-height: 1.6;
@@ -1523,7 +1497,6 @@ body::before {
   border-radius: 8px;
   padding: 5px 12px;
   font-size: 12px;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;
@@ -1537,9 +1510,6 @@ body::before {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: var(--primary-08);
-}
-.doc-quick-copy-btn span {
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
 }
 
 /* ۳. آکاردئون‌های فوق‌روان پرسش و پاسخ (Smooth FAQ Accordion) با CSS Grid */
@@ -1592,7 +1562,6 @@ body::before {
   flex: 1;
 }
 .doc-accordion-q-badge {
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   font-size: 11.5px;
   font-weight: 700;
   padding: 2px 8px;
@@ -1699,7 +1668,6 @@ body::before {
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -1729,7 +1697,6 @@ body::before {
   font-weight: 800;
   color: var(--color-text);
   margin-bottom: 6px;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif;
 }
 .doc-step-body {
   font-size: 13.5px;
@@ -1777,7 +1744,6 @@ body::before {
   border-radius: 99px;
   padding: 6px 14px;
   font-size: 12px;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;
@@ -1800,12 +1766,8 @@ body::before {
 .doc-feedback-btn.selected svg {
   color: #ffffff !important;
 }
-.doc-feedback-btn span {
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
-}
 .doc-feedback-toast {
   font-size: 12.5px;
-  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
   color: #16a37a;
   display: inline-flex;
   align-items: center;
@@ -1815,6 +1777,95 @@ body::before {
 @keyframes fadeInToast {
   from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   نشان متالیک کرومی مایع (Liquid Metal Chrome Badge - الهام از Libraries.dev Metal)
+   ========================================================================== */
+.metal-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 'Inter', sans-serif;
+  letter-spacing: 0.2px;
+  background: linear-gradient(135deg, #ffffff 0%, #edf2f7 32%, #cbd5e1 68%, #f8fafc 100%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 -3px 12px 1px rgba(255, 255, 255, 0.45),
+    0 0 8px 0 rgba(255, 255, 255, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 2px 0 rgba(100, 116, 139, 0.35);
+  isolation: isolate;
+  user-select: none;
+  overflow: visible;
+  vertical-align: middle;
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+}
+.metal-badge span,
+.metal-badge {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+:root[data-theme="dark"] .metal-badge {
+  color: #0f172a;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 30%, #94a3b8 68%, #f1f5f9 100%);
+  box-shadow:
+    0 -4px 16px 2px rgba(255, 255, 255, 0.55),
+    0 0 10px 0 rgba(255, 255, 255, 0.6),
+    0 3px 8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(51, 65, 85, 0.45);
+}
+
+/* افکت شکست نور رنگین‌کمانی و انعکاس کروم (Chromatic Reflection) */
+.metal-badge::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  background: linear-gradient(
+    115deg,
+    transparent 10%,
+    rgba(255, 107, 107, 0.55) 26%,
+    rgba(255, 217, 61, 0.6) 44%,
+    rgba(77, 150, 255, 0.6) 62%,
+    rgba(168, 85, 247, 0.5) 80%,
+    transparent 94%
+  );
+  opacity: 0.7;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* لکه براق نوری و هاله بازتاب (Specular Flare Highlight) */
+.metal-badge::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: 18%;
+  width: 16px;
+  height: 9px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.7) 40%, transparent 80%);
+  filter: blur(0.8px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.metal-badge:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 -5px 18px 2px rgba(255, 255, 255, 0.65),
+    0 0 14px 2px rgba(255, 255, 255, 0.8),
+    0 4px 10px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
 }
 
 /* ستون فهرست مطالب صفحه (On this page TOC) */
@@ -2065,7 +2116,8 @@ body::before {
         <span class="brand-sub">مرکز کنترل سرطان مکسا</span>
       </div>
     </a>
-    <span class="version-badge">نسخه آزمایشی v2.4</span>
+    <span class="version-badge">نسخه v2.4</span>
+    <span class="metal-badge" title="سامانه مستندات به‌روزشده">New</span>
   </div>
 
   <div class="header-center">
@@ -2156,13 +2208,13 @@ body::before {
         </div>
 
         <div class="article-tools">
-          <span class="tool-pill font-rooyin" id="readingTimePill" title="تخمین زمان مطالعه">
+          <span class="tool-pill" id="readingTimePill" title="تخمین زمان مطالعه">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span id="readingTimeText" class="font-rooyin">۳ دقیقه مطالعه</span>
+            <span id="readingTimeText">۳ دقیقه مطالعه</span>
           </span>
-          <button class="tool-pill font-rooyin" id="copyPageLinkBtn" type="button" title="کپی پیوند این سند">
+          <button class="tool-pill" id="copyPageLinkBtn" type="button" title="کپی پیوند این سند">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span class="font-rooyin">کپی پیوند</span>
+            <span>کپی پیوند</span>
           </button>
         </div>
       </div>
@@ -2174,11 +2226,11 @@ body::before {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>شناسه سند</span>
           </span>
-          <span class="doc-quick-snippet font-rooyin" id="docQuickPath"><?= htmlspecialchars($currentDoc, ENT_QUOTES, 'UTF-8') ?></span>
+          <span class="doc-quick-snippet" id="docQuickPath"><?= htmlspecialchars($currentDoc, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
-        <button class="doc-quick-copy-btn font-rooyin" id="docQuickCopyBtn" type="button" title="کپی مسیر سریع این سند">
+        <button class="doc-quick-copy-btn" id="docQuickCopyBtn" type="button" title="کپی مسیر سریع این سند">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span class="font-rooyin">کپی مسیر سند</span>
+          <span>کپی مسیر سند</span>
         </button>
       </div>
 
@@ -2206,13 +2258,13 @@ body::before {
           <span>آیا این راهنما برای شما مفید و کاربردی بود؟</span>
         </div>
         <div class="doc-feedback-actions" id="docFeedbackActions">
-          <button class="doc-feedback-btn font-rooyin" type="button" data-feedback="yes" title="راهنما مفید بود">
+          <button class="doc-feedback-btn" type="button" data-feedback="yes" title="راهنما مفید بود">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-            <span class="font-rooyin">بله، عالی بود</span>
+            <span>بله، عالی بود</span>
           </button>
-          <button class="doc-feedback-btn font-rooyin" type="button" data-feedback="no" title="نیاز به تکمیل دارد">
+          <button class="doc-feedback-btn" type="button" data-feedback="no" title="نیاز به تکمیل دارد">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
-            <span class="font-rooyin">نیاز به بازنگری دارد</span>
+            <span>نیاز به بازنگری دارد</span>
           </button>
         </div>
       </div>
@@ -2648,9 +2700,9 @@ function processCustomMarkdownElements(html, currentDocId) {
           <span class="mac-dot dot-green"></span>
         </div>
         <span class="code-lang-pill">${lang}</span>
-        <button class="code-copy-btn font-rooyin" type="button" title="کپی کد">
+        <button class="code-copy-btn" type="button" title="کپی کد">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span class="font-rooyin">کپی کد</span>
+          <span>کپی کد</span>
         </button>
       </div>
     `;
@@ -2743,8 +2795,8 @@ function processCustomMarkdownElements(html, currentDocId) {
       headBtn.className = 'doc-accordion-head';
       headBtn.innerHTML = `
         <div class="doc-accordion-title">
-          <span class="doc-accordion-q-badge font-rooyin">${qBadge}</span>
-          <span class="font-rooyin">${qTitle}</span>
+          <span class="doc-accordion-q-badge">${qBadge}</span>
+          <span>${qTitle}</span>
         </div>
         <span class="doc-accordion-chev">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -2784,7 +2836,7 @@ function processCustomMarkdownElements(html, currentDocId) {
         stepCard.className = 'doc-step-card';
 
         const stepBadge = document.createElement('div');
-        stepBadge.className = 'doc-step-badge font-rooyin';
+        stepBadge.className = 'doc-step-badge';
         const farsiDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
         const numStr = String(idx + 1).replace(/[0-9]/g, d => farsiDigits[d]);
         stepBadge.textContent = numStr;
@@ -2802,7 +2854,7 @@ function processCustomMarkdownElements(html, currentDocId) {
         if (strongEl) {
           const titleText = strongEl.textContent.replace(/[:：]\s*$/, '').trim();
           const titleDiv = document.createElement('div');
-          titleDiv.className = 'doc-step-title font-rooyin';
+          titleDiv.className = 'doc-step-title';
           titleDiv.textContent = titleText;
           contentDiv.appendChild(titleDiv);
           strongEl.remove();
@@ -2824,8 +2876,11 @@ function processCustomMarkdownElements(html, currentDocId) {
     }
   });
 
-  // ۹. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
+  // ۹. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro و نشان متالیک Libraries.dev Metal
   let rawHtml = container.innerHTML;
+
+  rawHtml = rawHtml.replace(/\[(جدید|new|New|NEW)\]/g, 
+    '<span class="metal-badge" title="قابلیت جدید">New</span>');
 
   rawHtml = rawHtml.replace(/\[(فعال|تأیید)\]/g, 
     '<span class="status-badge status-active"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>$1</span></span>');
@@ -2836,7 +2891,7 @@ function processCustomMarkdownElements(html, currentDocId) {
   rawHtml = rawHtml.replace(/\[(برنامه‌ریزی‌شده|عدم دسترسی)\]/g, 
     '<span class="status-badge status-muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/></svg><span>$1</span></span>');
 
-  // ۷. حذف قطعی و تضمینی هرگونه ایموجی یونیکد باقی‌مانده از محتوا
+  // ۱۰. حذف قطعی و تضمینی هرگونه ایموجی یونیکد باقی‌مانده از محتوا
   rawHtml = rawHtml.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}\u{200D}\u{FE0F}]/gu, '');
 
   return rawHtml;
@@ -3081,7 +3136,7 @@ async function renderAllMermaidDiagrams() {
         titleColor: '#1e293b',
         edgeLabelBackground: '#ffffff'
       },
-      fontFamily: 'Rooyin, Vazirmatn, -apple-system, sans-serif',
+      fontFamily: 'Vazirmatn, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       fontSize: '13px',
       securityLevel: 'loose',
       flowchart: {
@@ -3286,7 +3341,7 @@ function setupMarkdownContentDelegation() {
           const prevHtml = copyBtn.innerHTML;
           copyBtn.innerHTML = `
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-            <span class="font-rooyin" style="color:#2ea043">کپی شد!</span>
+            <span style="color:#2ea043">کپی شد!</span>
           `;
           setTimeout(() => { copyBtn.innerHTML = prevHtml; }, 2000);
         }).catch(() => {});
@@ -3334,7 +3389,7 @@ function setupMarkdownContentDelegation() {
         const prevHtml = quickCopyBtn.innerHTML;
         quickCopyBtn.innerHTML = `
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-          <span class="font-rooyin" style="color:#2ea043">مسیر کپی شد!</span>
+          <span style="color:#2ea043">مسیر کپی شد!</span>
         `;
         setTimeout(() => { quickCopyBtn.innerHTML = prevHtml; }, 2000);
       });
@@ -3357,7 +3412,7 @@ function setupMarkdownContentDelegation() {
       if (existingToast) existingToast.remove();
 
       const toast = document.createElement('span');
-      toast.className = 'doc-feedback-toast font-rooyin';
+      toast.className = 'doc-feedback-toast';
       toast.innerHTML = `
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         <span>با تشکر، بازخورد شما ثبت شد!</span>
@@ -3382,7 +3437,7 @@ document.getElementById('copyPageLinkBtn').addEventListener('click', () => {
     const prev = btn.innerHTML;
     btn.innerHTML = `
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-      <span class="font-rooyin" style="color:#2ea043">پیوند کپی شد!</span>
+      <span style="color:#2ea043">پیوند کپی شد!</span>
     `;
     setTimeout(() => { btn.innerHTML = prev; }, 2000);
   });
