@@ -17,35 +17,35 @@
 
   <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
-      <img src="{{image1}}">
+      <img src="/dashboard/components/hamrah/images/1.png" alt="شعب مکسا" loading="lazy">
     </div>
     <span class="macsa-btn">شعب مکسا</span>
   </a>
 
   <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
-      <img src="{{image2}}">
+      <img src="/dashboard/components/hamrah/images/2.png" alt="مرکز تماس کشوری" loading="lazy">
     </div>
     <span class="macsa-btn">مرکز تماس کشوری</span>
   </a>
 
   <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
-      <img src="{{image3}}">
+      <img src="/dashboard/components/hamrah/images/3.png" alt="حامیان و داوطلبان" loading="lazy">
     </div>
     <span class="macsa-btn">حامیان و داوطلبان</span>
   </a>
 
   <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
-      <img src="{{image4}}">
+      <img src="/dashboard/components/hamrah/images/4.png" alt="کادر درمان" loading="lazy">
     </div>
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
   <a href="/patient-option" class="gallery-item" aria-disabled="true">
     <div class="card card-lg">
-      <img src="{{image5}}">
+      <img src="/dashboard/components/hamrah/images/5.png" alt="بیماران و مراقبین" loading="lazy">
     </div>
     <span class="macsa-btn">بیماران و مراقبین</span>
   </a>
@@ -54,11 +54,11 @@
 
 <!-- نقاط راهنما (فقط موبایل) -->
 <div class="macsa-dots" aria-hidden="true">
-  <button class="macsa-dot" type="button"></button>
-  <button class="macsa-dot" type="button"></button>
-  <button class="macsa-dot" type="button"></button>
-  <button class="macsa-dot" type="button"></button>
-  <button class="macsa-dot" type="button"></button>
+  <button class="macsa-dot" type="button" aria-label="اسلاید ۱"></button>
+  <button class="macsa-dot" type="button" aria-label="اسلاید ۲"></button>
+  <button class="macsa-dot" type="button" aria-label="اسلاید ۳"></button>
+  <button class="macsa-dot" type="button" aria-label="اسلاید ۴"></button>
+  <button class="macsa-dot" type="button" aria-label="اسلاید ۵"></button>
 </div>
 
 </section>
@@ -90,10 +90,11 @@
 }
 
 .macsa-hero-header h1 span{
-  color: teal;      /* سبز teal */
-  font-size:0.7em;  /* کمی کوچکتر از متن اصلی */
-  font-weight:500;  /* کمی سبک‌تر */
+  color: #007b7a;   /* سبز برند مکسا */
+  font-size:0.72em; /* کمی کوچکتر از متن اصلی */
+  font-weight:700;  /* وزن مشخص‌تر */
   display:inline-block;
+  margin-top:8px;
 }
 
 .macsa-hero-header p{
@@ -251,14 +252,14 @@
     scroll-snap-align:center;
   }
 
-  .card{
+  .macsa-gallery .card{
     width:100%;
     height:70vh;        /* کشیده‌تر */
     border-radius:22px;
     overflow:hidden;
   }
 
-  .card img{
+  .macsa-gallery .card img{
     width:100%;
     height:100%;
     object-fit:cover;
@@ -305,104 +306,110 @@
 
 </style>
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+(function(){
+  function initHamrah(){
+    const gallery = document.querySelector(".macsa-gallery");
+    const cards   = document.querySelectorAll(".gallery-item");
+    const dots    = document.querySelectorAll(".macsa-dot");
+    if(!gallery || !cards.length) return;
 
-  const gallery = document.querySelector(".macsa-gallery");
-  const cards   = document.querySelectorAll(".gallery-item");
-  const dots    = document.querySelectorAll(".macsa-dot");
-  if(!gallery || !cards.length) return;
+    const isMobile = () => window.matchMedia("(max-width:700px)").matches;
 
-  const isMobile = () => window.matchMedia("(max-width:700px)").matches;
+    /* ---------- نسخهٔ دسکتاپ: همان فید قبلی ---------- */
+    let current = 0;
+    let fadeTimer = null;
 
-  /* ---------- نسخهٔ دسکتاپ: همان فید قبلی ---------- */
-  let current = 0;
-  let fadeTimer = null;
-
-  function showCard(index){
-    cards[current].classList.remove("active");
-    current = index;
-    cards[current].classList.add("active");
-  }
-
-  /* ---------- نسخهٔ موبایل: اسلایدر قابل کشیدن + پخش خودکار ملایم ---------- */
-  let autoTimer  = null;
-  let pauseUntil = 0;   // تا این لحظه پخش خودکار متوقف است (پس از تعامل کاربر)
-
-  function activeSlide(){
-    const center = gallery.scrollLeft + gallery.clientWidth / 2;
-    let best = 0, bestDist = Infinity;
-    cards.forEach((c, i)=>{
-      const cc = c.offsetLeft + c.offsetWidth / 2;
-      const d  = Math.abs(cc - center);
-      if(d < bestDist){ bestDist = d; best = i; }
-    });
-    return best;
-  }
-
-  function goTo(i){
-    const card = cards[(i + cards.length) % cards.length];
-    const left = card.offsetLeft - (gallery.clientWidth - card.offsetWidth) / 2;
-    gallery.scrollTo({ left: left, behavior: "smooth" });
-  }
-
-  function syncDots(){
-    if(!dots.length) return;
-    const active = activeSlide();
-    dots.forEach((d, i)=> d.classList.toggle("active", i === active));
-  }
-
-  // کلیک روی نقطه = رفتن به همان اسلاید
-  dots.forEach((dot, i)=>{
-    dot.addEventListener("click", ()=>{
-      pauseUntil = Date.now() + 6000;
-      goTo(i);
-    });
-  });
-
-  // به‌روزرسانی نقطهٔ فعال هنگام اسکرول/کشیدن
-  let scrollRaf = null;
-  gallery.addEventListener("scroll", ()=>{
-    if(scrollRaf) return;
-    scrollRaf = requestAnimationFrame(()=>{ scrollRaf = null; syncDots(); });
-  }, { passive:true });
-
-  function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
-  function startAuto(){
-    stopAuto();
-    autoTimer = setInterval(()=>{
-      if(Date.now() < pauseUntil) return;          // کاربر در حال تعامل است
-      goTo(activeSlide() + 1);
-    }, 3500);
-  }
-
-  // هر تعامل کاربر، پخش خودکار را برای چند ثانیه متوقف می‌کند
-  ["touchstart","pointerdown","wheel","scroll"].forEach(ev=>{
-    gallery.addEventListener(ev, ()=>{ pauseUntil = Date.now() + 6000; }, { passive:true });
-  });
-
-  function setup(){
-    stopAuto();
-    if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
-    cards.forEach(c=>c.classList.remove("active"));
-
-    if(isMobile()){
-      gallery.scrollLeft = 0;
-      syncDots();
-      startAuto();
-    } else {
-      current = 0;
-      showCard(0);
-      fadeTimer = setInterval(()=>{ showCard((current + 1) % cards.length); }, 2500);
+    function showCard(index){
+      cards[current].classList.remove("active");
+      current = index;
+      cards[current].classList.add("active");
     }
+
+    /* ---------- نسخهٔ موبایل: اسلایدر قابل کشیدن + پخش خودکار ملایم ---------- */
+    let autoTimer  = null;
+    let pauseUntil = 0;   // تا این لحظه پخش خودکار متوقف است (پس از تعامل کاربر)
+
+    function activeSlide(){
+      const center = gallery.scrollLeft + gallery.clientWidth / 2;
+      let best = 0, bestDist = Infinity;
+      cards.forEach((c, i)=>{
+        const cc = c.offsetLeft + c.offsetWidth / 2;
+        const d  = Math.abs(cc - center);
+        if(d < bestDist){ bestDist = d; best = i; }
+      });
+      return best;
+    }
+
+    function goTo(i){
+      const card = cards[(i + cards.length) % cards.length];
+      const left = card.offsetLeft - (gallery.clientWidth - card.offsetWidth) / 2;
+      gallery.scrollTo({ left: left, behavior: "smooth" });
+    }
+
+    function syncDots(){
+      if(!dots.length) return;
+      const active = activeSlide();
+      dots.forEach((d, i)=> d.classList.toggle("active", i === active));
+    }
+
+    // کلیک روی نقطه = رفتن به همان اسلاید
+    dots.forEach((dot, i)=>{
+      dot.addEventListener("click", ()=>{
+        pauseUntil = Date.now() + 6000;
+        goTo(i);
+      });
+    });
+
+    // به‌روزرسانی نقطهٔ فعال هنگام اسکرول/کشیدن
+    let scrollRaf = null;
+    gallery.addEventListener("scroll", ()=>{
+      if(scrollRaf) return;
+      scrollRaf = requestAnimationFrame(()=>{ scrollRaf = null; syncDots(); });
+    }, { passive:true });
+
+    function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+    function startAuto(){
+      stopAuto();
+      autoTimer = setInterval(()=>{
+        if(Date.now() < pauseUntil) return;          // کاربر در حال تعامل است
+        goTo(activeSlide() + 1);
+      }, 3500);
+    }
+
+    // هر تعامل کاربر، پخش خودکار را برای چند ثانیه متوقف می‌کند
+    ["touchstart","pointerdown","wheel","scroll"].forEach(ev=>{
+      gallery.addEventListener(ev, ()=>{ pauseUntil = Date.now() + 6000; }, { passive:true });
+    });
+
+    function setup(){
+      stopAuto();
+      if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
+      cards.forEach(c=>c.classList.remove("active"));
+
+      if(isMobile()){
+        gallery.scrollLeft = 0;
+        syncDots();
+        startAuto();
+      } else {
+        current = 0;
+        showCard(0);
+        fadeTimer = setInterval(()=>{ showCard((current + 1) % cards.length); }, 2500);
+      }
+    }
+
+    setup();
+
+    let resizeTimer;
+    window.addEventListener("resize", ()=>{
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(setup, 200);
+    });
   }
 
-  setup();
-
-  let resizeTimer;
-  window.addEventListener("resize", ()=>{
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(setup, 200);
-  });
-
-});
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initHamrah);
+  } else {
+    initHamrah();
+  }
+})();
 </script>
