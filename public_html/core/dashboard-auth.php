@@ -358,6 +358,44 @@ function dash_is_branch_admin(): bool
 }
 
 /**
+ * آیا کاربر جاری منحصراً «مسئول مالی» است؟
+ * یعنی سوپرادمین یا ادمین شعبه نیست، و تنها دسترسی واگذارشده به او financial است.
+ */
+function dash_is_finance_only(): bool
+{
+    $u = dash_user();
+    if (!$u) {
+        return false;
+    }
+    if (!empty($u['is_super']) || !empty($u['is_branch_admin'])) {
+        return false;
+    }
+    $perms = $u['permissions'] ?? [];
+    return in_array('financial', $perms, true) && count($perms) === 1;
+}
+
+/**
+ * اطمینان از وجود نقش پیش‌فرض «مسئول مالی» برای یک شعبه (خودترمیم در پایگاه داده)
+ */
+function dash_ensure_financial_role(int $branchId): void
+{
+    static $ensured = [];
+    if (isset($ensured[$branchId]) || $branchId <= 0) {
+        return;
+    }
+    $ensured[$branchId] = true;
+    try {
+        $pdo = dash_pdo();
+        $st = $pdo->prepare('SELECT id FROM dashboard_roles WHERE branch_id = ? AND name = ? LIMIT 1');
+        $st->execute([$branchId, 'مسئول مالی']);
+        if (!$st->fetch()) {
+            $ins = $pdo->prepare('INSERT INTO dashboard_roles (branch_id, name, permissions, is_preset) VALUES (?, ?, ?, 1)');
+            $ins->execute([$branchId, 'مسئول مالی', json_encode(['financial'], JSON_UNESCAPED_UNICODE)]);
+        }
+    } catch (Throwable $e) {}
+}
+
+/**
  * آیا شعبه‌ی فعال «ستاد مرکزی» (HQ) است؟
  * برخی بخش‌ها (مثل مکساپدیا) فقط از ستاد مرکزی در دسترس‌اند و در شعب نمایش/اجرا نمی‌شوند.
  * توجه: ملاک، شعبه‌ی *فعال* است نه فقط پرچم سوپرادمین؛ پس سوپرادمینی که شعبه‌ی دیگری را
