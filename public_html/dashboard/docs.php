@@ -2057,9 +2057,14 @@ function resolveDocPath(currentDoc, relativeHref) {
 /* ==========================================================================
    ابزار پالایش و رمزگشایی کدهای دیاگرام Mermaid (حذف قطعی انتیتی‌های HTML مانند &quot;)
    ========================================================================== */
+const mermaidDiagramsMap = new Map();
+
 function cleanMermaidCode(raw) {
   if (!raw) return '';
   let str = raw;
+
+  // حذف قطعی هر نوع تگ احتمالی مانند span هایلایتر
+  str = str.replace(/<span[^>]*>/gi, '').replace(/<\/span>/gi, '');
 
   try {
     const txt = document.createElement('textarea');
@@ -2139,8 +2144,12 @@ function processCustomMarkdownElements(html, currentDocId) {
     // اگر بلاک دیاگرام و فلوچارت گرافیکی Mermaid باشد:
     if (lang === 'MERMAID') {
       const rawDiagramCode = cleanMermaidCode(code ? (code.innerText || code.textContent) : pre.textContent);
+      const diagramId = 'mermaid-chart-' + pIdx + '-' + Math.random().toString(36).substring(2, 8);
+      mermaidDiagramsMap.set(diagramId, rawDiagramCode);
+
       const diagramCard = document.createElement('div');
       diagramCard.className = 'mermaid-diagram-card';
+      diagramCard.setAttribute('data-diagram-id', diagramId);
       const safeEscaped = rawDiagramCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       diagramCard.innerHTML = `
         <div class="mermaid-diagram-header">
@@ -2161,7 +2170,7 @@ function processCustomMarkdownElements(html, currentDocId) {
           </div>
         </div>
         <div class="mermaid-canvas-area">
-          <div class="mermaid-render-container">
+          <div class="mermaid-render-container" id="${diagramId}">
             <div style="display:flex;align-items:center;gap:8px;color:var(--color-text-muted);font-size:12px;padding:20px;">
               <svg class="docs-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
               <span>در حال ترسیم نمودار گرافیکی...</span>
@@ -2412,7 +2421,8 @@ const docCache = {};
 
 /* موتور هایلایت رنگی دقیق (متغیرها، کلیدواژه‌ها، رشته‌ها، اعداد و توابع) */
 function enrichCodeSyntaxHighlighting() {
-  document.querySelectorAll('#markdownContent pre code').forEach(block => {
+  // فقط بلاک‌های کد واقعی را پردازش کن (نه کدهای داخل دیاگرام Mermaid)
+  document.querySelectorAll('#markdownContent .code-block-wrapper pre code').forEach(block => {
     // اگر هیچ برچسب توکن رنگی وجود نداشت یا فقط متن خام بود:
     if (!block.querySelector('.hljs-keyword, .hljs-string, .hljs-variable, .hljs-number, .hljs-title')) {
       let codeText = block.innerHTML;
@@ -2500,8 +2510,12 @@ async function renderAllMermaidDiagrams() {
 
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
-      const srcCodeEl = card.querySelector('.mermaid-source-wrapper code');
-      let rawCode = srcCodeEl ? (srcCodeEl.innerText || srcCodeEl.textContent) : (card.getAttribute('data-diagram-raw') || '');
+      const diagramId = card.getAttribute('data-diagram-id');
+      let rawCode = (diagramId && mermaidDiagramsMap.has(diagramId)) ? mermaidDiagramsMap.get(diagramId) : '';
+      if (!rawCode) {
+        const srcCodeEl = card.querySelector('.mermaid-source-wrapper code');
+        rawCode = srcCodeEl ? (srcCodeEl.innerText || srcCodeEl.textContent) : (card.getAttribute('data-diagram-raw') || '');
+      }
       rawCode = cleanMermaidCode(rawCode);
       const renderEl = card.querySelector('.mermaid-render-container');
       if (!rawCode || !renderEl) continue;
@@ -2565,7 +2579,7 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   document.getElementById('markdownContent').innerHTML = processedHtml;
 
   if (window.hljs) {
-    document.querySelectorAll('#markdownContent pre code').forEach(block => {
+    document.querySelectorAll('#markdownContent .code-block-wrapper pre code').forEach(block => {
       try { hljs.highlightElement(block); } catch(e){}
     });
   }
