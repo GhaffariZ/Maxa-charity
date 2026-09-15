@@ -14,7 +14,7 @@ use Maksa\Core\Config;
  */
 final class StubGateway implements PaymentGateway
 {
-    public function request(int $amountToman, string $reference, string $callbackUrl, string $description): array
+    public function request(int $amountToman, string $reference, string $callbackUrl, string $description, array $metadata = []): array
     {
         $authority = 'STUB-' . bin2hex(random_bytes(8));
         $sep = str_contains($callbackUrl, '?') ? '&' : '?';
