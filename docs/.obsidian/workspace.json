@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "user-manual/08-news.md",
+                "file": "PROMPT-multi-branch-dashboard.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "08-news"
+              "title": "PROMPT-multi-branch-dashboard"
             }
           }
         ]
@@ -200,6 +200,7 @@
   },
   "active": "e10c50705bb4ce7b",
   "lastOpenFiles": [
+    "user-manual/08-news.md",
     "user-manual/01-getting-started.md",
     "user-manual/02-roles-and-permissions.md",
     "user-manual/README.md",

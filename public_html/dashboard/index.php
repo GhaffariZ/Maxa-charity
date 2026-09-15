@@ -1125,12 +1125,17 @@ body.spa-active .content{display:none}
       {label:'تعریف شعبه‌ی جدید',icon:'plus',href:'branch-create.php'},
       {label:'مدیریت شعبه‌ها',icon:'list',href:'branch-list.php'}]});
   }
+
+  // --- راهنما و مستندات سامانه ---
+  NAV.push({title:'راهنما و پشتیبانی'});
+  NAV.push({single:true,label:'مستندات و راهنمای سامانه',icon:'book',href:'docs.php',target:'_top'});
+
   const navEl=document.getElementById('navList');
   let delay=0;
   NAV.forEach(item=>{
     if(item.title){ navEl.insertAdjacentHTML('beforeend','<div class="nav-section-title" style="animation-delay:'+(delay+=0.04)+'s">'+item.title+'</div>'); return; }
     if(item.single){
-      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'" class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span></a>');
+      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'" '+(item.target?'target="'+item.target+'" ':'')+'class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span></a>');
       return;
     }
     const sub=item.children.map(c=>'<a href="'+c.href+'" class="nav-sub-link">'+icon(c.icon)+'<span>'+c.label+'</span></a>').join('');
