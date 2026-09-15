@@ -1707,77 +1707,6 @@ body::before {
   margin-bottom: 0;
 }
 
-/* ۵. ویجت تعاملی بازخورد کاربران در انتهای هر سند (Doc Feedback Card) */
-.doc-feedback-card {
-  margin-top: 42px;
-  padding: 18px 22px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.04);
-}
-.doc-feedback-question {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.doc-feedback-question svg {
-  color: var(--color-primary);
-  flex-shrink: 0;
-}
-.doc-feedback-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.doc-feedback-btn {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 99px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s var(--ease-smooth);
-}
-.doc-feedback-btn:hover {
-  background: var(--primary-08);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  transform: translateY(-1px);
-}
-.doc-feedback-btn.selected {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #ffffff !important;
-}
-.doc-feedback-btn.selected svg {
-  color: #ffffff !important;
-}
-.doc-feedback-toast {
-  font-size: 12.5px;
-  color: #16a37a;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  animation: fadeInToast 0.3s ease;
-}
-@keyframes fadeInToast {
-  from { opacity: 0; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 /* ==========================================================================
    نشان متالیک کرومی مایع (Liquid Metal Chrome Badge - الهام از Libraries.dev Metal)
@@ -2251,23 +2180,6 @@ body::before {
       <!-- بدنه اصلی مارک‌داون -->
       <article class="markdown-body" id="markdownContent"></article>
 
-      <!-- ویجت تعاملی بازخورد کاربران در انتهای هر سند (Doc Feedback Card) -->
-      <div class="doc-feedback-card" id="docFeedbackCard">
-        <div class="doc-feedback-question">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          <span>آیا این راهنما برای شما مفید و کاربردی بود؟</span>
-        </div>
-        <div class="doc-feedback-actions" id="docFeedbackActions">
-          <button class="doc-feedback-btn" type="button" data-feedback="yes" title="راهنما مفید بود">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-            <span>بله، عالی بود</span>
-          </button>
-          <button class="doc-feedback-btn" type="button" data-feedback="no" title="نیاز به تکمیل دارد">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
-            <span>نیاز به بازنگری دارد</span>
-          </button>
-        </div>
-      </div>
 
       <!-- ناوبری صفحه قبلی و بعدی -->
       <nav class="article-pagination" id="articlePagination">
@@ -3396,30 +3308,6 @@ function setupMarkdownContentDelegation() {
     });
   }
 
-  // ثبت بازخورد تعاملی کاربران (Doc Feedback Card)
-  const feedbackActions = document.getElementById('docFeedbackActions');
-  if (feedbackActions) {
-    feedbackActions.addEventListener('click', (e) => {
-      const btn = e.target.closest('.doc-feedback-btn');
-      if (!btn) return;
-      const type = btn.getAttribute('data-feedback');
-      safeStorage.set('maxa-doc-vote-' + activeDocId, type);
-
-      feedbackActions.querySelectorAll('.doc-feedback-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-
-      const existingToast = document.querySelector('.doc-feedback-toast');
-      if (existingToast) existingToast.remove();
-
-      const toast = document.createElement('span');
-      toast.className = 'doc-feedback-toast';
-      toast.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>با تشکر، بازخورد شما ثبت شد!</span>
-      `;
-      feedbackActions.appendChild(toast);
-    });
-  }
 }
 
 window.addEventListener('popstate', () => {
