@@ -230,24 +230,48 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* افکت درخشش ملایم پس‌زمینه (Next.js Ambient Glow) */
+body::before {
+  content: '';
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 960px;
+  height: 420px;
+  background: radial-gradient(ellipse at center, rgba(0, 123, 122, 0.12) 0%, rgba(79, 178, 176, 0.04) 50%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="dark"] body::before {
+  background: radial-gradient(ellipse at center, rgba(79, 178, 176, 0.16) 0%, rgba(0, 123, 122, 0.04) 50%, transparent 75%);
 }
 
 /* ==========================================================================
-   Header (هدر اصلی)
+   Header (هدر شیشه‌ای مایع - Liquid Glass Header)
    ========================================================================== */
 .docs-header {
   position: sticky;
   top: 0;
   z-index: 100;
   height: var(--header-height);
-  background: var(--header-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 clamp(12px, 3vw, 28px);
+  padding: 0 24px;
+  width: 100%;
+}
+:root[data-theme="dark"] .docs-header {
+  background: rgba(11, 15, 23, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .header-left, .header-right, .header-center {
@@ -300,10 +324,12 @@ body {
   border: 1px solid var(--primary-14);
 }
 
-/* کلید جستجو در هدر */
+/* کلید جستجو در هدر (Liquid Glass Style) */
 .search-trigger-btn {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 99px;
   padding: 8px 16px;
   display: flex;
@@ -312,9 +338,15 @@ body {
   color: var(--color-text-muted);
   cursor: pointer;
   width: clamp(180px, 22vw, 260px);
-  transition: all 0.2s var(--ease);
+  transition: all 0.25s var(--ease);
   font-family: inherit;
   font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+:root[data-theme="dark"] .search-trigger-btn {
+  background: rgba(20, 27, 38, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .search-trigger-btn:hover {
   border-color: var(--color-primary);
@@ -389,14 +421,14 @@ body {
 }
 
 /* ==========================================================================
-   Layout (3 ستونه: منو راست، محتوا وسط، فهرست چپ)
+   Layout (3 ستونه: منو راست چسبیده به لبه، محتوا وسط، فهرست چپ)
    ========================================================================== */
 .docs-layout {
   display: flex;
   flex: 1;
   width: 100%;
-  max-width: 1760px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
   position: relative;
 }
 
@@ -404,8 +436,9 @@ body {
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 85;
   opacity: 0;
   visibility: hidden;
@@ -416,20 +449,25 @@ body {
   visibility: visible;
 }
 
-/* ستون ناوبری سرفصل‌ها (Sidebar Navigation Drawer) */
+/* ستون ناوبری سرفصل‌ها (Sidebar Navigation Drawer چسبیده به سمت راست) */
 .docs-nav-sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
-  background: var(--color-sidebar-bg);
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-inline-end: 1px solid var(--color-border);
   height: calc(100vh - var(--header-height));
   position: sticky;
   top: var(--header-height);
   overflow-y: auto;
-  padding: 20px 14px 40px;
+  padding: 22px 14px 40px;
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+:root[data-theme="dark"] .docs-nav-sidebar {
+  background: rgba(15, 21, 32, 0.80);
 }
 .docs-nav-sidebar::-webkit-scrollbar { width: 5px; }
 .docs-nav-sidebar::-webkit-scrollbar-thumb {
@@ -756,13 +794,17 @@ body {
   margin-bottom: 0;
 }
 
-/* کادرهای استاندارد هشدار گیت‌هاب (Alerts) */
+/* کادرهای هشدار گیت‌هاب (Liquid Glass Callouts) */
 .callout {
-  padding: 16px 18px;
-  margin: 22px 0;
-  border-radius: var(--radius-md);
-  border-inline-start: 4px solid;
+  padding: 16px 20px;
+  margin: 24px 0;
+  border-radius: 14px;
+  border: 1px solid;
+  border-inline-start-width: 4px;
   position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.04);
 }
 .callout-title {
   display: flex;
@@ -887,7 +929,9 @@ body {
   color: var(--color-primary);
 }
 
-/* کد و قطعه برنامه‌ها */
+/* ==========================================================================
+   طراحی مدرن بلاک کد با هایلایت رنگی دقیق (One Dark Pro / Next.js Code Blocks)
+   ========================================================================== */
 .markdown-body code {
   font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
   font-size: 13px;
@@ -899,61 +943,146 @@ body {
   direction: ltr;
   display: inline-block;
 }
+
 .code-block-wrapper {
   position: relative;
-  margin: 22px 0;
-  border-radius: var(--radius-md);
+  margin: 26px 0;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--color-border);
-  background: #141b26;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0d1117;
+  box-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
+:root[data-theme="light"] .code-block-wrapper {
+  border: 1px solid #e2e8f0;
+  background: #141b24;
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.14);
+}
+
 .code-block-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
-  background: #0b0f17;
-  border-bottom: 1px solid #232f3e;
-  color: #8b949e;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  padding: 10px 16px;
+  background: #090d13;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   direction: ltr;
 }
-.code-copy-btn {
-  background: #1f2a3a;
-  border: 1px solid #334155;
+
+/* دکمه‌های ۳ رنگ پنجره مک (Mac Dots) */
+.code-mac-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.mac-dot {
+  width: 10.5px;
+  height: 10.5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-red    { background: #ff5f56; box-shadow: 0 0 6px rgba(255,95,86,0.35); }
+.dot-yellow { background: #ffbd2e; box-shadow: 0 0 6px rgba(255,189,46,0.35); }
+.dot-green  { background: #27c93f; box-shadow: 0 0 6px rgba(39,201,63,0.35); }
+
+.code-lang-pill {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: #8b949e;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
   border-radius: 6px;
-  color: #cbd5e1;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-copy-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: #c9d1d9;
   font-size: 11.5px;
   font-family: inherit;
-  padding: 4px 9px;
+  padding: 4px 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.2s;
+  gap: 6px;
+  transition: all 0.2s var(--ease);
 }
 .code-copy-btn:hover {
-  background: #2d3d52;
+  background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
 }
+
 .markdown-body pre {
   margin: 0;
-  padding: 16px;
+  padding: 18px 20px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   direction: ltr;
   text-align: left;
-  background: #141b26;
+  background: transparent !important;
 }
+
 .markdown-body pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: #f1f5f9;
-  font-size: 13px;
-  line-height: 1.6;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace !important;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #e6edf3;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  tab-size: 2;
+}
+
+/* رنگ‌بندی تفکیک‌شده و استاندارد سینتکس کد (One Dark Pro) */
+.hljs-keyword, 
+.hljs-selector-tag, 
+.hljs-built_in, 
+.hljs-name, 
+.hljs-tag {
+  color: #ff7b72 !important;
+  font-weight: 600;
+}
+.hljs-function .hljs-title, 
+.hljs-title.function_, 
+.hljs-title.class_ {
+  color: #d2a8ff !important;
+  font-weight: 600;
+}
+.hljs-variable, 
+.hljs-template-variable, 
+.hljs-property {
+  color: #79c0ff !important;
+}
+.hljs-string, 
+.hljs-attr {
+  color: #7ee787 !important;
+}
+.hljs-number, 
+.hljs-literal {
+  color: #ffab70 !important;
+}
+.hljs-comment, 
+.hljs-quote {
+  color: #8b949e !important;
+  font-style: italic;
+}
+.hljs-type, 
+.hljs-params {
+  color: #ffa657 !important;
+}
+.hljs-symbol, 
+.hljs-bullet, 
+.hljs-meta {
+  color: #56d364 !important;
+}
+.hljs-operator, 
+.hljs-punctuation {
+  color: #c9d1d9 !important;
 }
 
 .markdown-body kbd {
@@ -1666,9 +1795,14 @@ function processCustomMarkdownElements(html) {
     wrapper.className = 'code-block-wrapper';
     wrapper.innerHTML = `
       <div class="code-block-header">
-        <span>${lang}</span>
-        <button class="code-copy-btn" type="button">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <div class="code-mac-dots">
+          <span class="mac-dot dot-red"></span>
+          <span class="mac-dot dot-yellow"></span>
+          <span class="mac-dot dot-green"></span>
+        </div>
+        <span class="code-lang-pill">${lang}</span>
+        <button class="code-copy-btn" type="button" title="کپی کد">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span>کپی کد</span>
         </button>
       </div>
@@ -1894,6 +2028,36 @@ function updateDocMetadata(docId, rawMarkdown) {
    ========================================================================== */
 const docCache = {};
 
+/* موتور هایلایت رنگی دقیق (متغیرها، کلیدواژه‌ها، رشته‌ها، اعداد و توابع) */
+function enrichCodeSyntaxHighlighting() {
+  document.querySelectorAll('#markdownContent pre code').forEach(block => {
+    // اگر هیچ برچسب توکن رنگی وجود نداشت یا فقط متن خام بود:
+    if (!block.querySelector('.hljs-keyword, .hljs-string, .hljs-variable, .hljs-number, .hljs-title')) {
+      let codeText = block.innerHTML;
+
+      // ۱. کامنت‌ها (سبز مایل به خاکستری ایتالیک)
+      codeText = codeText.replace(/(\/\/[^\n<]*|#[^\n<]*|\/\*[\s\S]*?\*\/)/g, '<span class="hljs-comment">$1</span>');
+
+      // ۲. رشته‌ها (سبز روشن نعنایی)
+      codeText = codeText.replace(/(&quot;[^<]*?&quot;|&#039;[^<]*?&#039;|"[^"\n<]*"|'[^'\n<]*')/g, '<span class="hljs-string">$1</span>');
+
+      // ۳. متغیرها و پارامترها (آبی فیروزه‌ای خوشرنگ مانند $db و --option)
+      codeText = codeText.replace(/(\$[a-zA-Z0-9_]+|--[a-zA-Z0-9_-]+)/g, '<span class="hljs-variable">$1</span>');
+
+      // ۴. کلمات کلیدی زبان‌های برنامه‌نویسی و وب (قرمز/مرجانی شیک)
+      codeText = codeText.replace(/\b(function|class|return|if|else|foreach|while|for|const|let|var|public|private|protected|static|new|try|catch|throw|echo|print|require|include|require_once|include_once|SELECT|FROM|WHERE|INSERT|INTO|UPDATE|SET|DELETE|JOIN|LEFT|RIGHT|INNER|GROUP BY|ORDER BY|LIMIT|CREATE|TABLE|ALTER|DROP|AND|OR|NOT|IN|AS|docker|compose|git|bash|sudo|apt|curl|chmod|chown)\b/g, '<span class="hljs-keyword">$1</span>');
+
+      // ۵. اعداد و مقادیر بولین (نارنجی طلایی)
+      codeText = codeText.replace(/\b(\d+(\.\d+)?|true|false|null)\b/gi, '<span class="hljs-number">$1</span>');
+
+      // ۶. نام توابع و فراخوانی‌ها (بنفش ملایم)
+      codeText = codeText.replace(/\b([a-zA-Z0-9_]+)(?=\s*\()/g, '<span class="hljs-title function_">$1</span>');
+
+      block.innerHTML = codeText;
+    }
+  });
+}
+
 function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   let html = '';
   if (window.marked) {
@@ -1924,9 +2088,12 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
 
   if (window.hljs) {
     document.querySelectorAll('#markdownContent pre code').forEach(block => {
-      hljs.highlightElement(block);
+      try { hljs.highlightElement(block); } catch(e){}
     });
   }
+
+  // هایلایت پیشرفته و پرکنتراست سینتکس (متغیرها، کلیدواژه‌ها، رشته‌ها، اعداد)
+  enrichCodeSyntaxHighlighting();
 
   updateDocMetadata(docId, rawMarkdown);
   buildTableOfContents();
