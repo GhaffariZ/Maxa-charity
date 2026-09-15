@@ -65,6 +65,7 @@ return static function (Router $r): void {
     $r->get('/campaigns/{slug}',          [CampaignController::class, 'show']);
 
     // ---- Donations ----------------------------------------------------------
+    $r->post('/donations/initiate',       [DonationController::class, 'initiate']);
     $r->post('/donations',                [DonationController::class, 'create'], $auth);
     $r->get('/donations',                 [DonationController::class, 'history'], $auth);
     // Public gateway return — MUST be registered before /donations/{reference}.

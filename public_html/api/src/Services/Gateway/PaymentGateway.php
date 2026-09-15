@@ -21,9 +21,10 @@ interface PaymentGateway
      * @param string $reference    our public donation reference (MX-…)
      * @param string $callbackUrl  absolute URL the gateway returns the user to
      * @param string $description  short Persian description shown at the gateway
+     * @param array<string,mixed> $metadata optional payer metadata (mobile, email, national_code)
      * @return array{redirect_url:string,authority:string}
      */
-    public function request(int $amountToman, string $reference, string $callbackUrl, string $description): array;
+    public function request(int $amountToman, string $reference, string $callbackUrl, string $description, array $metadata = []): array;
 
     /**
      * Verify a payment after the user returns. Implementations read whatever

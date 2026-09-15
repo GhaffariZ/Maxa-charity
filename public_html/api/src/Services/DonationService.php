@@ -38,7 +38,7 @@ final class DonationService
      * Creates a pending donation and asks the gateway for a redirect URL.
      * @return array{reference:string,redirect_url:string}
      */
-    public function start(int $userId, ?string $campaignSlug, int $amountToman): array
+    public function start(int $userId, ?string $campaignSlug, int $amountToman, array $metadata = []): array
     {
         if ($amountToman < self::MIN_TOMAN || $amountToman > self::MAX_TOMAN) {
             throw ApiException::badRequest('مبلغ واردشده مجاز نیست.', 'invalid_amount');
@@ -63,7 +63,13 @@ final class DonationService
         $callback = $origin . '/api/donations/callback';
 
         try {
-            $result = $gateway->request($amountToman, $reference, $callback, 'کمک به ' . ($campaignSlug ?? 'صندوق عمومی'));
+            $result = $gateway->request(
+                $amountToman,
+                $reference,
+                $callback,
+                'کمک به ' . ($campaignSlug ?? 'صندوق عمومی'),
+                $metadata
+            );
         } catch (\Throwable $e) {
             $this->donations->markFailed($donationId, 'اتصال به درگاه ناموفق بود.');
             throw ApiException::badRequest('اتصال به درگاه پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.', 'gateway_unavailable');
@@ -144,7 +150,7 @@ final class DonationService
                     (new ProfileRepository())->addPointsAndRecomputeTier($userId, $points);
                 }
 
-                // Side-effect: send success notification.
+                // Side-effect: send success notification and sync with CRM.
                 if ($userId !== null) {
                     (new NotificationRepository())->create(
                         $userId,
@@ -153,6 +159,13 @@ final class DonationService
                         'از مشارکت شما سپاسگزاریم. رسید این کمک در بخش تاریخچه در دسترس است.',
                         '/history'
                     );
+
+                    (new \Maksa\Services\Crm\CrmService())->syncDonation($userId, [
+                        'amount'    => $amount,
+                        'reference' => $reference,
+                        'status'    => 'success',
+                        'paid_at'   => gmdate('Y-m-d H:i:s'),
+                    ]);
                 }
 
                 return 'success';
