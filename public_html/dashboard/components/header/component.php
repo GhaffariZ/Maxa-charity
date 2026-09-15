@@ -22,8 +22,6 @@
     :root{
       --cta-orange:#f5a623;
       --cta-orange-2:#f39a20;
-      --cta-brand-bg:#ffffff;              /* رنگ اختصاصی بخش لوگو (سفید درخشان و چشم‌نواز) */
-      --cta-brand-divider:#1e293b;         /* رنگ خط مورب جداکننده شیک و دقیق */
       --cta-text:#ffffff;
       --cta-muted: rgba(255,255,255,.78);
       --cta-container: 1440px;
@@ -56,8 +54,6 @@
       z-index:99999;
       display:flex;
       align-items:center;
-      overflow-x: clip;
-      overflow-y: visible;
       padding-inline: 0;
       background: var(--cta-orange);
       box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -87,64 +83,41 @@
       border-radius: 0;
       box-shadow: none;
       padding: 0 16px;
-      height: 100%;
       width: 100%;
     }
 
-    /* راست: لوگو با پس‌زمینه برش مورب اختصاصی */
+    /* راست: لوگو */
     .cta-right{
       display:flex;
       align-items:center;
       flex:0 0 auto;
-      align-self: stretch;
-      position: relative;
       margin-right: calc(-1 * var(--cta-edge-gap));
-      padding-right: calc(var(--cta-edge-gap) + 8px);
-      padding-left: 28px;
-      z-index: 5;
     }
 
-    /* لایه شکل پس‌زمینه با برش مورب و امتداد تا لبه راست مانیتور */
-    .cta-brand-badge-bg {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: -100vw;
-      background: var(--cta-brand-bg, #ffffff);
-      clip-path: polygon(24px 0, 100% 0, 100% 100%, 0 100%);
-      pointer-events: none;
-      z-index: -1;
-      filter: drop-shadow(-3px 0 8px rgba(0, 0, 0, 0.09));
-    }
-
-    /* خط مورب شیک جداکننده روی لبه برش */
-    .cta-brand-badge-bg::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 27px;
-      background: var(--cta-brand-divider, #1e293b);
-      clip-path: polygon(24px 0, 27px 0, 3px 100%, 0 100%);
-      z-index: 2;
-    }
-
+    /* بج کپسولی سفید شیک و درخشان برای تفکیک ۱۰۰٪ رنگ‌های لوگو */
     .cta-brand{
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      position: relative;
-      z-index: 3;
+      background:#ffffff;
+      padding:6px 16px;
+      border-radius:999px;
+      box-shadow:0 3px 12px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.04);
+      border:1.5px solid rgba(255,255,255,.9);
+      transition:transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration:none;
+    }
+
+    .cta-brand:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 6px 18px rgba(0,0,0,.12);
     }
 
     .cta-brand img{
-      height: 34px;
+      height: 32px;
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,.06));
     }
 
     /* وسط: منو */
@@ -868,20 +841,14 @@
 
       .cta-right {
         flex-shrink: 0;
-        padding-left: 20px;
-        padding-right: calc(var(--cta-edge-gap) + 4px);
       }
 
-      .cta-brand-badge-bg {
-        clip-path: polygon(18px 0, 100% 0, 100% 100%, 0 100%);
-      }
-
-      .cta-brand-badge-bg::before {
-        clip-path: polygon(18px 0, 20.5px 0, 2.5px 100%, 0 100%);
+      .cta-brand {
+        padding: 5px 12px;
       }
 
       .cta-brand img {
-        height: 26px;
+        height: 24px;
       }
 
       .cta-left {
@@ -908,20 +875,12 @@
         gap: 6px;
       }
 
-      .cta-right {
-        padding-left: 15px;
-      }
-
-      .cta-brand-badge-bg {
-        clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
-      }
-
-      .cta-brand-badge-bg::before {
-        clip-path: polygon(14px 0, 16.5px 0, 2.5px 100%, 0 100%);
+      .cta-brand {
+        padding: 4px 9px;
       }
 
       .cta-brand img {
-        height: 22px;
+        height: 20px;
       }
 
       .cta-donate,
@@ -1010,7 +969,6 @@
       <div class="cta-container cta-header">
 
         <div class="cta-right">
-          <div class="cta-brand-badge-bg" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
             <img src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
