@@ -507,6 +507,8 @@ require_once __DIR__ . '/components/header/component.php';
         display: block !important;
         clear: right !important;
         text-align: right;
+        width: 50%;
+        max-width: 100%;
     }
     .article-content figure.align-left,
     .article-content .article-img-wrap.align-left,
@@ -516,6 +518,8 @@ require_once __DIR__ . '/components/header/component.php';
         display: block !important;
         clear: left !important;
         text-align: left;
+        width: 50%;
+        max-width: 100%;
     }
     .article-content figure.align-center,
     .article-content .article-img-wrap.align-center,
@@ -525,6 +529,8 @@ require_once __DIR__ . '/components/header/component.php';
         text-align: center !important;
         float: none !important;
         clear: both !important;
+        width: 60%;
+        max-width: 100%;
     }
     .article-content figure.align-full,
     .article-content .article-img-wrap.align-full,

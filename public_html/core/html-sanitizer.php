@@ -41,15 +41,18 @@ final class HtmlSanitizer
      * @var array<string, list<string>>
      */
     private const ALLOWED_ATTRIBUTES = [
-        '*'       => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden'],
-        'a'       => ['href', 'target', 'rel'],
-        'img'     => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align', 'style'],
-        'figure'  => ['class'],
-        'td'      => ['colspan', 'rowspan'],
-        'th'      => ['colspan', 'rowspan', 'scope'],
-        'ol'      => ['start', 'type', 'reversed'],
-        'div'     => ['class', 'style'],
-        'span'    => ['class', 'style'],
+        '*'          => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden'],
+        'a'          => ['href', 'target', 'rel'],
+        'img'        => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align', 'style'],
+        'figure'     => ['class', 'style'],
+        'figcaption' => ['class', 'style'],
+        'p'          => ['class', 'style'],
+        'td'         => ['colspan', 'rowspan', 'style'],
+        'th'         => ['colspan', 'rowspan', 'scope', 'style'],
+        'ol'         => ['start', 'type', 'reversed', 'style'],
+        'ul'         => ['style'],
+        'div'        => ['class', 'style'],
+        'span'       => ['class', 'style'],
     ];
 
     /** Only these URL schemes are allowed in href / src attributes. */
@@ -180,8 +183,8 @@ final class HtmlSanitizer
                     continue;
                 }
 
-                // Check the allowlist.
-                if (!in_array($attrName, $allowed, true)) {
+                // Check the allowlist or safe data-* attributes.
+                if (!in_array($attrName, $allowed, true) && strpos($attrName, 'data-') !== 0) {
                     $toRemove[] = $attr;
                     continue;
                 }

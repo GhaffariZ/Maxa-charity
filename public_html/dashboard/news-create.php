@@ -579,6 +579,8 @@ figure.article-img-wrap {
     display: block !important;
     clear: right !important;
     text-align: right;
+    width: 50%;
+    max-width: 100%;
 }
 
 .article-img-wrap.align-left,
@@ -591,6 +593,8 @@ figure.article-img-wrap {
     display: block !important;
     clear: left !important;
     text-align: left;
+    width: 50%;
+    max-width: 100%;
 }
 
 .article-img-wrap.align-center,
@@ -603,6 +607,8 @@ figure.article-img-wrap {
     text-align: center !important;
     float: none !important;
     clear: both !important;
+    width: 60%;
+    max-width: 100%;
 }
 
 .article-img-wrap.align-full,
@@ -2504,8 +2510,16 @@ function updateFloatingToolbarState() {
     document.getElementById("imgBtnAlignLeft")?.classList.toggle("active", isLeft);
     document.getElementById("imgBtnAlignFull")?.classList.toggle("active", isFull);
 
-    const wStyle = targetEl.style.width || activeSelectedImg.style.width || "";
-    const pct = parseInt(wStyle) || 0;
+    const wStyle = targetEl.style.width || targetEl.getAttribute("data-width") || activeSelectedImg.style.width || "";
+    let pct = parseInt(wStyle) || 0;
+    if (!pct && (isRight || isLeft)) {
+        pct = 50;
+    } else if (!pct && isFull) {
+        pct = 100;
+    } else if (!pct && isCenter) {
+        pct = 60;
+    }
+
     document.getElementById("imgBtnSize25")?.classList.toggle("active", pct >= 20 && pct <= 30);
     document.getElementById("imgBtnSize50")?.classList.toggle("active", pct >= 45 && pct <= 55);
     document.getElementById("imgBtnSize75")?.classList.toggle("active", pct >= 70 && pct <= 80);
@@ -2523,15 +2537,19 @@ function setImageAlignment(alignClass) {
     });
 
     targetEl.classList.add(alignClass);
+    targetEl.setAttribute("data-align", alignClass);
     if (activeSelectedWrapper) {
         activeSelectedImg.classList.add(alignClass);
+        activeSelectedImg.setAttribute("data-align", alignClass);
     }
 
     if (alignClass === "align-full") {
         targetEl.style.width = "100%";
+        targetEl.setAttribute("data-width", "100%");
         activeSelectedImg.style.width = "100%";
     } else if (targetEl.style.width === "100%" || !targetEl.style.width) {
         targetEl.style.width = "50%";
+        targetEl.setAttribute("data-width", "50%");
         if (activeSelectedWrapper) activeSelectedImg.style.width = "100%";
     }
 
@@ -2555,6 +2573,7 @@ function setImageSize(percentage) {
 
     targetEl.style.width = percentage + "%";
     targetEl.style.maxWidth = "100%";
+    targetEl.setAttribute("data-width", percentage + "%");
     if (activeSelectedWrapper) {
         activeSelectedImg.style.width = "100%";
     }
