@@ -156,6 +156,9 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark-dimmed.min.css" id="hljsDarkTheme">
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
 
+<!-- کتابخانه استاندارد رسم فلوچارت و نمودارهای گرافیکی (Mermaid.js) -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
 <style>
 /* ==========================================================================
    سیستم طراحی و متغیرهای رنگی یکپارچه با پنل مکسا + استایل مستندات مهندسی
@@ -1225,6 +1228,132 @@ body::before {
   font-size: 12px;
 }
 
+/* ==========================================================================
+   طراحی مدرن کارت‌های فلوچارت و نمودار گرافیکی (Mermaid Diagram Cards)
+   ========================================================================== */
+.mermaid-diagram-card {
+  margin: 28px 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+:root[data-theme="dark"] .mermaid-diagram-card {
+  border-color: #334155;
+  background: #141b26;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.mermaid-diagram-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0, 123, 122, 0.4);
+}
+:root[data-theme="dark"] .mermaid-diagram-card:hover {
+  border-color: rgba(79, 178, 176, 0.5);
+}
+
+.mermaid-diagram-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(0, 123, 122, 0.05);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+:root[data-theme="dark"] .mermaid-diagram-header {
+  background: rgba(79, 178, 176, 0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+}
+
+.mermaid-diagram-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif;
+}
+
+.mermaid-diagram-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mermaid-action-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  padding: 3px 9px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+}
+.mermaid-action-btn:hover,
+.mermaid-action-btn.active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.mermaid-canvas-area {
+  padding: 26px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--color-surface);
+  min-height: 100px;
+}
+:root[data-theme="dark"] .mermaid-canvas-area {
+  background: #0d1117;
+}
+
+.mermaid-render-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.mermaid-render-container svg {
+  max-width: 100% !important;
+  height: auto !important;
+  font-family: 'Vazirmatn', 'Rooyin', sans-serif !important;
+}
+
+.mermaid-render-container .node .label,
+.mermaid-render-container .label text,
+.mermaid-render-container text {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+}
+
+.mermaid-source-wrapper {
+  border-top: 1px solid var(--color-border);
+  background: #090d13;
+  padding: 14px 18px;
+  display: none;
+}
+.mermaid-source-wrapper pre {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  font-family: 'JetBrains Mono', 'Rooyin', monospace;
+  font-size: 12.5px;
+  color: #79c0ff;
+  line-height: 1.6;
+  direction: ltr;
+  text-align: left;
+}
+
 /* ناوبری بعدی / قبلی */
 .article-pagination {
   margin-top: 48px;
@@ -1786,6 +1915,7 @@ themeToggleBtn.addEventListener('click', () => {
   }
   safeStorage.set('maxa-theme', newTheme);
   updateThemeIcons(newTheme === 'dark');
+  renderAllMermaidDiagrams();
 });
 
 window.addEventListener('storage', (e) => {
@@ -1969,8 +2099,8 @@ function processCustomMarkdownElements(html, currentDocId) {
     }
   });
 
-  // ۳. هدر و دکمه کپی کد (رویداد کلیک با Event Delegation سراسری مدیریت می‌شود)
-  container.querySelectorAll('pre').forEach(pre => {
+  // ۳. هدر و دکمه کپی کد و رندر فلوچارت‌های Mermaid
+  container.querySelectorAll('pre').forEach((pre, pIdx) => {
     const code = pre.querySelector('code');
     let lang = 'CODE';
     if (code) {
@@ -1978,6 +2108,49 @@ function processCustomMarkdownElements(html, currentDocId) {
       const match = cls.match(/language-([a-zA-Z0-9_-]+)/);
       if (match) lang = match[1].toUpperCase();
     }
+
+    // اگر بلاک دیاگرام و فلوچارت گرافیکی Mermaid باشد:
+    if (lang === 'MERMAID') {
+      const rawDiagramCode = (code ? code.textContent : pre.textContent).trim();
+      const diagramCard = document.createElement('div');
+      diagramCard.className = 'mermaid-diagram-card';
+      diagramCard.setAttribute('data-diagram-raw', rawDiagramCode);
+      const safeEscaped = rawDiagramCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      diagramCard.innerHTML = `
+        <div class="mermaid-diagram-header">
+          <div class="mermaid-diagram-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>فلوچارت فرآیند (دیاگرام بصری)</span>
+          </div>
+          <div class="mermaid-diagram-actions">
+            <button class="mermaid-action-btn mermaid-toggle-src" type="button" title="مشاهده کد متنی این دیاگرام">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>کد منبع</span>
+            </button>
+          </div>
+        </div>
+        <div class="mermaid-canvas-area">
+          <div class="mermaid-render-container">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--color-text-muted);font-size:12px;padding:20px;">
+              <svg class="docs-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              <span>در حال ترسیم نمودار گرافیکی...</span>
+            </div>
+          </div>
+        </div>
+        <div class="mermaid-source-wrapper" style="display:none">
+          <pre><code>${safeEscaped}</code></pre>
+        </div>
+      `;
+      pre.parentNode.insertBefore(diagramCard, pre);
+      pre.remove();
+      return;
+    }
+
     const wrapper = document.createElement('div');
     wrapper.className = 'code-block-wrapper';
     wrapper.innerHTML = `
@@ -2248,6 +2421,89 @@ function enrichCodeSyntaxHighlighting() {
   });
 }
 
+/* ==========================================================================
+   موتور رندر بلادرنگ فلوچارت‌ها و دیاگرام‌های گرافیکی (Mermaid Engine)
+   ========================================================================== */
+async function renderAllMermaidDiagrams() {
+  if (!window.mermaid) return;
+  const cards = document.querySelectorAll('.mermaid-diagram-card');
+  if (!cards.length) return;
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  try {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isDark ? 'dark' : 'neutral',
+      themeVariables: isDark ? {
+        primaryColor: '#163836',
+        primaryTextColor: '#f1f5f9',
+        primaryBorderColor: '#4fb2b0',
+        lineColor: '#4fb2b0',
+        secondaryColor: '#1a2232',
+        tertiaryColor: '#141b26',
+        mainBkg: '#141b26',
+        nodeBorder: '#334155',
+        clusterBkg: '#0f1520',
+        clusterBorder: '#334155',
+        titleColor: '#f1f5f9',
+        edgeLabelBackground: '#1e293b'
+      } : {
+        primaryColor: '#e6f7f6',
+        primaryTextColor: '#005554',
+        primaryBorderColor: '#007b7a',
+        lineColor: '#007b7a',
+        secondaryColor: '#f8fafc',
+        tertiaryColor: '#ffffff',
+        mainBkg: '#ffffff',
+        nodeBorder: '#cbd5e1',
+        clusterBkg: '#f8fafc',
+        clusterBorder: '#e2e8f0',
+        titleColor: '#1e293b',
+        edgeLabelBackground: '#ffffff'
+      },
+      fontFamily: 'Rooyin, Vazirmatn, -apple-system, sans-serif',
+      fontSize: '13px',
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const rawCode = card.getAttribute('data-diagram-raw') || '';
+      const renderEl = card.querySelector('.mermaid-render-container');
+      if (!rawCode || !renderEl) continue;
+
+      const renderId = 'mermaid-svg-' + i + '-' + Math.random().toString(36).substring(2, 7);
+      try {
+        const { svg } = await mermaid.render(renderId, rawCode.trim());
+        renderEl.innerHTML = svg;
+        const svgEl = renderEl.querySelector('svg');
+        if (svgEl) {
+          svgEl.removeAttribute('height');
+          svgEl.style.maxWidth = '100%';
+          svgEl.style.height = 'auto';
+        }
+      } catch (err) {
+        console.warn('Mermaid render issue for diagram', i, err);
+        const errEl = document.getElementById(renderId);
+        if (errEl) errEl.remove();
+        renderEl.innerHTML = `
+          <div style="color:var(--color-text-muted);font-size:12px;padding:12px;text-align:center">
+            امکان رسم این دیاگرام بصری وجود نداشت. برای مشاهده متن، کلید «کد منبع» را بزنید.
+          </div>
+        `;
+      }
+    }
+  } catch (err) {
+    console.warn('Mermaid engine error:', err);
+  }
+}
+
 function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   let html = '';
   if (window.marked) {
@@ -2255,6 +2511,9 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
       gfm: true,
       breaks: false,
       highlight: function(code, lang) {
+        if (lang && lang.toLowerCase() === 'mermaid') {
+          return code;
+        }
         if (window.hljs) {
           if (lang && hljs.getLanguage(lang)) {
             try { return hljs.highlight(code, { language: lang }).value; } catch(e){}
@@ -2285,6 +2544,9 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
 
   // هایلایت پیشرفته و پرکنتراست سینتکس (متغیرها، کلیدواژه‌ها، رشته‌ها، اعداد)
   enrichCodeSyntaxHighlighting();
+
+  // رندر خودکار تمام نمودارها و فلوچارت‌های گرافیکی با موتور Mermaid
+  renderAllMermaidDiagrams();
 
   updateDocMetadata(docId, rawMarkdown);
   buildTableOfContents();
@@ -2403,6 +2665,24 @@ function setupMarkdownContentDelegation() {
           `;
           setTimeout(() => { copyBtn.innerHTML = prevHtml; }, 2000);
         }).catch(() => {});
+      }
+      return;
+    }
+
+    // ۴. کلیک روی دکمه تغییر حالت سورس‌کد نمودار Mermaid
+    const mermaidToggleBtn = e.target.closest('.mermaid-toggle-src');
+    if (mermaidToggleBtn) {
+      e.preventDefault();
+      const card = mermaidToggleBtn.closest('.mermaid-diagram-card');
+      if (card) {
+        const srcWrap = card.querySelector('.mermaid-source-wrapper');
+        if (srcWrap) {
+          const isCurrentlyHidden = window.getComputedStyle(srcWrap).display === 'none';
+          srcWrap.style.display = isCurrentlyHidden ? 'block' : 'none';
+          mermaidToggleBtn.classList.toggle('active', isCurrentlyHidden);
+          const txt = mermaidToggleBtn.querySelector('span');
+          if (txt) txt.textContent = isCurrentlyHidden ? 'بستن کد' : 'کد منبع';
+        }
       }
       return;
     }
