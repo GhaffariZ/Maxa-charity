@@ -12,7 +12,7 @@
 graph TD
  SA[" مدیر ارشد (ستاد مرکزی / Super Admin)<br/>is_super = 1"]
  BA[" مدیر شعبه (Branch Admin)<br/>is_branch_admin = 1"]
- BU[" کاربر / کارشناس شعبه<br/>role_id -> dashboard_roles"]
+ BU[" کاربر / کارشناس شعبه<br/>role_id → dashboard_roles"]
  
  SA -->|مدیریت کلان، تعریف شعب، نظارت مالی سراسری| BA
  BA -->|تعریف کاربران شعبه، انتساب نقش‌ها| BU

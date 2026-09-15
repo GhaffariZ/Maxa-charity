@@ -2055,6 +2055,33 @@ function resolveDocPath(currentDoc, relativeHref) {
 }
 
 /* ==========================================================================
+   ابزار پالایش و رمزگشایی کدهای دیاگرام Mermaid (حذف قطعی انتیتی‌های HTML مانند &quot;)
+   ========================================================================== */
+function cleanMermaidCode(raw) {
+  if (!raw) return '';
+  let str = raw;
+
+  try {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    str = txt.value;
+    if (/&(?:quot|amp|lt|gt|#39|#039|apos);/i.test(str)) {
+      txt.innerHTML = str;
+      str = txt.value;
+    }
+  } catch(e) {}
+
+  str = str.replace(/&quot;/g, '"')
+           .replace(/&#039;/g, "'")
+           .replace(/&apos;/g, "'")
+           .replace(/&lt;/g, '<')
+           .replace(/&gt;/g, '>')
+           .replace(/&amp;/g, '&');
+
+  return str.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+}
+
+/* ==========================================================================
    پردازش و شخصی‌سازی مارک‌داون
    ========================================================================== */
 function processCustomMarkdownElements(html, currentDocId) {
@@ -2111,11 +2138,10 @@ function processCustomMarkdownElements(html, currentDocId) {
 
     // اگر بلاک دیاگرام و فلوچارت گرافیکی Mermaid باشد:
     if (lang === 'MERMAID') {
-      const rawDiagramCode = (code ? code.textContent : pre.textContent).trim();
+      const rawDiagramCode = cleanMermaidCode(code ? (code.innerText || code.textContent) : pre.textContent);
       const diagramCard = document.createElement('div');
       diagramCard.className = 'mermaid-diagram-card';
-      diagramCard.setAttribute('data-diagram-raw', rawDiagramCode);
-      const safeEscaped = rawDiagramCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const safeEscaped = rawDiagramCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       diagramCard.innerHTML = `
         <div class="mermaid-diagram-header">
           <div class="mermaid-diagram-title">
@@ -2143,7 +2169,7 @@ function processCustomMarkdownElements(html, currentDocId) {
           </div>
         </div>
         <div class="mermaid-source-wrapper" style="display:none">
-          <pre><code>${safeEscaped}</code></pre>
+          <pre><code class="mermaid-code-text">${safeEscaped}</code></pre>
         </div>
       `;
       pre.parentNode.insertBefore(diagramCard, pre);
@@ -2474,13 +2500,15 @@ async function renderAllMermaidDiagrams() {
 
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
-      const rawCode = card.getAttribute('data-diagram-raw') || '';
+      const srcCodeEl = card.querySelector('.mermaid-source-wrapper code');
+      let rawCode = srcCodeEl ? (srcCodeEl.innerText || srcCodeEl.textContent) : (card.getAttribute('data-diagram-raw') || '');
+      rawCode = cleanMermaidCode(rawCode);
       const renderEl = card.querySelector('.mermaid-render-container');
       if (!rawCode || !renderEl) continue;
 
       const renderId = 'mermaid-svg-' + i + '-' + Math.random().toString(36).substring(2, 7);
       try {
-        const { svg } = await mermaid.render(renderId, rawCode.trim());
+        const { svg } = await mermaid.render(renderId, rawCode);
         renderEl.innerHTML = svg;
         const svgEl = renderEl.querySelector('svg');
         if (svgEl) {
@@ -2490,7 +2518,7 @@ async function renderAllMermaidDiagrams() {
         }
       } catch (err) {
         console.warn('Mermaid render issue for diagram', i, err);
-        const errEl = document.getElementById(renderId);
+        const errEl = document.getElementById(renderId) || document.getElementById('d' + renderId);
         if (errEl) errEl.remove();
         renderEl.innerHTML = `
           <div style="color:var(--color-text-muted);font-size:12px;padding:12px;text-align:center">
