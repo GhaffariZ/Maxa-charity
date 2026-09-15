@@ -1,64 +1,117 @@
 <?php
 /**
  * پایگاه مستندات و راهنمای جامع سامانه وب مکسا (MACSA Docs Portal)
- * طراحی مدرن مبتنی بر استانداردهای مستندسازی مهندسی (مشابه ReadTheDocs / MkDocs Material)
- * یکپارچه با تم رنگی و توکن‌های طراحی پنل ادمین مکسا
+ * طراحی مدرن، فوق‌العاده واکنش‌گرا (موبایل، تبلت، دسکتاپ و صفحات اولتراواید)
+ * همگام با پالت رنگی و استانداردهای طراحی پنل ادمین مکسا
  */
 
 require_once __DIR__ . '/_guard.php';
 
-// مسیر پایه پوشه مستندات (خارج از public_html برای امنیت بالاتر)
-$baseDocsDir = realpath(dirname(dirname(__DIR__)) . '/docs');
+// تابع هوشمند تشخیص مسیر پایگاه مستندات (با چند لایه فال‌بک برای محیط‌های سروری مختلف)
+function getDocsBaseDir() {
+    $candidates = [
+        realpath(__DIR__ . '/../../docs'),
+        realpath(__DIR__ . '/../docs'),
+        realpath(__DIR__ . '/docs'),
+        __DIR__ . '/../../docs',
+        __DIR__ . '/../docs',
+        __DIR__ . '/docs',
+        dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'docs',
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'docs'
+    ];
+    foreach ($candidates as $dir) {
+        if ($dir && is_dir($dir) && (file_exists($dir . '/user-manual/README.md') || file_exists($dir . '/README.md'))) {
+            return $dir;
+        }
+    }
+    return realpath(__DIR__ . '/../docs') ?: (__DIR__ . '/../docs');
+}
+
+$baseDocsDir = getDocsBaseDir();
 
 // اگر درخواست خام (AJAX برای واکشی مارک‌داون) بود:
 if (isset($_GET['raw']) && !empty($_GET['file'])) {
-    $reqFile = ltrim((string)$_GET['file'], "/\\");
-    $targetPath = realpath($baseDocsDir . '/' . $reqFile);
+    // جلوگیری کامل از Path Traversal
+    $reqFile = ltrim(str_replace(['\\', '..'], ['/', ''], (string)$_GET['file']), '/');
 
-    if (
-        !$targetPath ||
-        strpos($targetPath, $baseDocsDir) !== 0 ||
-        !preg_match('/\.md$/i', $targetPath) ||
-        !file_exists($targetPath)
-    ) {
+    $candidates = [
+        $baseDocsDir . '/' . $reqFile,
+        __DIR__ . '/../docs/' . $reqFile,
+        __DIR__ . '/../../docs/' . $reqFile,
+        realpath(__DIR__ . '/../docs') ? realpath(__DIR__ . '/../docs') . '/' . $reqFile : null,
+        realpath(__DIR__ . '/../../docs') ? realpath(__DIR__ . '/../../docs') . '/' . $reqFile : null,
+    ];
+
+    $resolvedPath = null;
+    foreach ($candidates as $cand) {
+        if (!$cand) continue;
+        $real = realpath($cand);
+        if ($real && file_exists($real) && preg_match('/\.md$/i', $real)) {
+            $resolvedPath = $real;
+            break;
+        }
+    }
+
+    if (!$resolvedPath) {
         http_response_code(404);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['error' => 'سند مورد نظر یافت نشد یا دسترسی به آن مجاز نیست.']);
+        echo json_encode([
+            'error' => 'سند مورد نظر یافت نشد.',
+            'requested' => $reqFile
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
     header('Content-Type: text/markdown; charset=utf-8');
-    header('Cache-Control: private, max-age=60');
-    readfile($targetPath);
+    header('Cache-Control: private, max-age=180');
+    readfile($resolvedPath);
     exit;
 }
 
 // سند پیش‌فرض اولیه
 $currentDoc = isset($_GET['doc']) ? trim((string)$_GET['doc']) : 'user-manual/README.md';
-$currentDoc = ltrim($currentDoc, "/\\");
+$currentDoc = ltrim(str_replace(['\\', '..'], ['/', ''], $currentDoc), '/');
 
-$targetPath = realpath($baseDocsDir . '/' . $currentDoc);
-if (
-    !$targetPath ||
-    strpos($targetPath, $baseDocsDir) !== 0 ||
-    !preg_match('/\.md$/i', $targetPath) ||
-    !file_exists($targetPath)
-) {
-    $currentDoc = 'user-manual/README.md';
-    $targetPath = realpath($baseDocsDir . '/' . $currentDoc);
+$initialResolved = null;
+$checkFiles = [
+    $baseDocsDir . '/' . $currentDoc,
+    __DIR__ . '/../docs/' . $currentDoc,
+    __DIR__ . '/../../docs/' . $currentDoc
+];
+foreach ($checkFiles as $cf) {
+    $real = realpath($cf);
+    if ($real && file_exists($real) && preg_match('/\.md$/i', $real)) {
+        $initialResolved = $real;
+        break;
+    }
 }
 
-$initialContent = ($targetPath && file_exists($targetPath)) ? file_get_contents($targetPath) : '# راهنمای سامانه مکسا';
-$docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($targetPath) : time();
+if (!$initialResolved) {
+    $currentDoc = 'user-manual/README.md';
+    $fallbackFiles = [
+        $baseDocsDir . '/' . $currentDoc,
+        __DIR__ . '/../docs/' . $currentDoc,
+        __DIR__ . '/../../docs/' . $currentDoc
+    ];
+    foreach ($fallbackFiles as $ff) {
+        $real = realpath($ff);
+        if ($real && file_exists($real)) {
+            $initialResolved = $real;
+            break;
+        }
+    }
+}
+
+$initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get_contents($initialResolved) : "# راهنمای سامانه مکسا\n\nبه پایگاه جامع مستندات و راهنمای سامانه وب مرکز کنترل سرطان مکسا خوش آمدید.";
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>مستندات و راهنمای سامانه | مرکز کنترل سرطان مکسا</title>
 
-<!-- همگام‌سازی بلادرنگ تم (دارک/لایت) با پنل مدیریت -->
+<!-- همگام‌سازی بلادرنگ تم (دارک/لایت) با محافظت کامل در برابر مسدودکننده‌های کوکی/استوریج -->
 <script>
 (function(){
   try {
@@ -69,7 +122,7 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
 })();
 </script>
 
-<!-- فونت استاندارد سیستم مکسا -->
+<!-- فونت‌های استاندارد سامانه مکسا -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -81,24 +134,23 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
 
 <style>
 /* ==========================================================================
-   طراحی هماهنگ با سیستم طراحی پنل مکسا + استایل مستندات مهندسی (MkDocs/ReadTheDocs)
+   سیستم طراحی و متغیرهای رنگی یکپارچه با پنل مکسا + استایل مستندات مهندسی
    ========================================================================== */
 :root {
   --color-primary: #007b7a;
   --color-primary-dark: #006665;
   --color-primary-light: #4fb2b0;
   --color-secondary: #f4a61e;
-  --color-text: #24292f;
-  --color-text-muted: #57606a;
-  --color-border: #d0d7de;
-  --color-border-subtle: #eaeef2;
-  --color-bg: #f6f8fa;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-sidebar-bg: #f8fafc;
-  --color-card-bg: #ffffff;
-  --code-bg: #f6f8fa;
+  --code-bg: #f1f5f9;
   --kbd-bg: #f3f4f6;
-  --header-bg: rgba(255, 255, 255, 0.92);
+  --header-bg: rgba(255, 255, 255, 0.94);
 
   --primary-08: rgba(0, 123, 122, 0.08);
   --primary-14: rgba(0, 123, 122, 0.14);
@@ -116,9 +168,9 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
   --callout-caution-border: #cf222e;
 
   --header-height: 64px;
-  --sidebar-width: 320px;
+  --sidebar-width: 310px;
   --toc-width: 250px;
-  --content-max-width: 920px;
+  --content-max-width: 960px;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -126,7 +178,7 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 28px rgba(0,0,0,0.12);
+  --shadow-lg: 0 16px 36px rgba(0,0,0,0.12);
 
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -136,17 +188,16 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
   --color-primary-dark: #007b7a;
   --color-primary-light: #77d3d1;
   --color-secondary: #f4a61e;
-  --color-text: #e6edf3;
-  --color-text-muted: #8b949e;
-  --color-border: #30363d;
-  --color-border-subtle: #21262d;
-  --color-bg: #0d1117;
-  --color-surface: #161b22;
-  --color-sidebar-bg: #0d1117;
-  --color-card-bg: #161b22;
-  --code-bg: #161b22;
-  --kbd-bg: #21262d;
-  --header-bg: rgba(13, 17, 23, 0.90);
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+  --color-border-subtle: #1e293b;
+  --color-bg: #0b0f17;
+  --color-surface: #141b26;
+  --color-sidebar-bg: #0f1520;
+  --code-bg: #1a2232;
+  --kbd-bg: #1e293b;
+  --header-bg: rgba(15, 21, 32, 0.94);
 
   --primary-08: rgba(79, 178, 176, 0.12);
   --primary-14: rgba(79, 178, 176, 0.20);
@@ -167,12 +218,13 @@ $docLastModified = ($targetPath && file_exists($targetPath)) ? filemtime($target
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-size: 14.5px;
-  line-height: 1.8;
+  font-size: 15px;
+  line-height: 1.85;
   direction: rtl;
   min-height: 100vh;
   display: flex;
@@ -195,19 +247,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 clamp(12px, 3vw, 28px);
 }
 
 .header-left, .header-right, .header-center {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brand-wrap {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: inherit;
 }
@@ -232,7 +284,6 @@ body {
   font-size: 16px;
   line-height: 1.2;
   color: var(--color-text);
-  letter-spacing: -0.2px;
 }
 .brand-sub {
   font-size: 11px;
@@ -249,7 +300,7 @@ body {
   border: 1px solid var(--primary-14);
 }
 
-/* کلید جستجوی سریع در هدر */
+/* کلید جستجو در هدر */
 .search-trigger-btn {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -260,7 +311,7 @@ body {
   gap: 10px;
   color: var(--color-text-muted);
   cursor: pointer;
-  width: 260px;
+  width: clamp(180px, 22vw, 260px);
   transition: all 0.2s var(--ease);
   font-family: inherit;
   font-size: 13px;
@@ -281,13 +332,13 @@ body {
   color: var(--color-text-muted);
 }
 
-/* اکشن‌های هدر (تم و بازگشت به پیشخوان) */
+/* اکشن‌های هدر */
 .header-btn {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   height: 38px;
-  padding: 0 14px;
+  padding: 0 12px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -298,6 +349,7 @@ body {
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s var(--ease);
+  flex-shrink: 0;
 }
 .header-btn:hover {
   background: var(--primary-08);
@@ -324,26 +376,47 @@ body {
 
 .mobile-menu-btn {
   display: none;
-  background: none;
-  border: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   color: var(--color-text);
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
-   Layout (3 ستونه: منو چپ، محتوا وسط، فهرست راست)
+   Layout (3 ستونه: منو راست، محتوا وسط، فهرست چپ)
    ========================================================================== */
 .docs-layout {
   display: flex;
   flex: 1;
   width: 100%;
-  max-width: 1680px;
+  max-width: 1760px;
   margin: 0 auto;
+  position: relative;
 }
 
-/* ستون ناوبری اسناد (Navigation Sidebar) */
+/* پس‌زمینه نیمه‌شفاف برای بستن منوی موبایل با لمس بیرون */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 85;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s var(--ease);
+}
+.sidebar-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ستون ناوبری سرفصل‌ها (Sidebar Navigation Drawer) */
 .docs-nav-sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
@@ -353,18 +426,36 @@ body {
   position: sticky;
   top: var(--header-height);
   overflow-y: auto;
-  padding: 20px 16px 40px;
+  padding: 20px 14px 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
-.docs-nav-sidebar::-webkit-scrollbar { width: 6px; }
+.docs-nav-sidebar::-webkit-scrollbar { width: 5px; }
 .docs-nav-sidebar::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 4px;
 }
 
-/* فیلتر سریع منو */
+.sidebar-header-mobile {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 4px;
+}
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+}
+
 .sidebar-filter-wrap {
   position: relative;
 }
@@ -375,7 +466,7 @@ body {
   border-radius: var(--radius-sm);
   padding: 8px 12px 8px 34px;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--color-text);
   outline: none;
   transition: border-color 0.2s;
@@ -393,14 +484,11 @@ body {
   pointer-events: none;
 }
 
-/* دسته‌بندی‌های منو */
 .nav-group-title {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: var(--color-text-muted);
-  padding: 6px 12px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -415,7 +503,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   text-decoration: none;
@@ -459,7 +547,7 @@ body {
 .docs-main-container {
   flex: 1;
   min-width: 0;
-  padding: 32px 48px 60px;
+  padding: 32px clamp(16px, 4vw, 48px) 60px;
   display: flex;
   justify-content: center;
 }
@@ -468,16 +556,16 @@ body {
   max-width: var(--content-max-width);
 }
 
-/* بردکرامب و اطلاعات مقاله */
+/* بردکرامب و متادیتا */
 .article-header-meta {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--color-border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 .article-breadcrumbs {
   display: flex;
@@ -485,11 +573,13 @@ body {
   gap: 8px;
   font-size: 12.5px;
   color: var(--color-text-muted);
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 2px;
 }
 .article-breadcrumbs a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.15s;
 }
 .article-breadcrumbs a:hover {
   color: var(--color-primary);
@@ -521,11 +611,48 @@ body {
   color: var(--color-primary);
 }
 
-/* رندر مارک‌داون (Typography & Component Styles) */
+/* جعبه سرفصل درون-صفحه برای موبایل و تبلت (In-Article Mobile TOC Accordion) */
+.mobile-inline-toc {
+  display: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.mobile-inline-toc-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--color-text);
+  user-select: none;
+}
+.mobile-inline-toc-header svg.chev {
+  transition: transform 0.2s var(--ease);
+}
+.mobile-inline-toc.open .mobile-inline-toc-header svg.chev {
+  transform: rotate(180deg);
+}
+.mobile-inline-toc-body {
+  display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+.mobile-inline-toc.open .mobile-inline-toc-body {
+  display: block;
+}
+
+/* رندر مارک‌داون */
 .markdown-body {
   color: var(--color-text);
   line-height: 1.85;
-  font-size: 15px;
+  font-size: 15.5px;
+  word-break: break-word;
 }
 .markdown-body h1,
 .markdown-body h2,
@@ -538,27 +665,26 @@ body {
   scroll-margin-top: calc(var(--header-height) + 24px);
 }
 .markdown-body h1 {
-  font-size: 30px;
+  font-size: clamp(22px, 4vw, 30px);
   margin-bottom: 24px;
-  letter-spacing: -0.4px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--color-border);
 }
 .markdown-body h2 {
-  font-size: 22px;
-  margin-top: 42px;
-  margin-bottom: 18px;
+  font-size: clamp(18px, 3.2vw, 22px);
+  margin-top: 40px;
+  margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-border-subtle);
 }
 .markdown-body h3 {
-  font-size: 18px;
-  margin-top: 30px;
-  margin-bottom: 14px;
+  font-size: clamp(16px, 2.5vw, 18px);
+  margin-top: 28px;
+  margin-bottom: 12px;
 }
 .markdown-body h4 {
-  font-size: 15.5px;
-  margin-top: 22px;
+  font-size: 15px;
+  margin-top: 20px;
   margin-bottom: 10px;
 }
 
@@ -582,7 +708,7 @@ body {
 }
 .markdown-body ul, .markdown-body ol {
   margin-bottom: 20px;
-  padding-inline-start: 26px;
+  padding-inline-start: 24px;
 }
 .markdown-body li {
   margin-bottom: 8px;
@@ -596,7 +722,6 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 500;
-  transition: color 0.15s;
 }
 .markdown-body a:hover {
   color: var(--color-primary-dark);
@@ -606,12 +731,7 @@ body {
   border: 0;
   height: 1px;
   background: var(--color-border);
-  margin: 36px 0;
-}
-
-.markdown-body strong {
-  font-weight: 700;
-  color: var(--color-text);
+  margin: 32px 0;
 }
 
 .markdown-body img {
@@ -624,24 +744,22 @@ body {
   display: block;
 }
 
-/* بلوک نقل قول (Blockquote) */
 .markdown-body blockquote {
   background: var(--primary-08);
   border-inline-start: 4px solid var(--color-primary);
-  padding: 14px 20px;
+  padding: 14px 18px;
   margin: 20px 0;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   color: var(--color-text);
-  font-style: normal;
 }
 .markdown-body blockquote p:last-child {
   margin-bottom: 0;
 }
 
-/* کادرهای هشدار GitHub Callouts (Alerts) */
+/* کادرهای استاندارد هشدار گیت‌هاب (Alerts) */
 .callout {
-  padding: 16px 20px;
-  margin: 24px 0;
+  padding: 16px 18px;
+  margin: 22px 0;
   border-radius: var(--radius-md);
   border-inline-start: 4px solid;
   position: relative;
@@ -691,11 +809,12 @@ body {
 }
 .callout-caution .callout-title { color: var(--callout-caution-border); }
 
-/* جداول (Tables) */
+/* جداول واکنش‌گرا */
 .table-container {
   width: 100%;
   overflow-x: auto;
-  margin: 24px 0;
+  -webkit-overflow-scrolling: touch;
+  margin: 22px 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -703,12 +822,13 @@ body {
 }
 .markdown-body table {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
   font-size: 13.5px;
   text-align: right;
 }
 .markdown-body th, .markdown-body td {
-  padding: 12px 18px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--color-border);
 }
 .markdown-body th {
@@ -726,7 +846,7 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
-/* کد و تکه برنامه‌ها (Code Blocks) */
+/* کد و قطعه برنامه‌ها */
 .markdown-body code {
   font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
   font-size: 13px;
@@ -744,57 +864,57 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--color-border);
-  background: #161b22;
+  background: #141b26;
   box-shadow: var(--shadow-sm);
 }
 .code-block-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: #0d1117;
-  border-bottom: 1px solid #30363d;
+  padding: 8px 14px;
+  background: #0b0f17;
+  border-bottom: 1px solid #232f3e;
   color: #8b949e;
   font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
   direction: ltr;
 }
 .code-copy-btn {
-  background: #21262d;
-  border: 1px solid #30363d;
+  background: #1f2a3a;
+  border: 1px solid #334155;
   border-radius: 6px;
-  color: #c9d1d9;
+  color: #cbd5e1;
   font-size: 11.5px;
   font-family: inherit;
-  padding: 4px 10px;
+  padding: 4px 9px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   transition: all 0.2s;
 }
 .code-copy-btn:hover {
-  background: #30363d;
+  background: #2d3d52;
   color: #ffffff;
 }
 .markdown-body pre {
   margin: 0;
-  padding: 16px 20px;
+  padding: 16px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   direction: ltr;
   text-align: left;
-  background: #161b22;
+  background: #141b26;
 }
 .markdown-body pre code {
   background: transparent;
   border: none;
   padding: 0;
-  color: #e6edf3;
-  font-size: 13.5px;
+  color: #f1f5f9;
+  font-size: 13px;
   line-height: 1.6;
 }
 
-/* کلیدهای صفحه کلید (kbd) */
 .markdown-body kbd {
   font-family: 'JetBrains Mono', monospace;
   background: var(--kbd-bg);
@@ -803,22 +923,21 @@ body {
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 12px;
-  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
 }
 
-/* ناوبری پایین صفحه (صفحه بعدی / قبلی) */
+/* ناوبری بعدی / قبلی */
 .article-pagination {
-  margin-top: 56px;
-  padding-top: 32px;
+  margin-top: 48px;
+  padding-top: 28px;
   border-top: 1px solid var(--color-border);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 .pagination-card {
   display: flex;
   flex-direction: column;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   text-decoration: none;
@@ -836,21 +955,21 @@ body {
   align-items: flex-end;
 }
 .pagination-label {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--color-text-muted);
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .pagination-title {
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-/* ستون فهرست مطالب صفحه (On this page - Table of Contents) */
+/* ستون فهرست مطالب صفحه (On this page TOC) */
 .docs-toc-sidebar {
   width: var(--toc-width);
   flex-shrink: 0;
@@ -858,10 +977,10 @@ body {
   position: sticky;
   top: var(--header-height);
   overflow-y: auto;
-  padding: 28px 18px 40px;
+  padding: 28px 16px 40px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 .toc-title {
   font-size: 12.5px;
@@ -875,7 +994,7 @@ body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   border-inline-start: 2px solid var(--color-border-subtle);
   padding-inline-start: 12px;
 }
@@ -901,7 +1020,7 @@ body {
 }
 
 .back-to-top-btn {
-  margin-top: 18px;
+  margin-top: 16px;
   font-size: 12px;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -911,19 +1030,18 @@ body {
   border: none;
   background: none;
   font-family: inherit;
-  transition: color 0.15s;
 }
 .back-to-top-btn:hover {
   color: var(--color-primary);
 }
 
 /* ==========================================================================
-   Search Modal (مودال جستجوی بلادرنگ Ctrl+K)
+   مودال جستجو (Ctrl+K)
    ========================================================================== */
 .search-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: none;
@@ -935,8 +1053,8 @@ body {
   display: flex;
 }
 .search-modal-box {
-  width: 90%;
-  max-width: 640px;
+  width: 92%;
+  max-width: 620px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -944,16 +1062,11 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: modalIn 0.2s var(--ease);
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .search-input-wrap {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--color-border);
   gap: 12px;
 }
@@ -963,26 +1076,25 @@ body {
   border: none;
   outline: none;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-text);
 }
 .search-results-list {
-  max-height: 420px;
+  max-height: 400px;
   overflow-y: auto;
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .search-result-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: var(--color-text);
-  transition: background 0.15s;
 }
 .search-result-item:hover, .search-result-item.selected {
   background: var(--primary-08);
@@ -990,66 +1102,108 @@ body {
 }
 .search-result-title {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 .search-result-sub {
   font-size: 12px;
   color: var(--color-text-muted);
 }
 .search-footer {
-  padding: 10px 20px;
+  padding: 8px 18px;
   border-top: 1px solid var(--color-border);
   background: var(--color-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--color-text-muted);
 }
 
 /* ==========================================================================
-   Responsive Breakpoints (واکنش‌گرایی موبایل و تبلت)
+   طراحی فوق‌العاده واکنش‌گرا (Responsive Rules)
    ========================================================================== */
-@media (max-width: 1200px) {
+/* ۱. تبلت‌ها و صفحات زیر 1150px: ستون TOC سمت چپ جمع می‌شود و بالای محتوا می‌آید */
+@media (max-width: 1150px) {
   .docs-toc-sidebar { display: none; }
-  .docs-main-container { padding: 28px 32px 50px; }
+  .mobile-inline-toc { display: block; }
+  .docs-main-container { padding: 24px 28px 50px; }
 }
 
+/* ۲. صفحات زیر 860px (موبایل و تبلت عمودی): سایدبار راست تبدیل به دراور متحرک می‌شود */
 @media (max-width: 860px) {
-  .mobile-menu-btn { display: block; }
-  .search-trigger-btn { width: 160px; }
-  .search-trigger-btn kbd { display: none; }
+  .mobile-menu-btn { display: inline-flex; }
+  .sidebar-header-mobile { display: flex; }
+  
   .docs-nav-sidebar {
     position: fixed;
-    top: var(--header-height);
+    top: 0;
     right: 0;
     bottom: 0;
     z-index: 90;
-    width: 300px;
+    width: min(320px, 86vw);
+    height: 100vh;
     transform: translateX(100%);
-    transition: transform 0.25s var(--ease);
-    box-shadow: var(--shadow-lg);
+    transition: transform 0.28s var(--ease);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.25);
     background: var(--color-surface);
   }
   .docs-nav-sidebar.open {
     transform: translateX(0);
   }
-  .docs-main-container {
-    padding: 20px 18px 40px;
+
+  .search-trigger-btn {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
   }
+  .search-trigger-btn span, .search-trigger-btn kbd {
+    display: none;
+  }
+
+  .docs-main-container {
+    padding: 18px 16px 40px;
+  }
+}
+
+/* ۳. گوشی‌های با صفحه کوچک‌تر (زیر 520px) */
+@media (max-width: 520px) {
+  .version-badge { display: none; }
+  .brand-sub { display: none; }
+  .brand-title { font-size: 14.5px; }
+  
   .article-pagination {
     grid-template-columns: 1fr;
+  }
+  .pagination-card.next {
+    align-items: flex-start;
+    text-align: right;
+  }
+
+  .article-tools {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .header-btn-primary span {
+    display: none;
+  }
+  .header-btn-primary {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
   }
 }
 </style>
 </head>
 <body>
 
-<!-- هدر اصلی پورتال مستندات -->
+<!-- هدر اصلی -->
 <header class="docs-header">
   <div class="header-right">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="منوی سرفصل‌ها">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="منوی سرفصل‌ها" title="فهرست مستندات">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <a href="docs.php" class="brand-wrap">
       <div class="brand-icon">
@@ -1067,7 +1221,7 @@ body {
   </div>
 
   <div class="header-center">
-    <button class="search-trigger-btn" id="searchTriggerBtn">
+    <button class="search-trigger-btn" id="searchTriggerBtn" title="جستجو در مستندات">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <span>جستجو در مستندات...</span>
       <kbd>Ctrl K</kbd>
@@ -1075,39 +1229,47 @@ body {
   </div>
 
   <div class="header-left">
-    <!-- تغییر تم دارک/لایت -->
+    <!-- کلید تغییر حالت شب/روز -->
     <button class="header-btn header-btn-icon" id="themeToggleBtn" title="تغییر حالت شب/روز">
       <svg id="themeIconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
 
-    <!-- بازگشت مستقیم به پیشخوان مدیریت -->
-    <a href="index.php" class="header-btn header-btn-primary" target="_top">
+    <!-- بازگشت به پیشخوان مدیریت -->
+    <a href="index.php" class="header-btn header-btn-primary" target="_top" title="بازگشت به پیشخوان مدیریت">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       <span>بازگشت به پیشخوان</span>
     </a>
   </div>
 </header>
 
-<!-- ساختار ۳ ستونه داکیومنت -->
+<!-- ساختار اصلی ۳ ستونه -->
 <div class="docs-layout">
 
-  <!-- ستون راست: منوی درختی سرفصل‌ها (Nav Drawer) -->
+  <!-- پوشش پشت دراور برای بستن با کلیک بیرون -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ستون راست: سایدبار ناوبری (Nav Drawer) -->
   <aside class="docs-nav-sidebar" id="docsSidebar">
+    <div class="sidebar-header-mobile">
+      <span style="font-weight:800;font-size:14px;color:var(--color-primary)">فهرست مستندات مکسا</span>
+      <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="بستن منو">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
     <div class="sidebar-filter-wrap">
       <input type="text" class="sidebar-filter-input" id="sidebarFilter" placeholder="فیلتر سرفصل‌ها..." autocomplete="off">
       <svg class="sidebar-filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
 
-    <!-- گروه اول: راهنمای جامع کاربران (User Manual) -->
+    <!-- گروه اول: راهنمای کاربران (User Manual) -->
     <div>
       <div class="nav-group-title">
         <span>📖 راهنمای کاربران (User Manual)</span>
         <span style="font-size:10px;opacity:0.7">۲۲ بخش</span>
       </div>
-      <ul class="nav-group-list" id="userManualNavList">
-        <!-- آیتم‌های منو به صورت داینامیک یا سروری رندر می‌شوند -->
-      </ul>
+      <ul class="nav-group-list" id="userManualNavList"></ul>
     </div>
 
     <!-- گروه دوم: مستندات فنی و مهندسی (Developer Docs) -->
@@ -1115,17 +1277,15 @@ body {
       <div class="nav-group-title">
         <span>🛠️ مستندات فنی (Engineering)</span>
       </div>
-      <ul class="nav-group-list" id="devDocsNavList">
-        <!-- لینک‌های فنی -->
-      </ul>
+      <ul class="nav-group-list" id="devDocsNavList"></ul>
     </div>
   </aside>
 
-  <!-- ستون وسط: محتوای اصلی سند (Article) -->
+  <!-- ستون وسط: محتوای سند (Article) -->
   <main class="docs-main-container">
     <div class="docs-article-wrapper">
       
-      <!-- بردکرامب و متادیتای بالا -->
+      <!-- متادیتا و ابزارها -->
       <div class="article-header-meta">
         <div class="article-breadcrumbs" id="breadcrumbs">
           <a href="docs.php">مستندات مکسا</a>
@@ -1137,22 +1297,34 @@ body {
 
         <div class="article-tools">
           <span class="tool-pill" id="readingTimePill" title="تخمین زمان مطالعه">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span id="readingTimeText">۳ دقیقه مطالعه</span>
           </span>
           <button class="tool-pill" id="copyPageLinkBtn" title="کپی پیوند این سند">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             <span>کپی پیوند</span>
           </button>
         </div>
       </div>
 
-      <!-- بدنه اصلی مارک‌داون -->
-      <article class="markdown-body" id="markdownContent">
-        <!-- رندر اولیه در کلاینت یا سرور -->
-      </article>
+      <!-- جعبه آکاردئونی فهرست مطالب درون مقاله برای موبایل و تبلت -->
+      <div class="mobile-inline-toc" id="mobileInlineToc">
+        <div class="mobile-inline-toc-header" id="mobileInlineTocHeader">
+          <span style="display:flex;align-items:center;gap:8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>فهرست سرفصل‌های این بخش</span>
+          </span>
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="mobile-inline-toc-body" id="mobileInlineTocBody">
+          <ul class="toc-list" id="mobileTocList"></ul>
+        </div>
+      </div>
 
-      <!-- ناوبری صفحه قبلی و بعدی در انتهای مقاله -->
+      <!-- بدنه اصلی مارک‌داون -->
+      <article class="markdown-body" id="markdownContent"></article>
+
+      <!-- ناوبری صفحه قبلی و بعدی -->
       <nav class="article-pagination" id="articlePagination">
         <a href="#" class="pagination-card prev" id="prevArticleCard" style="display:none">
           <span class="pagination-label">
@@ -1174,15 +1346,13 @@ body {
     </div>
   </main>
 
-  <!-- ستون چپ: فهرست مطالب این صفحه (On this page TOC) -->
+  <!-- ستون چپ: فهرست مطالب این صفحه در دسکتاپ (TOC) -->
   <aside class="docs-toc-sidebar">
     <div class="toc-title">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       <span>در این صفحه</span>
     </div>
-    <ul class="toc-list" id="tocList">
-      <!-- توسط جاوااسکریپت از روی تگ‌های H2 و H3 پر می‌شود -->
-    </ul>
+    <ul class="toc-list" id="tocList"></ul>
     <button class="back-to-top-btn" id="backToTopBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
       <span>بازگشت به بالای صفحه</span>
@@ -1196,26 +1366,43 @@ body {
   <div class="search-modal-box">
     <div class="search-input-wrap">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" class="search-input-field" id="searchModalInput" placeholder="جستجو در تمام سرفصل‌ها، واژه‌ها و دستورالعمل‌ها..." autocomplete="off">
+      <input type="text" class="search-input-field" id="searchModalInput" placeholder="جستجو در تمام سرفصل‌ها و آموزش‌ها..." autocomplete="off">
       <kbd>ESC</kbd>
     </div>
-    <div class="search-results-list" id="searchResultsList">
-      <!-- نتایج جستجو -->
-    </div>
+    <div class="search-results-list" id="searchResultsList"></div>
     <div class="search-footer">
-      <span>پیمایش با کلیدهای ↑ و ↓</span>
-      <span>انتخاب با Enter</span>
-      <span>خروج با ESC</span>
+      <span>پیمایش: ↑ و ↓</span>
+      <span>انتخاب: Enter</span>
+      <span>بستن: ESC</span>
     </div>
   </div>
 </div>
 
-<!-- متن سند اولیه برای لود آنی و بدون تأخیر در اولین باز شدن -->
+<!-- متن سند اولیه برای لود صفر تأخیر -->
 <script type="text/markdown" id="rawInitialContent"><?= htmlspecialchars($initialContent, ENT_QUOTES, 'UTF-8') ?></script>
 
 <script>
 /* ==========================================================================
-   بانک اطلاعات جامع سرفصل‌های مستندات سامانه مکسا
+   ابزار ذخیره‌سازی امن (مقاوم در برابر مسدودکننده‌های کوکی و Tracking Prevention)
+   ========================================================================== */
+const safeStorage = {
+  get: function(key, fallback) {
+    try {
+      const val = localStorage.getItem(key);
+      return val !== null ? val : fallback;
+    } catch(e) {
+      return fallback;
+    }
+  },
+  set: function(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch(e) {}
+  }
+};
+
+/* ==========================================================================
+   کاتالوگ جامع مستندات مکسا
    ========================================================================== */
 const DOCS_CATALOG = [
   // راهنمای کاربران (User Manual)
@@ -1251,7 +1438,7 @@ const DOCS_CATALOG = [
 let activeDocId = '<?= addslashes($currentDoc) ?>';
 
 /* ==========================================================================
-   مدیریت تم (دارک و لایت) با ذخیره در localStorage و همگام با داشبورد
+   مدیریت تم با همگام‌سازی کامل
    ========================================================================== */
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeIconSun   = document.getElementById('themeIconSun');
@@ -1268,11 +1455,7 @@ function updateThemeIcons(isDark) {
 }
 
 function initTheme() {
-  var isDark = false;
-  try {
-    isDark = localStorage.getItem('maxa-theme') === 'dark';
-  } catch(e){}
-
+  const isDark = safeStorage.get('maxa-theme', 'light') === 'dark';
   if (isDark) {
     document.documentElement.setAttribute('data-theme', 'dark');
   } else {
@@ -1289,13 +1472,10 @@ themeToggleBtn.addEventListener('click', () => {
   } else {
     document.documentElement.removeAttribute('data-theme');
   }
-  try {
-    localStorage.setItem('maxa-theme', newTheme);
-  } catch(e){}
+  safeStorage.set('maxa-theme', newTheme);
   updateThemeIcons(newTheme === 'dark');
 });
 
-// شنونده رویداد ذخیره‌سازی برای تب‌های دیگر مرورگر
 window.addEventListener('storage', (e) => {
   if (!e || e.key === 'maxa-theme' || e.key === null) {
     initTheme();
@@ -1303,7 +1483,7 @@ window.addEventListener('storage', (e) => {
 });
 
 /* ==========================================================================
-   رندر منوی کناری (Sidebar Navigation Tree)
+   رندر منوی کناری (Sidebar Navigation)
    ========================================================================== */
 function renderSidebarNav() {
   const manualList = document.getElementById('userManualNavList');
@@ -1327,8 +1507,7 @@ function renderSidebarNav() {
     li.querySelector('a').addEventListener('click', (e) => {
       e.preventDefault();
       loadDoc(doc.id);
-      // بستن منو در موبایل پس از کلیک
-      document.getElementById('docsSidebar').classList.remove('open');
+      closeMobileSidebar();
     });
 
     if (doc.group === 'manual') {
@@ -1339,43 +1518,60 @@ function renderSidebarNav() {
   });
 }
 
-/* فیلتر سریع منوی کناری */
 document.getElementById('sidebarFilter').addEventListener('input', (e) => {
   const q = e.target.value.trim().toLowerCase();
   document.querySelectorAll('.nav-item-link').forEach(a => {
     const text = a.textContent.toLowerCase();
     const li = a.closest('li');
-    if (!q || text.includes(q)) {
-      li.style.display = '';
-    } else {
-      li.style.display = 'none';
-    }
+    li.style.display = (!q || text.includes(q)) ? '' : 'none';
   });
 });
 
-/* دکمه منوی موبایل */
-document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-  document.getElementById('docsSidebar').classList.toggle('open');
+/* مدیریت سایدبار در موبایل و تبلت */
+const docsSidebar = document.getElementById('docsSidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
+function openMobileSidebar() {
+  docsSidebar.classList.add('open');
+  sidebarBackdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileSidebar() {
+  docsSidebar.classList.remove('open');
+  sidebarBackdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+mobileMenuBtn.addEventListener('click', openMobileSidebar);
+sidebarCloseBtn.addEventListener('click', closeMobileSidebar);
+sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+
+/* آکاردئون فهرست درون صفحه موبایل */
+const mobileInlineToc = document.getElementById('mobileInlineToc');
+const mobileInlineTocHeader = document.getElementById('mobileInlineTocHeader');
+mobileInlineTocHeader.addEventListener('click', () => {
+  mobileInlineToc.classList.toggle('open');
 });
 
 /* ==========================================================================
-   پردازش و شخصی‌سازی مارک‌داون (GitHub Alerts, Syntax Highlight, Tables)
+   پردازش و شخصی‌سازی مارک‌داون
    ========================================================================== */
 function processCustomMarkdownElements(html) {
-  // ۱. تبدیل خودکار نقل‌قول‌های اخطار گیت‌هاب (GitHub Style Alerts)
-  // > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
   const alertTypes = {
     'NOTE':      { cls: 'callout-note',      title: 'یادداشت',         icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' },
     'TIP':       { cls: 'callout-tip',       title: 'نکته کاربردی',     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>' },
     'IMPORTANT': { cls: 'callout-important', title: 'مهم',             icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' },
     'WARNING':   { cls: 'callout-warning',   title: 'هشدار و توجه',    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
-    'CAUTION':   { cls: 'callout-caution',   title: 'احتیاط و هشدار امنیتی', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' }
+    'CAUTION':   { cls: 'callout-caution',   title: 'احتیاط و امنیت',   icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' }
   };
 
   const container = document.createElement('div');
   container.innerHTML = html;
 
-  // تبدیل blockquoteهای حاوی تگ alert
+  // ۱. تبدیل Calloutهای گیت‌هاب
   container.querySelectorAll('blockquote').forEach(bq => {
     const text = bq.innerHTML.trim();
     for (const [key, cfg] of Object.entries(alertTypes)) {
@@ -1394,7 +1590,7 @@ function processCustomMarkdownElements(html) {
     }
   });
 
-  // ۲. بسته‌بندی جداول داخل ظرف افقی اسکرول‌پذیر
+  // ۲. بسته‌بندی جداول
   container.querySelectorAll('table').forEach(tbl => {
     if (!tbl.parentElement.classList.contains('table-container')) {
       const wrap = document.createElement('div');
@@ -1404,7 +1600,7 @@ function processCustomMarkdownElements(html) {
     }
   });
 
-  // ۳. افزودن هدر و دکمه کپی به کدهای برنامه‌نویسی
+  // ۳. هدر و دکمه کپی کد
   container.querySelectorAll('pre').forEach(pre => {
     const code = pre.querySelector('code');
     let lang = 'CODE';
@@ -1448,7 +1644,6 @@ function processCustomMarkdownElements(html) {
   // ۴. افزودن شناسه و لنگر به سرتیترهای H2 و H3
   container.querySelectorAll('h2, h3').forEach((heading, idx) => {
     const rawText = heading.textContent.trim();
-    // ایجاد slug ساده و سازگار با فارسی
     let slug = heading.id || ('sec-' + idx + '-' + rawText.toLowerCase().replace(/[^a-zA-Z0-9\u0600-\u06FF]+/g, '-').replace(/^-+|-+$/g, ''));
     heading.id = slug;
 
@@ -1460,7 +1655,7 @@ function processCustomMarkdownElements(html) {
     heading.appendChild(anchor);
   });
 
-  // ۵. تبدیل لینک‌های نسبی به فایل‌های md برای پیمایش کلاینتی بدون ریلود
+  // ۵. اصلاح و رهگیری لینک‌های داخلی برای لود آنی
   container.querySelectorAll('a[href]').forEach(a => {
     const href = a.getAttribute('href');
     if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
@@ -1468,10 +1663,9 @@ function processCustomMarkdownElements(html) {
         a.addEventListener('click', (e) => {
           e.preventDefault();
           const parts = href.split('#');
-          let targetDoc = parts[0];
+          let targetDoc = parts[0].replace(/\\/g, '/');
           const targetHash = parts[1] || '';
 
-          // حل مسیر نسبی نسبت به سند فعلی
           if (targetDoc.startsWith('../')) {
             targetDoc = targetDoc.replace(/^\.\.\//, '');
           } else if (targetDoc.startsWith('./')) {
@@ -1493,15 +1687,18 @@ function processCustomMarkdownElements(html) {
 }
 
 /* ==========================================================================
-   ایجاد فهرست محتوای سمت چپ (On this page TOC) و شنونده اسکرول
+   ایجاد فهرست محتوا (TOC) برای دسکتاپ و موبایل
    ========================================================================== */
 function buildTableOfContents() {
   const tocList = document.getElementById('tocList');
+  const mobileTocList = document.getElementById('mobileTocList');
   tocList.innerHTML = '';
+  mobileTocList.innerHTML = '';
 
   const headings = document.querySelectorAll('#markdownContent h2, #markdownContent h3');
   if (!headings.length) {
-    tocList.innerHTML = '<li style="font-size:12px;color:var(--color-text-muted)">سرفصل خاصی در این سند یافت نشد.</li>';
+    tocList.innerHTML = '<li style="font-size:12px;color:var(--color-text-muted)">سرفصل فرعی در این سند ثبت نشده است.</li>';
+    mobileTocList.innerHTML = '<li style="font-size:12px;color:var(--color-text-muted)">سرفصل فرعی در این سند ثبت نشده است.</li>';
     return;
   }
 
@@ -1510,13 +1707,13 @@ function buildTableOfContents() {
     const text = h.childNodes[0] ? h.childNodes[0].textContent.trim() : h.textContent.trim();
     const id = h.id;
 
+    // آیتم دسکتاپ
     const li = document.createElement('li');
     li.innerHTML = `
       <a href="#${id}" class="toc-item-link ${isH3 ? 'toc-h3' : ''}" data-target="${id}">
         ${text}
       </a>
     `;
-
     li.querySelector('a').addEventListener('click', (e) => {
       e.preventDefault();
       const targetEl = document.getElementById(id);
@@ -1525,14 +1722,31 @@ function buildTableOfContents() {
         history.replaceState(null, null, '#' + id);
       }
     });
-
     tocList.appendChild(li);
+
+    // آیتم موبایل
+    const mLi = document.createElement('li');
+    mLi.innerHTML = `
+      <a href="#${id}" class="toc-item-link ${isH3 ? 'toc-h3' : ''}" data-target="${id}">
+        ${text}
+      </a>
+    `;
+    mLi.querySelector('a').addEventListener('click', (e) => {
+      e.preventDefault();
+      mobileInlineToc.classList.remove('open');
+      const targetEl = document.getElementById(id);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, null, '#' + id);
+      }
+    });
+    mobileTocList.appendChild(mLi);
   });
 
   setupScrollSpy();
 }
 
-/* هایلایت بلادرنگ سرفصل در حال مطالعه هنگام اسکرول (Scroll-Spy) */
+/* Scroll-Spy برای هایلایت سرفصل در حال مطالعه */
 let scrollSpyObserver = null;
 function setupScrollSpy() {
   if (scrollSpyObserver) scrollSpyObserver.disconnect();
@@ -1561,13 +1775,12 @@ function setupScrollSpy() {
   headings.forEach(h => scrollSpyObserver.observe(h));
 }
 
-/* بازگشت به بالای صفحه */
 document.getElementById('backToTopBtn').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* ==========================================================================
-   به‌روزرسانی متادیتا، بردکرامب، تخمین مطالعه و کارت‌های قبلی/بعدی
+   به‌روزرسانی متادیتا و کارت‌های قبلی / بعدی
    ========================================================================== */
 function updateDocMetadata(docId, rawMarkdown) {
   const meta = DOCS_CATALOG.find(d => d.id === docId) || {
@@ -1575,20 +1788,16 @@ function updateDocMetadata(docId, rawMarkdown) {
     group: 'manual'
   };
 
-  // عنوان تب و صفحه
   document.title = meta.title + ' | مستندات سامانه مکسا';
 
-  // بردکرامب
   document.getElementById('breadcrumbCategory').textContent = 
     meta.group === 'manual' ? 'راهنمای کاربران' : 'مستندات مهندسی';
   document.getElementById('breadcrumbCurrent').textContent = meta.title;
 
-  // تخمین زمان مطالعه بر اساس تعداد کلمات فارسی (میانگین ۱۸۰ کلمه در دقیقه)
   const wordCount = rawMarkdown.replace(/[`#*_\-[\]()]/g, ' ').trim().split(/\s+/).length;
   const minutes = Math.max(1, Math.ceil(wordCount / 180));
   document.getElementById('readingTimeText').textContent = minutes + ' دقیقه مطالعه';
 
-  // محاسبه کارت‌های صفحه قبلی و بعدی
   const currentIndex = DOCS_CATALOG.findIndex(d => d.id === docId);
   const prevCard = document.getElementById('prevArticleCard');
   const nextCard = document.getElementById('nextArticleCard');
@@ -1613,14 +1822,13 @@ function updateDocMetadata(docId, rawMarkdown) {
 }
 
 /* ==========================================================================
-   بارگذاری و رندر سند (Client-Side Dynamic Loading with Cache)
+   لود و رندر کلاینت (با کش حافظه و فال‌بک مطمئن)
    ========================================================================== */
 const docCache = {};
 
 function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   let html = '';
   if (window.marked) {
-    // تنظیمات Marked برای شکست خطوط و هایلایت کدها
     marked.setOptions({
       gfm: true,
       breaks: false,
@@ -1636,7 +1844,6 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
     });
     html = marked.parse(rawMarkdown);
   } else {
-    // فال‌بک پایه‌ای در صورت عدم بارگذاری CDN
     html = rawMarkdown
       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -1647,7 +1854,6 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   const processedHtml = processCustomMarkdownElements(html);
   document.getElementById('markdownContent').innerHTML = processedHtml;
 
-  // هایلایت مجدد کدهای احتمالی باقیمانده
   if (window.hljs) {
     document.querySelectorAll('#markdownContent pre code').forEach(block => {
       hljs.highlightElement(block);
@@ -1657,7 +1863,6 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   updateDocMetadata(docId, rawMarkdown);
   buildTableOfContents();
 
-  // هایلایت آیتم فعال در منوی سایدبار
   activeDocId = docId;
   document.querySelectorAll('.nav-item-link').forEach(a => {
     if (a.getAttribute('data-doc') === docId) {
@@ -1667,7 +1872,6 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
     }
   });
 
-  // اسکرول به هش در صورت وجود، یا به بالای صفحه
   if (targetHash) {
     setTimeout(() => {
       const el = document.getElementById(targetHash);
@@ -1679,9 +1883,8 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
 }
 
 function loadDoc(docId, targetHash = '') {
-  const cleanId = docId.replace(/^\/+/, '');
+  const cleanId = docId.replace(/\\/g, '/').replace(/^\/+/, '');
 
-  // اگر قبلاً کش شده بود، بدون درخواست شبکه رندر کن
   if (docCache[cleanId]) {
     history.pushState({ docId: cleanId }, '', `docs.php?doc=${encodeURIComponent(cleanId)}${targetHash ? '#' + targetHash : ''}`);
     renderMarkdownText(docCache[cleanId], cleanId, targetHash);
@@ -1689,7 +1892,7 @@ function loadDoc(docId, targetHash = '') {
   }
 
   document.getElementById('markdownContent').innerHTML = `
-    <div style="text-align:center;padding:80px 20px;color:var(--color-text-muted)">
+    <div style="text-align:center;padding:70px 20px;color:var(--color-text-muted)">
       <div style="font-size:32px;margin-bottom:12px">⏳</div>
       <p style="font-weight:700">در حال بارگذاری سند...</p>
     </div>
@@ -1697,7 +1900,7 @@ function loadDoc(docId, targetHash = '') {
 
   fetch(`docs.php?raw=1&file=${encodeURIComponent(cleanId)}`)
     .then(res => {
-      if (!res.ok) throw new Error('فایل یافت نشد');
+      if (!res.ok) throw new Error('وضعیت ' + res.status);
       return res.text();
     })
     .then(markdown => {
@@ -1709,14 +1912,16 @@ function loadDoc(docId, targetHash = '') {
       document.getElementById('markdownContent').innerHTML = `
         <div class="callout callout-caution">
           <div class="callout-title">خطا در دریافت سند</div>
-          <p>امکان بارگذاری پرونده <code>${cleanId}</code> میسر نشد. لطفاً اتصال اینترنت یا درستی نشانی را بررسی فرمایید.</p>
+          <p>امکان بارگذاری پرونده <code>${cleanId}</code> میسر نشد.</p>
+          <div style="margin-top:12px">
+            <button class="tool-pill" onclick="loadDoc('${cleanId}', '${targetHash}')">تلاش مجدد</button>
+          </div>
         </div>
       `;
     });
 }
 
-// پشتیبانی از دکمه‌های بازگشت/جلو مرورگر (Browser History Back/Forward)
-window.addEventListener('popstate', (e) => {
+window.addEventListener('popstate', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const docFromUrl = urlParams.get('doc') || 'user-manual/README.md';
   const hashFromUrl = window.location.hash.replace('#', '');
@@ -1725,13 +1930,12 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-/* دکمه کپی لینک مستقیم این صفحه */
 document.getElementById('copyPageLinkBtn').addEventListener('click', () => {
   navigator.clipboard.writeText(window.location.href).then(() => {
     const btn = document.getElementById('copyPageLinkBtn');
     const prev = btn.innerHTML;
     btn.innerHTML = `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
       <span style="color:#2ea043">پیوند کپی شد!</span>
     `;
     setTimeout(() => { btn.innerHTML = prev; }, 2000);
@@ -1739,7 +1943,7 @@ document.getElementById('copyPageLinkBtn').addEventListener('click', () => {
 });
 
 /* ==========================================================================
-   جستجوی سراسری پیشرفته (Ctrl+K Modal Search)
+   مودال جستجوی بلادرنگ (Ctrl+K)
    ========================================================================== */
 const searchModal = document.getElementById('searchModal');
 const searchTriggerBtn = document.getElementById('searchTriggerBtn');
@@ -1750,7 +1954,7 @@ function openSearchModal() {
   searchModal.classList.add('open');
   searchModalInput.value = '';
   renderSearchResults('');
-  setTimeout(() => searchModalInput.focus(), 50);
+  setTimeout(() => searchModalInput.focus(), 60);
 }
 
 function closeSearchModal() {
@@ -1787,8 +1991,8 @@ function renderSearchResults(query) {
 
   if (!matches.length) {
     searchResultsList.innerHTML = `
-      <div style="text-align:center;padding:32px;color:var(--color-text-muted);font-size:13px">
-        موردی مطابق با عبارت «${query}» یافت نشد.
+      <div style="text-align:center;padding:28px;color:var(--color-text-muted);font-size:13px">
+        موردی مطابق با «${query}» یافت نشد.
       </div>
     `;
     return;
@@ -1822,7 +2026,6 @@ searchModalInput.addEventListener('input', (e) => {
   renderSearchResults(e.target.value);
 });
 
-// ناوبری با کیبورد در نتایج جستجو
 searchModalInput.addEventListener('keydown', (e) => {
   const items = searchResultsList.querySelectorAll('.search-result-item');
   if (!items.length) return;
@@ -1851,13 +2054,12 @@ searchModalInput.addEventListener('keydown', (e) => {
 });
 
 /* ==========================================================================
-   راه‌اندازی اولیه صفحه
+   راه‌اندازی اولیه
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderSidebarNav();
 
-  // رندر متن سند اولیه تعبیه شده در تگ اسکریپت
   const initialRaw = document.getElementById('rawInitialContent').textContent;
   docCache[activeDocId] = initialRaw;
   const hash = window.location.hash.replace('#', '');
