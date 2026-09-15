@@ -409,63 +409,11 @@ body::before {
   border: 1px solid var(--primary-14);
 }
 
-/* ==========================================================================
-   نوار جستجو با افکت پالس نوری داخلی مونوکروم (Libraries.dev Border Beam)
-   Family: Pulse | Type: Pulse Inner | Color: Mono | Duration: 1.96s
-   ========================================================================== */
-@keyframes beamPulseInnerMono {
-  0% {
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-      inset 0 0 5px rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-  50% {
-    box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.4),
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.85),
-      inset 0 0 16px rgba(255, 255, 255, 0.26);
-    border-color: rgba(255, 255, 255, 0.7);
-  }
-  100% {
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-      inset 0 0 5px rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-}
-
-@keyframes beamPulseInnerMonoLight {
-  0% {
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.03),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.08),
-      inset 0 0 4px rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-  50% {
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.06),
-      inset 0 0 0 1.5px rgba(30, 41, 59, 0.45),
-      inset 0 0 14px rgba(30, 41, 59, 0.07);
-    border-color: rgba(30, 41, 59, 0.35);
-  }
-  100% {
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.03),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.08),
-      inset 0 0 4px rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-}
-
+/* کلید جستجو در هدر (Liquid Glass Style) */
 .search-trigger-btn {
-  position: relative;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 99px;
   padding: 8px 16px;
@@ -478,22 +426,18 @@ body::before {
   transition: all 0.25s var(--ease);
   font-family: inherit;
   font-size: 13px;
-  animation: beamPulseInnerMonoLight 1.96s ease-in-out infinite;
-  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
-
 :root[data-theme="dark"] .search-trigger-btn {
-  background: rgba(20, 27, 38, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  animation: beamPulseInnerMono 1.96s ease-in-out infinite;
+  background: rgba(20, 27, 38, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
-
 .search-trigger-btn:hover {
+  border-color: var(--color-primary);
   color: var(--color-text);
-  transform: translateY(-1px);
-  animation-duration: 1.2s;
+  box-shadow: var(--shadow-sm);
 }
-
 .search-trigger-btn kbd {
   margin-inline-start: auto;
   background: var(--kbd-bg);
@@ -503,14 +447,6 @@ body::before {
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--color-text-muted);
-}
-
-/* پالس نوری داخلی برای کادر ورودی مودال جستجو (Ctrl+K) */
-.search-modal-box .search-input-wrap {
-  animation: beamPulseInnerMonoLight 1.96s ease-in-out infinite;
-}
-:root[data-theme="dark"] .search-modal-box .search-input-wrap {
-  animation: beamPulseInnerMono 1.96s ease-in-out infinite;
 }
 
 /* اکشن‌های هدر */
