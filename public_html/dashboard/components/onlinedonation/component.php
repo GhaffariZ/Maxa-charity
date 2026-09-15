@@ -120,7 +120,7 @@
         </div>
 
         <div class="field">
-          <label>کد ملی (اختیاری - جهت معافیت مالیاتی و الزامات شاپرک)</label>
+          <label>کد ملی (اختیاری)</label>
           <input type="text" name="national_code" id="donorNationalCode" placeholder="مثلاً: 0012345678" maxlength="10">
         </div>
 
