@@ -1,0 +1,46 @@
+/**
+ * قلم رویین (Rooyin Font) - مرکز کنترل سرطان مکسا
+ */
+@font-face {
+  font-family: 'Rooyin';
+  src: url('RooyinFree-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rooyin';
+  src: url('RooyinFree-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RooyinDots2';
+  src: url('RooyinFree-RegularDots2.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* کلاس‌های کمکی برای اعمال مستقیم فونت رویین */
+.font-rooyin {
+  font-family: 'Rooyin', -apple-system, sans-serif !important;
+}
+
+.font-rooyin-dots2 {
+  font-family: 'RooyinDots2', -apple-system, sans-serif !important;
+}
+
+/* اعمال در استایل‌های کد فارسی */
+.code-persian,
+code[data-persian="true"],
+code.has-persian,
+.code-inline-persian {
+  font-family: 'JetBrains Mono', 'Rooyin', 'Vazirmatn', monospace !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}

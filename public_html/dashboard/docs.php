@@ -148,6 +148,8 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../webfont/rooyin/rooyin.css">
+<link rel="stylesheet" href="webfont/rooyin/rooyin.css">
 
 <!-- کتابخانه‌های پردازش کلاینت برای هایلایت کد و مارک‌داون -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -237,6 +239,50 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
   --callout-caution-border: #f85149;
 
   color-scheme: dark;
+}
+
+/* ==========================================================================
+   تعریف قلم فارسی «رویین» (Rooyin Font) جهت متون و کدهای فارسی
+   ========================================================================== */
+@font-face {
+  font-family: 'Rooyin';
+  src: url('../webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
+       url('webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
+       url('/webfont/rooyin/RooyinFree-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rooyin';
+  src: url('../webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
+       url('webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
+       url('/webfont/rooyin/RooyinFree-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RooyinDots2';
+  src: url('../webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2'),
+       url('webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2'),
+       url('/webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-rooyin {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}
+
+.font-rooyin-dots2 {
+  font-family: 'RooyinDots2', 'Vazirmatn', -apple-system, sans-serif !important;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -955,15 +1001,26 @@ body::before {
    طراحی مدرن بلاک کد با هایلایت رنگی دقیق (One Dark Pro / Next.js Code Blocks)
    ========================================================================== */
 .markdown-body code {
-  font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+  font-family: 'JetBrains Mono', 'Rooyin', 'Vazirmatn', Consolas, Monaco, monospace;
   font-size: 13px;
-  padding: 2.5px 6px;
+  padding: 2.5px 6.5px;
   border-radius: 6px;
   background: var(--code-bg);
   color: var(--color-primary);
   border: 1px solid var(--color-border-subtle);
-  direction: ltr;
   display: inline-block;
+  unicode-bidi: isolate;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}
+
+.markdown-body code.has-persian,
+.markdown-body code .font-rooyin {
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
 }
 
 .code-block-wrapper {
@@ -1050,7 +1107,7 @@ body::before {
 }
 
 .markdown-body pre code {
-  font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace !important;
+  font-family: 'JetBrains Mono', 'Rooyin', 'Vazirmatn', 'Fira Code', Consolas, Monaco, monospace !important;
   font-size: 13.5px;
   line-height: 1.7;
   color: #e6edf3;
@@ -1058,6 +1115,18 @@ body::before {
   border: none !important;
   padding: 0 !important;
   tab-size: 2;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0;
+  word-spacing: normal;
+}
+
+.markdown-body pre code .font-rooyin,
+.markdown-body pre code .hljs-string.font-rooyin,
+.markdown-body pre code .hljs-comment.font-rooyin {
+  font-family: 'Rooyin', 'Vazirmatn', sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
 }
 
 /* رنگ‌بندی تفکیک‌شده و استاندارد سینتکس کد (One Dark Pro) */
@@ -1935,7 +2004,17 @@ function processCustomMarkdownElements(html, currentDocId) {
     }
   });
 
-  // ۶. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
+  // ۶. اعمال قلم «رویین» و اتصال روان حروف برای قطعه‌کدهای فارسی درون‌خطی (Inline Codes)
+  container.querySelectorAll('code').forEach(c => {
+    if (c.closest('pre')) return;
+    const text = c.textContent;
+    if (/[\u0600-\u06FF]/.test(text)) {
+      c.classList.add('has-persian');
+      c.innerHTML = c.innerHTML.replace(/([\u0600-\u06FF\u200C][\u0600-\u06FF\u200C\s]*[\u0600-\u06FF\u200C]|[\u0600-\u06FF\u200C])/g, '<span class="font-rooyin">$1</span>');
+    }
+  });
+
+  // ۷. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
   let rawHtml = container.innerHTML;
 
   rawHtml = rawHtml.replace(/\[(فعال|تأیید)\]/g, 
@@ -2120,6 +2199,13 @@ function enrichCodeSyntaxHighlighting() {
 
       block.innerHTML = codeText;
     }
+
+    // اعمال قلم رویین برای رشته‌ها و کامنت‌های حاوی کاراکترهای فارسی
+    block.querySelectorAll('.hljs-string, .hljs-comment').forEach(token => {
+      if (/[\u0600-\u06FF]/.test(token.textContent)) {
+        token.classList.add('font-rooyin');
+      }
+    });
   });
 }
 
