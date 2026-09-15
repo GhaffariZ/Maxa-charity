@@ -473,11 +473,230 @@ body::before {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
-.header-btn-icon {
-  width: 38px;
-  padding: 0;
-  justify-content: center;
+/* ==========================================================================
+   دکمه تم حالت شب/روز گووی لمسی و ترنزیشن ذوب‌شدن (Libraries.dev Gooey Melt)
+   ========================================================================== */
+.gooey-theme-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.07),
+    inset 0 1px 1.5px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  overflow: visible;
+  flex-shrink: 0;
+  color: #1e293b;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root[data-theme="dark"] .gooey-theme-btn {
+  background: rgba(26, 34, 48, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.5);
+}
+
+.gooey-theme-btn:hover {
+  transform: scale(1.08);
+  border-color: var(--color-primary);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 0 14px -2px var(--color-primary),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+}
+
+:root[data-theme="dark"] .gooey-theme-btn:hover {
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.6),
+    0 0 16px -2px var(--color-primary),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.25);
+}
+
+.gooey-theme-btn:active {
+  transform: scale(0.92);
+}
+
+/* لایه محفظه ذوب مایع گووی درون کلید (Gooey Melt Stage) */
+.gooey-melt-wrapper {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: url(#gooeyMeltFilter);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.gooey-blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+.blob-primary {
+  width: 26px;
+  height: 26px;
+  background: radial-gradient(circle, #f59e0b 0%, #d97706 100%);
+  left: 7px;
+  top: 7px;
+}
+
+:root[data-theme="dark"] .blob-primary {
+  background: radial-gradient(circle, #38bdf8 0%, #0284c7 100%);
+}
+
+.blob-secondary {
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #fbbf24 0%, #f59e0b 100%);
+  right: 5px;
+  bottom: 5px;
+}
+
+:root[data-theme="dark"] .blob-secondary {
+  background: radial-gradient(circle, #7dd3fc 0%, #38bdf8 100%);
+}
+
+.gooey-theme-btn.is-melting .blob-primary {
+  opacity: 0.9;
+  animation: blobMeltA 0.58s ease forwards;
+}
+
+.gooey-theme-btn.is-melting .blob-secondary {
+  opacity: 0.9;
+  animation: blobMeltB 0.58s ease forwards;
+}
+
+@keyframes blobMeltA {
+  0% { transform: scale(0.3) translate(0, 0); opacity: 0.2; }
+  50% { transform: scale(1.35) translate(4px, 4px); opacity: 0.95; }
+  100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
+}
+
+@keyframes blobMeltB {
+  0% { transform: scale(0.3) translate(0, 0); opacity: 0.2; }
+  50% { transform: scale(1.25) translate(-5px, -5px); opacity: 0.95; }
+  100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
+}
+
+/* کانتینر آیکون‌های خورشید و ماه */
+.gooey-icon-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.gooey-theme-icon {
+  position: absolute;
+  transition:
+    transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.32s ease,
+    filter 0.35s ease;
+}
+
+:root:not([data-theme="dark"]) #themeIconSun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45));
+  color: #f59e0b;
+}
+:root:not([data-theme="dark"]) #themeIconMoon {
+  opacity: 0;
+  transform: scale(0.35) rotate(-90deg);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+:root[data-theme="dark"] #themeIconMoon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+  color: #38bdf8;
+}
+:root[data-theme="dark"] #themeIconSun {
+  opacity: 0;
+  transform: scale(0.35) rotate(90deg);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* لایه امواج مایع ذوب تمام‌صفحه (Full-screen Melt Ripple Layer) */
+.liquid-melt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.32s ease;
+}
+
+.liquid-melt-drop {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  filter: url(#gooeyMeltFilter);
+  animation: liquidMeltExpand 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes liquidMeltExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+  }
+  40% {
+    border-radius: 46% 54% 60% 40% / 54% 42% 58% 46%;
+  }
+  75% {
+    border-radius: 52% 48% 47% 53% / 49% 53% 47% 51%;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 50%;
+  }
+}
+
+/* سازگاری با View Transitions API مرورگرها */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 99999;
 }
 .header-btn-primary {
   background: linear-gradient(135deg, #007b7a, #005c5b);
@@ -2049,8 +2268,18 @@ body::before {
   }
 }
 </style>
-</head>
 <body>
+
+<!-- فیلتر SVG جلوه ذوب مایع گووی (Gooey Melt Filter - الهام از Libraries.dev Gooey) -->
+<svg class="gooey-svg-defs" aria-hidden="true" style="position:fixed;width:0;height:0;pointer-events:none;z-index:-1;opacity:0;">
+  <defs>
+    <filter id="gooeyMeltFilter">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" result="goo" />
+      <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+    </filter>
+  </defs>
+</svg>
 
 <!-- هدر اصلی -->
 <header class="docs-header">
@@ -2083,10 +2312,28 @@ body::before {
   </div>
 
   <div class="header-left">
-    <!-- کلید تغییر حالت شب/روز -->
-    <button class="header-btn header-btn-icon" id="themeToggleBtn" title="تغییر حالت شب/روز">
-      <svg id="themeIconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <!-- کلید تغییر حالت شب/روز با استایل لمسی گووی و ترنزیشن ذوب‌شدن (Libraries.dev Gooey Melt) -->
+    <button class="gooey-theme-btn" id="themeToggleBtn" type="button" aria-label="تغییر حالت شب و روز" title="تغییر حالت شب و روز">
+      <div class="gooey-melt-wrapper">
+        <span class="gooey-blob blob-primary"></span>
+        <span class="gooey-blob blob-secondary"></span>
+      </div>
+      <div class="gooey-icon-container">
+        <svg id="themeIconSun" class="gooey-theme-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="themeIconMoon" class="gooey-theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
     </button>
 
     <!-- بازگشت به پیشخوان مدیریت -->
@@ -2326,13 +2573,38 @@ const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeIconSun   = document.getElementById('themeIconSun');
 const themeIconMoon  = document.getElementById('themeIconMoon');
 
+function createLiquidMeltOverlay(x, y, radius, targetTheme, onMidpoint) {
+  const overlay = document.createElement('div');
+  overlay.className = 'liquid-melt-overlay';
+
+  const drop = document.createElement('div');
+  drop.className = 'liquid-melt-drop';
+  drop.style.left = x + 'px';
+  drop.style.top = y + 'px';
+  drop.style.width = (radius * 2.2) + 'px';
+  drop.style.height = (radius * 2.2) + 'px';
+  drop.style.background = targetTheme === 'dark' ? '#0b0f17' : '#ffffff';
+
+  overlay.appendChild(drop);
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    if (onMidpoint) onMidpoint();
+  }, 220);
+
+  setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.remove(); }, 320);
+  }, 550);
+}
+
 function updateThemeIcons(isDark) {
   if (isDark) {
-    themeIconSun.style.display = 'block';
-    themeIconMoon.style.display = 'none';
-  } else {
     themeIconSun.style.display = 'none';
     themeIconMoon.style.display = 'block';
+  } else {
+    themeIconSun.style.display = 'block';
+    themeIconMoon.style.display = 'none';
   }
 }
 
@@ -2346,17 +2618,63 @@ function initTheme() {
   updateThemeIcons(isDark);
 }
 
-themeToggleBtn.addEventListener('click', () => {
+themeToggleBtn.addEventListener('click', (e) => {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const newTheme = isDark ? 'light' : 'dark';
-  if (newTheme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
+
+  // ۱. اجرای افکت ذوب فلوئید در دکمه (Button Gooey Melt Morph)
+  themeToggleBtn.classList.add('is-melting');
+  setTimeout(() => {
+    themeToggleBtn.classList.remove('is-melting');
+  }, 600);
+
+  // ۲. استخراج مختصات کلید برای کانون امواج ذوب‌شونده
+  const rect = themeToggleBtn.getBoundingClientRect();
+  const x = e.clientX || (rect.left + rect.width / 2);
+  const y = e.clientY || (rect.top + rect.height / 2);
+  const maxRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  );
+
+  const applyThemeChange = () => {
+    if (newTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    safeStorage.set('maxa-theme', newTheme);
+    updateThemeIcons(newTheme === 'dark');
+    renderAllMermaidDiagrams();
+  };
+
+  // ۳. ترنزیشن مایع ذوب‌شونده با View Transitions API در صورت پشتیبانی مرورگر
+  if (document.startViewTransition) {
+    const transition = document.startViewTransition(() => {
+      applyThemeChange();
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius * 1.1}px at ${x}px ${y}px)`
+          ]
+        },
+        {
+          duration: 550,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
+    }).catch(() => {
+      applyThemeChange();
+    });
   } else {
-    document.documentElement.removeAttribute('data-theme');
+    // فال‌بک ترنزیشن ارگانیک ذوب مایع برای سایر مرورگرها
+    createLiquidMeltOverlay(x, y, maxRadius, newTheme, applyThemeChange);
   }
-  safeStorage.set('maxa-theme', newTheme);
-  updateThemeIcons(newTheme === 'dark');
-  renderAllMermaidDiagrams();
 });
 
 window.addEventListener('storage', (e) => {
