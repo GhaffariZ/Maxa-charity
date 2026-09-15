@@ -266,8 +266,11 @@
     </div>
   </section>
 
-  <!-- CONTENT (news → campaigns → courses) over a soft branded backdrop -->
+  <!-- CONTENT (hamrah → news → campaigns → courses) over a soft branded backdrop -->
   <div class="bh-content">
+
+    <!-- HAMRAH: همراهی مکسا در مسیر درمان و امید -->
+    <?php include __DIR__ . '/../hamrah/component.php'; ?>
 
     <!-- NEWS -->
     <section class="bh-sec" id="bh-news">
