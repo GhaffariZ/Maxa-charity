@@ -10,6 +10,10 @@ import {
   ShieldCheck,
   CheckCircle2,
   Star,
+  Smartphone,
+  KeyRound,
+  RotateCw,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthShell } from "../components/AuthShell";
@@ -21,7 +25,7 @@ import {
   isValidEmail,
 } from "../components/authui";
 import { useAuth } from "../../contexts/AuthContext";
-import { ApiRequestError } from "../../api/client";
+import { api, ApiRequestError } from "../../api/client";
 
 type Status = "idle" | "loading" | "success";
 
@@ -55,20 +59,59 @@ export function Login() {
 function SignInPanel() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
-  
+  const { login, loginWithOtp } = useAuth();
+
   // Parse returnUrl from query params if available
   const queryParams = new URLSearchParams(location.search);
   const returnUrl = queryParams.get("returnUrl");
   const from = returnUrl || (location.state as { from?: { pathname?: string } })?.from?.pathname || "/";
 
+  // Login mode: "otp" (phone) vs "password" (email)
+  const [method, setMethod] = React.useState<"otp" | "password">("otp");
+
+  // Email+Password state
   const [email, setEmail] = React.useState("");
   const [pw, setPw] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
-  const [errors, setErrors] = React.useState<{ email?: boolean; pw?: boolean }>({});
+  const [errors, setErrors] = React.useState<{ email?: boolean; pw?: boolean; phone?: boolean; code?: boolean }>({});
   const [status, setStatus] = React.useState<Status>("idle");
 
-  async function submit() {
+  // Phone OTP state
+  const [phone, setPhone] = React.useState("");
+  const [otpCode, setOtpCode] = React.useState("");
+  const [otpStep, setOtpStep] = React.useState<"phone" | "code">("phone");
+  const [countdown, setCountdown] = React.useState(120);
+  const [canResend, setCanResend] = React.useState(false);
+
+  // Countdown timer effect
+  React.useEffect(() => {
+    let timer: any;
+    if (otpStep === "code" && countdown > 0) {
+      timer = setInterval(() => setCountdown((c) => c - 1), 1000);
+    } else if (countdown <= 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [otpStep, countdown]);
+
+  function handleSuccessRedirect() {
+    setStatus("success");
+    setTimeout(() => {
+      const redirect = localStorage.getItem("redirect_to_patientintake");
+      if (redirect) {
+        localStorage.removeItem("redirect_to_patientintake");
+        window.location.href = redirect;
+      } else {
+        if (from.startsWith("http") || from.startsWith("/stand-order.php")) {
+          window.location.href = from;
+        } else {
+          navigate(from, { replace: true });
+        }
+      }
+    }, 600);
+  }
+
+  async function submitPasswordLogin() {
     const next = { email: !isValidEmail(email), pw: !pw };
     setErrors(next);
     if (next.email || next.pw) return;
@@ -76,20 +119,7 @@ function SignInPanel() {
     setStatus("loading");
     try {
       await login(email.trim(), pw);
-      setStatus("success");
-      setTimeout(() => {
-        const redirect = localStorage.getItem('redirect_to_patientintake');
-        if (redirect) {
-          localStorage.removeItem('redirect_to_patientintake');
-          window.location.href = redirect;
-        } else {
-          if (from.startsWith("http") || from.startsWith("/stand-order.php")) {
-            window.location.href = from;
-          } else {
-            navigate(from, { replace: true });
-          }
-        }
-      }, 600);
+      handleSuccessRedirect();
     } catch (e) {
       setStatus("idle");
       if (e instanceof ApiRequestError) {
@@ -109,6 +139,49 @@ function SignInPanel() {
     }
   }
 
+  async function handleSendOtp() {
+    const valid = /^09[0-9]{9}$/.test(phone.trim());
+    if (!valid) {
+      setErrors({ phone: true });
+      toast.error("لطفاً یک شماره موبایل معتبر (مانند 09123456789) وارد کنید.");
+      return;
+    }
+    setErrors({});
+    setStatus("loading");
+
+    try {
+      const res = await api.sendOtp(phone.trim(), "login");
+      setStatus("idle");
+      setOtpStep("code");
+      setCountdown(res.resend_after || 120);
+      setCanResend(false);
+      if (res.debug_code) {
+        setOtpCode(res.debug_code);
+      }
+      toast.success("کد تأیید پیامک شد.");
+    } catch (e) {
+      setStatus("idle");
+      toast.error(e instanceof ApiRequestError ? e.message : "خطا در ارسال پیامک.");
+    }
+  }
+
+  async function submitOtpLogin() {
+    if (otpCode.trim().length < 4) {
+      setErrors({ code: true });
+      toast.error("لطفاً کد تایید ۵ رقمی را وارد کنید.");
+      return;
+    }
+
+    setStatus("loading");
+    try {
+      await loginWithOtp(phone.trim(), otpCode.trim());
+      handleSuccessRedirect();
+    } catch (e) {
+      setStatus("idle");
+      toast.error(e instanceof ApiRequestError ? e.message : "کد وارد شده صحیح نیست.");
+    }
+  }
+
   return (
     <div>
       <div className="mb-7">
@@ -118,54 +191,169 @@ function SignInPanel() {
         </p>
       </div>
 
-      <Field
-        label="آدرس ایمیل"
-        icon={<Mail size={16} />}
-        error={errors.email}
-        errorMsg="لطفاً یک آدرس ایمیل معتبر وارد کنید."
-        inputProps={{
-          type: "email",
-          dir: "ltr",
-          placeholder: "you@example.com",
-          autoComplete: "email",
-          value: email,
-          onChange: (e) => setEmail(e.target.value),
-        }}
-      />
-
-      <Field
-        label="رمز عبور"
-        icon={<Lock size={16} />}
-        error={errors.pw}
-        errorMsg="لطفاً رمز عبور خود را وارد کنید."
-        action={<PasswordToggle shown={showPw} onToggle={() => setShowPw((s) => !s)} />}
-        inputProps={{
-          type: showPw ? "text" : "password",
-          placeholder: "رمز عبور خود را وارد کنید",
-          autoComplete: "current-password",
-          value: pw,
-          onChange: (e) => setPw(e.target.value),
-        }}
-      />
-
-      <div className="flex items-center justify-between mb-6">
-        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
-          <input type="checkbox" className="w-4 h-4 accent-primary rounded" />
-          <span>مرا به خاطر بسپار</span>
-        </label>
-        <Link to="/forgot" className="text-[0.83rem] font-semibold text-primary hover:underline">
-          فراموشی رمز عبور؟
-        </Link>
+      {/* Sub-toggle: OTP vs Password */}
+      <div className="flex border border-border/60 bg-surface/50 rounded-xl p-1 mb-6 text-xs font-bold gap-1">
+        <button
+          type="button"
+          onClick={() => {
+            setMethod("otp");
+            setOtpStep("phone");
+          }}
+          className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            method === "otp"
+              ? "bg-primary text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Smartphone size={15} />
+          ورود با شماره موبایل (پیامک)
+        </button>
+        <button
+          type="button"
+          onClick={() => setMethod("password")}
+          className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            method === "password"
+              ? "bg-primary text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <KeyRound size={15} />
+          ورود با رمز عبور
+        </button>
       </div>
 
-      <CtaButton
-        status={status}
-        onClick={submit}
-        idleLabel="ورود به پنل"
-        loadingLabel="در حال ورود…"
-        successLabel="ورود موفق!"
-        icon={<LogIn size={17} className="scale-x-[-1]" />}
-      />
+      {method === "otp" ? (
+        otpStep === "phone" ? (
+          <div>
+            <Field
+              label="شماره تلفن همراه"
+              icon={<Smartphone size={16} />}
+              error={errors.phone}
+              errorMsg="شماره همراه باید ۱۱ رقم با فرمت 0912... باشد."
+              inputProps={{
+                type: "tel",
+                dir: "ltr",
+                placeholder: "09123456789",
+                autoComplete: "tel",
+                value: phone,
+                onChange: (e) => setPhone(e.target.value),
+              }}
+            />
+
+            <CtaButton
+              status={status}
+              onClick={handleSendOtp}
+              idleLabel="دریافت کد تأیید"
+              loadingLabel="در حال ارسال پیامک…"
+              successLabel="ارسال شد!"
+              icon={<LogIn size={17} className="scale-x-[-1]" />}
+            />
+          </div>
+        ) : (
+          <div>
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-5 text-sm text-center">
+              کد ۵ رقمی به شماره <strong dir="ltr" className="font-bold text-primary">{phone}</strong> پیامک شد.
+              <button
+                type="button"
+                onClick={() => setOtpStep("phone")}
+                className="block mx-auto mt-2 text-xs font-bold text-primary hover:underline"
+              >
+                ویرایش شماره
+              </button>
+            </div>
+
+            <Field
+              label="کد تأیید پیامک‌شده"
+              icon={<KeyRound size={16} />}
+              error={errors.code}
+              errorMsg="لطفاً کد تایید را وارد کنید."
+              inputProps={{
+                type: "text",
+                dir: "ltr",
+                placeholder: "• • • • •",
+                maxLength: 6,
+                value: otpCode,
+                onChange: (e) => setOtpCode(e.target.value),
+              }}
+            />
+
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-6">
+              {canResend ? (
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  className="font-bold text-primary hover:underline flex items-center gap-1"
+                >
+                  <RotateCw size={13} />
+                  ارسال مجدد کد
+                </button>
+              ) : (
+                <span>ارسال مجدد تا {countdown} ثانیه دیگر</span>
+              )}
+            </div>
+
+            <CtaButton
+              status={status}
+              onClick={submitOtpLogin}
+              idleLabel="ورود به حساب کاربری"
+              loadingLabel="در حال بررسی…"
+              successLabel="ورود موفق!"
+              icon={<LogIn size={17} className="scale-x-[-1]" />}
+            />
+          </div>
+        )
+      ) : (
+        <div>
+          <Field
+            label="آدرس ایمیل"
+            icon={<Mail size={16} />}
+            error={errors.email}
+            errorMsg="لطفاً یک آدرس ایمیل معتبر وارد کنید."
+            inputProps={{
+              type: "email",
+              dir: "ltr",
+              placeholder: "you@example.com",
+              autoComplete: "email",
+              value: email,
+              onChange: (e) => setEmail(e.target.value),
+            }}
+          />
+
+          <Field
+            label="رمز عبور"
+            icon={<Lock size={16} />}
+            error={errors.pw}
+            errorMsg="لطفاً رمز عبور خود را وارد کنید."
+            action={<PasswordToggle shown={showPw} onToggle={() => setShowPw((s) => !s)} />}
+            inputProps={{
+              type: showPw ? "text" : "password",
+              placeholder: "رمز عبور خود را وارد کنید",
+              autoComplete: "current-password",
+              value: pw,
+              onChange: (e) => setPw(e.target.value),
+            }}
+          />
+
+          <div className="flex items-center justify-between mb-6">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" className="w-4 h-4 accent-primary rounded" />
+              <span>مرا به خاطر بسپار</span>
+            </label>
+            <Link to="/forgot" className="text-[0.83rem] font-semibold text-primary hover:underline">
+              فراموشی رمز عبور؟
+            </Link>
+          </div>
+
+          <CtaButton
+            status={status}
+            onClick={submitPasswordLogin}
+            idleLabel="ورود به پنل"
+            loadingLabel="در حال ورود…"
+            successLabel="ورود موفق!"
+            icon={<LogIn size={17} className="scale-x-[-1]" />}
+          />
+        </div>
+      )}
     </div>
   );
 }

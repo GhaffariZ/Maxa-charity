@@ -173,6 +173,38 @@ export const api = {
       body: { email, password },
       retryOnAuthFail: false,
     }),
+  sendOtp: (phone: string, purpose = "login") =>
+    apiRequest<{ message: string; expires_in: number; resend_after: number; debug_code?: string }>("/auth/otp/send", {
+      method: "POST",
+      body: { phone, purpose },
+      retryOnAuthFail: false,
+    }),
+  verifyOtp: (phone: string, code: string, purpose = "login") =>
+    apiRequest<{ valid: boolean; message: string }>("/auth/otp/verify", {
+      method: "POST",
+      body: { phone, code, purpose },
+      retryOnAuthFail: false,
+    }),
+  loginOtp: (phone: string, code: string) =>
+    apiRequest<{ access_token: string; expires_in: number }>("/auth/login-otp", {
+      method: "POST",
+      body: { phone, code },
+      retryOnAuthFail: false,
+    }),
+  initiateDonationWithOtp: (payload: {
+    phone: string;
+    code: string;
+    first_name: string;
+    last_name: string;
+    national_code?: string;
+    amount: number;
+    campaign_slug?: string;
+  }) =>
+    apiRequest<{ reference: string; redirect_url: string; access_token?: string }>("/donations/initiate", {
+      method: "POST",
+      body: payload,
+      retryOnAuthFail: false,
+    }),
   register: (payload: { email: string; password: string; first_name?: string; last_name?: string }) =>
     apiRequest<{ message: string }>("/auth/register", { method: "POST", body: payload, retryOnAuthFail: false }),
   verifyEmail: (token: string) =>
