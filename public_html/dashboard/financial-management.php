@@ -98,14 +98,32 @@ if ($endDate) {
  *  پس فیلترِ branch_id کافی است تا هر شعبه فقط درآمدِ خود را ببیند.
  */
 $BRANCH_ID = dash_active_branch_id();
+$ACTIVE_BRANCH_ROW = dash_load_branch($BRANCH_ID);
 $branchCond = " AND pd.branch_id = :branch_id";
 $params['branch_id'] = $BRANCH_ID;
 
 /* ---------- محاسبات تفکیکی منابع مالی (فقط موفق) ---------- */
 $onlineHelpTotal = 0.0;
 $campaignHelpTotal = 0.0;
-$coursesTotal = 0.0; // ساختار موقت طبق درخواست شما
-$ordersTotal = 0.0;  // ساختار موقت طبق درخواست شما
+$coursesTotal = 0.0; 
+$ordersTotal = 0.0;  
+
+// محاسبه عواید سفارشات استندهای خیریه
+if ($pdo) {
+  try {
+    $ordCond = " AND o.branch_id = :o_bid";
+    $ordParams = ['o_bid' => $BRANCH_ID];
+    if ($startDate) {
+      $ordCond .= " AND o.created_at >= :o_start";
+      $ordParams['o_start'] = $startDate . ' 00:00:00';
+    }
+    if ($endDate) {
+      $ordCond .= " AND o.created_at <= :o_end";
+      $ordParams['o_end'] = $endDate . ' 23:59:59';
+    }
+    $ordersTotal = (float)q($pdo, "SELECT COALESCE(SUM(o.total_price), 0) s FROM orders o WHERE 1=1" . $ordCond, $ordParams)->fetch()['s'];
+  } catch (Throwable $e) {}
+}
 
 if ($pdo) {
   try {
@@ -155,15 +173,40 @@ if ($pdo) {
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
 
-/* ---------- ساختار موقت برای دوره‌ها و محصولات (مقدار صفر) ---------- */
+/* ---------- تفکیک درآمد دوره‌ها و سفارشات استند ---------- */
 $coursesBreakdown = [
-  ['title' => 'دوره آموزشی اتوماسیون هوشمند آبزی‌پروری', 'total_collected' => 0.0],
-  ['title' => 'دوره پردازش تصویر پیشرفته (سورتر الگو)', 'total_collected' => 0.0],
+  ['title' => 'دوره آموزشی مراقبت‌های تسکینی سرطان', 'total_collected' => 0.0],
+  ['title' => 'کارگاه حمایت روانشناختی بیماران و خانواده', 'total_collected' => 0.0],
 ];
-$productsBreakdown = [
-  ['title' => 'دستگاه خودکار شمارش و تفکیک تخم ماهی', 'total_collected' => 0.0],
-  ['title' => 'قطعات اتوماسیون کارگاهی مکسا', 'total_collected' => 0.0],
-];
+
+$productsBreakdown = [];
+if ($pdo) {
+  try {
+    $ordCond = " AND o.branch_id = :o_bid";
+    $ordParams = ['o_bid' => $BRANCH_ID];
+    if ($startDate) {
+      $ordCond .= " AND o.created_at >= :o_start";
+      $ordParams['o_start'] = $startDate . ' 00:00:00';
+    }
+    if ($endDate) {
+      $ordCond .= " AND o.created_at <= :o_end";
+      $ordParams['o_end'] = $endDate . ' 23:59:59';
+    }
+    $productsBreakdown = q($pdo,
+      "SELECT COALESCE(s.title, 'استند خیریه') AS title, COALESCE(SUM(o.total_price), 0) AS total_collected
+         FROM orders o
+         LEFT JOIN stands s ON s.id = o.stand_id
+        WHERE 1=1" . $ordCond . "
+        GROUP BY s.id, s.title
+        ORDER BY total_collected DESC
+        LIMIT 10", $ordParams)->fetchAll();
+  } catch (Throwable $e) {}
+}
+if (empty($productsBreakdown)) {
+  $productsBreakdown = [
+    ['title' => 'استندهای تبریک و تسلیت خیریه', 'total_collected' => $ordersTotal]
+  ];
+}
 
 /* ---------- تراکنش‌های اخیر (فقط پرداخت‌های موفق) ---------- */
 $tx = [];
@@ -233,7 +276,7 @@ $monthChartData = build_monthly_series($don);
 
 $SERVER = [
   'distribution' => [
-    'labels' => ['کمک آنلاین مستقیم', 'کمپین‌ها', 'دوره‌ها (موقتاً صفر)', 'سفارش‌ها (موقتاً صفر)'],
+    'labels' => ['کمک آنلاین مستقیم', 'کمپین‌ها', 'استندها و سفارشات', 'دوره‌های آموزشی'],
     'data' => [$onlineHelpTotal, $campaignHelpTotal, $coursesTotal, $ordersTotal]
   ],
   'monthly' => $monthChartData,
@@ -442,6 +485,101 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   .card{padding:18px 16px}
   .stat-card{padding:18px 16px}
   .fm-head h1{font-size:19px}
+}
+
+/* ============ نوار ابزار فوقانی مستقل مسئول مالی ============ */
+.fm-topbar {
+  height: 70px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.fm-tb-brand { display: flex; align-items: center; gap: 12px; }
+.fm-tb-logo {
+  width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
+  color: #fff; font-weight: 900; font-size: 16px; display: grid; place-items: center; box-shadow: 0 8px 16px -6px rgba(0,102,101,.6);
+}
+.fm-tb-meta strong { font-size: 14.5px; font-weight: 800; display: block; color: var(--color-text); }
+.fm-tb-meta span { font-size: 11.5px; color: var(--color-muted); display: block; margin-top: 1px; }
+
+.fm-tb-branch {
+  display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: #5b6469; background: var(--color-bg);
+  padding: 7px 16px; border-radius: 99px; border: 1px solid var(--color-border);
+}
+.fm-tb-branch .ic { width: 16px; height: 16px; color: var(--color-primary); }
+.fm-tb-branch b { color: var(--color-primary-dark); font-weight: 800; }
+
+.fm-tb-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn-quick-excel {
+  display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: 11px;
+  background: linear-gradient(135deg,#107c41,#0b5a2f); color: #fff; font-weight: 700; font-size: 12.5px;
+  box-shadow: 0 6px 16px -6px rgba(16,124,65,.8); text-decoration: none; transition: transform .15s, box-shadow .2s;
+}
+.btn-quick-excel:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -6px rgba(16,124,65,.9); color:#fff; }
+.btn-quick-excel svg { width: 17px; height: 17px; }
+
+.fm-tb-icon-btn {
+  width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--color-border); background: var(--color-bg);
+  color: var(--color-text); display: grid; place-items: center; cursor: pointer; transition: background .2s;
+}
+.fm-tb-icon-btn:hover { background: var(--primary-08); color: var(--color-primary-dark); }
+.fm-tb-icon-btn svg { width: 18px; height: 18px; }
+
+.btn-back-dash {
+  display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 11px;
+  border: 1px solid var(--color-border); background: var(--color-bg); font-weight: 700; font-size: 12.5px;
+  color: var(--color-text); text-decoration: none; transition: all .2s;
+}
+.btn-back-dash:hover { background: var(--primary-08); border-color: var(--color-primary-light); color: var(--color-primary-dark); }
+.btn-back-dash svg { width: 16px; height: 16px; }
+
+.fm-user-pill {
+  display: flex; align-items: center; gap: 9px; padding: 5px 12px 5px 6px; background: var(--color-bg);
+  border: 1px solid var(--color-border); border-radius: 12px;
+}
+.fm-user-av {
+  width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg,var(--color-primary-light),var(--color-primary));
+  color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 800;
+}
+.fm-user-info { text-align: right; line-height: 1.25; }
+.fm-user-name { font-size: 12px; font-weight: 700; display: block; }
+.fm-user-role { font-size: 10px; color: var(--color-primary); font-weight: 600; display: block; }
+
+.fm-logout-btn {
+  width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; color: var(--danger);
+  border: 1px solid rgba(224,85,107,.2); background: rgba(224,85,107,.06); text-decoration: none; transition: all .2s;
+}
+.fm-logout-btn:hover { background: rgba(224,85,107,.15); transform: translateY(-1px); }
+.fm-logout-btn svg { width: 18px; height: 18px; }
+
+/* نوار چیپ‌های فیلتر سریع */
+.fm-quick-filters {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0 24px; padding: 12px 18px;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; box-shadow: var(--shadow-sm);
+}
+.fm-qf-label { font-size: 12px; font-weight: 700; color: var(--color-muted); margin-inline-end: 6px; }
+.fm-chip {
+  padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; color: var(--color-text);
+  border: 1px solid var(--color-border); background: var(--color-bg); text-decoration: none; transition: all .2s;
+}
+.fm-chip:hover { border-color: var(--color-primary-light); color: var(--color-primary-dark); }
+.fm-chip.active { background: linear-gradient(135deg,var(--color-primary),var(--color-primary-dark)); color: #fff; border-color: transparent; font-weight: 700; box-shadow: 0 4px 12px -4px rgba(0,123,122,.6); }
+.fm-chip.custom-btn { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+.fm-chip.custom-btn svg { width: 14px; height: 14px; color: var(--color-secondary); }
+
+@media (max-width: 900px) {
+  .fm-topbar { flex-direction: column; height: auto; padding: 14px 16px; gap: 12px; align-items: stretch; }
+  .fm-tb-brand { justify-content: space-between; }
+  .fm-tb-actions { flex-wrap: wrap; justify-content: flex-end; }
 }
 
 /* ============ چاپِ گزارش ============ */
@@ -665,7 +803,70 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 </head>
 <body>
 
-<main class="content">
+  <!-- سربرگ جامع پنل مالی -->
+  <header class="fm-topbar">
+    <div class="fm-tb-brand">
+      <div class="fm-tb-logo">مکسا</div>
+      <div class="fm-tb-meta">
+        <strong>خیریه مکسا</strong>
+        <span>سامانه نظارت، مدیریت و گزارش‌های مالی</span>
+      </div>
+    </div>
+
+    <div class="fm-tb-branch">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+      <span>شعبه: <b><?= e($ACTIVE_BRANCH_ROW['name'] ?? 'دفتر مرکزی') ?></b></span>
+    </div>
+
+    <div class="fm-tb-actions">
+      <!-- دکمه خروجی اکسل چند شیته -->
+      <a href="financial-export.php?format=excel<?= $startDate ? '&start_date=' . urlencode($startDate) : '' ?><?= $endDate ? '&end_date=' . urlencode($endDate) : '' ?>" class="btn-quick-excel" title="دانلود فایل اکسل چند کاربرگی شامل ریز تراکنش‌ها و خلاصه">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="20" x2="8" y2="13"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+        <span>دانلود اکسل چند شیته</span>
+      </a>
+
+      <!-- دکمه تغییر تم -->
+      <button type="button" class="fm-tb-icon-btn" onclick="toggleMaxaTheme()" title="تغییر تم تاریک / روشن">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+
+      <?php if (!dash_is_finance_only()): ?>
+      <a href="index.php" class="btn-back-dash" title="بازگشت به داشبورد عمومی">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>داشبورد اصلی</span>
+      </a>
+      <?php endif; ?>
+
+      <div class="fm-user-pill">
+        <div class="fm-user-av"><?= e(mb_substr($DASH_USER['full_name'] ?: $DASH_USER['username'], 0, 2, 'UTF-8')) ?></div>
+        <div class="fm-user-info">
+          <span class="fm-user-name"><?= e($DASH_USER['full_name'] ?: $DASH_USER['username']) ?></span>
+          <span class="fm-user-role"><?= e(dash_is_finance_only() ? 'مسئول مالی' : (dash_is_super() ? 'مدیر مرکزی' : 'مدیر شعبه')) ?></span>
+        </div>
+      </div>
+
+      <a href="logout.php" class="fm-logout-btn" title="خروج از حساب">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- نوار چیپ‌های فیلتر سریع زمانی -->
+    <div class="fm-quick-filters">
+      <span class="fm-qf-label">بازه زمانی سریع:</span>
+      <a href="financial-management.php" class="fm-chip <?= (!$startDate && !$endDate)?'active':'' ?>">کل دوره</a>
+      <a href="financial-management.php?start_date=<?= date('Y-m-d') ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-d') && $endDate === date('Y-m-d'))?'active':'' ?>">امروز</a>
+      <a href="financial-management.php?start_date=<?= date('Y-m-d', strtotime('-7 days')) ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-d', strtotime('-7 days')) && $endDate === date('Y-m-d'))?'active':'' ?>">۷ روز اخیر</a>
+      <a href="financial-management.php?start_date=<?= date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-d', strtotime('-30 days')) && $endDate === date('Y-m-d'))?'active':'' ?>">۳۰ روز اخیر</a>
+      <a href="financial-management.php?start_date=<?= date('Y-m-01') ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-01') && $endDate === date('Y-m-d'))?'active':'' ?>">ماه جاری</a>
+      <button type="button" class="fm-chip custom-btn" onclick="openReportModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        فیلتر پیشرفته و سایر فرمت‌ها...
+      </button>
+    </div>
+
 
   <header class="fm-head">
     <div class="fm-head-ic">
@@ -1067,25 +1268,38 @@ $(document).ready(function() {
   }
 });
 
+window.toggleMaxaTheme = function() {
+  const current = localStorage.getItem('maxa-theme');
+  const next = (current === 'dark') ? 'light' : 'dark';
+  localStorage.setItem('maxa-theme', next);
+  if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+};
+
 window.handleGenerateReport = function(e) {
   e.preventDefault();
   const form = e.target;
   const format = form.format.value;
-  const reportDetail = form.reportDetail.value;
+  const reportType = form.reportType.value;
   
   const start = window.selectedStartDateGregorian || '';
   const end = window.selectedEndDateGregorian || '';
   
-  closeReportModal();
-  
-  // Clear dates in window if inputs were cleared manually
   const startInputVal = document.getElementById('startDate').value;
   const endInputVal = document.getElementById('endDate').value;
   const finalStart = startInputVal ? start : '';
   const finalEnd = endInputVal ? end : '';
   
-  // Redirect page with date queries and format selection
-  window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}&format=${format}&detail=${reportDetail}`;
+  closeReportModal();
+
+  if (format === 'excel' || format === 'csv') {
+    showToast('در حال دانلود فایل خروجی ' + (format === 'excel' ? 'اکسل چند کاربرگی' : 'CSV') + '...', 'success');
+    window.location.href = `financial-export.php?start_date=${finalStart}&end_date=${finalEnd}&source=${reportType}&format=${format}`;
+  } else if (format === 'pdf') {
+    window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}&format=pdf`;
+  } else {
+    window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}`;
+  }
 };
 
 function triggerExcelDownload() {
