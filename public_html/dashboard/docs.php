@@ -409,11 +409,63 @@ body::before {
   border: 1px solid var(--primary-14);
 }
 
-/* کلید جستجو در هدر (Liquid Glass Style) */
+/* ==========================================================================
+   نوار جستجو با افکت پالس نوری داخلی مونوکروم (Libraries.dev Border Beam)
+   Family: Pulse | Type: Pulse Inner | Color: Mono | Duration: 1.96s
+   ========================================================================== */
+@keyframes beamPulseInnerMono {
+  0% {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.25),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 5px rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.4),
+      inset 0 0 0 1.5px rgba(255, 255, 255, 0.85),
+      inset 0 0 16px rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.25),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 5px rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+@keyframes beamPulseInnerMonoLight {
+  0% {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.03),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+      inset 0 0 4px rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.06),
+      inset 0 0 0 1.5px rgba(30, 41, 59, 0.45),
+      inset 0 0 14px rgba(30, 41, 59, 0.07);
+    border-color: rgba(30, 41, 59, 0.35);
+  }
+  100% {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.03),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+      inset 0 0 4px rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+}
+
 .search-trigger-btn {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 99px;
   padding: 8px 16px;
@@ -426,18 +478,22 @@ body::before {
   transition: all 0.25s var(--ease);
   font-family: inherit;
   font-size: 13px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.8);
+  animation: beamPulseInnerMonoLight 1.96s ease-in-out infinite;
+  overflow: hidden;
 }
+
 :root[data-theme="dark"] .search-trigger-btn {
-  background: rgba(20, 27, 38, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+  background: rgba(20, 27, 38, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  animation: beamPulseInnerMono 1.96s ease-in-out infinite;
 }
+
 .search-trigger-btn:hover {
-  border-color: var(--color-primary);
   color: var(--color-text);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+  animation-duration: 1.2s;
 }
+
 .search-trigger-btn kbd {
   margin-inline-start: auto;
   background: var(--kbd-bg);
@@ -447,6 +503,14 @@ body::before {
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--color-text-muted);
+}
+
+/* پالس نوری داخلی برای کادر ورودی مودال جستجو (Ctrl+K) */
+.search-modal-box .search-input-wrap {
+  animation: beamPulseInnerMonoLight 1.96s ease-in-out infinite;
+}
+:root[data-theme="dark"] .search-modal-box .search-input-wrap {
+  animation: beamPulseInnerMono 1.96s ease-in-out infinite;
 }
 
 /* اکشن‌های هدر */
@@ -473,137 +537,23 @@ body::before {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
+
 /* ==========================================================================
-   دکمه تم شب/روز با رینگ متالیک مایع و افکت ذوب گووی
-   (Libraries.dev Metal Chromatic Ring + Gooey Melt)
+   دکمه تم حالت شب/روز لمسی گووی و ترنزیشن ذوب‌شدن (Libraries.dev Gooey Melt)
    ========================================================================== */
-.metal-btn-wrapper {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2.5px;
-  overflow: visible;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* رینگ متالیک با تجزیه نوری کروماتیک (Metal Chromatic Ring) */
-.metal-chromatic-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from var(--metal-angle, 135deg),
-    #ffffff 0%,
-    #aae8ff 10%,
-    #747270 22%,
-    #f7888d 36%,
-    #0d0d0d 48%,
-    #fffdc3 60%,
-    #c5fe9e 72%,
-    #007cff 84%,
-    #ffffff 100%
-  );
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.25),
-    0 0 10px -2px rgba(170, 232, 255, 0.35);
-  animation: metalRingRotate 12s linear infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-:root[data-theme="dark"] .metal-chromatic-ring {
-  background: conic-gradient(
-    from var(--metal-angle, 135deg),
-    #ffffff 0%,
-    #aae8ff 12%,
-    #dedede 22%,
-    #0d0d0d 38%,
-    #f7888d 50%,
-    #fffdc3 65%,
-    #007cff 78%,
-    #747270 88%,
-    #ffffff 100%
-  );
-  box-shadow:
-    0 3px 12px rgba(0, 0, 0, 0.6),
-    0 0 14px -1px rgba(170, 232, 255, 0.3);
-}
-
-@keyframes metalRingRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* لکه درخشش اسپکولار در بالا-چپ رینگ (Specular Glint / Flare) مطابق اسکرین‌شات */
-.metal-glint {
-  position: absolute;
-  top: -1px;
-  left: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 35%,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.65) 30%,
-    rgba(170, 232, 255, 0.35) 55%,
-    transparent 80%
-  );
-  filter: blur(0.7px);
-  pointer-events: none;
-  z-index: 4;
-  opacity: 0.92;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.metal-btn-wrapper:hover {
-  transform: scale(1.08);
-}
-
-.metal-btn-wrapper:hover .metal-chromatic-ring {
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.35),
-    0 0 18px -1px rgba(170, 232, 255, 0.6);
-}
-
-:root[data-theme="dark"] .metal-btn-wrapper:hover .metal-chromatic-ring {
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.7),
-    0 0 20px 0px rgba(170, 232, 255, 0.5);
-}
-
-.metal-btn-wrapper:hover .metal-glint {
-  opacity: 1;
-  transform: scale(1.25) translate(-1px, -1px);
-  filter: blur(0.4px);
-}
-
-.metal-btn-wrapper:active {
-  transform: scale(0.93);
-}
-
-/* دکمه گووی داخل رینگ متالیک */
 .gooey-theme-btn {
   position: relative;
-  z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.1),
-    inset 0 1.5px 2px rgba(255, 255, 255, 1),
-    inset 0 -1.5px 2px rgba(0, 0, 0, 0.08);
+    0 3px 12px rgba(0, 0, 0, 0.07),
+    inset 0 1px 1.5px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -613,18 +563,43 @@ body::before {
   overflow: visible;
   flex-shrink: 0;
   color: #1e293b;
-  transition: background 0.3s ease, box-shadow 0.25s ease, color 0.25s ease;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.3s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 :root[data-theme="dark"] .gooey-theme-btn {
-  background: #141b26;
+  background: rgba(26, 34, 48, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: #f1f5f9;
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1.5px rgba(255, 255, 255, 0.16),
-    inset 0 -1.5px 3px rgba(0, 0, 0, 0.7);
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.5);
+}
+
+.gooey-theme-btn:hover {
+  transform: scale(1.08);
+  border-color: var(--color-primary);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 0 14px -2px var(--color-primary),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+}
+
+:root[data-theme="dark"] .gooey-theme-btn:hover {
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.6),
+    0 0 16px -2px var(--color-primary),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.25);
+}
+
+.gooey-theme-btn:active {
+  transform: scale(0.92);
 }
 
 /* لایه محفظه ذوب مایع گووی درون کلید (Gooey Melt Stage) */
@@ -2385,33 +2360,29 @@ body::before {
   </div>
 
   <div class="header-left">
-    <!-- کلید تغییر حالت شب/روز با رینگ متالیک مایع (Libraries.dev Metal Chromatic Ring) و افکت ذوب (Gooey Melt) -->
-    <div class="metal-btn-wrapper" id="metalBtnWrapper" title="تغییر حالت شب و روز">
-      <div class="metal-chromatic-ring" aria-hidden="true"></div>
-      <div class="metal-glint" aria-hidden="true"></div>
-      <button class="gooey-theme-btn" id="themeToggleBtn" type="button" aria-label="تغییر حالت شب و روز" title="تغییر حالت شب و روز">
-        <div class="gooey-melt-wrapper">
-          <span class="gooey-blob blob-primary"></span>
-          <span class="gooey-blob blob-secondary"></span>
-        </div>
-        <div class="gooey-icon-container">
-          <svg id="themeIconSun" class="gooey-theme-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-          <svg id="themeIconMoon" class="gooey-theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </div>
-      </button>
-    </div>
+    <!-- کلید تغییر حالت شب/روز لمسی گووی و ترنزیشن ذوب‌شدن (Libraries.dev Gooey Melt) -->
+    <button class="gooey-theme-btn" id="themeToggleBtn" type="button" aria-label="تغییر حالت شب و روز" title="تغییر حالت شب و روز">
+      <div class="gooey-melt-wrapper">
+        <span class="gooey-blob blob-primary"></span>
+        <span class="gooey-blob blob-secondary"></span>
+      </div>
+      <div class="gooey-icon-container">
+        <svg id="themeIconSun" class="gooey-theme-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="themeIconMoon" class="gooey-theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+    </button>
 
     <!-- بازگشت به پیشخوان مدیریت -->
     <a href="index.php" class="header-btn header-btn-primary" target="_top" title="بازگشت به پیشخوان مدیریت">
@@ -2691,35 +2662,6 @@ function initTheme() {
     document.documentElement.removeAttribute('data-theme');
   }
   updateThemeIcons(isDark);
-}
-
-// تعامل پویا با رینگ متالیک دور کلید تم (Libraries.dev Metal Ring Interaction)
-const metalBtnWrapper = document.getElementById('metalBtnWrapper');
-if (metalBtnWrapper) {
-  metalBtnWrapper.addEventListener('click', (e) => {
-    if (e.target !== themeToggleBtn && !themeToggleBtn.contains(e.target)) {
-      themeToggleBtn.click();
-    }
-  });
-
-  metalBtnWrapper.addEventListener('mousemove', (e) => {
-    const rect = metalBtnWrapper.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    const angle = Math.round(Math.atan2(y, x) * (180 / Math.PI) + 90);
-    const ring = metalBtnWrapper.querySelector('.metal-chromatic-ring');
-    if (ring) {
-      ring.style.setProperty('--metal-angle', `${angle}deg`);
-      ring.style.animationPlayState = 'paused';
-    }
-  });
-
-  metalBtnWrapper.addEventListener('mouseleave', () => {
-    const ring = metalBtnWrapper.querySelector('.metal-chromatic-ring');
-    if (ring) {
-      ring.style.animationPlayState = 'running';
-    }
-  });
 }
 
 themeToggleBtn.addEventListener('click', (e) => {
