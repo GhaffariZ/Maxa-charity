@@ -22,7 +22,7 @@ final class ProfileRepository
         $stmt = $this->db->prepare(
             'SELECT u.id, u.email, u.email_verified_at, u.status, u.created_at AS member_since,
                     u.last_login_at,
-                    p.first_name, p.last_name, p.phone, p.avatar_url, p.postal_address,
+                    p.first_name, p.last_name, p.national_code, p.phone, p.avatar_url, p.postal_address,
                     p.timezone, p.locale, p.kindness_points,
                     t.slug AS tier_slug, t.name_fa AS tier_name
                FROM panel_users u

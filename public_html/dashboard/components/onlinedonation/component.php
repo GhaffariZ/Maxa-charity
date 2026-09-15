@@ -1112,10 +1112,21 @@
         throw new Error(errorMsg);
       }
 
-      // Save token for authenticated session in donor dashboard
+      // Save token and donor profile for authenticated session in donor dashboard
       if (data?.data?.access_token) {
         localStorage.setItem('maksa_access_token', data.data.access_token);
       }
+      try {
+        const profile = {
+          first_name: vals.first_name || '',
+          last_name: vals.last_name || '',
+          full_name: [vals.first_name, vals.last_name].filter(Boolean).join(' ').trim(),
+          phone: vals.phone || '',
+          national_code: vals.national_code || '',
+          email: ''
+        };
+        localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
+      } catch (e) {}
 
       // Hand off to the bank gateway
       if (data?.data?.redirect_url) {
@@ -1129,5 +1140,55 @@
       submitBtn.disabled = false;
       submitBtn.innerHTML = origText;
     }
+  }
+
+  // تکمیل خودکار مشخصات نیکوکار از اطلاعات پنل نیکوکاران (Benefactor Panel)
+  function applyBenefactorAutofill() {
+    function fillInputs(u) {
+      if (!u) return;
+      const fnInput = document.querySelector('.donation-form [name="first_name"]');
+      const lnInput = document.querySelector('.donation-form [name="last_name"]');
+      const phoneInput = document.getElementById('donorPhone');
+      const ncInput = document.getElementById('donorNationalCode');
+
+      if (fnInput && u.first_name && !fnInput.value) fnInput.value = u.first_name;
+      if (lnInput && u.last_name && !lnInput.value) lnInput.value = u.last_name;
+      if (phoneInput && u.phone && !phoneInput.value) phoneInput.value = u.phone;
+      if (ncInput && u.national_code && !ncInput.value) ncInput.value = u.national_code;
+    }
+
+    try {
+      const raw = localStorage.getItem('maksa_benefactor_user');
+      if (raw) {
+        fillInputs(JSON.parse(raw));
+      } else {
+        const token = localStorage.getItem('maksa_access_token');
+        const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+        fetch('/api/user/me', { headers, credentials: 'include' })
+          .then(res => res.ok ? res.json() : null)
+          .then(json => {
+            const u = json?.data?.user;
+            if (u) {
+              const profile = {
+                first_name: u.first_name || '',
+                last_name: u.last_name || '',
+                full_name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
+                phone: u.phone || '',
+                national_code: u.national_code || '',
+                email: u.email || ''
+              };
+              localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
+              fillInputs(profile);
+            }
+          })
+          .catch(() => {});
+      }
+    } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyBenefactorAutofill);
+  } else {
+    applyBenefactorAutofill();
   }
 </script>
