@@ -50,6 +50,12 @@ if ($branch) {
         exit;
     }
 
+    // 1-a3) معرفی شعبه: /{branch}/about یا /{branch}/intro
+    if ($sub === 'about' || $sub === 'intro') {
+        render_branch_components($pdo, ['header', 'branch-intro', 'footer'], $branchSlug, $branchName, 'معرفی شعبه ' . $branchName);
+        exit;
+    }
+
     // 1-b) مسیر داخلیِ صفحه‌ی دلخواهِ شعبه: /{branch}/{page-slug}
     if ($sub !== '') {
         render_page_by_slug($pdo, $branchId, $sub, $branchSlug, $branchName);
