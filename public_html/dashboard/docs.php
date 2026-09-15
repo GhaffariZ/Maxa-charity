@@ -1681,76 +1681,59 @@ body::before {
   pointer-events: none;
 }
 
-/* ۲. نوار دسترسی سریع و چیپ کپی مسیر سند (Command & Quick Resource Bar) */
-.doc-quick-bar {
+/* ۲. پاورقی متادیتای سند در پایان مقاله (Article Footer Meta) */
+.article-footer-meta {
+  margin-top: 42px;
   margin-bottom: 24px;
-  padding: 11px 16px;
+  padding: 12px 16px;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 0 0 1px rgba(196,196,196,0.05);
-  transition: transform 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
-.doc-quick-bar:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-.doc-quick-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 200px;
-}
-.doc-quick-badge {
+.footer-doc-info {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  border-radius: 99px;
-  font-size: 11.5px;
-  font-weight: 700;
-  background: var(--primary-08);
+  gap: 8px;
+  color: var(--color-text-muted);
+}
+.footer-doc-info svg {
   color: var(--color-primary);
-  border: 1px solid var(--primary-14);
   flex-shrink: 0;
 }
-.doc-quick-snippet {
+.footer-doc-path {
   font-family: 'JetBrains Mono', 'Rooyin', monospace;
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: var(--color-text);
   background: var(--code-bg);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 6px;
   border: 1px solid var(--color-border-subtle);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   direction: ltr;
-  text-align: left;
-  max-width: clamp(140px, 35vw, 320px);
+  display: inline-block;
 }
-.doc-quick-copy-btn {
-  background: var(--color-surface);
+.footer-copy-path-btn {
+  background: none;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 5px 12px;
-  font-size: 12px;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-muted);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   transition: all 0.2s var(--ease-smooth);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
-.doc-quick-copy-btn:hover {
+.footer-copy-path-btn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: var(--primary-08);
@@ -2420,21 +2403,6 @@ body::before {
         </div>
       </div>
 
-      <!-- نوار دسترسی سریع و چیپ کپی مسیر سند (Quick Resource & Command Bar با افکت Border Beam) -->
-      <div class="doc-quick-bar border-beam-card" id="docQuickBar">
-        <div class="doc-quick-info">
-          <span class="doc-quick-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span>شناسه سند</span>
-          </span>
-          <span class="doc-quick-snippet" id="docQuickPath"><?= htmlspecialchars($currentDoc, ENT_QUOTES, 'UTF-8') ?></span>
-        </div>
-        <button class="doc-quick-copy-btn" id="docQuickCopyBtn" type="button" title="کپی مسیر سریع این سند">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span>کپی مسیر سند</span>
-        </button>
-      </div>
-
       <!-- جعبه آکاردئونی فهرست مطالب درون مقاله برای موبایل و تبلت -->
       <div class="mobile-inline-toc" id="mobileInlineToc">
         <div class="mobile-inline-toc-header" id="mobileInlineTocHeader">
@@ -2451,6 +2419,19 @@ body::before {
 
       <!-- بدنه اصلی مارک‌داون -->
       <article class="markdown-body" id="markdownContent"></article>
+
+      <!-- پاورقی متادیتا و مسیر سورس سند -->
+      <div class="article-footer-meta">
+        <div class="footer-doc-info">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>منبع سند:</span>
+          <code class="footer-doc-path" id="docQuickPath"><?= htmlspecialchars($currentDoc, ENT_QUOTES, 'UTF-8') ?></code>
+        </div>
+        <button class="footer-copy-path-btn" id="docQuickCopyBtn" type="button" title="کپی مسیر فایل در مخزن">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>کپی مسیر سورس</span>
+        </button>
+      </div>
 
 
       <!-- ناوبری صفحه قبلی و بعدی -->
