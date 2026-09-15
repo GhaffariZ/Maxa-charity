@@ -282,6 +282,38 @@ final class AuthController
         Response::success(['message' => 'رمز عبور با موفقیت تغییر کرد. لطفاً دوباره وارد شوید.']);
     }
 
+    // ---- POST /auth/login-otp ----------------------------------------------
+    public function loginWithOtp(Request $request): void
+    {
+        $data = (new Validator($request->body))
+            ->string('phone', min: 10, max: 20)
+            ->string('code', min: 4, max: 8)
+            ->validated();
+
+        $ip    = $request->ip();
+        $ua    = $request->userAgent();
+        $phone = \Maksa\Services\OtpService::normalizePhone($data['phone']);
+
+        (new \Maksa\Services\OtpService())->verify($phone, $data['code'], 'login');
+
+        $res    = $this->users->createOrGetDonorByPhone($phone);
+        $userId = $res['id'];
+
+        $user = $this->users->findById($userId);
+        if ($user !== null && $user['status'] === 'suspended') {
+            throw ApiException::forbidden('حساب کاربری شما مسدود شده است.', 'account_suspended');
+        }
+
+        $this->users->recordSuccessfulLogin($userId, $ip);
+        Audit::log($userId, 'login_otp', $ip, $ua);
+
+        (new \Maksa\Services\Crm\CrmService())->syncDonor($userId, [
+            'phone' => $phone,
+        ]);
+
+        $this->issueSession($userId, $ip, $ua);
+    }
+
     // ---- helpers ------------------------------------------------------------
 
     private function issueSession(int $userId, string $ip, string $ua): never
