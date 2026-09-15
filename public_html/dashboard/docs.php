@@ -2207,14 +2207,42 @@ body::before {
     transform: translateX(0);
   }
 
+  .docs-header {
+    padding: 0 14px;
+    gap: 8px;
+  }
+  .header-left, .header-right, .header-center {
+    gap: 8px;
+  }
+
   .search-trigger-btn {
     width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
     border-radius: 50%;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+  }
+  .search-trigger-btn svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
   }
   .search-trigger-btn span, .search-trigger-btn kbd {
     display: none;
+  }
+
+  .gooey-theme-btn {
+    flex-shrink: 0;
+  }
+  .mobile-menu-btn {
+    flex-shrink: 0;
   }
 
   .docs-main-container {
@@ -2224,10 +2252,64 @@ body::before {
 
 /* ۳. گوشی‌های با صفحه کوچک‌تر (زیر 520px) */
 @media (max-width: 520px) {
+  .docs-header {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .header-left, .header-right, .header-center {
+    gap: 6px;
+  }
+  .docs-header .metal-badge { display: none; }
   .version-badge { display: none; }
   .brand-sub { display: none; }
-  .brand-title { font-size: 14.5px; }
-  
+  .brand-title { font-size: 13.5px; white-space: nowrap; }
+  .brand-icon { width: 34px; height: 34px; border-radius: 8px; }
+  .brand-icon svg { width: 18px; height: 18px; }
+  .brand-wrap { gap: 6px; }
+
+  .mobile-menu-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .search-trigger-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    flex-shrink: 0;
+  }
+  .search-trigger-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .gooey-theme-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    flex-shrink: 0;
+  }
+
+  .header-btn-primary span {
+    display: none;
+  }
+  .header-btn-primary {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
   .article-pagination {
     grid-template-columns: 1fr;
   }
@@ -2240,15 +2322,16 @@ body::before {
     width: 100%;
     justify-content: flex-end;
   }
+}
 
-  .header-btn-primary span {
-    display: none;
-  }
-  .header-btn-primary {
-    width: 38px;
-    padding: 0;
-    justify-content: center;
-    border-radius: 50%;
+/* ۴. صفحات خیلی کوچک موبایل (زیر 380px) */
+@media (max-width: 380px) {
+  .brand-title {
+    font-size: 12.5px;
+    max-width: 76px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 </style>
