@@ -937,10 +937,35 @@ body::before {
 
 .callout-caution {
   background: var(--callout-caution-bg);
-  border-color: var(--callout-caution-border);
+  border: 1px solid var(--callout-caution-border);
+  border-inline-start: 4px solid var(--callout-caution-border);
   color: var(--color-text);
+  box-shadow: 0 4px 20px -4px rgba(248, 81, 73, 0.2);
 }
-.callout-caution .callout-title { color: var(--callout-caution-border); }
+.callout-caution .callout-title {
+  color: var(--callout-caution-border);
+  font-weight: 800;
+  font-size: 14.5px;
+}
+.callout-caution .callout-title svg {
+  color: var(--callout-caution-border);
+  filter: drop-shadow(0 0 5px rgba(248, 81, 73, 0.5));
+}
+.callout-caution ul {
+  margin-top: 8px;
+  margin-bottom: 0;
+  padding-inline-start: 22px;
+}
+.callout-caution li {
+  margin: 6px 0;
+  line-height: 1.85;
+}
+.callout-caution strong {
+  color: #ff6b6b;
+}
+:root:not([data-theme="dark"]) .callout-caution strong {
+  color: #b91c1c;
+}
 
 /* جداول واکنش‌گرا */
 .table-container {
@@ -2236,7 +2261,7 @@ body::before {
 </div>
 
 <!-- متن سند اولیه برای لود صفر تأخیر -->
-<script type="text/markdown" id="rawInitialContent"><?= htmlspecialchars($initialContent, ENT_QUOTES, 'UTF-8') ?></script>
+<textarea id="rawInitialContent" style="display:none;" aria-hidden="true"><?= htmlspecialchars($initialContent, ENT_QUOTES, 'UTF-8') ?></textarea>
 
 <script>
 /* ==========================================================================
@@ -2510,28 +2535,53 @@ function processCustomMarkdownElements(html, currentDocId) {
   const alertTypes = {
     'NOTE':      { cls: 'callout-note',      title: 'یادداشت',         icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' },
     'TIP':       { cls: 'callout-tip',       title: 'نکته کاربردی',     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>' },
-    'IMPORTANT': { cls: 'callout-important', title: 'مهم',             icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' },
+    'IMPORTANT': { cls: 'callout-important', title: 'مهم و الزامی',    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' },
     'WARNING':   { cls: 'callout-warning',   title: 'هشدار و توجه',    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
-    'CAUTION':   { cls: 'callout-caution',   title: 'احتیاط و امنیت',   icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' }
+    'CAUTION':   { cls: 'callout-caution',   title: 'احتیاط و هشدار امنیتی', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
+    'DANGER':    { cls: 'callout-caution',   title: 'خطر و هشدار امنیتی',   icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' }
   };
 
   const container = document.createElement('div');
   container.innerHTML = html;
 
-  // ۱. تبدیل Calloutهای گیت‌هاب
+  // ۱. تبدیل Calloutهای گیت‌هاب (Blockquote)
   container.querySelectorAll('blockquote').forEach(bq => {
     const text = bq.innerHTML.trim();
     for (const [key, cfg] of Object.entries(alertTypes)) {
-      const regex = new RegExp(`\\[!${key}\\]`, 'i');
+      const regex = new RegExp(`\\[!?${key}!?\\]`, 'i');
       if (regex.test(text)) {
-        const cleanHtml = text.replace(regex, '').replace(/^<p>\s*<\/p>/, '').trim();
+        let cleanHtml = text.replace(regex, '')
+                            .replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '')
+                            .replace(/^>\s*/gm, '')
+                            .trim();
         const callout = document.createElement('div');
         callout.className = `callout ${cfg.cls}`;
         callout.innerHTML = `
           <div class="callout-title">${cfg.icon} <span>${cfg.title}</span></div>
-          <div>${cleanHtml}</div>
+          <div class="callout-body">${cleanHtml}</div>
         `;
         bq.replaceWith(callout);
+        break;
+      }
+    }
+  });
+
+  // ۱.ب) تبدیل فال‌بک برای مواردی که کادر هشدار به جای blockquote در پاراگراف یا لیست آمده است
+  container.querySelectorAll('p').forEach(p => {
+    const text = p.innerHTML.trim();
+    for (const [key, cfg] of Object.entries(alertTypes)) {
+      const regex = new RegExp(`^(?:&gt;|>)?\\s*\\[!?${key}!?\\]`, 'i');
+      if (regex.test(text)) {
+        let cleanHtml = text.replace(regex, '')
+                            .replace(/^(?:&gt;|>|\*|-)\s*/gm, '')
+                            .trim();
+        const callout = document.createElement('div');
+        callout.className = `callout ${cfg.cls}`;
+        callout.innerHTML = `
+          <div class="callout-title">${cfg.icon} <span>${cfg.title}</span></div>
+          <div class="callout-body">${cleanHtml}</div>
+        `;
+        p.replaceWith(callout);
         break;
       }
     }
@@ -3097,6 +3147,11 @@ async function renderAllMermaidDiagrams() {
 }
 
 function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
+  let md = rawMarkdown || '';
+  if (md.includes('&gt;') || md.includes('&lt;')) {
+    md = md.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+  }
+
   let html = '';
   if (window.marked) {
     marked.setOptions({
@@ -3115,9 +3170,9 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
         return code;
       }
     });
-    html = marked.parse(rawMarkdown);
+    html = marked.parse(md);
   } else {
-    html = rawMarkdown
+    html = md
       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
@@ -3450,7 +3505,13 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSidebarNav();
   setupMarkdownContentDelegation();
 
-  const initialRaw = document.getElementById('rawInitialContent').textContent;
+  const rawInitialEl = document.getElementById('rawInitialContent');
+  let initialRaw = rawInitialEl ? (rawInitialEl.value || rawInitialEl.textContent || '') : '';
+  if (initialRaw.includes('&gt;') || initialRaw.includes('&lt;') || initialRaw.includes('&amp;')) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = initialRaw;
+    initialRaw = txt.value;
+  }
   docCache[activeDocId] = initialRaw;
   const hash = window.location.hash.replace('#', '');
   renderMarkdownText(initialRaw, activeDocId, hash);
