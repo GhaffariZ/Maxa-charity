@@ -198,8 +198,12 @@ try {
 }
 
 $featured_path = '';
+$has_featured_image = false;
 if (!empty($news['featured_image']) && !empty($news['news_code'])) {
   $featured_path = "/uploads/news/{$news['news_code']}/" . $news['featured_image'];
+  if (file_exists($_SERVER['DOCUMENT_ROOT'] . $featured_path) || file_exists(__DIR__ . '/..' . $featured_path)) {
+    $has_featured_image = true;
+  }
 }
 $publishDateFa = formatJalaliDateTimeFa($news['publish_date'] ?? null);
 $totalViewsFa = faNumbers(number_format($total_views));
@@ -317,8 +321,106 @@ require_once __DIR__ . '/components/header/component.php';
         background: var(--news-card-bg);
         border: 1px solid var(--news-border);
         border-radius: 24px;
-        padding: 40px;
+        overflow: hidden;
         box-shadow: 0 10px 30px rgba(0,0,0,0.015);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* بنر عکس شاخص همراه با گرادیان مشکی و تیتر روی عکس */
+    .article-hero-banner {
+        position: relative;
+        width: 100%;
+        min-height: 400px;
+        max-height: 520px;
+        background-color: #0c121c;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    .article-hero-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .article-hero-banner:hover .article-hero-img {
+        transform: scale(1.02);
+    }
+    .article-hero-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.05) 0%,
+            rgba(0, 0, 0, 0.25) 30%,
+            rgba(12, 18, 28, 0.78) 65%,
+            rgba(12, 18, 28, 0.96) 100%
+        );
+        pointer-events: none;
+        z-index: 1;
+    }
+    .article-hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 40px 40px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        text-align: right;
+    }
+    .article-hero-category {
+        align-self: flex-start;
+        background: rgba(8, 153, 169, 0.92);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #ffffff;
+        padding: 6px 16px;
+        font-size: 12.5px;
+        font-weight: 800;
+        border-radius: 99px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .article-hero-title {
+        color: #ffffff;
+        font-size: clamp(22px, 3.2vw, 32px);
+        font-weight: 900;
+        line-height: 1.55;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+        letter-spacing: -0.02em;
+    }
+    .article-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        padding-top: 14px;
+        margin-top: 4px;
+    }
+    .article-hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    .article-hero-meta i {
+        color: var(--news-accent);
+        font-size: 14px;
+    }
+
+    /* بدنه مقاله */
+    .article-body-wrapper {
+        padding: 40px;
     }
     .article-header {
         text-align: right;
@@ -357,18 +459,6 @@ require_once __DIR__ . '/components/header/component.php';
     }
     .article-meta i {
         color: var(--news-accent);
-    }
-    .article-cover-image {
-        width: 100%;
-        border-radius: 16px;
-        overflow: hidden;
-        margin-bottom: 32px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-    }
-    .article-cover-image img {
-        width: 100%;
-        height: auto;
-        display: block;
     }
     .article-content {
         font-size: 17px;
@@ -811,8 +901,24 @@ require_once __DIR__ . '/components/header/component.php';
         .news-detail-wrapper {
             padding: 32px 16px 60px;
         }
-        .article-container {
-            padding: 24px;
+        .article-body-wrapper {
+            padding: 28px 20px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .article-hero-banner {
+            min-height: 300px;
+            max-height: 420px;
+        }
+        .article-hero-content {
+            padding: 24px 20px 20px;
+            gap: 10px;
+        }
+        .article-hero-meta {
+            gap: 12px;
+            font-size: 12px;
+            padding-top: 10px;
         }
     }
 </style>
@@ -831,43 +937,62 @@ require_once __DIR__ . '/components/header/component.php';
     <div class="news-detail-layout">
         
         <!-- ستون راست: متن خبر -->
-        <article class="article-container">
-            <header class="article-header">
-                <span class="article-category"><?= htmlspecialchars($news['category_name'] ?? 'اخبار') ?></span>
-                <h1 class="article-title"><?= htmlspecialchars($news['title']) ?></h1>
+        <article class="article-container <?= $has_featured_image ? 'has-hero' : 'no-hero' ?>">
+            <?php if ($has_featured_image): ?>
+                <header class="article-hero-banner">
+                    <img src="<?= htmlspecialchars($featured_path) ?>" alt="<?= htmlspecialchars($news['title']) ?>" class="article-hero-img">
+                    <div class="article-hero-gradient"></div>
+                    <div class="article-hero-content">
+                        <?php if (!empty($news['category_name'])): ?>
+                            <span class="article-hero-category"><?= htmlspecialchars($news['category_name']) ?></span>
+                        <?php endif; ?>
 
-                <div class="article-meta">
-                    <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
-                    <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
-                    <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
-                    <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
-                </div>
-            </header>
+                        <h1 class="article-hero-title"><?= htmlspecialchars($news['title']) ?></h1>
 
-            <?php if ($featured_path && file_exists($_SERVER['DOCUMENT_ROOT'] . $featured_path)): ?>
-                <figure class="article-cover-image">
-                    <img src="<?= htmlspecialchars($featured_path) ?>" alt="<?= htmlspecialchars($news['title']) ?>">
-                </figure>
+                        <div class="article-hero-meta">
+                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                        </div>
+                    </div>
+                </header>
             <?php endif; ?>
 
-            <section class="article-content">
-                <?= HtmlSanitizer::sanitize($news['content']) ?>
-            </section>
+            <div class="article-body-wrapper">
+                <?php if (!$has_featured_image): ?>
+                    <header class="article-header">
+                        <span class="article-category"><?= htmlspecialchars($news['category_name'] ?? 'اخبار') ?></span>
+                        <h1 class="article-title"><?= htmlspecialchars($news['title']) ?></h1>
 
-            <!-- تگ‌ها -->
-            <?php 
-            $custom_tags = !empty($news['keywords']) ? explode(',', $news['keywords']) : [];
-            $all_news_tags = array_unique(array_merge($db_tags, $custom_tags));
-            $all_news_tags = array_filter(array_map('trim', $all_news_tags));
-            if (!empty($all_news_tags)): 
-            ?>
-                <footer class="article-tags">
-                    <strong>برچسب‌ها:</strong>
-                    <?php foreach ($all_news_tags as $tag): ?>
-                        <a href="/news.php?q=<?= urlencode($tag) ?>" class="tag-chip"><?= htmlspecialchars($tag) ?></a>
-                    <?php endforeach; ?>
-                </footer>
-            <?php endif; ?>
+                        <div class="article-meta">
+                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                        </div>
+                    </header>
+                <?php endif; ?>
+
+                <section class="article-content">
+                    <?= HtmlSanitizer::sanitize($news['content']) ?>
+                </section>
+
+                <!-- تگ‌ها -->
+                <?php 
+                $custom_tags = !empty($news['keywords']) ? explode(',', $news['keywords']) : [];
+                $all_news_tags = array_unique(array_merge($db_tags, $custom_tags));
+                $all_news_tags = array_filter(array_map('trim', $all_news_tags));
+                if (!empty($all_news_tags)): 
+                ?>
+                    <footer class="article-tags">
+                        <strong>برچسب‌ها:</strong>
+                        <?php foreach ($all_news_tags as $tag): ?>
+                            <a href="/news.php?q=<?= urlencode($tag) ?>" class="tag-chip"><?= htmlspecialchars($tag) ?></a>
+                        <?php endforeach; ?>
+                    </footer>
+                <?php endif; ?>
+            </div>
         </article>
 
         <!-- ستون چپ: سایدبار -->
