@@ -33,6 +33,9 @@ $baseDocsDir = getDocsBaseDir();
 if (isset($_GET['raw']) && !empty($_GET['file'])) {
     // جلوگیری کامل از Path Traversal
     $reqFile = ltrim(str_replace(['\\', '..'], ['/', ''], (string)$_GET['file']), '/');
+    if (strpos($reqFile, 'docs/') === 0) {
+        $reqFile = substr($reqFile, 5);
+    }
 
     $candidates = [
         $baseDocsDir . '/' . $reqFile,
@@ -40,6 +43,10 @@ if (isset($_GET['raw']) && !empty($_GET['file'])) {
         __DIR__ . '/../../docs/' . $reqFile,
         realpath(__DIR__ . '/../docs') ? realpath(__DIR__ . '/../docs') . '/' . $reqFile : null,
         realpath(__DIR__ . '/../../docs') ? realpath(__DIR__ . '/../../docs') . '/' . $reqFile : null,
+        // فال‌بک برای فایل‌های بدون پوشه
+        $baseDocsDir . '/user-manual/' . $reqFile,
+        __DIR__ . '/../docs/user-manual/' . $reqFile,
+        __DIR__ . '/../../docs/user-manual/' . $reqFile,
     ];
 
     $resolvedPath = null;
@@ -48,6 +55,9 @@ if (isset($_GET['raw']) && !empty($_GET['file'])) {
         $real = realpath($cand);
         if ($real && file_exists($real) && preg_match('/\.md$/i', $real)) {
             $resolvedPath = $real;
+            break;
+        } elseif (file_exists($cand) && preg_match('/\.md$/i', $cand)) {
+            $resolvedPath = $cand;
             break;
         }
     }
@@ -71,17 +81,26 @@ if (isset($_GET['raw']) && !empty($_GET['file'])) {
 // سند پیش‌فرض اولیه
 $currentDoc = isset($_GET['doc']) ? trim((string)$_GET['doc']) : 'user-manual/README.md';
 $currentDoc = ltrim(str_replace(['\\', '..'], ['/', ''], $currentDoc), '/');
+if (strpos($currentDoc, 'docs/') === 0) {
+    $currentDoc = substr($currentDoc, 5);
+}
 
 $initialResolved = null;
 $checkFiles = [
     $baseDocsDir . '/' . $currentDoc,
     __DIR__ . '/../docs/' . $currentDoc,
-    __DIR__ . '/../../docs/' . $currentDoc
+    __DIR__ . '/../../docs/' . $currentDoc,
+    $baseDocsDir . '/user-manual/' . $currentDoc,
+    __DIR__ . '/../docs/user-manual/' . $currentDoc,
+    __DIR__ . '/../../docs/user-manual/' . $currentDoc,
 ];
 foreach ($checkFiles as $cf) {
     $real = realpath($cf);
     if ($real && file_exists($real) && preg_match('/\.md$/i', $real)) {
         $initialResolved = $real;
+        break;
+    } elseif (file_exists($cf) && preg_match('/\.md$/i', $cf)) {
+        $initialResolved = $cf;
         break;
     }
 }
@@ -97,6 +116,9 @@ if (!$initialResolved) {
         $real = realpath($ff);
         if ($real && file_exists($real)) {
             $initialResolved = $real;
+            break;
+        } elseif (file_exists($ff)) {
+            $initialResolved = $ff;
             break;
         }
     }
@@ -1739,9 +1761,66 @@ mobileInlineTocHeader.addEventListener('click', () => {
 });
 
 /* ==========================================================================
+   تشخیص و حل هوشمند مسیر فایل‌های پیوند (Path Resolver)
+   ========================================================================== */
+function resolveDocPath(currentDoc, relativeHref) {
+  if (!relativeHref) return { doc: currentDoc || 'user-manual/README.md', hash: '' };
+
+  const parts = relativeHref.split('#');
+  let targetPath = parts[0].replace(/\\/g, '/').trim();
+  const targetHash = parts[1] || '';
+
+  if (!targetPath) {
+    return { doc: currentDoc || 'user-manual/README.md', hash: targetHash };
+  }
+
+  // حذف اسلش اول در صورت وجود
+  targetPath = targetPath.replace(/^\/+/, '');
+
+  // حذف پیشوند docs/ در صورتی که در مسیر آمده باشد
+  if (targetPath.startsWith('docs/')) {
+    targetPath = targetPath.substring(5);
+  }
+
+  const docContext = currentDoc || 'user-manual/README.md';
+  const lastSlash = docContext.lastIndexOf('/');
+  const currentDir = lastSlash !== -1 ? docContext.substring(0, lastSlash) : '';
+
+  let fullPath = '';
+  if (targetPath.startsWith('./') || targetPath.startsWith('../') || !targetPath.includes('/')) {
+    fullPath = currentDir ? (currentDir + '/' + targetPath) : targetPath;
+  } else {
+    fullPath = targetPath;
+  }
+
+  // حل و استانداردسازی سگمنت‌های نقطه و دو‌نقطه (Canonicalize)
+  const segments = fullPath.split('/');
+  const resolved = [];
+  for (const seg of segments) {
+    if (!seg || seg === '.') continue;
+    if (seg === '..') {
+      if (resolved.length > 0) resolved.pop();
+    } else {
+      resolved.push(seg);
+    }
+  }
+
+  let finalDoc = resolved.join('/');
+  if (finalDoc.startsWith('docs/')) {
+    finalDoc = finalDoc.substring(5);
+  }
+
+  return {
+    doc: finalDoc,
+    hash: targetHash
+  };
+}
+
+/* ==========================================================================
    پردازش و شخصی‌سازی مارک‌داون
    ========================================================================== */
-function processCustomMarkdownElements(html) {
+function processCustomMarkdownElements(html, currentDocId) {
+  const activeDoc = currentDocId || activeDocId || 'user-manual/README.md';
   const alertTypes = {
     'NOTE':      { cls: 'callout-note',      title: 'یادداشت',         icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' },
     'TIP':       { cls: 'callout-tip',       title: 'نکته کاربردی',     icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>' },
@@ -1782,7 +1861,7 @@ function processCustomMarkdownElements(html) {
     }
   });
 
-  // ۳. هدر و دکمه کپی کد
+  // ۳. هدر و دکمه کپی کد (رویداد کلیک با Event Delegation سراسری مدیریت می‌شود)
   container.querySelectorAll('pre').forEach(pre => {
     const code = pre.querySelector('code');
     let lang = 'CODE';
@@ -1809,23 +1888,6 @@ function processCustomMarkdownElements(html) {
     `;
     pre.parentNode.insertBefore(wrapper, pre);
     wrapper.appendChild(pre);
-
-    const copyBtn = wrapper.querySelector('.code-copy-btn');
-    copyBtn.addEventListener('click', () => {
-      const rawText = code ? code.innerText : pre.innerText;
-      navigator.clipboard.writeText(rawText).then(() => {
-        copyBtn.innerHTML = `
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-          <span style="color:#2ea043">کپی شد!</span>
-        `;
-        setTimeout(() => {
-          copyBtn.innerHTML = `
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span>کپی کد</span>
-          `;
-        }, 2000);
-      });
-    });
   });
 
   // ۴. افزودن شناسه و لنگر به سرتیترهای H2 و H3
@@ -1842,30 +1904,33 @@ function processCustomMarkdownElements(html) {
     heading.appendChild(anchor);
   });
 
-  // ۵. اصلاح و رهگیری لینک‌های داخلی برای لود آنی
+  // ۵. اصلاح و استانداردسازی تمام لینک‌ها (داخلی، مارک‌داون و خارجی)
   container.querySelectorAll('a[href]').forEach(a => {
-    const href = a.getAttribute('href');
-    if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-      if (href.endsWith('.md') || href.includes('.md#')) {
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          const parts = href.split('#');
-          let targetDoc = parts[0].replace(/\\/g, '/');
-          const targetHash = parts[1] || '';
+    const rawHref = a.getAttribute('href');
+    if (!rawHref) return;
 
-          if (targetDoc.startsWith('../')) {
-            targetDoc = targetDoc.replace(/^\.\.\//, '');
-          } else if (targetDoc.startsWith('./')) {
-            targetDoc = targetDoc.replace(/^\.\//, '');
-            if (activeDocId.includes('/')) {
-              targetDoc = activeDocId.substring(0, activeDocId.lastIndexOf('/') + 1) + targetDoc;
-            }
-          } else if (!targetDoc.includes('/') && activeDocId.includes('/')) {
-            targetDoc = activeDocId.substring(0, activeDocId.lastIndexOf('/') + 1) + targetDoc;
-          }
+    // الف) لینک‌های خارجی
+    if (/^(https?:|\/\/|mailto:|tel:)/i.test(rawHref)) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      return;
+    }
 
-          loadDoc(targetDoc, targetHash);
-        });
+    // ب) لنگرهای درون‌صفحه‌ای (#heading)
+    if (rawHref.startsWith('#')) {
+      a.setAttribute('data-anchor-link', 'true');
+      return;
+    }
+
+    // ج) لینک‌های اسناد مارک‌داون (.md)
+    if (/\.md($|#)/i.test(rawHref)) {
+      const resolved = resolveDocPath(activeDoc, rawHref);
+      const safeHref = `docs.php?doc=${encodeURIComponent(resolved.doc)}${resolved.hash ? '#' + resolved.hash : ''}`;
+      a.setAttribute('href', safeHref);
+      a.setAttribute('data-doc-link', 'true');
+      a.setAttribute('data-target-doc', resolved.doc);
+      if (resolved.hash) {
+        a.setAttribute('data-target-hash', resolved.hash);
       }
     }
   });
@@ -2083,7 +2148,8 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
       .replace(/\n\n/g, '<p></p>');
   }
 
-  const processedHtml = processCustomMarkdownElements(html);
+  activeDocId = docId;
+  const processedHtml = processCustomMarkdownElements(html, docId);
   document.getElementById('markdownContent').innerHTML = processedHtml;
 
   if (window.hljs) {
@@ -2098,7 +2164,6 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
   updateDocMetadata(docId, rawMarkdown);
   buildTableOfContents();
 
-  activeDocId = docId;
   document.querySelectorAll('.nav-item-link').forEach(a => {
     if (a.getAttribute('data-doc') === docId) {
       a.classList.add('active');
@@ -2118,7 +2183,10 @@ function renderMarkdownText(rawMarkdown, docId, targetHash = '') {
 }
 
 function loadDoc(docId, targetHash = '') {
-  const cleanId = docId.replace(/\\/g, '/').replace(/^\/+/, '');
+  let cleanId = docId.replace(/\\/g, '/').replace(/^\/+/, '');
+  if (cleanId.startsWith('docs/')) {
+    cleanId = cleanId.substring(5);
+  }
 
   if (docCache[cleanId]) {
     history.pushState({ docId: cleanId }, '', `docs.php?doc=${encodeURIComponent(cleanId)}${targetHash ? '#' + targetHash : ''}`);
@@ -2156,6 +2224,64 @@ function loadDoc(docId, targetHash = '') {
         </div>
       `;
     });
+}
+
+/* مدیریت سراسری و مطمئن کلیک‌ها (Event Delegation) برای پیوندها و کپی کد */
+function setupMarkdownContentDelegation() {
+  const mdContent = document.getElementById('markdownContent');
+  if (!mdContent) return;
+
+  mdContent.addEventListener('click', (e) => {
+    // ۱. کلیک روی لینک‌های اسناد داخلی
+    const docLink = e.target.closest('a[data-doc-link="true"]');
+    if (docLink) {
+      if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+        e.preventDefault();
+        const targetDoc = docLink.getAttribute('data-target-doc');
+        const targetHash = docLink.getAttribute('data-target-hash') || '';
+        if (targetDoc) {
+          loadDoc(targetDoc, targetHash);
+        }
+      }
+      return;
+    }
+
+    // ۲. کلیک روی لنگرهای درون‌صفحه‌ای (#heading)
+    const anchorLink = e.target.closest('a[data-anchor-link="true"], a.header-anchor');
+    if (anchorLink) {
+      const href = anchorLink.getAttribute('href') || '';
+      const id = href.replace(/^#/, '');
+      if (id) {
+        e.preventDefault();
+        const targetEl = document.getElementById(id);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, null, '#' + id);
+        }
+      }
+      return;
+    }
+
+    // ۳. کلیک روی دکمه‌های کپی کد
+    const copyBtn = e.target.closest('.code-copy-btn');
+    if (copyBtn) {
+      e.preventDefault();
+      const wrapper = copyBtn.closest('.code-block-wrapper');
+      const code = wrapper ? (wrapper.querySelector('pre code') || wrapper.querySelector('pre')) : null;
+      if (code) {
+        const rawText = code.innerText || code.textContent;
+        navigator.clipboard.writeText(rawText).then(() => {
+          const prevHtml = copyBtn.innerHTML;
+          copyBtn.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="color:#2ea043">کپی شد!</span>
+          `;
+          setTimeout(() => { copyBtn.innerHTML = prevHtml; }, 2000);
+        }).catch(() => {});
+      }
+      return;
+    }
+  });
 }
 
 window.addEventListener('popstate', () => {
@@ -2296,6 +2422,7 @@ searchModalInput.addEventListener('keydown', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderSidebarNav();
+  setupMarkdownContentDelegation();
 
   const initialRaw = document.getElementById('rawInitialContent').textContent;
   docCache[activeDocId] = initialRaw;
