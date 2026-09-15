@@ -192,6 +192,9 @@ final class HtmlSanitizer
                         $toRemove[] = $attr;
                         continue;
                     }
+                    if ($tagName === 'img' && $attrName === 'src') {
+                        $attr->value = self::normalizeImageUrl($attr->value);
+                    }
                 }
 
                 // Validate style attributes — strip dangerous CSS.
@@ -269,5 +272,25 @@ final class HtmlSanitizer
         }
 
         return true;
+    }
+
+    /**
+     * Normalize image URLs so relative paths on deep routes (e.g. /{id}/{slug}/)
+     * correctly resolve to /uploads/editor/ or root.
+     */
+    private static function normalizeImageUrl(string $url): string
+    {
+        $url = trim($url);
+        if ($url === '' || preg_match('/^(?:https?:|\/|data:)/i', $url)) {
+            return $url;
+        }
+
+        // If it starts with uploads/ (missing leading slash)
+        if (strpos($url, 'uploads/') === 0 || strpos($url, 'dashboard/uploads/') === 0) {
+            return '/' . $url;
+        }
+
+        // Bare filename (e.g. 6a4e46a5d2ce3.jpg or img_...) or relative editor path
+        return '/uploads/editor/' . ltrim($url, './');
     }
 }

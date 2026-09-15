@@ -2243,9 +2243,23 @@ document.addEventListener("DOMContentLoaded", function () {
       var slots = Array.prototype.slice.call(document.querySelectorAll('.cta-auth-slot'));
       if(!slots.length) return;
 
+      var hasSession = document.cookie.indexOf('maksa_session=1') !== -1 ||
+                       localStorage.getItem('maksa_logged') === '1' ||
+                       sessionStorage.getItem('maxa_access_token');
+      if(!hasSession) return;
+
       // با کوکی رفرش (httpOnly) یک access_token تازه می‌گیریم؛ این کار نشست را هم تمدید می‌کند.
       fetch('/api/auth/refresh', { method:'POST', credentials:'include', headers:{ 'Accept':'application/json' } })
-        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(res){
+          if(!res.ok){
+            try {
+              localStorage.removeItem('maksa_logged');
+              sessionStorage.removeItem('maxa_access_token');
+            } catch(e) {}
+            return null;
+          }
+          return res.json();
+        })
         .then(function(j){
           var token = j && j.data && j.data.access_token;
           if(!token) return null;

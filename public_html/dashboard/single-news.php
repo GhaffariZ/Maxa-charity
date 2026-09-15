@@ -39,7 +39,7 @@ $tag_name = $news['tag_name'] ?? "";
 $keywords = $news['keywords'];
 
 // مسیر فولدر تصاویر
-$folder = "uploads/news/" . $news_code . "/";
+$folder = "/uploads/news/" . $news_code . "/";
 ?>
 
 <!DOCTYPE html>
@@ -115,7 +115,7 @@ h1 { font-size:28px; margin-bottom:15px; }
         <?php endforeach; ?>
     </div>
 
-    <?php if($featured_image && file_exists($folder . $featured_image)): ?>
+    <?php if($featured_image && file_exists($_SERVER['DOCUMENT_ROOT'] . $folder . $featured_image)): ?>
         <img src="<?php echo $folder . $featured_image; ?>" alt="<?php echo htmlspecialchars($title); ?>">
     <?php endif; ?>
 
@@ -126,7 +126,7 @@ h1 { font-size:28px; margin-bottom:15px; }
     <?php if(!empty($images)): ?>
         <div class="gallery">
             <?php foreach($images as $img): ?>
-                <?php if(file_exists($folder . $img)): ?>
+                <?php if(file_exists($_SERVER['DOCUMENT_ROOT'] . $folder . $img)): ?>
                     <img src="<?php echo $folder . $img; ?>" alt="تصویر گالری">
                 <?php endif; ?>
             <?php endforeach; ?>

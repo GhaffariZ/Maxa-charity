@@ -257,10 +257,11 @@ $pageTitle = htmlspecialchars($news['title']) . ' — آخرین اخبار مک
 require_once __DIR__ . '/components/header/component.php';
 ?>
 
+<!-- لود Font Awesome با پالیسی بدون رهگیری جهت پیشگیری از هشدار مرورگر -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <!-- استایل‌های اختصاصی و پریمیوم صفحه نمایش خبر -->
 <style>
-    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-
     :root {
         --news-primary: #0899A9;      /* سبز برند مکسا */
         --news-accent: #f5a623;       /* نارنجی/خردلی برند مکسا */
@@ -991,6 +992,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         li.appendChild(a);
         tocList.appendChild(li);
+    });
+
+    // مدیریت نرم خطای لود تصاویر مقاله (جلوگیری از نمایش کادر شکسته در صورت نبود عکس فیزیکی روی سرور)
+    articleContent.querySelectorAll('img').forEach((img) => {
+        img.addEventListener('error', function() {
+            const figure = this.closest('figure') || this.closest('.article-img-wrap');
+            if (figure) {
+                figure.style.display = 'none';
+            } else {
+                this.style.display = 'none';
+            }
+        });
     });
 });
 </script>
