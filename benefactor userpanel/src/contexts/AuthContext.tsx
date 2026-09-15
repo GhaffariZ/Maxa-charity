@@ -59,6 +59,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Sync donor profile to localStorage so external forms (online donation, stand orders, campaigns) can autofill
+  React.useEffect(() => {
+    if (user) {
+      const benefactorProfile = {
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        full_name: [user.first_name, user.last_name].filter(Boolean).join(" ").trim(),
+        phone: user.phone || "",
+        national_code: user.national_code || "",
+        email: user.email || "",
+      };
+      try {
+        localStorage.setItem("maksa_benefactor_user", JSON.stringify(benefactorProfile));
+      } catch {}
+    } else if (!isLoading) {
+      try {
+        localStorage.removeItem("maksa_benefactor_user");
+      } catch {}
+    }
+  }, [user, isLoading]);
+
   const login = React.useCallback(async (email: string, password: string) => {
     const { access_token } = await api.login(email, password);
     setAccessToken(access_token);
@@ -85,6 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setAccessToken(null);
     setUser(null);
+    try {
+      localStorage.removeItem("maksa_benefactor_user");
+    } catch {}
   }, []);
 
   const value: AuthContextValue = {

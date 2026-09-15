@@ -1894,8 +1894,52 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     }
 });
 
+function applyStandOrderAutofill() {
+    function fill(u) {
+        if (!u) return;
+        const nameInput = document.querySelector('#standOrderForm [name="sender_name"]');
+        const phoneInput = document.querySelector('#standOrderForm [name="sender_phone"]');
+        const fullName = u.full_name || [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
+        if (nameInput && fullName && !nameInput.value) nameInput.value = fullName;
+        if (phoneInput && u.phone && !phoneInput.value) phoneInput.value = u.phone;
+    }
+
+    try {
+        const raw = localStorage.getItem('maksa_benefactor_user');
+        if (raw) {
+            fill(JSON.parse(raw));
+        } else {
+            fetchAccessToken().then(token => {
+                if (!token) return;
+                fetch('/api/user/me', {
+                    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' },
+                    credentials: 'include'
+                })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    const u = data?.data?.user;
+                    if (u) {
+                        const profile = {
+                            first_name: u.first_name || '',
+                            last_name: u.last_name || '',
+                            full_name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
+                            phone: u.phone || '',
+                            national_code: u.national_code || '',
+                            email: u.email || ''
+                        };
+                        localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
+                        fill(profile);
+                    }
+                })
+                .catch(() => {});
+            });
+        }
+    } catch (e) {}
+}
+
 // راه‌اندازی اولیه
 loadProvinces().then(() => {
     checkSavedOrder();
+    applyStandOrderAutofill();
 });
 </script>

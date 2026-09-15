@@ -6,12 +6,46 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>benefactor userpanel</title>
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
+      <script>
+        // Synchronize benefactor user data to localStorage for auto-prefilling other site forms
+        (function() {
+          const origFetch = window.fetch;
+          window.fetch = async function(...args) {
+            const res = await origFetch.apply(this, args);
+            try {
+              const url = typeof args[0] === 'string' ? args[0] : (args[0]?.url || '');
+              if (url.includes('/user/me') || url.includes('/auth/login') || url.includes('/auth/login-otp')) {
+                const clone = res.clone();
+                clone.json().then(data => {
+                  const u = data?.data?.user;
+                  if (u) {
+                    const profile = {
+                      first_name: u.first_name || '',
+                      last_name: u.last_name || '',
+                      full_name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
+                      phone: u.phone || '',
+                      national_code: u.national_code || '',
+                      email: u.email || ''
+                    };
+                    localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
+                  }
+                  if (data?.data?.access_token) {
+                    localStorage.setItem('maksa_access_token', data.data.access_token);
+                  }
+                }).catch(function() {});
+              } else if (url.includes('/auth/logout')) {
+                localStorage.removeItem('maksa_benefactor_user');
+                localStorage.removeItem('maksa_access_token');
+              }
+            } catch (e) {}
+            return res;
+          };
+        })();
+      </script>
       <script type="module" crossorigin src="/benefactor-dashboard/assets/index-ziT0srj8.js"></script>
       <link rel="stylesheet" crossorigin href="/benefactor-dashboard/assets/index-D9OnTc_y.css">
     </head>
-
     <body>
-      <div id="root"></div>
+      <div id="root"></div>
     </body>
   </html>
-  

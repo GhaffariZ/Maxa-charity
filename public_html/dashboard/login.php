@@ -12,7 +12,7 @@ dash_session_start();
 
 // اگر از قبل وارد شده، مستقیم به پنل مناسب
 if (dash_is_authenticated()) {
-    if (dash_is_finance_only()) {
+    if (dash_is_finance_only() || dash_is_finance_user()) {
         header('Location: /dashboard/financial-management.php');
     } else {
         header('Location: /dashboard/index.php');
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $res = dash_attempt_login($username, $password);
         if ($res['ok']) {
-            if (dash_is_finance_only()) {
+            if (dash_is_finance_only() || dash_is_finance_user()) {
                 header('Location: /dashboard/financial-management.php');
             } else {
                 header('Location: /dashboard/index.php');

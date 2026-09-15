@@ -247,12 +247,22 @@ function dash_establish_session(array $u): void
     $branch = dash_load_branch((int)$u['branch_id']);
     $perms  = dash_resolve_permissions($u);
 
+    $roleName = '';
+    if (!empty($u['role_id'])) {
+        try {
+            $st = dash_pdo()->prepare('SELECT name FROM dashboard_roles WHERE id = ? LIMIT 1');
+            $st->execute([(int)$u['role_id']]);
+            $roleName = (string)($st->fetchColumn() ?: '');
+        } catch (Throwable $e) {}
+    }
+
     $_SESSION['dash_user'] = [
         'id'              => (int)$u['id'],
         'username'        => $u['username'],
         'full_name'       => $u['full_name'],
         'branch_id'       => (int)$u['branch_id'],
         'role_id'         => $u['role_id'] !== null ? (int)$u['role_id'] : null,
+        'role_name'       => $roleName,
         'is_super'        => (int)$u['is_super'] === 1,
         'is_branch_admin' => (int)$u['is_branch_admin'] === 1,
         'permissions'     => $perms,
@@ -358,8 +368,34 @@ function dash_is_branch_admin(): bool
 }
 
 /**
- * آیا کاربر جاری منحصراً «مسئول مالی» است؟
- * یعنی سوپرادمین یا ادمین شعبه نیست، و تنها دسترسی واگذارشده به او financial است.
+ * دریافت نام نقش کاربر جاری
+ */
+function dash_user_role_name(): string
+{
+    $u = dash_user();
+    if (!$u) {
+        return '';
+    }
+    if (!empty($u['role_name'])) {
+        return (string)$u['role_name'];
+    }
+    if (!empty($u['role_id'])) {
+        try {
+            $st = dash_pdo()->prepare('SELECT name FROM dashboard_roles WHERE id = ? LIMIT 1');
+            $st->execute([(int)$u['role_id']]);
+            $rn = (string)($st->fetchColumn() ?: '');
+            if ($rn !== '') {
+                $_SESSION['dash_user']['role_name'] = $rn;
+                return $rn;
+            }
+        } catch (Throwable $e) {}
+    }
+    return '';
+}
+
+/**
+ * آیا کاربر جاری منحصراً «مسئول مالی» یا «مدیر مالی» است؟
+ * یعنی سوپرادمین نیست، و عنوان نقش او یا تنها دسترسی او مالی است.
  */
 function dash_is_finance_only(): bool
 {
@@ -367,11 +403,48 @@ function dash_is_finance_only(): bool
     if (!$u) {
         return false;
     }
-    if (!empty($u['is_super']) || !empty($u['is_branch_admin'])) {
+    if (!empty($u['is_super'])) {
+        return false;
+    }
+    $roleName = dash_user_role_name();
+    if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
+        return true;
+    }
+    if (!empty($u['is_branch_admin'])) {
         return false;
     }
     $perms = $u['permissions'] ?? [];
     return in_array('financial', $perms, true) && count($perms) === 1;
+}
+
+/**
+ * آیا کاربر جاری «مدیر مالی» یا کاربری با دسترسی مالی است؟
+ * سوپرادمین مدیر کل است و در این دسته قرار نمی‌گیرد.
+ */
+function dash_is_finance_user(): bool
+{
+    $u = dash_user();
+    if (!$u) {
+        return false;
+    }
+    if (!empty($u['is_super'])) {
+        return false;
+    }
+    if (dash_is_finance_only()) {
+        return true;
+    }
+    $roleName = dash_user_role_name();
+    if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
+        return true;
+    }
+    $perms = $u['permissions'] ?? [];
+    if (in_array('financial', $perms, true)) {
+        $generalPerms = ['hero', 'news', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
+        if (empty(array_intersect($perms, $generalPerms))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
