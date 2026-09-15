@@ -17,10 +17,13 @@
   } 
   body {
     font-family: 'Vazirmatn', sans-serif !important;
+    overflow-x: hidden;
   }
     :root{
       --cta-orange:#f5a623;
       --cta-orange-2:#f39a20;
+      --cta-brand-bg:#ffffff;              /* رنگ اختصاصی بخش لوگو (سفید درخشان و چشم‌نواز) */
+      --cta-brand-divider:#1e293b;         /* رنگ خط مورب جداکننده شیک و دقیق */
       --cta-text:#ffffff;
       --cta-muted: rgba(255,255,255,.78);
       --cta-container: 1440px;
@@ -53,7 +56,8 @@
       z-index:99999;
       display:flex;
       align-items:center;
-      overflow: visible;
+      overflow-x: clip;
+      overflow-y: visible;
       padding-inline: 0;
       background: var(--cta-orange);
       box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -82,23 +86,57 @@
       border: none;
       border-radius: 0;
       box-shadow: none;
-      padding: 8px 16px;
+      padding: 0 16px;
+      height: 100%;
       width: 100%;
     }
 
-    /* راست: لوگو */
+    /* راست: لوگو با پس‌زمینه برش مورب اختصاصی */
     .cta-right{
       display:flex;
       align-items:center;
       flex:0 0 auto;
-      margin-right: calc(-1 * var(--cta-edge-gap)); /* نزدیک‌تر به لبه */
-      padding-right: var(--cta-edge-gap);
+      align-self: stretch;
+      position: relative;
+      margin-right: calc(-1 * var(--cta-edge-gap));
+      padding-right: calc(var(--cta-edge-gap) + 8px);
+      padding-left: 28px;
+      z-index: 5;
+    }
+
+    /* لایه شکل پس‌زمینه با برش مورب و امتداد تا لبه راست مانیتور */
+    .cta-brand-badge-bg {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: -100vw;
+      background: var(--cta-brand-bg, #ffffff);
+      clip-path: polygon(24px 0, 100% 0, 100% 100%, 0 100%);
+      pointer-events: none;
+      z-index: -1;
+      filter: drop-shadow(-3px 0 8px rgba(0, 0, 0, 0.09));
+    }
+
+    /* خط مورب شیک جداکننده روی لبه برش */
+    .cta-brand-badge-bg::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 27px;
+      background: var(--cta-brand-divider, #1e293b);
+      clip-path: polygon(24px 0, 27px 0, 3px 100%, 0 100%);
+      z-index: 2;
     }
 
     .cta-brand{
       display:flex;
       align-items:center;
       justify-content:center;
+      position: relative;
+      z-index: 3;
     }
 
     .cta-brand img{
@@ -106,7 +144,7 @@
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,.18));
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.06));
     }
 
     /* وسط: منو */
@@ -824,12 +862,22 @@
     /* تبلت های کوچک */
     @media (max-width: 600px) {
       .cta-header {
-        padding: 6px 12px;
+        padding: 0 12px;
         gap: 8px;
       }
 
       .cta-right {
         flex-shrink: 0;
+        padding-left: 20px;
+        padding-right: calc(var(--cta-edge-gap) + 4px);
+      }
+
+      .cta-brand-badge-bg {
+        clip-path: polygon(18px 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      .cta-brand-badge-bg::before {
+        clip-path: polygon(18px 0, 20.5px 0, 2.5px 100%, 0 100%);
       }
 
       .cta-brand img {
@@ -856,8 +904,20 @@
     /* گوشی‌های بسیار باریک */
     @media (max-width: 420px) {
       .cta-header {
-        padding: 5px 10px;
+        padding: 0 8px;
         gap: 6px;
+      }
+
+      .cta-right {
+        padding-left: 15px;
+      }
+
+      .cta-brand-badge-bg {
+        clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      .cta-brand-badge-bg::before {
+        clip-path: polygon(14px 0, 16.5px 0, 2.5px 100%, 0 100%);
       }
 
       .cta-brand img {
@@ -950,6 +1010,7 @@
       <div class="cta-container cta-header">
 
         <div class="cta-right">
+          <div class="cta-brand-badge-bg" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
             <img src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
