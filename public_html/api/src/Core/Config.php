@@ -59,7 +59,7 @@ final class Config
                 continue;
             }
 
-            $pos = str_pos = strpos($line, '=');
+            $pos = strpos($line, '=');
             if ($pos === false) {
                 continue;
             }
