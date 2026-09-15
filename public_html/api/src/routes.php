@@ -18,6 +18,7 @@ use Maksa\Controllers\HealthController;
 use Maksa\Controllers\NotificationController;
 use Maksa\Controllers\UserController;
 use Maksa\Controllers\OrderController;
+use Maksa\Controllers\OtpController;
 use Maksa\Controllers\StandController;
 use Maksa\Core\Router;
 
@@ -32,6 +33,8 @@ return static function (Router $r): void {
     $r->post('/contact',                  [ContactController::class, 'submit']);
 
     // ---- Auth (public) ------------------------------------------------------
+    $r->post('/auth/otp/send',            [OtpController::class, 'send']);
+    $r->post('/auth/otp/verify',          [OtpController::class, 'verify']);
     $r->post('/auth/register',            [AuthController::class, 'register']);
     $r->post('/auth/verify-email',        [AuthController::class, 'verifyEmail']);
     $r->post('/auth/resend-verification', [AuthController::class, 'resendVerification']);
