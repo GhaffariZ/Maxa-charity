@@ -10,9 +10,13 @@
 require_once __DIR__ . '/../core/dashboard-auth.php';
 dash_session_start();
 
-// اگر از قبل وارد شده، مستقیم به پنل
+// اگر از قبل وارد شده، مستقیم به پنل مناسب
 if (dash_is_authenticated()) {
-    header('Location: /dashboard/index.php');
+    if (dash_is_finance_only()) {
+        header('Location: /dashboard/financial-management.php');
+    } else {
+        header('Location: /dashboard/index.php');
+    }
     exit;
 }
 
@@ -35,7 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $res = dash_attempt_login($username, $password);
         if ($res['ok']) {
-            header('Location: /dashboard/index.php');
+            if (dash_is_finance_only()) {
+                header('Location: /dashboard/financial-management.php');
+            } else {
+                header('Location: /dashboard/index.php');
+            }
             exit;
         }
         $error = $res['error'] ?? 'خطا در ورود.';
