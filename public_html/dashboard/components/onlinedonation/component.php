@@ -115,8 +115,13 @@
 
         <div class="field">
           <label>شماره همراه (اجباری)</label>
-          <input type="tel" name="phone" placeholder="09123456789" required
+          <input type="tel" name="phone" id="donorPhone" placeholder="09123456789" required
                  pattern="^09[0-9]{9}$" title="شماره تماس معتبر موبایل وارد کنید">
+        </div>
+
+        <div class="field">
+          <label>کد ملی (اختیاری - جهت معافیت مالیاتی و الزامات شاپرک)</label>
+          <input type="text" name="national_code" id="donorNationalCode" placeholder="مثلاً: 0012345678" maxlength="10">
         </div>
 
         <div class="field">
@@ -139,8 +144,8 @@
           <input type="text" name="note" placeholder="مثلاً: تأمین داروی شیمی‌درمانی">
         </div>
 
-        <button type="submit" class="submit-btn">
-          <span>تایید و اتصال به درگاه بانکی</span>
+        <button type="button" id="startDonationBtn" class="submit-btn" onclick="startDonationFlow()">
+          <span>تایید و دریافت کد پیامکی</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -154,6 +159,42 @@
           تراکنش‌های مالی رمزنگاری‌شده توسط پروتکل امن SSL بانک مرکزی
         </p>
       </form>
+
+      <!-- OTP Verification Modal -->
+      <div id="otpModal" class="otp-modal-overlay" style="display: none;">
+        <div class="otp-modal-box">
+          <div class="otp-modal-header">
+            <div class="otp-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10aeb8" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
+            <h4>تأیید شماره همراه و ساخت حساب</h4>
+            <p>کد ۵ رقمی پیامک‌شده به شماره <strong id="otpPhoneLabel"></strong> را وارد کنید:</p>
+          </div>
+
+          <div class="field otp-input-field">
+            <input type="text" id="otpCodeInput" maxlength="6" placeholder="• • • • •" autocomplete="one-time-code" dir="ltr">
+            <div id="otpErrorMsg" class="otp-error-msg" style="display: none;"></div>
+          </div>
+
+          <div class="otp-timer-row">
+            <span id="otpTimerText">ارسال مجدد تا: <strong id="otpCountdown">02:00</strong></span>
+            <button type="button" id="otpResendBtn" class="otp-resend-btn" style="display: none;" onclick="resendOtp()">ارسال مجدد کد پیامکی</button>
+          </div>
+
+          <div class="otp-actions">
+            <button type="button" id="otpSubmitBtn" class="submit-btn" onclick="submitOtpAndPay()">
+              <span>تایید و انتقال به درگاه بانکی</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <button type="button" class="otp-back-btn" onclick="closeOtpModal()">ویرایش مشخصات</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -730,16 +771,344 @@
     .donation-title {
       font-size: 25px;
     }
+  /* OTP Modal Styles */
+  .otp-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 100, 110, 0.82);
+    backdrop-filter: blur(10px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: var(--radius-large);
+    animation: otpFadeIn 0.25s ease-out;
+  }
+
+  @keyframes otpFadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .otp-modal-box {
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text-main);
+    border-radius: 24px;
+    padding: 32px 28px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.22);
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .otp-icon-wrap {
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: #e9fbfc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .otp-modal-header h4 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--primary-dark);
+  }
+
+  .otp-modal-header p {
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .otp-input-field input {
+    width: 100%;
+    height: 58px;
+    text-align: center;
+    letter-spacing: 10px;
+    font-size: 26px;
+    font-weight: 900;
+    border-radius: 16px;
+    border: 2px solid #b2e8eb;
+    background: #f8fcfc;
+    color: #05646e;
+    transition: all 0.2s;
+  }
+
+  .otp-input-field input:focus {
+    border-color: #10aeb8;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(16, 174, 184, 0.15);
+    outline: none;
+  }
+
+  .otp-error-msg {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #dc2626;
+    background: #fee2e2;
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  .otp-timer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0 22px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .otp-resend-btn {
+    background: none;
+    border: none;
+    color: #10aeb8;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    font-size: 13px;
+  }
+
+  .otp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .otp-actions .submit-btn {
+    background: linear-gradient(180deg, #10aeb8 0%, #07828e 100%);
+    color: white;
+  }
+
+  .otp-back-btn {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    height: 48px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .otp-back-btn:hover {
+    background: #f1f5f9;
   }
 </style>
 
 
 <script>
+  let otpCountdownTimer = null;
+  let remainingSeconds = 120;
+
   function setAmount(val, event) {
     const amountInput = document.getElementById('customAmount');
     amountInput.value = val;
 
     document.querySelectorAll('.amount-chip').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
+  }
+
+  function getFormValues() {
+    const form = document.querySelector('.donation-form');
+    return {
+      first_name: form.querySelector('[name="first_name"]').value.trim(),
+      last_name: form.querySelector('[name="last_name"]').value.trim(),
+      phone: document.getElementById('donorPhone').value.trim(),
+      national_code: document.getElementById('donorNationalCode').value.trim(),
+      amount: parseInt(document.getElementById('customAmount').value, 10) || 0,
+      note: form.querySelector('[name="note"]').value.trim()
+    };
+  }
+
+  async function startDonationFlow() {
+    const vals = getFormValues();
+
+    if (!vals.first_name || !vals.last_name) {
+      alert('لطفاً نام و نام خانوادگی خود را وارد کنید.');
+      return;
+    }
+
+    const phoneRegex = /^09[0-9]{9}$/;
+    if (!phoneRegex.test(vals.phone)) {
+      alert('لطفاً شماره تلفن همراه معتبر ۱۱ رقمی (مانند 09123456789) وارد کنید.');
+      return;
+    }
+
+    if (vals.national_code && !/^[0-9]{10}$/.test(vals.national_code)) {
+      alert('کد ملی باید ۱۰ رقم عددی باشد.');
+      return;
+    }
+
+    if (vals.amount < 1000) {
+      alert('حداقل مبلغ اهدایی ۱,۰۰۰ تومان می‌باشد.');
+      return;
+    }
+
+    const btn = document.getElementById('startDonationBtn');
+    btn.disabled = true;
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<span>در حال ارسال پیامک...</span>';
+
+    try {
+      const res = await fetch('/api/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: vals.phone,
+          purpose: 'donation_auth'
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'خطا در ارسال پیامک کد تأیید');
+      }
+
+      openOtpModal(vals.phone, data.data?.debug_code);
+    } catch (err) {
+      alert(err.message || 'خطا در ارتباط با سرور.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origText;
+    }
+  }
+
+  function openOtpModal(phone, debugCode) {
+    const modal = document.getElementById('otpModal');
+    document.getElementById('otpPhoneLabel').textContent = phone;
+    document.getElementById('otpErrorMsg').style.display = 'none';
+    const input = document.getElementById('otpCodeInput');
+    input.value = debugCode || '';
+    modal.style.display = 'flex';
+
+    startTimer(120);
+    setTimeout(() => input.focus(), 150);
+  }
+
+  function closeOtpModal() {
+    clearInterval(otpCountdownTimer);
+    document.getElementById('otpModal').style.display = 'none';
+  }
+
+  function startTimer(seconds) {
+    clearInterval(otpCountdownTimer);
+    remainingSeconds = seconds;
+    const timerText = document.getElementById('otpTimerText');
+    const countdown = document.getElementById('otpCountdown');
+    const resendBtn = document.getElementById('otpResendBtn');
+
+    timerText.style.display = 'inline';
+    resendBtn.style.display = 'none';
+
+    function update() {
+      const m = Math.floor(remainingSeconds / 60);
+      const s = remainingSeconds % 60;
+      countdown.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+      if (remainingSeconds <= 0) {
+        clearInterval(otpCountdownTimer);
+        timerText.style.display = 'none';
+        resendBtn.style.display = 'inline';
+      }
+      remainingSeconds--;
+    }
+
+    update();
+    otpCountdownTimer = setInterval(update, 1000);
+  }
+
+  async function resendOtp() {
+    const vals = getFormValues();
+    const resendBtn = document.getElementById('otpResendBtn');
+    resendBtn.textContent = 'در حال ارسال...';
+
+    try {
+      const res = await fetch('/api/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: vals.phone,
+          purpose: 'donation_auth'
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'خطا در ارسال مجدد');
+
+      startTimer(120);
+      if (data.data?.debug_code) {
+        document.getElementById('otpCodeInput').value = data.data.debug_code;
+      }
+    } catch (e) {
+      alert(e.message || 'خطا در ارسال مجدد کد');
+      resendBtn.textContent = 'ارسال مجدد کد پیامکی';
+    }
+  }
+
+  async function submitOtpAndPay() {
+    const vals = getFormValues();
+    const code = document.getElementById('otpCodeInput').value.trim();
+    const errorEl = document.getElementById('otpErrorMsg');
+
+    if (code.length < 4) {
+      errorEl.textContent = 'لطفاً کد تایید ۵ رقمی را وارد کنید.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const submitBtn = document.getElementById('otpSubmitBtn');
+    submitBtn.disabled = true;
+    const origText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span>در حال ایجاد حساب و اتصال به بانک...</span>';
+    errorEl.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/donations/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: vals.phone,
+          code: code,
+          first_name: vals.first_name,
+          last_name: vals.last_name,
+          national_code: vals.national_code || null,
+          amount: vals.amount
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'خطا در اعتبارسنجی کد یا اتصال به درگاه');
+      }
+
+      // Save token for authenticated session in donor dashboard
+      if (data.data?.access_token) {
+        localStorage.setItem('maksa_access_token', data.data.access_token);
+      }
+
+      // Hand off to the bank gateway
+      if (data.data?.redirect_url) {
+        window.location.href = data.data.redirect_url;
+      } else {
+        alert('پرداخت با موفقیت آغاز شد.');
+      }
+    } catch (err) {
+      errorEl.textContent = err.message || 'خطا در اتصال به درگاه بانکی';
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = origText;
+    }
   }
 </script>
