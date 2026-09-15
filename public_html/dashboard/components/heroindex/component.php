@@ -122,23 +122,27 @@
       margin-right: calc(-1 * var(--cta-edge-gap));
     }
 
-    /* بج کپسولی سفید شیک و درخشان برای تفکیک ۱۰۰٪ رنگ‌های لوگو */
+    /* باکس شیشه‌ای با پس‌زمینه تار (Frosted Glass) و گوشه‌های نرم مستطیلی */
     .cta-brand{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      background:#ffffff;
-      padding:6px 16px;
-      border-radius:999px;
-      box-shadow:0 3px 12px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.04);
-      border:1.5px solid rgba(255,255,255,.9);
-      transition:transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(255, 255, 255, 0.32);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      padding: 7px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 15px rgba(0,0,0,.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1), background .25s ease, border-color .25s ease;
       text-decoration:none;
     }
 
     .cta-brand:hover{
-      transform:translateY(-2px) scale(1.02);
-      box-shadow:0 6px 18px rgba(0,0,0,.12);
+      transform:translateY(-2px);
+      background: rgba(255, 255, 255, 0.45);
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow:0 6px 20px rgba(0,0,0,.1), inset 0 1px 1px rgba(255, 255, 255, 0.5);
     }
 
     .cta-brand img{
@@ -146,6 +150,7 @@
       width: auto;
       display:block;
       object-fit: contain;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
     }
 
     /* وسط: منو */
@@ -1410,7 +1415,8 @@
         flex-shrink: 0;
       }
       .cta-brand {
-        padding: 5px 12px;
+        padding: 5px 10px;
+        border-radius: 8px;
       }
       .cta-brand img {
         height: 24px;
@@ -1422,7 +1428,8 @@
         padding: 0 8px;
       }
       .cta-brand {
-        padding: 4px 9px;
+        padding: 4px 8px;
+        border-radius: 6px;
       }
       .cta-brand img {
         height: 20px;
