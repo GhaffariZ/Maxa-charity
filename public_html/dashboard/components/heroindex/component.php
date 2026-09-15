@@ -69,7 +69,7 @@
   z-index:2;
 }
 
-    /* ===== TOP BAR ===== */
+    /* ===== TOP BAR (SwiftUI Translucent Material) ===== */
     .cta-topbar{
       position:fixed;
       top:0; left:0; right:0;
@@ -78,15 +78,20 @@
       display:flex;
       align-items:center;
       padding-inline: 0;
-      background: var(--cta-orange);
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
+      background: rgba(245, 166, 35, 0.94);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease, background 0.3s ease;
     }
 
     /* Detached look when scrolled */
     .cta-topbar.scrolled {
       top: 0;
       height: 68px;
+      background: rgba(245, 166, 35, 0.98);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     }
 
     /* Hide on scroll down */
@@ -171,33 +176,41 @@
       filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
     }
 
-    /* وسط: منو */
+    /* وسط: منو - طراحی کپسولی شیشه‌ای پیوسته SwiftUI */
     .cta-center{
       display:flex;
       justify-content:center;
       flex:1 1 auto;
       min-width: 0;
-      padding-inline: 8px;
+      padding-inline: 6px;
     }
 
-    /* باکس دور منو مثل سرچ/ثبت‌نام */
-.cta-navbox{
-  background: transparent;
-  border: none;
-  padding: 6px 14px;
-}
+    /* نوار ناوبری کپسولی شیشه‌ای SwiftUI */
+    .cta-navbox{
+      background: rgba(255, 255, 255, 0.28);
+      -webkit-backdrop-filter: blur(20px) saturate(170%);
+      backdrop-filter: blur(20px) saturate(170%);
+      padding: 4px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 
+        0 4px 18px -2px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.65);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
 
 .cta-glass {
   /* Removed glass effect */
 }
-    /* ✅ منو افقی (حل عمودی شدن) */
     .cta-menu{
       list-style: none;
       margin: 0;
       padding: 0;
       display:flex;
       align-items:center;
-      gap: 4px;
+      gap: 2px;
       white-space: nowrap;
       flex-wrap: nowrap;
     }
@@ -211,39 +224,55 @@
     .cta-menu > li > a{
       display:inline-flex;
       align-items:center;
-      padding:8px 14px;
-      border-radius:10px;
-      transition: .2s ease;
+      padding: 6px 13px;
+      border-radius: 999px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       outline: none;
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 700;
-      color: #111111;
+      color: #1e293b;
+      text-decoration: none;
+      position: relative;
     }
 
     .cta-menu > li > a:hover{
-      background: rgba(0,0,0,.06);
+      background: rgba(255, 255, 255, 0.55);
+      color: #0f172a;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .cta-menu > li > a:active{
+      transform: scale(0.96);
     }
 
     .cta-menu > li > a:focus-visible{
-      box-shadow: 0 0 0 3px rgba(0,0,0,.15);
-      background: rgba(0,0,0,.06);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.6);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .cta-menu > li.active > a,
+    .cta-menu > li > a.active{
+      background: #ffffff;
+      color: #0899a9;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.09), inset 0 1px 1px #ffffff;
     }
 
     .highlighted-menu > a{
-      background: rgba(245,166,35,.18);
-      border: 1px solid rgba(245,166,35,.35);
+      background: rgba(255,255,255,.4);
+      border: 1px solid rgba(255,255,255,.6);
     }
     .highlighted-menu > a:hover{
-      background: rgba(245,166,35,.26);
+      background: rgba(255,255,255,.65);
     }
 
-    /* چپ: سرچ + ورود/ثبت‌نام */
+    /* چپ: دکمه‌های کنشی با استایل SwiftUI */
     .cta-left{
       display:flex;
       align-items:center;
       gap:10px;
       flex:0 0 auto;
-      margin-left: calc(-1 * var(--cta-edge-gap)); /* نزدیک‌تر به لبه */
+      margin-left: calc(-1 * var(--cta-edge-gap));
       padding-left: var(--cta-edge-gap);
     }
 
@@ -257,13 +286,16 @@
     .cta-search input{
       width: 170px;
       height: 38px;
-      border-radius: 10px;
-      border: 1px solid rgba(0,0,0,.15);
-      background: rgba(255,255,255,.2);
-      color: #111111;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.45);
+      background: rgba(255,255,255,.3);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: #1e293b;
       padding: 0 12px;
       outline: none;
-      transition: .2s ease;
+      transition: all .25s ease;
+      font-size: 13px;
     }
 
 .cta-glass {
@@ -271,108 +303,107 @@
   box-shadow: var(--cta-shadow-soft);
 }
     .cta-search input::placeholder{
-      color: rgba(0,0,0,.65);
+      color: rgba(30,41,59,.7);
     }
 
     .cta-search input:focus{
-      border-color: rgba(0,0,0,.3);
-      box-shadow: 0 0 0 2px rgba(0,0,0,.05);
-      background: rgba(255,255,255,.3);
+      border-color: rgba(255,255,255,.8);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.3);
+      background: rgba(255,255,255,.5);
     }
 
     .cta-donate {
       height: 38px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, #e53935, #c62828);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
       color: #ffffff !important;
       padding: 0 16px;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
       font-weight: 800;
-      box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+      font-size: 13px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      text-decoration: none;
     }
 
     .cta-donate:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(198, 40, 40, 0.4);
-      background: linear-gradient(135deg, #c62828, #b71c1c);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.5);
     }
 
     .cta-donate:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+      transform: scale(0.96);
     }
 
-.cta-auth {
-  height: 38px;
-  border-radius: 10px;
-  border: 1px solid rgba(8, 153, 169, 0.4);
-  background: linear-gradient(135deg, #0899A9, #067d8a);
-  color: #ffffff !important;
-  padding: 0 16px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  font-weight: 700;
-  box-shadow: 0 0 12px rgba(8, 153, 169, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
+    .cta-auth {
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: linear-gradient(180deg, #0899A9 0%, #067d8a 100%);
+      color: #ffffff !important;
+      padding: 0 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 13px;
+      box-shadow: 0 4px 14px rgba(8, 153, 169, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+    }
 
-.cta-auth:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(8, 153, 169, 0.6);
-  background: linear-gradient(135deg, #0ab2c5, #0899A9);
-}
+    .cta-auth:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(8, 153, 169, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    }
 
-.cta-auth:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 8px rgba(8, 153, 169, 0.4);
-}
+    .cta-auth:active {
+      transform: scale(0.96);
+    }
 
 /* .cta-band-cta is defined below with unified styles */
-    /* ===== Mega Menu (از نمونه شما) ===== */
-  .mega-menu{
-    position: relative;
-  }
+    /* ===== Mega Menu (SwiftUI Frosted Dropdown) ===== */
+    .mega-menu{
+      position: relative;
+    }
 
 /* ✅ مگا منو با عرض کامل صفحه */
 .mega-menu .mega-menu-content {
   display: block;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(16px) scale(0.98);
+  transform: translateY(12px) scale(0.98);
   transform-origin: top center;
   transition: 
-    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-    visibility 0.25s;
+    opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+    visibility 0.3s;
   position: fixed;
-  top: calc(var(--cta-nav-h) + 10px);
-  right: 0;
-  left: 0;
-  width: calc(100% - 32px);
+  top: calc(var(--cta-nav-h) + 8px);
+  right: 16px;
+  left: 16px;
   max-width: var(--cta-container);
   margin-inline: auto;
-  background: rgba(8, 153, 169, 0.88); /* Translucent premium teal glass */
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 28px 20px;
+  background: rgba(8, 153, 169, 0.92);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 28px 24px;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 24px 48px -12px rgba(0, 0, 0, 0.35), 
+    0 8px 16px -4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
   z-index: 9999;
   direction: rtl;
   text-align: right;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -1464,14 +1495,18 @@
     .cta-auth-slot{position:relative;display:inline-flex;align-items:center}
     .cta-account{position:relative}
     .cta-account-btn{
-      height:38px;border-radius:10px;border:1px solid rgba(8,153,169,.4);
-      background:linear-gradient(135deg,#0899A9,#067d8a);color:#fff;
-      padding:0 12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
-      white-space:nowrap;font-weight:700;box-shadow:0 0 12px rgba(8,153,169,.3);
-      transition:all .3s cubic-bezier(.16,1,.3,1);
+      height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.4);
+      background:linear-gradient(180deg,#0899A9,#067d8a);color:#fff;
+      padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+      white-space:nowrap;font-weight:700;font-size:13px;
+      box-shadow:0 4px 14px rgba(8,153,169,.3), inset 0 1px 1px rgba(255,255,255,.4);
+      transition:all .3s cubic-bezier(.34,1.56,.64,1);
     }
-    .cta-account-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(8,153,169,.6);background:linear-gradient(135deg,#0ab2c5,#0899A9)}
-    .cta-account-btn:active{transform:translateY(1px)}
+    .cta-account-btn:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 6px 20px rgba(8,153,169,.45), inset 0 1px 1px rgba(255,255,255,.6);
+    }
+    .cta-account-btn:active{transform:scale(0.96)}
     .cta-account-avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);
       display:grid;place-items:center;font-weight:800;font-size:13px;overflow:hidden;flex-shrink:0;color:#fff}
     .cta-account-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
