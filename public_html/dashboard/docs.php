@@ -246,9 +246,12 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
    ========================================================================== */
 @font-face {
   font-family: 'Rooyin';
-  src: url('../webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
+  src: local('Rooyin'),
+       local('Rooyin-Regular'),
+       url('../webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
        url('webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
-       url('/webfont/rooyin/RooyinFree-Regular.woff2') format('woff2');
+       url('/webfont/rooyin/RooyinFree-Regular.woff2') format('woff2'),
+       url('/assets/fonts/rooyin/RooyinFree-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -256,9 +259,12 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
 
 @font-face {
   font-family: 'Rooyin';
-  src: url('../webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
+  src: local('Rooyin Bold'),
+       local('Rooyin-Bold'),
+       url('../webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
        url('webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
-       url('/webfont/rooyin/RooyinFree-Bold.woff2') format('woff2');
+       url('/webfont/rooyin/RooyinFree-Bold.woff2') format('woff2'),
+       url('/assets/fonts/rooyin/RooyinFree-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -268,24 +274,30 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
   font-family: 'RooyinDots2';
   src: url('../webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2'),
        url('webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2'),
-       url('/webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2');
+       url('/webfont/rooyin/RooyinFree-RegularDots2.woff2') format('woff2'),
+       url('/assets/fonts/rooyin/RooyinFree-RegularDots2.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-.font-rooyin {
-  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
+.font-rooyin,
+.font-rooyin * {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   font-feature-settings: "liga" 1, "calt" 1;
   letter-spacing: 0 !important;
   word-spacing: normal !important;
 }
 
-.font-rooyin-dots2 {
-  font-family: 'RooyinDots2', 'Vazirmatn', -apple-system, sans-serif !important;
+.font-rooyin-dots2,
+.font-rooyin-dots2 * {
+  font-family: 'RooyinDots2', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+button, input, select, textarea {
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -698,12 +710,15 @@ body::before {
   align-items: center;
   gap: 8px;
 }
-.tool-pill {
+.tool-pill,
+#copyPageLinkBtn,
+#readingTimePill {
   font-size: 12px;
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   color: var(--color-text-muted);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 99px;
   display: inline-flex;
   align-items: center;
@@ -711,10 +726,26 @@ body::before {
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+  line-height: 1.4;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.tool-pill:hover {
+.tool-pill:hover,
+#copyPageLinkBtn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+.tool-pill span,
+.tool-pill button,
+#copyPageLinkBtn span,
+#readingTimePill span {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
 }
 
 /* جعبه سرفصل درون-صفحه برای موبایل و تبلت (In-Article Mobile TOC Accordion) */
@@ -1082,18 +1113,26 @@ body::before {
   border-radius: 7px;
   color: #c9d1d9;
   font-size: 11.5px;
-  font-family: inherit;
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   padding: 4px 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   transition: all 0.2s var(--ease);
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
 }
 .code-copy-btn:hover {
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.25);
+}
+.code-copy-btn span {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
 }
 
 .markdown-body pre {
@@ -1569,13 +1608,13 @@ body::before {
         </div>
 
         <div class="article-tools">
-          <span class="tool-pill" id="readingTimePill" title="تخمین زمان مطالعه">
+          <span class="tool-pill font-rooyin" id="readingTimePill" title="تخمین زمان مطالعه">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span id="readingTimeText">۳ دقیقه مطالعه</span>
+            <span id="readingTimeText" class="font-rooyin">۳ دقیقه مطالعه</span>
           </span>
-          <button class="tool-pill" id="copyPageLinkBtn" title="کپی پیوند این سند">
+          <button class="tool-pill font-rooyin" id="copyPageLinkBtn" type="button" title="کپی پیوند این سند">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span>کپی پیوند</span>
+            <span class="font-rooyin">کپی پیوند</span>
           </button>
         </div>
       </div>
@@ -1949,9 +1988,9 @@ function processCustomMarkdownElements(html, currentDocId) {
           <span class="mac-dot dot-green"></span>
         </div>
         <span class="code-lang-pill">${lang}</span>
-        <button class="code-copy-btn" type="button" title="کپی کد">
+        <button class="code-copy-btn font-rooyin" type="button" title="کپی کد">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span>کپی کد</span>
+          <span class="font-rooyin">کپی کد</span>
         </button>
       </div>
     `;
@@ -2360,7 +2399,7 @@ function setupMarkdownContentDelegation() {
           const prevHtml = copyBtn.innerHTML;
           copyBtn.innerHTML = `
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-            <span style="color:#2ea043">کپی شد!</span>
+            <span class="font-rooyin" style="color:#2ea043">کپی شد!</span>
           `;
           setTimeout(() => { copyBtn.innerHTML = prevHtml; }, 2000);
         }).catch(() => {});
@@ -2385,7 +2424,7 @@ document.getElementById('copyPageLinkBtn').addEventListener('click', () => {
     const prev = btn.innerHTML;
     btn.innerHTML = `
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ea043"><polyline points="20 6 9 17 4 12"/></svg>
-      <span style="color:#2ea043">پیوند کپی شد!</span>
+      <span class="font-rooyin" style="color:#2ea043">پیوند کپی شد!</span>
     `;
     setTimeout(() => { btn.innerHTML = prev; }, 2000);
   });

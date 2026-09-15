@@ -3,7 +3,9 @@
  */
 @font-face {
   font-family: 'Rooyin';
-  src: url('RooyinFree-Regular.woff2') format('woff2');
+  src: local('Rooyin'),
+       local('Rooyin-Regular'),
+       url('RooyinFree-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -11,7 +13,9 @@
 
 @font-face {
   font-family: 'Rooyin';
-  src: url('RooyinFree-Bold.woff2') format('woff2');
+  src: local('Rooyin Bold'),
+       local('Rooyin-Bold'),
+       url('RooyinFree-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -26,12 +30,37 @@
 }
 
 /* کلاس‌های کمکی برای اعمال مستقیم فونت رویین */
-.font-rooyin {
-  font-family: 'Rooyin', -apple-system, sans-serif !important;
+.font-rooyin,
+.font-rooyin * {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
 }
 
-.font-rooyin-dots2 {
-  font-family: 'RooyinDots2', -apple-system, sans-serif !important;
+.font-rooyin-dots2,
+.font-rooyin-dots2 * {
+  font-family: 'RooyinDots2', 'Vazirmatn', -apple-system, sans-serif !important;
+}
+
+/* دکمه‌ها و پیل‌های ابزار و کپی پیوند */
+.tool-pill,
+#copyPageLinkBtn,
+#readingTimePill,
+.code-copy-btn,
+.status-badge {
+  font-family: 'Rooyin', 'Vazirmatn', -apple-system, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}
+
+.tool-pill *,
+#copyPageLinkBtn *,
+#readingTimePill *,
+.code-copy-btn *,
+.status-badge * {
+  font-family: inherit !important;
 }
 
 /* اعمال در استایل‌های کد فارسی */
