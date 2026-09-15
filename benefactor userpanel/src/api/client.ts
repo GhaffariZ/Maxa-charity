@@ -156,6 +156,7 @@ export interface UserDto {
   status: string;
   first_name: string | null;
   last_name: string | null;
+  national_code?: string | null;
   phone: string | null;
   avatar_url: string | null;
   postal_address: string | null;

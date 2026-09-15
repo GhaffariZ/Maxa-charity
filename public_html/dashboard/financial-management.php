@@ -830,7 +830,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       </button>
 
-      <?php if (!dash_is_finance_only()): ?>
+      <?php if (!dash_is_finance_only() && !dash_is_finance_user()): ?>
       <a href="index.php" class="btn-back-dash" title="بازگشت به داشبورد عمومی">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span>داشبورد اصلی</span>
@@ -841,7 +841,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
         <div class="fm-user-av"><?= e(mb_substr($DASH_USER['full_name'] ?: $DASH_USER['username'], 0, 2, 'UTF-8')) ?></div>
         <div class="fm-user-info">
           <span class="fm-user-name"><?= e($DASH_USER['full_name'] ?: $DASH_USER['username']) ?></span>
-          <span class="fm-user-role"><?= e(dash_is_finance_only() ? 'مسئول مالی' : (dash_is_super() ? 'مدیر مرکزی' : 'مدیر شعبه')) ?></span>
+          <span class="fm-user-role"><?= e((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : (dash_is_super() ? 'مدیر مرکزی' : 'مدیر شعبه')) ?></span>
         </div>
       </div>
 

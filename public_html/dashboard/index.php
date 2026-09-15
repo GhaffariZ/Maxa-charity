@@ -7,8 +7,8 @@
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
 
-// اگر کاربر منحصراً مسئول مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
-if (dash_is_finance_only()) {
+// اگر کاربر مسئول یا مدیر مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
+if (dash_is_finance_only() || dash_is_finance_user()) {
     header('Location: /dashboard/financial-management.php');
     exit;
 }
@@ -327,7 +327,8 @@ $MENU = [
   'isHqView'      => $IS_HQ_VIEW,
   'isNewsEditor'  => dash_is_news_editor(),
   'canMaxapedia'  => dash_can_maxapedia(),
-  'isFinanceOnly' => dash_is_finance_only(),
+  'isFinanceOnly' => dash_is_finance_only() || dash_is_finance_user(),
+  'isFinanceUser' => dash_is_finance_user(),
   'activeBranch'  => $BRANCH_ID,
   'activeBranchName' => $ACTIVE_BRANCH_ROW['name'] ?? '',
   'branches'      => array_map(static fn($b)=>[
@@ -335,7 +336,7 @@ $MENU = [
                        'is_hq'=>(int)($b['is_hq']??0),'status'=>$b['status']??'active',
                      ], $branchList),
   'user'          => ['name'=>$U['full_name'] ?: $U['username'],
-                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : (dash_is_finance_only() ? 'مسئول مالی' : 'کاربر شعبه'))],
+                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
   'csrf'          => csrf_token(),
 ];
 ?>
@@ -1093,6 +1094,8 @@ body.spa-active .content{display:none}
                        {label:'مدیریت دوره‌ها',icon:'list',href:'courses-manage.php'}]});
   // مکساپدیا فقط از «ستاد مرکزی» و فقط برای مدیر مرکزی (یا کاربرِ دارای دسترسیِ صریح)
   if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
+  // روایات امید مکسا (فقط دفتر مرکزی / ستاد — و هرگز برای مدیر مالی)
+  if (MENU.isHqView && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
   // روایات امید مکسا (فقط دفتر مرکزی / ستاد)
   if (MENU.isHqView) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
   // صفحه معرفی شعبه (فقط برای شعب — غیر از ستاد مرکزی)
@@ -1111,8 +1114,10 @@ body.spa-active .content{display:none}
   const people=[];
   if (CAN.feedback) people.push({single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'});
   if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
-  // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل در دسترس است (سطحِ دسترسی داخلِ خودِ صفحه اعمال می‌شود)
-  people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
+  // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل به جز مدیر مالی
+  if (!MENU.isFinanceOnly && !MENU.isFinanceUser) {
+    people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
+  }
   // اثرات کمک (Impact of Donations)
   people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }

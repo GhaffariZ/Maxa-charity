@@ -966,6 +966,48 @@
       modal.offsetHeight; // force reflow
       modal.classList.add('show');
       document.querySelector('.modal-title').textContent = 'کمک برای: ' + title;
+      applyCampaignAutofill();
+    }
+
+    function applyCampaignAutofill() {
+      try {
+        function fill(u) {
+          if (!u) return;
+          const nameInput = document.getElementById('name');
+          const phoneInput = document.getElementById('phone');
+          const emailInput = document.getElementById('email');
+          const fullName = u.full_name || [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
+          if (nameInput && fullName && !nameInput.value) nameInput.value = fullName;
+          if (phoneInput && u.phone && !phoneInput.value) phoneInput.value = u.phone;
+          if (emailInput && u.email && !emailInput.value) emailInput.value = u.email;
+        }
+
+        const raw = localStorage.getItem('maksa_benefactor_user');
+        if (raw) {
+          fill(JSON.parse(raw));
+        } else {
+          const token = localStorage.getItem('maksa_access_token');
+          const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+          fetch('/api/user/me', { headers, credentials: 'include' })
+            .then(res => res.ok ? res.json() : null)
+            .then(json => {
+              const u = json?.data?.user;
+              if (u) {
+                const profile = {
+                  first_name: u.first_name || '',
+                  last_name: u.last_name || '',
+                  full_name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
+                  phone: u.phone || '',
+                  national_code: u.national_code || '',
+                  email: u.email || ''
+                };
+                localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
+                fill(profile);
+              }
+            })
+            .catch(() => {});
+        }
+      } catch (e) {}
     }
 
     function closeModal() {

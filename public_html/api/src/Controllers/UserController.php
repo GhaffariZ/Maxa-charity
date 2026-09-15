@@ -240,6 +240,7 @@ final class UserController
             'status'          => $p['status'] ?? null,
             'first_name'      => $p['first_name'] ?? null,
             'last_name'       => $p['last_name'] ?? null,
+            'national_code'   => $p['national_code'] ?? null,
             'phone'           => $p['phone'] ?? null,
             'avatar_url'      => $p['avatar_url'] ?? null,
             'postal_address'  => $p['postal_address'] ?? null,
