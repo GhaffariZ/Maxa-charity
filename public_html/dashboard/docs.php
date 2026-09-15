@@ -846,6 +846,47 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
+/* برچسب‌های وضعیت برداری مدرن (Iconly Style Status Badges) */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.status-badge svg { flex-shrink: 0; }
+.status-active {
+  background: rgba(22, 163, 122, 0.12);
+  color: #16a37a;
+  border: 1px solid rgba(22, 163, 122, 0.25);
+}
+.status-warning {
+  background: rgba(244, 166, 30, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(244, 166, 30, 0.25);
+}
+:root[data-theme="dark"] .status-warning {
+  color: #f59e0b;
+}
+.status-muted {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* اسپینر بارگذاری مدرن */
+@keyframes docsSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.docs-spinner {
+  animation: docsSpin 0.9s linear infinite;
+  color: var(--color-primary);
+}
+
 /* کد و قطعه برنامه‌ها */
 .markdown-body code {
   font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
@@ -1266,7 +1307,13 @@ body {
     <!-- گروه اول: راهنمای کاربران (User Manual) -->
     <div>
       <div class="nav-group-title">
-        <span>📖 راهنمای کاربران (User Manual)</span>
+        <span style="display:inline-flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+          </svg>
+          <span>راهنمای کاربران (User Manual)</span>
+        </span>
         <span style="font-size:10px;opacity:0.7">۲۲ بخش</span>
       </div>
       <ul class="nav-group-list" id="userManualNavList"></ul>
@@ -1275,7 +1322,13 @@ body {
     <!-- گروه دوم: مستندات فنی و مهندسی (Developer Docs) -->
     <div>
       <div class="nav-group-title">
-        <span>🛠️ مستندات فنی (Engineering)</span>
+        <span style="display:inline-flex;align-items:center;gap:7px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          <span>مستندات فنی (Engineering)</span>
+        </span>
       </div>
       <ul class="nav-group-list" id="devDocsNavList"></ul>
     </div>
@@ -1683,7 +1736,22 @@ function processCustomMarkdownElements(html) {
     }
   });
 
-  return container.innerHTML;
+  // ۶. تبدیل تگ‌های متنی وضعیت به برچسب‌های برداری مدرن با آیکون‌های Iconly Pro
+  let rawHtml = container.innerHTML;
+
+  rawHtml = rawHtml.replace(/\[(فعال|تأیید)\]/g, 
+    '<span class="status-badge status-active"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>$1</span></span>');
+
+  rawHtml = rawHtml.replace(/\[(آزمایشی|در حال توسعه)\]/g, 
+    '<span class="status-badge status-warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>$1</span></span>');
+
+  rawHtml = rawHtml.replace(/\[(برنامه‌ریزی‌شده|عدم دسترسی)\]/g, 
+    '<span class="status-badge status-muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/></svg><span>$1</span></span>');
+
+  // ۷. حذف قطعی و تضمینی هرگونه ایموجی یونیکد باقی‌مانده از محتوا
+  rawHtml = rawHtml.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}\u{200D}\u{FE0F}]/gu, '');
+
+  return rawHtml;
 }
 
 /* ==========================================================================
@@ -1893,8 +1961,10 @@ function loadDoc(docId, targetHash = '') {
 
   document.getElementById('markdownContent').innerHTML = `
     <div style="text-align:center;padding:70px 20px;color:var(--color-text-muted)">
-      <div style="font-size:32px;margin-bottom:12px">⏳</div>
-      <p style="font-weight:700">در حال بارگذاری سند...</p>
+      <svg class="docs-spinner" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      <p style="font-weight:700;margin-top:14px;font-size:14px">در حال بارگذاری سند...</p>
     </div>
   `;
 

@@ -25,7 +25,7 @@ This is a Persian **(RTL)** charity website built with **plain PHP + PDO + MySQL
 
 **Relevant existing tables:** `pages`, `news`, `news_categories`, `campaigns`, `hero_slides`, `components`, `page_components`, `courses`, `employee_profiles` (partners), `roles` (columns `name`, `level`), `webusers`, `settings`, `audit_log`, `login_attempts`.
 
-### ⚠️ Current security problems that MUST be fixed in this work
+### Current security problems that MUST be fixed in this work
 1. **The dashboard has NO auth guard** — `dashboard/index.php` and other dashboard pages are accessible without any login check. Anyone can open `/dashboard/`.
 2. **`dashboard/register.php` lets ANYONE self-register** and enter the panel. This must be completely removed/disabled.
 3. Two inconsistent auth systems exist (`webusers` in `dashboard/login.php` and sessions in `core/auth.php`). They must be replaced by **one clean, unified system**.
@@ -63,12 +63,12 @@ Three access levels:
 ### 3-1) `branches` table
 ```sql
 CREATE TABLE branches (
-  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name          VARCHAR(150) NOT NULL,            -- e.g. Imam Khomeini Hospital Branch
-  slug          VARCHAR(100) NOT NULL UNIQUE,     -- e.g. tabriz-branch  (only a-z0-9-)
-  is_hq         TINYINT(1) NOT NULL DEFAULT 0,    -- central HQ = 1 (exactly one row)
-  status        ENUM('active','disabled') NOT NULL DEFAULT 'active',
-  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(150) NOT NULL, -- e.g. Imam Khomeini Hospital Branch
+ slug VARCHAR(100) NOT NULL UNIQUE, -- e.g. tabriz-branch (only a-z0-9-)
+ is_hq TINYINT(1) NOT NULL DEFAULT 0, -- central HQ = 1 (exactly one row)
+ status ENUM('active','disabled') NOT NULL DEFAULT 'active',
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 - Seed one **central HQ** row (`is_hq=1`, e.g. `slug='hq'`, `name='MACSA Central HQ'`).
@@ -83,33 +83,33 @@ Add `branch_id INT UNSIGNED NOT NULL` with a `FOREIGN KEY` to `branches(id)` and
 > Instead of the scattered current tables (`webusers`), one clean unified table. `webusers` was only for the public benefactor panel; do not mix it with this.
 ```sql
 CREATE TABLE dashboard_users (
-  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  branch_id     INT UNSIGNED NOT NULL,            -- the branch this user belongs to
-  username      VARCHAR(60)  NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,            -- password_hash(PASSWORD_DEFAULT)
-  full_name     VARCHAR(120) DEFAULT NULL,
-  role_id       INT UNSIGNED DEFAULT NULL,        -- role/position (for branch users)
-  is_super      TINYINT(1) NOT NULL DEFAULT 0,    -- central admin = 1
-  is_branch_admin TINYINT(1) NOT NULL DEFAULT 0,  -- branch admin = 1
-  status        ENUM('active','disabled') NOT NULL DEFAULT 'active',
-  last_login_at DATETIME DEFAULT NULL,
-  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (branch_id) REFERENCES branches(id),
-  FOREIGN KEY (role_id)   REFERENCES dashboard_roles(id)
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ branch_id INT UNSIGNED NOT NULL, -- the branch this user belongs to
+ username VARCHAR(60) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL, -- password_hash(PASSWORD_DEFAULT)
+ full_name VARCHAR(120) DEFAULT NULL,
+ role_id INT UNSIGNED DEFAULT NULL, -- role/position (for branch users)
+ is_super TINYINT(1) NOT NULL DEFAULT 0, -- central admin = 1
+ is_branch_admin TINYINT(1) NOT NULL DEFAULT 0, -- branch admin = 1
+ status ENUM('active','disabled') NOT NULL DEFAULT 'active',
+ last_login_at DATETIME DEFAULT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (branch_id) REFERENCES branches(id),
+ FOREIGN KEY (role_id) REFERENCES dashboard_roles(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 ### 3-4) Roles & permissions — `dashboard_roles`
 ```sql
 CREATE TABLE dashboard_roles (
-  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  branch_id   INT UNSIGNED NOT NULL,              -- roles are defined per-branch
-  name        VARCHAR(80) NOT NULL,               -- e.g. Reporter (خبرنگار)
-  permissions JSON NOT NULL,                      -- e.g. ["news"] or ["news","campaigns"]
-  is_preset   TINYINT(1) NOT NULL DEFAULT 0,      -- predefined roles like Reporter
-  created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (branch_id) REFERENCES branches(id),
-  UNIQUE(branch_id, name)
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ branch_id INT UNSIGNED NOT NULL, -- roles are defined per-branch
+ name VARCHAR(80) NOT NULL, -- e.g. Reporter (خبرنگار)
+ permissions JSON NOT NULL, -- e.g. ["news"] or ["news","campaigns"]
+ is_preset TINYINT(1) NOT NULL DEFAULT 0, -- predefined roles like Reporter
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (branch_id) REFERENCES branches(id),
+ UNIQUE(branch_id, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 - **Preset roles** such as "Reporter / خبرنگار" (`permissions: ["news"]`) should be seeded for each branch.
@@ -118,11 +118,11 @@ CREATE TABLE dashboard_roles (
 Which sections are enabled for a branch (determined by checkboxes at branch creation):
 ```sql
 CREATE TABLE branch_features (
-  branch_id INT UNSIGNED NOT NULL,
-  feature   VARCHAR(50)  NOT NULL,   -- hero | news | partners | campaigns | courses | pages | financial | feedback | medical | ...
-  enabled   TINYINT(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (branch_id, feature),
-  FOREIGN KEY (branch_id) REFERENCES branches(id)
+ branch_id INT UNSIGNED NOT NULL,
+ feature VARCHAR(50) NOT NULL, -- hero | news | partners | campaigns | courses | pages | financial | feedback | medical | ...
+ enabled TINYINT(1) NOT NULL DEFAULT 1,
+ PRIMARY KEY (branch_id, feature),
+ FOREIGN KEY (branch_id) REFERENCES branches(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
@@ -147,11 +147,11 @@ Display rules:
 
 ### 4-2) Auth-guard bootstrap
 - Build a bootstrap file (e.g. `dashboard/_guard.php`) that is `require`d at the **top of every dashboard page** and:
-  1. Starts the secure session.
-  2. If the user is not logged in → redirect to the login page.
-  3. Loads the user, the active branch, and their permissions into `$_SESSION`.
-  4. If the user's `status = disabled` → immediate logout and message.
-  5. Checks each page's access based on feature/permission (e.g. the news page only for someone with the `news` permission).
+ 1. Starts the secure session.
+ 2. If the user is not logged in → redirect to the login page.
+ 3. Loads the user, the active branch, and their permissions into `$_SESSION`.
+ 4. If the user's `status = disabled` → immediate logout and message.
+ 5. Checks each page's access based on feature/permission (e.g. the news page only for someone with the `news` permission).
 - This guard must be applied to **all dashboard files** (index.php and every `*-create.php`, `*-list.php`, `*-save.php`, …). No dashboard endpoint may be left without a guard.
 
 ### 4-3) Seed the central admin
@@ -163,12 +163,12 @@ Display rules:
 
 - Each branch's URL: `mymacsa.ir/{branch-slug}` (e.g. `mymacsa.ir/tabriz-branch`).
 - Routing (`public_html/index.php` and/or `core/router.php` and `.htaccess`) must:
-  1. First check whether `{slug}` matches a `branches.slug` → if yes, render **that branch's home page** (from `pages` with that branch's `branch_id` and `slug='home'`).
-  2. Also support the branch's internal routes: `mymacsa.ir/{branch-slug}/news/{news-slug}`, campaigns, etc. — exactly like the central structure but scoped to that branch.
+ 1. First check whether `{slug}` matches a `branches.slug` → if yes, render **that branch's home page** (from `pages` with that branch's `branch_id` and `slug='home'`).
+ 2. Also support the branch's internal routes: `mymacsa.ir/{branch-slug}/news/{news-slug}`, campaigns, etc. — exactly like the central structure but scoped to that branch.
 - **URL structure (final decision): top-level, no prefix** — exactly `mymacsa.ir/{slug}` like `mymacsa.ir/tabriz-branch`. **Do not use any `/branch/` prefix.**
 - **Collision prevention (mandatory):** the slug namespace is shared between branches and central pages, so:
-  - When creating a branch, the slug must be unique against **both** `branches.slug` **and** the central `pages.slug` (global uniqueness check + a reserved-slug list).
-  - **Router resolution order:** check `branches.slug` first; if matched, render the branch home page. Otherwise fall through to the current central-pages logic.
+ - When creating a branch, the slug must be unique against **both** `branches.slug` **and** the central `pages.slug` (global uniqueness check + a reserved-slug list).
+ - **Router resolution order:** check `branches.slug` first; if matched, render the branch home page. Otherwise fall through to the current central-pages logic.
 - The branch page rendering must use the **same existing component-based mechanism** (the same `dashboard/components/*`), only reading data from `branch_id`-scoped rows.
 
 ---
@@ -189,8 +189,8 @@ Display rules:
 
 ### 6-3) "Branches / شعب" section (central admin only)
 - Only at the central HQ access level, a new sidebar heading named **"Branches / شعب"** (at the same level as "Content Management" and "Financial") with two sub-items:
-  - **Create New Branch / تعریف شعبه جدید**
-  - **Manage Branches / مدیریت شعبه‌ها**
+ - **Create New Branch / تعریف شعبه جدید**
+ - **Manage Branches / مدیریت شعبه‌ها**
 
 ---
 
@@ -201,10 +201,10 @@ A page that collects these inputs:
 1. **Branch name** and **branch tag/slug** (for the URL and for attributing data in the database). Sanitize the slug (only `a-z0-9-`) and check uniqueness.
 2. **Branch admin username and password** — a `dashboard_users` record with `is_branch_admin=1` and that branch's `branch_id` is created (password via `password_hash`).
 3. **Branch content permissions** — a **checkbox** for each section below (the final, complete list of delegatable sections):
-   `hero` (هیروها), `news` (خبرها), `campaigns` (کمپین‌ها), `partners` (همکاران), `courses` (دوره‌ها), `pages` (کامپوننت‌ها و صفحات), `financial` (گزارش مالی), `feedback` (انتقادات و پیشنهادات), `medical` (پرونده‌های پزشکی).
-   Each enabled checkbox:
-   - Creates a row in `branch_features`.
-   - Provisions that section's independent subsystem for the branch (e.g. if "hero" is enabled, an independent hero system for that branch with its own `branch_id`).
+ `hero` (هیروها), `news` (خبرها), `campaigns` (کمپین‌ها), `partners` (همکاران), `courses` (دوره‌ها), `pages` (کامپوننت‌ها و صفحات), `financial` (گزارش مالی), `feedback` (انتقادات و پیشنهادات), `medical` (پرونده‌های پزشکی).
+ Each enabled checkbox:
+ - Creates a row in `branch_features`.
+ - Provisions that section's independent subsystem for the branch (e.g. if "hero" is enabled, an independent hero system for that branch with its own `branch_id`).
 4. **"Create Branch" button.**
 
 ### Branch directory
@@ -213,7 +213,7 @@ A page that collects these inputs:
 - **Note:** the source of truth for content is the database (the `branch_id`-scoped rows); this folder is for that branch's **files/uploads**. Both must be scoped.
 - A default `home` page for the branch should be created in the `pages` table with its `branch_id` and `slug='home'` so `mymacsa.ir/{tag}` works immediately.
 
-> ⚠️ Folder creation security: the folder name must be built exactly from the validated slug (never from raw input). Prevent path traversal.
+> Folder creation security: the folder name must be built exactly from the validated slug (never from raw input). Prevent path traversal.
 
 ---
 
@@ -221,10 +221,10 @@ A page that collects these inputs:
 
 - When a branch admin (e.g. Tabriz) logs in, they are directed to the **same main dashboard**, but with **limited access**: they only see and edit their own branch's content.
 - On the dashboard home page, **branch-specific stats** are shown:
-  - Number of active campaigns for that branch.
-  - Total donations collected that were paid **only** to that branch's campaigns/courses (`panel_donations.branch_id` = that branch).
-  - **General donations (online, no campaign) are NOT shown in a branch dashboard** (HQ only).
-  - All other stats scoped to `branch_id`.
+ - Number of active campaigns for that branch.
+ - Total donations collected that were paid **only** to that branch's campaigns/courses (`panel_donations.branch_id` = that branch).
+ - **General donations (online, no campaign) are NOT shown in a branch dashboard** (HQ only).
+ - All other stats scoped to `branch_id`.
 - The branch admin must **not** see the "Branches" section, the multi-branch dropdown, or any other branch's content.
 
 ### Central HQ dashboard (bird's-eye view)
@@ -241,8 +241,8 @@ In the branch admin's sidebar, a new heading with two options:
 - User's first and last name.
 - Username and password.
 - **Role:**
-  - Select from predefined roles (such as "Reporter / خبرنگار" which only has access to that branch's news section).
-  - Or the **"Add new role / افزودن سمت جدید"** option: role name + content-permission checkboxes (news, campaigns, …) → a `dashboard_roles` row with `permissions` as JSON.
+ - Select from predefined roles (such as "Reporter / خبرنگار" which only has access to that branch's news section).
+ - Or the **"Add new role / افزودن سمت جدید"** option: role name + content-permission checkboxes (news, campaigns, …) → a `dashboard_roles` row with `permissions` as JSON.
 - The created user gets that branch's `branch_id` and the selected `role_id`.
 
 ### 9-2) "Manage Users / مدیریت کاربران"

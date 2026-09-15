@@ -1,17 +1,17 @@
-# 📚 پایگاه مستندات سامانه وب خیریه مکسا (MACSA Charity Documentation)
+# پایگاه مستندات سامانه وب خیریه مکسا (MACSA Charity Documentation)
 
 > **مرکز کنترل سرطان مکسا — شبکه مراقبت‌های حمایتی و تسکینی**
 
 ---
 
-## ⚠️ وضعیت نسخه (نسخه آزمایشی / دوره ارزیابی)
+## وضعیت نسخه (نسخه آزمایشی / دوره ارزیابی)
 
 > [!IMPORTANT]
 > سامانه حاضر در نسخه آزمایشی (Pilot Test Release) قرار دارد و مستندات آن به دو بخش مجزا جهت استفاده پرسنل و کاربران سازمانی (User Manual) و توسعه‌دهندگان فنی (Developer Docs) تدوین گردیده است.
 
 ---
 
-## ۱. 📖 راهنمای جامع کاربران (User Manual)
+## ۱. راهنمای جامع کاربران (User Manual)
 
 مجموعه راهنماهای مرحله‌به‌مرحله و کاربردی برای کادر اداری، درمانی، مدیران شعب و نیکوکاران در پوشه [`docs/user-manual/`](user-manual/README.md) قرار دارد:
 
@@ -32,7 +32,7 @@
 * [بخش ۱۴: شبکه همکاران و معرفی پرسنل (14-partners.md)](user-manual/14-partners.md)
 * [بخش ۱۵: سامانه تیکتینگ و مکاتبات سازمانی (15-ticketing.md)](user-manual/15-ticketing.md)
 * [بخش ۱۶: گزارش‌های مالی و تحلیل تراکنش‌ها (16-financial.md)](user-manual/16-financial.md)
-* [بخش ۱۷: انتقادات و پیشنهادات مراجعان 🟡 (17-feedback.md)](user-manual/17-feedback.md)
+* [بخش ۱۷: انتقادات و پیشنهادات مراجعان [آزمایشی] (17-feedback.md)](user-manual/17-feedback.md)
 * [بخش ۱۸: راهنمای پرتال و داشبورد خیرین (18-benefactor-dashboard.md)](user-manual/18-benefactor-dashboard.md)
 * [بخش ۱۹: ساختار سایت عمومی و صفحات شعب (19-public-site.md)](user-manual/19-public-site.md)
 * [بخش ۲۰: راهنمای عیب‌یابی و رفع خطاها (20-troubleshooting.md)](user-manual/20-troubleshooting.md)
@@ -40,7 +40,7 @@
 
 ---
 
-## ۲. 🛠️ مستندات فنی و مهندسی نرم‌افزار (Developer Docs)
+## ۲. مستندات فنی و مهندسی نرم‌افزار (Developer Docs)
 
 برای توسعه‌دهندگان، مدیران سیستم و تیم دواپس:
 
