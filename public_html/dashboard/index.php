@@ -1040,8 +1040,7 @@ body.spa-active .content{display:none}
     ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/>',
     cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
     package:'<path d="m16.5 9.4-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
-    quote:'<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2zm14 0c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2z"/>',
-    external:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>'
+    quote:'<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2zm14 0c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2z"/>'
   };
   function icon(name,cls){ return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 
@@ -1126,20 +1125,12 @@ body.spa-active .content{display:none}
       {label:'تعریف شعبه‌ی جدید',icon:'plus',href:'branch-create.php'},
       {label:'مدیریت شعبه‌ها',icon:'list',href:'branch-list.php'}]});
   }
-
-  // --- راهنما و مستندات سامانه (پرتال مستندات اختصاصی به سبک Read the Docs) ---
-  NAV.push({title:'راهنما و مستندات'});
-  NAV.push({single:true,label:'دفترچه راهنمای سامانه',icon:'book',href:'docs.php',target:'_blank',badge:'مستندات'});
-
   const navEl=document.getElementById('navList');
   let delay=0;
   NAV.forEach(item=>{
     if(item.title){ navEl.insertAdjacentHTML('beforeend','<div class="nav-section-title" style="animation-delay:'+(delay+=0.04)+'s">'+item.title+'</div>'); return; }
     if(item.single){
-      const tgt = item.target ? ' target="'+item.target+'"' : '';
-      const badge = item.badge ? '<span class="nav-badge" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:rgba(0,123,122,.12);color:var(--color-primary-dark);margin-inline-start:auto;">'+item.badge+'</span>' : '';
-      const ext = item.target === '_blank' && !item.badge ? '<span style="opacity:0.5;display:inline-flex;margin-inline-start:auto;">'+icon('external')+'</span>' : '';
-      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'"'+tgt+' class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span>'+badge+ext+'</a>');
+      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'" class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span></a>');
       return;
     }
     const sub=item.children.map(c=>'<a href="'+c.href+'" class="nav-sub-link">'+icon(c.icon)+'<span>'+c.label+'</span></a>').join('');
