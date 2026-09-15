@@ -6,6 +6,13 @@
  * ========================================================================== */
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
+
+// اگر کاربر منحصراً مسئول مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
+if (dash_is_finance_only()) {
+    header('Location: /dashboard/financial-management.php');
+    exit;
+}
+
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
@@ -320,6 +327,7 @@ $MENU = [
   'isHqView'      => $IS_HQ_VIEW,
   'isNewsEditor'  => dash_is_news_editor(),
   'canMaxapedia'  => dash_can_maxapedia(),
+  'isFinanceOnly' => dash_is_finance_only(),
   'activeBranch'  => $BRANCH_ID,
   'activeBranchName' => $ACTIVE_BRANCH_ROW['name'] ?? '',
   'branches'      => array_map(static fn($b)=>[
@@ -327,7 +335,7 @@ $MENU = [
                        'is_hq'=>(int)($b['is_hq']??0),'status'=>$b['status']??'active',
                      ], $branchList),
   'user'          => ['name'=>$U['full_name'] ?: $U['username'],
-                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : 'کاربر شعبه')],
+                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : (dash_is_finance_only() ? 'مسئول مالی' : 'کاربر شعبه'))],
   'csrf'          => csrf_token(),
 ];
 ?>
@@ -1057,6 +1065,10 @@ body.spa-active .content{display:none}
   const CAN  = MENU.can || {};
   const NAV  = [];
 
+  if (MENU.isFinanceOnly) {
+    NAV.push({title:'امور مالی'});
+    NAV.push({single:true,label:'گزارش‌ها و خروجی اکسل',icon:'wallet',href:'financial-management.php',active:true});
+  } else {
   // --- مدیریت محتوا ---
   const content = [];
   if (CAN.hero)      content.push({label:'هیروها',icon:'award',children:[
