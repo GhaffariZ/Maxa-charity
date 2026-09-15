@@ -94,27 +94,45 @@
       margin-right: calc(-1 * var(--cta-edge-gap));
     }
 
-    /* باکس شیشه‌ای با پس‌زمینه تار (Frosted Glass) و گوشه‌های نرم مستطیلی */
+    /* باکس شیشه‌ای با متریال SwiftUI (Ultra-Thin Material / Vibrancy) و گوشه‌های نرم Squircle */
     .cta-brand{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      background: rgba(255, 255, 255, 0.32);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
-      padding: 7px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 0 4px 15px rgba(0,0,0,.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-      transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1), background .25s ease, border-color .25s ease;
+      background: rgba(255, 255, 255, 0.42);
+      -webkit-backdrop-filter: blur(24px) saturate(190%) contrast(105%);
+      backdrop-filter: blur(24px) saturate(190%) contrast(105%);
+      padding: 7px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 
+        0 8px 24px -4px rgba(0, 0, 0, 0.08),
+        0 2px 6px -1px rgba(0, 0, 0, 0.04),
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       text-decoration:none;
+      cursor: pointer;
+      user-select: none;
     }
 
     .cta-brand:hover{
-      transform:translateY(-2px);
-      background: rgba(255, 255, 255, 0.45);
-      border-color: rgba(255, 255, 255, 0.7);
-      box-shadow:0 6px 20px rgba(0,0,0,.1), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px) scale(1.02);
+      background: rgba(255, 255, 255, 0.55);
+      border-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 
+        0 12px 28px -4px rgba(0, 0, 0, 0.12),
+        0 4px 10px -1px rgba(0, 0, 0, 0.06),
+        inset 0 2px 2px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    .cta-brand:active{
+      transform: scale(0.96) translateY(0);
+      background: rgba(255, 255, 255, 0.38);
+      box-shadow: 
+        0 4px 12px -2px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
     }
 
     .cta-brand img{
@@ -122,7 +140,7 @@
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
     }
 
     /* وسط: منو */
