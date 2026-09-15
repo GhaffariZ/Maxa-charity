@@ -13,6 +13,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithOtp: (phone: string, code: string) => Promise<void>;
   register: (payload: {
     email: string;
     password: string;
@@ -64,6 +65,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await reloadUser();
   }, [reloadUser]);
 
+  const loginWithOtp = React.useCallback(async (phone: string, code: string) => {
+    const { access_token } = await api.loginOtp(phone, code);
+    setAccessToken(access_token);
+    await reloadUser();
+  }, [reloadUser]);
+
   const register = React.useCallback(
     (payload: { email: string; password: string; first_name?: string; last_name?: string }) =>
       api.register(payload),
@@ -85,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: user !== null,
     isLoading,
     login,
+    loginWithOtp,
     register,
     logout,
     reloadUser,
