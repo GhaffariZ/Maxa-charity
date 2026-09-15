@@ -970,13 +970,20 @@
           purpose: 'donation_auth'
         })
       });
-      const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || 'خطا در ارسال پیامک کد تأیید');
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {
+        // Empty or non-JSON body
       }
 
-      openOtpModal(vals.phone, data.data?.debug_code);
+      if (!res.ok) {
+        const errorMsg = data?.error?.message || data?.message || ('خطا در ارتباط با سرور (کد خطا: ' + res.status + ')');
+        throw new Error(errorMsg);
+      }
+
+      openOtpModal(vals.phone, data?.data?.debug_code);
     } catch (err) {
       alert(err.message || 'خطا در ارتباط با سرور.');
     } finally {
@@ -1043,11 +1050,19 @@
           purpose: 'donation_auth'
         })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'خطا در ارسال مجدد');
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {}
+
+      if (!res.ok) {
+        const errorMsg = data?.error?.message || data?.message || ('خطا در ارسال مجدد (کد ' + res.status + ')');
+        throw new Error(errorMsg);
+      }
 
       startTimer(120);
-      if (data.data?.debug_code) {
+      if (data?.data?.debug_code) {
         document.getElementById('otpCodeInput').value = data.data.debug_code;
       }
     } catch (e) {
@@ -1087,19 +1102,23 @@
         })
       });
 
-      const data = await res.json();
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {}
 
       if (!res.ok) {
-        throw new Error(data.message || 'خطا در اعتبارسنجی کد یا اتصال به درگاه');
+        const errorMsg = data?.error?.message || data?.message || ('خطا در اعتبارسنجی کد یا اتصال به درگاه (کد ' + res.status + ')');
+        throw new Error(errorMsg);
       }
 
       // Save token for authenticated session in donor dashboard
-      if (data.data?.access_token) {
+      if (data?.data?.access_token) {
         localStorage.setItem('maksa_access_token', data.data.access_token);
       }
 
       // Hand off to the bank gateway
-      if (data.data?.redirect_url) {
+      if (data?.data?.redirect_url) {
         window.location.href = data.data.redirect_url;
       } else {
         alert('پرداخت با موفقیت آغاز شد.');
