@@ -216,10 +216,14 @@ export const api = {
 
   // donations
   startDonation: (amount: number, campaign_slug?: string) =>
-    apiRequest<{ reference: string; redirect_url: string }>("/donations", {
+    apiRequest<{ reference: string; redirect_url: string; redirect_method: "GET" | "POST"; redirect_fields: Record<string, string> }>("/donations", {
       method: "POST",
       body: { amount, campaign_slug },
     }),
+  donationStatus: (reference: string) =>
+    apiRequest<{ reference: string; status: string; receipt_number: string | null }>(
+      `/donations/${encodeURIComponent(reference)}`
+    ),
   donationHistory: (page = 1, perPage = 10, q = "") =>
     apiRequest<{ items: DonationDto[]; total: number; page: number; per_page: number }>(
       `/donations?page=${page}&per_page=${perPage}${q ? `&q=${encodeURIComponent(q)}` : ""}`
@@ -255,7 +259,7 @@ export interface OrderDto {
 }
 
 export interface CampaignDto {
-  id: number;
+  id: string;
   slug: string;
   title: string;
   description: string | null;
