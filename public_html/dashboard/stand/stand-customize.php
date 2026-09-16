@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../_guard.php';
 dash_require('pages');
 $csrfToken = csrf_token();
+require_once $_SERVER['DOCUMENT_ROOT'] . '/api/src/Services/StandCatalog.php';
+$standDesigns = \Maksa\Services\StandCatalog::all();
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -328,21 +330,14 @@ $csrfToken = csrf_token();
     <label>طرح‌ها</label>
     <div class="image-list-vertical">
         
-        <div class="image-card" data-id="design1.jpg" data-price="150000" data-full="/dashboard/stand/happy1.jpg">
-            <img src="/dashboard/stand/happy1.jpg" alt="طرح ۱">
+        <?php $designNumber = 1; foreach ($standDesigns as $designId => $design): ?>
+        <div class="image-card"
+             data-id="<?= e($designId . '.jpg') ?>"
+             data-price="<?= (int)$design['unit_price'] ?>"
+             data-full="<?= e('/dashboard/stand/' . $design['full_image']) ?>">
+            <img src="<?= e('/dashboard/stand/' . $design['full_image']) ?>" alt="طرح <?= $designNumber ?>">
         </div>
-        
-        <div class="image-card" data-id="design2.jpg" data-price="180000" data-full="/dashboard/stand/happy2.jpg">
-            <img src="/dashboard/stand/happy2.jpg" alt="طرح ۲"> 
-        </div>
-        
-        <div class="image-card" data-id="design3.jpg" data-price="200000" data-full="/dashboard/stand/sad1.jpg">
-            <img src="/dashboard/stand/sad1.jpg" alt="طرح ۳">
-        </div>
-        
-        <div class="image-card" data-id="design4.jpg" data-price="250000" data-full="/dashboard/stand/sad3.jpg">
-            <img src="/dashboard/stand/sad3.jpg" alt="طرح ۴">
-        </div>
+        <?php $designNumber++; endforeach; ?>
 
     </div>
 </div>
@@ -370,7 +365,7 @@ $csrfToken = csrf_token();
                 <label>تعداد</label>
                 <div class="quantity-control">
                     <button type="button" class="quantity-btn" id="btnMinus">−</button>
-                    <input type="number" id="quantity" class="quantity-input" value="1" min="1" readonly>
+                    <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="100" readonly>
                     <button type="button" class="quantity-btn" id="btnPlus">+</button>
                 </div>
             </div>
@@ -426,7 +421,7 @@ $csrfToken = csrf_token();
     }
 
     document.getElementById('btnPlus').addEventListener('click', () => {
-        quantityInput.value = parseInt(quantityInput.value) + 1;
+        quantityInput.value = Math.min(100, parseInt(quantityInput.value) + 1);
         updateTotalPrice();
     });
 

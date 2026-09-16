@@ -1827,9 +1827,7 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
 
     const formData = new FormData(this);
     const payload = Object.fromEntries(formData.entries());
-    payload.unit_price = state.selectedStand.unit_price;
     payload.quantity = 1;
-    payload.total_price = state.selectedStand.unit_price;
     payload.branch_id = state.selectedBranchId;
 
     // بررسی وضعیت ورود کاربر

@@ -153,6 +153,8 @@ final class OrderController
             if ($catalogEntry !== null) {
                 $unitPrice = $catalogEntry['unit_price'];
                 $image = $catalogEntry['image'];
+            } elseif ($designId !== '') {
+                throw ApiException::badRequest('طرح انتخاب‌شده معتبر نیست.', 'invalid_design');
             } else {
                 // واکشی اولین استند شعبه
                 $stmt = $pdo->prepare("SELECT * FROM stands WHERE branch_id = ? AND is_active = 1 ORDER BY id ASC LIMIT 1");
