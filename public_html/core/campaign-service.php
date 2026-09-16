@@ -293,11 +293,22 @@ function campaign_service_load_env(): void
         return;
     }
     $loaded = true;
-    $candidates = [
-        dirname(__DIR__, 2) . '/maksa-private/.env',
-        dirname(__DIR__, 2) . '/.env',
-        dirname(__DIR__) . '/.env',
-    ];
+    $candidates = [];
+    $directory = __DIR__;
+
+    for ($level = 0; $level < 10; $level++) {
+        $candidates[] = $directory . '/maksa-private/.env';
+
+        $parent = dirname($directory);
+
+        if ($parent === $directory) {
+            break;
+        }
+
+        $directory = $parent;
+    }
+
+    $candidates[] = dirname(__DIR__) . '/.env';
     foreach ($candidates as $path) {
         if (!is_file($path) || !is_readable($path)) {
             continue;
