@@ -1,5 +1,7 @@
 # Sensitive — never commit these
 config.php
+!public_html/api/src/Core/Config.php
+!benefactor userpanel/api/src/Core/Config.php
 .env
 wp-config.php
 # Database credentials used by the deploy import script (keep on server only)
@@ -22,4 +24,4 @@ error_log
 # Untracked app folder
 /public_html/eo/
 # Local markdown documentation and prompt files
-Markdowns/
+Markdowns/

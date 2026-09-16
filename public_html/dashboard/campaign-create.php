@@ -112,6 +112,7 @@ dash_require('campaigns'); ?>
 
             <div class="form-side">
                 <form id="campForm">
+                    <?= csrf_field() ?>
                     <div class="form-group">
                         <label><i class="fas fa-camera"></i> تصویر شاخص کمپین</label>
                         <input type="file" name="featured_image" id="imageInput" class="input" accept="image/*" required>

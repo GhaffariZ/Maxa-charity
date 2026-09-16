@@ -714,7 +714,7 @@
       <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h2 class="modal-title">عنوان مودال</h2>
-        <form>
+        <form id="campaignDonationForm">
           <div class="form-group">
             <label for="name">نام</label>
             <input type="text" id="name" placeholder="نام">
@@ -744,6 +744,7 @@
 
   </div>
 
+  <script src="/js/campaign-payment.js"></script>
   <script>
     // تصویر جایگزین بهصورت SVG درونخطی (بدون درخواست شبکهای تا صفحه هرگز معلق نماند)
     var PLACEHOLDER_IMG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+";
@@ -751,6 +752,8 @@
     let allCampaigns = [];
     let campaignsData = [];
     let currentPage = 0;
+    let selectedCampaignId = '';
+    let selectedCenterSlug = 'hq';
 
     (async function loadCampaignsSimple() {
       try {
@@ -837,13 +840,17 @@
                     </div>
 
                     <div class="card-footer">
-                        <button class="btn-help" onclick="event.stopPropagation(); openModal('${camp.title.replace(/'/g, "\\'")}')">همین حالا کمک کنید</button>
+                        <button class="btn-help" type="button">همین حالا کمک کنید</button>
                     </div>
 
                     <div class="mobile-indicator"><i class="fas fa-ellipsis-h"></i></div>
                 </div>
             `;
 
+        cardDiv.querySelector('.btn-help').addEventListener('click', (event) => {
+          event.stopPropagation();
+          openModal(camp.id, camp.title, camp.branch_slug || 'hq');
+        });
         cardDiv.addEventListener('click', () => {
           cardDiv.classList.toggle('expanded');
         });
@@ -960,7 +967,9 @@
 
     window.addEventListener('resize', updateSlider);
 
-    function openModal(title) {
+    function openModal(campaignId, title, centerSlug) {
+      selectedCampaignId = campaignId;
+      selectedCenterSlug = centerSlug || 'hq';
       const modal = document.getElementById('donationModal');
       modal.style.display = 'flex';
       modal.offsetHeight; // force reflow
@@ -983,10 +992,33 @@
       if (event.target == donationModal) { closeModal(); }
     }
 
-    document.querySelector('form').addEventListener('submit', function (e) {
+    document.getElementById('campaignDonationForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-      alert('فرم ارسال شد.');
-      closeModal();
+      const form = e.currentTarget;
+      const button = form.querySelector('.btn-submit');
+      if (!document.getElementById('agreeTerms').checked) {
+        alert('لطفاً شرایط و ضوابط را بپذیرید.');
+        return;
+      }
+      button.disabled = true;
+      try {
+        await window.MaksaCampaignPayment.start({
+          center_slug: selectedCenterSlug,
+          campaign_id: selectedCampaignId,
+          full_name: document.getElementById('name').value.trim(),
+          mobile: document.getElementById('phone').value.trim(),
+          amount_toman: Number(document.getElementById('amount').value),
+          onSuccess: function () {
+            alert('پرداخت شما با موفقیت ثبت شد. سپاسگزاریم.');
+            closeModal();
+          },
+          onFailure: function () { alert('پرداخت ناموفق بود یا لغو شد.'); }
+        });
+      } catch (error) {
+        alert(error && error.message ? error.message : 'اتصال به درگاه ناموفق بود.');
+      } finally {
+        button.disabled = false;
+      }
     });
 
     // فیلترها بر اساس دادههای زنده

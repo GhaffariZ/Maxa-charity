@@ -2,8 +2,8 @@
 require_once __DIR__ . '/_guard.php';
 dash_require('campaigns');
 header('Content-Type: application/json; charset=utf-8');
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/campaign-service.php';
 
 /* ── SECURITY: Secure file upload helper functions ────────────────────────── */
 
@@ -55,7 +55,6 @@ function _campaign_validate_image(string $tmpPath): array
     $allowedMimes = [
         'image/jpeg' => 'jpeg',
         'image/png'  => 'png',
-        'image/gif'  => 'gif',
         'image/webp' => 'webp',
     ];
     if (!isset($allowedMimes[$mimeType])) {
@@ -84,7 +83,7 @@ function _campaign_validate_image(string $tmpPath): array
     }
     imagedestroy($image);
 
-    return ['ok' => true, 'type' => $allowedMimes[$mimeType]];
+    return ['ok' => true, 'type' => $mimeType];
 }
 
 function _campaign_reencode_image(string $tmpPath, string $mimeType): string|false
@@ -109,23 +108,26 @@ define('CAMPAIGN_MAX_UPLOAD_SIZE', 5 * 1024 * 1024);
 
 /* ── Main logic ───────────────────────────────────────────────────────────── */
 try {
-    $pdo->exec("SET NAMES utf8mb4");
     if (empty($_POST['title']) || empty($_POST['target_amount'])) {
         throw new Exception("Title and target amount are required.");
     }
-    $title = $_POST['title'];
+    csrf_check();
+    $title = trim((string)$_POST['title']);
     $description = isset($_POST['description']) ? HtmlSanitizer::sanitize($_POST['description']) : '';
-    $target_amount = (float)$_POST['target_amount'];
+    $targetAmountToman = filter_var($_POST['target_amount'], FILTER_VALIDATE_INT);
+    if ($targetAmountToman === false || $targetAmountToman < 1 || $targetAmountToman > intdiv(PHP_INT_MAX, 10)) {
+        throw new Exception('مبلغ هدف نامعتبر است.');
+    }
     $allowed_categories = ['food', 'drug', 'education'];
     $category = isset($_POST['category']) ? $_POST['category'] : 'food';
     if (!in_array($category, $allowed_categories, true)) $category = 'food';
 
-    $campaign_code = 'CAMP-' . date('Ymd') . '-' . str_pad(random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
-    $__branch = dash_active_branch_id();
-    $sql = "INSERT INTO campaigns (campaign_code, title, description, category, target_amount, collected_amount, branch_id) VALUES (?, ?, ?, ?, ?, 0, ?)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$campaign_code, $title, $description, $category, $target_amount, $__branch]);
-    $id = $pdo->lastInsertId();
+    $branch = dash_load_branch(dash_active_branch_id());
+    if (!$branch) {
+        throw new Exception('مرکز فعال یافت نشد.');
+    }
+    $client = new CampaignServiceClient((string)$branch['slug']);
+    $imageFileId = null;
 
     if (!empty($_FILES['featured_image']['name'])) {
         $file = $_FILES['featured_image'];
@@ -142,6 +144,11 @@ try {
         }
         if ($file['size'] > CAMPAIGN_MAX_UPLOAD_SIZE) throw new Exception('File size exceeds 5 MB limit.');
         if ($file['size'] === 0) throw new Exception('Uploaded file is empty.');
+        if (!is_uploaded_file($file['tmp_name'])) throw new Exception('Invalid upload source.');
+        $actualSize = filesize($file['tmp_name']);
+        if ($actualSize === false || $actualSize <= 0 || $actualSize > CAMPAIGN_MAX_UPLOAD_SIZE) {
+            throw new Exception('Uploaded file size is invalid.');
+        }
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (_campaign_is_forbidden_extension($ext)) throw new Exception('File extension is not permitted.');
@@ -149,26 +156,54 @@ try {
         $validation = _campaign_validate_image($file['tmp_name']);
         if (!$validation['ok']) throw new Exception($validation['error']);
 
+        $dimensions = @getimagesize($file['tmp_name']);
+        if ($dimensions === false || $dimensions[0] <= 0 || $dimensions[1] <= 0
+            || $dimensions[0] > 10000 || $dimensions[1] > 10000
+            || ($dimensions[0] * $dimensions[1]) > 40000000) {
+            throw new Exception('Image dimensions are invalid or too large.');
+        }
+
         $reencoded = _campaign_reencode_image($file['tmp_name'], $validation['type']);
         if ($reencoded === false) throw new Exception('Image processing failed.');
 
-        $safeExtMap = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
-        $safeExt = $safeExtMap[$validation['type']] ?? 'jpg';
-        $randomName = bin2hex(random_bytes(16)) . '.' . $safeExt;
-        $safeCampaignCode = preg_replace('/[^A-Za-z0-9_-]/', '', $campaign_code);
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/campaigns/" . $safeCampaignCode;
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-
         if (!is_file($reencoded) || filesize($reencoded) === 0) { @unlink($reencoded); throw new Exception('Image processing failed.'); }
-        $destination = $uploadDir . '/' . $randomName;
-        if (!rename($reencoded, $destination)) { @unlink($reencoded); throw new Exception('Failed to save image.'); }
-        $finalCheck = @getimagesize($destination);
-        if ($finalCheck === false) { @unlink($destination); throw new Exception('Saved file is not a valid image.'); }
-
-        $image_path = "/uploads/campaigns/" . $safeCampaignCode . "/" . $randomName;
-        $pdo->prepare("UPDATE campaigns SET image_url = ? WHERE id = ?")->execute([$image_path, $id]);
+        try {
+            $uploaded = $client->uploadImage(
+                $reencoded,
+                basename((string)$file['name']),
+                (string)$validation['type']
+            );
+            $imageFileId = (string)($uploaded['id'] ?? '');
+            if ($imageFileId === '') {
+                throw new Exception('شناسه تصویر از کمپین‌ساز دریافت نشد.');
+            }
+        } finally {
+            @unlink($reencoded);
+        }
     }
-    echo json_encode(["status" => "success", "message" => "Campaign created successfully", "id" => $id], JSON_UNESCAPED_UNICODE);
+
+    $categoryId = $client->ensureCategory(campaign_service_category_name($category));
+    $payload = [
+        'participation_type' => 'FINANCIAL',
+        'category_id' => $categoryId,
+        'title' => $title,
+        'description' => $description,
+        'starts_at' => gmdate('Y-m-d\TH:i:s\Z'),
+        'ends_at' => '2099-12-31T23:59:59Z',
+        'status' => 'ACTIVE',
+        'goal_amount' => $targetAmountToman * 10,
+        'manual_raised_amount' => 0,
+    ];
+    if ($imageFileId !== null) {
+        $payload['image_file_id'] = $imageFileId;
+    }
+    $created = $client->createCampaign($payload);
+    dash_audit('campaign_created', [
+        'campaign_id' => $created['id'] ?? null,
+        'center' => $branch['slug'],
+    ]);
+    echo json_encode(["status" => "success", "message" => "Campaign created successfully", "id" => $created['id'] ?? null], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
+    http_response_code($e instanceof CampaignServiceException && $e->status >= 400 && $e->status < 500 ? 422 : 502);
     echo json_encode(["status" => "error", "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
 }

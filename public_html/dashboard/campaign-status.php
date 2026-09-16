@@ -1,18 +1,36 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('campaigns'); 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+require_once __DIR__ . '/../core/campaign-service.php';
 
 // عملیات تغییر وضعیت کمپین (فعال / غیرفعال سازی) بدون نیاز به alert
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
-    $campaign_id = (int)$_POST['toggle_id'];
+    csrf_check();
+    $campaign_id = trim((string)$_POST['toggle_id']);
     $current_status = (int)$_POST['current_status'];
-    $new_status = $current_status === 1 ? 0 : 1;
-    
-    // IDOR: فقط کمپین‌های شعبه‌ی فعال (سوپرادمین هر شعبه‌ای که فعال کرده باشد)
-    $__branch = dash_active_branch_id();
-    $stmt = $pdo->prepare("UPDATE campaigns SET is_active = ? WHERE id = ? AND branch_id = ?");
-    $stmt->execute([$new_status, $campaign_id, $__branch]);
+    $postedSlug = campaign_service_normalize_slug((string)($_POST['branch_slug'] ?? ''));
+    $__activeBranch = dash_load_branch(dash_active_branch_id());
+    if (!$__activeBranch) {
+        http_response_code(404);
+        exit('مرکز فعال یافت نشد.');
+    }
+    $allowedSlug = (string)$__activeBranch['slug'];
+    if (dash_is_super() && dash_is_hq_view()) {
+        $allowed = array_column(dash_all_branches(), null, 'slug');
+        if (!isset($allowed[$postedSlug])) {
+            http_response_code(403);
+            exit('مرکز نامعتبر است.');
+        }
+        $allowedSlug = $postedSlug;
+    } elseif ($postedSlug !== $allowedSlug) {
+        http_response_code(403);
+        exit('دسترسی به این مرکز مجاز نیست.');
+    }
+
+    (new CampaignServiceClient($allowedSlug))->updateCampaign($campaign_id, [
+        'status' => $current_status === 1 ? 'INACTIVE' : 'ACTIVE',
+    ]);
+    dash_audit('campaign_status_changed', ['campaign_id' => $campaign_id, 'center' => $allowedSlug]);
 
     // رفرش صفحه برای اعمال تغییرات
     header("Location: campaign-status.php");
@@ -22,20 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
 // نمای مرکزی: همه‌ی کمپین‌های همه‌ی شعب با برچسبِ شعبه. سایر شعب: فقط کمپین‌های خودشان.
 $__branch = dash_active_branch_id();
 $__row = dash_load_branch($__branch);
-if ($__row && (int)$__row['is_hq'] === 1) {
-    $campaigns = $pdo->query(
-        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
-          ORDER BY c.id DESC"
-    )->fetchAll();
-} else {
-    $stmt = $pdo->prepare(
-        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
-          WHERE c.branch_id = ? ORDER BY c.id DESC"
-    );
-    $stmt->execute([$__branch]);
-    $campaigns = $stmt->fetchAll();
+$campaigns = [];
+$branchesToLoad = ($__row && (int)$__row['is_hq'] === 1 && dash_is_super()) ? dash_all_branches() : array_filter([$__row]);
+$campaignLoadErrors = [];
+foreach ($branchesToLoad as $branch) {
+    try {
+        $rows = (new CampaignServiceClient((string)$branch['slug']))->managementCampaigns();
+        foreach ($rows as $campaign) {
+            $campaigns[] = campaign_service_present($campaign, $branch);
+        }
+    } catch (Throwable $e) {
+        $campaignLoadErrors[] = (string)$branch['name'] . ': ' . $e->getMessage();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -336,6 +352,12 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         <h2>کمپین‌های حمایتی </h2>
     </div>
 
+    <?php if ($campaignLoadErrors): ?>
+      <div style="margin-bottom:20px;padding:14px;border-radius:12px;background:#fff3cd;color:#735c0f;">
+        <?= htmlspecialchars(implode(' | ', $campaignLoadErrors), ENT_QUOTES, 'UTF-8') ?>
+      </div>
+    <?php endif; ?>
+
     <div class="campaign-grid">
         <?php foreach($campaigns as $c): 
             // تعیین وضعیت فعال بودن (اگر ستون در دیتابیس نبود یا ۱ بود، فعال است)
@@ -354,7 +376,9 @@ if ($__row && (int)$__row['is_hq'] === 1) {
             <?php endif; ?>
 
             <form method="POST" class="toggle-status-form" onclick="event.stopPropagation();">
+                <?= csrf_field() ?>
                 <input type="hidden" name="toggle_id" value="<?= $c['id'] ?>">
+                <input type="hidden" name="branch_slug" value="<?= htmlspecialchars($c['branch_slug'], ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="current_status" value="<?= $is_active ?>">
                 <button type="submit" class="btn-toggle-status">
                     <?php if($is_active === 1): ?>

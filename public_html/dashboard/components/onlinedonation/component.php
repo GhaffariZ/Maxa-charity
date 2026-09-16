@@ -95,7 +95,7 @@
 
     <!-- Left Panel: Form -->
     <div class="donation-form-wrap">
-      <form class="donation-form" action="#" method="post">
+      <form class="donation-form" id="onlineDonationForm" action="#" method="post">
         <div class="form-header">
           <h3>ثبت اطلاعات پرداخت</h3>
           <p>مبالغ اهدایی مشمول معافیت مالیاتی می‌باشند</p>
@@ -734,6 +734,7 @@
 </style>
 
 
+<script src="/js/campaign-payment.js"></script>
 <script>
   function setAmount(val, event) {
     const amountInput = document.getElementById('customAmount');
@@ -742,4 +743,27 @@
     document.querySelectorAll('.amount-chip').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
   }
+
+  document.getElementById('onlineDonationForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector('.submit-btn');
+    const firstName = form.elements.first_name.value.trim();
+    const lastName = form.elements.last_name.value.trim();
+    button.disabled = true;
+    try {
+      await window.MaksaCampaignPayment.start({
+        center_slug: 'hq',
+        full_name: (firstName + ' ' + lastName).trim(),
+        mobile: form.elements.phone.value.trim(),
+        amount_toman: Number(form.elements.amount.value),
+        onSuccess: function () { alert('پرداخت شما با موفقیت ثبت شد. سپاسگزاریم.'); },
+        onFailure: function () { alert('پرداخت ناموفق بود یا لغو شد.'); }
+      });
+    } catch (error) {
+      alert(error && error.message ? error.message : 'اتصال به درگاه ناموفق بود.');
+    } finally {
+      button.disabled = false;
+    }
+  });
 </script>
