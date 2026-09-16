@@ -12,7 +12,6 @@ use Maksa\Repositories\DonationRepository;
 use Maksa\Repositories\NotificationRepository;
 use Maksa\Repositories\ProfileRepository;
 use Maksa\Services\Gateway\GatewayFactory;
-use Maksa\Services\Gateway\GatewayResult;
 
 /**
  * Orchestrates the donation lifecycle across the gateway and the database.
@@ -35,8 +34,9 @@ final class DonationService
     }
 
     /**
-     * Creates a pending donation and asks the gateway for a redirect URL.
-     * @return array{reference:string,redirect_url:string}
+     * Creates a pending local receipt and starts the authoritative Campaign
+     * Service payment for the headquarters Center.
+     * @return array{reference:string,redirect_url:string,redirect_method:string,redirect_fields:array<string,string>}
      */
     public function start(int $userId, ?string $campaignSlug, int $amountToman): array
     {
@@ -44,34 +44,109 @@ final class DonationService
             throw ApiException::badRequest('مبلغ واردشده مجاز نیست.', 'invalid_amount');
         }
 
-        $campaignId = null;
-        if ($campaignSlug !== null && $campaignSlug !== '') {
-            $campaign = $this->campaigns->findBySlug($campaignSlug);
-            if ($campaign === null || $campaign['status'] === 'draft' || $campaign['status'] === 'archived') {
-                throw ApiException::badRequest('کمپین انتخاب‌شده نامعتبر است.', 'invalid_campaign');
-            }
-            $campaignId = $campaign['id'];
+        $client = $this->campaignClient();
+        if ($campaignSlug === null || $campaignSlug === '') {
+            \campaign_service_load_env();
+            $campaignSlug = \campaign_service_env('CAMPAIGN_HQ_ONLINE_DONATION_CAMPAIGN_ID');
+        }
+        $campaign = $this->campaigns->findBySlug($campaignSlug);
+        if ($campaign === null || $campaign['status'] !== 'active') {
+            throw ApiException::badRequest('کمپین انتخاب‌شده نامعتبر است.', 'invalid_campaign');
         }
 
-        $gateway = GatewayFactory::make();
-        [$donationId, $reference] = $this->donations->createPending($userId, $campaignId, $amountToman, $gateway->name());
+        $profile = (new ProfileRepository())->fullProfile($userId);
+        $mobile = trim((string)($profile['phone'] ?? ''));
+        if ($mobile === '') {
+            throw ApiException::badRequest('برای پرداخت، ابتدا شماره همراه خود را در پروفایل ثبت کنید.', 'phone_required');
+        }
+        $fullName = trim(implode(' ', array_filter([
+            (string)($profile['first_name'] ?? ''),
+            (string)($profile['last_name'] ?? ''),
+        ])));
 
-        $callbackUrl = rtrim((string) Config::get('APP_URL', ''), '/');
-        // Gateway returns the browser to this API endpoint, which then redirects
-        // into the SPA. APP_URL is the SPA base; derive the same-origin API root.
-        $origin = self::originOf((string) Config::get('APP_URL', ''));
-        $callback = $origin . '/api/donations/callback';
+        [$donationId, $reference] = $this->donations->createPending($userId, null, $amountToman, 'campaign_service');
 
         try {
-            $result = $gateway->request($amountToman, $reference, $callback, 'کمک به ' . ($campaignSlug ?? 'صندوق عمومی'));
+            $payment = $client->startPayment((string)$campaign['id'], $mobile, $fullName, $amountToman * 10, 'macsa:panel:' . $reference);
+            $paymentId = (string)($payment['id'] ?? '');
+            if ($paymentId === '' || empty($payment['redirect_url'])) {
+                throw new \RuntimeException('Payment redirect data is missing.');
+            }
+            $this->donations->attachCampaignServicePayment(
+                $donationId,
+                $paymentId,
+                (string)$campaign['id'],
+                (string)$campaign['title']
+            );
         } catch (\Throwable $e) {
-            $this->donations->markFailed($donationId, 'اتصال به درگاه ناموفق بود.');
-            throw ApiException::badRequest('اتصال به درگاه پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.', 'gateway_unavailable');
+            $this->donations->markFailed($donationId, 'شروع پرداخت در کمپین‌ساز ناموفق بود.');
+            $message = $e instanceof \CampaignServiceException
+                ? $e->getMessage()
+                : 'اتصال به درگاه پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.';
+            throw ApiException::badRequest($message, 'gateway_unavailable');
         }
 
-        $this->donations->setAuthority($donationId, $result['authority']);
+        return [
+            'reference' => $reference,
+            'redirect_url' => (string)($payment['redirect_url'] ?? ''),
+            'redirect_method' => strtoupper((string)($payment['redirect_method'] ?? 'GET')),
+            'redirect_fields' => is_array($payment['redirect_fields'] ?? null) ? $payment['redirect_fields'] : [],
+        ];
+    }
 
-        return ['reference' => $reference, 'redirect_url' => $result['redirect_url']];
+    /** @return array<string,mixed>|null */
+    public function syncStatus(int $userId, string $reference): ?array
+    {
+        $donation = $this->donations->findForUserByReference($userId, $reference);
+        if ($donation === null || $donation['gateway'] !== 'campaign_service' || $donation['status'] !== 'pending') {
+            return $donation;
+        }
+        $paymentId = (string)($donation['gateway_authority'] ?? '');
+        if ($paymentId === '') {
+            return $donation;
+        }
+
+        $remote = $this->campaignClient()->paymentStatus($paymentId);
+        $remoteStatus = strtoupper((string)($remote['status'] ?? 'PENDING'));
+        if ($remoteStatus === 'SUCCEEDED') {
+            $amount = (int)$donation['amount'];
+            $points = (int)floor($amount * self::POINTS_PER_TOMAN);
+            Database::transaction(function () use ($donation, $userId, $amount, $points, $paymentId): void {
+                $marked = $this->donations->markSuccess((int)$donation['id'], $paymentId, null);
+                if ($marked['row_count'] !== 1) {
+                    return;
+                }
+                if ($points > 0) {
+                    (new ProfileRepository())->addPointsAndRecomputeTier($userId, $points);
+                }
+                (new NotificationRepository())->create(
+                    $userId,
+                    'donation_success',
+                    'پرداخت شما با موفقیت انجام شد',
+                    'از مشارکت شما سپاسگزاریم. رسید این کمک در بخش تاریخچه در دسترس است.',
+                    '/history'
+                );
+            });
+        } elseif (in_array($remoteStatus, ['FAILED', 'CANCELED', 'CANCELLED'], true)) {
+            $this->donations->markFailed((int)$donation['id'], 'پرداخت در درگاه ناموفق یا لغو شد.');
+        }
+        return $this->donations->findForUserByReference($userId, $reference);
+    }
+
+    private function campaignClient(): \CampaignServiceClient
+    {
+        if (!class_exists('\CampaignServiceClient', false)) {
+            foreach ([dirname(__DIR__, 3) . '/core/campaign-service.php', dirname(__DIR__, 4) . '/public_html/core/campaign-service.php'] as $path) {
+                if (is_file($path)) {
+                    require_once $path;
+                    break;
+                }
+            }
+        }
+        if (!class_exists('\CampaignServiceClient', false)) {
+            throw new \RuntimeException('Campaign Service adapter is not available.');
+        }
+        return new \CampaignServiceClient('hq');
     }
 
     /**
@@ -93,7 +168,8 @@ final class DonationService
      */
     public function handleCallback(string $authority, array $params): array
     {
-        $donation = $this->donations->findByAuthority($authority);
+        $gateway = GatewayFactory::make();
+        $donation = $this->donations->findByAuthority($authority, $gateway->name());
         if ($donation === null) {
             return ['status' => 'failed', 'reference' => null];
         }
@@ -105,7 +181,6 @@ final class DonationService
         }
 
         $amount = (int) $donation['amount'];
-        $gateway = GatewayFactory::make();
         $result = $gateway->verify($authority, $params, $amount);
 
         if (!$result->success) {
@@ -128,10 +203,10 @@ final class DonationService
                 $mark = $this->donations->markSuccess($donationId, $result->refId, $result->trackId);
 
                 if ($mark['row_count'] !== 1) {
-                    // Already processed by another concurrent request — rollback
-                    // (nothing was written beyond the status flip which is harmless
-                    // to re-apply, but rolling back keeps the transaction atomic).
-                    return 'duplicate';
+                    // Another callback won the atomic claim. Return the persisted
+                    // final state so concurrent browser redirects remain idempotent
+                    // and never expose an internal "duplicate" status to the UI.
+                    return $this->donations->statusById($donationId) ?? 'failed';
                 }
 
                 // Side-effect: bump campaign collected_amount.

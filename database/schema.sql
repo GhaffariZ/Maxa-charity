@@ -1022,6 +1022,8 @@ CREATE TABLE `panel_donations` (
   `reference` varchar(20) NOT NULL,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `campaign_id` int(10) UNSIGNED DEFAULT NULL,
+  `remote_campaign_id` char(36) DEFAULT NULL,
+  `remote_campaign_title` varchar(255) DEFAULT NULL,
   `amount` bigint(20) UNSIGNED NOT NULL,
   `currency` char(3) NOT NULL DEFAULT 'IRT',
   `type` enum('online','card_to_card') NOT NULL DEFAULT 'online',
@@ -1597,8 +1599,10 @@ ALTER TABLE `panel_donations`
   ADD UNIQUE KEY `uq_panel_donations_reference` (`reference`),
   ADD KEY `idx_panel_donations_user_time` (`user_id`,`created_at`),
   ADD KEY `idx_panel_donations_campaign` (`campaign_id`),
+  ADD KEY `idx_panel_donations_remote_campaign` (`remote_campaign_id`),
   ADD KEY `idx_panel_donations_status` (`status`),
-  ADD KEY `idx_panel_donations_authority` (`gateway_authority`);
+  ADD UNIQUE KEY `uq_panel_donations_gateway_authority` (`gateway`,`gateway_authority`),
+  ADD UNIQUE KEY `uq_panel_donations_gateway_ref` (`gateway`,`gateway_ref_id`);
 
 --
 -- Indexes for table `panel_users`

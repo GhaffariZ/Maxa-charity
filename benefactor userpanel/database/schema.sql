@@ -165,7 +165,9 @@ CREATE TABLE IF NOT EXISTS panel_donations (
     id                 BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     reference          VARCHAR(20) NOT NULL,
     user_id            BIGINT UNSIGNED NULL DEFAULT NULL,
-    campaign_id        INT UNSIGNED NULL DEFAULT NULL,    -- => campaigns.id
+    campaign_id        INT UNSIGNED NULL DEFAULT NULL,    -- legacy local campaigns.id
+    remote_campaign_id CHAR(36) NULL DEFAULT NULL,
+    remote_campaign_title VARCHAR(255) NULL DEFAULT NULL,
     amount             BIGINT UNSIGNED NOT NULL,          -- Toman
     currency           CHAR(3) NOT NULL DEFAULT 'IRT',
     type               ENUM('online','card_to_card') NOT NULL DEFAULT 'online',
@@ -183,6 +185,7 @@ CREATE TABLE IF NOT EXISTS panel_donations (
     UNIQUE KEY uq_panel_donations_reference (reference),
     KEY idx_panel_donations_user_time (user_id, created_at),
     KEY idx_panel_donations_campaign (campaign_id),
+    KEY idx_panel_donations_remote_campaign (remote_campaign_id),
     KEY idx_panel_donations_status (status),
     KEY idx_panel_donations_authority (gateway_authority),
     CONSTRAINT fk_panel_donations_user FOREIGN KEY (user_id) REFERENCES panel_users(id) ON DELETE SET NULL

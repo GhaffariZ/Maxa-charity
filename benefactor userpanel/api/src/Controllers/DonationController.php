@@ -67,7 +67,7 @@ final class DonationController
     // ---- GET /donations/{reference}  (authenticated) ------------------------
     public function status(Request $request): void
     {
-        $donation = (new DonationRepository())->findForUserByReference(
+        $donation = (new DonationService())->syncStatus(
             $request->userId(),
             $request->params['reference'] ?? ''
         );

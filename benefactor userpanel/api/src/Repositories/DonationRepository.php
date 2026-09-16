@@ -51,13 +51,38 @@ final class DonationRepository
                  ->execute([':a' => $authority, ':id' => $donationId]);
     }
 
-    /** @return array<string,mixed>|null */
-    public function findByAuthority(string $authority): ?array
+    public function attachCampaignServicePayment(int $donationId, string $paymentId, string $campaignId, string $campaignTitle): void
     {
-        $stmt = $this->db->prepare('SELECT * FROM panel_donations WHERE gateway_authority = :a LIMIT 1');
-        $stmt->execute([':a' => $authority]);
+        $this->db->prepare(
+            'UPDATE panel_donations
+                SET gateway_authority = :payment_id, remote_campaign_id = :campaign_id,
+                    remote_campaign_title = :campaign_title
+              WHERE id = :id'
+        )->execute([
+            ':payment_id' => $paymentId,
+            ':campaign_id' => $campaignId,
+            ':campaign_title' => mb_substr($campaignTitle, 0, 255),
+            ':id' => $donationId,
+        ]);
+    }
+
+    /** @return array<string,mixed>|null */
+    public function findByAuthority(string $authority, string $gateway): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM panel_donations WHERE gateway_authority = :a AND gateway = :g LIMIT 1'
+        );
+        $stmt->execute([':a' => $authority, ':g' => $gateway]);
         $row = $stmt->fetch();
         return $row ?: null;
+    }
+
+    public function statusById(int $donationId): ?string
+    {
+        $stmt = $this->db->prepare('SELECT status FROM panel_donations WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $donationId]);
+        $status = $stmt->fetchColumn();
+        return is_string($status) ? $status : null;
     }
 
     /** @return array<string,mixed>|null */
@@ -122,7 +147,7 @@ final class DonationRepository
         // Distinct placeholders (:q1/:q2) — native prepares forbid reusing :q.
         $where = 'd.user_id = :uid';
         if ($hasSearch) {
-            $where .= ' AND (d.reference LIKE :q1 OR c.title LIKE :q2)';
+            $where .= ' AND (d.reference LIKE :q1 OR COALESCE(d.remote_campaign_title, c.title) LIKE :q2)';
         }
 
         $countSql = "SELECT COUNT(*) FROM panel_donations d LEFT JOIN campaigns c ON c.id = d.campaign_id WHERE {$where}";
@@ -136,7 +161,7 @@ final class DonationRepository
         $total = (int) $countStmt->fetchColumn();
 
         $sql = "SELECT d.reference, d.amount, d.type, d.status, d.receipt_number,
-                       d.created_at, d.paid_at, c.title AS campaign_title
+                       d.created_at, d.paid_at, COALESCE(d.remote_campaign_title, c.title) AS campaign_title
                   FROM panel_donations d
              LEFT JOIN campaigns c ON c.id = d.campaign_id
                  WHERE {$where}
@@ -173,7 +198,7 @@ final class DonationRepository
             "SELECT
                 COALESCE(SUM(amount), 0)                              AS total_amount,
                 COUNT(*)                                             AS donation_count,
-                COUNT(DISTINCT campaign_id)                          AS campaigns_supported,
+                COUNT(DISTINCT COALESCE(remote_campaign_id, CAST(campaign_id AS CHAR))) AS campaigns_supported,
                 MIN(created_at)                                      AS first_donation_at
              FROM panel_donations WHERE user_id = :uid AND status = 'success'"
         );
@@ -211,7 +236,8 @@ final class DonationRepository
     public function recentActivity(int $userId, int $limit = 5): array
     {
         $stmt = $this->db->prepare(
-            "SELECT d.reference, d.amount, d.status, d.created_at, c.title AS campaign_title
+            "SELECT d.reference, d.amount, d.status, d.created_at,
+                    COALESCE(d.remote_campaign_title, c.title) AS campaign_title
                FROM panel_donations d
           LEFT JOIN campaigns c ON c.id = d.campaign_id
               WHERE d.user_id = :uid
