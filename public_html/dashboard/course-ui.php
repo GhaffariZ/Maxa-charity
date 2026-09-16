@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__DIR__) . '/core/component-renderer.php';
+
 /* ============================================================================
  *  پوسته‌ی مشترک رابط کاربری دوره‌ها — آکادمی مکسا
  *  - course_base_css() : توکن‌های طراحی و کامپوننت‌های مشترک (بدون تگ <style>)
@@ -159,7 +161,7 @@ function course_site_head(string $title, string $pageCss = ''): void {
      - pageTitle: عنوان تب مرورگر   - maxaCoursesContext: نمایش آیتم‌های دوره در منوی حساب کاربری */
   $pageTitle = $title . ' | آکادمی مکسا';
   $maxaCoursesContext = true;
-  require __DIR__ . '/components/header/component.php';
+  render_dashboard_component('header', get_defined_vars());
   ?>
 <style>
 .course-shell{font-family:'Vazirmatn',sans-serif;color:var(--color-text);font-size:14px;line-height:1.7;background:var(--color-bg);min-height:46vh}
@@ -182,7 +184,7 @@ if (!function_exists('course_site_footer')):
 function course_site_footer(): void {
   echo "\n</div><!-- /.course-shell -->\n";
   course_cart_marker();
-  require __DIR__ . '/components/footer/component.php';
+  render_dashboard_component('footer', get_defined_vars());
 }
 endif;
 

@@ -260,19 +260,15 @@ function getNewsImageUrl($row, $basePath) {
     }
 }
 
+require_once __DIR__ . '/core/component-renderer.php';
+
 function getFooterHTML() {
-    $footerFile = __DIR__ . '/dashboard/components/footer/component.php';
-    if (file_exists($footerFile)) {
-        $code = file_get_contents($footerFile);
-        $code = str_replace('{{image1}}', '/dashboard/components/footer/images/1.png', $code);
-        return $code;
-    }
-    return '';
+    return dashboard_component_html('footer', get_defined_vars());
 }
 
 // بارگذاری هدر سراسری
 $pageTitle = 'آخرین اخبار و رویدادها — مکسا';
-require_once __DIR__ . '/dashboard/components/header/component.php';
+render_dashboard_component('header', get_defined_vars());
 ?>
 
 <!-- استایل اختصاصی، واکنش‌گرا و پریمیوم صفحه اخبار -->

@@ -3,6 +3,12 @@ require_once __DIR__ . '/_guard.php';
 dash_require('pages');
 require_once __DIR__ . "/../../config/database.php";
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
+csrf_check();
+
 // بررسی اینکه مقدار ارسال شده یا نه
 if (!isset($_POST['component_name'])) {
     header("Location: component-create.php");
@@ -12,9 +18,7 @@ if (!isset($_POST['component_name'])) {
 $component_name = trim($_POST['component_name']);
 
 // جلوگیری از نفوذ مسیر
-if (strpos($component_name, '..') !== false ||
-    strpos($component_name, '/') !== false ||
-    strpos($component_name, '\\') !== false) {
+if (!preg_match('/^[\p{L}\p{N}_-]+$/u', $component_name)) {
     die("نام نامعتبر است.");
 }
 

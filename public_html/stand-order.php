@@ -6,7 +6,8 @@
 
 $pageTitle = 'سفارش استند و کارت دیجیتال | خیریه مکسا';
 
-require_once __DIR__ . '/dashboard/components/header/component.php';
-require_once __DIR__ . '/dashboard/components/stand-order/component.php';
-require_once __DIR__ . '/dashboard/components/footer/component.php';
+require_once __DIR__ . '/core/component-renderer.php';
+render_dashboard_component('header', get_defined_vars());
+render_dashboard_component('stand-order', get_defined_vars());
+render_dashboard_component('footer', get_defined_vars());
 ?>

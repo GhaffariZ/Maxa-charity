@@ -13,6 +13,7 @@
 
 require_once __DIR__ . '/../core/dashboard-auth.php';   // فقط برای dash_pdo() و ابزارها
 require_once __DIR__ . '/../core/html-sanitizer.php';
+require_once __DIR__ . '/../core/component-renderer.php';
 $pdo = dash_pdo();
 
 $HQ_BRANCH = 1;
@@ -91,8 +92,8 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
         }
 
         // ۴) اگر کامپوننتی به همین نام در مسیر کامپوننت‌ها وجود داشته باشد، آن را رندر می‌کنیم
-        $directComponent = __DIR__ . '/components/' . $slug . '/component.php';
-        if (file_exists($directComponent)) {
+        $directComponent = dashboard_component_name($slug);
+        if ($directComponent !== null) {
             $titles = [
                 'stand-order'         => 'سفارش استند و کارت دیجیتال | خیریه مکسا',
                 'stand-sell-section'  => 'سفارش استند و کارت دیجیتال | خیریه مکسا',
@@ -192,32 +193,8 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
 {
     global $pdo;
     foreach ($components as $component) {
-        $cleanComponent = trim((string)$component);
-        $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
-
-        // حل نام‌های چندکلمه‌ای مانند "heroindex ikhc"
-        if (!file_exists($componentPath) && strpos($cleanComponent, ' ') !== false) {
-            $parts = explode(' ', $cleanComponent);
-            if (file_exists(__DIR__ . '/components/' . $parts[1] . $parts[0] . '/component.php')) {
-                $cleanComponent = $parts[1] . $parts[0];
-                $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
-            } elseif (file_exists(__DIR__ . '/components/' . $parts[0] . '/component.php')) {
-                $cleanComponent = $parts[0];
-                $componentPath = __DIR__ . '/components/' . $cleanComponent . '/component.php';
-            }
-        }
-
-        if (file_exists($componentPath)) {
-            ob_start();
-            include $componentPath;
-            $code = ob_get_clean();
-
-            $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) use ($cleanComponent) {
-                return '/dashboard/components/' . rawurlencode($cleanComponent) . '/images/' . $m[1] . '.png';
-            }, $code);
-            echo $code;
-        } else {
-            echo '<!-- Component not found: ' . htmlspecialchars($cleanComponent, ENT_QUOTES, 'UTF-8') . ' -->';
+        if (!render_dashboard_component((string)$component, get_defined_vars())) {
+            echo '<!-- Component not found -->';
         }
     }
 }

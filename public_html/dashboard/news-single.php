@@ -1,3 +1,4 @@
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php'; ?>
 <h1><?= htmlspecialchars($news['title']) ?></h1>
 
 <?php if(file_exists("/uploads/news/{$news['news_code']}/featured.jpg")): ?>

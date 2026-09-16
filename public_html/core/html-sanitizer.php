@@ -31,6 +31,8 @@ final class HtmlSanitizer
         'a', 'img',
         'figure', 'figcaption',
         'div', 'span',
+        'main', 'section', 'article', 'header', 'footer', 'nav', 'aside',
+        'details', 'summary', 'time', 'button',
         'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
         'dl', 'dt', 'dd',
     ];
@@ -41,15 +43,18 @@ final class HtmlSanitizer
      * @var array<string, list<string>>
      */
     private const ALLOWED_ATTRIBUTES = [
-        '*'       => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden'],
+        '*'       => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden', 'style'],
         'a'       => ['href', 'target', 'rel'],
-        'img'     => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align', 'style'],
+        'img'     => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align'],
         'figure'  => ['class'],
         'td'      => ['colspan', 'rowspan'],
         'th'      => ['colspan', 'rowspan', 'scope'],
         'ol'      => ['start', 'type', 'reversed'],
-        'div'     => ['class', 'style'],
-        'span'    => ['class', 'style'],
+        'div'     => ['class'],
+        'span'    => ['class'],
+        'details' => ['open'],
+        'time'    => ['datetime'],
+        'button'  => ['type', 'disabled'],
     ];
 
     /** Only these URL schemes are allowed in href / src attributes. */
@@ -64,6 +69,20 @@ final class HtmlSanitizer
      * @return string        Sanitized HTML.
      */
     public static function sanitize(string $html): string
+    {
+        return self::sanitizeInternal($html, false);
+    }
+
+    /**
+     * Sanitize declarative component markup. Unlike article content, component
+     * markup may contain a <style> block, but never executable <script> or PHP.
+     */
+    public static function sanitizeComponent(string $html): string
+    {
+        return self::sanitizeInternal($html, true);
+    }
+
+    private static function sanitizeInternal(string $html, bool $allowStyleElement): string
     {
         if ($html === '') {
             return '';
@@ -99,7 +118,7 @@ final class HtmlSanitizer
         }
 
         // Process all nodes recursively.
-        self::sanitizeNode($body, $doc);
+        self::sanitizeNode($body, $doc, $allowStyleElement);
 
         // Extract only the inner HTML of <body> (strip the wrapper we added).
         $inner = '';
@@ -117,7 +136,7 @@ final class HtmlSanitizer
     /**
      * Recursively sanitize a DOM node and its children.
      */
-    private static function sanitizeNode(\DOMNode $node, \DOMDocument $doc): void
+    private static function sanitizeNode(\DOMNode $node, \DOMDocument $doc, bool $allowStyleElement): void
     {
         // Collect child nodes first — the list changes as we remove nodes.
         $children = [];
@@ -131,6 +150,19 @@ final class HtmlSanitizer
             if ($child->nodeType === XML_ELEMENT_NODE) {
                 $tagName = strtolower($child->nodeName);
 
+                if ($tagName === 'style' && $allowStyleElement) {
+                    $css = self::sanitizeStylesheet((string)$child->textContent);
+                    if ($css === '') {
+                        $node->removeChild($child);
+                    } else {
+                        while ($child->firstChild !== null) {
+                            $child->removeChild($child->firstChild);
+                        }
+                        $child->appendChild($doc->createTextNode($css));
+                    }
+                    continue;
+                }
+
                 if (!in_array($tagName, self::ALLOWED_TAGS, true)) {
                     // Disallowed element — remove it and all its children.
                     $node->removeChild($child);
@@ -141,7 +173,7 @@ final class HtmlSanitizer
                 self::sanitizeAttributes($child);
 
                 // Recurse into children.
-                self::sanitizeNode($child, $doc);
+                self::sanitizeNode($child, $doc, $allowStyleElement);
 
             } elseif ($child->nodeType === XML_TEXT_NODE) {
                 // Text nodes are safe as-is.
@@ -249,25 +281,67 @@ final class HtmlSanitizer
      */
     private static function isSafeStyle(string $style): bool
     {
-        $style = strtolower($style);
+        $decoded = html_entity_decode($style, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $compact = strtolower(preg_replace('/[\s\x00-\x1f\x7f]+/', '', $decoded) ?? '');
 
-        $dangerous = [
-            '/expression\s*\(/i',
-            '/url\s*\(\s*["\']?\s*(?!https?:)/i',
-            '/-moz-binding\s*:/i',
-            '/behavior\s*:/i',
-            '/@import/i',
-            '/<\s*script/i',
-            '/javascript\s*:/i',
-            '/vbscript\s*:/i',
-        ];
+        // CSS escapes can hide property names and URL schemes. They are not
+        // needed by the component editor, so reject ambiguous declarations.
+        if (str_contains($decoded, '\\')) {
+            return false;
+        }
 
-        foreach ($dangerous as $pattern) {
-            if (preg_match($pattern, $style)) {
+        foreach (['expression(', '-moz-binding:', 'behavior:', '@import',
+                  'javascript:', 'vbscript:', '<script'] as $needle) {
+            if (str_contains($compact, $needle)) {
                 return false;
             }
         }
 
+        if (preg_match_all('/url\s*\(\s*([^)]*)\s*\)/i', $decoded, $matches)) {
+            foreach ($matches[1] as $rawUrl) {
+                $url = trim((string)$rawUrl, " \t\n\r\0\x0B\"'");
+                if (!self::isSafeUrl($url)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
+    }
+
+    /**
+     * Component styles are kept for visual compatibility, but active/external
+     * CSS primitives are rejected. Returning an empty string removes the block.
+     */
+    private static function sanitizeStylesheet(string $css): string
+    {
+        $css = str_replace("\0", '', $css);
+        $decoded = html_entity_decode($css, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $compact = preg_replace('~/\\*.*?\\*/~s', '', $decoded) ?? '';
+        $compact = strtolower(preg_replace('/[\\s\\x00-\\x1f\\x7f]+/', '', $compact) ?? '');
+
+        // Reject CSS escape obfuscation globally, including escaped at-rules
+        // and property names, before checking active constructs below.
+        if (str_contains($decoded, '\\')) {
+            return '';
+        }
+
+        foreach (['@import', '@namespace', 'expression(', 'javascript:', 'vbscript:',
+                  '-moz-binding:', 'behavior:', '</style'] as $needle) {
+            if (str_contains($compact, $needle)) {
+                return '';
+            }
+        }
+
+        if (preg_match_all('/url\s*\(\s*([^)]*)\s*\)/i', $decoded, $matches)) {
+            foreach ($matches[1] as $rawUrl) {
+                $url = trim((string)$rawUrl, " \t\n\r\0\x0B\"'");
+                if (!self::isSafeUrl($url)) {
+                    return '';
+                }
+            }
+        }
+
+        return trim($css);
     }
 }

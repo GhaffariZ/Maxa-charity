@@ -5,7 +5,8 @@ require __DIR__ . '/dashboard/maxapedia-db.php';
 $mpCounts = ($pdo) ? maxapedia_counts($pdo) : [];
 
 $pageTitle = 'مکساپدیا';
-require __DIR__ . '/dashboard/components/header/component.php';
+require_once __DIR__ . '/core/component-renderer.php';
+render_dashboard_component('header', get_defined_vars());
 ?>
 
 <style>
@@ -112,4 +113,4 @@ require __DIR__ . '/dashboard/components/header/component.php';
 </div>
 
 <?php
-require __DIR__ . '/dashboard/components/footer/component.php';
+render_dashboard_component('footer', get_defined_vars());

@@ -2,13 +2,14 @@
 require_once __DIR__ . '/_guard.php';
 dash_require('news');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $news_data = null;
 
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ?");
-    $stmt->execute([$id]);
+    $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ? AND branch_id = ?");
+    $stmt->execute([$id, dash_active_branch_id()]);
     $news_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$news_data) {
@@ -1751,7 +1752,7 @@ figcaption.img-caption,
                 </div>
 
                 <div class="editor-shell" id="editorShell">
-                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? $news_data['content'] : '' ?></div>
+                    <div id="editor" contenteditable="true" data-placeholder="متن خبر خود را اینجا آغاز کنید..."><?= $news_data ? HtmlSanitizer::sanitize((string)$news_data['content']) : '' ?></div>
 
                     <!-- نوار ابزار شناور اختصاصی تصویر در ادیتور -->
                     <div id="imageFloatingToolbar" class="img-float-bar">

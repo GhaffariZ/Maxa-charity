@@ -937,6 +937,8 @@ text-align:center;
 
 <form action="components-save.php" method="POST" enctype="multipart/form-data">
 
+<?= csrf_field() ?>
+
 <input type="text" name="component_name" placeholder="نام کامپوننت" required>
 
 <select name="component_tag" required>
@@ -991,6 +993,8 @@ text-align:center;
 
 <form action="component-update.php" method="POST" enctype="multipart/form-data">
 
+<?= csrf_field() ?>
+
 <div class="component-header" onclick="toggleComponent(this)">
 
 <div>
@@ -1041,7 +1045,7 @@ text-align:center;
 نمایش واقعی کامپوننت
 </div>
 
-<iframe class="preview-frame"></iframe>
+<iframe class="preview-frame" sandbox=""></iframe>
 
 </div>
 

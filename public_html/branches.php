@@ -82,7 +82,8 @@ $defaultBranches = [
 $branches = $defaultBranches;
 
 $pageTitle = 'شعب مکسا';
-require __DIR__ . '/dashboard/components/header/component.php';
+require_once __DIR__ . '/core/component-renderer.php';
+render_dashboard_component('header', get_defined_vars());
 ?>
 
 <style>
@@ -239,11 +240,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
 
     <!-- ستون چپ: نقشه‌ی ایران با شعب رنگی و دکمه‌های ویژه -->
     <div class="br-map">
-      <?php require __DIR__ . '/dashboard/components/branches/component.php'; ?>
+      <?php render_dashboard_component('branches', get_defined_vars()); ?>
     </div>
 
   </div>
 </div>
 
 <?php
-require __DIR__ . '/dashboard/components/footer/component.php';
+render_dashboard_component('footer', get_defined_vars());

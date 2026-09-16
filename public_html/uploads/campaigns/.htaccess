@@ -1,0 +1,12 @@
+<FilesMatch "\.(?i:php|php[34578s]?|phtml|pht|phar|inc|cgi|pl|py|rb|sh|shtml)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+RemoveHandler .php .php3 .php4 .php5 .php7 .php8 .phtml .pht .phar .cgi .pl .py .rb .sh .shtml
+RemoveType .php .php3 .php4 .php5 .php7 .php8 .phtml .pht .phar .cgi .pl .py .rb .sh .shtml

@@ -3,6 +3,14 @@ require_once __DIR__ . '/_guard.php';
 dash_require('pages');
 header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/component-renderer.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+    exit;
+}
+csrf_check();
 
 try {
 
@@ -22,6 +30,13 @@ try {
 
     if (!is_array($components) || empty($components)) {
         throw new Exception("حداقل یک کامپوننت انتخاب کنید");
+    }
+
+    $components = array_values(array_filter(array_map(static function ($component): ?string {
+        return is_string($component) ? dashboard_component_name($component) : null;
+    }, $components)));
+    if ($components === []) {
+        throw new Exception("هیچ کامپوننت معتبری انتخاب نشده است");
     }
 
     // ساخت slug

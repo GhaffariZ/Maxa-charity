@@ -1,15 +1,28 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('pages');
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
+csrf_check();
 
 $name = trim($_POST['component_name'] ?? '');
 $tag  = trim($_POST['component_tag'] ?? '');
-$code = $_POST['component_code'] ?? '';
+$code = HtmlSanitizer::sanitizeComponent((string)($_POST['component_code'] ?? ''));
 
 /* ── SECURITY: Validate component name ────────────────────────────────────── */
 // Only allow alphanumeric, hyphens, underscores. Block path traversal.
-if ($name === '' || !preg_match('/^[a-zA-Z0-9_-]+$/', $name)) {
+if ($name === '' || !preg_match('/^[\p{L}\p{N}_-]+$/u', $name)) {
     die("Invalid component name. Only letters, numbers, hyphens and underscores are allowed.");
+}
+
+$allowedTags = ['هیرو', 'اطلاعات عمومی ساختار', 'آموزشی', 'پژوهشی', 'درمانی',
+    'خدمات', 'افراد', 'آمار', 'پروژه‌های حمایتی', 'دوره‌ها', 'روایات', 'اخبار', 'سایر'];
+if (!in_array($tag, $allowedTags, true)) {
+    $tag = 'سایر';
 }
 
 $dir = __DIR__ . "/components/" . $name;
@@ -31,15 +44,19 @@ $componentData = [
     'tag'     => $tag,
 ];
 
-file_put_contents(
+if (file_put_contents(
     $dir . "/data.json",
-    json_encode($componentData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-);
+    json_encode($componentData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR),
+    LOCK_EX
+) === false) {
+    throw new RuntimeException('ذخیره کامپوننت انجام نشد.');
+}
 
 /* ── SECURITY: Also write meta.json for backward compatibility ────────────── */
 file_put_contents(
     $dir . "/meta.json",
-    json_encode(["tag" => $tag], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+    json_encode(["tag" => $tag], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR),
+    LOCK_EX
 );
 
 /* ── SECURITY: Secure image upload handling ────────────────────────────────── */
