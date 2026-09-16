@@ -18,6 +18,14 @@ error_log
 **/error_log
 .vscode/
 .idea/
+/.codex/
+/AGENTS.md
+
+# Local one-time maintenance/bootstrap scripts
+/create-admin-once.php
+
+# Local deployment archives (never serve or commit these)
+/public_html/public_html.zip
 # Dependencies (if you use them)
 /vendor/
 /node_modules/
