@@ -265,8 +265,8 @@ This README reflects an **in-progress** build. Rough state of the major areas:
 | Donations & campaigns        | 🟡 In progress    |
 | Courses (LMS)                | 🟡 In progress    |
 | Admin dashboard              | 🟡 In progress    |
-| REST API (auth/donations)    | 🟡 In progress    |
-| Documentation & installer    | 🔴 Not started    |
+| Documentation & user manual  | 🟢 Complete ([User Manual](docs/user-manual/README.md)) |
+| Installer & CI               | 🔴 Planned        |
 
 🟢 working · 🟡 partial / under active development · 🔴 planned
 

@@ -22,4 +22,5 @@ error_log
 # Untracked app folder
 /public_html/eo/
 # Local markdown documentation and prompt files
-Markdowns/
+Markdowns/
+./agents
