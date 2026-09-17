@@ -13,6 +13,13 @@ if (dash_is_finance_only() || dash_is_finance_user()) {
     exit;
 }
 
+
+// اگر کاربر مسئول یا مدیر مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
+if (dash_is_finance_only() || dash_is_finance_user()) {
+    header('Location: /dashboard/financial-management.php');
+    exit;
+}
+
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
@@ -329,6 +336,8 @@ $MENU = [
   'canMaxapedia'  => dash_can_maxapedia(),
   'isFinanceOnly' => dash_is_finance_only() || dash_is_finance_user(),
   'isFinanceUser' => dash_is_finance_user(),
+  'isFinanceOnly' => dash_is_finance_only() || dash_is_finance_user(),
+  'isFinanceUser' => dash_is_finance_user(),
   'activeBranch'  => $BRANCH_ID,
   'activeBranchName' => $ACTIVE_BRANCH_ROW['name'] ?? '',
   'branches'      => array_map(static fn($b)=>[
@@ -336,6 +345,7 @@ $MENU = [
                        'is_hq'=>(int)($b['is_hq']??0),'status'=>$b['status']??'active',
                      ], $branchList),
   'user'          => ['name'=>$U['full_name'] ?: $U['username'],
+                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
                       'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
   'csrf'          => csrf_token(),
 ];
@@ -1070,6 +1080,10 @@ body.spa-active .content{display:none}
     NAV.push({title:'امور مالی'});
     NAV.push({single:true,label:'گزارش‌ها و خروجی اکسل',icon:'wallet',href:'financial-management.php',active:true});
   } else {
+  if (MENU.isFinanceOnly) {
+    NAV.push({title:'امور مالی'});
+    NAV.push({single:true,label:'گزارش‌ها و خروجی اکسل',icon:'wallet',href:'financial-management.php',active:true});
+  } else {
   // --- مدیریت محتوا ---
   const content = [];
   if (CAN.hero)      content.push({label:'هیروها',icon:'award',children:[
@@ -1114,6 +1128,10 @@ body.spa-active .content{display:none}
   const people=[];
   if (CAN.feedback) people.push({single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'});
   if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
+  // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل به جز مدیر مالی
+  if (!MENU.isFinanceOnly && !MENU.isFinanceUser) {
+    people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
+  }
   // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل به جز مدیر مالی
   if (!MENU.isFinanceOnly && !MENU.isFinanceUser) {
     people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});

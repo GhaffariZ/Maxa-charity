@@ -1,6 +1,8 @@
 # Sensitive — never commit these
 /config.php
 !public_html/api/src/Core/Config.php
+/config.php
+!public_html/api/src/Core/Config.php
 .env
 wp-config.php
 # Database credentials used by the deploy import script (keep on server only)
