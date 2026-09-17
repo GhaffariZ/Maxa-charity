@@ -346,6 +346,7 @@ $MENU = [
                      ], $branchList),
   'user'          => ['name'=>$U['full_name'] ?: $U['username'],
                       'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
+                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
   'csrf'          => csrf_token(),
 ];
 ?>
@@ -1166,7 +1167,6 @@ body.spa-active .content{display:none}
   // --- راهنما و مستندات سامانه ---
   NAV.push({title:'راهنما و پشتیبانی'});
   NAV.push({single:true,label:'مستندات و راهنمای سامانه',icon:'book',href:'docs.php',target:'_top'});
-  }
 
   const navEl=document.getElementById('navList');
   let delay=0;

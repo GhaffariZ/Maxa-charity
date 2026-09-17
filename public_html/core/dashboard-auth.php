@@ -368,6 +368,7 @@ function dash_is_branch_admin(): bool
 }
 
 /**
+<<<<<<< HEAD
  * دریافت نام نقش کاربر جاری
  */
 function dash_user_role_name(): string
@@ -396,6 +397,10 @@ function dash_user_role_name(): string
 /**
  * آیا کاربر جاری منحصراً «مسئول مالی» یا «مدیر مالی» است؟
  * یعنی سوپرادمین نیست، و عنوان نقش او یا تنها دسترسی او مالی است.
+=======
+ * آیا کاربر جاری منحصراً «مسئول مالی» است؟
+ * یعنی سوپرادمین یا ادمین شعبه نیست، و تنها دسترسی واگذارشده به او financial است.
+>>>>>>> a292efc (feat(auth): add dash_is_finance_only and dash_ensure_financial_role helpers)
  */
 function dash_is_finance_only(): bool
 {
@@ -403,6 +408,7 @@ function dash_is_finance_only(): bool
     if (!$u) {
         return false;
     }
+<<<<<<< HEAD
     if (!empty($u['is_super'])) {
         return false;
     }
@@ -411,6 +417,9 @@ function dash_is_finance_only(): bool
         return true;
     }
     if (!empty($u['is_branch_admin'])) {
+=======
+    if (!empty($u['is_super']) || !empty($u['is_branch_admin'])) {
+>>>>>>> a292efc (feat(auth): add dash_is_finance_only and dash_ensure_financial_role helpers)
         return false;
     }
     $perms = $u['permissions'] ?? [];
@@ -418,6 +427,7 @@ function dash_is_finance_only(): bool
 }
 
 /**
+<<<<<<< HEAD
  * آیا کاربر جاری «مدیر مالی» یا کاربری با دسترسی مالی است؟
  * سوپرادمین مدیر کل است و در این دسته قرار نمی‌گیرد.
  */
@@ -448,6 +458,8 @@ function dash_is_finance_user(): bool
 }
 
 /**
+=======
+>>>>>>> a292efc (feat(auth): add dash_is_finance_only and dash_ensure_financial_role helpers)
  * اطمینان از وجود نقش پیش‌فرض «مسئول مالی» برای یک شعبه (خودترمیم در پایگاه داده)
  */
 function dash_ensure_financial_role(int $branchId): void
