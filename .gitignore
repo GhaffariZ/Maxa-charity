@@ -22,6 +22,8 @@ error_log
 /node_modules/
 # Untracked app folder
 /public_html/eo/
+# Locally installed agent skills
+.agents/skills/
 # Local markdown documentation and prompt files
 Markdowns/
 ./agents
