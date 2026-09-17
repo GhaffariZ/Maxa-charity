@@ -1149,6 +1149,7 @@ body.spa-active .content{display:none}
   // --- راهنما و مستندات سامانه ---
   NAV.push({title:'راهنما و پشتیبانی'});
   NAV.push({single:true,label:'مستندات و راهنمای سامانه',icon:'book',href:'docs.php',target:'_top'});
+  }
 
   const navEl=document.getElementById('navList');
   let delay=0;
