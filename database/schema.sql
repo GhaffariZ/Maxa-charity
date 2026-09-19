@@ -825,7 +825,7 @@ INSERT INTO `pages` (`id`, `title`, `slug`, `components`, `status`, `created_at`
 (39, 'mission-vision', 'mission-vision', '[\"topbar\",\"header\",\"mission-vision\",\"footer\"]', 'published', '2026-06-04 14:30:59', '2026-06-04 14:31:10'),
 (40, 'association', 'association', '[\"topbar\",\"header\",\"association\",\"footer\"]', 'published', '2026-06-04 14:46:13', '2026-06-04 14:46:15'),
 (41, 'organizationalchart', 'organizationalchart', '[\"topbar\",\"header\",\"organizationalchart\",\"footer\"]', 'published', '2026-06-04 17:14:37', '2026-06-04 17:15:19'),
-(57, 'home', 'home', '[\"heroindex\",\"hamrah\",\"aboutus\",\"macsa_stories\",\"recent-news-hero-v2\",\"ourexcellence\",\"footer\"]', 'published', '2026-06-05 00:00:02', '2026-06-05 00:00:04'),
+(57, 'home', 'home', '[\"heroindex\",\"home-campaigns\",\"hamrah\",\"aboutus\",\"macsa_stories\",\"recent-news-hero-v2\",\"ourexcellence\",\"footer\"]', 'published', '2026-06-05 00:00:02', '2026-06-05 00:00:04'),
 (58, 'supportive_and_palliative_care', 'supportiveandpalliativecare', '[\"topbar\",\"header\",\"supportive_and_palliative_care\",\"footer\"]', 'published', '2026-06-05 15:38:20', '2026-06-05 15:38:22'),
 (59, 'supportive_and_palliative_care_team', 'supportiveandpalliativecareteam', '[\"topbar\",\"header\",\"supportive_and_palliative_care_team\",\"footer\"]', 'published', '2026-06-05 17:08:30', '2026-06-05 17:08:32'),
 (60, 'end_of_life_care', 'endoflifecare', '[\"topbar\",\"header\",\"end_of_life_care\",\"footer\"]', 'published', '2026-06-05 22:56:52', '2026-06-05 22:56:57'),

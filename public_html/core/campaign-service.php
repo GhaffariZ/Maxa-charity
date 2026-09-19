@@ -61,6 +61,20 @@ final class CampaignServiceClient
         return $this->entity($this->request('GET', '/public/v1/campaigns/' . rawurlencode($id)));
     }
 
+    /** Return only the newest active financial campaign without paging through the full list. */
+    public function latestPublicCampaign(): ?array
+    {
+        $response = $this->request('GET', '/public/v1/campaigns?' . http_build_query([
+            'limit' => 1,
+            'participation_type' => 'FINANCIAL',
+            'status' => 'ACTIVE',
+            'sort' => 'created_at',
+            'direction' => 'desc',
+        ]), null, false, [], 7);
+        $items = $response['data'] ?? [];
+        return isset($items[0]) && is_array($items[0]) ? $items[0] : null;
+    }
+
     /** @return array<string,mixed> */
     public function managementCampaigns(): array
     {
@@ -165,7 +179,7 @@ final class CampaignServiceClient
     }
 
     /** @return array<string,mixed> */
-    private function request(string $method, string $path, ?array $payload = null, bool $management = false, array $headers = []): array
+    private function request(string $method, string $path, ?array $payload = null, bool $management = false, array $headers = [], int $timeoutSeconds = 30): array
     {
         if ($management) {
             $headers[] = 'Authorization: Bearer ' . $this->managementToken();
@@ -175,7 +189,7 @@ final class CampaignServiceClient
             }
             $headers[] = 'X-Public-API-Key: ' . $this->publicKey;
         }
-        return $this->curl($method, $path, $payload, $headers, false);
+        return $this->curl($method, $path, $payload, $headers, false, $timeoutSeconds);
     }
 
     private function managementToken(): string
@@ -214,7 +228,7 @@ final class CampaignServiceClient
     }
 
     /** @return array<string,mixed> */
-    private function curl(string $method, string $path, mixed $payload, array $headers, bool $multipart): array
+    private function curl(string $method, string $path, mixed $payload, array $headers, bool $multipart, int $timeoutSeconds = 30): array
     {
         if (!function_exists('curl_init')) {
             throw new CampaignServiceException('افزونه cURL روی سرور فعال نیست.');
@@ -232,8 +246,8 @@ final class CampaignServiceClient
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 8,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => min(8, max(2, $timeoutSeconds - 1)),
+            CURLOPT_TIMEOUT => max(2, $timeoutSeconds),
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_FOLLOWLOCATION => false,
         ]);
