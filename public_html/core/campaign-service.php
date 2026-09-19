@@ -32,6 +32,7 @@ final class CampaignServiceClient
     private string $clientId;
     private string $clientSecret;
     private string $publicKey;
+    private ?string $managementAccessToken = null;
 
     public function __construct(string $centerSlug)
     {
@@ -69,6 +70,16 @@ final class CampaignServiceClient
             'sort' => 'created_at',
             'direction' => 'desc',
         ], true);
+    }
+
+    /**
+     * Resolve and cache the management token while the PHP session is still
+     * writable. The caller may then release the session lock before slow API
+     * requests without forcing a new authentication request.
+     */
+    public function prepareManagement(): void
+    {
+        $this->managementToken();
     }
 
     /** @return array<string,mixed> */
@@ -169,6 +180,9 @@ final class CampaignServiceClient
 
     private function managementToken(): string
     {
+        if ($this->managementAccessToken !== null && $this->managementAccessToken !== '') {
+            return $this->managementAccessToken;
+        }
         if ($this->clientId === '' || $this->clientSecret === '') {
             throw new CampaignServiceException('اعتبارنامه مدیریتی کمپین‌ساز برای مرکز «' . $this->centerSlug . '» تنظیم نشده است.');
         }
@@ -176,7 +190,8 @@ final class CampaignServiceClient
         if (session_status() === PHP_SESSION_ACTIVE) {
             $cached = $_SESSION[$cacheKey] ?? null;
             if (is_array($cached) && !empty($cached['token']) && (int)($cached['expires_at'] ?? 0) > time() + 30) {
-                return (string)$cached['token'];
+                $this->managementAccessToken = (string)$cached['token'];
+                return $this->managementAccessToken;
             }
         }
         $response = $this->curl('POST', '/api/v1/auth/client/token', [
@@ -194,7 +209,8 @@ final class CampaignServiceClient
                 'expires_at' => time() + max(60, (int)($data['expires_in'] ?? 900)),
             ];
         }
-        return $token;
+        $this->managementAccessToken = $token;
+        return $this->managementAccessToken;
     }
 
     /** @return array<string,mixed> */
