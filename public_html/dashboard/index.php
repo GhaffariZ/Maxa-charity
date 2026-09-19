@@ -1040,7 +1040,8 @@ body.spa-active .content{display:none}
     ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/>',
     cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
     package:'<path d="m16.5 9.4-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
-    quote:'<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2zm14 0c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2z"/>'
+    quote:'<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2zm14 0c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 0 4-2 6-4 6v2z"/>',
+    building:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'
   };
   function icon(name,cls){ return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 
@@ -1082,6 +1083,8 @@ body.spa-active .content{display:none}
   if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
   // روایات امید مکسا (فقط دفتر مرکزی / ستاد)
   if (MENU.isHqView) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
+  // صفحه معرفی شعبه (فقط برای شعب — غیر از ستاد مرکزی)
+  if (!MENU.isHqView) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
   if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
                        {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
                        {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
@@ -1125,12 +1128,17 @@ body.spa-active .content{display:none}
       {label:'تعریف شعبه‌ی جدید',icon:'plus',href:'branch-create.php'},
       {label:'مدیریت شعبه‌ها',icon:'list',href:'branch-list.php'}]});
   }
+
+  // --- راهنما و مستندات سامانه ---
+  NAV.push({title:'راهنما و پشتیبانی'});
+  NAV.push({single:true,label:'مستندات و راهنمای سامانه',icon:'book',href:'docs.php',target:'_top'});
+
   const navEl=document.getElementById('navList');
   let delay=0;
   NAV.forEach(item=>{
     if(item.title){ navEl.insertAdjacentHTML('beforeend','<div class="nav-section-title" style="animation-delay:'+(delay+=0.04)+'s">'+item.title+'</div>'); return; }
     if(item.single){
-      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'" class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span></a>');
+      navEl.insertAdjacentHTML('beforeend','<a href="'+item.href+'" '+(item.target?'target="'+item.target+'" ':'')+'class="nav-item '+(item.active?'active':'')+'" style="animation-delay:'+(delay+=0.04)+'s">'+icon(item.icon)+'<span>'+item.label+'</span></a>');
       return;
     }
     const sub=item.children.map(c=>'<a href="'+c.href+'" class="nav-sub-link">'+icon(c.icon)+'<span>'+c.label+'</span></a>').join('');

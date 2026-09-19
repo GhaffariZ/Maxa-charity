@@ -90,7 +90,29 @@
   .bh-id-line{display:flex;align-items:center;gap:10px;margin-top:16px;color:rgba(255,255,255,.9);font-size:13px;font-weight:600}
   .bh-id-line svg{width:17px;height:17px;color:var(--orange)}
   .bh-id-rule{height:1px;flex:1;background:linear-gradient(90deg,rgba(255,255,255,.32),transparent)}
-  @media(max-width:760px){.bh-id-inner{gap:18px;padding:34px 0}.bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}.bh-id-name{font-size:26px}}
+  .bh-id-actions{display:flex;align-items:center;margin-inline-start:auto}
+  .bh-intro-btn{
+    display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:14px;
+    background:linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+    border:1px solid rgba(255,255,255,0.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    color:#fff;font-size:14px;font-weight:800;transition:all .25s var(--ease);
+    box-shadow:0 8px 24px -6px rgba(0,0,0,0.3);white-space:nowrap;
+  }
+  .bh-intro-btn svg{width:18px;height:18px;transition:transform .2s var(--ease)}
+  .bh-intro-btn:hover{
+    background:var(--orange);color:#0a3a3a;border-color:transparent;
+    transform:translateY(-2px);box-shadow:0 12px 28px -6px rgba(245,166,35,0.5);
+  }
+  .bh-intro-btn:hover svg.arrow{
+    transform:translateX(-4px);
+  }
+  @media(max-width:760px){
+    .bh-id-inner{gap:18px;padding:34px 0}
+    .bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}
+    .bh-id-name{font-size:26px}
+    .bh-id-actions{width:100%;margin-top:6px}
+    .bh-intro-btn{width:100%;justify-content:center}
+  }
 
   /* ===== CONTENT BACKDROP (behind news + campaigns + courses) =====
      یک گرادیانِ سبکِ برندی با پالتِ مکسا (فیروزه‌ای → نعنایی → کرمِ گرم) به‌جای
@@ -263,6 +285,20 @@
           <span class="bh-id-rule"></span>
         </div>
       </div>
+      <div class="bh-id-actions">
+        <a href="#" class="bh-intro-btn" id="bh-intro-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+            <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+            <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+            <path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+          </svg>
+          <span>معرفی شعبه</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -358,6 +394,10 @@
     if(badge){ var ch=(nm.trim()[0]||'م'); badge.textContent=ch; }
     var tag=document.getElementById('bh-id-tagline');
     if(tag) tag.textContent='شعبه‌ی '+nm+' — در خدمت مردم، در کنار شما';
+    var introBtn=document.getElementById('bh-intro-btn');
+    if(introBtn && SLUG){
+      introBtn.href='/' + encodeURIComponent(SLUG) + '/about';
+    }
   })();
 
   /* ---- HERO ---- */

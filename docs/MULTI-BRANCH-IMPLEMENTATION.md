@@ -3,7 +3,7 @@
 این سند خلاصه‌ی تغییرات و **مراحل استقرار** را شرح می‌دهد. اسپک کامل در
 [`PROMPT-multi-branch-dashboard.en.md`](PROMPT-multi-branch-dashboard.en.md) است.
 
-> ⚠️ همه‌چیز فقط با **فایل‌های مهاجرت/اسکریپت** تحویل شده است؛ هیچ تغییری روی دیتابیس
+> همه‌چیز فقط با **فایل‌های مهاجرت/اسکریپت** تحویل شده است؛ هیچ تغییری روی دیتابیس
 > زنده اعمال نشده. مراحل زیر را خودتان روی دیتابیس اجرا کنید.
 
 ---
@@ -17,14 +17,14 @@ mysql -u USER -p DBNAME < database/migrations/001_multi_branch.sql
 این مهاجرت:
 - جدول‌های `branches`, `dashboard_users`, `dashboard_roles`, `branch_features` را می‌سازد.
 - ستون `branch_id` را به `pages`, `news`, `campaigns`, `hero_slides`, `courses`,
-  `employee_profiles`, `panel_donations` اضافه و همه را به **دفتر مرکزی (id=1)** نسبت می‌دهد.
+ `employee_profiles`, `panel_donations` اضافه و همه را به **دفتر مرکزی (id=1)** نسبت می‌دهد.
 - نقش پیش‌فرض «خبرنگار» را برای دفتر مرکزی می‌سازد.
 
 > **نکته‌ی مهم درباره‌ی `pages.slug`:** برای اینکه هر شعبه بتواند صفحه‌ی `home` خود را
 > داشته باشد، یکتایی باید **ترکیبی** شود: `UNIQUE(branch_id, slug)`. اگر روی جدول
 > `pages` از قبل یک کلیدِ یکتای تک‌ستونی روی `slug` دارید، ابتدا آن را حذف کنید:
 > ```sql
-> SHOW INDEX FROM pages;                 -- نام ایندکس یکتای فعلی روی slug را پیدا کنید
+> SHOW INDEX FROM pages; -- نام ایندکس یکتای فعلی روی slug را پیدا کنید
 > ALTER TABLE pages DROP INDEX <نام_ایندکس>;
 > ```
 > سپس مهاجرت را (دوباره) اجرا کنید تا `uq_pages_branch_slug` ساخته شود. مهاجرت idempotent است.
@@ -63,7 +63,7 @@ php database/seed-admin.php --user=admin --pass='YourStrongPassword!' --name="م
 - `public_html/dashboard/login.php` — بازنویسی کامل: واحد، برنددار، CSRF، rate-limit.
 - `public_html/dashboard/register.php` — **غیرفعال** (410 + ریدایرکت).
 - `public_html/dashboard/index.php` — انتخابگر شعبه (Box 1)، منوی سرور-محورِ محدودشده (Box 2)،
-  بخش «شعب» و «کاربران شعبه»، آمارِ محدود به شعبه، کاربر/خروجِ واقعی.
+ بخش «شعب» و «کاربران شعبه»، آمارِ محدود به شعبه، کاربر/خروجِ واقعی.
 - **۳۷ صفحه‌ی ادمین** — `require_once _guard.php` در بالا + `dash_require('<feature>')` روی صفحات محتوا.
 - `public_html/dashboard/page-view.php` — resolveِ شعبه‌محور (ابتدا `branches.slug` سپس صفحه‌ی مرکزی).
 - کوئری‌های محتوا scope شدند: `news-list/save`, `campaign-status/save`, `hero-management/save`, `page-list`, `template-save`.
@@ -92,7 +92,7 @@ php database/seed-admin.php --user=admin --pass='YourStrongPassword!' --name="م
 - **CSRF:** توکن در همه‌ی فرم‌ها و POSTها (`csrf_token()`/`csrf_check()`).
 - **XSS:** خروجی با `e()` (= `htmlspecialchars`).
 - **Session:** `HttpOnly`+`Secure`(در HTTPS)+`SameSite=Lax`، `session_regenerate_id(true)` پس از ورود،
-  timeoutِ بیکاری (۳۰ دقیقه) و مطلق (۸ ساعت).
+ timeoutِ بیکاری (۳۰ دقیقه) و مطلق (۸ ساعت).
 - **Brute-force:** قفلِ موقت پس از ۵ تلاش ناموفق (۱۵ دقیقه) + ثبت در `login_attempts`.
 - **IDOR:** پیش از هر عملیات، مالکیتِ شعبه‌ی رکورد بررسی می‌شود؛ `WHERE branch_id=?` مضاعف.
 - **Least privilege:** مدیر شعبه نمی‌تواند سوپرادمین/مدیرِ شعبه بسازد یا منابع مرکزی را لمس کند.
@@ -103,8 +103,8 @@ php database/seed-admin.php --user=admin --pass='YourStrongPassword!' --name="م
 
 ## ۵) کارهای باقی‌مانده / یادداشت‌ها (اختیاری برای آینده)
 - چند صفحه‌ی محتوا که در این پاس scope نشدند چون فهرست/ذخیره‌ی اصلی نبودند یا هنوز فقط ظاهری‌اند:
-  `feedback.php` (هنوز بک‌اند ندارد)، `courses-*` (در صورت فعال‌سازیِ واقعیِ دوره‌ها باید مثل news/campaign
-  با `branch_id` scope شوند)، `personal-resume-*`/`employee_profiles`. الگوی scope در news/campaign آماده است.
+ `feedback.php` (هنوز بک‌اند ندارد)، `courses-*` (در صورت فعال‌سازیِ واقعیِ دوره‌ها باید مثل news/campaign
+ با `branch_id` scope شوند)، `personal-resume-*`/`employee_profiles`. الگوی scope در news/campaign آماده است.
 - فایل‌های ادمین هنوز از includeهای قدیمیِ دیتابیس (`/../config/database.php`) استفاده می‌کنند؛
-  طبق تصمیمِ شما این‌ها بازنویسیِ گسترده نشدند. کدِ جدید همگی از `core/db-config.php` استفاده می‌کنند.
+ طبق تصمیمِ شما این‌ها بازنویسیِ گسترده نشدند. کدِ جدید همگی از `core/db-config.php` استفاده می‌کنند.
 - `core/router.php` (front controllerِ قدیمی) دیگر در مسیر اصلی نیست؛ `page-view.php` متولّیِ resolve است.

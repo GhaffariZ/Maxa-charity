@@ -20,6 +20,7 @@ error_log
 .idea/
 /.codex/
 /AGENTS.md
+/.agents/
 
 # Local one-time maintenance/bootstrap scripts
 /create-admin-once.php

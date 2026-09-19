@@ -21,7 +21,7 @@
 
 **جدول‌های موجود مرتبط:** `pages`, `news`, `news_categories`, `campaigns`, `hero_slides`, `components`, `page_components`, `courses`, `employee_profiles` (همکاران), `roles` (ستون‌های `name`, `level`), `webusers`, `settings`, `audit_log`, `login_attempts`.
 
-### ⚠️ مشکلات امنیتی فعلی که باید در این کار رفع شوند
+### مشکلات امنیتی فعلی که باید در این کار رفع شوند
 1. **داشبورد هیچ محافظی (auth guard) ندارد** — `dashboard/index.php` و سایر صفحات داشبورد بدون هیچ بررسی ورود قابل دسترسی‌اند. هر کسی می‌تواند `/dashboard/` را باز کند.
 2. **`dashboard/register.php` به هر کسی اجازه‌ی ثبت‌نام می‌دهد** و وارد پنل می‌شود. این باید کاملاً حذف/غیرفعال شود.
 3. دو سیستم احراز هویت ناهماهنگ وجود دارد (`webusers` در `dashboard/login.php` و سشن در `core/auth.php`). باید **یک سیستم واحد و تمیز** جایگزین شود.
@@ -59,12 +59,12 @@
 ### ۳-۱) جدول `branches`
 ```sql
 CREATE TABLE branches (
-  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name          VARCHAR(150) NOT NULL,            -- مثلا: شعبه بیمارستان امام خمینی
-  slug          VARCHAR(100) NOT NULL UNIQUE,     -- مثلا: tabriz-branch  (فقط a-z0-9-)
-  is_hq         TINYINT(1) NOT NULL DEFAULT 0,    -- ستاد مرکزی = 1 (فقط یک ردیف)
-  status        ENUM('active','disabled') NOT NULL DEFAULT 'active',
-  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(150) NOT NULL, -- مثلا: شعبه بیمارستان امام خمینی
+ slug VARCHAR(100) NOT NULL UNIQUE, -- مثلا: tabriz-branch (فقط a-z0-9-)
+ is_hq TINYINT(1) NOT NULL DEFAULT 0, -- ستاد مرکزی = 1 (فقط یک ردیف)
+ status ENUM('active','disabled') NOT NULL DEFAULT 'active',
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 - یک ردیف **ستاد مرکزی** (`is_hq=1`, مثلاً `slug='hq'` یا `name='ستاد مرکزی مکسا'`) به‌صورت seed ساخته می‌شود.
@@ -79,33 +79,33 @@ CREATE TABLE branches (
 > به‌جای جدول‌های پراکنده‌ی فعلی (`webusers`)، یک جدول تمیز و واحد. `webusers` فقط برای پنل عمومی حامیان بود؛ آن را با این قاطی نکن.
 ```sql
 CREATE TABLE dashboard_users (
-  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  branch_id     INT UNSIGNED NOT NULL,            -- شعبه‌ای که کاربر به آن تعلق دارد
-  username      VARCHAR(60)  NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,            -- password_hash(PASSWORD_DEFAULT)
-  full_name     VARCHAR(120) DEFAULT NULL,
-  role_id       INT UNSIGNED DEFAULT NULL,        -- سمت (برای کاربران شعبه)
-  is_super      TINYINT(1) NOT NULL DEFAULT 0,    -- ادمین مرکزی = 1
-  is_branch_admin TINYINT(1) NOT NULL DEFAULT 0,  -- ادمین شعبه = 1
-  status        ENUM('active','disabled') NOT NULL DEFAULT 'active',
-  last_login_at DATETIME DEFAULT NULL,
-  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (branch_id) REFERENCES branches(id),
-  FOREIGN KEY (role_id)   REFERENCES dashboard_roles(id)
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ branch_id INT UNSIGNED NOT NULL, -- شعبه‌ای که کاربر به آن تعلق دارد
+ username VARCHAR(60) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL, -- password_hash(PASSWORD_DEFAULT)
+ full_name VARCHAR(120) DEFAULT NULL,
+ role_id INT UNSIGNED DEFAULT NULL, -- سمت (برای کاربران شعبه)
+ is_super TINYINT(1) NOT NULL DEFAULT 0, -- ادمین مرکزی = 1
+ is_branch_admin TINYINT(1) NOT NULL DEFAULT 0, -- ادمین شعبه = 1
+ status ENUM('active','disabled') NOT NULL DEFAULT 'active',
+ last_login_at DATETIME DEFAULT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (branch_id) REFERENCES branches(id),
+ FOREIGN KEY (role_id) REFERENCES dashboard_roles(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 ### ۳-۴) سمت‌ها و دسترسی‌ها — `dashboard_roles`
 ```sql
 CREATE TABLE dashboard_roles (
-  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  branch_id   INT UNSIGNED NOT NULL,              -- سمت‌ها per-branch تعریف می‌شوند
-  name        VARCHAR(80) NOT NULL,               -- مثلا: خبرنگار
-  permissions JSON NOT NULL,                      -- مثلا: ["news"] یا ["news","campaigns"]
-  is_preset   TINYINT(1) NOT NULL DEFAULT 0,      -- سمت‌های از پیش تعریف‌شده مثل خبرنگار
-  created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (branch_id) REFERENCES branches(id),
-  UNIQUE(branch_id, name)
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ branch_id INT UNSIGNED NOT NULL, -- سمت‌ها per-branch تعریف می‌شوند
+ name VARCHAR(80) NOT NULL, -- مثلا: خبرنگار
+ permissions JSON NOT NULL, -- مثلا: ["news"] یا ["news","campaigns"]
+ is_preset TINYINT(1) NOT NULL DEFAULT 0, -- سمت‌های از پیش تعریف‌شده مثل خبرنگار
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (branch_id) REFERENCES branches(id),
+ UNIQUE(branch_id, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 - **سمت‌های پیش‌فرض (preset)** مثل «خبرنگار» (`permissions: ["news"]`) برای هر شعبه seed شوند.
@@ -114,11 +114,11 @@ CREATE TABLE dashboard_roles (
 کدام بخش‌ها برای یک شعبه فعال‌اند (هنگام ساخت شعبه با چک‌باکس‌ها تعیین می‌شود):
 ```sql
 CREATE TABLE branch_features (
-  branch_id INT UNSIGNED NOT NULL,
-  feature   VARCHAR(50)  NOT NULL,   -- hero | news | partners | campaigns | courses | pages | financial | feedback | medical | ...
-  enabled   TINYINT(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (branch_id, feature),
-  FOREIGN KEY (branch_id) REFERENCES branches(id)
+ branch_id INT UNSIGNED NOT NULL,
+ feature VARCHAR(50) NOT NULL, -- hero | news | partners | campaigns | courses | pages | financial | feedback | medical | ...
+ enabled TINYINT(1) NOT NULL DEFAULT 1,
+ PRIMARY KEY (branch_id, feature),
+ FOREIGN KEY (branch_id) REFERENCES branches(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
@@ -143,11 +143,11 @@ CREATE TABLE branch_features (
 
 ### ۴-۲) Bootstrap محافظ (auth guard)
 - یک فایل bootstrap بساز (مثلاً `dashboard/_guard.php`) که در **ابتدای هر صفحه‌ی داشبورد** require شود و:
-  1. سشن امن را شروع کند.
-  2. اگر کاربر لاگین نیست → ریدایرکت به صفحه‌ی لاگین.
-  3. کاربر، شعبه‌ی فعال، و دسترسی‌هایش را در `$_SESSION` لود کند.
-  4. اگر کاربر `status = disabled` است → خروج فوری و پیام.
-  5. دسترسی هر صفحه را بر اساس feature/permission بررسی کند (مثلاً صفحه‌ی خبر فقط برای کسی که permission `news` دارد).
+ 1. سشن امن را شروع کند.
+ 2. اگر کاربر لاگین نیست → ریدایرکت به صفحه‌ی لاگین.
+ 3. کاربر، شعبه‌ی فعال، و دسترسی‌هایش را در `$_SESSION` لود کند.
+ 4. اگر کاربر `status = disabled` است → خروج فوری و پیام.
+ 5. دسترسی هر صفحه را بر اساس feature/permission بررسی کند (مثلاً صفحه‌ی خبر فقط برای کسی که permission `news` دارد).
 - این guard باید روی **همه‌ی فایل‌های داشبورد** اعمال شود (index.php و همه‌ی `*-create.php`, `*-list.php`, `*-save.php`, …). هیچ endpoint داشبورد نباید بدون guard بماند.
 
 ### ۴-۳) Seed ادمین مرکزی
@@ -159,12 +159,12 @@ CREATE TABLE branch_features (
 
 - آدرس هر شعبه: `mymacsa.ir/{branch-slug}` (مثلاً `mymacsa.ir/tabriz-branch`).
 - روتینگ (`public_html/index.php` و/یا `core/router.php` و `.htaccess`) باید:
-  1. اول بررسی کند آیا `{slug}` با یک `branches.slug` مطابقت دارد → اگر بله، **صفحه‌ی اصلی آن شعبه** را رندر کند (از `pages` با `branch_id` آن شعبه و `slug='home'`).
-  2. مسیرهای داخلی شعبه هم پشتیبانی شوند: `mymacsa.ir/{branch-slug}/news/{news-slug}`، کمپین‌ها و … — دقیقاً مثل ساختار مرکزی ولی scope‌شده به آن شعبه.
+ 1. اول بررسی کند آیا `{slug}` با یک `branches.slug` مطابقت دارد → اگر بله، **صفحه‌ی اصلی آن شعبه** را رندر کند (از `pages` با `branch_id` آن شعبه و `slug='home'`).
+ 2. مسیرهای داخلی شعبه هم پشتیبانی شوند: `mymacsa.ir/{branch-slug}/news/{news-slug}`، کمپین‌ها و … — دقیقاً مثل ساختار مرکزی ولی scope‌شده به آن شعبه.
 - **ساختار آدرس (تصمیم نهایی): top-level بدون پیشوند** — دقیقاً `mymacsa.ir/{slug}` مثل `mymacsa.ir/tabriz-branch`. **هیچ پیشوند `/branch/`** استفاده نشود.
 - **جلوگیری از تداخل (اجباری):** فضای نام slug بین شعبه‌ها و صفحات مرکزی مشترک است، پس:
-  - هنگام ساخت شعبه، slug باید یکتا باشد نسبت به **هم** `branches.slug` و **هم** `pages.slug` صفحات مرکزی (چک یکتایی سراسری + لیست slugهای رزروشده).
-  - **ترتیب تشخیص در روتر:** اول `branches.slug` چک شود؛ اگر مطابقت داشت، صفحه‌ی اصلی شعبه رندر شود. در غیر این صورت به منطق فعلی صفحات مرکزی برود.
+ - هنگام ساخت شعبه، slug باید یکتا باشد نسبت به **هم** `branches.slug` و **هم** `pages.slug` صفحات مرکزی (چک یکتایی سراسری + لیست slugهای رزروشده).
+ - **ترتیب تشخیص در روتر:** اول `branches.slug` چک شود؛ اگر مطابقت داشت، صفحه‌ی اصلی شعبه رندر شود. در غیر این صورت به منطق فعلی صفحات مرکزی برود.
 - ساختار رندر صفحه‌ی شعبه باید **همان مکانیزم component-based فعلی** باشد (همان `dashboard/components/*`)، فقط داده‌ها از ردیف‌های `branch_id`‌دار خوانده شوند.
 
 ---
@@ -185,8 +185,8 @@ CREATE TABLE branch_features (
 
 ### ۶-۳) بخش «شعب» (فقط برای ادمین مرکزی)
 - فقط در سطح دسترسی ستاد مرکزی، یک تیتر جدید در سایدبار به نام **«شعب»** (هم‌سطح «مدیریت محتوا» و «مالی») با دو زیرمنو:
-  - **تعریف شعبه جدید**
-  - **مدیریت شعبه‌ها**
+ - **تعریف شعبه جدید**
+ - **مدیریت شعبه‌ها**
 
 ---
 
@@ -197,10 +197,10 @@ CREATE TABLE branch_features (
 1. **نام شعبه** و **تگ/slug شعبه** (برای URL و انتساب داده‌ها در دیتابیس). slug را sanitize کن (فقط `a-z0-9-`) و یکتا بودنش را چک کن.
 2. **یوزرنیم و پسورد ادمین شعبه** — یک رکورد در `dashboard_users` با `is_branch_admin=1` و `branch_id` همان شعبه ساخته می‌شود (پسورد با `password_hash`).
 3. **دسترسی‌های محتوایی شعبه** — برای هر بخش زیر یک **چک‌باکس** (لیست نهایی و کامل بخش‌های قابل‌واگذاری):
-   `hero` (هیروها)، `news` (خبرها)، `campaigns` (کمپین‌ها)، `partners` (همکاران)، `courses` (دوره‌ها)، `pages` (کامپوننت‌ها و صفحات)، `financial` (گزارش مالی)، `feedback` (انتقادات و پیشنهادات)، `medical` (پرونده‌های پزشکی).
-   هر چک‌باکس فعال:
-   - یک ردیف در `branch_features` ایجاد می‌کند.
-   - زیرسیستم مجزای آن بخش را برای شعبه فراهم می‌کند (مثلاً اگر «هیرو» فعال شد، سیستم هیروی مستقل برای آن شعبه با `branch_id` خودش).
+ `hero` (هیروها)، `news` (خبرها)، `campaigns` (کمپین‌ها)، `partners` (همکاران)، `courses` (دوره‌ها)، `pages` (کامپوننت‌ها و صفحات)، `financial` (گزارش مالی)، `feedback` (انتقادات و پیشنهادات)، `medical` (پرونده‌های پزشکی).
+ هر چک‌باکس فعال:
+ - یک ردیف در `branch_features` ایجاد می‌کند.
+ - زیرسیستم مجزای آن بخش را برای شعبه فراهم می‌کند (مثلاً اگر «هیرو» فعال شد، سیستم هیروی مستقل برای آن شعبه با `branch_id` خودش).
 4. **دکمه‌ی «ایجاد شعبه»**.
 
 ### دایرکتوری شعبه
@@ -209,7 +209,7 @@ CREATE TABLE branch_features (
 - **توجه:** منبع حقیقت محتوا، دیتابیس است (ردیف‌های `branch_id`‌دار)؛ این پوشه برای **فایل‌ها/آپلودها**ی آن شعبه است. هر دو باید scope‌شده باشند.
 - یک صفحه‌ی `home` پیش‌فرض برای شعبه در جدول `pages` با `branch_id` و `slug='home'` ساخته شود تا `mymacsa.ir/{tag}` بلافاصله کار کند.
 
-> ⚠️ امنیت ساخت پوشه: نام پوشه دقیقاً از slug تأییدشده ساخته شود (هیچ‌گاه از ورودی خام). از path traversal جلوگیری شود.
+> امنیت ساخت پوشه: نام پوشه دقیقاً از slug تأییدشده ساخته شود (هیچ‌گاه از ورودی خام). از path traversal جلوگیری شود.
 
 ---
 
@@ -217,10 +217,10 @@ CREATE TABLE branch_features (
 
 - وقتی ادمین شعبه (مثلاً تبریز) لاگین می‌کند، به **همان داشبورد اصلی** هدایت می‌شود، اما با **سطح دسترسی محدود**: فقط محتوای شعبه‌ی خودش را می‌بیند و ویرایش می‌کند.
 - در صفحه‌ی اصلی داشبورد، **آمار مختص همان شعبه** نمایش داده شود:
-  - تعداد کمپین‌های فعال آن شعبه.
-  - مجموع کمک‌های جمع‌آوری‌شده که **فقط** به کمپین‌ها/دوره‌های آن شعبه پرداخت شده (`panel_donations.branch_id` = همان شعبه).
-  - **کمک‌های عمومی (آنلاین بدون کمپین) در داشبورد شعبه نمایش داده نمی‌شوند** (فقط در ستاد مرکزی).
-  - سایر آمار، همه scope‌شده به `branch_id`.
+ - تعداد کمپین‌های فعال آن شعبه.
+ - مجموع کمک‌های جمع‌آوری‌شده که **فقط** به کمپین‌ها/دوره‌های آن شعبه پرداخت شده (`panel_donations.branch_id` = همان شعبه).
+ - **کمک‌های عمومی (آنلاین بدون کمپین) در داشبورد شعبه نمایش داده نمی‌شوند** (فقط در ستاد مرکزی).
+ - سایر آمار، همه scope‌شده به `branch_id`.
 - ادمین شعبه **نباید** بخش «شعب» یا دراپ‌داون چندشعبه‌ای یا محتوای شعبه‌های دیگر را ببیند.
 
 ### داشبورد ستاد مرکزی (دید کلان)
@@ -237,8 +237,8 @@ CREATE TABLE branch_features (
 - نام و نام‌خانوادگی کاربر.
 - یوزرنیم و پسورد.
 - **سمت (Role):**
-  - انتخاب از سمت‌های از پیش تعریف‌شده (مثل «خبرنگار» که فقط به بخش خبرِ همان شعبه دسترسی دارد).
-  - یا گزینه‌ی **«افزودن سمت جدید»**: نام سمت + چک‌باکس‌های دسترسی محتوا (خبر، کمپین، …) → یک ردیف در `dashboard_roles` با `permissions` به‌صورت JSON.
+ - انتخاب از سمت‌های از پیش تعریف‌شده (مثل «خبرنگار» که فقط به بخش خبرِ همان شعبه دسترسی دارد).
+ - یا گزینه‌ی **«افزودن سمت جدید»**: نام سمت + چک‌باکس‌های دسترسی محتوا (خبر، کمپین، …) → یک ردیف در `dashboard_roles` با `permissions` به‌صورت JSON.
 - کاربر ساخته‌شده `branch_id` همان شعبه و `role_id` انتخاب‌شده را می‌گیرد.
 
 ### ۹-۲) «مدیریت کاربران»

@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') : 'مکسا' ?></title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
 
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -17,6 +19,7 @@
   } 
   body {
     font-family: 'Vazirmatn', sans-serif !important;
+    overflow-x: hidden;
   }
     :root{
       --cta-orange:#f5a623;
@@ -53,10 +56,11 @@
       z-index:99999;
       display:flex;
       align-items:center;
-      overflow: visible;
+      overflow-x: clip;
+      overflow-y: visible;
       padding-inline: 0;
       background: var(--cta-orange);
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 24px -2px rgba(0,0,0,0.14);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
     }
 
@@ -82,31 +86,93 @@
       border: none;
       border-radius: 0;
       box-shadow: none;
-      padding: 8px 16px;
+      padding: 0 16px;
+      height: 100%;
       width: 100%;
     }
 
-    /* راست: لوگو */
+    /* راست: لوگو با صفحه شیشه‌ای مات که از زیر قسمت زرد هدر بیرون زده */
     .cta-right{
       display:flex;
       align-items:center;
       flex:0 0 auto;
-      margin-right: calc(-1 * var(--cta-edge-gap)); /* نزدیک‌تر به لبه */
-      padding-right: var(--cta-edge-gap);
+      align-self: stretch;
+      position: relative;
+      margin-right: calc(-1 * var(--cta-edge-gap));
+      padding-right: calc(var(--cta-edge-gap) + 12px);
+      padding-left: 28px;
+      z-index: 5;
+    }
+
+    /* صفحه شیشه‌ای مات (Frosted Glass) با امتداد تا لبه راست صفحه و برش مورب در محل ورود */
+    .cta-glass-underlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: -100vw;
+      background: rgba(255, 255, 255, 0.76);
+      -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%);
+      backdrop-filter: blur(28px) saturate(190%) contrast(105%);
+      clip-path: polygon(26px 0, 100% 0, 100% 100%, 0 100%);
+      pointer-events: none;
+      z-index: -1;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
+    }
+
+    /* سایه نرم و عمق‌دار لایه زرد رنگ روی صفحه شیشه زیرین (حس دقیق لایه رو و لایه زیر) */
+    .cta-glass-underlay::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 38px;
+      background: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.28) 100%);
+      clip-path: polygon(26px 0, 38px 0, 12px 100%, 0 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* لبه نوری براق (Bevel Highlight) روی مرز برش مورب زرد */
+    .cta-glass-underlay::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 100%);
+      clip-path: polygon(24.5px 0, 26px 0, 1.5px 100%, 0 100%);
+      z-index: 3;
+      pointer-events: none;
     }
 
     .cta-brand{
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
+      position: relative;
+      z-index: 4;
+      text-decoration:none;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cta-brand:hover{
+      transform: scale(1.04);
+    }
+
+    .cta-brand:active{
+      transform: scale(0.96);
     }
 
     .cta-brand img{
-      height: 34px;
+      height: 38px;
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,.18));
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
     }
 
     /* وسط: منو */
@@ -824,16 +890,32 @@
     /* تبلت های کوچک */
     @media (max-width: 600px) {
       .cta-header {
-        padding: 6px 12px;
+        padding: 0 12px;
         gap: 8px;
       }
 
       .cta-right {
         flex-shrink: 0;
+        padding-left: 20px;
+        padding-right: calc(var(--cta-edge-gap) + 6px);
+      }
+
+      .cta-glass-underlay {
+        clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      .cta-glass-underlay::before {
+        width: 30px;
+        clip-path: polygon(20px 0, 30px 0, 10px 100%, 0 100%);
+      }
+
+      .cta-glass-underlay::after {
+        width: 22px;
+        clip-path: polygon(18.5px 0, 20px 0, 1.5px 100%, 0 100%);
       }
 
       .cta-brand img {
-        height: 26px;
+        height: 28px;
       }
 
       .cta-left {
@@ -856,12 +938,31 @@
     /* گوشی‌های بسیار باریک */
     @media (max-width: 420px) {
       .cta-header {
-        padding: 5px 10px;
+        padding: 0 8px;
         gap: 6px;
       }
 
+      .cta-right {
+        padding-left: 14px;
+        padding-right: calc(var(--cta-edge-gap) + 4px);
+      }
+
+      .cta-glass-underlay {
+        clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      .cta-glass-underlay::before {
+        width: 22px;
+        clip-path: polygon(15px 0, 22px 0, 7px 100%, 0 100%);
+      }
+
+      .cta-glass-underlay::after {
+        width: 17px;
+        clip-path: polygon(13.5px 0, 15px 0, 1.5px 100%, 0 100%);
+      }
+
       .cta-brand img {
-        height: 22px;
+        height: 24px;
       }
 
       .cta-donate,
@@ -950,6 +1051,7 @@
       <div class="cta-container cta-header">
 
         <div class="cta-right">
+          <div class="cta-glass-underlay" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
             <img src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
@@ -1405,9 +1507,24 @@
       var slots = Array.prototype.slice.call(document.querySelectorAll('.cta-auth-slot'));
       if(!slots.length) return;
 
+      // فقط در صورتی که نشانه لاگین وجود داشته باشد تلاش برای رفرش انجام می‌شود تا خطای ۴۰۱ برای مهمان در کنسول ثبت نشود
+      var hasSession = document.cookie.indexOf('maksa_session=1') !== -1 ||
+                       localStorage.getItem('maksa_logged') === '1' ||
+                       sessionStorage.getItem('maxa_access_token');
+      if(!hasSession) return;
+
       // با کوکی رفرش (httpOnly) یک access_token تازه می‌گیریم؛ این کار نشست را هم تمدید می‌کند.
       fetch('/api/auth/refresh', { method:'POST', credentials:'include', headers:{ 'Accept':'application/json' } })
-        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(res){
+          if(!res.ok){
+            try {
+              localStorage.removeItem('maksa_logged');
+              sessionStorage.removeItem('maxa_access_token');
+            } catch(e) {}
+            return null;
+          }
+          return res.json();
+        })
         .then(function(j){
           var token = j && j.data && j.data.access_token;
           if(!token) return null;

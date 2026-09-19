@@ -43,18 +43,21 @@ final class HtmlSanitizer
      * @var array<string, list<string>>
      */
     private const ALLOWED_ATTRIBUTES = [
-        '*'       => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden', 'style'],
-        'a'       => ['href', 'target', 'rel'],
-        'img'     => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align'],
-        'figure'  => ['class'],
-        'td'      => ['colspan', 'rowspan'],
-        'th'      => ['colspan', 'rowspan', 'scope'],
-        'ol'      => ['start', 'type', 'reversed'],
-        'div'     => ['class'],
-        'span'    => ['class'],
-        'details' => ['open'],
-        'time'    => ['datetime'],
-        'button'  => ['type', 'disabled'],
+        '*'          => ['class', 'id', 'dir', 'lang', 'title', 'role', 'aria-label', 'aria-hidden', 'style'],
+        'a'          => ['href', 'target', 'rel'],
+        'img'        => ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'align'],
+        'figure'     => ['class'],
+        'figcaption' => ['class'],
+        'p'          => ['class'],
+        'td'         => ['colspan', 'rowspan'],
+        'th'         => ['colspan', 'rowspan', 'scope'],
+        'ol'         => ['start', 'type', 'reversed'],
+        'ul'         => ['class'],
+        'div'        => ['class'],
+        'span'       => ['class'],
+        'details'    => ['open'],
+        'time'       => ['datetime'],
+        'button'     => ['type', 'disabled'],
     ];
 
     /** Only these URL schemes are allowed in href / src attributes. */
@@ -212,7 +215,8 @@ final class HtmlSanitizer
                     continue;
                 }
 
-                // Check the allowlist.
+                // Keep a strict allowlist. In particular, TinyMCE's internal
+                // data-mce-* attributes must never leak into public content.
                 if (!in_array($attrName, $allowed, true)) {
                     $toRemove[] = $attr;
                     continue;
@@ -223,6 +227,9 @@ final class HtmlSanitizer
                     if (!self::isSafeUrl($attr->value)) {
                         $toRemove[] = $attr;
                         continue;
+                    }
+                    if ($tagName === 'img' && $attrName === 'src') {
+                        $attr->value = self::normalizeImageUrl($attr->value);
                     }
                 }
 
@@ -343,5 +350,25 @@ final class HtmlSanitizer
         }
 
         return trim($css);
+    }
+
+    /**
+     * Normalize image URLs so relative paths on deep routes (e.g. /{id}/{slug}/)
+     * correctly resolve to /uploads/editor/ or root.
+     */
+    private static function normalizeImageUrl(string $url): string
+    {
+        $url = trim($url);
+        if ($url === '' || preg_match('/^(?:https?:|\/|data:)/i', $url)) {
+            return $url;
+        }
+
+        // If it starts with uploads/ (missing leading slash)
+        if (strpos($url, 'uploads/') === 0 || strpos($url, 'dashboard/uploads/') === 0) {
+            return '/' . $url;
+        }
+
+        // Bare filename (e.g. 6a4e46a5d2ce3.jpg or img_...) or relative editor path
+        return '/uploads/editor/' . ltrim($url, './');
     }
 }

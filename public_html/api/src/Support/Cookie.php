@@ -34,6 +34,17 @@ final class Cookie
             'httponly' => true,                    // JS can never read it
             'samesite' => 'Strict',                // blocks cross-site sending (CSRF)
         ]);
+
+        // Client-readable session marker cookie to avoid unneeded refresh requests for guests
+        $markerValue = ($maxAgeSeconds > 0 && $value !== '') ? '1' : '';
+        setcookie('maksa_session', $markerValue, [
+            'expires'  => time() + $maxAgeSeconds,
+            'path'     => '/',
+            'domain'   => $domain,
+            'secure'   => Security::isHttps(),
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
     }
 
     public static function refreshToken(): ?string
