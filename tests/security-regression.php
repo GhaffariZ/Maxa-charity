@@ -53,6 +53,11 @@ check(!str_contains($obfuscatedCss, 'back\\ground'), 'Escaped CSS property survi
 check(dashboard_component_name('../header') === null, 'Component path traversal was accepted.');
 check(dashboard_component_name('header') === 'header', 'Valid legacy component was rejected.');
 check(dashboard_component_name('فونت') === 'فونت', 'Valid Unicode component name was rejected.');
+check(
+    dashboard_component_replace_images('<img src="{{image1}}">', 'onlinedonation')
+        === '<img src="/dashboard/components/onlinedonation/images/1.png">',
+    'Legacy component image placeholder was not replaced.'
+);
 
 $legacyFile = __DIR__ . '/../public_html/dashboard/components/فونت/component.php';
 ob_start();

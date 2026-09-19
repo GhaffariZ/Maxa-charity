@@ -45,6 +45,20 @@ function dashboard_component_images(string $name): array
     return array_values($images);
 }
 
+/** Replace {{imageN}} placeholders with public URLs for a component's images. */
+function dashboard_component_replace_images(string $html, string $name): string
+{
+    $images = dashboard_component_images($name);
+
+    return preg_replace_callback('/{{image(\\d+)}}/', static function (array $match) use ($name, $images): string {
+        $index = (int)$match[1] - 1;
+        if ($index < 0 || !isset($images[$index])) {
+            return '';
+        }
+        return '/dashboard/components/' . rawurlencode($name) . '/images/' . rawurlencode($images[$index]);
+    }, $html) ?? '';
+}
+
 /** Return safe data-driven markup, or null for an immutable legacy component. */
 function dashboard_component_data(string $name): ?string
 {
@@ -59,15 +73,7 @@ function dashboard_component_data(string $name): ?string
     }
 
     $html = HtmlSanitizer::sanitizeComponent($data['content']);
-    $images = dashboard_component_images($name);
-
-    return preg_replace_callback('/{{image(\\d+)}}/', static function (array $match) use ($name, $images): string {
-        $index = (int)$match[1] - 1;
-        if ($index < 0 || !isset($images[$index])) {
-            return '';
-        }
-        return '/dashboard/components/' . rawurlencode($name) . '/images/' . rawurlencode($images[$index]);
-    }, $html) ?? '';
+    return dashboard_component_replace_images($html, $name);
 }
 
 /**
@@ -92,10 +98,19 @@ function render_dashboard_component(string $rawName, array $scope = []): bool
         return false;
     }
 
-    (static function (string $__file, array $__scope): void {
-        extract($__scope, EXTR_SKIP);
-        include $__file;
-    })($file, $scope);
+    ob_start();
+    try {
+        (static function (string $__file, array $__scope): void {
+            extract($__scope, EXTR_SKIP);
+            include $__file;
+        })($file, $scope);
+        $html = (string)ob_get_clean();
+    } catch (Throwable $error) {
+        ob_end_clean();
+        throw $error;
+    }
+
+    echo dashboard_component_replace_images($html, $name);
     return true;
 }
 

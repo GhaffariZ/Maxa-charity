@@ -101,16 +101,19 @@ final class StandController
             $branchesWithStands = [];
         }
 
-        // اگر هیچ استندی هنوز در جدول ثبت نشده باشد، شعب غیر مرکزی نمونه را برمی‌گردانیم تا کاتالوگ آماده باشد
+        // اگر هنوز هیچ استندی ثبت نشده باشد، فقط شعبی را برگردان که قابلیت
+        // stands برایشان فعال است؛ مراکز تخصصی نباید وارد انتخاب شعبه شوند.
         if (empty($branchesWithStands)) {
             try {
                 $stmt = $pdo->query("
-                    SELECT id AS branch_id, name AS branch_name, 
-                           COALESCE(province, name) AS province, 
-                           COALESCE(city, name) AS city
-                    FROM branches 
-                    WHERE is_hq = 0 AND status = 'active'
-                    ORDER BY id ASC
+                    SELECT b.id AS branch_id, b.name AS branch_name,
+                           COALESCE(b.province, b.name) AS province,
+                           COALESCE(b.city, b.name) AS city
+                    FROM branches b
+                    LEFT JOIN branch_features bf ON bf.branch_id = b.id AND bf.feature = 'stands'
+                    WHERE b.is_hq = 0 AND b.status = 'active'
+                      AND (bf.enabled = 1 OR bf.enabled IS NULL)
+                    ORDER BY b.id ASC
                 ");
                 $branchesWithStands = $stmt->fetchAll(PDO::FETCH_ASSOC);
             } catch (Throwable $e) {
@@ -118,27 +121,24 @@ final class StandController
             }
         }
 
-        // تجمیع به تفکیک استان و شهرهای تحت پوشش
-        $provincesMap = [];
+        // هر شعبه یک گزینه مستقل است. این موضوع برای شهرهایی مثل کاشان و
+        // اصفهان که در یک استان‌اند ضروری است تا branch_id اشتباه نشود.
+        $provinces = [];
         foreach ($branchesWithStands as $row) {
             $prov = trim((string)$row['province']);
             if ($prov === '' || str_contains($prov, 'ستاد') || str_contains($prov, 'مرکزی')) {
                 continue;
             }
-            if (!isset($provincesMap[$prov])) {
-                $provincesMap[$prov] = [
-                    'province'   => $prov,
-                    'branch_id'  => (int)$row['branch_id'],
-                    'cities'     => [],
-                ];
-            }
             $cityName = trim((string)$row['city']);
-            if ($cityName !== '' && !in_array($cityName, $provincesMap[$prov]['cities'], true)) {
-                $provincesMap[$prov]['cities'][] = $cityName;
-            }
+            $provinces[] = [
+                'province' => $prov,
+                'branch_id' => (int)$row['branch_id'],
+                'branch_name' => (string)$row['branch_name'],
+                'cities' => $cityName !== '' ? [$cityName] : [],
+            ];
         }
 
-        Response::success(array_values($provincesMap));
+        Response::success($provinces);
     }
 
     /**

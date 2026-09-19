@@ -21,17 +21,16 @@ try {
         foreach ($rows as $r) {
             $p = trim((string)$r['province']);
             if ($p === '' || str_contains($p, 'ستاد')) continue;
-            if (!isset($initialProvinces[$p])) {
-                $initialProvinces[$p] = [
-                    'province'  => $p,
-                    'branch_id' => (int)$r['branch_id'],
-                    'branch_name' => (string)$r['branch_name'],
-                    'cities'    => []
-                ];
-            }
+            $key = (string)(int)$r['branch_id'];
+            $initialProvinces[$key] = [
+                'province'  => $p,
+                'branch_id' => (int)$r['branch_id'],
+                'branch_name' => (string)$r['branch_name'],
+                'cities'    => []
+            ];
             $c = trim((string)$r['city']);
-            if ($c !== '' && !in_array($c, $initialProvinces[$p]['cities'], true)) {
-                $initialProvinces[$p]['cities'][] = $c;
+            if ($c !== '') {
+                $initialProvinces[$key]['cities'][] = $c;
             }
         }
     }
@@ -1516,7 +1515,10 @@ function onProvinceSelected() {
         return;
     }
 
-    const provData = state.provinces.find(p => p.province === selectedProv);
+    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
+    const selectedBranchId = parseInt(selectedOption?.dataset.branch || '0', 10);
+    const provData = state.provinces.find(p => parseInt(p.branch_id, 10) === selectedBranchId)
+        || state.provinces.find(p => p.province === selectedProv);
     citySelect.innerHTML = '';
 
     if (provData && Array.isArray(provData.cities) && provData.cities.length > 0) {
@@ -1533,7 +1535,6 @@ function onProvinceSelected() {
         citySelect.appendChild(opt);
     }
 
-    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
     const bId = selectedOption ? selectedOption.dataset.branch : (provData ? provData.branch_id : 1);
     state.selectedBranchId = parseInt(bId);
     inputBranchId.value = state.selectedBranchId;
@@ -1543,16 +1544,18 @@ function onProvinceSelected() {
     soEmptyGuide.style.display = 'none';
     soStandsContent.style.display = 'block';
 
-    loadStands(selectedProv);
+    loadStands(selectedProv, state.selectedBranchId);
 }
 
 provinceSelect.addEventListener('change', onProvinceSelected);
 
 // بارگذاری استندهای اختصاصی شعبه
-async function loadStands(province) {
+async function loadStands(province, branchId) {
     standsCatalog.innerHTML = '<div style="text-align:center;padding:30px;color:#9ca3af">در حال بارگذاری طرح‌های اختصاصی شعبه...</div>';
     try {
-        const res = await fetch(`/api/stands?province=${encodeURIComponent(province)}`);
+        const query = new URLSearchParams({ province });
+        if (branchId) query.set('branch_id', String(branchId));
+        const res = await fetch(`/api/stands?${query.toString()}`);
         const data = await res.json();
         const standsList = Array.isArray(data.data) ? data.data : (data.data?.stands || []);
         if (data.success && standsList.length > 0) {

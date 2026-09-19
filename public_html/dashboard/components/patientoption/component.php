@@ -68,7 +68,7 @@
       <a href="fear.html" class="po-card-link">
         <div class="po-card wow fadeInUp">
           <div class="po-card-img">
-            <img src="{{image1}}" alt="مدیریت ترس از عوارض جانبی">
+            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="مدیریت ترس از عوارض جانبی">
             <span class="po-badge">ترس</span>
           </div>
           <div class="po-card-body">
@@ -81,7 +81,7 @@
       <a href="stress.html" class="po-card-link">
         <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
           <div class="po-card-img">
-            <img src="{{image2}}" alt="مدیریت استرس">
+            <img src="/dashboard/components/socialworkcare/images/1.png" alt="مدیریت استرس">
             <span class="po-badge">استرس</span>
           </div>
           <div class="po-card-body">
@@ -94,7 +94,7 @@
       <a href="anger.html" class="po-card-link">
         <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
           <div class="po-card-img">
-            <img src="{{image3}}" alt="مدیریت خشم">
+            <img src="/dashboard/components/spritualcare/images/1.png" alt="مدیریت خشم">
             <span class="po-badge">خشم</span>
           </div>
           <div class="po-card-body">
@@ -132,7 +132,7 @@
         </a>
       </div>
       <div class="po-feature-img">
-        <img src="{{image4}}" alt="مراقبت حمایتی و تسکینی">
+        <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="مراقبت حمایتی و تسکینی">
       </div>
     </div>
 

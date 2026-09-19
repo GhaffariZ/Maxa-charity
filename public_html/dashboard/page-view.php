@@ -21,6 +21,12 @@ $HQ_BRANCH = 1;
 $slug = trim((string)($_GET['slug'] ?? ''));
 $sub  = trim((string)($_GET['sub'] ?? ''), '/');   // مسیر داخلیِ شعبه (اختیاری)
 
+// Public aliases whose historical database/component slugs are different.
+$slugAliases = [
+    'patient-option' => 'patientoption',
+];
+$slug = $slugAliases[$slug] ?? $slug;
+
 if ($slug === '') {
     http_response_code(404);
     include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
