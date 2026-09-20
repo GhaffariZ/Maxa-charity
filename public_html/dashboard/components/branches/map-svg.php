@@ -98,14 +98,18 @@ a.province-link:active .province-shape.is-active {
   pointer-events: auto !important;
   cursor: pointer !important;
 }
-.map-labels a.branch-pin-link circle {
+.map-labels a.branch-pin-link circle,
+.map-labels a.branch-pin-link rect {
   pointer-events: auto !important;
   cursor: pointer !important;
 }
 .map-labels .lbl-hitbox {
-  fill: transparent;
-  stroke: none;
+  fill: #000000 !important;
+  fill-opacity: 0.001 !important;
+  opacity: 0.001 !important;
+  stroke: none !important;
   cursor: pointer !important;
+  pointer-events: all !important;
 }
 
 @keyframes branchPing {
@@ -145,6 +149,49 @@ a.province-link:active .province-shape.is-active {
 .map-labels a.branch-pin-link.is-hovered .lbl-active {
   fill: #ffffff;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
+}
+
+/* نشان اختصاصی و شاخص شعبه کاشان روی نقشه */
+.pin-kashan {
+  cursor: pointer !important;
+}
+.kashan-pill-bg {
+  fill: #0f172a;
+  stroke: #facc15;
+  stroke-width: 1.3px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+.kashan-pill-text {
+  fill: #fef08a;
+  font-size: 12.5px;
+  font-weight: 800;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  letter-spacing: -0.2px;
+}
+.pin-kashan:hover .kashan-pill-bg,
+.pin-kashan:focus-visible .kashan-pill-bg,
+.pin-kashan.is-hovered .kashan-pill-bg {
+  fill: #007b7a;
+  stroke: #ffffff;
+  stroke-width: 1.7px;
+  filter: drop-shadow(0 4px 14px rgba(250, 204, 21, 0.8));
+}
+.pin-kashan:hover .kashan-pill-text,
+.pin-kashan:focus-visible .kashan-pill-text,
+.pin-kashan.is-hovered .kashan-pill-text {
+  fill: #ffffff;
+}
+.lbl-active-pulse--kashan {
+  animation-delay: 1.25s;
+}
+.lbl-active-dot--kashan {
+  fill: #facc15;
+  stroke: #ffffff;
+  stroke-width: 1.4;
 }
 </style>
 <g id="layercountry" transform="translate(-14.397255,-27.439554)">
@@ -237,12 +284,20 @@ a.province-link:active .province-shape.is-active {
   </a>
 
   <!-- استان اصفهان: شعبه کاشان (شمال استان اصفهان) -->
-  <a xlink:href="/kashan-branch" href="/kashan-branch" class="branch-pin-link" data-branch="kashan" title="شعبه کاشان مکسا (استان اصفهان)">
-    <g class="active-label-group" data-province="اصفهان" data-city="کاشان">
-      <circle cx="472.0" cy="413.0" r="24" class="lbl-hitbox" />
-      <circle cx="472.0" cy="406.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="472.0" cy="406.0" r="3.2" class="lbl-active-dot" />
-      <text x="472.0" y="421.0" font-size="14.5px" class="lbl-active">کاشان</text>
+  <a xlink:href="/kashan-branch" href="/kashan-branch" class="branch-pin-link pin-kashan" data-branch="kashan" title="شعبه کاشان مکسا (کلیک برای ورود به صفحه شعبه)">
+    <title>شعبه کاشان مکسا (کلیک برای ورود به صفحه شعبه)</title>
+    <g class="active-label-group active-label-group--kashan" data-province="اصفهان" data-city="کاشان">
+      <!-- محدوده وسیع کلیک‌پذیر جهت کلیک و لمس دقیق و بدون خطا -->
+      <rect x="420.0" y="375.0" width="104.0" height="65.0" rx="16" class="lbl-hitbox" />
+      <!-- رادارهای پالس نوری -->
+      <circle cx="472.0" cy="398.0" r="3.5" class="lbl-active-pulse" />
+      <circle cx="472.0" cy="398.0" r="3.5" class="lbl-active-pulse lbl-active-pulse--kashan" />
+      <circle cx="472.0" cy="398.0" r="4.0" class="lbl-active-dot lbl-active-dot--kashan" />
+      <!-- کپسول شاخص شعبه کاشان -->
+      <g class="kashan-pill-group">
+        <rect x="440.0" y="409.0" width="64.0" height="22.0" rx="11" class="kashan-pill-bg" />
+        <text x="472.0" y="420.0" class="kashan-pill-text">کاشان</text>
+      </g>
     </g>
   </a>
 

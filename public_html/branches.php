@@ -59,6 +59,13 @@ $defaultBranches = [
         'icon' => 'location'
     ],
     [
+        'name' => 'شعبه کاشان',
+        'href' => '/kashan-branch',
+        'is_hq' => false,
+        'tag' => 'شعبه فعال (استان اصفهان)',
+        'icon' => 'location'
+    ],
+    [
         'name' => 'شعبه مشهد',
         'href' => '/mashhad-branch',
         'is_hq' => false,
@@ -84,13 +91,6 @@ $defaultBranches = [
         'href' => '/qom-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => 'location'
-    ],
-    [
-        'name' => 'شعبه کاشان',
-        'href' => '/kashan-branch',
-        'is_hq' => false,
-        'tag' => 'شعبه فعال (استان اصفهان)',
         'icon' => 'location'
     ],
     [

@@ -576,6 +576,39 @@
 
 <script>
 (function() {
+  function navigateTo(url) {
+    if (!url || url === '#' || url.startsWith('javascript:')) return;
+    window.location.href = url;
+  }
+
+  // 1. Direct Click & Touch handler for all map branch pins
+  const pinLinks = document.querySelectorAll('#Iran a.branch-pin-link');
+  pinLinks.forEach(function(pin) {
+    const href = pin.getAttribute('href') || pin.getAttribute('xlink:href');
+    if (!href) return;
+
+    const onPinActivate = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      navigateTo(href);
+    };
+
+    pin.addEventListener('click', onPinActivate);
+  });
+
+  // 2. Specific foolproof direct handler for Kashan pin (touch + click)
+  const kashanPins = document.querySelectorAll('#Iran [data-branch="kashan"], #Iran .pin-kashan');
+  kashanPins.forEach(function(el) {
+    const onKashanActivate = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      navigateTo('/kashan-branch');
+    };
+    el.addEventListener('click', onKashanActivate);
+    el.addEventListener('touchend', onKashanActivate);
+  });
+
+  // 3. Modal logic & intelligent territory click for Isfahan province
   const modal = document.getElementById('esfahanBranchModal');
   if (modal) {
     const closeBtns = modal.querySelectorAll('[data-close-popover]');
@@ -596,22 +629,55 @@
       if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
     });
 
-    // When clicking Isfahan province shape on the map (outside of inner city pins)
+    // When clicking Isfahan province shape on the map
     const esfahanLink = document.querySelector('#Iran a.province-link[data-province="اصفهان"]');
     if (esfahanLink) {
       esfahanLink.addEventListener('click', function(e) {
-        // If click was on one of the inner city branch pin links, do nothing (let pin link handle it)
-        if (e.target.closest('.branch-pin-link')) return;
+        // If click was on or inside Kashan pin or city pin, let the pin handler do it
+        if (e.target.closest && (e.target.closest('.branch-pin-link') || e.target.closest('[data-branch="kashan"]'))) {
+          return;
+        }
+
+        // Check if the click coordinates fall inside northern Isfahan (the Kashan territory)
+        const svg = document.getElementById('Iran');
+        if (svg && svg.createSVGPoint && svg.getScreenCTM) {
+          try {
+            const pt = svg.createSVGPoint();
+            pt.x = e.clientX;
+            pt.y = e.clientY;
+            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+            // In SVG coordinates, Kashan territory is northern Isfahan (Y < 440 and X between 405 and 535)
+            if (svgP.y < 440 && svgP.x >= 405 && svgP.x <= 535) {
+              e.preventDefault();
+              e.stopPropagation();
+              navigateTo('/kashan-branch');
+              return;
+            }
+          } catch (err) {
+            // Coordinate check fallback
+          }
+        }
+
         e.preventDefault();
         openModal();
       });
     }
   }
 
-  // Cross-hover synchronization between map pins and sidebar list
-  const pinLinks = document.querySelectorAll('#Iran a.branch-pin-link');
+  // 4. Universal province link click handler
+  const otherProvLinks = document.querySelectorAll('#Iran a.province-link:not([data-province="اصفهان"])');
+  otherProvLinks.forEach(function(link) {
+    const href = link.getAttribute('href') || link.getAttribute('xlink:href');
+    if (!href) return;
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      navigateTo(href);
+    });
+  });
+
+  // 5. Cross-hover synchronization between map pins and sidebar list
   pinLinks.forEach(function(pin) {
-    const href = pin.getAttribute('href');
+    const href = pin.getAttribute('href') || pin.getAttribute('xlink:href');
     const slug = href ? href.replace(/^\//, '') : '';
     if (!slug) return;
 
@@ -629,7 +695,7 @@
   sidebarItems.forEach(function(item) {
     const slug = item.getAttribute('data-slug');
     if (!slug) return;
-    const pin = document.querySelector('#Iran a.branch-pin-link[href="/' + slug + '"]');
+    const pin = document.querySelector('#Iran a.branch-pin-link[href="/' + slug + '"], #Iran a.branch-pin-link[xlink\\:href="/' + slug + '"]');
     if (pin) {
       item.addEventListener('mouseenter', function() {
         pin.classList.add('is-hovered');
