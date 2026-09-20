@@ -1105,7 +1105,7 @@
                       <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
                       <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
                       <a href="/iran-situation-in-palliative">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
-                      <a href="/doctorspage">نقض کادر درمان</a>
+                      <a href="/doctorspage">نقش کادر درمان</a>
                     </div>
                     <div class="mega-col">
                       <h6>مراقبت های حمایتی و تسکینی</h6>
