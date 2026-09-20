@@ -1239,6 +1239,7 @@ body.spa-active .content{display:none}
       if(it.children) it.children.forEach(c=>{ MAP[c.href]={label:c.label,group:it.label}; });
       else if(it.href) MAP[it.href]={label:it.label,group:''};
     });
+    MAP['campaign-edit.php']={label:'ویرایش کمپین',group:'کمپین‌ها'};
 
     let current=null;     // نام فایلِ بازشده (null یعنی داشبورد/خانه)
     let syncing=false;    // محافظ در برابر حلقه‌ی hashchange
@@ -1265,10 +1266,11 @@ body.spa-active .content{display:none}
       const links=Array.from(navEl.querySelectorAll('a[href]'));
       // ۱) تطبیقِ دقیق (شاملِ query): «بررسی سردبیری» را از «مدیریت اخبار» جدا می‌کند
       let matches=links.filter(a=>fileOf(a.getAttribute('href'))===file);
-      // ۲) اگر تطبیقِ دقیق نبود (مثلاً صفحه‌بندیِ news-list.php?page=2)، به تطبیقِ فقط-فایل
+      // ۲) اگر تطبیقِ دقیق نبود (مثلاً صفحه‌بندیِ news-list.php?page=2 یا ویرایش)، به تطبیقِ فقط-فایل
       //    برگرد، ولی فقط لینک‌هایی که خودشان query ندارند تا لینکِ پایه active بماند.
       if(!matches.length){
-        const base=baseOf(file);
+        let base=baseOf(file);
+        if(base==='campaign-edit.php') base='campaign-status.php';
         matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
       }
       matches.forEach(a=>{
@@ -1284,7 +1286,8 @@ body.spa-active .content{display:none}
     function setTitle(file,override){
       if(!tbTitle) return;
       if(!file){ tbTitle.innerHTML=homeTitleHTML; return; }
-      const m=MAP[file]||{};
+      const base=baseOf(file);
+      const m=MAP[file]||MAP[base]||{};
       const label=m.label || override || file.replace(/\.php.*$/,'');
       tbTitle.innerHTML='<h1 id="pageTitle">'+label+'</h1><span>'+(m.group||'پنل مدیریت مکسا')+'</span>';
     }

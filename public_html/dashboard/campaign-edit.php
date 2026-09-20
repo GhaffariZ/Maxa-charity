@@ -2,6 +2,34 @@
 require_once __DIR__ . '/_guard.php';
 dash_require('campaigns');
 
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$__branch = dash_active_branch_id();
+$is_hq = dash_is_hq_view();
+
+$campaign = null;
+if ($id > 0) {
+    if ($is_hq) {
+        $stmt = $pdo->prepare(
+            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
+               FROM campaigns c
+          LEFT JOIN branches b ON b.id = c.branch_id
+              WHERE c.id = ?
+              LIMIT 1"
+        );
+        $stmt->execute([$id]);
+    } else {
+        $stmt = $pdo->prepare(
+            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
+               FROM campaigns c
+          LEFT JOIN branches b ON b.id = c.branch_id
+              WHERE c.id = ? AND c.branch_id = ?
+              LIMIT 1"
+        );
+        $stmt->execute([$id, $__branch]);
+    }
+    $campaign = $stmt->fetch();
+}
+
 $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+';
 ?>
 <!DOCTYPE html>
@@ -9,8 +37,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ایجاد کمپین حمایتی جدید</title>
-<!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
+<title><?= $campaign ? 'ویرایش کمپین: ' . htmlspecialchars($campaign['title']) : 'ویرایش کمپین' ?></title>
 <script>
 (function(){
   function applyMaxaTheme(){
@@ -39,6 +66,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         --text-color: #333333;
         --text-muted: #6b7674;
         --border-color: #e0e0e0;
+        --card-bg: #ffffff;
         --success-color: #2ed573;
         --danger-color: #ff4757;
     }
@@ -48,6 +76,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         --text-color: #eeeeee;
         --text-muted: #aaaaaa;
         --border-color: #333333;
+        --card-bg: #1e1e1e;
     }
 
     * { box-sizing: border-box; }
@@ -59,6 +88,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         padding: 24px 20px;
         line-height: 1.6;
     }
+
     .container { max-width: 1100px; margin: 0 auto; }
 
     .header-bar {
@@ -69,6 +99,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         flex-wrap: wrap;
         gap: 16px;
     }
+
     .header-title-group {
         display: flex;
         align-items: center;
@@ -83,6 +114,32 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         align-items: center;
         gap: 8px;
     }
+    .header-badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .badge-branch {
+        background: rgba(0, 125, 117, 0.1);
+        color: var(--primary-color);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 99px;
+    }
+    .badge-code {
+        background: rgba(247, 159, 31, 0.12);
+        color: #d97706;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-family: monospace;
+        letter-spacing: 0.5px;
+    }
+    [data-theme="dark"] .badge-code { color: #f59e0b; }
+
     .btn-back {
         display: inline-flex;
         align-items: center;
@@ -102,7 +159,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         color: var(--primary-color);
         transform: translateX(-3px);
     }
-    
+
     .main-card {
         background: var(--panel-bg);
         border-radius: 20px;
@@ -112,26 +169,28 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     }
     .panel-header {
         background: var(--primary-color);
-        color: white;
+        color: #ffffff;
         padding: 18px 24px;
         font-weight: 700;
         font-size: 16px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 10px;
     }
 
-    /* چیدمان دو ستونه */
-    .panel-body { display: flex; gap: 36px; padding: 30px; }
-    
+    .panel-body {
+        display: flex;
+        gap: 36px;
+        padding: 30px;
+    }
+
     .form-side { flex: 1; min-width: 0; }
     .preview-side { width: 340px; flex-shrink: 0; }
 
     .form-group { margin-bottom: 22px; }
     label {
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        display: block;
         margin-bottom: 8px;
         font-weight: 700;
         color: var(--primary-color);
@@ -156,7 +215,28 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     }
     textarea.input { resize: vertical; min-height: 120px; }
 
-    /* استایل کارت پیش‌نمایش زنده */
+    .current-img-box {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px;
+        background: var(--bg-color);
+        border-radius: 12px;
+        border: 1px dashed var(--border-color);
+        margin-bottom: 10px;
+    }
+    .current-img-thumb {
+        width: 70px;
+        height: 52px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #ddd;
+    }
+    .current-img-info {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
     .preview-sticky { position: sticky; top: 20px; }
     .preview-label {
         text-align: center;
@@ -203,7 +283,8 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         height: 100%;
         background: linear-gradient(90deg, var(--secondary-color), #ffb94b);
         border-radius: 10px;
-        width: 15%;
+        width: 0%;
+        transition: width 0.4s ease;
     }
     .live-stats {
         display: flex;
@@ -212,16 +293,26 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         font-weight: 700;
         margin-bottom: 8px;
     }
+    .live-collected {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: normal;
+    }
 
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
     .btn-submit {
+        flex: 1;
         background: var(--primary-color);
-        color: white;
+        color: #ffffff;
         border: none;
         padding: 14px 20px;
         border-radius: 12px;
         cursor: pointer;
         font-weight: 700;
-        width: 100%;
         font-size: 15px;
         font-family: inherit;
         display: flex;
@@ -229,7 +320,6 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         justify-content: center;
         gap: 8px;
         transition: all 0.2s;
-        margin-top: 15px;
     }
     .btn-submit:hover:not(:disabled) {
         background: var(--primary-hover);
@@ -241,16 +331,25 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         cursor: not-allowed;
     }
 
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 0.8s linear infinite;
+    .btn-cancel {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn-cancel:hover {
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
 
     /* Toast Notification */
     .toast-container { position: fixed; bottom: 25px; left: 25px; z-index: 99999; }
@@ -273,24 +372,88 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     .toast.active { transform: translateX(0); }
     .toast.error { border-right-color: var(--danger-color); }
 
-    /* بهینه‌سازی موبایل */
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-card {
+        background: var(--panel-bg);
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        padding: 60px 30px;
+        text-align: center;
+        max-width: 600px;
+        margin: 40px auto;
+    }
+    .error-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 20px;
+        color: var(--danger-color);
+    }
+    .error-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0 0 10px 0;
+        color: var(--text-color);
+    }
+    .error-desc {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
     @media (max-width: 900px) {
         body { padding: 15px 10px; }
         .panel-body { flex-direction: column-reverse; padding: 20px; gap: 24px; }
         .preview-side { width: 100%; }
         .preview-sticky { position: static; margin-bottom: 20px; }
+        .form-actions { flex-direction: column; }
     }
 </style>
 </head>
 <body>
 
 <div class="container">
+<?php if (!$campaign): ?>
+    <div class="error-card">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3 class="error-title">کمپین یافت نشد</h3>
+        <p class="error-desc">کمپین درخواستی وجود ندارد یا شما دسترسی لازم برای ویرایش آن در این شعبه را ندارید.</p>
+        <a href="campaign-status.php" class="btn-submit" style="display:inline-flex; width:auto; text-decoration:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            بازگشت به لیست کمپین‌ها
+        </a>
+    </div>
+<?php else: 
+    $target = (float)$campaign['target_amount'];
+    $collected = (float)$campaign['collected_amount'];
+    $progress = ($target > 0) ? ($collected / $target) * 100 : 0;
+    $initialImg = !empty($campaign['image_url']) ? $campaign['image_url'] : $ph;
+?>
     <div class="header-bar">
         <div class="header-title-group">
             <h2>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                ایجاد کمپین جدید
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                ویرایش کمپین
             </h2>
+            <div class="header-badges">
+                <?php if (!empty($campaign['branch_name'])): ?>
+                    <span class="badge-branch">🏢 <?= htmlspecialchars($campaign['branch_name']) ?></span>
+                <?php endif; ?>
+                <?php if (!empty($campaign['campaign_code'])): ?>
+                    <span class="badge-code"><?= htmlspecialchars($campaign['campaign_code']) ?></span>
+                <?php endif; ?>
+            </div>
         </div>
         <a href="campaign-status.php" class="btn-back">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -300,82 +463,102 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 
     <div class="main-card">
         <div class="panel-header">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            طراحی و ایجاد کمپین حمایتی جدید
+            <span>فرم تغییر و به‌روزرسانی مشخصات کمپین</span>
+            <span style="font-size:12px; font-weight:normal; opacity:0.9;">کد شناسه: <?= (int)$campaign['id'] ?></span>
         </div>
         
         <div class="panel-body">
+            <!-- ستون پیش‌نمایش زنده -->
             <div class="preview-side">
                 <div class="preview-sticky">
                     <span class="preview-label">پیش‌نمایش زنده کارت</span>
                     <div class="live-card">
                         <div class="live-img-wrapper">
-                            <img src="<?= $ph ?>" id="imgPreview" class="live-img" onerror="this.onerror=null;this.src='<?= $ph ?>'">
+                            <img src="<?= htmlspecialchars($initialImg) ?>" id="imgPreview" class="live-img" onerror="this.onerror=null;this.src='<?= $ph ?>'">
                         </div>
                         <div class="live-content">
-                            <h4 class="live-title" id="titlePreview">عنوان کمپین شما در این قسمت...</h4>
-                            <div class="live-progress"><div class="live-bar" id="barPreview"></div></div>
-                            <div class="live-stats">
-                                <span id="targetPreview">هدف: ۰ تومان</span>
-                                <span style="color: var(--secondary-color);" id="percentPreview">۰٪</span>
+                            <h4 class="live-title" id="titlePreview"><?= htmlspecialchars($campaign['title']) ?></h4>
+                            <div class="live-progress">
+                                <div class="live-bar" id="barPreview" style="width: <?= min($progress, 100) ?>%;"></div>
                             </div>
-                            <button style="width: 100%; background: none; border: 1.5px solid var(--secondary-color); color: var(--secondary-color); padding: 8px; border-radius: 8px; font-weight: bold; cursor: default; font-family: inherit; font-size: 13px;" disabled>حمایت مالی</button>
+                            <div class="live-stats">
+                                <span id="targetPreview">هدف: <?= number_format($target) ?> تومان</span>
+                                <span style="color: var(--secondary-color);" id="percentPreview"><?= round($progress) ?>٪</span>
+                            </div>
+                            <div class="live-collected">
+                                جمع‌آوری شده: <?= number_format($collected) ?> تومان
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- ستون فرم ویرایش -->
             <div class="form-side">
-                <form id="campForm" enctype="multipart/form-data">
+                <form id="campEditForm" enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="<?= (int)$campaign['id'] ?>">
+
                     <div class="form-group">
-                        <label for="imageInput">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                            تصویر شاخص کمپین
-                        </label>
-                        <input type="file" name="featured_image" id="imageInput" class="input" accept="image/jpeg,image/png,image/gif,image/webp" required>
-                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">تصویر با کیفیت مطلوب برای کارت آپلود کنید (حداکثر ۵ مگابایت).</small>
+                        <label>تصویر شاخص کمپین</label>
+                        <?php if (!empty($campaign['image_url'])): ?>
+                        <div class="current-img-box">
+                            <img src="<?= htmlspecialchars($campaign['image_url']) ?>" class="current-img-thumb" onerror="this.onerror=null;this.src='<?= $ph ?>'">
+                            <div class="current-img-info">
+                                <strong>تصویر فعلی در سامانه ذخیره است.</strong>
+                                <div>برای تغییر، فایل تصویر جدیدی در کادر زیر انتخاب کنید.</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        <input type="file" name="featured_image" id="imageInput" class="input" accept="image/jpeg,image/png,image/gif,image/webp">
+                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">فرمت‌های مجاز: JPG, PNG, WEBP (حداکثر ۵ مگابایت). در صورت خالی ماندن، تصویر قبلی حفظ می‌شود.</small>
                     </div>
 
                     <div class="form-group">
                         <label for="titleInput">عنوان کمپین</label>
-                        <input type="text" name="title" id="titleInput" class="input" placeholder="یک عنوان جذاب بنویسید..." required maxlength="70">
+                        <input type="text" name="title" id="titleInput" class="input" value="<?= htmlspecialchars($campaign['title']) ?>" required maxlength="70" placeholder="یک عنوان جذاب برای کمپین بنویسید...">
                     </div>
 
                     <div class="form-group">
                         <label for="categoryInput">دسته‌بندی کمپین</label>
                         <select name="category" id="categoryInput" class="input" required>
-                            <option value="food">غذا و معیشت</option>
-                            <option value="drug">دارو و درمان</option>
-                            <option value="education">مهارت‌آموزی و آموزش</option>
+                            <option value="food" <?= $campaign['category'] === 'food' ? 'selected' : '' ?>>غذا و معیشت</option>
+                            <option value="drug" <?= $campaign['category'] === 'drug' ? 'selected' : '' ?>>دارو و درمان</option>
+                            <option value="education" <?= $campaign['category'] === 'education' ? 'selected' : '' ?>>مهارت‌آموزی و آموزش</option>
                         </select>
-                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">این دسته در صفحه کاربران برای فیلتر کردن کمپین‌ها استفاده می‌شود.</small>
+                        <small style="font-size: 11px; color: var(--text-muted); margin-top: 5px; display: block;">این دسته در صفحه اصلی و فیلترهای وب‌سایت برای مخاطبان استفاده می‌شود.</small>
                     </div>
 
                     <div class="form-group">
                         <label for="targetInput">مبلغ مورد نیاز هدف (تومان)</label>
-                        <input type="number" name="target_amount" id="targetInput" class="input" placeholder="مثلاً 50000000" required min="10000" step="1000">
+                        <input type="number" name="target_amount" id="targetInput" class="input" value="<?= (int)$campaign['target_amount'] ?>" required min="10000" step="1000" placeholder="مثلاً 50000000">
                     </div>
 
                     <div class="form-group">
-                        <label for="descInput">توضیحات تکمیلی</label>
-                        <textarea name="description" id="descInput" class="input" rows="6" placeholder="داستان کمپین و چرخه حمایت را شرح دهید..."></textarea>
+                        <label for="descInput">توضیحات و داستان کمپین</label>
+                        <textarea name="description" id="descInput" class="input" rows="7" placeholder="شرح کامل اهداف، چرخه حمایت و نیازهای این کمپین..."><?= htmlspecialchars($campaign['description']) ?></textarea>
                     </div>
 
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
-                        انتشار نهایی کمپین
-                    </button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            ذخیره تغییرات کمپین
+                        </button>
+                        <a href="campaign-status.php" class="btn-cancel">انصراف</a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
+<?php endif; ?>
 </div>
 
 <div class="toast-container" id="toastBox"></div>
 
 <script>
 (function(){
-    const defaultImg = <?= json_encode($ph) ?>;
+    const collectedAmount = <?= isset($campaign['collected_amount']) ? (float)$campaign['collected_amount'] : 0 ?>;
+    const initialImgSrc = <?= json_encode($initialImg ?? $ph) ?>;
+
     const imgInput = document.getElementById('imageInput');
     const imgPreview = document.getElementById('imgPreview');
     const titleInput = document.getElementById('titleInput');
@@ -384,7 +567,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     const targetPreview = document.getElementById('targetPreview');
     const percentPreview = document.getElementById('percentPreview');
     const barPreview = document.getElementById('barPreview');
-    const form = document.getElementById('campForm');
+    const form = document.getElementById('campEditForm');
     const submitBtn = document.getElementById('submitBtn');
 
     function toPersianDigits(n) {
@@ -395,7 +578,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         return toPersianDigits(Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬"));
     }
 
-    // پیش‌نمایش تصویر
+    // پیش‌نمایش تصویر جدید هنگام انتخاب
     if (imgInput) {
         imgInput.addEventListener('change', function() {
             const file = this.files && this.files[0];
@@ -406,26 +589,27 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
                 };
                 reader.readAsDataURL(file);
             } else {
-                if (imgPreview) imgPreview.src = defaultImg;
+                if (imgPreview) imgPreview.src = initialImgSrc;
             }
         });
     }
 
-    // پیش‌نمایش زنده عنوان
+    // به‌روزرسانی زنده عنوان در کارت
     if (titleInput && titlePreview) {
         titleInput.addEventListener('input', function() {
-            titlePreview.textContent = this.value.trim() || 'عنوان کمپین شما در این قسمت...';
+            titlePreview.textContent = this.value.trim() || 'عنوان کمپین در این قسمت...';
         });
     }
 
-    // پیش‌نمایش مبلغ هدف
+    // به‌روزرسانی زنده درصد و مبلغ هدف در کارت
     if (targetInput && targetPreview && percentPreview && barPreview) {
         targetInput.addEventListener('input', function() {
             const targetVal = parseFloat(this.value) || 0;
             if (targetVal > 0) {
                 targetPreview.textContent = 'هدف: ' + formatNumber(targetVal) + ' تومان';
-                percentPreview.textContent = '۰٪';
-                barPreview.style.width = '5%';
+                const pct = Math.min(Math.round((collectedAmount / targetVal) * 100), 100);
+                percentPreview.textContent = toPersianDigits(pct) + '٪';
+                barPreview.style.width = pct + '%';
             } else {
                 targetPreview.textContent = 'هدف: ۰ تومان';
                 percentPreview.textContent = '۰٪';
@@ -434,7 +618,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         });
     }
 
-    // نوتیفیکیشن
+    // سیستم نوتیفیکیشن اختصاصی
     function notify(msg, isError) {
         const box = document.getElementById('toastBox');
         if (!box) return;
@@ -451,13 +635,13 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         }, 3500);
     }
 
-    // ثبت فرم با fetch
+    // ارسال فرم با fetch
     if (form && submitBtn) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const originalHTML = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner"></span> در حال ثبت و انتشار کمپین...';
+            submitBtn.innerHTML = '<span class="spinner"></span> در حال ذخیره اطلاعات...';
 
             const formData = new FormData(form);
 
@@ -468,12 +652,12 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    notify(data.message || 'کمپین با موفقیت ایجاد و منتشر شد.', false);
+                    notify(data.message || 'کمپین با موفقیت به‌روزرسانی شد.', false);
                     setTimeout(() => {
                         window.location.href = 'campaign-status.php';
                     }, 1200);
                 } else {
-                    throw new Error(data.message || 'خطا در ثبت اطلاعات.');
+                    throw new Error(data.message || 'خطا در ذخیره تغییرات.');
                 }
             })
             .catch(err => {
@@ -485,5 +669,6 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     }
 })();
 </script>
+
 </body>
 </html>
