@@ -5,6 +5,36 @@
 
 require_once __DIR__ . '/core/database.php';
 
+// نگاشت آیکون‌های وکتور به سبک Iconly Pro برای شعب و مراکز
+if (!function_exists('get_branch_icon')) {
+    function get_branch_icon(string $key): string {
+        switch ($key) {
+            case 'hq':
+            case 'building':
+            case '🏛️':
+                // Iconly Work / Building Style (ستاد مرکزی)
+                return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"/></svg>';
+            case 'headset':
+            case 'telehealth':
+            case 'contact-center':
+            case '🎧':
+                // Iconly Voice / Calling / Headset Style (دورپزشکی و ارتباطات)
+                return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13v-2a9 9 0 0 1 18 0v2"/><rect x="2" y="13" width="4" height="6" rx="2"/><rect x="18" y="13" width="4" height="6" rx="2"/><path d="M20 19v1a3 3 0 0 1-3 3h-3"/></svg>';
+            case 'cdst':
+            case 'graduation':
+            case 'education':
+            case '🎓':
+                // Iconly Discovery / Graduation Style (استعدادهای دانشجویی)
+                return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5Z"/><path d="M6 12.5v4.5c0 2 2.7 4 6 4s6-2 6-4v-4.5"/></svg>';
+            case 'location':
+            case '📍':
+            default:
+                // Iconly Location Style (شعب استانی)
+                return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13.43c1.78 0 3.23-1.44 3.23-3.23s-1.45-3.23-3.23-3.23c-1.79 0-3.23 1.45-3.23 3.23s1.44 3.23 3.23 3.23Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3.62 10.2c0 6.07 7.07 10.98 7.77 11.45.37.25.86.25 1.23 0 .7-.47 7.76-5.38 7.76-11.45C20.38 5.56 16.63 2 12 2 7.37 2 3.62 5.56 3.62 10.2Z"/></svg>';
+        }
+    }
+}
+
 // فهرست استاندارد شعب و مراکز به ترتیب درخواستی (مشهد بالاتر در کنار بقیه شهرها)
 $defaultBranches = [
     [
@@ -12,70 +42,70 @@ $defaultBranches = [
         'href' => '/home',
         'is_hq' => true,
         'tag' => 'دفتر مرکزی',
-        'icon' => '🏛️'
+        'icon' => 'hq'
     ],
     [
         'name' => 'شعبه تهران',
         'href' => '/tehran-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه اصفهان',
         'href' => '/esfahan-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه مشهد',
         'href' => '/mashhad-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه اهواز (خوزستان)',
         'href' => '/ahvaz-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه تبریز (آذربایجان شرقی)',
         'href' => '/tabriz-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه قم',
         'href' => '/qom-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'شعبه کاشان',
         'href' => '/kashan-branch',
         'is_hq' => false,
         'tag' => 'شعبه فعال',
-        'icon' => '📍'
+        'icon' => 'location'
     ],
     [
         'name' => 'مرکز ارتباطات و دورپزشکی',
         'href' => '/contact-center',
         'is_hq' => false,
         'tag' => 'مرکز تخصصی',
-        'icon' => '🎧'
+        'icon' => 'headset'
     ],
     [
         'name' => 'مرکز رویش استعدادهای دانشجویی (CDST)',
         'href' => '/cdst',
         'is_hq' => false,
         'tag' => 'مرکز نوآوری',
-        'icon' => '🎓'
+        'icon' => 'cdst'
     ]
 ];
 
@@ -157,14 +187,45 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #f8fdfd;
   }
   .br-icon {
-    flex: 0 0 40px;
-    width: 40px; height: 40px;
+    flex: 0 0 42px;
+    width: 42px; height: 42px;
     display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 10px;
-    font-size: 20px;
+    border-radius: 11px;
     background: rgba(0,123,122,.08);
     color: #007b7a;
     flex-shrink: 0;
+    transition: transform .18s ease, background-color .18s ease, color .18s ease;
+  }
+  .br-icon svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+  }
+  .br-item--hq .br-icon {
+    background: rgba(244,166,30,.14);
+    color: #b45309;
+  }
+  a.br-item:hover .br-icon {
+    transform: scale(1.08);
+    background: rgba(0,123,122,.14);
+  }
+  a.br-item--hq:hover .br-icon {
+    background: rgba(244,166,30,.22);
+  }
+  .br-arrow {
+    margin-right: auto;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .18s ease, color .18s ease;
+  }
+  a.br-item:hover .br-arrow {
+    color: #007b7a;
+    transform: translateX(-3px);
+  }
+  a.br-item--hq:hover .br-arrow {
+    color: #b45309;
   }
   .br-item h3 { margin: 0; font-size: 15px; font-weight: 800; color: #1e293b; line-height: 1.4; }
   .br-item .br-tag {
@@ -216,19 +277,25 @@ require __DIR__ . '/dashboard/components/header/component.php';
       <?php if (!empty($branches)): ?>
         <div class="br-list">
           <?php foreach ($branches as $b):
-            $isHq   = !empty($b['is_hq']);
-            $name   = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
-            $href   = htmlspecialchars($b['href'] ?? '#', ENT_QUOTES, 'UTF-8');
-            $tag    = htmlspecialchars($b['tag'] ?? 'شعبه', ENT_QUOTES, 'UTF-8');
-            $icon   = $b['icon'] ?? '📍';
-            $tagCls = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
+            $isHq    = !empty($b['is_hq']);
+            $name    = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
+            $href    = htmlspecialchars($b['href'] ?? '#', ENT_QUOTES, 'UTF-8');
+            $tag     = htmlspecialchars($b['tag'] ?? 'شعبه', ENT_QUOTES, 'UTF-8');
+            $iconKey = $b['icon'] ?? ($isHq ? 'hq' : 'location');
+            $tagCls  = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
+            $itemCls = $isHq ? 'br-item br-item--hq' : 'br-item';
           ?>
-            <a class="br-item" href="<?= $href ?>" title="<?= $name ?>">
-              <span class="br-icon"><?= $icon ?></span>
-              <div>
+            <a class="<?= $itemCls ?>" href="<?= $href ?>" title="<?= $name ?>">
+              <span class="br-icon" aria-hidden="true"><?= get_branch_icon($iconKey) ?></span>
+              <div style="flex: 1; min-width: 0;">
                 <h3><?= $name ?></h3>
                 <span class="<?= $tagCls ?>"><?= $tag ?></span>
               </div>
+              <span class="br-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </span>
             </a>
           <?php endforeach; ?>
         </div>
