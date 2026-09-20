@@ -581,6 +581,31 @@
     window.location.href = url;
   }
 
+  // 0. Activate any provinces that have active branches registered
+  if (window.__activeBranchProvinces && Array.isArray(window.__activeBranchProvinces)) {
+    window.__activeBranchProvinces.forEach(function(prov) {
+      if (!prov) return;
+      const provElements = document.querySelectorAll('#Iran [data-province="' + prov + '"]');
+      provElements.forEach(function(el) {
+        if (el.classList.contains('is-inactive')) {
+          el.classList.remove('is-inactive');
+          el.classList.add('is-active');
+        }
+        const shape = el.classList.contains('province-shape') ? el : el.querySelector('.province-shape');
+        if (shape && shape.classList.contains('is-inactive')) {
+          shape.classList.remove('is-inactive');
+          shape.classList.add('is-active');
+        }
+      });
+      // Hide inactive province label so it doesn't overlap the active pin
+      document.querySelectorAll('#Iran text.lbl-inactive').forEach(function(txt) {
+        if (txt.textContent.trim() === prov) {
+          txt.style.display = 'none';
+        }
+      });
+    });
+  }
+
   // 1. Direct Click & Touch handler for all map branch pins
   const pinLinks = document.querySelectorAll('#Iran a.branch-pin-link');
   pinLinks.forEach(function(pin) {

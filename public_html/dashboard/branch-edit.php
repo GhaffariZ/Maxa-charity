@@ -56,6 +56,8 @@ $old = [
     'city'       => $branch['city'] ?? '',
     'admin_user' => $adminRow['username'] ?? '',
     'features'   => $curFeatures,
+    'map_x'      => $branch['map_x'] ?? '',
+    'map_y'      => $branch['map_y'] ?? '',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -67,6 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
     $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
+    $mapX      = (isset($_POST['map_x']) && $_POST['map_x'] !== '') ? (float)$_POST['map_x'] : null;
+    $mapY      = (isset($_POST['map_y']) && $_POST['map_y'] !== '') ? (float)$_POST['map_y'] : null;
+    if ($mapX !== null && ($mapX < 0 || $mapX > 1156)) { $mapX = null; }
+    if ($mapY !== null && ($mapY < 0 || $mapY > 1016)) { $mapY = null; }
 
     $old = [
         'name'       => $name,
@@ -75,6 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'city'       => $city,
         'admin_user' => $adminUser,
         'features'   => $features,
+        'map_x'      => $mapX !== null ? $mapX : '',
+        'map_y'      => $mapY !== null ? $mapY : '',
     ];
 
     // ---- اعتبارسنجی ----
@@ -101,18 +109,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $oldSlug = $branch['slug'];
 
-            // 1) نام + slug + استان + شهر
+            // 1) نام + slug + استان + شهر + مختصات نقشه ایران
             if ($isHq) {
                 try {
-                    $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $province, $city, $branchId]);
+                    $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $province, $city, $mapX, $mapY, $branchId]);
                 } catch (Throwable $e) {
-                    $pdo->prepare('UPDATE branches SET name = ? WHERE id = ?')->execute([$name, $branchId]);
+                    try {
+                        $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+                        $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $province, $city, $mapX, $mapY, $branchId]);
+                    } catch (Throwable $e2) {
+                        $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $province, $city, $branchId]);
+                    }
                 }
             } else {
                 try {
-                    $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $branchId]);
+                    $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $mapX, $mapY, $branchId]);
                 } catch (Throwable $e) {
-                    $pdo->prepare('UPDATE branches SET name = ?, slug = ? WHERE id = ?')->execute([$name, $slug, $branchId]);
+                    try {
+                        $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+                        $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $mapX, $mapY, $branchId]);
+                    } catch (Throwable $e2) {
+                        $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $branchId]);
+                    }
                 }
             }
 
@@ -227,6 +245,9 @@ require __DIR__ . '/_panel_head.php';
         </div>
       </div>
     </div>
+
+    <!-- نقشه تعاملی ایران با نشانگر درگ‌بل جهت تعیین موقعیت شعبه -->
+    <?php require __DIR__ . '/components/branches/map-picker.php'; ?>
 
     <?php if (!$isHq && $adminRow): ?>
     <div class="card">

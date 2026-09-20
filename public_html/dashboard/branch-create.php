@@ -20,7 +20,7 @@ dash_require_hq();
 $err = '';
 $ok  = '';
 $created = null;  // پس از ساختِ موفق پر می‌شود تا مودالِ اعتبارنامه نمایش داده شود
-$old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
+$old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES, 'map_x' => '', 'map_y' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -31,6 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
     $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
+    $mapX      = (isset($_POST['map_x']) && $_POST['map_x'] !== '') ? (float)$_POST['map_x'] : null;
+    $mapY      = (isset($_POST['map_y']) && $_POST['map_y'] !== '') ? (float)$_POST['map_y'] : null;
+    if ($mapX !== null && ($mapX < 0 || $mapX > 1156)) { $mapX = null; }
+    if ($mapY !== null && ($mapY < 0 || $mapY > 1016)) { $mapY = null; }
 
     $old = [
         'name'       => $name,
@@ -39,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'city'       => $city,
         'admin_user' => $adminUser,
         'features'   => $features,
+        'map_x'      => $mapX !== null ? $mapX : '',
+        'map_y'      => $mapY !== null ? $mapY : '',
     ];
 
     // ---- اعتبارسنجی ----
@@ -65,14 +71,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
-            // 1) ردیف شعبه
+            // 1) ردیف شعبه (با ذخیره مختصات نشانگر روی نقشه ایران)
             try {
-                $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, is_hq, status) VALUES (?,?,?,?,0,'active')");
-                $st->execute([$name, $slug, $province, $city]);
+                $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
+                $st->execute([$name, $slug, $province, $city, $mapX, $mapY]);
             } catch (Throwable $e) {
-                // اگر ستون‌های province/city هنوز به جدول اضافه نشده باشند
-                $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
-                $st->execute([$name, $slug]);
+                // اگر ستون‌های map_x و map_y هنوز اضافه نشده باشند، خودکار اضافه و دوباره تلاش کن
+                try {
+                    $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+                    $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
+                    $st->execute([$name, $slug, $province, $city, $mapX, $mapY]);
+                } catch (Throwable $e2) {
+                    try {
+                        $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, is_hq, status) VALUES (?,?,?,?,0,'active')");
+                        $st->execute([$name, $slug, $province, $city]);
+                    } catch (Throwable $e3) {
+                        $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
+                        $st->execute([$name, $slug]);
+                    }
+                }
             }
             $branchId = (int)$pdo->lastInsertId();
 
@@ -119,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             dash_audit('branch_created', ['branch_id' => $branchId, 'slug' => $slug, 'admin' => $adminUser]);
             // اطلاعاتِ نمایش در مودالِ پروفایل (رمز فقط همین یک‌بار به سوپرادمینِ سازنده نشان داده می‌شود)
             $created = ['name' => $name, 'slug' => $slug, 'admin_user' => $adminUser, 'admin_pass' => $adminPass];
-            $old = ['name' => '', 'slug' => '', 'admin_user' => '', 'features' => DASH_FEATURES];
+            $old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES, 'map_x' => '', 'map_y' => ''];
 
         } catch (Throwable $ex) {
             if ($pdo->inTransaction()) { $pdo->rollBack(); }
@@ -171,6 +188,9 @@ require __DIR__ . '/_panel_head.php';
         </div>
       </div>
     </div>
+
+    <!-- نقشه تعاملی ایران با نشانگر درگ‌بل جهت تعیین موقعیت شعبه -->
+    <?php require __DIR__ . '/components/branches/map-picker.php'; ?>
 
     <div class="card">
       <h2>مدیر شعبه</h2>

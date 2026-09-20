@@ -1,3 +1,31 @@
+<?php
+// خواندن اطلاعات شعب فعال ثبت‌شده از دیتابیس برای نمایش خودکار پین‌های جدید
+if (!isset($pdo)) {
+    @require_once __DIR__ . '/../../../../core/database.php';
+}
+
+$dynamicBranchPins = [];
+$activeProvincesList = [];
+$hardcodedSlugs = ['tehran-branch', 'kashan-branch', 'esfahan-branch', 'ahvaz-branch', 'tabriz-branch', 'qom-branch', 'mashhad-branch'];
+
+if (isset($pdo)) {
+    try {
+        $stPins = $pdo->query("SELECT id, name, slug, province, city, map_x, map_y FROM branches WHERE status = 'active' AND is_hq = 0");
+        $dbBranches = $stPins->fetchAll();
+        foreach ($dbBranches as $brRow) {
+            if (!empty($brRow['province'])) {
+                $activeProvincesList[] = trim($brRow['province']);
+            }
+            // اگر مختصات ست شده بود و جزو اسلاگ‌های هاردکد شده نبود، به عنوان پین پویا اضافه شود
+            if ($brRow['map_x'] !== null && $brRow['map_y'] !== null && !in_array($brRow['slug'], $hardcodedSlugs, true)) {
+                $dynamicBranchPins[] = $brRow;
+            }
+        }
+    } catch (Throwable $e) {
+        // در صورت عدم وجود ستون‌ها یا خطای موقت دیتابیس
+    }
+}
+?>
 <svg
    version="1.1"
    id="Iran"
@@ -317,7 +345,7 @@ a.province-link:active .province-shape.is-active {
       <circle cx="315.0" cy="580.0" r="24" class="lbl-hitbox" />
       <circle cx="315.0" cy="573.0" r="3.2" class="lbl-active-pulse" />
       <circle cx="315.0" cy="573.0" r="3.2" class="lbl-active-dot" />
-      <text x="315.0" y="588.0" font-size="16px" class="lbl-active">خوزستان</text>
+      <text x="315.0" y="588.0" font-size="16px" class="lbl-active">اهواز</text>
     </g>
   </a>
 
@@ -327,7 +355,7 @@ a.province-link:active .province-shape.is-active {
       <circle cx="185.0" cy="106.0" r="24" class="lbl-hitbox" />
       <circle cx="185.0" cy="100.0" r="3.2" class="lbl-active-pulse" />
       <circle cx="185.0" cy="100.0" r="3.2" class="lbl-active-dot" />
-      <text x="185.0" y="113.0" font-size="14px" class="lbl-active">آذربایجان شرقی</text>
+      <text x="185.0" y="113.0" font-size="15px" class="lbl-active">تبریز</text>
     </g>
   </a>
 
@@ -347,8 +375,36 @@ a.province-link:active .province-shape.is-active {
       <circle cx="905.0" cy="270.0" r="24" class="lbl-hitbox" />
       <circle cx="905.0" cy="263.0" r="3.2" class="lbl-active-pulse" />
       <circle cx="905.0" cy="263.0" r="3.2" class="lbl-active-dot" />
-      <text x="905.0" y="278.0" font-size="17px" class="lbl-active">خراسان رضوی</text>
+      <text x="905.0" y="278.0" font-size="17px" class="lbl-active">مشهد</text>
     </g>
   </a>
+
+  <?php if (!empty($dynamicBranchPins)): ?>
+    <!-- شعب پویا ساخته‌شده از طریق پنل مدیریت با مختصات نقشه -->
+    <?php foreach ($dynamicBranchPins as $dynBranch):
+      $bx = (float)$dynBranch['map_x'];
+      $by = (float)$dynBranch['map_y'];
+      $bSlug = htmlspecialchars($dynBranch['slug'], ENT_QUOTES, 'UTF-8');
+      $bTitle = htmlspecialchars($dynBranch['name'], ENT_QUOTES, 'UTF-8');
+      $bCity = trim($dynBranch['city'] ?? '');
+      $bProv = trim($dynBranch['province'] ?? '');
+      // نام نمایشی زیر نشانگر شعبه در نقشه
+      $bLabel = $bCity !== '' ? $bCity : preg_replace('/^شعبه\s+/u', '', $dynBranch['name']);
+      $bLabel = htmlspecialchars($bLabel, ENT_QUOTES, 'UTF-8');
+    ?>
+    <a xlink:href="/<?= $bSlug ?>" href="/<?= $bSlug ?>" class="branch-pin-link" data-branch="<?= $bSlug ?>" title="<?= $bTitle ?> (کلیک برای ورود به صفحه شعبه)">
+      <title><?= $bTitle ?> (کلیک برای ورود به صفحه شعبه)</title>
+      <g class="active-label-group" data-province="<?= htmlspecialchars($bProv, ENT_QUOTES, 'UTF-8') ?>" data-city="<?= htmlspecialchars($bCity, ENT_QUOTES, 'UTF-8') ?>">
+        <circle cx="<?= $bx ?>" cy="<?= $by + 7 ?>" r="24" class="lbl-hitbox" />
+        <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.5" class="lbl-active-pulse" />
+        <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.5" class="lbl-active-dot" />
+        <text x="<?= $bx ?>" y="<?= $by + 16 ?>" font-size="15px" class="lbl-active"><?= $bLabel ?></text>
+      </g>
+    </a>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </g>
 </svg>
+<script>
+window.__activeBranchProvinces = <?= json_encode(array_values(array_unique($activeProvincesList)), JSON_UNESCAPED_UNICODE) ?>;
+</script>
