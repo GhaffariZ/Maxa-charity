@@ -17,6 +17,17 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # ---- Redirect root to /home -----------------------------------------------------
 RewriteRule ^$ /home [R=301,L]
 
+# ---- Language prefix routing (/fa/, /en/, /ar/) ---------------------------------
+# /fa/{path} → /{path}?lang=fa (internal rewrite, language detected by PHP)
+RewriteRule ^fa/(.+)$ $1?lang=fa [L,QSA]
+RewriteRule ^en/(.+)$ $1?lang=en [L,QSA]
+RewriteRule ^ar/(.+)$ $1?lang=ar [L,QSA]
+
+# /fa, /en, /ar (root) → /home?lang=XX
+RewriteRule ^fa/?$ home?lang=fa [L,QSA]
+RewriteRule ^en/?$ home?lang=en [L,QSA]
+RewriteRule ^ar/?$ home?lang=ar [L,QSA]
+
 # ---- Leave the API alone (handled by api/.htaccess) -----------------------------
 RewriteRule ^api(/|$) - [L]
 

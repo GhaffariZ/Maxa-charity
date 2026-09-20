@@ -1,4 +1,12 @@
-<footer class="gf-footer">
+<?php
+// Multi-language: include language infrastructure
+require_once __DIR__ . '/../../../core/language.php';
+require_once __DIR__ . '/../../../core/translations.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$f_locale = CURRENT_LOCALE ?? getLocale();
+$f_dir = CURRENT_DIRECTION ?? getDirection($f_locale);
+?>
+<footer class="gf-footer" dir="<?= htmlspecialchars($f_dir) ?>">
 <div class="gf-container">
 
 <!-- ستون بزرگ -->
@@ -8,29 +16,29 @@
 </div>
 
 <h2 class="gf-title">
-همراه با هم به زندگی بیماران نور هدیه کنیم</h2>
+<?= htmlspecialchars(__('hero.subtitle')) ?></h2>
 </div>
 
 
 <!-- صفحات اصلی -->
 <div class="gf-col">
-<h4>آشنایی با مکسا</h4>
+<h4><?= htmlspecialchars(__('nav.about')) ?></h4>
 <ul>
-<li><a href="/home">صفحه اصلی</a></li>
-<li><a href="/history">درباره ما</a></li>
-<li><a href="/MACSAservices.html">صفحات خدمات</a></li>
-<li><a href="/single-fundraising-option">روش های حمایت</a></li>
+<li><a href="/home" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('nav.home')) ?></a></li>
+<li><a href="/history" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('nav.about')) ?></a></li>
+<li><a href="/MACSAservices.html" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('hero.title')) ?></a></li>
+<li><a href="/single-fundraising-option" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('campaign.title')) ?></a></li>
 </ul>
 </div>
 
 
 <!-- شرکت ما -->
 <div class="gf-col">
-<h4>ارتباط با مکسا</h4>
+<h4><?= htmlspecialchars(__('nav.contact')) ?></h4>
 <ul>
-<li><a href="/branches.php">شعب</a></li>
-<li><a href="/contact-center">مرکز ارتباطات کشوری</a></li>
-<li><a href="/contactus">تماس با ما</a></li>
+<li><a href="/branches.php" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('nav.branches')) ?></a></li>
+<li><a href="/contact-center" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('footer.contact_info')) ?></a></li>
+<li><a href="/contactus" data-arrow-ltr="→" data-arrow-rtl="←"><?= htmlspecialchars(__('nav.contact')) ?></a></li>
 
 </ul>
 </div>
@@ -38,15 +46,15 @@
 
 <!-- خبرنامه -->
 <div class="gf-col">
-<h4 class="gf-news-title">برای دریافت گزارش کمک‌ها و داستان بیماران عضو شوید</h4>
+<h4 class="gf-news-title"><?= htmlspecialchars(__('footer.newsletter')) ?></h4>
 
 <div class="gf-newsletter">
-<input type="email" placeholder="آدرس ایمیل خود را وارد کنید">
+<input type="email" placeholder="<?= htmlspecialchars(__('footer.newsletter_placeholder')) ?>">
 <button>➜</button>
 </div>
 
 <p class="gf-privacy">
-با عضویت سیاست حفظ حریم خصوصی را می‌پذیرید
+<?= htmlspecialchars(__('footer.privacy_policy')) ?>
 </p>
 </div>
 
@@ -58,18 +66,18 @@
 <div class="gf-contact">
 
 <div>
-<span>تماس با ما</span>
+<span><?= htmlspecialchars(__('nav.contact')) ?></span>
 <p>021-91092030 / 021-86015342</p>
 </div>
 
 <div>
-<span>آدرس</span>
+<span><?= htmlspecialchars(__('branch.address')) ?></span>
 <p>تهران، بزرگراه جلال‌آل‌احمد(شرق به غرب)، بعد از کوی نصر(گیشا)، پلاک ۱۳۹، ساختمان مکسا
 </p>
 </div>
 
 <div>
-<span>آدرس ایمیل ما</span>
+<span><?= htmlspecialchars(__('branch.email')) ?></span>
 <p>info@macsa.ir</p>
 </div>
 
@@ -101,7 +109,7 @@
   </div>
 
 <div class="gf-copy">
- تمامی حقوق مادی و معنوی متعلق به موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) است.
+ &copy; <?= date('Y') ?> <?= htmlspecialchars(__('meta.site_name')) ?>. <?= htmlspecialchars(__('footer.rights_reserved')) ?>
 </div>
 </div>
 
@@ -133,7 +141,6 @@ body {
 .gf-footer {
   position: relative;
   overflow: hidden;
-  direction: rtl;
   font-family: inherit;
   color: #ffffff;
   padding-top: 80px;
@@ -243,7 +250,7 @@ body {
 
 /* فلش ظریف برای لینک‌ها */
 .gf-col a::before {
-  content: "←";
+  content: attr(data-arrow-rtl, "←");
   color: rgba(255,255,255,0.65);
   font-weight: 900;
   transition:
@@ -426,6 +433,17 @@ body {
   text-align: right;
 }
 
+/* LTR support */
+[dir="ltr"] .gf-col a::before {
+  content: attr(data-arrow-ltr, "→");
+}
+[dir="ltr"] .gf-col a:hover {
+  transform: translateX(3px);
+}
+[dir="ltr"] .gf-col a:hover::before {
+  transform: translateX(3px);
+}
+
 /* =========================
    Bottom Footer
 ========================= */
@@ -532,7 +550,7 @@ body {
   color: rgba(255,255,255,0.78);
   font-size: 13.5px;
   line-height: 2;
-  text-align: left;
+  text-align: start;
   white-space: nowrap;
 }
 

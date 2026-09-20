@@ -1,5 +1,13 @@
+<?php
+// Multi-language: detect and include language infrastructure
+require_once __DIR__ . '/../../../core/language.php';
+require_once __DIR__ . '/../../../core/translations.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$hdr_locale = CURRENT_LOCALE ?? getLocale();
+$hdr_dir = CURRENT_DIRECTION ?? getDirection($hdr_locale);
+?>
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="<?= htmlspecialchars($hdr_locale) ?>" dir="<?= htmlspecialchars($hdr_dir) ?>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1063,11 +1071,11 @@
             <ul class="cta-menu" id="menu">
 
               <li>
-                <a href="/home">خانه</a>
+                <a href="/home"><?= htmlspecialchars(__('nav.home')) ?></a>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);"><?= htmlspecialchars(__('nav.about')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1096,7 +1104,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">خدمات مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);"><?= htmlspecialchars(__('hero.title')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1136,7 +1144,7 @@
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/single-fundraising-option">روش های حمایت</a>
+                <a class="mega-toggle" href="/single-fundraising-option"><?= htmlspecialchars(__('campaign.title')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1163,29 +1171,49 @@
                 </div>
               </li>
 
-              <li><a href="/branches.php">شعب</a></li>
-              <li><a href="/news.php">اخبار</a></li>
+              <li><a href="/branches.php"><?= htmlspecialchars(__('nav.branches')) ?></a></li>
+              <li><a href="/news.php"><?= htmlspecialchars(__('nav.news')) ?></a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
-              <li><a href="contactus.html">تماس با ما</a></li>
+              <li><a href="contactus.html"><?= htmlspecialchars(__('nav.contact')) ?></a></li>
             </ul>
           </nav>
         </div>
 
         <div class="cta-left">
+          <!-- Language Switcher -->
+          <div class="lang-switcher-header" style="display:flex;align-items:center;gap:4px;">
+            <?php
+            $currentLocale = CURRENT_LOCALE ?? getLocale();
+            foreach (SUPPORTED_LOCALES as $loc) :
+                $meta = LANGUAGE_META[$loc];
+                $isActive = ($loc === $currentLocale);
+                $switchUrl = getCurrentUrlInLocale($loc);
+            ?>
+            <a href="<?= htmlspecialchars($switchUrl) ?>" 
+               hreflang="<?= htmlspecialchars($loc) ?>"
+               style="display:inline-flex;align-items:center;gap:3px;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;color:rgba(255,255,255,.85);background:<?= $isActive ? 'rgba(255,255,255,.22)' : 'transparent' ?>;border:1px solid <?= $isActive ? 'rgba(255,255,255,.35)' : 'transparent' ?>;transition:all .2s ease;white-space:nowrap;"
+               <?= $isActive ? 'aria-current="page"' : '' ?>
+               title="<?= htmlspecialchars($meta['name_native']) ?>">
+              <span><?= htmlspecialchars($meta['flag']) ?></span>
+              <span><?= strtoupper($loc) ?></span>
+            </a>
+            <?php endforeach; ?>
+          </div>
+
           <div class="menu-icon" id="menuToggle" aria-label="منوی موبایل">
             <div></div>
             <div></div>
             <div></div>
           </div>
 
-          <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
-            کمک آنلاین
+          <a class="cta-donate" href="/onlinedonation" aria-label="<?= htmlspecialchars(__('header.donate_now')) ?>">
+            <?= htmlspecialchars(__('header.donate_now')) ?>
           </a>
 
           <div class="cta-auth-slot">
-            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
-              ورود / ثبت‌نام
+            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="<?= htmlspecialchars(__('header.login')) ?>">
+              <?= htmlspecialchars(__('header.login')) ?> / <?= htmlspecialchars(__('header.register')) ?>
             </a>
 
             <div class="cta-account js-cta-account" hidden>
@@ -1193,7 +1221,7 @@
                 <span class="cta-account-avatar js-acc-avatar">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </span>
-                <span class="cta-account-name js-acc-name">حساب کاربری</span>
+                <span class="cta-account-name js-acc-name"><?= htmlspecialchars(__('header.dashboard')) ?></span>
                 <svg class="cta-account-caret" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
 
@@ -1203,18 +1231,18 @@
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                   </span>
                   <div>
-                    <strong class="js-acc-fullname">کاربر مکسا</strong>
+                    <strong class="js-acc-fullname"><?= htmlspecialchars(__('header.profile')) ?></strong>
                     <span class="js-acc-email"></span>
                   </div>
                 </div>
 
                 <a role="menuitem" href="/benefactor-dashboard/">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
-                  داشبورد من
+                  <?= htmlspecialchars(__('header.dashboard')) ?>
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/profile">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  پروفایل کاربری
+                  <?= htmlspecialchars(__('header.profile')) ?>
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/history">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10h18" stroke="currentColor" stroke-width="2"/></svg>
@@ -1222,12 +1250,12 @@
                 </a>
                 <a role="menuitem" href="/onlinedonation">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  کمک آنلاین
+                  <?= htmlspecialchars(__('header.donate_now')) ?>
                 </a>
 
                 <button type="button" class="cta-account-logout js-cta-logout" role="menuitem">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17l-5-5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  خروج از حساب
+                  <?= htmlspecialchars(__('header.logout')) ?>
                 </button>
               </div>
             </div>
@@ -1257,12 +1285,30 @@
     <div class="mobile-menu-actions">
       <a class="mobile-action-donate" href="/onlinedonation">
         <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        کمک آنلاین
+        <?= htmlspecialchars(__('header.donate_now')) ?>
       </a>
       <a class="mobile-action-auth js-mobile-login" href="/benefactor-dashboard/">
         <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        ورود / ثبت‌نام
+        <?= htmlspecialchars(__('header.login')) ?> / <?= htmlspecialchars(__('header.register')) ?>
       </a>
+    </div>
+
+    <!-- Mobile Language Switcher -->
+    <div style="display:flex;gap:6px;padding:8px 18px 4px;flex-shrink:0;">
+      <?php
+      $mobLocale = CURRENT_LOCALE ?? getLocale();
+      foreach (SUPPORTED_LOCALES as $loc) :
+          $mobMeta = LANGUAGE_META[$loc];
+          $mobActive = ($loc === $mobLocale);
+          $mobUrl = getCurrentUrlInLocale($loc);
+      ?>
+      <a href="<?= htmlspecialchars($mobUrl) ?>"
+         hreflang="<?= htmlspecialchars($loc) ?>"
+         style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;color:#1e293b;background:<?= $mobActive ? '#0899A9' : '#f1f5f9' ?>;border:1px solid <?= $mobActive ? '#0899A9' : '#e2e8f0' ?>;transition:all .2s ease;flex:1;justify-content:center;">
+        <span><?= htmlspecialchars($mobMeta['flag']) ?></span>
+        <span><?= htmlspecialchars($mobMeta['name_native']) ?></span>
+      </a>
+      <?php endforeach; ?>
     </div>
 
     <div class="mobile-menu-container" id="mobileMenuContainer"></div>
@@ -1272,7 +1318,7 @@
         <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
         <span>پشتیبانی: <a href="tel:02191092030" dir="ltr" style="display:inline-block; font-family:inherit; color:inherit; text-decoration:none; unicode-bidi:isolate;">021-91092030</a></span>
       </div>
-      <div class="mobile-footer-tagline">مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</div>
+      <div class="mobile-footer-tagline"><?= htmlspecialchars(__('meta.site_name')) ?></div>
     </div>
   </nav>
   <div class="mobile-backdrop" id="mobileBackdrop"></div>
@@ -1452,7 +1498,7 @@
       var mobLogin = document.querySelector('.js-mobile-login');
       if(mobLogin){
         mobLogin.href = '/benefactor-dashboard/';
-        mobLogin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> داشبورد من';
+        mobLogin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> <?= htmlspecialchars(__('header.dashboard')) ?>';
       }
 
       if(!account) return;

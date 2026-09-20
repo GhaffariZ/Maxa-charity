@@ -1,6 +1,7 @@
 <?php
 /* ============================================================================
  *  نمایش صفحه‌ی عمومی (مرکزی یا شعبه) — با ایزولاسیون branch_id
+ *  + Multi-language support (fa/en/ar via URL prefix)
  * ----------------------------------------------------------------------------
  *  ترتیب resolveِ مسیر (طبق تصمیم نهایی پروژه — بدون پیشوند /branch/):
  *    1) اگر {slug} با یک branches.slug بخورد → صفحه‌ی home همان شعبه رندر می‌شود.
@@ -14,6 +15,31 @@
 require_once __DIR__ . '/../core/dashboard-auth.php';   // فقط برای dash_pdo() و ابزارها
 require_once __DIR__ . '/../core/html-sanitizer.php';
 $pdo = dash_pdo();
+
+// ── Multi-language: detect and set locale ──────────────────────────────────
+require_once __DIR__ . '/../core/language.php';
+require_once __DIR__ . '/../core/translations.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Language from .htaccess rewrite (?lang=fa) or URL path detection
+$langParam = trim((string)($_GET['lang'] ?? ''));
+if ($langParam && in_array($langParam, SUPPORTED_LOCALES, true)) {
+    setLocale($langParam);
+} else {
+    // Detect from REQUEST_URI path prefix
+    $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    $uriSegments = array_filter(explode('/', trim($uriPath, '/')));
+    if (!empty($uriSegments) && in_array($uriSegments[0], SUPPORTED_LOCALES, true)) {
+        setLocale($uriSegments[0]);
+    }
+}
+
+$locale = getLocale();
+define('CURRENT_LOCALE', $locale);
+define('CURRENT_DIRECTION', getDirection($locale));
 
 $HQ_BRANCH = 1;
 
@@ -141,16 +167,21 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     }
 
     if (!$hasHeader) {
-        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+        $htmlLang = getHtmlLang();
+        $htmlDir = getHtmlDir();
+        echo "<!DOCTYPE html>\n<html lang=\"" . htmlspecialchars($htmlLang) . "\" dir=\"" . htmlspecialchars($htmlDir) . "\">\n<head>\n<meta charset=\"utf-8\">\n";
         echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
         echo '<title>' . $pageTitle . "</title>\n";
         echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
         echo "</head>\n<body>\n";
     }
 
-    // شعبه‌ی جاری برای کامپوننت‌ها
+    // شعبه‌ی جاری + زبان برای کامپوننت‌ها
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
-       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
+       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_LOCALE__=' . json_encode(CURRENT_LOCALE, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_DIRECTION__=' . json_encode(CURRENT_DIRECTION, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ";</script>\n";
 
     echo_components($components, $pageTitle);
 
@@ -176,7 +207,9 @@ function render_branch_components(PDO $pdo, array $components, string $branchSlu
     }
 
     if (!$hasHeader) {
-        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+        $htmlLang = getHtmlLang();
+        $htmlDir = getHtmlDir();
+        echo "<!DOCTYPE html>\n<html lang=\"" . htmlspecialchars($htmlLang) . "\" dir=\"" . htmlspecialchars($htmlDir) . "\">\n<head>\n<meta charset=\"utf-8\">\n";
         echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
         echo '<title>' . $pageTitle . "</title>\n";
         echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
@@ -184,7 +217,10 @@ function render_branch_components(PDO $pdo, array $components, string $branchSlu
     }
 
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
-       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
+       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_LOCALE__=' . json_encode(CURRENT_LOCALE, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ';window.__MAXA_DIRECTION__=' . json_encode(CURRENT_DIRECTION, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+       . ";</script>\n";
 
     echo_components($components, $pageTitle);
 
@@ -253,7 +289,9 @@ function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
     $folder  = '/uploads/news/' . rawurlencode($code) . '/';
     $excerpt = mb_substr(trim(preg_replace('/\s+/u', ' ', strip_tags($content))), 0, 150);
 
-    echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
+    $htmlLang = getHtmlLang();
+    $htmlDir = getHtmlDir();
+    echo "<!DOCTYPE html>\n<html lang=\"" . htmlspecialchars($htmlLang) . "\" dir=\"" . htmlspecialchars($htmlDir) . "\">\n<head>\n<meta charset=\"utf-8\">\n";
     echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
     echo '<meta name="description" content="' . $e($excerpt) . '">' . "\n";
     echo '<title>' . $e($title) . "</title>\n";

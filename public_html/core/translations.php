@@ -488,20 +488,25 @@ function getStaticTranslation(string $key, string $locale = null, string $contex
 {
     $locale = $locale ?? getLocale();
     
-    $sql = "
-        SELECT value FROM static_translations 
-        WHERE translation_key = ? AND locale = ?
-        UNION ALL
-        SELECT value FROM static_translations 
-        WHERE translation_key = ? AND locale = ?
-        LIMIT 1
-    ";
-    
-    $stmt = getDB()->prepare($sql);
-    $stmt->execute([$key, $locale, $key, DEFAULT_LOCALE]);
-    $result = $stmt->fetchColumn();
-    
-    return $result ?: null;
+    try {
+        $sql = "
+            SELECT value FROM static_translations 
+            WHERE translation_key = ? AND locale = ?
+            UNION ALL
+            SELECT value FROM static_translations 
+            WHERE translation_key = ? AND locale = ?
+            LIMIT 1
+        ";
+        
+        $stmt = getDB()->prepare($sql);
+        $stmt->execute([$key, $locale, $key, DEFAULT_LOCALE]);
+        $result = $stmt->fetchColumn();
+        
+        return $result ?: null;
+    } catch (Throwable $e) {
+        // Table may not exist yet — fall through to file-based translations
+        return null;
+    }
 }
 
 /**
@@ -648,24 +653,28 @@ function getComponentTranslation(string $componentName, string $locale = null): 
 {
     $locale = $locale ?? getLocale();
     
-    $sql = "SELECT content FROM component_translations WHERE component_name = ? AND locale = ?";
-    $stmt = getDB()->prepare($sql);
-    $stmt->execute([$componentName, $locale]);
-    $result = $stmt->fetchColumn();
-    
-    if ($result) {
-        $data = json_decode($result, true);
-        return $data['content'] ?? null;
-    }
-    
-    // Fallback to default locale
-    if ($locale !== DEFAULT_LOCALE) {
-        $stmt->execute([$componentName, DEFAULT_LOCALE]);
+    try {
+        $sql = "SELECT content FROM component_translations WHERE component_name = ? AND locale = ?";
+        $stmt = getDB()->prepare($sql);
+        $stmt->execute([$componentName, $locale]);
         $result = $stmt->fetchColumn();
+        
         if ($result) {
             $data = json_decode($result, true);
             return $data['content'] ?? null;
         }
+        
+        // Fallback to default locale
+        if ($locale !== DEFAULT_LOCALE) {
+            $stmt->execute([$componentName, DEFAULT_LOCALE]);
+            $result = $stmt->fetchColumn();
+            if ($result) {
+                $data = json_decode($result, true);
+                return $data['content'] ?? null;
+            }
+        }
+    } catch (Throwable $e) {
+        // Table may not exist yet
     }
     
     return null;
