@@ -7,8 +7,8 @@
 SET NAMES utf8mb4;
 
 ALTER TABLE `branches`
-  ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`,
-  ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`;
+  ADD `map_x` FLOAT NULL DEFAULT NULL AFTER `city`,
+  ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`;
 
 -- تنظیم مختصات پیش‌فرض برای شعب موجود بر مبنای نقشه SVG
 UPDATE `branches` SET `map_x` = 475.0, `map_y` = 283.0 WHERE `slug` = 'tehran-branch' OR `name` LIKE '%تهران%';

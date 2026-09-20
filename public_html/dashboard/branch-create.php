@@ -72,23 +72,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             // 1) ردیف شعبه (با ذخیره مختصات نشانگر روی نقشه ایران)
+            // بررسی و ایجاد ستون‌های مختصات نقشه در صورت عدم وجود (سازگار با کلیه نسخه‌های MySQL)
+            try {
+                $hasColsX = $pdo->query("SHOW COLUMNS FROM `branches` LIKE 'map_x'")->fetch();
+                if (!$hasColsX) {
+                    $pdo->exec("ALTER TABLE `branches` ADD `map_x` FLOAT NULL DEFAULT NULL AFTER `city`");
+                }
+                $hasColsY = $pdo->query("SHOW COLUMNS FROM `branches` LIKE 'map_y'")->fetch();
+                if (!$hasColsY) {
+                    $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+                }
+            } catch (Throwable $eCols) {}
+
             try {
                 $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
                 $st->execute([$name, $slug, $province, $city, $mapX, $mapY]);
             } catch (Throwable $e) {
-                // اگر ستون‌های map_x و map_y هنوز اضافه نشده باشند، خودکار اضافه و دوباره تلاش کن
                 try {
-                    $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
-                    $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
-                    $st->execute([$name, $slug, $province, $city, $mapX, $mapY]);
-                } catch (Throwable $e2) {
-                    try {
-                        $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, is_hq, status) VALUES (?,?,?,?,0,'active')");
-                        $st->execute([$name, $slug, $province, $city]);
-                    } catch (Throwable $e3) {
-                        $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
-                        $st->execute([$name, $slug]);
-                    }
+                    $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, is_hq, status) VALUES (?,?,?,?,0,'active')");
+                    $st->execute([$name, $slug, $province, $city]);
+                } catch (Throwable $e3) {
+                    $st = $pdo->prepare("INSERT INTO branches (name, slug, is_hq, status) VALUES (?,?,0,'active')");
+                    $st->execute([$name, $slug]);
                 }
             }
             $branchId = (int)$pdo->lastInsertId();

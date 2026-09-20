@@ -1,29 +1,197 @@
 <?php
-// خواندن اطلاعات شعب فعال ثبت‌شده از دیتابیس برای نمایش خودکار پین‌های جدید
-if (!isset($pdo)) {
-    @require_once __DIR__ . '/../../../../core/database.php';
+// خواندن اطلاعات شعب فعال ثبت‌شده از دیتابیس برای نمایش خودکار و هماهنگ پین‌های نقشه
+global $pdo;
+$db = null;
+if (isset($pdo) && $pdo instanceof PDO) {
+    $db = $pdo;
+} elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+    $db = $GLOBALS['pdo'];
+} elseif (function_exists('dash_pdo')) {
+    try { $db = dash_pdo(); } catch (Throwable $e) {}
+} else {
+    $dbPath = __DIR__ . '/../../../core/database.php';
+    if (file_exists($dbPath)) {
+        @require_once $dbPath;
+        if (isset($pdo) && $pdo instanceof PDO) {
+            $db = $pdo;
+        } elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+            $db = $GLOBALS['pdo'];
+        }
+    }
 }
 
-$dynamicBranchPins = [];
-$activeProvincesList = [];
-$hardcodedSlugs = ['tehran-branch', 'kashan-branch', 'esfahan-branch', 'ahvaz-branch', 'tabriz-branch', 'qom-branch', 'mashhad-branch'];
+// شعب استاندارد با مختصات پیش‌فرض
+$allBranchesForMap = [
+    'tehran-branch' => [
+        'id' => null,
+        'slug' => 'tehran-branch',
+        'name' => 'شعبه تهران',
+        'city' => 'تهران',
+        'province' => 'تهران',
+        'map_x' => 475.0,
+        'map_y' => 283.0,
+        'label' => 'تهران',
+        'data_branch' => 'tehran',
+        'title' => 'شعبه تهران مکسا',
+    ],
+    'kashan-branch' => [
+        'id' => null,
+        'slug' => 'kashan-branch',
+        'name' => 'شعبه کاشان',
+        'city' => 'کاشان',
+        'province' => 'اصفهان',
+        'map_x' => 472.0,
+        'map_y' => 398.0,
+        'label' => 'کاشان',
+        'data_branch' => 'kashan',
+        'is_kashan' => true,
+        'title' => 'شعبه کاشان مکسا (کلیک برای ورود به صفحه شعبه)',
+    ],
+    'esfahan-branch' => [
+        'id' => null,
+        'slug' => 'esfahan-branch',
+        'name' => 'شعبه اصفهان',
+        'city' => 'اصفهان',
+        'province' => 'اصفهان',
+        'map_x' => 510.0,
+        'map_y' => 468.0,
+        'label' => 'اصفهان',
+        'data_branch' => 'esfahan',
+        'title' => 'شعبه اصفهان مکسا',
+    ],
+    'ahvaz-branch' => [
+        'id' => null,
+        'slug' => 'ahvaz-branch',
+        'name' => 'شعبه اهواز (خوزستان)',
+        'city' => 'اهواز',
+        'province' => 'خوزستان',
+        'map_x' => 315.0,
+        'map_y' => 573.0,
+        'label' => 'اهواز',
+        'data_branch' => 'ahvaz',
+        'title' => 'شعبه اهواز (خوزستان) مکسا',
+    ],
+    'tabriz-branch' => [
+        'id' => null,
+        'slug' => 'tabriz-branch',
+        'name' => 'شعبه تبریز (آذربایجان شرقی)',
+        'city' => 'تبریز',
+        'province' => 'آذربایجان شرقی',
+        'map_x' => 185.0,
+        'map_y' => 100.0,
+        'label' => 'تبریز',
+        'data_branch' => 'tabriz',
+        'title' => 'شعبه تبریز (آذربایجان شرقی) مکسا',
+    ],
+    'qom-branch' => [
+        'id' => null,
+        'slug' => 'qom-branch',
+        'name' => 'شعبه قم',
+        'city' => 'قم',
+        'province' => 'قم',
+        'map_x' => 430.0,
+        'map_y' => 343.0,
+        'label' => 'قم',
+        'data_branch' => 'qom',
+        'title' => 'شعبه قم مکسا',
+    ],
+    'mashhad-branch' => [
+        'id' => null,
+        'slug' => 'mashhad-branch',
+        'name' => 'شعبه مشهد (خراسان رضوی)',
+        'city' => 'مشهد',
+        'province' => 'خراسان رضوی',
+        'map_x' => 905.0,
+        'map_y' => 263.0,
+        'label' => 'مشهد',
+        'data_branch' => 'mashhad',
+        'title' => 'شعبه مشهد (خراسان رضوی) مکسا',
+    ],
+];
 
-if (isset($pdo)) {
+$activeProvincesList = ['تهران', 'اصفهان', 'خوزستان', 'آذربایجان شرقی', 'قم', 'خراسان رضوی'];
+
+if ($db) {
     try {
-        $stPins = $pdo->query("SELECT id, name, slug, province, city, map_x, map_y FROM branches WHERE status = 'active' AND is_hq = 0");
+        // ایجاد ایمن ستون‌ها در صورت عدم وجود (سازگار با کلیه نسخه‌های MySQL)
+        $hasX = $db->query("SHOW COLUMNS FROM `branches` LIKE 'map_x'")->fetch();
+        if (!$hasX) {
+            $db->exec("ALTER TABLE `branches` ADD `map_x` FLOAT NULL DEFAULT NULL AFTER `city`");
+        }
+        $hasY = $db->query("SHOW COLUMNS FROM `branches` LIKE 'map_y'")->fetch();
+        if (!$hasY) {
+            $db->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+        }
+
+        $stPins = $db->query("SELECT id, name, slug, province, city, map_x, map_y FROM branches WHERE status = 'active' AND is_hq = 0");
         $dbBranches = $stPins->fetchAll();
         foreach ($dbBranches as $brRow) {
-            if (!empty($brRow['province'])) {
-                $activeProvincesList[] = trim($brRow['province']);
+            $slug = trim($brRow['slug'] ?? '');
+            $name = trim($brRow['name'] ?? '');
+            $city = trim($brRow['city'] ?? '');
+            $prov = trim($brRow['province'] ?? '');
+            if ($prov !== '') {
+                $activeProvincesList[] = $prov;
             }
-            // اگر مختصات ست شده بود و جزو اسلاگ‌های هاردکد شده نبود، به عنوان پین پویا اضافه شود
-            if ($brRow['map_x'] !== null && $brRow['map_y'] !== null && !in_array($brRow['slug'], $hardcodedSlugs, true)) {
-                $dynamicBranchPins[] = $brRow;
+
+            // بررسی تطابق با یکی از ۷ شعبه اصلی
+            $matchedKey = null;
+            if (isset($allBranchesForMap[$slug])) {
+                $matchedKey = $slug;
+            } else {
+                foreach ($allBranchesForMap as $k => $info) {
+                    if (
+                        ($city !== '' && mb_strpos($info['city'], $city) !== false) ||
+                        ($name !== '' && mb_strpos($name, $info['label']) !== false) ||
+                        ($k === 'tehran-branch' && mb_strpos($name, 'تهران') !== false) ||
+                        ($k === 'kashan-branch' && mb_strpos($name, 'کاشان') !== false) ||
+                        ($k === 'esfahan-branch' && mb_strpos($name, 'اصفهان') !== false && mb_strpos($name, 'کاشان') === false) ||
+                        ($k === 'ahvaz-branch' && (mb_strpos($name, 'اهواز') !== false || mb_strpos($name, 'خوزستان') !== false)) ||
+                        ($k === 'tabriz-branch' && mb_strpos($name, 'تبریز') !== false) ||
+                        ($k === 'qom-branch' && mb_strpos($name, 'قم') !== false) ||
+                        ($k === 'mashhad-branch' && mb_strpos($name, 'مشهد') !== false)
+                    ) {
+                        $matchedKey = $k;
+                        break;
+                    }
+                }
+            }
+
+            if ($matchedKey !== null) {
+                $allBranchesForMap[$matchedKey]['id'] = (int)$brRow['id'];
+                if ($slug !== '') $allBranchesForMap[$matchedKey]['slug'] = $slug;
+                if ($name !== '') $allBranchesForMap[$matchedKey]['name'] = $name;
+                if ($city !== '') {
+                    $allBranchesForMap[$matchedKey]['city'] = $city;
+                    $allBranchesForMap[$matchedKey]['label'] = $city;
+                }
+                if ($prov !== '') $allBranchesForMap[$matchedKey]['province'] = $prov;
+                if ($brRow['map_x'] !== null && $brRow['map_x'] !== '') {
+                    $allBranchesForMap[$matchedKey]['map_x'] = (float)$brRow['map_x'];
+                }
+                if ($brRow['map_y'] !== null && $brRow['map_y'] !== '') {
+                    $allBranchesForMap[$matchedKey]['map_y'] = (float)$brRow['map_y'];
+                }
+            } else {
+                // شعبه اختصاصی ایجاد شده توسط ادمین در پنل
+                if ($brRow['map_x'] !== null && $brRow['map_y'] !== null && $brRow['map_x'] !== '' && $brRow['map_y'] !== '') {
+                    $lbl = $city !== '' ? $city : preg_replace('/^شعبه\s+/u', '', $name);
+                    $allBranchesForMap[$slug] = [
+                        'id' => (int)$brRow['id'],
+                        'slug' => $slug,
+                        'name' => $name,
+                        'city' => $city,
+                        'province' => $prov,
+                        'map_x' => (float)$brRow['map_x'],
+                        'map_y' => (float)$brRow['map_y'],
+                        'label' => $lbl,
+                        'data_branch' => $slug,
+                        'title' => $name . ' (کلیک برای ورود به صفحه شعبه)',
+                    ];
+                }
             }
         }
-    } catch (Throwable $e) {
-        // در صورت عدم وجود ستون‌ها یا خطای موقت دیتابیس
-    }
+    } catch (Throwable $e) {}
 }
 ?>
 <svg
@@ -179,10 +347,11 @@ a.province-link:active .province-shape.is-active {
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
 }
 
-/* نشان اختصاصی و شاخص شعبه کاشان روی نقشه */
+/* کپسول‌های اختصاصی نام و شاخص شعب روی نقشه (با کنتراست بالا جهت خوانایی حداکثری) */
 .pin-kashan {
   cursor: pointer !important;
 }
+.branch-pill-bg,
 .kashan-pill-bg {
   fill: #0f172a;
   stroke: #facc15;
@@ -192,26 +361,34 @@ a.province-link:active .province-shape.is-active {
   cursor: pointer !important;
   pointer-events: all !important;
 }
+.branch-pill-text,
 .kashan-pill-text {
   fill: #fef08a;
-  font-size: 12.5px;
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
   font-weight: 800;
   pointer-events: auto !important;
   cursor: pointer !important;
   letter-spacing: -0.2px;
 }
+a.branch-pin-link:hover .branch-pill-bg,
+a.branch-pin-link:focus-visible .branch-pill-bg,
+a.branch-pin-link.is-hovered .branch-pill-bg,
 .pin-kashan:hover .kashan-pill-bg,
 .pin-kashan:focus-visible .kashan-pill-bg,
 .pin-kashan.is-hovered .kashan-pill-bg {
-  fill: #007b7a;
-  stroke: #ffffff;
-  stroke-width: 1.7px;
-  filter: drop-shadow(0 4px 14px rgba(250, 204, 21, 0.8));
+  fill: #007b7a !important;
+  stroke: #ffffff !important;
+  stroke-width: 1.7px !important;
+  filter: drop-shadow(0 4px 14px rgba(250, 204, 21, 0.8)) !important;
 }
+a.branch-pin-link:hover .branch-pill-text,
+a.branch-pin-link:focus-visible .branch-pill-text,
+a.branch-pin-link.is-hovered .branch-pill-text,
 .pin-kashan:hover .kashan-pill-text,
 .pin-kashan:focus-visible .kashan-pill-text,
 .pin-kashan.is-hovered .kashan-pill-text {
-  fill: #ffffff;
+  fill: #ffffff !important;
 }
 .lbl-active-pulse--kashan {
   animation-delay: 1.25s;
@@ -301,108 +478,45 @@ a.province-link:active .province-shape.is-active {
   <text x="700.0" y="925.0" font-size="15px" class="lbl-inactive">هرمزگان</text>
   <text x="292.0" y="335.0" font-size="14px" class="lbl-inactive">همدان</text>
   <text x="645.0" y="550.0" font-size="16px" class="lbl-inactive">یزد</text>
-  <!-- تهران -->
-  <a xlink:href="/tehran-branch" href="/tehran-branch" class="branch-pin-link" data-branch="tehran" title="شعبه تهران مکسا">
-    <g class="active-label-group" data-province="تهران">
-      <circle cx="475.0" cy="290.0" r="24" class="lbl-hitbox" />
-      <circle cx="475.0" cy="283.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="475.0" cy="283.0" r="3.2" class="lbl-active-dot" />
-      <text x="475.0" y="298.0" font-size="16px" class="lbl-active">تهران</text>
-    </g>
-  </a>
+  <!-- پین‌های تعاملی و نشانگرهای شعب مکسا به همراه کپسول نام شهر/شعبه در زیر نشانگر -->
+  <?php foreach ($allBranchesForMap as $bKey => $b):
+    $bx = (float)$b['map_x'];
+    $by = (float)$b['map_y'];
+    $bSlug = htmlspecialchars($b['slug'], ENT_QUOTES, 'UTF-8');
+    $bName = htmlspecialchars($b['name'], ENT_QUOTES, 'UTF-8');
+    $bTitle = htmlspecialchars($b['title'] ?? $bName, ENT_QUOTES, 'UTF-8');
+    $bLabel = htmlspecialchars($b['label'], ENT_QUOTES, 'UTF-8');
+    $bProv = htmlspecialchars($b['province'] ?? '', ENT_QUOTES, 'UTF-8');
+    $bCity = htmlspecialchars($b['city'] ?? '', ENT_QUOTES, 'UTF-8');
+    $dataBranch = htmlspecialchars($b['data_branch'] ?? $bSlug, ENT_QUOTES, 'UTF-8');
+    $isKashan = !empty($b['is_kashan']);
 
-  <!-- استان اصفهان: شعبه کاشان (شمال استان اصفهان) -->
-  <a xlink:href="/kashan-branch" href="/kashan-branch" class="branch-pin-link pin-kashan" data-branch="kashan" title="شعبه کاشان مکسا (کلیک برای ورود به صفحه شعبه)">
-    <title>شعبه کاشان مکسا (کلیک برای ورود به صفحه شعبه)</title>
-    <g class="active-label-group active-label-group--kashan" data-province="اصفهان" data-city="کاشان">
-      <!-- محدوده وسیع کلیک‌پذیر جهت کلیک و لمس دقیق و بدون خطا -->
-      <rect x="420.0" y="375.0" width="104.0" height="65.0" rx="16" class="lbl-hitbox" />
-      <!-- رادارهای پالس نوری -->
-      <circle cx="472.0" cy="398.0" r="3.5" class="lbl-active-pulse" />
-      <circle cx="472.0" cy="398.0" r="3.5" class="lbl-active-pulse lbl-active-pulse--kashan" />
-      <circle cx="472.0" cy="398.0" r="4.0" class="lbl-active-dot lbl-active-dot--kashan" />
-      <!-- کپسول شاخص شعبه کاشان -->
-      <g class="kashan-pill-group">
-        <rect x="440.0" y="409.0" width="64.0" height="22.0" rx="11" class="kashan-pill-bg" />
-        <text x="472.0" y="420.0" class="kashan-pill-text">کاشان</text>
+    $lblLen = mb_strlen($b['label']);
+    $pillW = max(52.0, (float)($lblLen * 11.5 + 22));
+    $pillX = $bx - ($pillW / 2.0);
+    $pillY = $by + 9.0;
+  ?>
+  <a xlink:href="/<?= $bSlug ?>" href="/<?= $bSlug ?>" class="branch-pin-link <?= $isKashan ? 'pin-kashan' : '' ?>" data-branch="<?= $dataBranch ?>" title="<?= $bTitle ?>">
+    <title><?= $bTitle ?></title>
+    <g class="active-label-group <?= $isKashan ? 'active-label-group--kashan' : '' ?>" data-province="<?= $bProv ?>" data-city="<?= $bCity ?>">
+      <!-- محدوده وسیع کلیک‌پذیر جهت کلیک و لمس دقیق -->
+      <rect x="<?= $bx - 28 ?>" y="<?= $by - 12 ?>" width="56" height="50" rx="14" class="lbl-hitbox" />
+      
+      <!-- رادارهای پالس متحرک -->
+      <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.4" class="lbl-active-pulse <?= $isKashan ? 'lbl-active-pulse--kashan' : '' ?>" />
+      <?php if ($isKashan): ?>
+        <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.4" class="lbl-active-pulse" />
+      <?php endif; ?>
+      <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="<?= $isKashan ? '4.0' : '3.4' ?>" class="lbl-active-dot <?= $isKashan ? 'lbl-active-dot--kashan' : '' ?>" />
+
+      <!-- کپسول نام شهر/شعبه در زیر نشانگر با خوانایی بالا مشابه کاشان -->
+      <g class="branch-pill-group <?= $isKashan ? 'kashan-pill-group' : '' ?>">
+        <rect x="<?= $pillX ?>" y="<?= $pillY ?>" width="<?= $pillW ?>" height="22" rx="11" class="branch-pill-bg <?= $isKashan ? 'kashan-pill-bg' : '' ?>" />
+        <text x="<?= $bx ?>" y="<?= $pillY + 11 ?>" dominant-baseline="central" text-anchor="middle" class="branch-pill-text <?= $isKashan ? 'kashan-pill-text' : '' ?>"><?= $bLabel ?></text>
       </g>
     </g>
   </a>
-
-  <!-- استان اصفهان: شعبه اصفهان (مرکز استان اصفهان) -->
-  <a xlink:href="/esfahan-branch" href="/esfahan-branch" class="branch-pin-link" data-branch="esfahan" title="شعبه اصفهان مکسا">
-    <g class="active-label-group" data-province="اصفهان" data-city="اصفهان">
-      <circle cx="510.0" cy="475.0" r="24" class="lbl-hitbox" />
-      <circle cx="510.0" cy="468.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="510.0" cy="468.0" r="3.2" class="lbl-active-dot" />
-      <text x="510.0" y="483.0" font-size="17px" class="lbl-active">اصفهان</text>
-    </g>
-  </a>
-
-  <!-- خوزستان (اهواز) -->
-  <a xlink:href="/ahvaz-branch" href="/ahvaz-branch" class="branch-pin-link" data-branch="ahvaz" title="شعبه اهواز (خوزستان) مکسا">
-    <g class="active-label-group" data-province="خوزستان">
-      <circle cx="315.0" cy="580.0" r="24" class="lbl-hitbox" />
-      <circle cx="315.0" cy="573.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="315.0" cy="573.0" r="3.2" class="lbl-active-dot" />
-      <text x="315.0" y="588.0" font-size="16px" class="lbl-active">اهواز</text>
-    </g>
-  </a>
-
-  <!-- آذربایجان شرقی (تبریز) -->
-  <a xlink:href="/tabriz-branch" href="/tabriz-branch" class="branch-pin-link" data-branch="tabriz" title="شعبه تبریز (آذربایجان شرقی) مکسا">
-    <g class="active-label-group" data-province="آذربایجان شرقی">
-      <circle cx="185.0" cy="106.0" r="24" class="lbl-hitbox" />
-      <circle cx="185.0" cy="100.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="185.0" cy="100.0" r="3.2" class="lbl-active-dot" />
-      <text x="185.0" y="113.0" font-size="15px" class="lbl-active">تبریز</text>
-    </g>
-  </a>
-
-  <!-- قم -->
-  <a xlink:href="/qom-branch" href="/qom-branch" class="branch-pin-link" data-branch="qom" title="شعبه قم مکسا">
-    <g class="active-label-group" data-province="قم">
-      <circle cx="430.0" cy="350.0" r="24" class="lbl-hitbox" />
-      <circle cx="430.0" cy="343.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="430.0" cy="343.0" r="3.2" class="lbl-active-dot" />
-      <text x="430.0" y="358.0" font-size="15px" class="lbl-active">قم</text>
-    </g>
-  </a>
-
-  <!-- خراسان رضوی (مشهد) -->
-  <a xlink:href="/mashhad-branch" href="/mashhad-branch" class="branch-pin-link" data-branch="mashhad" title="شعبه مشهد (خراسان رضوی) مکسا">
-    <g class="active-label-group" data-province="خراسان رضوی">
-      <circle cx="905.0" cy="270.0" r="24" class="lbl-hitbox" />
-      <circle cx="905.0" cy="263.0" r="3.2" class="lbl-active-pulse" />
-      <circle cx="905.0" cy="263.0" r="3.2" class="lbl-active-dot" />
-      <text x="905.0" y="278.0" font-size="17px" class="lbl-active">مشهد</text>
-    </g>
-  </a>
-
-  <?php if (!empty($dynamicBranchPins)): ?>
-    <!-- شعب پویا ساخته‌شده از طریق پنل مدیریت با مختصات نقشه -->
-    <?php foreach ($dynamicBranchPins as $dynBranch):
-      $bx = (float)$dynBranch['map_x'];
-      $by = (float)$dynBranch['map_y'];
-      $bSlug = htmlspecialchars($dynBranch['slug'], ENT_QUOTES, 'UTF-8');
-      $bTitle = htmlspecialchars($dynBranch['name'], ENT_QUOTES, 'UTF-8');
-      $bCity = trim($dynBranch['city'] ?? '');
-      $bProv = trim($dynBranch['province'] ?? '');
-      // نام نمایشی زیر نشانگر شعبه در نقشه
-      $bLabel = $bCity !== '' ? $bCity : preg_replace('/^شعبه\s+/u', '', $dynBranch['name']);
-      $bLabel = htmlspecialchars($bLabel, ENT_QUOTES, 'UTF-8');
-    ?>
-    <a xlink:href="/<?= $bSlug ?>" href="/<?= $bSlug ?>" class="branch-pin-link" data-branch="<?= $bSlug ?>" title="<?= $bTitle ?> (کلیک برای ورود به صفحه شعبه)">
-      <title><?= $bTitle ?> (کلیک برای ورود به صفحه شعبه)</title>
-      <g class="active-label-group" data-province="<?= htmlspecialchars($bProv, ENT_QUOTES, 'UTF-8') ?>" data-city="<?= htmlspecialchars($bCity, ENT_QUOTES, 'UTF-8') ?>">
-        <circle cx="<?= $bx ?>" cy="<?= $by + 7 ?>" r="24" class="lbl-hitbox" />
-        <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.5" class="lbl-active-pulse" />
-        <circle cx="<?= $bx ?>" cy="<?= $by ?>" r="3.5" class="lbl-active-dot" />
-        <text x="<?= $bx ?>" y="<?= $by + 16 ?>" font-size="15px" class="lbl-active"><?= $bLabel ?></text>
-      </g>
-    </a>
-    <?php endforeach; ?>
-  <?php endif; ?>
+  <?php endforeach; ?>
 </g>
 </svg>
 <script>

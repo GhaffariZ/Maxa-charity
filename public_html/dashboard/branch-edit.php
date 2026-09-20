@@ -48,6 +48,29 @@ $ok  = '';
 $passChanged = false;
 $newPassForModal = '';
 
+// پیش‌فرض مختصات برای شعب شناخته‌شده اگر در دیتابیس خالی بود
+$fallbackX = $branch['map_x'] ?? '';
+$fallbackY = $branch['map_y'] ?? '';
+if (($fallbackX === '' || $fallbackX === null) && ($fallbackY === '' || $fallbackY === null)) {
+    $bSlug = $branch['slug'] ?? '';
+    $bName = $branch['name'] ?? '';
+    if ($bSlug === 'tehran-branch' || mb_strpos($bName, 'تهران') !== false) {
+        $fallbackX = 475.0; $fallbackY = 283.0;
+    } elseif ($bSlug === 'kashan-branch' || mb_strpos($bName, 'کاشان') !== false) {
+        $fallbackX = 472.0; $fallbackY = 398.0;
+    } elseif ($bSlug === 'esfahan-branch' || mb_strpos($bName, 'اصفهان') !== false) {
+        $fallbackX = 510.0; $fallbackY = 468.0;
+    } elseif ($bSlug === 'ahvaz-branch' || mb_strpos($bName, 'اهواز') !== false || mb_strpos($bName, 'خوزستان') !== false) {
+        $fallbackX = 315.0; $fallbackY = 573.0;
+    } elseif ($bSlug === 'tabriz-branch' || mb_strpos($bName, 'تبریز') !== false) {
+        $fallbackX = 185.0; $fallbackY = 100.0;
+    } elseif ($bSlug === 'qom-branch' || mb_strpos($bName, 'قم') !== false) {
+        $fallbackX = 430.0; $fallbackY = 343.0;
+    } elseif ($bSlug === 'mashhad-branch' || mb_strpos($bName, 'مشهد') !== false) {
+        $fallbackX = 905.0; $fallbackY = 263.0;
+    }
+}
+
 // مقادیرِ فرم (پیش‌فرض از دیتابیس)
 $old = [
     'name'       => $branch['name'],
@@ -56,8 +79,8 @@ $old = [
     'city'       => $branch['city'] ?? '',
     'admin_user' => $adminRow['username'] ?? '',
     'features'   => $curFeatures,
-    'map_x'      => $branch['map_x'] ?? '',
-    'map_y'      => $branch['map_y'] ?? '',
+    'map_x'      => $fallbackX,
+    'map_y'      => $fallbackY,
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -109,28 +132,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $oldSlug = $branch['slug'];
 
+            // بررسی و ایجاد ستون‌های مختصات نقشه در صورت عدم وجود (سازگار با کلیه نسخه‌های MySQL)
+            try {
+                $hasColsX = $pdo->query("SHOW COLUMNS FROM `branches` LIKE 'map_x'")->fetch();
+                if (!$hasColsX) {
+                    $pdo->exec("ALTER TABLE `branches` ADD `map_x` FLOAT NULL DEFAULT NULL AFTER `city`");
+                }
+                $hasColsY = $pdo->query("SHOW COLUMNS FROM `branches` LIKE 'map_y'")->fetch();
+                if (!$hasColsY) {
+                    $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
+                }
+            } catch (Throwable $eCols) {}
+
             // 1) نام + slug + استان + شهر + مختصات نقشه ایران
             if ($isHq) {
                 try {
                     $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $province, $city, $mapX, $mapY, $branchId]);
                 } catch (Throwable $e) {
-                    try {
-                        $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
-                        $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $province, $city, $mapX, $mapY, $branchId]);
-                    } catch (Throwable $e2) {
-                        $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $province, $city, $branchId]);
-                    }
+                    $pdo->prepare('UPDATE branches SET name = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $province, $city, $branchId]);
                 }
             } else {
                 try {
                     $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $mapX, $mapY, $branchId]);
                 } catch (Throwable $e) {
-                    try {
-                        $pdo->exec("ALTER TABLE `branches` ADD COLUMN IF NOT EXISTS `map_x` FLOAT NULL DEFAULT NULL AFTER `city`, ADD COLUMN IF NOT EXISTS `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
-                        $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ?, map_x = ?, map_y = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $mapX, $mapY, $branchId]);
-                    } catch (Throwable $e2) {
-                        $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $branchId]);
-                    }
+                    $pdo->prepare('UPDATE branches SET name = ?, slug = ?, province = ?, city = ? WHERE id = ?')->execute([$name, $slug, $province, $city, $branchId]);
                 }
             }
 

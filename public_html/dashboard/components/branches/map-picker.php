@@ -22,13 +22,57 @@ if ($cachedCountryLayer === null) {
         $rawSvg = file_get_contents($svgFile);
         // استخراج لایه استان‌ها
         if (preg_match('/(<g id="layercountry"[^>]*>.*?<\/g>)\s*<g id="layerlabels"/s', $rawSvg, $mCountry)) {
-            $cachedCountryLayer = $mCountry[1];
+            $cleaned = $mCountry[1];
+            // حذف تمام تگ‌های <a> و </a> و هرگونه ویژگی href تا هیچ کلیکی باعث انتقال به صفحات شعب نشود
+            $cleaned = preg_replace('/<a\b[^>]*>/i', '<g class="province-wrapper">', $cleaned);
+            $cleaned = str_ireplace('</a>', '</g>', $cleaned);
+            $cleaned = preg_replace('/\s*(?:xlink:href|href)="[^"]*"/i', '', $cleaned);
+            $cachedCountryLayer = $cleaned;
         }
         // استخراج برچسب‌های متنی استان‌ها
         if (preg_match_all('/<text[^>]*class="lbl-inactive"[^>]*>.*?<\/text>/s', $rawSvg, $mLabels)) {
             $cachedInactiveLabels = implode("\n", $mLabels[0]);
         }
     }
+}
+
+// شعب موجود به عنوان نقاط مرجع جهت جهت‌یابی راحت کاربر (فقط نقاط راهنما، بدون هیچ‌گونه لینک)
+$referenceBranches = [
+    ['name' => 'تهران', 'x' => 475.0, 'y' => 283.0],
+    ['name' => 'اصفهان', 'x' => 510.0, 'y' => 468.0],
+    ['name' => 'کاشان', 'x' => 472.0, 'y' => 398.0],
+    ['name' => 'مشهد', 'x' => 905.0, 'y' => 263.0],
+    ['name' => 'تبریز', 'x' => 185.0, 'y' => 100.0],
+    ['name' => 'اهواز', 'x' => 315.0, 'y' => 573.0],
+    ['name' => 'قم', 'x' => 430.0, 'y' => 343.0],
+];
+
+if (isset($pdo) && $pdo instanceof PDO) {
+    try {
+        $stRef = $pdo->query("SELECT name, city, map_x, map_y FROM branches WHERE status = 'active' AND map_x IS NOT NULL AND map_y IS NOT NULL");
+        $dbRefs = $stRef->fetchAll();
+        foreach ($dbRefs as $dbr) {
+            $lbl = trim($dbr['city'] ?? '');
+            if ($lbl === '') {
+                $lbl = preg_replace('/^شعبه\s+/u', '', trim($dbr['name']));
+            }
+            $bx = (float)$dbr['map_x'];
+            $by = (float)$dbr['map_y'];
+            $exists = false;
+            foreach ($referenceBranches as &$rf) {
+                if ($rf['name'] === $lbl || (abs($rf['x'] - $bx) < 6 && abs($rf['y'] - $by) < 6)) {
+                    $rf['x'] = $bx;
+                    $rf['y'] = $by;
+                    $exists = true;
+                    break;
+                }
+            }
+            unset($rf);
+            if (!$exists && $lbl !== '') {
+                $referenceBranches[] = ['name' => $lbl, 'x' => $bx, 'y' => $by];
+            }
+        }
+    } catch (Throwable $e) {}
 }
 ?>
 
@@ -72,7 +116,7 @@ if ($cachedCountryLayer === null) {
         </filter>
       </defs>
 
-      <!-- ۱. لایه شکل استان‌های کشور -->
+      <!-- ۱. لایه شکل استان‌های کشور (تمامی لینک‌ها حذف شده‌اند) -->
       <g class="mp-country-layer">
         <?= $cachedCountryLayer ?? '' ?>
       </g>
@@ -82,29 +126,12 @@ if ($cachedCountryLayer === null) {
         <?= $cachedInactiveLabels ?? '' ?>
       </g>
 
-      <!-- ۳. پین‌های راهنما برای شعب موجود جهت جهت‌یابی سریع مدیر -->
+      <!-- ۳. پین‌های راهنما برای شعب موجود جهت جهت‌یابی سریع مدیر (کاملاً استاتیک و بدون لینک) -->
       <g class="mp-reference-branches" pointer-events="none">
-        <!-- تهران -->
-        <circle cx="475.0" cy="283.0" r="3.5" class="mp-ref-dot" />
-        <text x="475.0" y="274.0" class="mp-ref-text">تهران</text>
-        <!-- اصفهان -->
-        <circle cx="510.0" cy="468.0" r="3.5" class="mp-ref-dot" />
-        <text x="510.0" y="459.0" class="mp-ref-text">اصفهان</text>
-        <!-- کاشان -->
-        <circle cx="472.0" cy="398.0" r="3.2" class="mp-ref-dot" />
-        <text x="472.0" y="391.0" class="mp-ref-text">کاشان</text>
-        <!-- مشهد -->
-        <circle cx="905.0" cy="263.0" r="3.5" class="mp-ref-dot" />
-        <text x="905.0" y="254.0" class="mp-ref-text">مشهد</text>
-        <!-- تبریز -->
-        <circle cx="185.0" cy="100.0" r="3.5" class="mp-ref-dot" />
-        <text x="185.0" y="91.0" class="mp-ref-text">تبریز</text>
-        <!-- اهواز -->
-        <circle cx="315.0" cy="573.0" r="3.5" class="mp-ref-dot" />
-        <text x="315.0" y="564.0" class="mp-ref-text">اهواز</text>
-        <!-- قم -->
-        <circle cx="430.0" cy="343.0" r="3.2" class="mp-ref-dot" />
-        <text x="430.0" y="336.0" class="mp-ref-text">قم</text>
+        <?php foreach ($referenceBranches as $rb): ?>
+          <circle cx="<?= $rb['x'] ?>" cy="<?= $rb['y'] ?>" r="3.5" class="mp-ref-dot" />
+          <text x="<?= $rb['x'] ?>" y="<?= $rb['y'] - 8 ?>" class="mp-ref-text"><?= htmlspecialchars($rb['name'], ENT_QUOTES, 'UTF-8') ?></text>
+        <?php endforeach; ?>
       </g>
 
       <!-- ۴. نشانگر متحرک و درگ‌بل شعبه انتخابی (Active Draggable Pin) -->
@@ -301,14 +328,25 @@ if ($cachedCountryLayer === null) {
   stroke: #2dd4bf !important;
 }
 
+/* ممانعت قطعی از کلیک‌پذیری هرگونه لینک یا جابجایی صفحه در انتخابگر نقشه */
+.map-picker-viewport a,
+.mp-country-layer a,
+.mp-country-layer .province-wrapper,
+.mp-reference-branches,
+.mp-province-labels {
+  pointer-events: none !important;
+  cursor: crosshair !important;
+  text-decoration: none !important;
+}
+
 /* برچسب‌های کم‌رنگ استانی برای جهت‌یابی */
 .mp-province-labels text {
   font-family: 'Vazirmatn', sans-serif;
   fill: #94a3b8;
   font-weight: 500;
   text-anchor: middle;
-  pointer-events: none;
-  user-select: none;
+  pointer-events: none !important;
+  user-select: none !important;
 }
 
 :root[data-theme="dark"] .mp-province-labels text {
@@ -592,8 +630,18 @@ if ($cachedCountryLayer === null) {
   dragHitbox.addEventListener('pointerup', onDragEnd);
   dragHitbox.addEventListener('pointercancel', onDragEnd);
 
+  // پیشگیری قطعی از هرگونه باز شدن لینک در ویوپورت انتخابگر
+  viewport.addEventListener('click', function(e) {
+    if (e.target && e.target.closest('a')) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+
   // ۴. کلیک مستقیم روی نقشه برای قراردادن یا جابجا کردن پین در آن نقطه
   svg.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     // اگر کاربر در حال کشیدن پین بود یا روی خود پین کلیک کرد، کاری نکن
     if (isDragging) return;
     if (e.target && (e.target.closest('#mpActivePin') || e.target.classList.contains('mp-pin-drag-hitbox'))) {

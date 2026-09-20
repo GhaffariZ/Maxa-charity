@@ -24,13 +24,13 @@
       --cta-orange-2:#f39a20;
       --cta-text:#ffffff;
       --cta-muted: rgba(255,255,255,.78);
-      --cta-container: 1360px;
-      --cta-nav-h: 86px;
+      --cta-container: 1440px;
+      --cta-nav-h: 78px;
 
       --cta-shadow: 0 10px 22px rgba(0,0,0,.14);
       --cta-shadow-soft: 0 8px 18px rgba(0,0,0,.12);
       --cta-radius: 14px;
-      --cta-edge-gap: 16px;
+      --cta-edge-gap: 10px;
     }
 
     .cta {
@@ -43,7 +43,7 @@
     .cta-container{
     width: min(var(--cta-container), 100%);
     margin-inline:auto;
-    padding-inline:28px;
+    padding-inline:16px;
     }
 
     /* ===== HERO ===== */
@@ -91,16 +91,6 @@
       height: 68px;
     }
 
-    /* Hide on scroll down */
-    .cta-topbar.scroll-down {
-      transform: translateY(-120%);
-    }
-
-    /* Force show on hover/reveal */
-    .cta-topbar.scroll-down.force-show {
-      transform: translateY(0);
-    }
-
     .cta-header{
       display:flex;
       align-items:center;
@@ -126,7 +116,7 @@
       position: relative;
       margin-right: calc(-1 * var(--cta-edge-gap));
       padding-right: calc(var(--cta-edge-gap) + 12px);
-      padding-left: 28px;
+      padding-left: 64px;
       z-index: 5;
     }
 
@@ -227,7 +217,7 @@
       padding: 0;
       display:flex;
       align-items:center;
-      gap: 4px;
+      gap: 6px;
       white-space: nowrap;
       flex-wrap: nowrap;
     }
@@ -241,11 +231,11 @@
     .cta-menu > li > a{
       display:inline-flex;
       align-items:center;
-      padding:8px 14px;
+      padding:8px 10px;
       border-radius:10px;
       transition: .2s ease;
       outline: none;
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 700;
       color: #111111;
     }
@@ -1538,6 +1528,16 @@
       opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top left;
       transition:opacity .2s,transform .22s cubic-bezier(.16,1,.3,1),visibility .2s;
       z-index:100001;direction:rtl;text-align:right;
+      max-width: calc(100vw - 20px);
+    }
+
+    @media (max-width: 480px) {
+      .cta-account-menu {
+        min-width: auto;
+        right: 10px;
+        left: auto;
+        transform-origin: top right;
+      }
     }
     .cta-account.open .cta-account-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
     .cta-account-head{display:flex;align-items:center;gap:10px;padding:8px 8px 12px;
@@ -1731,11 +1731,11 @@
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
                   داشبورد من
                 </a>
-                <a role="menuitem" href="/benefactor-dashboard/">
+                <a role="menuitem" href="/benefactor-dashboard/profile">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                   پروفایل کاربری
                 </a>
-                <a role="menuitem" href="/benefactor-dashboard/">
+                <a role="menuitem" href="/benefactor-dashboard/history">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10h18" stroke="currentColor" stroke-width="2"/></svg>
                   پرداخت‌های من
                 </a>
@@ -2192,48 +2192,19 @@ function initSlider() {
         });
       }
     });
-  // راه‌اندازی هدر چسبنده با قابلیت مخفی شدن در اسکرول به پایین و آشکار شدن در هاور
-  (function() {
-    const topbar = document.querySelector(".cta-topbar");
-    if (!topbar) return;
+    (function() {
+      const topbar = document.querySelector(".cta-topbar");
+      if (!topbar) return;
 
-    let lastScrollY = window.scrollY;
-
-    window.addEventListener("scroll", function() {
-      const currentScrollY = window.scrollY;
-
-      // ۱. اگر اسکرول بیشتر از 50 پیکسل بود هدر جدا شود
-      if (currentScrollY > 50) {
-        topbar.classList.add("scrolled");
-      } else {
-        topbar.classList.remove("scrolled");
-      }
-
-      // ۲. مخفی شدن در اسکرول به پایین و ظاهر شدن در اسکرول به بالا
-      if (currentScrollY > lastScrollY && currentScrollY > 150) {
-        topbar.classList.add("scroll-down");
-      } else {
-        topbar.classList.remove("scroll-down");
-      }
-      lastScrollY = currentScrollY;
-    });
-
-    // ۳. آشکار شدن هدر در زمان نزدیک شدن موس به بالای صفحه (هاور بخش بالایی)
-    window.addEventListener("mousemove", function(e) {
-      if (e.clientY <= 30) {
-        topbar.classList.add("force-show");
-      } else if (e.clientY > 100) {
-        topbar.classList.remove("force-show");
-      }
-    });
-
-    topbar.addEventListener("mouseenter", function() {
-      topbar.classList.add("force-show");
-    });
-    topbar.addEventListener("mouseleave", function() {
-      topbar.classList.remove("force-show");
-    });
-  })();
+      window.addEventListener("scroll", function() {
+        // اگر اسکرول بیشتر از 50 پیکسل بود هدر جدا شود (بدون مخفی شدن)
+        if (window.scrollY > 50) {
+          topbar.classList.add("scrolled");
+        } else {
+          topbar.classList.remove("scrolled");
+        }
+      });
+    })();
   });
 })();
 
@@ -2377,6 +2348,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(function(j){
           var token = j && j.data && j.data.access_token;
           if(!token) return null;
+          try {
+            window.__maxa_access_token = token;
+            sessionStorage.setItem('maxa_access_token', token);
+          } catch(e) {}
           return fetch('/api/user/me', {
             headers:{ 'Authorization':'Bearer '+token, 'Accept':'application/json' },
             credentials:'include'
