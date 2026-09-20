@@ -100,7 +100,7 @@
       position: relative;
       margin-right: calc(-1 * var(--cta-edge-gap));
       padding-right: calc(var(--cta-edge-gap) + 12px);
-      padding-left: 28px;
+      padding-left: 64px;
       z-index: 5;
     }
 

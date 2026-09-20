@@ -20,10 +20,10 @@
 </div>
 
 <div class="mex-level mex-level-single" id="level-1">
-<div class="mex-node mex-node-manager" data-href="manager.html">مدیر عامل</div>
+<div class="mex-node mex-node-manager">مدیر عامل</div>
 </div>
 
-<div class="mex-node mex-node-side" id="hoze-node" data-href="hoze.html">
+<div class="mex-node mex-node-side" id="hoze-node">
 حوزه مدیر عامل
 </div>
 
@@ -33,16 +33,16 @@
 
 <div class="mex-level mex-level-departments" id="level-2">
 
-<div class="mex-node" data-href="ertebat.html">معاونت ارتباطات</div>
-<div class="mex-node" data-href="human.html">معاونت سرمایه‌های انسانی</div>
-<div class="mex-node" data-href="plan.html">معاونت طرح، برنامه‌ریزی و توسعه</div>
+<div class="mex-node">معاونت ارتباطات</div>
+<div class="mex-node">معاونت سرمایه‌های انسانی</div>
+<div class="mex-node">معاونت طرح، برنامه‌ریزی و توسعه</div>
 
-<div class="mex-node mex-branches-anchor" data-href="branches.html">شعب</div>
+<div class="mex-node mex-branches-anchor">شعب</div>
 
-<div class="mex-node" data-href="logistic.html">معاونت لجستیک و پشتیبانی</div>
-<div class="mex-node" data-href="amoozesh.html">معاونت آموزش و پژوهش</div>
-<div class="mex-node" data-href="royesh.html">مرکز رویش استعدادهای دانشجویی مکسا</div>
-<div class="mex-node" data-href="ertebatkeshvari.html">مرکز ارتباطات کشوری</div>
+<div class="mex-node">معاونت لجستیک و پشتیبانی</div>
+<div class="mex-node">معاونت آموزش و پژوهش</div>
+<div class="mex-node">مرکز رویش استعدادهای دانشجویی مکسا</div>
+<div class="mex-node">مرکز ارتباطات کشوری</div>
 
 </div>
 
@@ -54,13 +54,58 @@
 
 <div class="mex-level mex-level-branches" id="level-3">
 
-<div class="mex-node mex-branch-node" data-href="tehran.html">تهران</div>
-<div class="mex-node mex-branch-node" data-href="esfahan.html">اصفهان</div>
-<div class="mex-node mex-branch-node" data-href="mashhad.html">مشهد</div>
-<div class="mex-node mex-branch-node" data-href="qom.html">قم</div>
-<div class="mex-node mex-branch-node" data-href="kerman.html">کرمان</div>
-<div class="mex-node mex-branch-node" data-href="tabriz.html">تبریز</div>
-<div class="mex-node mex-branch-node" data-href="ahvaz.html">اهواز</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">اصفهان</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۸۸</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">تهران</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۹۲</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">مشهد</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">قم</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">کرمان</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">کاشان</span>
+  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">اهواز</span>
+  <span class="mex-branch-badge mex-badge-established">۱۴۰۲</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">تبریز</span>
+  <span class="mex-branch-badge mex-badge-established">۱۴۰۳</span>
+</div>
+<div class="mex-node mex-branch-node">
+  <span class="mex-branch-name">زاهدان</span>
+  <span class="mex-branch-badge mex-badge-established">۱۴۰۵</span>
+</div>
+<div class="mex-node mex-branch-node mex-branch-pending">
+  <span class="mex-branch-name">سنندج</span>
+  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+</div>
+<div class="mex-node mex-branch-node mex-branch-pending">
+  <span class="mex-branch-name">بجنورد</span>
+  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+</div>
+<div class="mex-node mex-branch-node mex-branch-pending">
+  <span class="mex-branch-name">خرم‌آباد</span>
+  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+</div>
+<div class="mex-node mex-branch-node mex-branch-pending">
+  <span class="mex-branch-name">یزد</span>
+  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+</div>
 
 </div>
 </div>
@@ -227,11 +272,105 @@ padding:6px 18px;
 
 .mex-branches-anchor{visibility:hidden}
 
-.mex-branches-wrapper{margin-top:84px;padding:34px 20px;border-radius:24px;background:rgba(255,255,255,.62);border:1px dashed rgba(0,125,130,.24)}
+.mex-branches-wrapper{
+  margin-top:84px;
+  padding:34px 14px;
+  border-radius:24px;
+  background:rgba(255,255,255,.72);
+  border:1px dashed rgba(0,125,130,.28);
+}
 
-.mex-level-branches{display:grid;grid-template-columns:repeat(7,minmax(100px,1fr));gap:12px}
+.mex-level-branches{
+  display:grid;
+  grid-template-columns:repeat(13, minmax(0, 1fr));
+  gap:8px;
+  direction:ltr; /* ترتیب قدیمی به جدید از چپ به راست */
+}
 
-.mex-branch-node{min-height:48px;border-style:dashed}
+.mex-branch-node{
+  min-height:64px;
+  padding:8px 4px;
+  border-radius:12px;
+  border:1px solid rgba(0,125,130,.22);
+  background:#fff;
+  box-shadow:var(--mex-node-shadow);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  text-align:center;
+  cursor:default;
+  direction:rtl;
+  transition:all .22s ease;
+}
+
+.mex-branch-name{
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--mex-text);
+  line-height:1.2;
+}
+
+.mex-branch-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:800;
+  padding:2px 6px;
+  border-radius:6px;
+  letter-spacing:-0.2px;
+  white-space:nowrap;
+  line-height:1.4;
+}
+
+.mex-badge-established{
+  background:rgba(0,125,130,.08);
+  color:var(--mex-primary);
+  border:1px solid rgba(0,125,130,.18);
+}
+
+.mex-branch-node:hover .mex-badge-established,
+.mex-branch-node.is-active .mex-badge-established{
+  background:rgba(255,255,255,.25);
+  color:#fff;
+  border-color:rgba(255,255,255,.45);
+}
+
+.mex-branch-pending{
+  border-style:dashed;
+  border-color:rgba(245,166,35,.5);
+  background:#fffdfa;
+}
+
+.mex-badge-pending{
+  background:rgba(245,166,35,.16);
+  color:#b45309;
+  border:1px solid rgba(245,166,35,.35);
+  font-size:9px;
+  font-weight:800;
+}
+
+.mex-branch-pending:hover,
+.mex-branch-pending.is-active{
+  border-color:#f5a623;
+  background:#f5a623;
+  color:#fff;
+  box-shadow:0 12px 30px rgba(245,166,35,.28);
+}
+
+.mex-branch-pending:hover .mex-branch-name,
+.mex-branch-pending.is-active .mex-branch-name{
+  color:#fff;
+}
+
+.mex-branch-pending:hover .mex-badge-pending,
+.mex-branch-pending.is-active .mex-badge-pending{
+  background:rgba(255,255,255,.28);
+  color:#fff;
+  border-color:rgba(255,255,255,.5);
+}
 
 .mex-lines{
   position:absolute;
@@ -385,10 +524,11 @@ padding:6px 18px;
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
+  direction:ltr;
 }
 
 .mex-branch-node{
-  min-height:50px;
+  min-height:54px;
   padding:10px 8px;
   font-size:12.5px;
 }
@@ -457,7 +597,7 @@ chart.querySelectorAll(".mex-node").forEach(node => {
 
   node.addEventListener("click", () => {
     const href = node.getAttribute("data-href");
-    if(href){
+    if(href && href.startsWith("/") && !href.endsWith(".html")){
       window.location.href = href;
     }
   });
@@ -466,7 +606,7 @@ chart.querySelectorAll(".mex-node").forEach(node => {
     if(e.key === "Enter" || e.key === " "){
       e.preventDefault();
       const href = node.getAttribute("data-href");
-      if(href){
+      if(href && href.startsWith("/") && !href.endsWith(".html")){
         window.location.href = href;
       }
     }
