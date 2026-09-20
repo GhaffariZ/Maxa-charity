@@ -12,6 +12,42 @@
       <?php require __DIR__ . '/map-svg.php'; ?>
     </div>
 
+    <!-- پنجره پاپ‌اور انتخاب شعبه برای استان اصفهان (شامل شعب اصفهان و کاشان) -->
+    <div id="esfahanBranchModal" class="branch-popover" aria-hidden="true" role="dialog" aria-labelledby="ebm-title">
+      <div class="branch-popover__backdrop" data-close-popover></div>
+      <div class="branch-popover__box">
+        <button type="button" class="branch-popover__close" data-close-popover aria-label="بستن پنجره">&times;</button>
+        <div class="branch-popover__head">
+          <span class="branch-popover__eyebrow">استان اصفهان</span>
+          <h3 id="ebm-title" class="branch-popover__title">شعب فعال مکسا در استان اصفهان</h3>
+          <p class="branch-popover__desc">در گستره استان اصفهان، ۲ شعبه فعال مکسا آماده خدمت‌رسانی به بیماران و خانواده‌های آنان هستند. لطفاً شعبه مورد نظر را انتخاب فرمایید:</p>
+        </div>
+        <div class="branch-popover__cards">
+          <a href="/esfahan-branch" class="branch-popover__card" title="ورود به صفحه اختصاصی شعبه اصفهان">
+            <div class="branch-popover__icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.418 0-8-3.582-8-8 0-4.418 8-11 8-11s8 6.582 8 11c0 4.418-3.582 8-8 8z"/><circle cx="12" cy="13" r="3"/></svg>
+            </div>
+            <div class="branch-popover__card-info">
+              <h4>شعبه اصفهان</h4>
+              <span>مرکز استان اصفهان · درمانگاه طب تسکینی و شبکه مراقبت در منزل</span>
+            </div>
+            <span class="branch-popover__arrow">&larr;</span>
+          </a>
+
+          <a href="/kashan-branch" class="branch-popover__card" title="ورود به صفحه اختصاصی شعبه کاشان">
+            <div class="branch-popover__icon branch-popover__icon--kashan">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.418 0-8-3.582-8-8 0-4.418 8-11 8-11s8 6.582 8 11c0 4.418-3.582 8-8 8z"/><circle cx="12" cy="13" r="3"/></svg>
+            </div>
+            <div class="branch-popover__card-info">
+              <h4>شعبه کاشان</h4>
+              <span>شمال استان اصفهان · خدمات تخصصی مراقبت تسکینی و مشاوره</span>
+            </div>
+            <span class="branch-popover__arrow">&larr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- راهنمای نقشه و ۳ مرکز ویژه زیر نقشه -->
     <div class="branches__bottom-bar">
       <!-- راهنمای رنگ‌ها -->
@@ -373,4 +409,235 @@
     transition: none !important;
   }
 }
+
+/* === پاپ‌اور انتخاب شعبه برای استان اصفهان (اصفهان و کاشان) === */
+.branch-popover {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease, visibility 0.24s;
+  visibility: hidden;
+  direction: rtl;
+}
+.branch-popover.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+.branch-popover__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.branch-popover__box {
+  position: relative;
+  width: min(480px, 100%);
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 26px 24px;
+  box-shadow: 0 24px 50px rgba(0, 77, 76, 0.24), 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 123, 122, 0.16);
+  transform: translateY(16px) scale(0.96);
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+.branch-popover.is-open .branch-popover__box {
+  transform: translateY(0) scale(1);
+}
+.branch-popover__close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.branch-popover__close:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: scale(1.05);
+}
+.branch-popover__head {
+  text-align: right;
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+.branch-popover__eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #007b7a;
+  background: rgba(0, 123, 122, 0.08);
+  border: 1px solid rgba(0, 123, 122, 0.16);
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.branch-popover__title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.35;
+}
+.branch-popover__desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: #64748b;
+}
+.branch-popover__cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.branch-popover__card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  text-decoration: none;
+  color: #1e293b;
+  transition: all 0.2s ease;
+}
+.branch-popover__card:hover {
+  border-color: #007b7a;
+  background: #f8fdfd;
+  transform: translateX(-4px);
+  box-shadow: 0 8px 20px rgba(0, 123, 122, 0.12);
+}
+.branch-popover__icon {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(0, 123, 122, 0.1);
+  color: #007b7a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.branch-popover__icon--kashan {
+  background: rgba(244, 166, 30, 0.14);
+  color: #b45309;
+}
+.branch-popover__card:hover .branch-popover__icon {
+  transform: scale(1.08);
+}
+.branch-popover__card-info {
+  flex: 1;
+  min-width: 0;
+}
+.branch-popover__card-info h4 {
+  margin: 0 0 3px;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+.branch-popover__card-info span {
+  display: block;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+.branch-popover__arrow {
+  color: #94a3b8;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.branch-popover__card:hover .branch-popover__arrow {
+  color: #007b7a;
+  transform: translateX(-4px);
+}
 </style>
+
+<script>
+(function() {
+  const modal = document.getElementById('esfahanBranchModal');
+  if (modal) {
+    const closeBtns = modal.querySelectorAll('[data-close-popover]');
+    const closeModal = function() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    };
+    const openModal = function() {
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    };
+
+    closeBtns.forEach(function(btn) {
+      btn.addEventListener('click', closeModal);
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+
+    // When clicking Isfahan province shape on the map (outside of inner city pins)
+    const esfahanLink = document.querySelector('#Iran a.province-link[data-province="اصفهان"]');
+    if (esfahanLink) {
+      esfahanLink.addEventListener('click', function(e) {
+        // If click was on one of the inner city branch pin links, do nothing (let pin link handle it)
+        if (e.target.closest('.branch-pin-link')) return;
+        e.preventDefault();
+        openModal();
+      });
+    }
+  }
+
+  // Cross-hover synchronization between map pins and sidebar list
+  const pinLinks = document.querySelectorAll('#Iran a.branch-pin-link');
+  pinLinks.forEach(function(pin) {
+    const href = pin.getAttribute('href');
+    const slug = href ? href.replace(/^\//, '') : '';
+    if (!slug) return;
+
+    pin.addEventListener('mouseenter', function() {
+      const item = document.querySelector('.br-item[data-slug="' + slug + '"]');
+      if (item) item.classList.add('br-item--hovered');
+    });
+    pin.addEventListener('mouseleave', function() {
+      const item = document.querySelector('.br-item[data-slug="' + slug + '"]');
+      if (item) item.classList.remove('br-item--hovered');
+    });
+  });
+
+  const sidebarItems = document.querySelectorAll('.br-item[data-slug]');
+  sidebarItems.forEach(function(item) {
+    const slug = item.getAttribute('data-slug');
+    if (!slug) return;
+    const pin = document.querySelector('#Iran a.branch-pin-link[href="/' + slug + '"]');
+    if (pin) {
+      item.addEventListener('mouseenter', function() {
+        pin.classList.add('is-hovered');
+      });
+      item.addEventListener('mouseleave', function() {
+        pin.classList.remove('is-hovered');
+      });
+    }
+  });
+})();
+</script>

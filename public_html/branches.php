@@ -90,7 +90,7 @@ $defaultBranches = [
         'name' => 'شعبه کاشان',
         'href' => '/kashan-branch',
         'is_hq' => false,
-        'tag' => 'شعبه فعال',
+        'tag' => 'شعبه فعال (استان اصفهان)',
         'icon' => 'location'
     ],
     [
@@ -180,7 +180,8 @@ require __DIR__ . '/dashboard/components/header/component.php';
     color: inherit;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
   }
-  a.br-item:hover {
+  a.br-item:hover,
+  a.br-item.br-item--hovered {
     transform: translateX(-4px);
     box-shadow: 0 10px 24px rgba(0,123,122,.1);
     border-color: #007b7a;
@@ -284,8 +285,9 @@ require __DIR__ . '/dashboard/components/header/component.php';
             $iconKey = $b['icon'] ?? ($isHq ? 'hq' : 'location');
             $tagCls  = $isHq ? 'br-tag br-tag--hq' : 'br-tag';
             $itemCls = $isHq ? 'br-item br-item--hq' : 'br-item';
+            $slug    = trim($b['href'] ?? '', '/');
           ?>
-            <a class="<?= $itemCls ?>" href="<?= $href ?>" title="<?= $name ?>">
+            <a class="<?= $itemCls ?>" href="<?= $href ?>" data-slug="<?= htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') ?>" title="<?= $name ?>">
               <span class="br-icon" aria-hidden="true"><?= get_branch_icon($iconKey) ?></span>
               <div style="flex: 1; min-width: 0;">
                 <h3><?= $name ?></h3>
