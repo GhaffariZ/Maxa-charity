@@ -1,0 +1,44 @@
+{
+  "name": "Language Switcher",
+  "description": "Language selector component with flags and native names",
+  "category": "navigation",
+  "tags": ["language", "i18n", "navigation", "switcher"],
+  "icon": "🌐",
+  "settings": {
+    "show_flags": {
+      "type": "boolean",
+      "label": "Show Flags",
+      "default": true,
+      "description": "Display country flags next to language names"
+    },
+    "show_native_names": {
+      "type": "boolean",
+      "label": "Show Native Names",
+      "default": true,
+      "description": "Display language names in their native script"
+    },
+    "style": {
+      "type": "select",
+      "label": "Display Style",
+      "default": "dropdown",
+      "options": [
+        { "value": "dropdown", "label": "Dropdown" },
+        { "value": "inline", "label": "Inline Links" },
+        { "value": "pills", "label": "Pill Buttons" }
+      ],
+      "description": "Visual style of the language switcher"
+    },
+    "position": {
+      "type": "select",
+      "label": "Position",
+      "default": "top-right",
+      "options": [
+        { "value": "top-right", "label": "Top Right" },
+        { "value": "top-left", "label": "Top Left" },
+        { "value": "header", "label": "In Header" },
+        { "value": "footer", "label": "In Footer" }
+      ],
+      "description": "Where to display the switcher"
+    }
+  }
+}

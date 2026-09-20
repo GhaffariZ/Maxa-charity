@@ -1,0 +1,14 @@
+{
+  "name": "Language Switcher",
+  "settings": {
+    "show_flags": true,
+    "show_native_names": true,
+    "style": "inline",
+    "position": "top-right"
+  },
+  "content": {
+    "fa": "",
+    "en": "",
+    "ar": ""
+  }
+}
