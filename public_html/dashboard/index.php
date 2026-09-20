@@ -337,7 +337,6 @@ $MENU = [
                      ], $branchList),
   'user'          => ['name'=>$U['full_name'] ?: $U['username'],
                       'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
-                      'role'=>$isSuper ? 'مدیر مرکزی' : (dash_is_branch_admin() ? 'مدیر شعبه' : ((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : 'کاربر شعبه'))],
   'csrf'          => csrf_token(),
 ];
 ?>
@@ -1097,8 +1096,6 @@ body.spa-active .content{display:none}
   if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
   // روایات امید مکسا (فقط دفتر مرکزی / ستاد — و هرگز برای مدیر مالی)
   if (MENU.isHqView && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
-  // روایات امید مکسا (فقط دفتر مرکزی / ستاد)
-  if (MENU.isHqView) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
   // صفحه معرفی شعبه (فقط برای شعب — غیر از ستاد مرکزی)
   if (!MENU.isHqView) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
   if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
@@ -1150,6 +1147,7 @@ body.spa-active .content{display:none}
   // --- راهنما و مستندات سامانه ---
   NAV.push({title:'راهنما و پشتیبانی'});
   NAV.push({single:true,label:'مستندات و راهنمای سامانه',icon:'book',href:'docs.php',target:'_top'});
+  }
 
   const navEl=document.getElementById('navList');
   let delay=0;

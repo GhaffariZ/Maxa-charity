@@ -12,11 +12,7 @@ dash_session_start();
 
 // اگر از قبل وارد شده، مستقیم به پنل مناسب
 if (dash_is_authenticated()) {
-<<<<<<< HEAD
     if (dash_is_finance_only() || dash_is_finance_user()) {
-=======
-    if (dash_is_finance_only()) {
->>>>>>> 34fc93f (feat(dash): isolate navigation and add login redirection for financial officer)
         header('Location: /dashboard/financial-management.php');
     } else {
         header('Location: /dashboard/index.php');
@@ -43,11 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $res = dash_attempt_login($username, $password);
         if ($res['ok']) {
-<<<<<<< HEAD
             if (dash_is_finance_only() || dash_is_finance_user()) {
-=======
-            if (dash_is_finance_only()) {
->>>>>>> 34fc93f (feat(dash): isolate navigation and add login redirection for financial officer)
                 header('Location: /dashboard/financial-management.php');
             } else {
                 header('Location: /dashboard/index.php');
