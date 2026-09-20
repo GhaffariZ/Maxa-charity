@@ -231,6 +231,32 @@ require __DIR__ . '/dashboard/components/header/component.php';
     margin-top: auto; display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
     font-size: 14px; font-weight: 700; color: #fff; text-decoration: none;
     background: var(--cta-orange, #f5a623); padding: 9px 16px; border-radius: 10px;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .mp-item-link:hover { transform: translateY(-1px); }
+  .mp-item-link--book {
+    background: linear-gradient(135deg, #0ab2c5, #0899A9);
+  }
+  .mp-item-link--book:hover {
+    background: linear-gradient(135deg, #0899A9, #067d8a);
+  }
+  .mp-item-thumb--book {
+    aspect-ratio: 3 / 4;
+    max-height: 280px;
+    object-fit: contain;
+    background: #f8f9fa;
+    padding: 12px;
+  }
+  .mp-book-badge {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 700;
+    color: #067d8a;
+    background: rgba(8,153,169,.12);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 8px;
   }
   .mp-item-source { margin-top: auto; align-self: flex-start; font-size: 12.5px; font-weight: 700; color: #8b8f96; text-decoration: none; }
   .mp-item-source:hover { color: var(--cta-orange, #f5a623); }
@@ -406,11 +432,17 @@ require __DIR__ . '/dashboard/components/header/component.php';
               <?php if ($em && $em['kind'] === 'audio'): ?>
                 <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
               <?php elseif (!empty($it['thumbnail'])): ?>
-                <img class="mp-item-thumb" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
+                <img class="mp-item-thumb <?= $mpSlug === 'books' ? 'mp-item-thumb--book' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
               <?php else: ?>
-                <div class="mp-item-thumb"><?= $mpSection['icon'] ?></div>
+                <div class="mp-item-thumb <?= $mpSlug === 'books' ? 'mp-item-thumb--book' : '' ?>"><?= $mpSection['icon'] ?></div>
               <?php endif; ?>
               <div class="mp-item-body">
+                <?php if ($mpSlug === 'books' && !empty($it['url'])):
+                  $bookExt = strtolower(pathinfo(parse_url($it['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+                  if ($bookExt):
+                ?>
+                  <span class="mp-book-badge">کتاب <?= strtoupper(e($bookExt)) ?></span>
+                <?php endif; endif; ?>
                 <h3><?= e($it['title']) ?></h3>
                 <?php if (!empty($it['description'])): ?>
                   <p><?= nl2br(e($it['description'])) ?></p>
@@ -418,6 +450,8 @@ require __DIR__ . '/dashboard/components/header/component.php';
                 <?php if (!empty($it['url'])): ?>
                   <?php if ($em): ?>
                     <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
+                  <?php elseif ($mpSlug === 'books'): ?>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">دانلود و مطالعه کتاب 📥</a>
                   <?php else: ?>
                     <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده ↗</a>
                   <?php endif; ?>

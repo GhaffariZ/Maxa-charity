@@ -665,14 +665,28 @@ svg.ic{display:block}
 }
 /* ============ SPA — پوسته‌ی ثابت (پنل + هدر) ============ */
 /* محتوای صفحات داخل این آی‌فریم بارگذاری می‌شود؛ پنل و هدر دیگر دوباره لود نمی‌شوند */
-.spa-frame{display:none;width:100%;height:calc(100vh - 70px);border:0;background:var(--color-bg)}
+.spa-frame{display:none;width:100%;height:calc(100vh - 70px);border:0;background:var(--color-bg);transition:opacity .25s var(--ease)}
 body.spa-active .spa-frame{display:block;animation:fadeUp .35s var(--ease)}
 body.spa-active .content{display:none}
-/* نوار پیشرفت نازک هنگام جابه‌جایی بین صفحات */
-.spa-bar{position:fixed;top:0;right:0;left:0;height:3px;z-index:80;transform:scaleX(0);transform-origin:right center;opacity:0;
-  background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));
-  transition:transform .35s var(--ease),opacity .3s}
-.spa-bar.show{opacity:1}
+body.spa-loading .spa-frame{opacity:.6}
+
+/* نوار پیشرفت مدل یوتیوب (YouTube-style Top Loading Bar) */
+.spa-bar-wrap{position:fixed;top:0;right:0;left:0;height:3.5px;z-index:999999;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
+.spa-bar-wrap.show{opacity:1}
+.spa-bar{position:absolute;top:0;right:0;width:100%;height:100%;
+  background:linear-gradient(to left, #007b7a, #0ab2c5, #f4a61e, #ff9500);
+  background-size:200% 100%;
+  box-shadow:0 0 10px rgba(10,178,197,.8), 0 0 5px rgba(244,166,30,.9);
+  transform:translate3d(100%,0,0);
+  transition:transform .28s cubic-bezier(.1,.6,.1,1);
+  animation:spaBarShimmer 2s linear infinite}
+.spa-bar-peg{position:absolute;left:0;top:0;bottom:0;width:100px;height:100%;
+  box-shadow:0 0 14px 3px #f4a61e,0 0 8px 1px #0ab2c5;
+  border-radius:99px;opacity:1;pointer-events:none}
+@keyframes spaBarShimmer{
+  0%{background-position:100% 0}
+  100%{background-position:-100% 0}
+}
 /* حالت فعال برای زیرلینک‌های منو هنگام باز بودن یک صفحه */
 .nav-sub-link.active{background:var(--primary-08);color:var(--color-primary-dark);font-weight:700}
 .nav-sub-link.active .ic{opacity:1}
@@ -794,7 +808,7 @@ body.spa-active .content{display:none}
 </head>
 <body>
 <div class="app" id="app">
-  <div class="spa-bar" id="spaBar" aria-hidden="true"></div>
+  <div class="spa-bar-wrap" id="spaBarWrap" aria-hidden="true"><div class="spa-bar" id="spaBar"><div class="spa-bar-peg"></div></div></div>
 
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
@@ -1227,6 +1241,7 @@ body.spa-active .content{display:none}
   /* ---------- ناوبری SPA: محتوا داخل آی‌فریم؛ پنل و هدر ثابت می‌مانند ---------- */
   (function(){
     const frame=document.getElementById('spaFrame');
+    const barWrap=document.getElementById('spaBarWrap');
     const bar=document.getElementById('spaBar');
     const dashBtn=document.getElementById('dashHomeBtn');
     const tbTitle=document.querySelector('.tb-title');
@@ -1291,23 +1306,110 @@ body.spa-active .content{display:none}
       const label=m.label || override || file.replace(/\.php.*$/,'');
       tbTitle.innerHTML='<h1 id="pageTitle">'+label+'</h1><span>'+(m.group||'پنل مدیریت مکسا')+'</span>';
     }
-    function showBar(){ if(!bar) return; bar.classList.add('show'); bar.style.transform='scaleX(.25)'; requestAnimationFrame(()=>{ bar.style.transform='scaleX(.7)'; }); }
-    function hideBar(){ if(!bar) return; bar.style.transform='scaleX(1)'; setTimeout(()=>{ bar.classList.remove('show'); bar.style.transform='scaleX(0)'; },280); }
-    // نوار لودینگ همیشه تمام می‌شود: به‌محضِ آماده‌شدنِ DOMِ صفحه‌ی هدف (نه منتظرِ فونت/عکس) + تایم‌اوتِ ایمنی
-    let barTimer=null, barPoll=null;
-    function clearBarTimers(){ clearTimeout(barTimer); clearInterval(barPoll); barTimer=null; barPoll=null; }
-    function finishBar(){ clearBarTimers(); hideBar(); }
-    function startBar(){
-      showBar(); clearBarTimers();
-      barPoll=setInterval(function(){
-        let d=null; try{ d=frame.contentDocument; }catch(e){}
-        try{ if(d && fileOf(d.location.href)===current && /interactive|complete/.test(d.readyState)) finishBar(); }catch(e){}
-      },100);
-      barTimer=setTimeout(finishBar,2000);
+
+    /* ---------- نوار پیشرفت مدل یوتیوب (YouTube Progress Bar Engine) ---------- */
+    let curProgress = 0;
+    let trickleTimer = null;
+    let pollTimer = null;
+    let safetyTimer = null;
+    let isBarActive = false;
+
+    function setBarProgress(val, speed) {
+      if (!bar) return;
+      curProgress = Math.min(Math.max(val, 0), 1);
+      if (speed !== undefined) {
+        bar.style.transition = 'transform ' + speed + 'ms cubic-bezier(.1, .6, .1, 1)';
+      }
+      var translateX = (1 - curProgress) * 100;
+      bar.style.transform = 'translate3d(' + translateX + '%, 0, 0)';
+    }
+
+    function clearBarTimers() {
+      if (trickleTimer) { clearInterval(trickleTimer); trickleTimer = null; }
+      if (pollTimer)    { clearInterval(pollTimer); pollTimer = null; }
+      if (safetyTimer)  { clearTimeout(safetyTimer); safetyTimer = null; }
+    }
+
+    function startBar() {
+      if (!bar || !barWrap) return;
+      clearBarTimers();
+      isBarActive = true;
+      document.body.classList.add('spa-loading');
+
+      // نقطه شروع: فورا از ۰ (پنهان در سمت راست) بدون انیمیشن
+      bar.style.transition = 'none';
+      curProgress = 0;
+      bar.style.transform = 'translate3d(100%, 0, 0)';
+      barWrap.classList.add('show');
+
+      // پرش اولیه یوتیوب به حدود ۱۶٪ تا ۲۲٪
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          if (!isBarActive) return;
+          setBarProgress(0.18 + Math.random() * 0.06, 260);
+        });
+      });
+
+      // مکانیزم Trickle: جلو رفتن تدریجی و زنده نوار در طول زمان انتظار
+      trickleTimer = setInterval(function() {
+        if (!isBarActive) return;
+        if (curProgress < 0.94) {
+          var step = 0;
+          if (curProgress < 0.35) {
+            step = 0.05 + Math.random() * 0.05;
+          } else if (curProgress < 0.65) {
+            step = 0.025 + Math.random() * 0.035;
+          } else if (curProgress < 0.85) {
+            step = 0.012 + Math.random() * 0.018;
+          } else {
+            step = 0.003 + Math.random() * 0.006;
+          }
+          setBarProgress(curProgress + step, 280);
+        }
+      }, 250);
+
+      // پایش آماده‌سازی سند آی‌فریم
+      pollTimer = setInterval(function() {
+        if (!isBarActive) return;
+        var d = null;
+        try { d = frame.contentDocument; } catch(e) {}
+        try {
+          if (d && fileOf(d.location.href) === current && /interactive|complete/.test(d.readyState)) {
+            finishBar();
+          }
+        } catch(e) {}
+      }, 70);
+
+      // تایم‌اوت ایمنی ۲۰ ثانیه‌ای برای شبکه‌های کند
+      safetyTimer = setTimeout(finishBar, 20000);
+    }
+
+    function finishBar() {
+      if (!isBarActive) return;
+      isBarActive = false;
+      clearBarTimers();
+      document.body.classList.remove('spa-loading');
+
+      // پرتاب نهایی به ۱۰۰٪ (کل صفحه)
+      setBarProgress(1, 160);
+
+      // محو شدن نوار با ترنزیشن نرم و بازگشت به نقطه صفر
+      setTimeout(function() {
+        if (!isBarActive) {
+          barWrap.classList.remove('show');
+          setTimeout(function() {
+            if (!isBarActive) {
+              bar.style.transition = 'none';
+              bar.style.transform = 'translate3d(100%, 0, 0)';
+              curProgress = 0;
+            }
+          }, 300);
+        }
+      }, 220);
     }
 
     function showHome(){
-      clearBarTimers();
+      finishBar();
       current=null;
       document.body.classList.remove('spa-active');
       try{ frame.contentWindow.location.replace('about:blank'); }catch(e){}  // بدون افزودن تاریخچه
@@ -1355,6 +1457,28 @@ body.spa-active .content{display:none}
           setTimeout(()=>{ syncing=false; },0);
         }
         setTitle(p,docTitle);
+      }catch(e){}
+
+      // رهگیری کلیک‌ها، تب‌ها و ارسال فرم‌ها در داخل آی‌فریم برای فعال‌سازی بلافاصله لودینگ مدل یوتیوب
+      try{
+        doc.addEventListener('click',function(e){
+          const a=e.target.closest?e.target.closest('a[href]'):null;
+          if(!a) return;
+          const href=a.getAttribute('href')||'';
+          if(!href || href.charAt(0)==='#' || /^(javascript:|mailto:|tel:)/i.test(href)) return;
+          if(a.target && a.target!=='_self') return;
+          startBar();
+        }, true);
+
+        doc.addEventListener('submit',function(){
+          startBar();
+        }, true);
+
+        if(doc.defaultView){
+          doc.defaultView.addEventListener('beforeunload',function(){
+            startBar();
+          });
+        }
       }catch(e){}
     });
 
