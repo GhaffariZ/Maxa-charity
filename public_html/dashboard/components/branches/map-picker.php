@@ -650,6 +650,16 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
     const pt = screenToSvg(e);
     setPinPosition(pt.x, pt.y);
+
+    // اگر روی استانی کلیک شد و فیلد استان خالی بود، به‌صورت هوشمند نام استان را درج کن
+    const clickedProvEl = e.target.closest ? e.target.closest('[data-province]') : null;
+    if (clickedProvEl) {
+      const provName = clickedProvEl.getAttribute('data-province');
+      const provInput = document.getElementById('branchProvinceInput') || document.querySelector('input[name="province"]');
+      if (provName && provInput && (!provInput.value || provInput.value.trim() === '')) {
+        provInput.value = provName;
+      }
+    }
   });
 
   // مقداردهی اولیه اگر از قبل موقعیتی ثبت شده بود

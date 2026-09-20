@@ -185,7 +185,40 @@ require __DIR__ . '/_panel_head.php';
         </div>
         <div class="field">
           <label>استان تحت پوشش</label>
-          <input type="text" name="province" value="<?= e($old['province']) ?>" placeholder="مثلاً: اصفهان">
+          <input type="text" name="province" id="branchProvinceInput" value="<?= e($old['province']) ?>" placeholder="مثلاً: اصفهان" list="iranProvincesList" autocomplete="off">
+          <datalist id="iranProvincesList">
+            <option value="آذربایجان شرقی">
+            <option value="آذربایجان غربی">
+            <option value="اردبیل">
+            <option value="اصفهان">
+            <option value="البرز">
+            <option value="ایلام">
+            <option value="بوشهر">
+            <option value="تهران">
+            <option value="چهارمحال و بختیاری">
+            <option value="خراسان جنوبی">
+            <option value="خراسان رضوی">
+            <option value="خراسان شمالی">
+            <option value="خوزستان">
+            <option value="زنجان">
+            <option value="سمنان">
+            <option value="سیستان و بلوچستان">
+            <option value="فارس">
+            <option value="قزوین">
+            <option value="قم">
+            <option value="کردستان">
+            <option value="کرمان">
+            <option value="کرمانشاه">
+            <option value="کهگیلویه و بویراحمد">
+            <option value="گلستان">
+            <option value="گیلان">
+            <option value="لرستان">
+            <option value="مازندران">
+            <option value="مرکزی">
+            <option value="هرمزگان">
+            <option value="همدان">
+            <option value="یزد">
+          </datalist>
         </div>
         <div class="field">
           <label>شهر تحت پوشش</label>

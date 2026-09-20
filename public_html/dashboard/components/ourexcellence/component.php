@@ -225,19 +225,25 @@ cursor: pointer;
 outline: none;
 }
 
+.iran-map-box #Iran .province-shape.is-active,
 .iran-map-box #Iran path.province-shape.is-active,
-.iran-map-box #Iran polygon.province-shape.is-active {
-fill: #007b7a;
-stroke: #004d4c;
-stroke-width: 1.2;
+.iran-map-box #Iran polygon.province-shape.is-active,
+.iran-map-box #Iran .province-item.is-active .province-shape,
+.iran-map-box #Iran g.is-active path,
+.iran-map-box #Iran [data-province].is-active path {
+fill: #007b7a !important;
+stroke: #004d4c !important;
+stroke-width: 1.25 !important;
 transition: all 0.25s ease;
-cursor: pointer;
+cursor: pointer !important;
 }
 
+.iran-map-box #Iran .province-shape.is-active:hover,
+.iran-map-box #Iran path.province-shape.is-active:hover,
 .iran-map-box #Iran a.province-link:hover path.province-shape.is-active,
 .iran-map-box #Iran a.province-link:hover polygon.province-shape.is-active {
-fill: #10aeb8;
-filter: drop-shadow(0 6px 14px rgba(0,123,122,.4));
+fill: #10aeb8 !important;
+filter: drop-shadow(0 6px 14px rgba(0,123,122,.4)) !important;
 }
 
 

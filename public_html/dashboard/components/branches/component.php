@@ -232,14 +232,33 @@
   outline: none;
 }
 
-#Iran a.province-link .province-shape.is-active {
+#Iran .province-shape.is-active,
+#Iran path.province-shape.is-active,
+#Iran polygon.province-shape.is-active,
+#Iran .province-item.is-active .province-shape,
+#Iran .province-item.is-active path,
+#Iran .province-item.is-active polygon,
+#Iran g.is-active .province-shape,
+#Iran g.is-active path,
+#Iran g.is-active polygon,
+#Iran a.province-link .province-shape,
+#Iran a.province-link .province-shape.is-active,
+#Iran [data-province].is-active path,
+#Iran [data-province].is-active polygon {
   fill: #007b7a !important;
   stroke: #004544 !important;
   stroke-width: 1.25 !important;
   cursor: pointer !important;
-  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3));
+  pointer-events: auto !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3)) !important;
 }
 
+#Iran .province-shape.is-active:hover,
+#Iran path.province-shape.is-active:hover,
+#Iran polygon.province-shape.is-active:hover,
+#Iran .province-item.is-active:hover .province-shape,
+#Iran g.is-active:hover path,
+#Iran a.province-link:hover .province-shape,
 #Iran a.province-link:hover .province-shape.is-active,
 #Iran a.province-link:focus-visible .province-shape.is-active {
   fill: #10aeb8 !important;
@@ -248,6 +267,7 @@
   filter: drop-shadow(0 8px 18px rgba(16, 174, 184, 0.5)) !important;
 }
 
+#Iran .province-shape.is-active:active,
 #Iran a.province-link:active .province-shape.is-active {
   fill: #005958 !important;
 }
@@ -583,24 +603,46 @@
 
   // 0. Activate any provinces that have active branches registered
   if (window.__activeBranchProvinces && Array.isArray(window.__activeBranchProvinces)) {
-    window.__activeBranchProvinces.forEach(function(prov) {
+    window.__activeBranchProvinces.forEach(function(rawProv) {
+      if (!rawProv) return;
+      var prov = String(rawProv).replace(/^استان\s+/u, '').trim();
       if (!prov) return;
-      const provElements = document.querySelectorAll('#Iran [data-province="' + prov + '"]');
+
+      var provElements = document.querySelectorAll(
+        '#Iran [data-province="' + prov + '"], ' +
+        '#Iran [data-province="استان ' + prov + '"], ' +
+        '#Iran [data-province="' + rawProv + '"]'
+      );
+
       provElements.forEach(function(el) {
-        if (el.classList.contains('is-inactive')) {
-          el.classList.remove('is-inactive');
-          el.classList.add('is-active');
-        }
-        const shape = el.classList.contains('province-shape') ? el : el.querySelector('.province-shape');
-        if (shape && shape.classList.contains('is-inactive')) {
+        el.classList.remove('is-inactive');
+        el.classList.add('is-active');
+
+        var shapes = el.querySelectorAll ? el.querySelectorAll('.province-shape, path, polygon') : [];
+        shapes.forEach(function(shape) {
           shape.classList.remove('is-inactive');
           shape.classList.add('is-active');
+          shape.style.setProperty('fill', '#007b7a', 'important');
+          shape.style.setProperty('stroke', '#004544', 'important');
+          shape.style.setProperty('stroke-width', '1.25', 'important');
+          shape.style.setProperty('cursor', 'pointer', 'important');
+        });
+
+        if (el.classList.contains('province-shape') || el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'polygon') {
+          el.style.setProperty('fill', '#007b7a', 'important');
+          el.style.setProperty('stroke', '#004544', 'important');
+          el.style.setProperty('stroke-width', '1.25', 'important');
+          el.style.setProperty('cursor', 'pointer', 'important');
         }
       });
+
       // Hide inactive province label so it doesn't overlap the active pin
       document.querySelectorAll('#Iran text.lbl-inactive').forEach(function(txt) {
-        if (txt.textContent.trim() === prov) {
-          txt.style.display = 'none';
+        var textContent = txt.textContent.trim().replace(/^استان\s+/u, '');
+        var dataProv = (txt.getAttribute('data-province') || '').trim().replace(/^استان\s+/u, '');
+        if (textContent === prov || dataProv === prov || textContent === rawProv) {
+          txt.style.setProperty('display', 'none', 'important');
+          txt.setAttribute('data-hidden', 'true');
         }
       });
     });
