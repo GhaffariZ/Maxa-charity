@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <section class="branches" dir="rtl">
   <div class="branches__card">
     <header class="branches__head">

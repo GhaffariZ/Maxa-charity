@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
     <!-- Vazirmatn Variable Font — self-hosted for reliability on the Iran network (no external CDN) -->
 <style>
   @font-face {

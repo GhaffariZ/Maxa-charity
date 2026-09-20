@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <section class="travel-stats-section" dir="rtl">
 
 <div class="travel-box">

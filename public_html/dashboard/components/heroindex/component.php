@@ -1,5 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
+<?php
+$hi_locale = CURRENT_LOCALE ?? getLocale();
+$hi_dir = CURRENT_DIRECTION ?? getDirection($hi_locale);
+?>
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="<?= htmlspecialchars($hi_locale) ?>" dir="<?= htmlspecialchars($hi_dir) ?>">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1581,111 +1586,104 @@
             <ul class="cta-menu" id="menu">
 
               <li>
-                <a href="/home">خانه</a>
+                <a href="/home"><?= htmlspecialchars(__('nav.home')) ?></a>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);"><?= htmlspecialchars(__('component.about_menu')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>معرفی</h6>
-                      <a href="/history">تاریخچه و نحوه تاسیس</a>
-                      <a href="/mission-vision">ماموریت و چشم انداز</a>
-                      <a href="/association">اساسنامه</a>
-                      <a href="/organizationalchart">چارت سازمانی</a>
-                      <a href="/headdirectors">شورای عالی</a>
-                      <a href="/directors">هیئت مدیره</a>
-                      <a href="/CEOoffice">مدیرعامل</a>
-                      <a href="/network.php">شبکه همکاران</a>
+                      <h6><?= htmlspecialchars(__('component.about_intro')) ?></h6>
+                      <a href="/history"><?= htmlspecialchars(__('component.history_founding')) ?></a>
+                      <a href="/mission-vision"><?= htmlspecialchars(__('component.mission_vision')) ?></a>
+                      <a href="/association"><?= htmlspecialchars(__('component.association')) ?></a>
+                      <a href="/organizationalchart"><?= htmlspecialchars(__('component.org_chart')) ?></a>
+                      <a href="/headdirectors"><?= htmlspecialchars(__('component.supreme_council_menu')) ?></a>
+                      <a href="/directors"><?= htmlspecialchars(__('component.board_menu')) ?></a>
+                      <a href="/CEOoffice"><?= htmlspecialchars(__('component.ceo')) ?></a>
+                      <a href="/network.php"><?= htmlspecialchars(__('component.partner_network')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراکز تابعه مکسا</h6>
-                      <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
-                      <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
+                      <h6><?= htmlspecialchars(__('component.affiliated_centers')) ?></h6>
+                      <a href="/cdst"><?= htmlspecialchars(__('component.talent_center')) ?></a>
+                      <a href="/amoozesh_maharati.html"><?= htmlspecialchars(__('component.skills_center')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>گزارش‌ها</h6>
-                      <a href="/image-gallery.html">گزارش‌های سالانه</a>
-                      <a href="/video-gallery.html">صورت‌های مالی</a>
+                      <h6><?= htmlspecialchars(__('component.reports')) ?></h6>
+                      <a href="/image-gallery.html"><?= htmlspecialchars(__('component.annual_reports')) ?></a>
+                      <a href="/video-gallery.html"><?= htmlspecialchars(__('component.financial_statements')) ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">خدمات مکسا</a>
+                <a class="mega-toggle" href="javascript:void(0);"><?= htmlspecialchars(__('component.services_menu')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
-                      <a href="/supportiveandpalliativecare">مفهوم مراقبت های حمایتی و تسکینی</a>
-                      <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
-                      <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
-                      <a href="/iran-situation-in-palliative">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
-                      <a href="/doctorspage">نقش کادر درمان</a>
+                      <h6><?= htmlspecialchars(__('component.palliative_overview')) ?></h6>
+                      <a href="/supportiveandpalliativecare"><?= htmlspecialchars(__('component.palliative_overview')) ?></a>
+                      <a href="/supportiveandpalliativecareteam"><?= htmlspecialchars(__('component.palliative_team')) ?></a>
+                      <a href="/endoflifecare"><?= htmlspecialchars(__('component.end_of_life_care')) ?></a>
+                      <a href="/iran-situation-in-palliative"><?= htmlspecialchars(__('component.palliative_in_iran')) ?></a>
+                      <a href="/doctorspage"><?= htmlspecialchars(__('component.medical_team')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
-                      <a href="/medicalcare">مراقبت های پزشکی تسکینی</a>
-                      <a href="/nursecare">مراقبت های پرستاری تسکینی</a>
-                      <a href="/psychologicalcare">مراقبت های روانشناختی</a>
-                      <a href="/socialworkcare">مددکاری اجتماعی</a>
-                      <a href="/spritualcare">مراقبت های معنوی</a>
-                      <a href="/nutritioncare">مراقبت های تغذیه</a>
-                      <a href="/physiotherapycare">مراقبت های بازتوانی و توانبخشی</a>
-                      <a href="/geneticconseuling">مشاوره ژنتیک و غربالگری</a>
-                      <a href="/medicalequipments">تامین تجهیزات پزشکی</a>
+                      <h6><?= htmlspecialchars(__('component.palliative_overview')) ?></h6>
+                      <a href="/medicalcare"><?= htmlspecialchars(__('component.palliative_medical')) ?></a>
+                      <a href="/nursecare"><?= htmlspecialchars(__('component.palliative_nursing')) ?></a>
+                      <a href="/psychologicalcare"><?= htmlspecialchars(__('component.psychological')) ?></a>
+                      <a href="/socialworkcare"><?= htmlspecialchars(__('component.social_work')) ?></a>
+                      <a href="/spritualcare"><?= htmlspecialchars(__('component.spiritual')) ?></a>
+                      <a href="/nutritioncare"><?= htmlspecialchars(__('component.nutrition')) ?></a>
+                      <a href="/physiotherapycare"><?= htmlspecialchars(__('component.rehabilitation')) ?></a>
+                      <a href="/geneticconseuling"><?= htmlspecialchars(__('component.genetic')) ?></a>
+                      <a href="/medicalequipments"><?= htmlspecialchars(__('component.medical_equipment')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>بخش‌ها</h6>
-                      <a href="#">مراقبت در منزل</a>
-                      <a href="#">بستری</a>
-                      <a href="#">سرپایی</a>
-                      <a href="#">کلینیک</a>
-                    </div>
-                    <div class="mega-col">
-                      <h6>پذیرش بیمار</h6>
-                      <a href="#">نوبت دهی</a>
-                      <a href="#">مدارک موردنیاز</a>
+                      <h6><?= htmlspecialchars(__('component.patient_admission')) ?></h6>
+                      <a href="#"><?= htmlspecialchars(__('component.appointment')) ?></a>
+                      <a href="#"><?= htmlspecialchars(__('component.required_documents')) ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/single-fundraising-option">روش های حمایت</a>
+                <a class="mega-toggle" href="/single-fundraising-option"><?= htmlspecialchars(__('component.support_menu')) ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>همیاری مالی</h6>
-                      <a href="/onlinedonation">حمایت مالی آنلاین</a>
-                      <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
+                      <h6><?= htmlspecialchars(__('component.financial_support')) ?></h6>
+                      <a href="/onlinedonation"><?= htmlspecialchars(__('component.online_donation')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.recurring_payment')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری اجتماعی و فرهنگی</h6>
-                      <a href="/under-construction.html">مسئولیت اجتماعی</a>
-                      <a href="/under-construction.html">حمایت های خلاقانه و هنری</a>
+                      <h6><?= htmlspecialchars(__('component.social_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.corporate_social')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.creative_support')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری علمی و تخصصی</h6>
-                      <a href="/under-construction.html">حمایت علمی و تخصصی</a>
-                      <a href="/under-construction.html">اهدای تجهیزات پزشکی</a>
+                      <h6><?= htmlspecialchars(__('component.scientific_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.scientific_support')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.equipment_donation')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مشارکت داوطلبی</h6>
-                      <a href="/under-construction.html">همکاری داوطلبانه</a>
-                      <a href="/under-construction.html">شرایط جذب داوطلبان</a>
+                      <h6><?= htmlspecialchars(__('component.volunteer_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.volunteer_cooperation')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.volunteer_requirements')) ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <li><a href="/branches.php">شعب</a></li>
-              <li><a href="/news.php">اخبار</a></li>
-              <li><a href="/macsapedia.php">مکساپدیا</a></li>
-              <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
-              <li><a href="contactus.html">تماس با ما</a></li>
+              <li><a href="/branches.php"><?= htmlspecialchars(__('nav.branches')) ?></a></li>
+              <li><a href="/news.php"><?= htmlspecialchars(__('nav.news')) ?></a></li>
+              <li><a href="/macsapedia.php"><?= htmlspecialchars(__('component.macsapedia_title')) ?></a></li>
+              <li><a href="/dashboard/courses.php"><?= htmlspecialchars(__('component.courses_title')) ?></a></li>
+              <li><a href="contactus.html"><?= htmlspecialchars(__('nav.contact')) ?></a></li>
             </ul>
           </nav>
         </div>
@@ -1698,13 +1696,13 @@
 </div>
 
 
-          <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
-            کمک آنلاین
+          <a class="cta-donate" href="/onlinedonation" aria-label="<?= htmlspecialchars(__('header.donate_now')) ?>">
+            <?= htmlspecialchars(__('header.donate_now')) ?>
           </a>
 
           <div class="cta-auth-slot">
-            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
-              ورود / ثبت‌نام
+            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="<?= htmlspecialchars(__('header.login')) ?>">
+              <?= htmlspecialchars(__('header.login')) ?> / <?= htmlspecialchars(__('header.register')) ?>
             </a>
 
             <div class="cta-account js-cta-account" hidden>
@@ -1769,37 +1767,36 @@
             <h1 class="cta-title" id="heroTitle"></h1>
             <p class="cta-desc" id="heroDesc"></p>
             <a class="cta-btn" id="heroBtn" href="#">
-              <span id="heroBtnText">مشاهده بیشتر</span>
+              <span id="heroBtnText"><?= htmlspecialchars(__('hero_slider.view_more')) ?></span>
               <span aria-hidden="true">←</span>
             </a>
           </div>
         </div>
       </div>
 
-      <button class="cta-arrow prev" id="ctaPrev" aria-label="اسلاید قبلی" type="button">
+      <button class="cta-arrow prev" id="ctaPrev" aria-label="<?= htmlspecialchars(__('hero_slider.prev_slide')) ?>" type="button">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M9.5 5L16 12l-6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
 
-      <button class="cta-arrow next" id="ctaNext" aria-label="اسلاید بعدی" type="button">
+      <button class="cta-arrow next" id="ctaNext" aria-label="<?= htmlspecialchars(__('hero_slider.next_slide')) ?>" type="button">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M14.5 5L8 12l6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
 
-      <div class="cta-dots" id="ctaDots" aria-label="نشانگر اسلایدها"></div>
+      <div class="cta-dots" id="ctaDots" aria-label="<?= htmlspecialchars(__('hero_slider.slide_indicators')) ?>"></div>
 
     </section>
 
     <section class="cta-band" aria-label="Band">
       <div class="cta-container">
-        <a class="cta-band-cta" href="/onlinedonation">❤ می‌خواهم کمک کنم </a>
+        <a class="cta-band-cta" href="/onlinedonation">❤ <?= htmlspecialchars(__('band.donate_cta')) ?> </a>
         <div class="cta-band-text">
-          <h3>با هم برای جهانی بهتر</h3>
+          <h3><?= htmlspecialchars(__('band.title')) ?></h3>
           <p>
-            مشارکت شما می‌تونه یک تغییر واقعی بسازه؛
-            کافی‌ست مسیر درست رو انتخاب کنیم و کنار هم ادامه بدیم.
+            <?= htmlspecialchars(__('band.description')) ?>
           </p>
         </div>
       </div>
@@ -1818,8 +1815,8 @@
       </svg>
     </div>
 
-    <h4>بسته های نیکوکاری</h4>
-    <p>یک قدم کوچک شما، برای یک خانواده می‌تونه بزرگ‌ترین امید باشه.</p>
+    <h4><?= htmlspecialchars(__('home_card.charity_packages')) ?></h4>
+    <p><?= htmlspecialchars(__('home_card.charity_packages_desc')) ?></p>
   </div>
 
   <div class="cta-card" role="link" tabindex="0" data-link="/single-fundraising-option" aria-label="مشاهده روش‌های حمایت">
@@ -1833,8 +1830,8 @@
       </svg>
     </div>
 
-    <h4>روش های حمایت</h4>
-    <p>از راه های مختلف کمک های نقدی و غیر نقدی خود را به زندگی بیماران هدیه کنید.</p>
+    <h4><?= htmlspecialchars(__('home_card.support_methods')) ?></h4>
+    <p><?= htmlspecialchars(__('home_card.support_methods_desc')) ?></p>
   </div>
 
   <div class="cta-card" role="link" tabindex="0" data-link="/patientintake" aria-label="تشکیل پرونده اولیه مجازی">
@@ -1845,8 +1842,8 @@
       </svg>
     </div>
 
-    <h4>تشکیل پرونده اولیه مجازی</h4>
-    <p>برای دریافت مشاوره تخصصی و بررسی پرونده درمانی، فرم مجازی را تکمیل کنید.</p>
+    <h4><?= htmlspecialchars(__('home_card.virtual_record')) ?></h4>
+    <p><?= htmlspecialchars(__('home_card.virtual_record_desc')) ?></p>
   </div>
 
   <div class="cta-card" role="link" tabindex="0" data-link="/stand-order.php" aria-label="سفارش استند و کارت دیجیتال تبریک و تسلیت">
@@ -1856,8 +1853,8 @@
       </svg>
     </div>
 
-    <h4>استند و کارت تسلیت</h4>
-    <p>در شادی‌ها و غم‌ها با سفارش استند، حامی بیماران مبتلا به سرطان باشید.</p>
+    <h4><?= htmlspecialchars(__('home_card.condolence_stand')) ?></h4>
+    <p><?= htmlspecialchars(__('home_card.condolence_stand_desc')) ?></p>
   </div>
 
 </div>
@@ -1882,11 +1879,11 @@
   <div class="mobile-menu-actions">
     <a class="mobile-action-donate" href="/onlinedonation">
       <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      کمک آنلاین
+      <?= htmlspecialchars(__('header.donate_now')) ?>
     </a>
     <a class="mobile-action-auth js-mobile-login" href="/benefactor-dashboard/">
       <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      ورود / ثبت‌نام
+      <?= htmlspecialchars(__('header.login')) ?> / <?= htmlspecialchars(__('header.register')) ?>
     </a>
   </div>
 
@@ -1896,8 +1893,7 @@
     <div class="mobile-footer-info">
       <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
       <span>پشتیبانی: <a href="tel:02191092030" dir="ltr" style="display:inline-block; font-family:inherit; color:inherit; text-decoration:none; unicode-bidi:isolate;">021-91092030</a></span>
-    </div>
-    <div class="mobile-footer-tagline">مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</div>
+    </div>      <div class="mobile-footer-tagline"><?= htmlspecialchars(__('meta.site_name')) ?></div>
   </div>
 </nav>
 <div class="mobile-backdrop" id="mobileBackdrop"></div>

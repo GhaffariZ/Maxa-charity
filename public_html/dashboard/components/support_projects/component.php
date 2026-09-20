@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 

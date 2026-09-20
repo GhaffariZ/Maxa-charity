@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/component-lang.php';
 // دریافت فهرست شعب فعال ارائه‌دهنده استند از دیتابیس برای دراپ‌داون اولیه
 $homeBranches = [];
 try {

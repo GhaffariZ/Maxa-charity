@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <section class="pro-stories" dir="rtl" data-component="macsa-stories-details">
 
   <div class="ps-global-bg"></div>

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <!-- Books Archive Section Start -->
 <section class="books-archive-section" dir="rtl">
   <div class="container">

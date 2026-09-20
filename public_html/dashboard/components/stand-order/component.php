@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/component-lang.php';
 // دریافت اولیه لیست استان‌ها و شعب فعال غیرستادی
 $initialProvinces = [];
 

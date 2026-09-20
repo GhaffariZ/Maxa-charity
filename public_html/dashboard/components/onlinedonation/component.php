@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <section class="donation-shell">
   <div class="donation-card">
 

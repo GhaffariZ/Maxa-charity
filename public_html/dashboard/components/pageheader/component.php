@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <div class="page-header-wrapper">
     <header class="page-header-capsule" dir="rtl">
         <h1>تاریخچه و نحوه تاسیس</h1>

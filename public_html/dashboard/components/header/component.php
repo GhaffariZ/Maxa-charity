@@ -1079,25 +1079,25 @@ $hdr_dir = CURRENT_DIRECTION ?? getDirection($hdr_locale);
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>معرفی</h6>
-                      <a href="/history">تاریخچه و نحوه تاسیس</a>
-                      <a href="/mission-vision">ماموریت و چشم انداز</a>
-                      <a href="/association">اساسنامه</a>
-                      <a href="/organizationalchart">چارت سازمانی</a>
-                      <a href="/headdirectors">شورای عالی</a>
-                      <a href="/directors">هیئت مدیره</a>
-                      <a href="/CEOoffice">مدیرعامل</a>
-                      <a href="/network.php">شبکه همکاران</a>
+                      <h6><?= htmlspecialchars(__('component.about_intro')) ?></h6>
+                      <a href="/history"><?= htmlspecialchars(__('component.history_founding')) ?></a>
+                      <a href="/mission-vision"><?= htmlspecialchars(__('component.mission_vision')) ?></a>
+                      <a href="/association"><?= htmlspecialchars(__('component.association')) ?></a>
+                      <a href="/organizationalchart"><?= htmlspecialchars(__('component.org_chart')) ?></a>
+                      <a href="/headdirectors"><?= htmlspecialchars(__('component.supreme_council_menu')) ?></a>
+                      <a href="/directors"><?= htmlspecialchars(__('component.board_menu')) ?></a>
+                      <a href="/CEOoffice"><?= htmlspecialchars(__('component.ceo')) ?></a>
+                      <a href="/network.php"><?= htmlspecialchars(__('component.partner_network')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراکز تابعه مکسا</h6>
-                      <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
-                      <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
+                      <h6><?= htmlspecialchars(__('component.affiliated_centers')) ?></h6>
+                      <a href="/cdst"><?= htmlspecialchars(__('component.talent_center')) ?></a>
+                      <a href="/amoozesh_maharati.html"><?= htmlspecialchars(__('component.skills_center')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>گزارش‌ها</h6>
-                      <a href="/image-gallery.html">گزارش‌های سالانه</a>
-                      <a href="/video-gallery.html">صورت‌های مالی</a>
+                      <h6><?= htmlspecialchars(__('component.reports')) ?></h6>
+                      <a href="/image-gallery.html"><?= htmlspecialchars(__('component.annual_reports')) ?></a>
+                      <a href="/video-gallery.html"><?= htmlspecialchars(__('component.financial_statements')) ?></a>
                     </div>
                   </div>
                 </div>
@@ -1108,36 +1108,29 @@ $hdr_dir = CURRENT_DIRECTION ?? getDirection($hdr_locale);
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
-                      <a href="/supportiveandpalliativecare">مفهوم مراقبت های حمایتی و تسکینی</a>
-                      <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
-                      <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
-                      <a href="/iran-situation-in-palliative">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
-                      <a href="/doctorspage">نقش کادر درمان</a>
+                      <h6><?= htmlspecialchars(__('component.palliative_overview')) ?></h6>
+                      <a href="/supportiveandpalliativecare"><?= htmlspecialchars(__('component.palliative_overview')) ?></a>
+                      <a href="/supportiveandpalliativecareteam"><?= htmlspecialchars(__('component.palliative_team')) ?></a>
+                      <a href="/endoflifecare"><?= htmlspecialchars(__('component.end_of_life_care')) ?></a>
+                      <a href="/iran-situation-in-palliative"><?= htmlspecialchars(__('component.palliative_in_iran')) ?></a>
+                      <a href="/doctorspage"><?= htmlspecialchars(__('component.medical_team')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
-                      <a href="/medicalcare">مراقبت های پزشکی تسکینی</a>
-                      <a href="/nursecare">مراقبت های پرستاری تسکینی</a>
-                      <a href="/psychologicalcare">مراقبت های روانشناختی</a>
-                      <a href="/socialworkcare">مددکاری اجتماعی</a>
-                      <a href="/spritualcare">مراقبت های معنوی</a>
-                      <a href="/nutritioncare">مراقبت های تغذیه</a>
-                      <a href="/physiotherapycare">مراقبت های بازتوانی و توانبخشی</a>
-                      <a href="/geneticconseuling">مشاوره ژنتیک و غربالگری</a>
-                      <a href="/medicalequipments">تامین تجهیزات پزشکی</a>
+                      <h6><?= htmlspecialchars(__('component.palliative_overview')) ?></h6>
+                      <a href="/medicalcare"><?= htmlspecialchars(__('component.palliative_medical')) ?></a>
+                      <a href="/nursecare"><?= htmlspecialchars(__('component.palliative_nursing')) ?></a>
+                      <a href="/psychologicalcare"><?= htmlspecialchars(__('component.psychological')) ?></a>
+                      <a href="/socialworkcare"><?= htmlspecialchars(__('component.social_work')) ?></a>
+                      <a href="/spritualcare"><?= htmlspecialchars(__('component.spiritual')) ?></a>
+                      <a href="/nutritioncare"><?= htmlspecialchars(__('component.nutrition')) ?></a>
+                      <a href="/physiotherapycare"><?= htmlspecialchars(__('component.rehabilitation')) ?></a>
+                      <a href="/geneticconseuling"><?= htmlspecialchars(__('component.genetic')) ?></a>
+                      <a href="/medicalequipments"><?= htmlspecialchars(__('component.medical_equipment')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>بخش‌ها</h6>
-                      <a href="#">مراقبت در منزل</a>
-                      <a href="#">بستری</a>
-                      <a href="#">سرپایی</a>
-                      <a href="#">کلینیک</a>
-                    </div>
-                    <div class="mega-col">
-                      <h6>پذیرش بیمار</h6>
-                      <a href="#">نوبت دهی</a>
-                      <a href="#">مدارک موردنیاز</a>
+                      <h6><?= htmlspecialchars(__('component.patient_admission')) ?></h6>
+                      <a href="#"><?= htmlspecialchars(__('component.appointment')) ?></a>
+                      <a href="#"><?= htmlspecialchars(__('component.required_documents')) ?></a>
                     </div>
                   </div>
                 </div>
@@ -1148,24 +1141,24 @@ $hdr_dir = CURRENT_DIRECTION ?? getDirection($hdr_locale);
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>همیاری مالی</h6>
-                      <a href="/onlinedonation">حمایت مالی آنلاین</a>
-                      <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
+                      <h6><?= htmlspecialchars(__('component.financial_support')) ?></h6>
+                      <a href="/onlinedonation"><?= htmlspecialchars(__('component.online_donation')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.recurring_payment')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری اجتماعی و فرهنگی</h6>
-                      <a href="/under-construction.html">مسئولیت اجتماعی</a>
-                      <a href="/under-construction.html">حمایت های خلاقانه و هنری</a>
+                      <h6><?= htmlspecialchars(__('component.social_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.corporate_social')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.creative_support')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری علمی و تخصصی</h6>
-                      <a href="/under-construction.html">حمایت علمی و تخصصی</a>
-                      <a href="/under-construction.html">اهدای تجهیزات پزشکی</a>
+                      <h6><?= htmlspecialchars(__('component.scientific_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.scientific_support')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.equipment_donation')) ?></a>
                     </div>
                     <div class="mega-col">
-                      <h6>مشارکت داوطلبی</h6>
-                      <a href="/under-construction.html">همکاری داوطلبانه</a>
-                      <a href="/under-construction.html">شرایط جذب داوطلبان</a>
+                      <h6><?= htmlspecialchars(__('component.volunteer_support')) ?></h6>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.volunteer_cooperation')) ?></a>
+                      <a href="/under-construction.html"><?= htmlspecialchars(__('component.volunteer_requirements')) ?></a>
                     </div>
                   </div>
                 </div>

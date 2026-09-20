@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <section class="maxsa-glass" data-component="macsa-stories">
 
 <h2 class="maxsa-title">

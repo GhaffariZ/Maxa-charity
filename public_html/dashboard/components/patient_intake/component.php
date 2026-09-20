@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <div class="medical-intake">
 
 <div class="mi-container">

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <!-- ========================= -->
 <!-- Section 1 — Link Cards (no images, links stacked) -->
 <section class="po-section">

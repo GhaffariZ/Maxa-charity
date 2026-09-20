@@ -238,4 +238,171 @@ return [
         'site_description' => 'هم‌سنگر بیماران سرطان، حمایت مالی، داوطلبی، شفافیت مالی',
         'keywords' => 'سرطان, حمایت مالی, موسسه نیکوکاری, مکسا, داوطلبی, شفافیت',
     ],
+
+    // Hero Slider
+    'hero_slider' => [
+        'view_more' => 'مشاهده بیشتر',
+        'prev_slide' => 'اسلاید قبلی',
+        'next_slide' => 'اسلاید بعدی',
+        'slide_indicators' => 'نشانگر اسلایدها',
+    ],
+
+    // Homepage Band Section
+    'band' => [
+        'donate_cta' => 'می‌خواهم کمک کنم',
+        'title' => 'با هم برای جهانی بهتر',
+        'description' => 'مشارکت شما می‌تونه یک تغییر واقعی بسازه؛ کافی‌ست مسیر درست رو انتخاب کنیم و کنار هم ادامه بدیم.',
+    ],
+
+    // Homepage Cards
+    'home_card' => [
+        'charity_packages' => 'بسته های نیکوکاری',
+        'charity_packages_desc' => 'یک قدم کوچک شما، برای یک خانواده می‌تونه بزرگ‌ترین امید باشه.',
+        'support_methods' => 'روش های حمایت',
+        'support_methods_desc' => 'از راه های مختلف کمک های نقدی و غیر نقدی خود را به زندگی بیماران هدیه کنید.',
+        'virtual_record' => 'تشکیل پرونده اولیه مجازی',
+        'virtual_record_desc' => 'برای دریافت مشاوره تخصصی و بررسی پرونده درمانی، فرم مجازی را تکمیل کنید.',
+        'condolence_stand' => 'استند و کارت تسلیت',
+        'condolence_stand_desc' => 'در شادی‌ها و غم‌ها با سفارش استند، حامی بیماران مبتلا به سرطان باشید.',
+    ],
+
+    // Component Strings
+    'component' => [
+        // Breadcrumbs
+        'home' => 'صفحه اصلی',
+        'services' => 'خدمات',
+        'about_maxa' => 'آشنایی با مکسا',
+        'branch_intro' => 'معرفی شعبه',
+        'supportive_care' => 'مراقبت‌های حمایتی و تسکینی',
+
+        // Contact / Support
+        'contact_us' => 'تماس با ما',
+        'call_support' => 'تماس با مرکز ارتباطات مکسا',
+        'call_support_desc' => 'برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.',
+        'phone_number' => 'شماره تماس',
+        'support_24h' => 'با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید',
+        'support_online' => 'حمایت و کمک آنلاین',
+
+        // Services
+        'what_is_supportive' => 'مراقبت حمایتی چیست؟',
+        'maxa_services' => 'خدمات تسکینی مکسا',
+        'supportive_care_team' => 'اعضای تیم حمایتی و تسکینی',
+        'end_of_life_care' => 'مراقبت‌های پایان زندگی',
+        'palliative_in_iran' => 'وضعیت مراقبت های حمایتی و تسکینی در ایران',
+        'medical_team' => 'نقش کادر درمان',
+
+        // Branches
+        'branch_home' => 'خانه شعبه',
+        'branch_news' => 'آخرین اخبار شعبه',
+        'branch_campaigns' => 'کمپین‌های شعبه',
+        'branch_courses' => 'دوره‌های شعبه',
+        'all_branches' => 'شعب مکسا',
+        'branch_of' => 'شعبه',
+        'branch_welcome' => 'به صفحه‌ی این شعبه از مؤسسه‌ی نیکوکاری مکسا خوش آمدید؛ این‌جا کمپین‌ها، اخبار و دوره‌های همین شعبه را دنبال می‌کنید.',
+        'no_news_yet' => 'هنوز خبری برای این شعبه منتشر نشده است.',
+        'no_campaigns_yet' => 'هنوز کمپینی برای این شعبه تعریف نشده است.',
+        'no_courses_yet' => 'هنوز دوره‌ای برای این شعبه منتشر نشده است.',
+
+        // Branch Intro
+        'branch_address' => 'آدرس فیزیکی شعبه',
+        'branch_phone' => 'تلفن تماس مستقیم',
+        'branch_donate' => 'همراهی با بیماران این شعبه',
+        'branch_donate_desc' => 'با نیت‌های خیر و حمایت‌های خود می‌توانید در تامین دارو و خدمات تسکینی بیماران شعبه سهیم باشید.',
+        'address_copied' => 'آدرس شعبه در کلیپ‌بورد کپی شد.',
+        'branch_gallery' => 'گالری تصاویر شعبه',
+        'branch_about' => 'درباره شعبه',
+        'branch_content_coming' => 'محتوای تفصیلی و تاریخچه شعبه به‌زودی توسط مدیریت این شعبه تکمیل خواهد شد.',
+        'branch_services_desc' => 'این شعبه کلیه خدمات حمایتی، تسکینی، پزشکی و مشاوره‌ای مکسا را به بیماران مبتلا به سرطان و خانواده‌های گرامی آنان ارائه می‌نماید.',
+        'branch_images_coming' => 'تصاویر اختصاصی این شعبه به‌زودی بارگذاری خواهد شد.',
+        'back_to_branch' => 'بازگشت به خانه شعبه',
+
+        // CEO Office
+        'ceo_mission' => 'رهبری و مدیریت راهبردی مؤسسه مکسا با هدف ارتقای مراقبت‌های حمایتی و تسکینی بیماران مبتلا به سرطان در سراسر کشور',
+        'active_branches' => 'شعبه فعال در سراسر کشور',
+        'ceo_vision_title' => 'دیدگاه و رویکرد مدیرعامل مؤسسه مکسا به مراقبت‌های حمایتی و تسکینی',
+
+        // Directors
+        'supreme_council' => 'شورای عالی',
+        'board_of_directors' => 'هیئت مدیره',
+
+        // Pages
+        'history_title' => 'تاریخچه و نحوه تاسیس',
+        'mission_vision_title' => 'ماموریت و چشم انداز',
+        'association_title' => 'اساسنامه',
+        'org_chart_title' => 'چارت سازمانی',
+
+        // Stand Order
+        'stand_order_title' => 'سفارش استند و کارت دیجیتال تبریک و تسلیت',
+        'stand_order_desc' => 'در شادی‌ها و غم‌ها با سفارش استند، حامی بیماران مبتلا به سرطان باشید.',
+
+        // Fundraising
+        'fundraising_title' => 'روش های حمایت',
+        'financial_support' => 'همیاری مالی',
+        'online_donation' => 'حمایت مالی آنلاین',
+        'recurring_payment' => 'پرداخت مستمر هدایای نقدی',
+        'social_support' => 'همیاری اجتماعی و فرهنگی',
+        'corporate_social' => 'مسئولیت اجتماعی',
+        'creative_support' => 'حمایت های خلاقانه و هنری',
+        'scientific_support' => 'همیاری علمی و تخصصی',
+        'equipment_donation' => 'اهدای تجهیزات پزشکی',
+        'volunteer_support' => 'مشارکت داوطلبی',
+        'volunteer_cooperation' => 'همکاری داوطلبانه',
+        'volunteer_requirements' => 'شرایط جذب داوطلبان',
+
+        // News
+        'latest_news' => 'اخبار اخیر',
+        'news_category' => 'اخبار',
+
+        // Courses
+        'courses_title' => 'دوره‌ها',
+
+        // Macsapedia
+        'macsapedia_title' => 'مکساپدیا',
+
+        // About Mega Menu
+        'about_menu' => 'آشنایی با مکسا',
+        'about_intro' => 'معرفی',
+        'history_founding' => 'تاریخچه و نحوه تاسیس',
+        'mission_vision' => 'ماموریت و چشم انداز',
+        'association' => 'اساسنامه',
+        'org_chart' => 'چارت سازمانی',
+        'supreme_council_menu' => 'شورای عالی',
+        'board_menu' => 'هیئت مدیره',
+        'ceo' => 'مدیرعامل',
+        'partner_network' => 'شبکه همکاران',
+        'affiliated_centers' => 'مراکز تابعه مکسا',
+        'talent_center' => 'مرکز رویش استعدادهای دانشجویی مکسا',
+        'skills_center' => 'مرکز آموزش مهارتی مکسا',
+        'reports' => 'گزارش‌ها',
+        'annual_reports' => 'گزارش‌های سالانه',
+        'financial_statements' => 'صورت‌های مالی',
+
+        // Services Mega Menu
+        'services_menu' => 'خدمات مکسا',
+        'palliative_overview' => 'مفهوم مراقبت های حمایتی و تسکینی',
+        'palliative_team' => 'اعضای تیم حمایتی و تسکینی',
+        'home_care' => 'مراقبت در منزل',
+        'inpatient' => 'بستری',
+        'outpatient' => 'سرپایی',
+        'clinic' => 'کلینیک',
+        'patient_admission' => 'پذیرش بیمار',
+        'appointment' => 'نوبت دهی',
+        'required_documents' => 'مدارک موردنیاز',
+        'palliative_nursing' => 'مراقبت های پرستاری تسکینی',
+        'palliative_medical' => 'مراقبت های پزشکی تسکینی',
+        'psychological' => 'مراقبت های روانشناختی',
+        'social_work' => 'مددکاری اجتماعی',
+        'spiritual' => 'مراقبت های معنوی',
+        'nutrition' => 'مراقبت های تغذیه',
+        'rehabilitation' => 'مراقبت های بازتوانی و توانبخشی',
+        'genetic' => 'مشاوره ژنتیک و غربالگری',
+        'medical_equipment' => 'تامین تجهیزات پزشکی',
+
+        // Support Options Mega Menu
+        'support_menu' => 'روش های حمایت',
+
+        // Slider Arrows
+        'prev' => 'قبلی',
+        'next' => 'بعدی',
+    ],
 ];

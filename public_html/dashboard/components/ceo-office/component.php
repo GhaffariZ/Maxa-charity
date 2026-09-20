@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/component-lang.php'; ?>
 <!-- ============================================================
      CEO Office — مدیرعامل
      Creative introduction page for the Chief Executive Officer
