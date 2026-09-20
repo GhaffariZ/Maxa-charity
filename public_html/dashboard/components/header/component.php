@@ -1079,7 +1079,6 @@
                       <a href="/headdirectors">شورای عالی</a>
                       <a href="/directors">هیئت مدیره</a>
                       <a href="/CEOoffice">مدیرعامل</a>
-                      <a href="/doctorspage">کادر درمان</a>
                       <a href="/network.php">شبکه همکاران</a>
                     </div>
                     <div class="mega-col">
@@ -1106,6 +1105,7 @@
                       <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
                       <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
                       <a href="/iran-situation-in-palliative">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
+                      <a href="/doctorspage">نقض کادر درمان</a>
                     </div>
                     <div class="mega-col">
                       <h6>مراقبت های حمایتی و تسکینی</h6>
