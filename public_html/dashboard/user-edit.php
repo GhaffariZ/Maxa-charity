@@ -22,6 +22,7 @@ $FEATURE_LABELS = [
     'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];
 if (dash_is_hq_view()) {
+    $FEATURE_LABELS['events']     = 'رویدادها';
     $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
     $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
 }

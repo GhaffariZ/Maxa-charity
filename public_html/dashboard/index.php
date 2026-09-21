@@ -313,6 +313,7 @@ $MENU = [
   'can'           => [
     'hero'      => $visible('hero'),
     'news'      => $visible('news'),
+    'events'    => $visible('events'),
     'campaigns' => $visible('campaigns'),
     'partners'  => $visible('partners'),
     'courses'   => $visible('courses'),

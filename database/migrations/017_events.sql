@@ -1,6 +1,7 @@
 -- Event management module for the HQ content team.
-INSERT IGNORE INTO `branch_features` (`branch_id`, `feature`, `enabled`)
-VALUES (1, 'events', 1);
+INSERT INTO `branch_features` (`branch_id`, `feature`, `enabled`)
+SELECT `id`, 'events', 1 FROM `branches` WHERE `is_hq` = 1
+ON DUPLICATE KEY UPDATE `enabled` = VALUES(`enabled`);
 
 CREATE TABLE IF NOT EXISTS `events` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

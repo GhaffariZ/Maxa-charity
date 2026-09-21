@@ -439,7 +439,7 @@ function dash_is_finance_user(): bool
     }
     $perms = $u['permissions'] ?? [];
     if (in_array('financial', $perms, true)) {
-        $generalPerms = ['hero', 'news', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
+        $generalPerms = ['hero', 'news', 'events', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
         if (empty(array_intersect($perms, $generalPerms))) {
             return true;
         }
