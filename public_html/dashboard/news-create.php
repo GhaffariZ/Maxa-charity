@@ -2674,6 +2674,7 @@ function replaceSelectedImage() {
         if (!file) return;
         showStatus("⏳ در حال بارگذاری تصویر جدید...", true);
         const fd = new FormData();
+        fd.append("csrf_token", "<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>");
         fd.append("image", file);
         try {
             const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });

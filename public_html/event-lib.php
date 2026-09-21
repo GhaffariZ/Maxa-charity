@@ -20,8 +20,14 @@ function event_gregorian_to_jalali(int $gy, int $gm, int $gd): array {
     return [$jy, $days < 186 ? 1 + intdiv($days, 31) : 7 + intdiv($days - 186, 30), $days < 186 ? 1 + $days % 31 : 1 + ($days - 186) % 30];
 }
 function event_jalali_input_to_date(string $raw): ?string {
-    $raw = trim(str_replace('-', '/', $raw)); if (!preg_match('/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/', $raw, $m)) return null;
-    [$gy, $gm, $gd] = event_jalali_to_gregorian((int)$m[1], (int)$m[2], (int)$m[3]); return checkdate($gm, $gd, $gy) ? sprintf('%04d-%02d-%02d', $gy, $gm, $gd) : null;
+    $raw = strtr(trim(str_replace('-', '/', $raw)), ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9']);
+    if (!preg_match('/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/', $raw, $m)) return null;
+    $jy = (int)$m[1]; $jm = (int)$m[2]; $jd = (int)$m[3];
+    if ($jm < 1 || $jm > 12 || $jd < 1 || $jd > ($jm <= 6 ? 31 : ($jm <= 11 ? 30 : 30))) return null;
+    [$gy, $gm, $gd] = event_jalali_to_gregorian($jy, $jm, $jd);
+    if (!checkdate($gm, $gd, $gy)) return null;
+    [$ry, $rm, $rd] = event_gregorian_to_jalali($gy, $gm, $gd);
+    return [$ry, $rm, $rd] === [$jy, $jm, $jd] ? sprintf('%04d-%02d-%02d', $gy, $gm, $gd) : null;
 }
 function event_date_label(?string $date): string {
     if (!$date) return 'تاریخ مشخص نشده'; [$jy, $jm, $jd] = event_gregorian_to_jalali((int)substr($date, 0, 4), (int)substr($date, 5, 2), (int)substr($date, 8, 2));
