@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/core/database.php';
 require_once __DIR__ . '/event-lib.php';
 
-$filter = in_array($_GET['filter'] ?? 'all', ['all', 'upcoming', 'past'], true) ? (string)$_GET['filter'] : 'all';
+$filter = isset($_GET['filter']) && in_array($_GET['filter'], ['upcoming', 'past'], true) ? (string)$_GET['filter'] : 'all';
 $q = trim((string)($_GET['q'] ?? ''));
 
 // Get counts for tabs
