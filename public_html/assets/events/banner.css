@@ -1,0 +1,70 @@
+/* The banner occupies document flow; the spacer only reserves the navbar. */
+body .cta-topbar,
+body .cta-topbar.scrolled {
+    top: var(--event-banner-offset, 0px);
+    transition-property: transform, height;
+}
+body .cta-navbar-spacer { height: var(--cta-nav-h, 78px); }
+body .mega-menu .mega-menu-content {
+    top: calc(var(--event-banner-offset, 0px) + var(--cta-nav-h, 78px) + 10px);
+}
+.event-global-banner {
+    position: relative;
+    z-index: 100000;
+    box-sizing: border-box;
+    min-height: 52px;
+    padding: 8px 48px 8px 18px;
+    background: var(--banner-bg);
+    color: var(--banner-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-family: Vazirmatn, sans-serif;
+}
+.event-global-banner .event-banner-copy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 12px;
+}
+.event-global-banner b { font-size: 14px; }
+.event-global-banner .event-banner-count {
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    color: var(--banner-accent);
+}
+.event-global-banner a {
+    flex-shrink: 0;
+    color: var(--banner-text);
+    border: 1px solid var(--banner-accent);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: none;
+}
+.event-global-banner a:hover { background: rgba(255,255,255,.12); }
+.event-banner-dismiss {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--banner-text);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    opacity: .82;
+}
+.event-banner-dismiss:hover { opacity: 1; }
+@media (max-width: 600px) {
+    .event-global-banner { gap: 8px; padding-inline: 40px; }
+    .event-global-banner .event-banner-copy { font-size: 10px; }
+    .event-global-banner b { font-size: 12px; }
+    .event-banner-dismiss { right: 7px; }
+}

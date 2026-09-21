@@ -10,5 +10,20 @@ function event_global_banner(PDO $pdo): string {
     $accent = $hex($e['banner_accent_color'] ?? '', '#f4a61e');
     $dismissible = (int)($e['banner_dismissible'] ?? 1) === 1;
     $dismiss = $dismissible ? '<button type="button" class="event-banner-dismiss" aria-label="بستن موقت بنر">×</button>' : '';
-    return '<style>:root{--event-banner-h:52px}body:has(.event-global-banner) .cta-topbar{top:52px!important}body:has(.event-global-banner) .cta-topbar.scrolled{top:52px!important}body:has(.event-global-banner) .cta-navbar-spacer{height:130px!important}.event-global-banner{position:relative;z-index:100000;min-height:52px;padding:8px 48px 8px 18px;background:'.$bg.';color:'.$text.';display:flex;align-items:center;justify-content:center;gap:18px;font-family:Vazirmatn,sans-serif}.event-global-banner .event-banner-copy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;font-size:12px}.event-global-banner b{font-size:14px}.event-global-banner .event-banner-count{font-variant-numeric:tabular-nums;font-weight:900;color:'.$accent.'}.event-global-banner a{color:'.$text.';border:1px solid '.$accent.';border-radius:8px;padding:5px 10px;font-size:11px;font-weight:800;text-decoration:none}.event-global-banner a:hover{background:rgba(255,255,255,.12)}.event-banner-dismiss{position:absolute;right:14px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:'.$text.';font-size:22px;line-height:1;cursor:pointer;padding:4px 8px;opacity:.82}.event-banner-dismiss:hover{opacity:1}@media(max-width:600px){.event-global-banner{gap:8px;padding-inline:40px}.event-global-banner .event-banner-copy{font-size:10px}.event-global-banner b{font-size:12px}.event-banner-dismiss{right:7px}}</style><div class="event-global-banner" data-banner-id="'.(int)$e['id'].'" data-banner-target="'.event_h($target).'" role="status"><div class="event-banner-copy"><span>'.event_h($e['banner_label']).'</span><b>'.event_h($e['title']).'</b><span class="event-banner-count">در حال آماده‌سازی...</span></div><a href="'.event_h($link).'">'.event_h($e['banner_cta']).'</a>'.$dismiss.'</div><script>(function(){const e=document.querySelector("[data-banner-target]");if(!e)return;const key="macsa-event-banner-dismissed-"+e.dataset.bannerId;if(sessionStorage.getItem(key)==="1"){e.remove();return}const close=e.querySelector(".event-banner-dismiss");if(close)close.addEventListener("click",()=>{sessionStorage.setItem(key,"1");e.remove()});const out=e.querySelector(".event-banner-count"),fa=n=>String(Math.max(0,n)).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);const t=()=>{let x=Math.max(0,Date.parse(e.dataset.bannerTarget)-Date.now()),d=Math.floor(x/86400000);x%=86400000;let h=Math.floor(x/3600000),m=Math.floor(x/60000)%60;out.textContent=fa(d)+" روز · "+fa(h)+" ساعت · "+fa(m)+" دقیقه"};t();setInterval(t,60000)})();</script>';
+    ob_start();
+    ?>
+    <link rel="stylesheet" href="/assets/events/banner.css">
+    <div class="event-global-banner" style="--banner-bg:<?= $bg ?>;--banner-text:<?= $text ?>;--banner-accent:<?= $accent ?>"
+         data-banner-id="<?= (int)$e['id'] ?>" data-banner-target="<?= event_h($target) ?>" role="status">
+        <div class="event-banner-copy">
+            <span><?= event_h($e['banner_label']) ?></span>
+            <b><?= event_h($e['title']) ?></b>
+            <span class="event-banner-count">در حال آماده‌سازی...</span>
+        </div>
+        <a href="<?= event_h($link) ?>"><?= event_h($e['banner_cta']) ?></a>
+        <?= $dismiss ?>
+    </div>
+    <script src="/assets/events/banner.js"></script>
+    <?php
+    return (string)ob_get_clean();
 }

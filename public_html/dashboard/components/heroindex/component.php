@@ -91,6 +91,10 @@
       height: 68px;
     }
 
+    .cta-navbar-spacer {
+      height: var(--cta-nav-h);
+    }
+
     .cta-header{
       display:flex;
       align-items:center;
