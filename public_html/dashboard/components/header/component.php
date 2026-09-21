@@ -1044,6 +1044,7 @@
 </head>
 
 <body>
+<?php if (isset($pdo) && $pdo instanceof PDO) { require_once __DIR__ . '/../../../event-lib.php'; require_once __DIR__ . '/../../../event-banner.php'; echo event_global_banner($pdo); } ?>
 
   <div class="cta">
 

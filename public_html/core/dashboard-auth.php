@@ -29,7 +29,7 @@ const DASH_LOCK_MINUTES     = 15;     // مدت قفل (دقیقه)
 
 /* فهرست کامل بخش‌های قابل‌واگذاری (مرجعِ واحد در کل سامانه) */
 const DASH_FEATURES = [
-    'hero', 'news', 'campaigns', 'partners', 'courses',
+    'hero', 'news', 'events', 'campaigns', 'partners', 'courses',
     'pages', 'financial', 'feedback', 'medical', 'stands',
 ];
 

@@ -1097,6 +1097,10 @@ body.spa-loading .spa-frame{opacity:.6}
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
   }
+  if (CAN.events && MENU.isHqView) content.push({label:'رویدادها',icon:'calendar',children:[
+                       {label:'ساخت رویداد جدید',icon:'plus',href:'event-create.php'},
+                       {label:'مدیریت رویدادها',icon:'list',href:'event-list.php'},
+                       {label:'اخبار رویدادها',icon:'news',href:'event-news-list.php'}]});
   if (CAN.partners)  content.push({label:'همکاران',icon:'users',children:[
                        {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
                        {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'}]});
