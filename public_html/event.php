@@ -64,11 +64,14 @@ $heroStyle = $primaryHero && $primaryHero['image']
 .schedule-empty{padding:22px 16px;background:#fff;border:1.5px dashed #cadada;border-radius:14px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
 .schedule-empty svg{width:18px;height:18px;color:#f59e0b}
 /* Grids with Intelligent Balancing */
-.people-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;max-width:100%}
-.speaker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-.news-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.partner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}
+.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:24px;max-width:100%}
+.speaker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:20px}
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,360px));gap:20px}
+.partner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,220px));gap:16px}
 .person-card,.speaker-card,.news-card,.partner-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(18,58,61,.04);transition:transform .2s,box-shadow .2s}
+.person-card{max-width:320px;width:100%}
+.speaker-card{max-width:280px;width:100%}
+.news-card{max-width:360px;width:100%}
 .person-card:hover,.speaker-card:hover,.news-card:hover,.partner-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(18,58,61,.08)}
 .person-card img,.speaker-card img{width:100%;aspect-ratio:1;object-fit:cover;background:#eaf2f1}
 .person-card .inner,.speaker-card .inner,.news-card .inner{padding:16px}
