@@ -505,6 +505,13 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
         const badge = showBranchBadge && campaign.branch_name
             ? '<span style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:8px;">' + escapeHtml(campaign.branch_name) + '</span>'
             : '';
+        const progressMarkup = target > 0
+            ? '<div class="progress-container">' +
+                '<div class="funding-stats"><span>هدف: ' + numberFa(target) + ' تومان</span><span style="color:var(--secondary-color);font-size:14px">' + numberFa(progress) + '٪</span></div>' +
+                '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>' +
+                '<div class="funding-stats" style="color:var(--text-muted);font-size:11px;font-weight:normal;margin-top:4px"><span>جمع‌آوری شده: ' + numberFa(collected) + ' تومان</span></div>' +
+              '</div>'
+            : '';
 
         const card = document.createElement('div');
         card.className = 'card' + (active ? '' : ' disabled-campaign');
@@ -521,11 +528,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
             '<div class="card-body">' +
                 '<h4 class="card-title">' + escapeHtml(campaign.title) + '</h4>' + badge +
                 '<div class="card-desc">' + escapeHtml(campaign.description).replace(/\n/g, '<br>') + '</div>' +
-                '<div class="progress-container">' +
-                    '<div class="funding-stats"><span>هدف: ' + numberFa(target) + ' تومان</span><span style="color:var(--secondary-color);font-size:14px">' + numberFa(progress) + '٪</span></div>' +
-                    '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>' +
-                    '<div class="funding-stats" style="color:var(--text-muted);font-size:11px;font-weight:normal;margin-top:4px"><span>جمع‌آوری شده: ' + numberFa(collected) + ' تومان</span></div>' +
-                '</div>' +
+                progressMarkup +
                 '<button class="btn-support" ' + (active ? '' : 'disabled') + '><i class="fas fa-heart"></i> حمایت مالی مستقیم</button>' +
                 '<div class="mobile-indicator"><i class="fas fa-ellipsis-h"></i></div>' +
             '</div>';

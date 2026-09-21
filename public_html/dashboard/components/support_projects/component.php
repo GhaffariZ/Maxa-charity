@@ -709,42 +709,10 @@
       </section>
     </div>
 
-    <!-- Modal -->
-    <div id="donationModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 class="modal-title">عنوان مودال</h2>
-        <form id="campaignDonationForm">
-          <div class="form-group">
-            <label for="name">نام</label>
-            <input type="text" id="name" placeholder="نام">
-          </div>
-          <div style="display:flex; gap:15px;">
-            <div class="form-group" style="flex:1;">
-              <label for="email">ایمیل</label>
-              <input type="email" id="email" placeholder="ایمیل">
-            </div>
-            <div class="form-group" style="flex:1;">
-              <label for="phone">تلفن</label>
-              <input type="tel" id="phone" placeholder="تلفن">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="amount">مبلغ کمک (تومان)</label>
-            <input type="number" id="amount" placeholder="مبلغ">
-          </div>
-          <div class="checkbox-group">
-            <input type="checkbox" id="agreeTerms" name="agreeTerms">
-            <label for="agreeTerms">من شرایط و ضوابط را می‌پذیرم</label>
-          </div>
-          <button type="submit" class="btn-submit">ثبت کمک</button>
-        </form>
-      </div>
-    </div>
-
   </div>
 
   <script src="/js/campaign-payment.js"></script>
+  <script src="/js/campaign-donation-ui.js"></script>
   <script>
     // تصویر جایگزین بهصورت SVG درونخطی (بدون درخواست شبکهای تا صفحه هرگز معلق نماند)
     var PLACEHOLDER_IMG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+";
@@ -752,8 +720,6 @@
     let allCampaigns = [];
     let campaignsData = [];
     let currentPage = 0;
-    let selectedCampaignId = '';
-    let selectedCenterSlug = 'hq';
 
     (async function loadCampaignsSimple() {
       try {
@@ -828,7 +794,7 @@
                     ${camp.branch_name ? `<span class="branch-tag" style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;">🏢 ${camp.branch_name}</span>` : ''}
                     <div class="card-desc">${descHtml}</div>
 
-                    <div class="progress-container">
+                    ${target > 0 ? `<div class="progress-container">
                         <div class="progress-badge">${Number(percent).toLocaleString('fa-IR')}٪</div>
                         <div class="progress-info">
                             <span>جمع‌آوری شده: ${Number(collected).toLocaleString('fa-IR')} تومان</span>
@@ -837,7 +803,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${percent}%;"></div>
                         </div>
-                    </div>
+                    </div>` : ''}
 
                     <div class="card-footer">
                         <button class="btn-help" type="button">همین حالا کمک کنید</button>
@@ -968,58 +934,14 @@
     window.addEventListener('resize', updateSlider);
 
     function openModal(campaignId, title, centerSlug) {
-      selectedCampaignId = campaignId;
-      selectedCenterSlug = centerSlug || 'hq';
-      const modal = document.getElementById('donationModal');
-      modal.style.display = 'flex';
-      modal.offsetHeight; // force reflow
-      modal.classList.add('show');
-      document.querySelector('.modal-title').textContent = 'کمک برای: ' + title;
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('donationModal');
-      modal.classList.remove('show');
-      setTimeout(() => {
-        if (!modal.classList.contains('show')) {
-          modal.style.display = 'none';
-        }
-      }, 500);
-    }
-
-    window.onclick = function (event) {
-      const donationModal = document.getElementById('donationModal');
-      if (event.target == donationModal) { closeModal(); }
-    }
-
-    document.getElementById('campaignDonationForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const button = form.querySelector('.btn-submit');
-      if (!document.getElementById('agreeTerms').checked) {
-        alert('لطفاً شرایط و ضوابط را بپذیرید.');
-        return;
-      }
-      button.disabled = true;
-      try {
-        await window.MaksaCampaignPayment.start({
-          center_slug: selectedCenterSlug,
-          campaign_id: selectedCampaignId,
-          full_name: document.getElementById('name').value.trim(),
-          mobile: document.getElementById('phone').value.trim(),
-          amount_toman: Number(document.getElementById('amount').value),
-          onSuccess: function () {
-            alert('پرداخت شما با موفقیت ثبت شد. سپاسگزاریم.');
-            closeModal();
-          },
-          onFailure: function () { alert('پرداخت ناموفق بود یا لغو شد.'); }
+      if (window.MacsaCampaignDonation) {
+        window.MacsaCampaignDonation.open({
+          id: campaignId,
+          title: title,
+          branch_slug: centerSlug || 'hq'
         });
-      } catch (error) {
-        alert(error && error.message ? error.message : 'اتصال به درگاه ناموفق بود.');
-      } finally {
-        button.disabled = false;
       }
-    });
+    }
 
     // فیلترها بر اساس دادههای زنده
     const filterButtons = document.querySelectorAll('.course-categories li');

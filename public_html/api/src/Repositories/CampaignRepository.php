@@ -40,14 +40,15 @@ final class CampaignRepository
     /** @return array<string,mixed> */
     private static function present(array $row): array
     {
-        $goal = intdiv((int)($row['goalAmount'] ?? 0), 10);
+        $goal = intdiv((int)($row['goal_amount'] ?? $row['goalAmount'] ?? 0), 10);
         $raised = intdiv((int)($row['raised_amount'] ?? 0), 10);
         $effective = strtoupper((string)($row['effective_status'] ?? $row['status'] ?? 'INACTIVE'));
         $status = $effective === 'ACTIVE' ? 'active' : ($effective === 'ENDED' ? 'completed' : 'archived');
         $id = (string)($row['id'] ?? '');
         $daysLeft = null;
-        if (is_string($row['endsAt'] ?? null) && $row['endsAt'] !== '') {
-            $daysLeft = max(0, (int)ceil((strtotime($row['endsAt']) - time()) / 86400));
+        $endsAt = $row['ends_at'] ?? $row['endsAt'] ?? null;
+        if (is_string($endsAt) && $endsAt !== '') {
+            $daysLeft = max(0, (int)ceil((strtotime($endsAt) - time()) / 86400));
         }
 
         \campaign_service_load_env();
@@ -55,7 +56,7 @@ final class CampaignRepository
             'id' => $id,
             'slug' => $id,
             'title' => (string)($row['title'] ?? ''),
-            'description' => (string)($row['shortDescription'] ?? $row['description'] ?? ''),
+            'description' => (string)($row['short_description'] ?? $row['shortDescription'] ?? $row['description'] ?? ''),
             'image_url' => $row['image_url'] ?? null,
             'category' => $row['category']['name'] ?? null,
             'goal_amount' => $goal,

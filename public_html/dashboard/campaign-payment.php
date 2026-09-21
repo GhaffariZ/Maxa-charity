@@ -65,11 +65,19 @@ try {
         payment_json(['status' => 'error', 'message' => 'شماره همراه معتبر وارد کنید.'], 422);
     }
     $fullName = trim(strip_tags((string)($input['full_name'] ?? '')));
+    if (mb_strlen($fullName) < 2) {
+        payment_json(['status' => 'error', 'message' => 'نام و نام خانوادگی را وارد کنید.'], 422);
+    }
     if (mb_strlen($fullName) > 200) {
         $fullName = mb_substr($fullName, 0, 200);
     }
-    $amountToman = filter_var($input['amount_toman'] ?? null, FILTER_VALIDATE_INT);
-    if ($amountToman === false || $amountToman < 1000 || $amountToman > 500000000) {
+    if (array_key_exists('amount_rial', $input)) {
+        $amountRial = filter_var($input['amount_rial'], FILTER_VALIDATE_INT);
+    } else {
+        $amountToman = filter_var($input['amount_toman'] ?? null, FILTER_VALIDATE_INT);
+        $amountRial = $amountToman === false ? false : $amountToman * 10;
+    }
+    if ($amountRial === false || $amountRial < 10000 || $amountRial > 5000000000 || $amountRial % 10 !== 0) {
         payment_json(['status' => 'error', 'message' => 'مبلغ کمک معتبر نیست.'], 422);
     }
     $idempotencyKey = trim((string)($input['idempotency_key'] ?? ''));
@@ -77,7 +85,7 @@ try {
         payment_json(['status' => 'error', 'message' => 'شناسه یکتای پرداخت نامعتبر است.'], 400);
     }
 
-    $payment = $client->startPayment($campaignId, $mobile, $fullName, $amountToman * 10, $idempotencyKey);
+    $payment = $client->startPayment($campaignId, $mobile, $fullName, $amountRial, $idempotencyKey);
     payment_json(['status' => 'success', 'data' => $payment], 201);
 } catch (CampaignServiceException $e) {
     $status = $e->status >= 400 && $e->status < 500 ? $e->status : 502;

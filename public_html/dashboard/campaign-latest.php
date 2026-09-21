@@ -22,7 +22,7 @@ try {
     require_once __DIR__ . '/../core/campaign-service.php';
 
     $slug = campaign_service_normalize_slug((string)($_GET['branch'] ?? ''));
-    $statement = $pdo->prepare("SELECT id, name, slug FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
+    $statement = $pdo->prepare("SELECT id, name, slug, is_hq FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
     $statement->execute([$slug]);
     $branch = $statement->fetch() ?: null;
     if (!$branch) {
@@ -30,7 +30,7 @@ try {
     }
 
     $cacheFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
-        . DIRECTORY_SEPARATOR . 'macsa-latest-campaign-' . hash('sha256', $slug) . '.json';
+        . DIRECTORY_SEPARATOR . 'macsa-latest-campaign-v2-' . hash('sha256', $slug) . '.json';
     $readCache = static function (string $path): ?array {
         if (!is_file($path)) {
             return null;
@@ -58,7 +58,15 @@ try {
     }
 
     try {
-        $remote = (new CampaignServiceClient($slug))->latestPublicCampaign();
+        $excludedIds = [];
+        if ((int)($branch['is_hq'] ?? 0) === 1) {
+            campaign_service_load_env();
+            $onlineDonationId = campaign_service_env('CAMPAIGN_HQ_ONLINE_DONATION_CAMPAIGN_ID');
+            if ($onlineDonationId !== '') {
+                $excludedIds[] = $onlineDonationId;
+            }
+        }
+        $remote = (new CampaignServiceClient($slug))->latestPublicCampaign($excludedIds);
         $campaign = $remote ? campaign_service_present($remote, $branch) : null;
         $payload = $campaign
             ? ['status' => 'success', 'data' => $campaign]

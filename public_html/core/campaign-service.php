@@ -61,18 +61,32 @@ final class CampaignServiceClient
         return $this->entity($this->request('GET', '/public/v1/campaigns/' . rawurlencode($id)));
     }
 
-    /** Return only the newest active financial campaign without paging through the full list. */
-    public function latestPublicCampaign(): ?array
+    /**
+     * Return the newest active financial campaign that is not explicitly
+     * excluded, without paging through the full campaign history.
+     *
+     * @param list<string> $excludedIds
+     */
+    public function latestPublicCampaign(array $excludedIds = []): ?array
     {
         $response = $this->request('GET', '/public/v1/campaigns?' . http_build_query([
-            'limit' => 1,
+            'limit' => $excludedIds ? 10 : 1,
             'participation_type' => 'FINANCIAL',
             'status' => 'ACTIVE',
             'sort' => 'created_at',
             'direction' => 'desc',
         ]), null, false, [], 7);
         $items = $response['data'] ?? [];
-        return isset($items[0]) && is_array($items[0]) ? $items[0] : null;
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $id = (string)($item['id'] ?? '');
+            if ($id !== '' && !in_array($id, $excludedIds, true)) {
+                return $item;
+            }
+        }
+        return null;
     }
 
     /** @return array<string,mixed> */
@@ -361,7 +375,7 @@ function campaign_service_load_env(): void
 /** @return array<string,mixed> */
 function campaign_service_present(array $campaign, array $branch): array
 {
-    $goalIrr = (int)($campaign['goalAmount'] ?? 0);
+    $goalIrr = (int)($campaign['goal_amount'] ?? $campaign['goalAmount'] ?? 0);
     $raisedIrr = (int)($campaign['raised_amount'] ?? 0);
     $effective = strtoupper((string)($campaign['effective_status'] ?? $campaign['status'] ?? 'INACTIVE'));
     $categoryName = trim((string)($campaign['category']['name'] ?? ''));
@@ -371,8 +385,8 @@ function campaign_service_present(array $campaign, array $branch): array
         'id' => (string)($campaign['id'] ?? ''),
         'campaign_code' => (string)($campaign['id'] ?? ''),
         'title' => (string)($campaign['title'] ?? ''),
-        'short_description' => (string)($campaign['shortDescription'] ?? ''),
-        'description' => (string)($campaign['description'] ?? $campaign['shortDescription'] ?? ''),
+        'short_description' => (string)($campaign['short_description'] ?? $campaign['shortDescription'] ?? ''),
+        'description' => (string)($campaign['description'] ?? $campaign['short_description'] ?? $campaign['shortDescription'] ?? ''),
         'category' => $categoryMap[$categoryName] ?? 'all',
         'category_name' => $categoryName,
         'target_amount' => intdiv($goalIrr, 10),

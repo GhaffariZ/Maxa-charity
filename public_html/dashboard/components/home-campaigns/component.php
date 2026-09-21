@@ -81,7 +81,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   .hc-track{display:flex;gap:24px;min-width:100%}
 
   /* Same card grammar used by the campaign section on branch pages. */
-  .hc .bh-card{flex:0 0 calc((100% - 48px)/3);min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;
+  .hc .bh-card{flex:0 0 calc((100% - 72px)/4);min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;
     background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
     box-shadow:var(--shadow-sm);transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s}
   .hc .bh-card:not(.hc-skeleton):hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(0,123,122,.28)}
@@ -128,6 +128,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
 </style>
 
+<script src="/js/campaign-payment.js"></script>
+<script src="/js/campaign-donation-ui.js"></script>
 <script>
 (function(){
   'use strict';
@@ -153,6 +155,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
     var target=Number(campaign.target_amount)||0;
     var collected=Number(campaign.collected_amount)||0;
     var percent=target>0?Math.min(100,Math.round(collected/target*100)):0;
+    var progress=target>0?('<div class="bh-prog"><div class="bh-prog-info"><span class="bh-prog-badge">'+money(percent)+'٪</span>'+
+      '<span>'+money(collected)+' از '+money(target)+' تومان</span></div>'+
+      '<div class="bh-prog-bar"><div class="bh-prog-fill" style="width:'+percent+'%"></div></div></div>'):'';
     var card=document.createElement('article');
     card.className='bh-card';
     card.innerHTML='<div class="bh-thumb"><img alt=""></div>'+
@@ -160,19 +165,20 @@ if (isset($pdo) && $pdo instanceof PDO) {
         '<span class="bh-tag">مرکز '+esc(campaign.branch_name||'مکسا')+'</span>'+
         '<h3>'+esc(campaign.title||'')+'</h3>'+
         '<p>'+esc(cut(campaign.description||campaign.short_description||'',90))+'</p>'+
-        '<div class="bh-prog"><div class="bh-prog-info"><span class="bh-prog-badge">'+money(percent)+'٪</span>'+
-          '<span>'+money(collected)+' از '+money(target)+' تومان</span></div>'+
-          '<div class="bh-prog-bar"><div class="bh-prog-fill" style="width:'+percent+'%"></div></div></div>'+
-        '<a class="bh-help" href="/'+encodeURIComponent(campaign.branch_slug||'')+'#bh-campaigns">'+
-          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>همین حالا کمک کنید</a>'+
+        progress+
+        '<button type="button" class="bh-help">'+
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>همین حالا کمک کنید</button>'+
       '</div>';
     var image=card.querySelector('img');
     image.src=safeImage(campaign.image_url);
     image.addEventListener('error',function(){image.src=placeholder;},{once:true});
+    card.querySelector('.bh-help').addEventListener('click',function(){
+      if(window.MacsaCampaignDonation) window.MacsaCampaignDonation.open(campaign);
+    });
     return card;
   }
 
-  function cardsPerView(){return window.innerWidth<=620?1:(window.innerWidth<=900?2:3);}
+  function cardsPerView(){return window.innerWidth<=620?1:(window.innerWidth<=900?2:4);}
   function realCards(){return Array.prototype.slice.call(track.querySelectorAll('.bh-card:not(.hc-skeleton)'));}
   function updateNavigation(){
     var cards=realCards();
