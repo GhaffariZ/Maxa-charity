@@ -199,6 +199,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 }
 // --- END OF BACKEND LOGIC ---
+
+// تابع تولید آیکون‌های استاندارد و برداری Iconoir (https://iconoir.com/)
+function iconoir_icon($name, $extraClass = '') {
+    $class = 'iconoir-icon' . ($extraClass ? ' ' . $extraClass : '');
+    $icons = [
+        'user' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/></svg>',
+        'user-plus' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12V8M17 10H21"/><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C14.1843 12 16.1432 12.999 17.4411 14.5684"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/></svg>',
+        'edit-pencil' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20H20.5"/><path d="M16.5 3.5L18.5 5.5L7 17H5V15L16.5 3.5Z"/></svg>',
+        'camera' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19V9C2 7.89543 2.89543 7 4 7H4.5C5.12951 7 5.72229 6.70361 6.1 6.2L8.32 3.24C8.43331 3.08892 8.61115 3 8.8 3H15.2C15.3889 3 15.5667 3.08892 15.68 3.24L17.9 6.2C18.2777 6.70361 18.8705 7 19.5 7H20C21.1046 7 22 7.89543 22 9V19C22 20.1046 21.1046 21 20 21H4C2.89543 21 2 20.1046 2 19Z"/><path d="M12 17C14.2091 17 16 15.2091 16 13C16 10.7909 14.2091 9 12 9C9.79086 9 8 10.7909 8 13C8 15.2091 9.79086 17 12 17Z"/></svg>',
+        'mail' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9L12 12.5L17 9"/><path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z"/></svg>',
+        'pin-alt' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.866 3 12 3C8.13401 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z"/><path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z"/></svg>',
+        'view-grid' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4H10V10H4V4Z"/><path d="M14 4H20V10H14V4Z"/><path d="M4 14H10V20H4V14Z"/><path d="M14 14H20V20H14V14Z"/></svg>',
+        'suitcase' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19V9C2 7.89543 2.89543 7 4 7H20C21.1046 7 22 7.89543 22 9V19C22 20.1046 21.1046 21 20 21H4C2.89543 21 2 20.1046 2 19Z"/><path d="M8 7V5C8 3.89543 8.89543 3 10 3H14C15.1046 3 16 3.89543 16 5V7"/><path d="M12 12V14"/></svg>',
+        'stethoscope' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4V10C4 14.4183 7.58172 18 12 18C16.4183 18 20 14.4183 20 10V4"/><path d="M2 4H6"/><path d="M18 4H22"/><path d="M12 18V21C12 21.5523 12.4477 22 13 22H15C16.1046 22 17 21.1046 17 20V19C17 17.8954 17.8954 17 19 17H20"/><path d="M20 16V18"/></svg>',
+        'graduation-cap' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10V16"/><path d="M12 4L2 9L12 14L22 9L12 4Z"/><path d="M6 11.5V16.5C6 16.5 8 19 12 19C16 19 18 16.5 18 16.5V11.5"/></svg>',
+        'calendar' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z"/></svg>',
+        'building' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21H21"/><path d="M6 21V5C6 3.89543 6.89543 3 8 3H16C17.1046 3 18 3.89543 18 5V21"/><path d="M10 7H14"/><path d="M10 11H14"/><path d="M10 15H14"/></svg>',
+        'instagram' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"/><path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z"/><path d="M17.5 6.51L17.51 6.49889"/></svg>',
+        'linkedin' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z"/><path d="M7 17V11"/><path d="M11 17V11"/><path d="M11 14C11 12.3431 12.3431 11 14 11C15.6569 11 17 12.3431 17 14V17"/><path d="M7 7.01L7.01 6.99889"/></svg>',
+        'notes' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14H16M8 18H12M10 3H14C16.8284 3 18.2426 3 19.1213 3.87868C20 4.75736 20 6.17157 20 9V15C20 17.8284 20 19.2426 19.1213 20.1213C18.2426 21 16.8284 21 14 21H10C7.17157 21 5.75736 21 4.87868 20.1213C4 19.2426 4 17.8284 4 15V9C4 6.17157 4 4.75736 4.87868 3.87868C5.75736 3 7.17157 3 10 3Z"/><path d="M10 7H14"/></svg>',
+        'microscope' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21H20"/><path d="M9 21V18C9 14.6863 11.6863 12 15 12V12C18.3137 12 21 14.6863 21 18V21"/><path d="M7.5 4.5L13.5 10.5M5.5 6.5L11.5 12.5"/><path d="M10 2L14 6L6 14L2 10L10 2Z"/></svg>',
+        'task-list' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6L20 6M9 12L20 12M9 18L20 18"/><path d="M4 6L5 7L7 5M4 12L5 13L7 11M4 18L5 19L7 17"/></svg>',
+        'floppy-disk' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21.4V2.6C4 2.26863 4.26863 2 4.6 2H16.2515C16.4106 2 16.5632 2.06321 16.6757 2.17574L19.8243 5.32426C19.9368 5.43679 20 5.5894 20 5.74853V21.4C20 21.7314 19.7314 22 19.4 22H4.6C4.26863 22 4 21.7314 4 21.4Z"/><path d="M8 2V8H16V2"/><path d="M8 22V14H16V22"/></svg>',
+        'eye' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12C3 12 6.5 5 12 5C17.5 5 21 12 21 12C21 12 17.5 19 12 19C6.5 19 3 12 3 12Z"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"/></svg>',
+        'xmark' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6L18 18M18 6L6 18"/></svg>',
+    ];
+    return $icons[$name] ?? '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -209,19 +237,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
     :root {
-        --color-primary: #007b7a;
-        --color-primary-dark: #006665;
-        --color-primary-light: #4fb2b0;
-        --color-secondary: #f4a61e;
-        --color-text: #2f3437;
-        --color-muted: #9d9d9d;
-        --color-border: #e6e8ea;
-        --color-bg: #f8f9fa;
+        /* پالت رنگی اختصاصی، مدرن و هماهنگ با هویت بصری مکسا */
+        --color-primary: #0d7a6e;
+        --color-primary-dark: #08554d;
+        --color-primary-light: #149486;
+        --color-primary-soft: rgba(13, 122, 110, 0.08);
+        --color-primary-glow: rgba(13, 122, 110, 0.16);
+
+        --color-secondary: #d97706;
+        --color-secondary-light: #f59e0b;
+        --color-secondary-soft: rgba(217, 119, 6, 0.1);
+
+        --color-text: #1e293b;
+        --color-text-secondary: #475569;
+        --color-label: #334155;
+        --color-muted: #94a3b8;
+        --color-border: #e2e8f0;
+        --color-border-hover: #cbd5e1;
+        --color-bg: #f8fafc;
         --color-surface: #ffffff;
+        --color-input-bg: #ffffff;
+        --color-input-disabled: #f1f5f9;
 
         --primary-color: var(--color-primary);
         --secondary-color: var(--color-secondary);
@@ -229,22 +269,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         --text-color: var(--color-text);
         --panel-bg: var(--color-surface);
         --border-color: var(--color-border);
-        --input-bg: var(--color-surface);
-        --header-text: var(--color-primary-dark);
-        --btn-hover-opacity: 0.9;
-        --modal-overlay: rgba(47, 52, 55, 0.6);
-        --anim-fast: 220ms;
-        --anim-mid: 420ms;
-        --anim-slow: 700ms;
+        --input-bg: var(--color-input-bg);
+        --header-text: #0f172a;
+        --btn-hover-opacity: 0.94;
+        --modal-overlay: rgba(15, 23, 42, 0.65);
+        --anim-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+        --anim-mid: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        --anim-slow: 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
-    [data-theme="dark"] {
-        --bg-color: #121212;
-        --text-color: #e0e0e0;
-        --panel-bg: #1e1e1e;
-        --border-color: #444444;
-        --input-bg: #2d2d2d;
-        --modal-overlay: rgba(0,0,0,0.8);
+    [data-theme="dark"], body[data-theme="dark"] {
+        --color-primary: #14b8a6;
+        --color-primary-dark: #0d9488;
+        --color-primary-light: #2dd4bf;
+        --color-primary-soft: rgba(20, 184, 166, 0.12);
+        --color-primary-glow: rgba(20, 184, 166, 0.25);
+
+        --color-secondary: #f59e0b;
+        --color-secondary-light: #fbbf24;
+        --color-secondary-soft: rgba(245, 158, 11, 0.15);
+
+        --color-text: #f1f5f9;
+        --color-text-secondary: #cbd5e1;
+        --color-label: #e2e8f0;
+        --color-muted: #64748b;
+        --color-border: #334155;
+        --color-border-hover: #475569;
+        --color-bg: #0f172a;
+        --color-surface: #1e293b;
+        --color-input-bg: #152238;
+        --color-input-disabled: #1e293b;
+
+        --primary-color: var(--color-primary);
+        --secondary-color: var(--color-secondary);
+        --bg-color: var(--color-bg);
+        --text-color: var(--color-text);
+        --panel-bg: var(--color-surface);
+        --border-color: var(--color-border);
+        --input-bg: var(--color-input-bg);
+        --header-text: #ffffff;
+        --modal-overlay: rgba(0, 0, 0, 0.85);
+        color-scheme: dark;
     }
 
     * { box-sizing: border-box; }
@@ -253,60 +318,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         font-family: 'Vazirmatn', sans-serif !important;
         background-color: var(--bg-color);
         color: var(--text-color);
-        transition: background-color 0.3s, color 0.3s;
+        transition: background-color var(--anim-fast), color var(--anim-fast);
         margin: 0;
         padding: 0;
         min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
     }
 
     .container {
         max-width: 1100px;
         margin: 0 auto;
-        padding: 40px 15px;
+        padding: 36px 16px;
         animation: pageRise var(--anim-slow) cubic-bezier(.2,.8,.2,1) both;
     }
 
     .card {
         background-color: var(--panel-bg);
         border: 1px solid var(--border-color);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04), 0 8px 10px -6px rgba(0,0,0,0.02);
+        border-radius: 20px;
         overflow: hidden;
+        transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
     }
 
     .panel-heading {
         background-color: var(--panel-bg);
         color: var(--header-text);
-        border-bottom: 2px solid var(--primary-color);
-        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        padding: 22px 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .panel-title { margin: 0; font-weight: bold; font-size: 1.25rem; }
-
-    .theme-toggle-btn {
-        background-color: var(--secondary-color);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 42px;
-        height: 42px;
+    .panel-title {
+        margin: 0;
+        font-weight: 800;
+        font-size: 1.25rem;
         display: flex;
-        justify-content: center;
         align-items: center;
-        cursor: pointer;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        transition: transform 0.2s, background-color 0.3s;
+        gap: 12px;
+        letter-spacing: -0.015em;
     }
 
-    .theme-toggle-btn:hover { transform: scale(1.08); }
-    .theme-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .panel-title-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--color-primary-soft);
+        color: var(--color-primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .panel-title-badge svg {
+        width: 20px;
+        height: 20px;
+    }
 
     .panel-body { 
-        padding: 30px; 
-        padding-bottom: 60px;
+        padding: 32px 28px; 
+        padding-bottom: 50px;
     }
 
     .row {
@@ -318,7 +392,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     .col-3, .col-4, .col-6, .col-12 {
         padding: 0 10px;
-        margin-bottom: 20px;
+        margin-bottom: 22px;
     }
 
     .col-3 { width: 25%; }
@@ -328,91 +402,145 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     .input-group { width: 100%; position: relative; }
 
+    /* استایل استاندارد، شیک و خوانای لیبل‌ها بدون رنگ سبز خسته‌کننده */
     .input-group label {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: bold;
-        color: var(--primary-color);
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--color-label);
+        letter-spacing: -0.01em;
     }
 
-    .social-icon { width: 18px; height: 18px; display: inline-block; vertical-align: middle; }
-    .instagram-color { fill: #E1306C; }
-    .linkedin-color { fill: #0077B5; }
+    .input-group label .iconoir-icon {
+        width: 17px;
+        height: 17px;
+        stroke-width: 1.8;
+        color: var(--color-primary);
+        flex-shrink: 0;
+        display: inline-flex;
+    }
 
+    /* اینپوت‌ها و سلکتورها */
     .input, select.input {
         width: 100%;
         background-color: var(--input-bg);
         color: var(--text-color);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 12px;
-        font-size: 15px;
+        border: 1.5px solid var(--border-color);
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 14px;
         font-family: inherit;
-        transition: border-color var(--anim-fast), box-shadow var(--anim-fast);
+        transition: border-color var(--anim-fast), box-shadow var(--anim-fast), background-color var(--anim-fast);
         appearance: none;
     }
 
-    input[type="file"].input { padding: 8px 12px; cursor: pointer; }
+    .input::placeholder {
+        color: var(--color-muted);
+        opacity: 0.85;
+    }
+
+    .input:hover {
+        border-color: var(--color-border-hover);
+    }
 
     .input:focus {
-        border-color: var(--primary-color);
+        border-color: var(--color-primary);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 125, 117, 0.15);
+        box-shadow: 0 0 0 3.5px var(--color-primary-glow);
     }
 
     select.input {
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23007D75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230d7a6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: left 12px center;
-        padding-left: 35px;
+        background-position: left 14px center;
+        padding-left: 38px;
+        cursor: pointer;
     }
 
-    textarea.input-large { min-height: 110px; resize: vertical; line-height: 1.6; }
+    [data-theme="dark"] select.input, body[data-theme="dark"] select.input {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2314b8a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+
+    select.input-disabled {
+        background-color: var(--color-input-disabled) !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.88;
+    }
+
+    input[type="file"].input { padding: 9px 12px; cursor: pointer; }
+
+    textarea.input-large { min-height: 115px; resize: vertical; line-height: 1.65; }
 
     .char-counter {
         display: none;
         font-size: 12px;
-        color: var(--muted);
-        margin-top: 5px;
+        color: var(--color-muted);
+        margin-top: 6px;
         text-align: left;
         direction: ltr;
         transition: color 0.2s;
     }
 
+    /* نوار ابزار و دکمه‌ها */
     .builder-toolbar {
         display: flex;
-        gap: 15px;
-        margin-top: 25px;
+        gap: 16px;
+        margin-top: 28px;
     }
 
     .btn {
-        padding: 14px 24px;
+        padding: 13px 24px;
         border: none;
-        border-radius: 6px;
+        border-radius: 12px;
         cursor: pointer;
-        font-weight: bold;
-        font-size: 15px;
+        font-weight: 700;
+        font-size: 14.5px;
         transition: transform var(--anim-fast), box-shadow var(--anim-fast), opacity var(--anim-fast);
         font-family: inherit;
         flex-grow: 1;
-        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
     }
 
-    .btn:hover {
-        opacity: var(--btn-hover-opacity);
+    .btn .iconoir-icon {
+        width: 19px;
+        height: 19px;
+        stroke-width: 2;
+        display: inline-flex;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 55%, var(--color-primary-light) 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 14px var(--color-primary-glow);
+    }
+
+    .btn-save:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 22px var(--color-primary-glow);
     }
 
-    .btn-save { background: linear-gradient(135deg, var(--primary-color), #009b90); color: white; }
-    .btn-preview { background: linear-gradient(135deg, var(--secondary-color), #ffbf5a); color: white; }
+    .btn-preview {
+        background: linear-gradient(135deg, #b45309 0%, var(--color-secondary) 55%, var(--color-secondary-light) 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 14px var(--color-secondary-soft);
+    }
+
+    .btn-preview:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(217, 119, 6, 0.32);
+    }
 
     #previewModal {
         position: fixed; inset: 0; background: var(--modal-overlay);
         display: none; z-index: 9999; overflow-y: auto; padding: 20px;
+        backdrop-filter: blur(4px);
     }
 
     .modal-content {
@@ -445,7 +573,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         --brand-gold-glow: rgba(217, 119, 6, 0.1);
         --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
     }
-    [data-theme="dark"] {
+    [data-theme="dark"], body[data-theme="dark"] {
         --bg-global-preview: #0f172a;
         --bg-surface-preview: #1e293b;
         --text-main-preview: #f1f5f9;
@@ -487,7 +615,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         color: var(--text-muted-preview);
         gap: 8px;
     }
-    .avatar-placeholder .icon { font-size: 55px; }
     .card-info-box {
         padding: 24px 20px 16px 20px;
         display: flex;
@@ -538,7 +665,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         background: rgba(0, 0, 0, 0.015);
         border-top: 1px solid var(--border-color-preview);
     }
-    [data-theme="dark"] .action-drawer { background: rgba(255, 255, 255, 0.02); }
+    [data-theme="dark"] .action-drawer, body[data-theme="dark"] .action-drawer { background: rgba(255, 255, 255, 0.02); }
     .btn-more-info {
         width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
         padding: 12px 14px; border-radius: 14px; font-size: 14px; font-weight: 700;
@@ -547,10 +674,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     .btn-more-info svg { width: 18px; height: 18px; fill: currentColor; }
 
-    .status-msg { margin-top: 15px; padding: 12px; border-radius: 6px; display: none; text-align: center; font-weight: bold; line-height: 1.6; }
+    .status-msg {
+        margin-top: 18px;
+        padding: 13px 18px;
+        border-radius: 12px;
+        display: none;
+        text-align: center;
+        font-weight: 600;
+        font-size: 13.5px;
+        line-height: 1.7;
+    }
     .status-msg:not(:empty) { display: block; }
-    .status-ok { background: #e8f8f5; color: #007D75; border: 1px solid #007D75; }
-    .status-error { background: #fdedec; color: #c0392b; border: 1px solid #e74c3c; }
+    .status-ok {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+    [data-theme="dark"] .status-ok, body[data-theme="dark"] .status-ok {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border-color: rgba(52, 211, 153, 0.35);
+    }
+    .status-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.28);
+    }
+    [data-theme="dark"] .status-error, body[data-theme="dark"] .status-error {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border-color: rgba(248, 113, 113, 0.35);
+    }
+    .status-loading {
+        background: rgba(217, 119, 6, 0.1);
+        color: #b45309;
+        border: 1px solid rgba(217, 119, 6, 0.25);
+    }
+    [data-theme="dark"] .status-loading, body[data-theme="dark"] .status-loading {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border-color: rgba(251, 191, 36, 0.3);
+    }
 
     .fade-in-field { animation: fieldFadeIn 300ms ease forwards; }
 
@@ -558,10 +722,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .col-3, .col-4, .col-6 { width: 100%; }
         .builder-toolbar { flex-direction: column; }
         .modal-content { margin: 20px auto; }
+        .panel-body { padding: 22px 18px; }
+        .panel-heading { padding: 18px 20px; }
     }
 
     @keyframes pageRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fieldFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fieldFadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -570,8 +736,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="card">
         
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo $is_edit_mode ? ('✏️ ویرایش پروفایل ' . htmlspecialchars($edit_data['fullname'] ?? '')) : '👥 ثبت پروفایل همکار جدید'; ?></h3>
-            <!-- دکمه‌ی تغییر تم حذف شد — تم از «داشبورد مدیریت» کنترل می‌شود -->
+            <h3 class="panel-title">
+                <span class="panel-title-badge"><?php echo iconoir_icon($is_edit_mode ? 'edit-pencil' : 'user-plus'); ?></span>
+                <span><?php echo $is_edit_mode ? ('ویرایش پروفایل ' . htmlspecialchars($edit_data['fullname'] ?? '')) : 'ثبت پروفایل همکار جدید'; ?></span>
+            </h3>
         </div>
 
         <div class="panel-body">
@@ -584,18 +752,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-4">
                     <div class="input-group">
-                        <label>نام و نام خانوادگی</label>
+                        <label><?php echo iconoir_icon('user'); ?> نام و نام خانوادگی</label>
                         <input type="text" id="fullname" class="input" placeholder="نام همکار را وارد کنید" required>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="input-group">
-                        <label>📸 آپلود عکس پرسنلی</label>
+                        <label><?php echo iconoir_icon('camera'); ?> آپلود عکس پرسنلی</label>
                         <input type="file" id="profile_pic" class="input" accept="image/*">
                         <?php if ($is_edit_mode && !empty($edit_data['profile_pic'])): ?>
                         <div style="margin-top:9px; display:flex; align-items:center; gap:10px;">
                             <img src="<?php echo htmlspecialchars($edit_data['profile_pic']); ?>"
-                                 style="width:70px; height:70px; object-fit:cover; border-radius:8px; border:2px solid var(--color-primary);"
+                                 style="width:70px; height:70px; object-fit:cover; border-radius:10px; border:2px solid var(--color-primary);"
                                  alt="عکس فعلی">
                             <span style="font-size:12px; color:var(--color-muted); line-height:1.5;">عکس فعلی<br>در صورت عدم انتخاب فایل جدید،<br>همین عکس حفظ می‌شود</span>
                         </div>
@@ -604,7 +772,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="col-4">
                     <div class="input-group">
-                        <label>ایمیل سازمان/شخصی</label>
+                        <label><?php echo iconoir_icon('mail'); ?> ایمیل سازمان/شخصی</label>
                         <input type="email" id="email" class="input" placeholder="email@example.com" style="text-align: left; dir: ltr;" required>
                     </div>
                 </div>
@@ -613,7 +781,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-3" id="branch_container">
                     <div class="input-group">
-                        <label>📍 محل خدمت</label>
+                        <label><?php echo iconoir_icon('pin-alt'); ?> محل خدمت</label>
                         <?php
                           // محل خدمت قفل‌شده به شعبه‌ی فعالِ کاربر است؛ امکانِ انتخابِ شعبه‌ی دیگر وجود ندارد.
                           $__pbRow  = dash_load_branch(dash_active_branch_id());
@@ -622,18 +790,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                           //   ستاد مرکزی → setad_markazi (مسیرِ معاونت‌ها)، سایر شعب → branch (مسیرِ کادر درمان/اداری)
                           $__pbKey  = (int)($__pbRow['is_hq'] ?? 0) === 1 ? 'setad_markazi' : 'branch';
                         ?>
-                        <select id="branch" class="input" required onchange="handleBranchChange()"
-                                style="background:#f1f3f9;cursor:not-allowed;pointer-events:none;" tabindex="-1"
+                        <select id="branch" class="input input-disabled" required onchange="handleBranchChange()"
+                                tabindex="-1"
                                 title="محل خدمت بر اساس شعبه‌ی شما تعیین می‌شود">
                             <option value="<?= htmlspecialchars($__pbKey) ?>" selected><?= htmlspecialchars($__pbName) ?></option>
                         </select>
-                        <small style="color:var(--text-muted,#858796);font-size:11px;">محل خدمت به‌صورت خودکار، شعبه‌ی شما است.</small>
+                        <small style="color:var(--color-muted);font-size:11.5px;margin-top:4px;display:block;">محل خدمت به‌صورت خودکار، شعبه‌ی شما است.</small>
                     </div>
                 </div>
                 
                 <div class="col-3" id="job_category_container" style="display: none;">
                     <div class="input-group">
-                        <label>🗂️ دسته سمت شغلی</label>
+                        <label><?php echo iconoir_icon('view-grid'); ?> دسته سمت شغلی</label>
                         <select id="job_category" class="input" onchange="handleCategoryChange()">
                         </select>
                     </div>
@@ -641,7 +809,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="col-3" id="role_container" style="display: none;">
                     <div class="input-group">
-                        <label>💼 سمت شغلی</label>
+                        <label><?php echo iconoir_icon('suitcase'); ?> سمت شغلی</label>
                         <select id="role_select" class="input">
                             <option value="">انتخاب سمت...</option>
                         </select>
@@ -652,7 +820,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="col-3" id="medical_id_container" style="display: none;">
                     <div class="input-group">
-                        <label>🩺 شماره نظام پزشکی</label>
+                        <label><?php echo iconoir_icon('stethoscope'); ?> شماره نظام پزشکی</label>
                         <input type="text" id="medical_id" class="input" placeholder="فقط عدد وارد کنید" style="text-align: left; dir: ltr;" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
                 </div>
@@ -661,13 +829,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-4">
                     <div class="input-group">
-                        <label>آخرین رشته تخصصی</label>
+                        <label><?php echo iconoir_icon('graduation-cap'); ?> آخرین رشته تخصصی</label>
                         <input type="text" id="study_field" class="input" placeholder="مثلا مهندسی نرم‌افزار" required>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="input-group">
-                        <label>سال شروع فعالیت (کلی)</label>
+                        <label><?php echo iconoir_icon('calendar'); ?> سال شروع فعالیت (کلی)</label>
                         <select id="start_work_year" class="input" required>
                             <option value="">انتخاب سال...</option>
                         </select>
@@ -675,7 +843,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="col-4">
                     <div class="input-group">
-                        <label>سال همکاری با مکسا</label>
+                        <label><?php echo iconoir_icon('building'); ?> سال همکاری با مکسا</label>
                         <select id="maxa_join_year" class="input" required>
                             <option value="">انتخاب سال...</option>
                         </select>
@@ -686,19 +854,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-6">
                     <div class="input-group">
-                        <label>
-                            <svg class="social-icon instagram-color" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                            لینک اینستاگرام (اختیاری)
-                        </label>
+                        <label><?php echo iconoir_icon('instagram'); ?> لینک اینستاگرام (اختیاری)</label>
                         <input type="url" id="instagram" class="input" placeholder="https://instagram.com/username" style="text-align: left; dir: ltr;">
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="input-group">
-                        <label>
-                            <svg class="social-icon linkedin-color" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                            لینک لینکدین (اختیاری)
-                        </label>
+                        <label><?php echo iconoir_icon('linkedin'); ?> لینک لینکدین (اختیاری)</label>
                         <input type="url" id="linkedin" class="input" placeholder="https://linkedin.com/in/username" style="text-align: left; dir: ltr;">
                     </div>
                 </div>
@@ -707,7 +869,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-12">
                     <div class="input-group">
-                        <label>📝 بیوگرافی حرفه ای</label>
+                        <label><?php echo iconoir_icon('notes'); ?> بیوگرافی حرفه‌ای</label>
                         <textarea id="bio_professional" class="input input-large" placeholder="خلاصه سوابق کلیدی..." required></textarea>
                     </div>
                 </div>
@@ -716,7 +878,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-12">
                     <div class="input-group">
-                        <label>🔬 سوابق علمی و پژوهشی (اختیاری)</label>
+                        <label><?php echo iconoir_icon('microscope'); ?> سوابق علمی و پژوهشی (اختیاری)</label>
                         <textarea id="academic_background" class="input input-large" placeholder="کتب، مقالات و مدارک بین‌المللی..."></textarea>
                     </div>
                 </div>
@@ -725,15 +887,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
                 <div class="col-12">
                     <div class="input-group">
-                        <label>🏢 مسئولیت ها در مکسا</label>
+                        <label><?php echo iconoir_icon('task-list'); ?> مسئولیت‌ها در مکسا</label>
                         <textarea id="maxa_responsibilities" class="input input-large" placeholder="شرح دقیق وظایف در مکسا..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="builder-toolbar">
-                <button type="button" class="btn btn-save" onclick="saveData()">💾 ثبت نهایی</button>
-                <button type="button" class="btn btn-preview" onclick="openPreview()">👁️ پیش‌نمایش کارت همکار</button>
+                <button type="button" class="btn btn-save" onclick="saveData()">
+                    <?php echo iconoir_icon('floppy-disk'); ?>
+                    <span>ثبت نهایی اطلاعات</span>
+                </button>
+                <button type="button" class="btn btn-preview" onclick="openPreview()">
+                    <?php echo iconoir_icon('eye'); ?>
+                    <span>پیش‌نمایش کارت همکار</span>
+                </button>
             </div>
 
             <div id="statusBox" class="status-msg"></div>
@@ -744,8 +912,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div id="previewModal" onclick="if(event.target===this) closePreview()">
     <div class="modal-content">
-        <button onclick="closePreview()" style="position:absolute; top:12px; left:12px; background:#000000; color:#ffffff; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; box-shadow:0 3px 10px rgba(0,0,0,0.4); padding:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <button onclick="closePreview()" style="position:absolute; top:12px; left:12px; background:rgba(15,23,42,0.85); color:#ffffff; border:none; width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; box-shadow:0 3px 12px rgba(0,0,0,0.3); padding:0; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+            <?php echo iconoir_icon('xmark'); ?>
         </button>
         <div id="previewContent"></div>
     </div>
@@ -896,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startWorkSelect = document.getElementById('start_work_year');
     const maxaJoinSelect = document.getElementById('maxa_join_year');
 
-    for (let year = currentYear; year >= 1360; year--) {
+    for (let year = currentYear; year >= 1340; year--) {
         startWorkSelect.add(new Option(year, year));
     }
     for (let year = currentYear; year >= 1388; year--) {
@@ -989,15 +1157,18 @@ function saveData() {
     if (errors.length > 0) {
         statusBox.innerHTML = "⚠️ تکمیل فیلدهای اجباری زیر الزامی است:<br>" + errors.join("، ");
         statusBox.className = "status-msg status-error";
+        statusBox.style.backgroundColor = "";
+        statusBox.style.color = "";
+        statusBox.style.borderColor = "";
         return;
     }
     
     statusBox.textContent = "⏳ در حال ارسال و ذخیره‌سازی اطلاعات...";
-    statusBox.className = "status-msg";
+    statusBox.className = "status-msg status-loading";
     statusBox.style.display = "block";
-    statusBox.style.backgroundColor = "#fff3cd";
-    statusBox.style.color = "#856404";
-    statusBox.style.borderColor = "#ffeeba";
+    statusBox.style.backgroundColor = "";
+    statusBox.style.color = "";
+    statusBox.style.borderColor = "";
     
     const formData = new FormData();
     formData.append("fullname", document.getElementById("fullname").value.trim());
@@ -1116,7 +1287,7 @@ function openPreview() {
     } else {
         imageHtml = `
         <div class="avatar-placeholder">
-            <span class="icon">👤</span>
+            <svg class="iconoir-icon" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/></svg>
         </div>`;
     }
 
