@@ -36,10 +36,29 @@ body.dark,
   --pdp-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.45);
 }
 
+.pdp-wrapper,
+.pdp-wrapper *,
+.pdp-popover,
+.pdp-popover *,
+.pdp-trigger,
+.pdp-trigger-val,
+.pdp-select,
+.pdp-month-select,
+.pdp-year-select,
+.pdp-nav-btn,
+.pdp-btn,
+.pdp-day,
+.pdp-month-item,
+.pdp-year-item,
+.pdp-time-col,
+.pdp-time-val,
+.pdp-quick-btn {
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 .pdp-wrapper {
   position: relative;
   direction: rtl;
-  font-family: inherit;
   width: 100%;
   user-select: none;
 }

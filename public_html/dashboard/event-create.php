@@ -1,11 +1,17 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/_guard.php';
-dash_require('events');
-dash_require_hq();
+if (!defined('IN_SNAPSHOT')) {
+    require_once __DIR__ . '/_guard.php';
+    dash_require('events');
+    dash_require_hq();
+}
 require_once __DIR__ . '/../event-lib.php';
 
-$pdo = dash_pdo();
+try {
+    $pdo = dash_pdo();
+} catch (Throwable $e) {
+    $pdo = null;
+}
 $id = (int)($_GET['id'] ?? 0);
 
 $event = [
@@ -35,7 +41,7 @@ $event = [
 
 $heroes = $people = $speakers = $partners = $news = [];
 
-if ($id) {
+if ($id && $pdo) {
     $st = $pdo->prepare('SELECT * FROM events WHERE id = ?');
     $st->execute([$id]);
     $event = array_merge($event, $st->fetch() ?: []);
@@ -74,6 +80,7 @@ function rowVal(array $row, string $key, string $default = ''): string {
 }
 require_once __DIR__ . '/event-icons.php';
 ?>
+<link rel="stylesheet" href="/font.css">
 <link rel="stylesheet" href="/assets/events/datepicker.css">
 <!-- Theme synchronizer for iframe / standalone -->
 <script>
@@ -122,8 +129,93 @@ require_once __DIR__ . '/event-icons.php';
 
 <style>
 /* ============================================================================
+   Font: Self-Hosted Vazirmatn (Variable & Static Weights)
+   Guaranteed 100% offline and Iran-network resilience.
+   ============================================================================ */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2 supports variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+input,
+button,
+select,
+textarea,
+optgroup,
+option,
+.hq-input,
+.hq-select,
+.hq-textarea,
+.hq-btn,
+.hq-pill,
+.hq-wizard-title,
+.hq-wizard-circle,
+.hq-sidebar-link,
+.hq-step-nav-btn,
+.hq-repeat-pill-number,
+.hq-repeat-pill-status,
+.pdp-wrapper,
+.pdp-popover,
+.pdp-popover * {
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* ============================================================================
    Figma Design #2:286 "admin-event-form" (1440px canvas layout)
-   Complete Dark & Light Mode Theme Support + 3 UX Layout Modes
+   Complete Dark & Light Mode Theme Support
+   - Desktop: Quick-Jump Sticky Sidebar (all sections visible)
+   - Mobile: Step Wizard (focused step-by-step navigation)
    ============================================================================ */
 
 :root {
@@ -155,8 +247,6 @@ require_once __DIR__ . '/event-icons.php';
   --hq-btn-white-bg: #ffffff;
   --hq-btn-white-border: #d1d5db;
   --hq-btn-white-text: #374151;
-  --hq-tab-active-bg: #0d7a87;
-  --hq-tab-active-text: #ffffff;
   --hq-sidebar-active-bg: rgba(13, 122, 135, 0.08);
   --hq-sidebar-active-border: #0d7a87;
   --hq-sticky-footer-bg: rgba(255, 255, 255, 0.95);
@@ -191,18 +281,20 @@ require_once __DIR__ . '/event-icons.php';
   --hq-btn-white-bg: #1f2937;
   --hq-btn-white-border: #374151;
   --hq-btn-white-text: #e5e7eb;
-  --hq-tab-active-bg: #14b8a6;
-  --hq-tab-active-text: #0f1518;
   --hq-sidebar-active-bg: rgba(20, 184, 166, 0.15);
   --hq-sidebar-active-border: #14b8a6;
   --hq-sticky-footer-bg: rgba(25, 35, 42, 0.95);
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--hq-bg) !important;
   color: var(--hq-text-main) !important;
-  font-family: 'Vazirmatn', sans-serif !important;
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -279,41 +371,6 @@ body {
   color: var(--hq-pill-danger-text);
 }
 
-/* UX Layout Switcher Bar */
-.hq-switcher-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--hq-surface);
-  border: 1px solid var(--hq-border);
-  border-radius: 14px;
-  padding: 10px 16px;
-  gap: 14px;
-  box-shadow: var(--hq-shadow);
-  flex-wrap: wrap;
-}
-.hq-switcher-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--hq-text-main);
-}
-.hq-switcher-info svg {
-  color: var(--hq-primary);
-  width: 18px;
-  height: 18px;
-}
-.hq-switcher-buttons {
-  display: flex;
-  background: var(--hq-input-bg);
-  padding: 4px;
-  border-radius: 10px;
-  border: 1px solid var(--hq-border);
-  gap: 4px;
-  flex-wrap: wrap;
-}
 /* Iconoir Vector Icons */
 .iconoir {
   display: inline-block;
@@ -323,103 +380,7 @@ body {
   transition: color 0.15s ease, stroke 0.15s ease, transform 0.15s ease;
 }
 
-.hq-mode-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  border: none;
-  background: transparent;
-  color: var(--hq-text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.hq-mode-btn .iconoir {
-  color: var(--hq-text-muted);
-}
-.hq-mode-btn:hover {
-  color: var(--hq-text-main);
-}
-.hq-mode-btn:hover .iconoir {
-  color: var(--hq-text-main);
-}
-.hq-mode-btn.is-active {
-  background: var(--hq-surface);
-  color: var(--hq-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-.hq-mode-btn.is-active .iconoir {
-  color: var(--hq-primary);
-}
-
-/* Mode 1: Tabs Navigation */
-.hq-tabs-nav {
-  display: none;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  background: var(--hq-surface);
-  border: 1px solid var(--hq-border);
-  border-radius: 16px;
-  padding: 8px;
-  box-shadow: var(--hq-shadow);
-}
-.hq-tab-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--hq-text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: right;
-}
-.hq-tab-title-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.hq-tab-item .iconoir {
-  color: var(--hq-text-muted);
-}
-.hq-tab-item:hover {
-  background: var(--hq-input-bg);
-  color: var(--hq-text-main);
-}
-.hq-tab-item:hover .iconoir {
-  color: var(--hq-text-main);
-}
-.hq-tab-item.is-active {
-  background: var(--hq-tab-active-bg);
-  color: var(--hq-tab-active-text);
-  box-shadow: var(--hq-shadow);
-}
-.hq-tab-item.is-active .iconoir {
-  color: var(--hq-tab-active-text);
-}
-.hq-tab-badge {
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--hq-surface-muted);
-  border: 1px solid var(--hq-border);
-  color: var(--hq-text-muted);
-  flex-shrink: 0;
-}
-.hq-tab-item.is-active .hq-tab-badge {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
+/* Step Wizard (Optimized for Mobile/Phone) */
 
 /* Mode 2: Wizard Stepper */
 .hq-wizard-stepper {
@@ -623,20 +584,32 @@ body {
   border-color: var(--hq-primary);
 }
 
-/* Active Mode Display Toggles */
-body[data-hq-layout="tabs"] .hq-tabs-nav { display: grid; }
-body[data-hq-layout="wizard"] .hq-wizard-stepper { display: flex; }
-body[data-hq-layout="sidebar"] .hq-sidebar-nav { display: flex; }
-
-body[data-hq-layout="tabs"] .hq-step-group:not(.is-active-tab),
-body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
-  display: none !important;
-}
-
+/* Step Group Base */
 .hq-step-group {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Desktop Layout (>= 901px): Quick-Jump Sticky Sidebar (all sections visible) */
+@media (min-width: 901px) {
+  .hq-wizard-stepper {
+    display: none !important;
+  }
+  .hq-sidebar-nav {
+    display: flex !important;
+    width: 280px;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+  .hq-step-group {
+    display: flex !important;
+  }
+  #stepNavButtons {
+    display: none !important;
+  }
 }
 
 /* 2. Intro Box */
@@ -1055,17 +1028,77 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
   background: var(--hq-input-bg);
 }
 
-/* Responsive */
+/* Mobile Structure (<= 900px): Step Wizard */
 @media (max-width: 900px) {
   .hq-grid-3 { grid-template-columns: 1fr; }
   .hq-grid-2 { grid-template-columns: 1fr; }
   .hq-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .hq-tabs-nav { grid-template-columns: 1fr 1fr; }
   .hq-sidebar-layout { flex-direction: column; }
   .hq-sidebar-nav { display: none !important; }
-  .hq-actions-bar-inner { flex-direction: column-reverse; gap: 10px; }
-  .hq-actions-left { width: 100%; flex-direction: column; }
-  .hq-btn { width: 100%; }
+  
+  .hq-wizard-stepper {
+    display: flex !important;
+    position: sticky;
+    top: 10px;
+    z-index: 90;
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.96);
+  }
+  :root[data-theme="dark"] .hq-wizard-stepper,
+  body[data-theme="dark"] .hq-wizard-stepper {
+    background: rgba(25, 35, 42, 0.96);
+  }
+
+  .hq-step-group:not(.is-active-step) {
+    display: none !important;
+  }
+  .hq-step-group.is-active-step {
+    display: flex !important;
+  }
+
+  #stepNavButtons {
+    display: inline-flex !important;
+  }
+  .hq-actions-bar-inner {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  .hq-actions-left {
+    width: 100%;
+    flex-direction: column;
+  }
+  .hq-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-wizard-stepper {
+    padding: 14px 10px;
+  }
+  .hq-wizard-steps {
+    gap: 2px;
+  }
+  .hq-wizard-step {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .hq-wizard-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  .hq-wizard-title {
+    font-size: 11px;
+    max-width: 68px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 </style>
 
@@ -1089,63 +1122,7 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
     </div>
   </header>
 
-  <!-- UX Mode Switcher Bar -->
-  <div class="hq-switcher-bar">
-    <div class="hq-switcher-info">
-      <?= hq_iconoir('sidebar', '', 18) ?>
-      <span>چیدمان و نحوه نمایش فرم:</span>
-    </div>
-    <div class="hq-switcher-buttons">
-      <button type="button" class="hq-mode-btn is-active" data-set-layout="tabs">
-        <?= hq_iconoir('tabs', '', 17) ?>
-        <span>تب‌بندی موضوعی</span>
-      </button>
-      <button type="button" class="hq-mode-btn" data-set-layout="wizard">
-        <?= hq_iconoir('wizard', '', 17) ?>
-        <span>استپر مرحله‌ای</span>
-      </button>
-      <button type="button" class="hq-mode-btn" data-set-layout="sidebar">
-        <?= hq_iconoir('sidebar', '', 17) ?>
-        <span>سایدبار ناوبری سریع</span>
-      </button>
-      <button type="button" class="hq-mode-btn" data-set-layout="full">
-        <?= hq_iconoir('full', '', 17) ?>
-        <span>نمایش کامل فیگما</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mode 1: Tabs Navigation Bar -->
-  <nav class="hq-tabs-nav" id="tabsNav">
-    <button type="button" class="hq-tab-item is-active" data-tab-target="1">
-      <div class="hq-tab-title-wrap">
-        <?= hq_iconoir('base', '', 18) ?>
-        <span>اطلاعات پایه و زمان‌بندی</span>
-      </div>
-      <span class="hq-tab-badge">گام ۱</span>
-    </button>
-    <button type="button" class="hq-tab-item" data-tab-target="2">
-      <div class="hq-tab-title-wrap">
-        <?= hq_iconoir('media', '', 18) ?>
-        <span>رسانه و فایل‌ها</span>
-      </div>
-      <span class="hq-tab-badge">گام ۲</span>
-    </button>
-    <button type="button" class="hq-tab-item" data-tab-target="3">
-      <div class="hq-tab-title-wrap">
-        <?= hq_iconoir('people', '', 18) ?>
-        <span>عوامل و سخنرانان</span>
-      </div>
-      <span class="hq-tab-badge"><?= count($heroes) + count($people) + count($speakers) + count($partners) ?> مورد</span>
-    </button>
-    <button type="button" class="hq-tab-item" data-tab-target="4">
-      <div class="hq-tab-title-wrap">
-        <?= hq_iconoir('news', '', 18) ?>
-        <span>اخبار و بنر سراسری</span>
-      </div>
-      <span class="hq-tab-badge"><?= count($news) ?> خبر</span>
-    </button>
-  </nav>
+  <!-- Step Wizard Stepper (Active on Mobile Phone Screens, <= 900px) -->
 
   <!-- Mode 2: Wizard Stepper Progress Bar -->
   <div class="hq-wizard-stepper" id="wizardStepper">
@@ -1878,38 +1855,19 @@ function toggleAllDrawers(open) {
 
 (function() {
   // =========================================================================
-  // 1. Layout Mode Switcher (Tabs, Wizard, Sidebar, Full)
+  // 1. Responsive Layout: Mobile Step Wizard vs Desktop Quick-Jump Sidebar
   // =========================================================================
-  const savedMode = localStorage.getItem('maxa-event-form-mode') || 'tabs';
   let currentStep = 1;
   const totalSteps = 4;
 
-  const modeButtons = document.querySelectorAll('[data-set-layout]');
-  const tabItems = document.querySelectorAll('.hq-tab-item');
   const wizardSteps = document.querySelectorAll('.hq-wizard-step');
   const groups = document.querySelectorAll('.hq-step-group');
-  const stepNav = document.getElementById('stepNavButtons');
   const btnPrev = document.getElementById('btnPrevStep');
   const btnNext = document.getElementById('btnNextStep');
   const progressBar = document.getElementById('wizardProgressBar');
 
-  function setLayout(mode) {
-    document.body.setAttribute('data-hq-layout', mode);
-    localStorage.setItem('maxa-event-form-mode', mode);
-
-    modeButtons.forEach(btn => {
-      btn.classList.toggle('is-active', btn.dataset.setLayout === mode);
-    });
-
-    if (mode === 'tabs' || mode === 'wizard') {
-      stepNav.style.display = 'inline-flex';
-      setStep(currentStep);
-    } else {
-      stepNav.style.display = 'none';
-      groups.forEach(g => {
-        g.classList.add('is-active-tab', 'is-active-step');
-      });
-    }
+  function isMobile() {
+    return window.innerWidth <= 900;
   }
 
   function setStep(stepNum) {
@@ -1918,12 +1876,7 @@ function toggleAllDrawers(open) {
 
     groups.forEach(g => {
       const matches = g.dataset.group === String(stepNum);
-      g.classList.toggle('is-active-tab', matches);
       g.classList.toggle('is-active-step', matches);
-    });
-
-    tabItems.forEach(t => {
-      t.classList.toggle('is-active', t.dataset.tabTarget === String(stepNum));
     });
 
     wizardSteps.forEach((s, idx) => {
@@ -1936,21 +1889,17 @@ function toggleAllDrawers(open) {
       progressBar.style.width = (stepNum / totalSteps * 100) + '%';
     }
 
-    if (btnPrev) btnPrev.style.visibility = stepNum === 1 ? 'hidden' : 'visible';
+    if (btnPrev) {
+      btnPrev.style.visibility = stepNum === 1 ? 'hidden' : 'visible';
+    }
     if (btnNext) {
       btnNext.style.display = stepNum === totalSteps ? 'none' : 'inline-flex';
     }
 
-    window.scrollTo({ top: 120, behavior: 'smooth' });
+    if (isMobile()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
-
-  modeButtons.forEach(btn => {
-    btn.addEventListener('click', () => setLayout(btn.dataset.setLayout));
-  });
-
-  tabItems.forEach(t => {
-    t.addEventListener('click', () => setStep(Number(t.dataset.tabTarget)));
-  });
 
   wizardSteps.forEach(s => {
     s.addEventListener('click', () => setStep(Number(s.dataset.stepTarget)));
@@ -1959,15 +1908,23 @@ function toggleAllDrawers(open) {
   if (btnPrev) btnPrev.addEventListener('click', () => setStep(currentStep - 1));
   if (btnNext) btnNext.addEventListener('click', () => setStep(currentStep + 1));
 
-  // Initialize Layout
-  setLayout(savedMode);
+  // Initialize
+  setStep(1);
+
+  window.addEventListener('resize', () => {
+    if (!isMobile()) {
+      groups.forEach(g => g.classList.add('is-active-step'));
+    } else {
+      setStep(currentStep);
+    }
+  });
 
   // =========================================================================
-  // 2. Sidebar Scrollspy & Filled Counter
+  // 2. Desktop Sidebar Scrollspy & Filled Counter
   // =========================================================================
   const sidebarLinks = document.querySelectorAll('.hq-sidebar-link');
   function updateSidebarSpy() {
-    if (document.body.getAttribute('data-hq-layout') !== 'sidebar') return;
+    if (isMobile()) return;
     const scrollY = window.scrollY + 160;
     sidebarLinks.forEach(link => {
       const target = document.getElementById(link.dataset.anchor);

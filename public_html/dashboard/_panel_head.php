@@ -27,6 +27,7 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
   });
 })();
 </script>
+<link rel="stylesheet" href="/font.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -51,8 +52,9 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
   color-scheme:dark;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;padding:26px}
+*, *::before, *::after{box-sizing:border-box;margin:0;padding:0;font-family:'Vazirmatn',sans-serif}
+body{font-family:'Vazirmatn',sans-serif !important;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;padding:26px}
+input, button, select, textarea, optgroup, option{font-family:'Vazirmatn',sans-serif !important}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:920px;margin:0 auto}
 .page-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}

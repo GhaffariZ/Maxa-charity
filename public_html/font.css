@@ -1,33 +1,107 @@
-/* ---------------------------
-   Font: Vazirmatn Variable
-   Path: /webfont/Vazirmatn[wght].woff2
-   Self-hosted for reliability on the Iran network
-   (no external CDN dependency).
----------------------------- */
+/* --------------------------------------------------------------------------
+   Font: Vazirmatn (Variable & Static Weights)
+   Path: /webfont/Vazirmatn*.woff2
+   Self-hosted for 100% offline & Iran network reliability
+   (No external Google Fonts CDN dependency).
+--------------------------------------------------------------------------- */
 
+/* Variable font */
 @font-face {
   font-family: 'Vazirmatn';
-  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
-       url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  src: url('/webfont/Vazirmatn[wght].woff2') format('woff2 supports variations'),
+       url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-/* ---------------------------
-   Apply globally
----------------------------- */
+/* Static weight fallbacks for older browsers / engines */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/webfont/Vazirmatn-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   Apply globally & enforce on all form inputs and interactive elements
+--------------------------------------------------------------------------- */
 
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Vazirmatn', sans-serif;
-  direction: rtl; /* اگر سایت فارسی است */
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  direction: rtl;
 }
 
-/* Optional default text sizes */
+*, *::before, *::after {
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Overriding browser user-agent defaults for form controls */
+input,
+button,
+select,
+textarea,
+optgroup,
+option {
+  font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Typography scale */
 h1 { font-weight: 800; }
 h2 { font-weight: 700; }
 h3 { font-weight: 600; }
+h4 { font-weight: 600; }
 p  { font-weight: 400; }
 small { font-weight: 300; }
+

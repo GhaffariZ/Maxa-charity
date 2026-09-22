@@ -51,6 +51,10 @@ try {
 }
 
 /* در دسترسِ صفحات: اتصال آماده + کاربر + شعبه‌ی فعال */
-$pdo            = dash_pdo();
+try {
+    $pdo        = dash_pdo();
+} catch (Throwable $e) {
+    $pdo        = null;
+}
 $DASH_USER      = dash_user();
 $ACTIVE_BRANCH  = dash_active_branch_id();
