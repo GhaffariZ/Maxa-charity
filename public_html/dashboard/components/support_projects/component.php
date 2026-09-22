@@ -201,7 +201,7 @@
     /* دکمههای ناوبری اسلایدر */
     .slider-btn {
       position: absolute;
-      top: 50%;
+      top: 270px;
       transform: translateY(-50%);
       width: 48px;
       height: 48px;
@@ -218,6 +218,12 @@
       z-index: 10;
       transition: all 0.3s var(--ease);
       cursor: pointer;
+    }
+
+    .slider-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
     }
 
     .slider-btn:hover {
@@ -697,13 +703,17 @@
 
       <section class="cta-cards-wrap" aria-label="Cards">
         <button class="slider-btn prev-btn" id="sliderPrevBtn" aria-label="صفحه قبلی">
-          <i class="fas fa-chevron-right"></i>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
         <div class="cta-cards-viewport">
           <div class="cta-cards" id="ctaCards"></div>
         </div>
         <button class="slider-btn next-btn" id="sliderNextBtn" aria-label="صفحه بعدی">
-          <i class="fas fa-chevron-left"></i>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
         <div class="slider-dots" id="sliderDots"></div>
       </section>

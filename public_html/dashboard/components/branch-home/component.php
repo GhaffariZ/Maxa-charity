@@ -82,6 +82,7 @@
       background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.05));
       border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);
       font-size:38px;font-weight:900;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.22)}
+  .bh-id-badge svg{width:56px;height:56px;display:block}
   .bh-id-main{flex:1 1 280px;min-width:240px}
   .bh-id-kicker{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.04em;
       color:#0a3a3a;background:var(--orange);padding:5px 13px;border-radius:999px;margin-bottom:12px}
@@ -109,6 +110,7 @@
   @media(max-width:760px){
     .bh-id-inner{gap:18px;padding:34px 0}
     .bh-id-badge{width:70px;height:70px;font-size:28px;border-radius:18px}
+    .bh-id-badge svg{width:43px;height:43px}
     .bh-id-name{font-size:26px}
     .bh-id-actions{width:100%;margin-top:6px}
     .bh-intro-btn{width:100%;justify-content:center}
@@ -271,7 +273,7 @@
   <!-- BRANCH IDENTITY BAR (portfolio-style) -->
   <section class="bh-id">
     <div class="bh-wrap bh-id-inner">
-      <div class="bh-id-badge" id="bh-id-badge">م</div>
+      <div class="bh-id-badge" id="bh-id-badge" role="img" aria-label="نماد شعبه"></div>
       <div class="bh-id-main">
         <span class="bh-id-kicker">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
@@ -368,6 +370,34 @@
   var ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560"><rect width="100%" height="100%" fill="#e9edee"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#9aa4a6" font-size="40" font-family="Vazirmatn,Tahoma">مکسا</text></svg>');
   var money=function(n){return Number(n||0).toLocaleString('fa-IR');};
 
+  function branchCityIcon(slug,name){
+    var key=(String(slug||'')+' '+String(name||'')).toLowerCase();
+    var open='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+    var close='</svg>';
+    if(key.indexOf('tehran')>-1||key.indexOf('تهران')>-1){
+      return open+'<path d="M9 41h30M15 41l5-31h8l5 31M18 25h12M16.5 33h15"/><path d="M20 41c0-7 8-7 8 0M21 10l3-5 3 5"/>'+close;
+    }
+    if(key.indexOf('esfahan')>-1||key.indexOf('isfahan')>-1||key.indexOf('اصفهان')>-1){
+      return open+'<path d="M5 36h38M7 17h34v19M7 22h34"/><path d="M10 36v-6a4 4 0 0 1 8 0v6M20 36v-6a4 4 0 0 1 8 0v6M30 36v-6a4 4 0 0 1 8 0v6M9 13h30M12 9h24"/><path d="M7 41c5-3 10 3 15 0s10 3 19 0"/>'+close;
+    }
+    if(key.indexOf('kashan')>-1||key.indexOf('کاشان')>-1){
+      return open+'<path d="M7 41h34M11 41V24l7-5 6 5 6-5 7 5v17"/><path d="M19 19V8h10v11M22 8V4M26 8V4M20 13h8M16 41v-8a3 3 0 0 1 6 0v8M26 41v-8a3 3 0 0 1 6 0v8"/>'+close;
+    }
+    if(key.indexOf('mashhad')>-1||key.indexOf('مشهد')>-1){
+      return open+'<path d="M7 41h34M13 41V19M35 41V19M10 19h6M32 19h6M12 15h4M34 15h4"/><path d="M17 41V27c0-7 14-7 14 0v14M18 27h12M24 17v-6M21 11h6M14 11v4M36 11v4"/>'+close;
+    }
+    if(key.indexOf('ahvaz')>-1||key.indexOf('اهواز')>-1){
+      return open+'<path d="M5 36h38M9 36V17M39 36V17M9 18l15 18 15-18M9 18h30M15 25h18M5 42c6-3 10 3 16 0s11 3 22 0"/><path d="M24 36V15"/>'+close;
+    }
+    if(key.indexOf('tabriz')>-1||key.indexOf('تبریز')>-1){
+      return open+'<path d="M8 41h32M12 41V10h24v31M17 41V26c0-10 14-10 14 0v15M16 15h16M12 8h24"/><path d="M18 20h12"/>'+close;
+    }
+    if(key.indexOf('qom')>-1||key.indexOf('قم')>-1){
+      return open+'<path d="M6 41h36M10 41V17M38 41V17M8 17h4M36 17h4M10 12v5M38 12v5"/><path d="M17 41V28c0-8 14-8 14 0v13M18 28h12M24 18v-6M21 12h6"/><path d="M15 35h18"/>'+close;
+    }
+    return open+'<path d="M6 42h36M10 42V15l14-8 14 8v27M17 20h4M27 20h4M17 27h4M27 27h4M21 42v-8h6v8"/>'+close;
+  }
+
   function soon(msg){
     return '<div class="bh-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>'
       +'<b>به‌زودی</b><span>'+esc(msg)+'</span></div>';
@@ -394,7 +424,7 @@
     var nameEl=document.getElementById('bh-id-name');
     if(nameEl) nameEl.textContent='شعبه‌ی '+nm;
     var badge=document.getElementById('bh-id-badge');
-    if(badge){ var ch=(nm.trim()[0]||'م'); badge.textContent=ch; }
+    if(badge){ badge.innerHTML=branchCityIcon(SLUG,nm); badge.setAttribute('aria-label','نماد شهر '+nm); }
     var tag=document.getElementById('bh-id-tagline');
     if(tag) tag.textContent='شعبه‌ی '+nm+' — در خدمت مردم، در کنار شما';
     var introBtn=document.getElementById('bh-intro-btn');

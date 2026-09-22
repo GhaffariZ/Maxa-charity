@@ -16,6 +16,7 @@ use Maksa\Controllers\DonationController;
 use Maksa\Controllers\EngagementController;
 use Maksa\Controllers\HealthController;
 use Maksa\Controllers\NotificationController;
+use Maksa\Controllers\MedicalRecordController;
 use Maksa\Controllers\UserController;
 use Maksa\Controllers\OrderController;
 use Maksa\Controllers\OtpController;
@@ -31,6 +32,7 @@ return static function (Router $r): void {
 
     // ---- Contact form (public) ---------------------------------------------
     $r->post('/contact',                  [ContactController::class, 'submit']);
+    $r->post('/medical-records/intake',   [MedicalRecordController::class, 'create']);
 
     // ---- Auth (public) ------------------------------------------------------
     $r->post('/auth/otp/send',            [OtpController::class, 'send']);

@@ -28,7 +28,7 @@ final class OtpController
             ->validated();
 
         $purpose = $data['purpose'] ?? 'donation_auth';
-        if (!in_array($purpose, ['donation_auth', 'login'], true)) {
+        if (!in_array($purpose, ['donation_auth', 'login', 'medical_intake'], true)) {
             $purpose = 'donation_auth';
         }
 
@@ -57,7 +57,7 @@ final class OtpController
             ->validated();
 
         $purpose = $data['purpose'] ?? 'donation_auth';
-        if (!in_array($purpose, ['donation_auth', 'login'], true)) {
+        if (!in_array($purpose, ['donation_auth', 'login', 'medical_intake'], true)) {
             $purpose = 'donation_auth';
         }
 

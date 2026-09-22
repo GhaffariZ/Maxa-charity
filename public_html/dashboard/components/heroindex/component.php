@@ -1041,7 +1041,7 @@
   box-shadow: var(--cta-shadow-soft);
 }
     .cta-arrow:hover{ background: rgba(0,0,0,.40); }
-    .cta-arrow.prev{ right:16px; left: auto; }
+    .cta-arrow.prev{ right:10px; left: auto; }
     .cta-arrow.next{ left:16px; right: auto; }
     .cta-arrow svg{ width:18px; height:18px; opacity:.9; }
 

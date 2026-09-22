@@ -10,7 +10,7 @@
 برای بررسی پرونده و دریافت مشاوره تخصصی فرم زیر را تکمیل کنید.
 </p>
 
-<form>
+<form id="medicalIntakeForm">
 
 <div class="mi-section">
 
@@ -20,36 +20,36 @@
 
 <div class="mi-group">
 <label>نام و نام خانوادگی <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="full_name" autocomplete="name" required>
 </div>
 
 <div class="mi-group">
 <label>شماره موبایل <span class="mi-required">*</span></label>
-<input type="tel" required>
+<input type="tel" name="phone" inputmode="tel" autocomplete="tel" required>
 </div>
 
 <div class="mi-group">
 <label>سن</label>
-<input type="number">
+<input type="number" name="age" min="1" max="120">
 </div>
 
 <div class="mi-group">
 <label>جنسیت</label>
-<select>
-<option>انتخاب کنید</option>
-<option>مرد</option>
-<option>زن</option>
+<select name="gender">
+<option value="unspecified">انتخاب کنید</option>
+<option value="male">مرد</option>
+<option value="female">زن</option>
 </select>
 </div>
 
 <div class="mi-group">
 <label>استان <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="province" autocomplete="address-level1" required>
 </div>
 
 <div class="mi-group">
 <label>شهر محل سکونت <span class="mi-required">*</span></label>
-<input type="text" required>
+<input type="text" name="city" autocomplete="address-level2" required>
 </div>
 
 </div>
@@ -64,24 +64,24 @@
 
 <div class="mi-group">
 <label>نوع سرطان</label>
-<select>
-<option>انتخاب کنید</option>
-<option>سرطان پستان</option>
-<option>سرطان ریه</option>
-<option>سرطان معده</option>
-<option>سرطان روده</option>
-<option>سرطان خون</option>
-<option>سایر</option>
+<select name="cancer_type">
+<option value="">انتخاب کنید</option>
+<option value="سرطان پستان">سرطان پستان</option>
+<option value="سرطان ریه">سرطان ریه</option>
+<option value="سرطان معده">سرطان معده</option>
+<option value="سرطان روده">سرطان روده</option>
+<option value="سرطان خون">سرطان خون</option>
+<option value="سایر">سایر</option>
 </select>
 </div>
 
 <div class="mi-group">
 <label>وضعیت تشخیص</label>
-<select>
-<option>انتخاب کنید</option>
-<option>تشخیص قطعی</option>
-<option>در حال بررسی</option>
-<option>مشکوک</option>
+<select name="diagnosis_status">
+<option value="">انتخاب کنید</option>
+<option value="تشخیص قطعی">تشخیص قطعی</option>
+<option value="در حال بررسی">در حال بررسی</option>
+<option value="مشکوک">مشکوک</option>
 </select>
 </div>
 
@@ -89,7 +89,7 @@
 
 <div class="mi-group">
 <label>توضیحات</label>
-<textarea rows="3"></textarea>
+<textarea name="description" rows="3" maxlength="5000"></textarea>
 </div>
 
 </div>
@@ -101,7 +101,7 @@
 
 <label class="mi-upload">
 انتخاب فایل
-<input type="file" multiple accept="image/*" id="miFileInput">
+<input type="file" name="documents[]" multiple accept="image/jpeg,image/png,image/webp,application/pdf" id="miFileInput">
 </label>
 
 <div class="mi-preview" id="miPreview"></div>
@@ -110,14 +110,20 @@
 
 
 <div class="mi-group mi-checkbox">
-<input type="checkbox" id="consent" required>
+<input type="checkbox" name="consent" id="consent" value="1" required>
 <label for="consent">
 با ذخیره اطلاعات پزشکی خود موافق هستم
 <span class="mi-required">*</span>
 </label>
 </div>
 
-<button class="mi-submit">ثبت پرونده</button>
+<div class="mi-group" id="miOtpGroup" hidden>
+<label for="miOtpCode">کد تأیید پیامک‌شده <span class="mi-required">*</span></label>
+<input type="text" name="code" id="miOtpCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+<div class="mi-otp-hint">کد تأیید به شماره همراه واردشده ارسال شد.</div>
+</div>
+
+<button type="submit" class="mi-submit">ثبت پرونده</button>
 
 </form>
 
@@ -347,171 +353,210 @@ margin-top:20px;
     font-size: 20px;
     color: #3fb6b2;
 }
+.medical-intake .mi-otp-hint{
+color:#667085;
+font-size:13px;
+margin-top:6px;
+}
+.medical-intake .mi-form-message{
+margin:12px 0;
+padding:10px 12px;
+border-radius:8px;
+background:#fff1f1;
+color:#b42318;
+font-size:13px;
+}
 </style>
 
 
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-
-    var form = document.querySelector(".medical-intake form");
+    var form = document.getElementById("medicalIntakeForm");
     var fileInput = document.getElementById("miFileInput");
     var preview = document.getElementById("miPreview");
+    var otpGroup = document.getElementById("miOtpGroup");
+    var otpInput = document.getElementById("miOtpCode");
+    var submitButton = form.querySelector(".mi-submit");
     var filesArray = [];
 
-    if (fileInput) {
-        fileInput.addEventListener("change", function() {
-
-            for (var i = 0; i < this.files.length; i++) {
-                filesArray.push(this.files[i]);
-            }
-
-            renderImages();
-        });
-    }
-
-    function renderImages() {
-
-        preview.innerHTML = "";
-
-        filesArray.forEach(function(file, index){
-
-            var reader = new FileReader();
-
-            reader.onload = function(e){
-
-                var box = document.createElement("div");
-                box.className = "mi-image-box";
-
-                var img = document.createElement("img");
-                img.src = e.target.result;
-
-                var remove = document.createElement("div");
-                remove.className = "mi-remove";
-                remove.setAttribute("data-index", index);
-                remove.innerHTML = "×";
-
-                box.appendChild(img);
-                box.appendChild(remove);
-
-                preview.appendChild(box);
-
-            };
-
-            reader.readAsDataURL(file);
-
-        });
-
-    }
-
-
-    preview.addEventListener("click", function(e){
-
-        if (e.target.classList.contains("mi-remove")){
-
-            var idx = e.target.getAttribute("data-index");
-            filesArray.splice(idx,1);
-            renderImages();
-
-        }
-
+    fileInput.addEventListener("change", function() {
+        filesArray = Array.prototype.slice.call(this.files, 0, 5);
+        renderFiles();
     });
 
+    function renderFiles() {
+        preview.innerHTML = "";
+        filesArray.forEach(function(file, index){
+            var box = document.createElement("div");
+            box.className = "mi-image-box";
+            if (file.type.indexOf("image/") === 0) {
+              var reader = new FileReader();
+              reader.onload = function(e){
+                var img = document.createElement("img");
+                img.src = e.target.result;
+                box.insertBefore(img, box.firstChild);
+              };
+              reader.readAsDataURL(file);
+            } else {
+              box.textContent = file.name;
+            }
+            var remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "mi-remove";
+            remove.setAttribute("data-index", index);
+            remove.setAttribute("aria-label", "حذف فایل");
+            remove.textContent = "×";
+            box.appendChild(remove);
+            preview.appendChild(box);
+        });
+    }
 
+    preview.addEventListener("click", function(e){
+        if (e.target.classList.contains("mi-remove")){
+            var idx = Number(e.target.getAttribute("data-index"));
+            filesArray.splice(idx,1);
+            renderFiles();
+        }
+    });
 
-    form.addEventListener("submit", function(e){
-
+    form.addEventListener("submit", async function(e){
         e.preventDefault();
-
         var firstError = null;
-
-        document.querySelectorAll(".mi-error-message").forEach(function(el){
+        form.querySelectorAll(".mi-error-message, .mi-form-message").forEach(function(el){
             el.remove();
         });
-
-        document.querySelectorAll(".mi-error").forEach(function(el){
+        form.querySelectorAll(".mi-error").forEach(function(el){
             el.classList.remove("mi-error");
         });
-
         var requiredFields = form.querySelectorAll("[required]");
-
         requiredFields.forEach(function(field){
-
             var isInvalid = false;
-
             if (field.type === "checkbox"){
-
                 if (!field.checked){
-
                     isInvalid = true;
                     field.closest(".mi-checkbox").classList.add("mi-error");
-
                 }
-
-            } else {
-
-                if (field.value.trim() === ""){
-
-                    isInvalid = true;
-                    field.classList.add("mi-error");
-
-                }
-
+            } else if (field.value.trim() === ""){
+                isInvalid = true;
+                field.classList.add("mi-error");
             }
-
             if (isInvalid){
-
                 var msg = document.createElement("div");
                 msg.className = "mi-error-message";
                 msg.innerText = "این فیلد را حتما پر کنید";
-
                 field.parentNode.appendChild(msg);
-
-                if (!firstError){
-                    firstError = field;
-                }
-
+                if (!firstError) firstError = field;
             }
-
         });
-
-
-
         if (firstError){
-
             firstError.scrollIntoView({
                 behavior: "smooth",
                 block: "center"
             });
-
-        } else {
-
-            var container = document.querySelector(".mi-card");
-            form.style.display = "none";
-
-            var success = document.createElement("div");
-            success.className = "mi-success-message";
-
-            success.innerHTML =
-            "<p><strong>اطلاعات شما با موفقیت ثبت شد.</strong></p>" +
-            "<p>همکاران ما تا 48 ساعت آینده با شما تماس خواهند گرفت.</p>" +
-            "<p>با سپاس از شما</p>";
-
-            container.appendChild(success);
-
-            setTimeout(function(){
-
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-
-            },100);
-
+            return;
         }
 
+        var token = localStorage.getItem("maksa_access_token");
+        if (!token && otpGroup.hidden) {
+            await sendOtp();
+            return;
+        }
+
+        await saveRecord(token);
     });
 
+    async function sendOtp() {
+        var sent = false;
+        setBusy(true, "در حال ارسال کد تأیید...");
+        try {
+            var response = await fetch("/api/auth/otp/send", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    phone: form.elements.phone.value,
+                    purpose: "medical_intake"
+                })
+            });
+            var result = await response.json();
+            if (!response.ok) throw new Error(result.error && result.error.message || "ارسال کد تأیید ناموفق بود.");
+            otpGroup.hidden = false;
+            otpInput.required = true;
+            if (result.data && result.data.debug_code) otpInput.value = result.data.debug_code;
+            otpInput.focus();
+            sent = true;
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            setBusy(false);
+            if (sent) submitButton.textContent = "تأیید و ثبت پرونده";
+        }
+    }
+
+    async function saveRecord(token) {
+        setBusy(true, "در حال ثبت پرونده...");
+        try {
+            var data = new FormData(form);
+            data.delete("documents[]");
+            filesArray.forEach(function(file){ data.append("documents[]", file); });
+
+            var headers = token ? {"Authorization": "Bearer " + token} : {};
+            var response = await fetch("/api/medical-records/intake", {
+                method: "POST",
+                headers: headers,
+                credentials: "include",
+                body: data
+            });
+            var result = await response.json();
+
+            if (!response.ok) {
+                if (result.error && result.error.code === "otp_required") {
+                    localStorage.removeItem("maksa_access_token");
+                    setBusy(false);
+                    await sendOtp();
+                    return;
+                }
+                throw new Error(result.error && result.error.message || "ثبت پرونده ناموفق بود.");
+            }
+
+            if (result.data.access_token) {
+                localStorage.setItem("maksa_access_token", result.data.access_token);
+            }
+            localStorage.setItem("maksa_benefactor_user", JSON.stringify(result.data.user));
+
+            form.style.display = "none";
+            var success = document.createElement("div");
+            success.className = "mi-success-message";
+            success.innerHTML = "<p><strong>پرونده شما با موفقیت ثبت شد.</strong></p>" +
+                "<p>شماره پرونده: " + Number(result.data.record_id).toLocaleString("fa-IR") + "</p>" +
+                "<p>همکاران ما تا ۴۸ ساعت آینده با شما تماس خواهند گرفت.</p>";
+            document.querySelector(".mi-card").appendChild(success);
+            success.scrollIntoView({behavior:"smooth", block:"center"});
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    function setBusy(busy, text) {
+        submitButton.disabled = busy;
+        if (busy) {
+            submitButton.dataset.label = submitButton.textContent;
+            submitButton.textContent = text;
+        } else if (submitButton.dataset.label) {
+            submitButton.textContent = submitButton.dataset.label;
+            delete submitButton.dataset.label;
+        }
+    }
+
+    function showError(message) {
+        var error = document.createElement("div");
+        error.className = "mi-form-message";
+        error.textContent = message || "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
+        submitButton.before(error);
+        error.scrollIntoView({behavior:"smooth", block:"center"});
+    }
 });
 </script>
 
