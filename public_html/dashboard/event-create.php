@@ -72,6 +72,7 @@ require __DIR__ . '/_panel_head.php';
 function rowVal(array $row, string $key, string $default = ''): string {
     return event_h((string)($row[$key] ?? $default));
 }
+require_once __DIR__ . '/event-icons.php';
 ?>
 <link rel="stylesheet" href="/assets/events/datepicker.css">
 <!-- Theme synchronizer for iframe / standalone -->
@@ -313,11 +314,20 @@ body {
   gap: 4px;
   flex-wrap: wrap;
 }
+/* Iconoir Vector Icons */
+.iconoir {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  stroke: currentColor;
+  transition: color 0.15s ease, stroke 0.15s ease, transform 0.15s ease;
+}
+
 .hq-mode-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: 8px;
+  padding: 7px 14px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
@@ -328,13 +338,22 @@ body {
   transition: all 0.2s ease;
   white-space: nowrap;
 }
+.hq-mode-btn .iconoir {
+  color: var(--hq-text-muted);
+}
 .hq-mode-btn:hover {
+  color: var(--hq-text-main);
+}
+.hq-mode-btn:hover .iconoir {
   color: var(--hq-text-main);
 }
 .hq-mode-btn.is-active {
   background: var(--hq-surface);
   color: var(--hq-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.hq-mode-btn.is-active .iconoir {
+  color: var(--hq-primary);
 }
 
 /* Mode 1: Tabs Navigation */
@@ -351,7 +370,7 @@ body {
 .hq-tab-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 12px 14px;
   border-radius: 12px;
@@ -362,10 +381,21 @@ body {
   color: var(--hq-text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: center;
+  text-align: right;
+}
+.hq-tab-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.hq-tab-item .iconoir {
+  color: var(--hq-text-muted);
 }
 .hq-tab-item:hover {
   background: var(--hq-input-bg);
+  color: var(--hq-text-main);
+}
+.hq-tab-item:hover .iconoir {
   color: var(--hq-text-main);
 }
 .hq-tab-item.is-active {
@@ -373,14 +403,21 @@ body {
   color: var(--hq-tab-active-text);
   box-shadow: var(--hq-shadow);
 }
+.hq-tab-item.is-active .iconoir {
+  color: var(--hq-tab-active-text);
+}
 .hq-tab-badge {
   font-size: 11px;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  color: var(--hq-text-muted);
+  flex-shrink: 0;
 }
 .hq-tab-item.is-active .hq-tab-badge {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 
@@ -507,6 +544,7 @@ body {
   color: var(--hq-text-muted);
   text-decoration: none;
   transition: all 0.2s ease;
+  gap: 8px;
 }
 .hq-sidebar-link:hover {
   background: var(--hq-input-bg);
@@ -517,6 +555,46 @@ body {
   color: var(--hq-primary);
   font-weight: 700;
 }
+.hq-sidebar-link-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.hq-sidebar-ico {
+  color: var(--hq-text-muted);
+  opacity: 0.75;
+}
+.hq-sidebar-link:hover .hq-sidebar-ico,
+.hq-sidebar-link.is-active .hq-sidebar-ico {
+  color: var(--hq-primary);
+  opacity: 1;
+}
+
+.hq-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.hq-check .hq-icon-done {
+  display: none;
+  color: #10b981;
+}
+.hq-check .hq-icon-empty {
+  display: inline-block;
+  color: var(--hq-text-muted);
+  opacity: 0.35;
+}
+.hq-check.is-done .hq-icon-done {
+  display: inline-block;
+}
+.hq-check.is-done .hq-icon-empty {
+  display: none;
+}
+
 .hq-sidebar-tools {
   padding-top: 10px;
   border-top: 1px solid var(--hq-border);
@@ -527,12 +605,22 @@ body {
   flex: 1;
   font-size: 11px;
   font-weight: 700;
-  padding: 6px 8px;
+  padding: 7px 8px;
   border-radius: 6px;
   border: 1px solid var(--hq-border);
   background: var(--hq-input-bg);
   color: var(--hq-text-muted);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.hq-sidebar-btn:hover {
+  background: var(--hq-surface);
+  color: var(--hq-text-main);
+  border-color: var(--hq-primary);
 }
 
 /* Active Mode Display Toggles */
@@ -1004,25 +1092,25 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
   <!-- UX Mode Switcher Bar -->
   <div class="hq-switcher-bar">
     <div class="hq-switcher-info">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="3" y1="9" x2="21" y2="9"></line>
-        <line x1="9" y1="21" x2="9" y2="9"></line>
-      </svg>
+      <?= hq_iconoir('sidebar', '', 18) ?>
       <span>چیدمان و نحوه نمایش فرم:</span>
     </div>
     <div class="hq-switcher-buttons">
       <button type="button" class="hq-mode-btn is-active" data-set-layout="tabs">
-        🗂️ تب‌بندی موضوعی
+        <?= hq_iconoir('tabs', '', 17) ?>
+        <span>تب‌بندی موضوعی</span>
       </button>
       <button type="button" class="hq-mode-btn" data-set-layout="wizard">
-        🪜 استپر مرحله‌ای
+        <?= hq_iconoir('wizard', '', 17) ?>
+        <span>استپر مرحله‌ای</span>
       </button>
       <button type="button" class="hq-mode-btn" data-set-layout="sidebar">
-        📑 سایدبار ناوبری سریع
+        <?= hq_iconoir('sidebar', '', 17) ?>
+        <span>سایدبار ناوبری سریع</span>
       </button>
       <button type="button" class="hq-mode-btn" data-set-layout="full">
-        📄 نمایش کامل فیگما
+        <?= hq_iconoir('full', '', 17) ?>
+        <span>نمایش کامل فیگما</span>
       </button>
     </div>
   </div>
@@ -1030,19 +1118,31 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
   <!-- Mode 1: Tabs Navigation Bar -->
   <nav class="hq-tabs-nav" id="tabsNav">
     <button type="button" class="hq-tab-item is-active" data-tab-target="1">
-      <span>📋 اطلاعات پایه و زمان‌بندی</span>
+      <div class="hq-tab-title-wrap">
+        <?= hq_iconoir('base', '', 18) ?>
+        <span>اطلاعات پایه و زمان‌بندی</span>
+      </div>
       <span class="hq-tab-badge">گام ۱</span>
     </button>
     <button type="button" class="hq-tab-item" data-tab-target="2">
-      <span>🖼️ رسانه و فایل‌ها</span>
+      <div class="hq-tab-title-wrap">
+        <?= hq_iconoir('media', '', 18) ?>
+        <span>رسانه و فایل‌ها</span>
+      </div>
       <span class="hq-tab-badge">گام ۲</span>
     </button>
     <button type="button" class="hq-tab-item" data-tab-target="3">
-      <span>👥 عوامل و سخنرانان</span>
+      <div class="hq-tab-title-wrap">
+        <?= hq_iconoir('people', '', 18) ?>
+        <span>عوامل و سخنرانان</span>
+      </div>
       <span class="hq-tab-badge"><?= count($heroes) + count($people) + count($speakers) + count($partners) ?> مورد</span>
     </button>
     <button type="button" class="hq-tab-item" data-tab-target="4">
-      <span>📢 اخبار و بنر سراسری</span>
+      <div class="hq-tab-title-wrap">
+        <?= hq_iconoir('news', '', 18) ?>
+        <span>اخبار و بنر سراسری</span>
+      </div>
       <span class="hq-tab-badge"><?= count($news) ?> خبر</span>
     </button>
   </nav>
@@ -1592,53 +1692,124 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
       </div>
       <div class="hq-sidebar-links">
         <a href="#sec-intro" class="hq-sidebar-link is-active" data-anchor="sec-intro">
-          <span>معرفی فرم</span>
-          <span style="font-size:10px;">ℹ️</span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('info', 'hq-sidebar-ico', 16) ?>
+            <span>معرفی فرم</span>
+          </div>
+          <span class="hq-check is-done" style="color:var(--hq-primary);">
+            <?= hq_iconoir('info', '', 15) ?>
+          </span>
         </a>
         <a href="#sec-base" class="hq-sidebar-link" data-anchor="sec-base">
-          <span>اطلاعات پایه رویداد</span>
-          <span class="hq-check" id="chk-base">⚪</span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('base', 'hq-sidebar-ico', 16) ?>
+            <span>اطلاعات پایه رویداد</span>
+          </div>
+          <span class="hq-check <?= !empty($event['title']) ? 'is-done' : '' ?>" id="chk-base">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-date" class="hq-sidebar-link" data-anchor="sec-date">
-          <span>تاریخ شمسی و زمان</span>
-          <span class="hq-check" id="chk-date">⚪</span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('base', 'hq-sidebar-ico', 16) ?>
+            <span>تاریخ شمسی و زمان</span>
+          </div>
+          <span class="hq-check <?= !empty($event['event_date']) ? 'is-done' : '' ?>" id="chk-date">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-about" class="hq-sidebar-link" data-anchor="sec-about">
-          <span>توضیح کوتاه و متن</span>
-          <span class="hq-check" id="chk-about">⚪</span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('wizard', 'hq-sidebar-ico', 16) ?>
+            <span>توضیح کوتاه و متن</span>
+          </div>
+          <span class="hq-check <?= !empty($event['short_description']) ? 'is-done' : '' ?>" id="chk-about">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-media" class="hq-sidebar-link" data-anchor="sec-media">
-          <span>پوستر و برنامه PDF</span>
-          <span class="hq-check" id="chk-media">⚪</span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('media', 'hq-sidebar-ico', 16) ?>
+            <span>پوستر و برنامه PDF</span>
+          </div>
+          <span class="hq-check <?= (!empty($event['poster']) || !empty($event['schedule_pdf'])) ? 'is-done' : '' ?>" id="chk-media">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-heroes" class="hq-sidebar-link" data-anchor="sec-heroes">
-          <span>بخش‌های هیرو</span>
-          <span class="hq-check" id="chk-heroes"><?= count($heroes) ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('media', 'hq-sidebar-ico', 16) ?>
+            <span>بخش‌های هیرو</span>
+          </div>
+          <span class="hq-check <?= count($heroes) ? 'is-done' : '' ?>" id="chk-heroes">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-organizers" class="hq-sidebar-link" data-anchor="sec-organizers">
-          <span>دبیر علمی و اجرایی</span>
-          <span class="hq-check" id="chk-organizers"><?= count($people) ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('people', 'hq-sidebar-ico', 16) ?>
+            <span>دبیر علمی و اجرایی</span>
+          </div>
+          <span class="hq-check <?= count($people) ? 'is-done' : '' ?>" id="chk-organizers">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-speakers" class="hq-sidebar-link" data-anchor="sec-speakers">
-          <span>اساتید و سخنرانان</span>
-          <span class="hq-check" id="chk-speakers"><?= count($speakers) ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('people', 'hq-sidebar-ico', 16) ?>
+            <span>اساتید و سخنرانان</span>
+          </div>
+          <span class="hq-check <?= count($speakers) ? 'is-done' : '' ?>" id="chk-speakers">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-partners" class="hq-sidebar-link" data-anchor="sec-partners">
-          <span>همراهان و حامیان</span>
-          <span class="hq-check" id="chk-partners"><?= count($partners) ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('people', 'hq-sidebar-ico', 16) ?>
+            <span>همراهان و حامیان</span>
+          </div>
+          <span class="hq-check <?= count($partners) ? 'is-done' : '' ?>" id="chk-partners">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-news" class="hq-sidebar-link" data-anchor="sec-news">
-          <span>اخبار اختصاصی</span>
-          <span class="hq-check" id="chk-news"><?= count($news) ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('news', 'hq-sidebar-ico', 16) ?>
+            <span>اخبار اختصاصی</span>
+          </div>
+          <span class="hq-check <?= count($news) ? 'is-done' : '' ?>" id="chk-news">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
         <a href="#sec-banner" class="hq-sidebar-link" data-anchor="sec-banner">
-          <span>تنظیمات بنر سراسری</span>
-          <span class="hq-check" id="chk-banner"><?= (int)$event['banner_active'] ? '🟢' : '⚪' ?></span>
+          <div class="hq-sidebar-link-label">
+            <?= hq_iconoir('news', 'hq-sidebar-ico', 16) ?>
+            <span>تنظیمات بنر سراسری</span>
+          </div>
+          <span class="hq-check <?= (int)$event['banner_active'] ? 'is-done' : '' ?>" id="chk-banner">
+            <?= hq_iconoir('check', 'hq-icon-done', 15) ?>
+            <?= hq_iconoir('circle', 'hq-icon-empty', 15) ?>
+          </span>
         </a>
       </div>
       <div class="hq-sidebar-tools">
-        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(true)">باز کردن کارت‌ها</button>
-        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(false)">بستن کارت‌ها</button>
+        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(true)">
+          <?= hq_iconoir('expand', '', 14) ?>
+          <span>باز کردن کارت‌ها</span>
+        </button>
+        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(false)">
+          <?= hq_iconoir('collapse', '', 14) ?>
+          <span>بستن کارت‌ها</span>
+        </button>
       </div>
     </aside>
 
@@ -1648,23 +1819,37 @@ body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
   <footer class="hq-actions-bar">
     <div class="hq-actions-bar-inner">
       <div style="display:flex; align-items:center; gap:10px;">
-        <a href="event-list.php" class="hq-btn hq-btn-white" style="padding:10px 22px;">انصراف</a>
+        <a href="event-list.php" class="hq-btn hq-btn-white" style="padding:10px 20px; display:inline-flex; align-items:center; gap:6px;">
+          <?= hq_iconoir('cancel', '', 15) ?>
+          <span>انصراف</span>
+        </a>
         <div id="stepNavButtons" style="display:none; gap:8px;">
-          <button type="button" class="hq-step-nav-btn" id="btnPrevStep">
-            <span>← گام قبلی</span>
+          <button type="button" class="hq-step-nav-btn" id="btnPrevStep" style="display:inline-flex; align-items:center; gap:6px;">
+            <?= hq_iconoir('prev', '', 15) ?>
+            <span>گام قبلی</span>
           </button>
-          <button type="button" class="hq-step-nav-btn" id="btnNextStep" style="background:var(--hq-primary-light); color:var(--hq-primary); border-color:var(--hq-primary);">
-            <span>گام بعدی →</span>
+          <button type="button" class="hq-step-nav-btn" id="btnNextStep" style="background:var(--hq-primary-light); color:var(--hq-primary); border-color:var(--hq-primary); display:inline-flex; align-items:center; gap:6px;">
+            <span>گام بعدی</span>
+            <?= hq_iconoir('next', '', 15) ?>
           </button>
         </div>
       </div>
       <div class="hq-actions-left">
         <?php if ($event['slug']): ?>
-          <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white">پیش‌نمایش رویداد</a>
+          <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white" style="display:inline-flex; align-items:center; gap:6px;">
+            <?= hq_iconoir('preview', '', 15) ?>
+            <span>پیش‌نمایش رویداد</span>
+          </a>
         <?php else: ?>
-          <button type="button" class="hq-btn hq-btn-white" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')">پیش‌نمایش</button>
+          <button type="button" class="hq-btn hq-btn-white" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')" style="display:inline-flex; align-items:center; gap:6px;">
+            <?= hq_iconoir('preview', '', 15) ?>
+            <span>پیش‌نمایش</span>
+          </button>
         <?php endif; ?>
-        <button type="submit" class="hq-btn hq-btn-primary" style="padding:10px 28px; font-size:14px;">ذخیره تغییرات رویداد</button>
+        <button type="submit" class="hq-btn hq-btn-primary" style="padding:10px 24px; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+          <?= hq_iconoir('save', '', 16) ?>
+          <span>ذخیره تغییرات رویداد</span>
+        </button>
       </div>
     </div>
   </footer>
@@ -1802,11 +1987,18 @@ function toggleAllDrawers(open) {
   function updateCheckmarks() {
     const title = document.querySelector('input[name="title"]');
     const chkBase = document.getElementById('chk-base');
-    if (chkBase && title) chkBase.textContent = title.value.trim() ? '🟢' : '⚪';
+    if (chkBase && title) chkBase.classList.toggle('is-done', !!title.value.trim());
 
     const shortDesc = document.getElementById('shortDescInput');
     const chkAbout = document.getElementById('chk-about');
-    if (chkAbout && shortDesc) chkAbout.textContent = shortDesc.value.trim() ? '🟢' : '⚪';
+    if (chkAbout && shortDesc) chkAbout.classList.toggle('is-done', !!shortDesc.value.trim());
+
+    const doneCount = document.querySelectorAll('.hq-sidebar-links .hq-check.is-done').length;
+    const countEl = document.getElementById('sidebarFilledCount');
+    if (countEl) {
+      const faCount = String(doneCount).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      countEl.textContent = faCount + ' از ۹ پر شده';
+    }
   }
   updateCheckmarks();
   document.addEventListener('input', updateCheckmarks);
