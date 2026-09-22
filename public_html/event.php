@@ -1,262 +1,1334 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/core/database.php'; require_once __DIR__ . '/event-lib.php';
-$slug=trim((string)($_GET['slug']??'')); $st=$pdo->prepare("SELECT * FROM events WHERE slug=? AND status='published' LIMIT 1");$st->execute([$slug]);$event=$st->fetch(); if(!$event){http_response_code(404);exit('رویداد پیدا نشد.');}
-$q=function(string $sql)use($pdo,$event){$s=$pdo->prepare($sql);$s->execute([(int)$event['id']]);return $s->fetchAll();};$heroes=$q('SELECT * FROM event_heroes WHERE event_id=? AND is_active=1 ORDER BY sort_order,id');$people=$q('SELECT * FROM event_people WHERE event_id=? ORDER BY sort_order,id');$speakers=$q('SELECT * FROM event_speakers WHERE event_id=? ORDER BY sort_order,id');$partners=$q('SELECT * FROM event_partners WHERE event_id=? ORDER BY sort_order,id');$news=$q("SELECT * FROM event_news WHERE event_id=? AND status='published' ORDER BY published_at DESC,id DESC");$pageTitle=$event['title']; require __DIR__ . '/dashboard/components/header/component.php';
-$iso=$event['event_date'].'T'.substr((string)$event['start_time'],0,8).'+03:30';
-$primaryHero = $heroes[0] ?? null;
-$secondaryHeroes = count($heroes) > 1 ? array_slice($heroes, 1) : [];
-$heroStyle = $primaryHero && $primaryHero['image']
-    ? " style=\"background-image:linear-gradient(90deg,rgba(0,35,40,.82),rgba(0,123,122,.62)),url('" . event_h($primaryHero['image']) . "')\""
-    : '';
+
+require_once __DIR__ . '/event-lib.php';
+
+$pdo = null;
+try {
+    require_once __DIR__ . '/core/database.php';
+} catch (Throwable $e) {
+    $pdo = null;
+}
+
+$slug = trim((string)($_GET['slug'] ?? ''));
+$event = null;
+$heroes = $people = $speakers = $partners = $news = [];
+
+if ($pdo && $slug !== '') {
+    $st = $pdo->prepare("SELECT * FROM events WHERE slug = ? AND status = 'published' LIMIT 1");
+    $st->execute([$slug]);
+    $event = $st->fetch();
+
+    if ($event) {
+        $q = function(string $sql) use ($pdo, $event) {
+            $s = $pdo->prepare($sql);
+            $s->execute([(int)$event['id']]);
+            return $s->fetchAll();
+        };
+        $heroes = $q('SELECT * FROM event_heroes WHERE event_id = ? AND is_active = 1 ORDER BY sort_order, id');
+        $people = $q('SELECT * FROM event_people WHERE event_id = ? ORDER BY sort_order, id');
+        $speakers = $q('SELECT * FROM event_speakers WHERE event_id = ? ORDER BY sort_order, id');
+        $partners = $q('SELECT * FROM event_partners WHERE event_id = ? ORDER BY sort_order, id');
+        $news = $q("SELECT * FROM event_news WHERE event_id = ? AND status = 'published' ORDER BY published_at DESC, id DESC");
+    }
+}
+
+// Fallback for snapshot / preview / direct demonstration
+if (!$event && (defined('IN_SNAPSHOT') || $slug === '' || !$pdo)) {
+    $event = [
+        'id' => 1,
+        'title' => 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی',
+        'slug' => 'palliativeconference',
+        'event_date' => '2026-10-08',
+        'start_time' => '08:00:00',
+        'end_time' => '18:00:00',
+        'short_description' => 'همایشی ملی برای همگرایی دانش نوین، تبادل تجربیات و ارتقای کیفیت زندگی بیماران مبتلا به سرطان با محوریت ادغام مراقبت‌های تسکینی در نظام بهداشتی کشور.',
+        'about' => "مرکز رویش استعدادهای دانشجویی مکسا برگزار می‌کند:\n📌 سلسله جلسات مکسا تاک\n👤 ارائه‌دهنده: دکتر استادهاشمی\nعضو هیئت علمی دانشگاه علوم توانبخشی و سلامت اجتماعی\nدبیر علمی واحد مددکاری اجتماعی مکسا\n👤 با نظارت: دکتر بابک ارجمند\nدانشیار دانشگاه علوم پزشکی تهران\nفلوشیپ هماتولوژی و مدیکال انکولوژی\n🗓 تاریخ برگزاری: سه‌شنبه ۱۴۰۵/۰۶/۳۱",
+        'poster' => '/assets/events/demo-poster.jpg',
+        'schedule_pdf' => '/uploads/events/schedule.pdf',
+        'registration_url' => 'https://mymacsa.ir/register.php',
+        'status' => 'published',
+        'banner_active' => 1
+    ];
+    $heroes = [
+        [
+            'id' => 1,
+            'title' => 'همایش ملی مراقبت‌های حمایتی و تسکینی',
+            'description' => 'رویدادی برای متخصصان، بیماران و خانواده‌ها با محوریت کیفیت زندگی و حمایت‌های همه‌جانبه.',
+            'image' => '/assets/events/hero-sample-1.jpg',
+            'button_label' => 'ثبت نام در همایش',
+            'button_link' => '#sec-about'
+        ],
+        [
+            'id' => 2,
+            'title' => 'کارگاه‌های تخصصی بین‌رشته‌ای',
+            'description' => 'پنل‌های تخصصی با حضور برجسته‌ترین اساتید آنکولوژی و اخلاق پزشکی کشور.',
+            'image' => '/assets/events/hero-sample-2.jpg',
+            'button_label' => 'برنامه کارگاه‌ها',
+            'button_link' => '#sec-speakers'
+        ]
+    ];
+    $people = [
+        ['name' => 'جناب دکتر محمدرضا شریفی', 'role' => 'scientific_secretary', 'title' => 'فوق تخصص انکولوژی و عضو هیئت علمی', 'image' => ''],
+        ['name' => 'سرکار خانم دکتر سارا کریمی', 'role' => 'executive_secretary', 'title' => 'مدیر اجرایی طرح‌های جامع مراقبت تسکینی', 'image' => '']
+    ];
+    $speakers = [
+        ['name' => 'دکتر مسعود سلیمانی', 'title' => 'فوق تخصص انکولوژی', 'image' => ''],
+        ['name' => 'دکتر زهرا هاشمی', 'title' => 'متخصص طب تسکینی', 'image' => ''],
+        ['name' => 'دکتر امین رضایی', 'title' => 'دکترای اخلاق پزشکی', 'image' => ''],
+        ['name' => 'دکتر مریم نوری', 'title' => 'روانپزشک سلامت', 'image' => '']
+    ];
+    $partners = [
+        ['name' => 'مؤسسه خیریه مکسا', 'logo' => ''],
+        ['name' => 'دانشگاه علوم پزشکی تهران', 'logo' => ''],
+        ['name' => 'انجمن سرطان ایران', 'logo' => ''],
+        ['name' => 'جمعیت هلال احمر', 'logo' => ''],
+        ['name' => 'سازمان نظام پزشکی ایران', 'logo' => ''],
+        ['name' => 'وزارت بهداشت، درمان و آموزش پزشکی', 'logo' => ''],
+        ['name' => 'سازمان بیمه سلامت ایران', 'logo' => ''],
+        ['name' => 'ستاد ملی مبارزه با سرطان', 'logo' => '']
+    ];
+    $news = [
+        ['id' => 1, 'slug' => 'news-1', 'title' => 'انتشار برنامه نهایی همایش', 'excerpt' => 'برنامه کامل سخنرانی‌ها، کارگاه‌ها و زمان‌بندی اصلی همایش منتشر شد.', 'published_at' => '2026-10-04 10:00:00', 'image' => ''],
+        ['id' => 2, 'slug' => 'news-2', 'title' => 'اعلام زمان ثبت‌نام کارگاه‌ها', 'excerpt' => 'ثبت‌نام کارگاه‌های همایش از طریق سامانه اصلی و با ظرفیت محدود آغاز می‌شود.', 'published_at' => '2026-09-30 14:30:00', 'image' => ''],
+        ['id' => 3, 'slug' => 'news-3', 'title' => 'معرفی سخنرانان و کارگاه‌های ویژه', 'excerpt' => 'اسامی سخنرانان و کارگاه‌های ویژه همایش اعلام شد و ثبت‌نام ادامه دارد.', 'published_at' => '2026-10-02 09:00:00', 'image' => '']
+    ];
+}
+
+if (!$event) {
+    http_response_code(404);
+    exit('رویداد پیدا نشد.');
+}
+
+$pageTitle = $event['title'];
+$iso = ($event['event_date'] ?: '2026-10-08') . 'T' . substr((string)($event['start_time'] ?: '08:00:00'), 0, 8) . '+03:30';
+
+if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/header/component.php')) {
+    require __DIR__ . '/dashboard/components/header/component.php';
+}
 ?>
-<?php if($secondaryHeroes): ?><section class="event-hero-strip" aria-label="هیروهای رویداد"><?php foreach($secondaryHeroes as $hero): ?><article <?php if($hero['image']): ?>style="background-image:linear-gradient(180deg,transparent,rgba(0,30,35,.88)),url('<?= event_h($hero['image']) ?>')"<?php endif; ?>><h2><?= event_h($hero['title']) ?></h2><p><?= event_h($hero['description']) ?></p><?php if($hero['button_link']): ?><a href="<?= event_h($hero['button_link']) ?>" target="_blank" rel="noopener">مشاهده بیشتر ↗</a><?php endif; ?></article><?php endforeach; ?></section><?php endif; ?>
-<style>
-.event-hero-strip{max-width:1180px;margin:0 auto;padding:24px 20px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.event-hero-strip article{min-height:170px;border-radius:18px;overflow:hidden;background:#0b5e63;color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:flex-end;background-size:cover;background-position:center;box-shadow:0 10px 24px rgba(11,94,99,.15)}
-.event-hero-strip h2{font-size:20px;font-weight:800;margin:0 0 6px}
-.event-hero-strip p{font-size:13px;margin:0 0 12px;color:rgba(255,255,255,.82);line-height:1.7}
-.event-hero-strip a{color:#ffe1a2;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:6px}
-.event-page{--teal:#007b7a;--teal-dark:#085759;--teal-light:#e6f5f4;--ink:#123a3d;--muted:#5c7478;--border:#e2eceb;--card-bg:#ffffff;direction:rtl;color:var(--ink);background:#f6f9f8;font-family:inherit}
-.event-hero{min-height:560px;background:linear-gradient(135deg,#05383e 0%,#007b7a 58%,#0ba3a0 100%);color:#fff;position:relative;overflow:hidden}
-.event-hero:after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 10% 20%,rgba(255,255,255,.08) 0%,transparent 60%),linear-gradient(90deg,rgba(0,0,0,.42),transparent 70%);pointer-events:none}
-.event-hero-inner{max-width:1180px;min-height:560px;margin:auto;padding:70px 20px;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center;position:relative;z-index:2}
-.event-hero-copy{max-width:640px}
-.event-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#ffe1a2;background:rgba(255,225,162,.15);border:1px solid rgba(255,225,162,.3);padding:5px 12px;border-radius:100px;margin-bottom:18px}
-.event-hero h1{font-size:clamp(30px,4.5vw,56px);line-height:1.32;margin:0 0 16px;font-weight:900}
-.event-hero p{font-size:15px;line-height:2.1;color:rgba(255,255,255,.88);margin-bottom:0}
-.event-meta-bar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:22px}
-.event-meta-item{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:7px 13px;font-size:13px;font-weight:700;color:#fff}
-.event-meta-item svg{width:16px;height:16px;opacity:.9}
-.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px}
-.countdown div{background:#fff;color:var(--ink);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 8px 24px rgba(0,35,40,.18)}
-.countdown strong{display:block;font-size:28px;font-weight:900;color:var(--teal);font-variant-numeric:tabular-nums;line-height:1.1}
-.countdown span{font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;display:block}
-.event-poster{min-height:360px;border-radius:22px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:14px;display:grid;place-items:center;box-shadow:0 24px 50px rgba(0,30,35,.28);backdrop-filter:blur(6px)}
-.event-poster img{width:100%;max-height:440px;object-fit:contain;border-radius:14px}
-.poster-empty{width:100%;height:320px;display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.7);border:1.5px dashed rgba(255,255,255,.3);border-radius:14px;font-size:13px;font-weight:700}
-.event-container{max-width:1180px;margin:auto;padding:52px 20px 80px}
-.event-section{padding:48px 0}
-.event-section+.event-section{border-top:1px solid var(--border)}
-.section-kicker{font-size:12px;font-weight:800;color:var(--teal);margin-bottom:8px;letter-spacing:.04em}
-.event-section h2{font-size:clamp(24px,2.8vw,36px);margin:0 0 16px;font-weight:900;color:#13393c}
-.about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:start}
-.about-copy{font-size:15px;line-height:2.2;color:#4c6265;white-space:pre-line}
-.register-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#e99b16;color:#fff;border-radius:12px;padding:14px 26px;font-weight:800;font-size:14px;margin-top:22px;box-shadow:0 8px 20px rgba(233,155,22,.28);transition:all .2s ease}
-.register-btn:hover{background:#d58a0e;transform:translateY(-1px);color:#fff}
-.register-btn svg{width:16px;height:16px}
-/* Modern React-Inspired Schedule Card */
-.schedule-card{background:linear-gradient(150deg,#ffffff 0%,#f5f9f8 100%);border:1.5px solid var(--border);border-radius:22px;box-shadow:0 16px 36px rgba(18,58,61,.07);padding:28px 24px;position:relative;overflow:hidden}
-.schedule-card-tag{display:inline-flex;align-items:center;gap:7px;background:#e6f5f4;color:var(--teal);font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;margin-bottom:18px}
-.schedule-card-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
-.schedule-doc-box{display:flex;align-items:center;gap:16px;margin-bottom:20px}
-.schedule-icon-wrap{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#fee2e2,#fef2f2);border:1px solid #fecaca;color:#ef4444;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-.schedule-icon-wrap svg{width:24px;height:24px}
-.schedule-icon-wrap span{font-size:9px;font-weight:900;letter-spacing:.05em;margin-top:2px}
-.schedule-info h3{font-size:18px;font-weight:800;margin:0 0 5px;color:#13393c}
-.schedule-info p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}
-.schedule-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-.schedule-pill{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #e1e9e8;border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700;color:#5a7275}
-.schedule-pill svg{width:12px;height:12px;color:var(--teal)}
-.schedule-download-btn{display:flex;align-items:center;justify-content:space-between;width:100%;height:52px;padding:0 20px;border-radius:14px;background:var(--teal);color:#fff;font-size:14px;font-weight:800;box-shadow:0 8px 20px rgba(0,123,122,.22);transition:all .2s ease}
-.schedule-download-btn:hover{background:var(--teal-dark);transform:translateY(-1px);color:#fff}
-.schedule-download-btn svg{width:18px;height:18px}
-.schedule-empty{padding:22px 16px;background:#fff;border:1.5px dashed #cadada;border-radius:14px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
-.schedule-empty svg{width:18px;height:18px;color:#f59e0b}
-/* Grids with Intelligent Balancing */
-.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:24px;max-width:100%}
-.speaker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:20px}
-.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,360px));gap:20px}
-.partner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,220px));gap:16px}
-.person-card,.speaker-card,.news-card,.partner-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(18,58,61,.04);transition:transform .2s,box-shadow .2s}
-.person-card{max-width:320px;width:100%}
-.speaker-card{max-width:280px;width:100%}
-.news-card{max-width:360px;width:100%}
-.person-card:hover,.speaker-card:hover,.news-card:hover,.partner-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(18,58,61,.08)}
-.person-card img,.speaker-card img{width:100%;aspect-ratio:1;object-fit:cover;background:#eaf2f1}
-.person-card .inner,.speaker-card .inner,.news-card .inner{padding:16px}
-.person-badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;background:var(--teal-light);color:var(--teal);margin-bottom:8px}
-.person-card h3,.speaker-card h3{font-size:16px;font-weight:800;margin:0 0 5px;color:#13393c}
-.news-card img{width:100%;height:165px;object-fit:cover;background:#eaf2f1}
-.news-card h3{font-size:16px;font-weight:800;line-height:1.6;margin:0 0 8px;color:#13393c}
-.news-card a{display:inline-flex;align-items:center;gap:6px;color:var(--teal);font-weight:800;font-size:13px;margin-top:10px}
-.partner-card{text-align:center;padding:22px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.partner-card img{max-width:110px;height:55px;object-fit:contain;margin-bottom:12px;filter:grayscale(30%);transition:filter .2s}
-.partner-card:hover img{filter:none}
-.partner-card h3{font-size:13px;font-weight:700;margin:0;color:#355357}
-@media(max-width:860px){.event-hero-inner,.about-grid{grid-template-columns:1fr}.event-poster{min-height:240px;max-width:420px;margin:auto;width:100%}}
-@media(max-width:560px){.countdown{grid-template-columns:repeat(2,1fr)}.event-container{padding:36px 16px}.event-hero h1{font-size:28px}}
-</style>
-<main class="event-page">
-  <section class="event-hero<?= $primaryHero && $primaryHero['image'] ? ' has-primary-image' : '' ?>"<?= $heroStyle ?>>
-    <div class="event-hero-inner">
-      <div class="event-hero-copy">
-        <div class="event-eyebrow">
-          <span>●</span>
-          <span><?= $primaryHero ? event_h($primaryHero['title']) : 'رویداد و همایش ملی مکسا' ?></span>
-        </div>
-        <h1><?= event_h($event['title']) ?></h1>
-        <p><?= event_h($primaryHero['description'] ?? $event['short_description']) ?></p>
-        <div class="event-meta-bar">
-          <div class="event-meta-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path></svg>
-            <span><?= event_h(event_date_label($event['event_date'])) ?></span>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= event_h($event['title']) ?> | مکسا</title>
+  <link rel="stylesheet" href="/font.css">
+  <style>
+    /* ============================================================================
+       Figma Design #2:96 "public-event-detail" (1440px canvas layout)
+       Design Tokens:
+       - Deep Teal Hero Background: #0A5C66
+       - Brand Primary Teal: #0D7A87 / #007B7A
+       - Warm Amber Accent: #D97706 / #F59E0B
+       - Soft Surfaces: #F0FDFA, #F8FAFB, #FFFFFF
+       - Dark Text: #1F2937, #4B5563, #6B7280
+       ============================================================================ */
+    :root {
+      --event-teal-dark: #0A5C66;
+      --event-primary: #0D7A87;
+      --event-primary-light: #F0FDFA;
+      --event-amber: #D97706;
+      --event-amber-light: #FFFBEB;
+      --event-surface: #FFFFFF;
+      --event-bg-light: #F8FAFB;
+      --event-text-main: #1F2937;
+      --event-text-muted: #4B5563;
+      --event-text-light: #6B7280;
+      --event-border: #E5E7EB;
+      --event-border-subtle: #F3F4F6;
+      --event-radius: 16px;
+      --event-radius-lg: 24px;
+      --event-shadow: 0 4px 16px rgba(10, 92, 102, 0.06);
+      --event-shadow-hover: 0 12px 30px rgba(10, 92, 102, 0.12);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
+    }
+
+    body {
+      background: #FFFFFF;
+      color: var(--event-text-main);
+      direction: rtl;
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .event-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ============================================================================
+       1. HERO SECTION (#2:113)
+       ============================================================================ */
+    .event-hero {
+      background: var(--event-teal-dark);
+      background: radial-gradient(circle at 15% 25%, #0d7a87 0%, #0A5C66 70%, #053b42 100%);
+      color: #FFFFFF;
+      padding: 64px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .event-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .event-hero-inner {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .event-hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .event-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--event-amber-light);
+      color: var(--event-amber);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      align-self: flex-start;
+    }
+
+    .event-hero-title {
+      font-size: clamp(28px, 3.8vw, 42px);
+      font-weight: 800;
+      line-height: 1.25;
+      color: #FFFFFF;
+    }
+
+    .event-hero-desc {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #F0FDFA;
+      opacity: 0.95;
+      max-width: 620px;
+    }
+
+    /* Countdown Timer Boxes (#8:9) */
+    .event-countdown-grid {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .countdown-box {
+      width: 82px;
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+    .countdown-val {
+      display: block;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--event-teal-dark);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .countdown-lbl {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--event-text-light);
+      margin-top: 4px;
+    }
+
+    /* Hero Action Buttons (#8:19) */
+    .event-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .btn-register-hero {
+      background: var(--event-amber);
+      color: #FFFFFF;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .btn-register-hero:hover {
+      background: #B45309;
+      transform: translateY(-2px);
+    }
+    .btn-pdf-hero {
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(6px);
+      transition: all 0.2s ease;
+    }
+    .btn-pdf-hero:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: #FFFFFF;
+      transform: translateY(-2px);
+    }
+
+    /* Event Date & Status Info (#8:24) */
+    .event-hero-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13.5px;
+      color: #F0FDFA;
+    }
+    .status-pill-active {
+      background: var(--event-amber);
+      color: #FFFFFF;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ============================================================================
+       DEDICATED HERO SHOWCASE CAROUSEL (#8:28)
+       A dedicated 560x420px spotlight frame for Event Heroes
+       ============================================================================ */
+    .hero-showcase-wrapper {
+      width: 100%;
+      max-width: 560px;
+      height: 420px;
+      background: #042e34;
+      border: 2px solid var(--event-primary);
+      border-radius: var(--event-radius-lg);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    }
+    .hero-slider-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      transform: scale(0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-slide.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+    .hero-slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(4, 46, 52, 0.25) 0%, rgba(4, 46, 52, 0.88) 70%, #042e34 100%);
+      z-index: 1;
+    }
+    .hero-slide-body {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .hero-slide-badge {
+      background: #FFFFFF;
+      color: var(--event-teal-dark);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+    .hero-slide-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.3;
+    }
+    .hero-slide-desc {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #E2E8F0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .hero-slide-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--event-amber);
+      color: #FFFFFF;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .hero-slide-link:hover {
+      background: #B45309;
+    }
+
+    /* Slider Arrows & Dots */
+    .hero-slider-nav {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+    }
+    .hero-slider-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+    .hero-slider-btn:hover {
+      background: rgba(255, 255, 255, 0.45);
+    }
+    .hero-slider-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+    }
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .hero-dot.is-active {
+      width: 22px;
+      border-radius: 999px;
+      background: var(--event-amber);
+    }
+
+    /* ============================================================================
+       SECTION HEADERS & GENERAL STYLES
+       ============================================================================ */
+    .event-section {
+      padding: 72px 0;
+    }
+    .event-section-light {
+      background: var(--event-bg-light);
+    }
+    .event-section-white {
+      background: #FFFFFF;
+    }
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 36px;
+    }
+    .section-kicker {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--event-primary);
+      letter-spacing: 0.5px;
+    }
+    .section-title {
+      font-size: clamp(22px, 2.5vw, 32px);
+      font-weight: 800;
+      color: var(--event-teal-dark);
+      line-height: 1.3;
+    }
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--event-text-muted);
+      max-width: 760px;
+      line-height: 1.7;
+    }
+
+    /* ============================================================================
+       SECTION 1: معرفی و محورهای همایش (#2:133)
+       ============================================================================ */
+    .about-main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .about-text-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    /* Fixed line-height and normal spacing: eliminates huge line gaps */
+    .about-copy {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--event-text-main);
+      white-space: pre-line;
+      background: #FFFFFF;
+      border: 1px solid var(--event-border);
+      border-radius: var(--event-radius);
+      padding: 28px;
+      box-shadow: var(--event-shadow);
+    }
+    .about-register-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Side Cards Column: Official Poster + Schedule PDF */
+    .about-side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .event-poster-card {
+      background: var(--event-primary-light);
+      border: 2px solid var(--event-primary);
+      border-radius: var(--event-radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+      box-shadow: var(--event-shadow);
+    }
+    .event-poster-img {
+      width: 100%;
+      max-height: 440px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #FFFFFF;
+    }
+    .poster-empty-state {
+      width: 100%;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--event-teal-dark);
+      font-weight: 700;
+      font-size: 14px;
+      border: 2px dashed rgba(13, 122, 135, 0.35);
+      border-radius: 12px;
+    }
+
+    /* Schedule PDF Download Card */
+    .schedule-pdf-card {
+      background: #FFFFFF;
+      border: 1px solid var(--event-border);
+      border-radius: var(--event-radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--event-shadow);
+    }
+    .schedule-pdf-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .pdf-icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #FEE2E2;
+      border: 1px solid #FECACA;
+      color: #DC2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .schedule-pdf-info h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--event-teal-dark);
+      margin: 0 0 4px;
+    }
+    .schedule-pdf-info p {
+      font-size: 12px;
+      color: var(--event-text-muted);
+      margin: 0;
+    }
+    .btn-download-pdf {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 12px 18px;
+      background: var(--event-primary);
+      color: #FFFFFF;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-download-pdf:hover {
+      background: var(--event-teal-dark);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================================
+       SECTION 2: دبیران علمی و اجرایی (#2:139)
+       ============================================================================ */
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .person-card {
+      background: #FFFFFF;
+      border: 1px solid var(--event-border);
+      border-radius: var(--event-radius);
+      overflow: hidden;
+      box-shadow: var(--event-shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .person-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--event-shadow-hover);
+    }
+    .person-card-media {
+      width: 100%;
+      height: 240px;
+      background: var(--event-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .person-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .person-card-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .person-role-badge {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: var(--event-primary-light);
+      color: var(--event-primary);
+      margin-bottom: 4px;
+    }
+    .person-role-badge.is-executive {
+      background: #EFF6FF;
+      color: #2563EB;
+    }
+    .person-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--event-teal-dark);
+    }
+    .person-title {
+      font-size: 13px;
+      color: var(--event-text-muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================================
+       SECTION 3: سخنرانان برجسته همایش (#2:148)
+       ============================================================================ */
+    .speaker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .speaker-card {
+      background: #FFFFFF;
+      border: 1px solid var(--event-border);
+      border-radius: var(--event-radius);
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      box-shadow: var(--event-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .speaker-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--event-shadow-hover);
+    }
+    .speaker-avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: var(--event-primary-light);
+      border: 2px solid var(--event-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .speaker-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .speaker-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--event-text-main);
+    }
+    .speaker-title {
+      font-size: 12.5px;
+      color: var(--event-text-light);
+      line-height: 1.5;
+    }
+
+    /* ============================================================================
+       SECTION 4: همراهان همایش (#8:66)
+       ============================================================================ */
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .partner-card {
+      background: var(--event-primary-light);
+      border: 1px solid var(--event-primary);
+      border-radius: var(--event-radius);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      min-height: 140px;
+      transition: transform 0.2s ease;
+    }
+    .partner-card:hover {
+      transform: translateY(-2px);
+    }
+    .partner-logo-box {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: #FFFFFF;
+      border: 1px solid var(--event-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 8px;
+    }
+    .partner-logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .partner-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--event-teal-dark);
+      line-height: 1.4;
+    }
+
+    /* ============================================================================
+       SECTION 5: اخبار همایش (#8:34)
+       ============================================================================ */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .news-card {
+      background: #FFFFFF;
+      border: 1px solid var(--event-border);
+      border-radius: var(--event-radius);
+      overflow: hidden;
+      box-shadow: var(--event-shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--event-shadow-hover);
+    }
+    .news-card-media {
+      width: 100%;
+      height: 180px;
+      background: var(--event-primary-light);
+      position: relative;
+      overflow: hidden;
+    }
+    .news-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .news-date-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(10, 92, 102, 0.9);
+      color: #FFFFFF;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
+    .news-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .news-card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--event-teal-dark);
+      line-height: 1.4;
+    }
+    .news-card-desc {
+      font-size: 13px;
+      color: var(--event-text-muted);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+    .news-card-btn {
+      align-self: flex-start;
+      margin-top: 8px;
+      padding: 8px 16px;
+      background: var(--event-amber);
+      color: #FFFFFF;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .news-card-btn:hover {
+      background: #B45309;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 990px) {
+      .event-hero-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-showcase-wrapper {
+        max-width: 100%;
+        height: 360px;
+      }
+      .about-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .event-hero {
+        padding: 40px 0 48px;
+      }
+      .hero-showcase-wrapper {
+        height: 320px;
+      }
+      .countdown-box {
+        width: 68px;
+        padding: 8px 4px;
+      }
+      .countdown-val {
+        font-size: 20px;
+      }
+      .event-section {
+        padding: 48px 0;
+      }
+      .about-copy {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       1. HERO SECTION
+       ========================================================================== -->
+  <section class="event-hero">
+    <div class="event-container">
+      <div class="event-hero-inner">
+        
+        <!-- Right Column: Event Info & Call-to-Actions -->
+        <div class="event-hero-content">
+          <div class="event-hero-badge">
+            <span>●</span>
+            <span>بزرگترین گردهمایی علمی حمایتی کشور</span>
           </div>
-          <div class="event-meta-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span>ساعت شروع: <?= event_h(substr((string)$event['start_time'],0,5)) ?></span>
+
+          <h1 class="event-hero-title"><?= event_h($event['title']) ?></h1>
+
+          <p class="event-hero-desc">
+            <?= event_h($event['short_description'] ?: 'همایشی ملی برای همگرایی دانش نوین و ارتقای کیفیت زندگی بیماران مبتلا به سرطان.') ?>
+          </p>
+
+          <!-- Countdown Timer -->
+          <div class="event-countdown-grid" data-countdown="<?= event_h($iso) ?>">
+            <div class="countdown-box">
+              <span class="countdown-val" data-unit="days">۰</span>
+              <span class="countdown-lbl">روز</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-val" data-unit="hours">۰</span>
+              <span class="countdown-lbl">ساعت</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-val" data-unit="minutes">۰</span>
+              <span class="countdown-lbl">دقیقه</span>
+            </div>
+            <div class="countdown-box">
+              <span class="countdown-val" data-unit="seconds">۰</span>
+              <span class="countdown-lbl">ثانیه</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="event-hero-actions">
+            <?php if ($event['registration_url']): ?>
+              <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-register-hero">
+                <span>ثبت‌نام سریع در همایش</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            <?php else: ?>
+              <a href="#sec-about" class="btn-register-hero">
+                <span>مشاهده جزئیات همایش</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+              </a>
+            <?php endif; ?>
+
+            <?php if ($event['schedule_pdf']): ?>
+              <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-pdf-hero">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>برنامه زمان‌بندی (PDF)</span>
+              </a>
+            <?php endif; ?>
+          </div>
+
+          <!-- Status & Date -->
+          <div class="event-hero-status">
+            <span class="status-pill-active">ثبت‌نام فعال</span>
+            <span>تاریخ برگزاری: <?= event_h(event_date_label($event['event_date'])) ?> ساعت <?= event_h(substr((string)$event['start_time'], 0, 5)) ?> به وقت تهران</span>
           </div>
         </div>
-        <div class="countdown" data-countdown="<?= event_h($iso) ?>">
-          <div><strong data-unit="days">۰</strong><span>روز</span></div>
-          <div><strong data-unit="hours">۰</strong><span>ساعت</span></div>
-          <div><strong data-unit="minutes">۰</strong><span>دقیقه</span></div>
-          <div><strong data-unit="seconds">۰</strong><span>ثانیه</span></div>
+
+        <!-- Left Column: Dedicated Hero Showcase Frame (#8:28) -->
+        <div class="hero-showcase-wrapper" id="heroShowcase">
+          <div class="hero-slider-track" id="heroSliderTrack">
+            <?php if (!empty($heroes)): ?>
+              <?php foreach ($heroes as $idx => $h): ?>
+                <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= !empty($h['image']) ? "background-image: url('" . event_h($h['image']) . "');" : "background-color: #0d7a87;" ?>">
+                  <div class="hero-slide-overlay"></div>
+                  <div class="hero-slide-body">
+                    <span class="hero-slide-badge">بخش ویژه رویداد</span>
+                    <h3 class="hero-slide-title"><?= event_h($h['title']) ?></h3>
+                    <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
+                    <?php if (!empty($h['button_label']) && !empty($h['button_link'])): ?>
+                      <a href="<?= event_h($h['button_link']) ?>" target="_blank" class="hero-slide-link">
+                        <span><?= event_h($h['button_label']) ?></span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                      </a>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="hero-slide is-active" style="background-color: #0d7a87;">
+                <div class="hero-slide-overlay"></div>
+                <div class="hero-slide-body">
+                  <span class="hero-slide-badge">رویداد ملی</span>
+                  <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
+                  <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
+                </div>
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <?php if (count($heroes) > 1): ?>
+            <!-- Carousel Navigation Arrows -->
+            <div class="hero-slider-nav">
+              <button type="button" class="hero-slider-btn" id="heroPrevBtn" aria-label="اسلاید قبلی">❮</button>
+              <button type="button" class="hero-slider-btn" id="heroNextBtn" aria-label="اسلاید بعدی">❯</button>
+            </div>
+            <!-- Indicator Dots -->
+            <div class="hero-slider-dots" id="heroDots">
+              <?php foreach ($heroes as $idx => $h): ?>
+                <span class="hero-dot <?= $idx === 0 ? 'is-active' : '' ?>" data-dot-index="<?= $idx ?>"></span>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
         </div>
-      </div>
-      <div class="event-poster">
-        <?php if($event['poster']): ?>
-          <img src="<?= event_h($event['poster']) ?>" alt="پوستر <?= event_h($event['title']) ?>">
-        <?php else: ?>
-          <div class="poster-empty">پوستر رسمی این رویداد به‌زودی بارگذاری می‌شود.</div>
-        <?php endif; ?>
+
       </div>
     </div>
   </section>
 
-  <div class="event-container">
-    <section class="event-section about-grid">
-      <div>
-        <div class="section-kicker">درباره همایش</div>
-        <h2>همراه با تازه‌ترین نگاه‌ها به مراقبت تسکینی</h2>
-        <div class="about-copy"><?= nl2br(event_h($event['about'])) ?></div>
-        <?php if($event['registration_url']): ?>
-          <a class="register-btn" href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener">
-            <span>ثبت‌نام در این همایش</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          </a>
-        <?php endif; ?>
+  <!-- ==========================================================================
+       2. SECTION 1: معرفی و محورهای همایش (About & Schedule PDF)
+       ========================================================================== -->
+  <section class="event-section event-section-white" id="sec-about">
+    <div class="event-container">
+      
+      <div class="section-header">
+        <span class="section-kicker">معرفی و محورهای همایش</span>
+        <h2 class="section-title"><?= event_h($event['title']) ?></h2>
+        <p class="section-subtitle">اطلاعات تفصیلی، محورهای علمی و جدول زمان‌بندی کامل همایش</p>
       </div>
 
-      <!-- Modern Schedule PDF Card -->
-      <div class="schedule-card">
-        <div class="schedule-card-tag">
-          <span class="dot"></span>
-          <span>برنامه و زمان‌بندی رسمی</span>
+      <div class="about-main-grid">
+        <!-- Text Column with Perfect Typography & Spacing -->
+        <div class="about-text-column">
+          <div class="about-copy"><?= event_h($event['about'] ?: $event['short_description']) ?></div>
+
+          <?php if ($event['registration_url']): ?>
+            <div class="about-register-bar">
+              <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-register-hero">
+                <span>ثبت‌نام در این همایش</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          <?php endif; ?>
         </div>
-        <div class="schedule-doc-box">
-          <div class="schedule-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            <span>PDF</span>
+
+        <!-- Side Column: Official Poster + Schedule PDF Download -->
+        <div class="about-side-column">
+          <!-- Poster -->
+          <div class="event-poster-card">
+            <?php if (!empty($event['poster'])): ?>
+              <img src="<?= event_h($event['poster']) ?>" alt="پوستر <?= event_h($event['title']) ?>" class="event-poster-img">
+            <?php else: ?>
+              <div class="poster-empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>پوستر رسمی این رویداد</span>
+              </div>
+            <?php endif; ?>
           </div>
-          <div class="schedule-info">
-            <h3>سین همایش</h3>
-            <p>جدول زمان‌بندی سخنرانی‌ها، پنل‌ها و کارگاه‌ها</p>
+
+          <!-- Schedule PDF Download Card -->
+          <div class="schedule-pdf-card">
+            <div class="schedule-pdf-header">
+              <div class="pdf-icon-badge">PDF</div>
+              <div class="schedule-pdf-info">
+                <h3>سین همایش</h3>
+                <p>جدول زمان‌بندی سخنرانی‌ها، پنل‌ها و کارگاه‌ها</p>
+              </div>
+            </div>
+            <?php if (!empty($event['schedule_pdf'])): ?>
+              <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-download-pdf">
+                <span>دریافت فایل برنامه (PDF)</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </a>
+            <?php else: ?>
+              <div style="font-size:12.5px; color:var(--event-text-light); text-align:center; padding:10px; background:var(--event-bg-light); border-radius:8px;">
+                فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.
+              </div>
+            <?php endif; ?>
           </div>
         </div>
-        <div class="schedule-badges">
-          <span class="schedule-pill">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            نسخه رسمی دبیرخانه
-          </span>
-          <span class="schedule-pill">سند دیجیتال</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. SECTION 2: دبیران علمی و اجرایی
+       ========================================================================== -->
+  <?php if (!empty($people)): ?>
+    <section class="event-section event-section-light" id="sec-organizers">
+      <div class="event-container">
+        
+        <div class="section-header">
+          <span class="section-kicker">ارکان علمی و اجرایی</span>
+          <h2 class="section-title">دبیران همایش</h2>
+          <p class="section-subtitle">اطلاعات دبیران علمی و اجرایی مسئول برگزاری همایش</p>
         </div>
-        <?php if($event['schedule_pdf']): ?>
-          <a class="schedule-download-btn" href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download>
-            <span>دریافت فایل برنامه (PDF)</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          </a>
-        <?php else: ?>
-          <div class="schedule-empty">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            <span>فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.</span>
-          </div>
-        <?php endif; ?>
+
+        <div class="people-grid">
+          <?php foreach ($people as $p): ?>
+            <article class="person-card">
+              <div class="person-card-media">
+                <?php if (!empty($p['image'])): ?>
+                  <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
+                <?php else: ?>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--event-primary)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <?php endif; ?>
+              </div>
+              <div class="person-card-body">
+                <span class="person-role-badge <?= ($p['role'] ?? '') === 'executive_secretary' ? 'is-executive' : '' ?>">
+                  <?= ($p['role'] ?? '') === 'scientific_secretary' ? 'دبیر علمی' : 'دبیر اجرایی' ?>
+                </span>
+                <h3 class="person-name"><?= event_h($p['name']) ?></h3>
+                <div class="person-title"><?= event_h($p['title']) ?></div>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        </div>
+
       </div>
     </section>
+  <?php endif; ?>
 
-    <?php if($people): ?>
-      <section class="event-section">
-        <div class="section-kicker">ارکان علمی و اجرایی</div>
-        <h2>دبیران همایش</h2>
-        <div class="people-grid">
-          <?php foreach($people as $p): ?>
-            <article class="person-card">
-              <?php if($p['image']): ?>
-                <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
-              <?php endif; ?>
-              <div class="inner">
-                <span class="person-badge"><?= $p['role']==='scientific_secretary'?'دبیر علمی':'دبیر اجرایی' ?></span>
-                <h3><?= event_h($p['name']) ?></h3>
-                <div class="muted"><?= event_h($p['title']) ?></div>
-              </div>
-            </article>
-          <?php endforeach; ?>
+  <!-- ==========================================================================
+       4. SECTION 3: سخنرانان برجسته همایش
+       ========================================================================== -->
+  <?php if (!empty($speakers)): ?>
+    <section class="event-section event-section-white" id="sec-speakers">
+      <div class="event-container">
+        
+        <div class="section-header">
+          <span class="section-kicker">سخنرانان و اساتید</span>
+          <h2 class="section-title">سخنرانان برجسته همایش</h2>
+          <p class="section-subtitle">اساتید و چهره‌های برجسته علمی و تخصصی حاضر در این رویداد</p>
         </div>
-      </section>
-    <?php endif; ?>
 
-    <?php if($speakers): ?>
-      <section class="event-section">
-        <div class="section-kicker">سخنرانان و اساتید</div>
-        <h2>چهره‌های حاضر در همایش</h2>
         <div class="speaker-grid">
-          <?php foreach($speakers as $p): ?>
+          <?php foreach ($speakers as $s): ?>
             <article class="speaker-card">
-              <?php if($p['image']): ?>
-                <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
-              <?php endif; ?>
-              <div class="inner">
-                <h3><?= event_h($p['name']) ?></h3>
-                <div class="muted"><?= event_h($p['title']) ?></div>
+              <div class="speaker-avatar">
+                <?php if (!empty($s['image'])): ?>
+                  <img src="<?= event_h($s['image']) ?>" alt="<?= event_h($s['name']) ?>">
+                <?php else: ?>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--event-primary)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <?php endif; ?>
               </div>
+              <h3 class="speaker-name"><?= event_h($s['name']) ?></h3>
+              <div class="speaker-title"><?= event_h($s['title']) ?></div>
             </article>
           <?php endforeach; ?>
         </div>
-      </section>
-    <?php endif; ?>
 
-    <?php if($news): ?>
-      <section class="event-section">
-        <div class="section-kicker">رویدادنامه</div>
-        <h2>اخبار همایش</h2>
+      </div>
+    </section>
+  <?php endif; ?>
+
+  <!-- ==========================================================================
+       5. SECTION 4: همراهان همایش
+       ========================================================================== -->
+  <?php if (!empty($partners)): ?>
+    <section class="event-section event-section-light" id="sec-partners">
+      <div class="event-container">
+        
+        <div class="section-header">
+          <span class="section-kicker">همراهان و حامیان</span>
+          <h2 class="section-title">همراهان همایش</h2>
+          <p class="section-subtitle">شبکه‌ای از سازمان‌ها، مراکز علمی و حامیانی که در برگزاری این همایش مشارکت دارند.</p>
+        </div>
+
+        <div class="partners-grid">
+          <?php foreach ($partners as $partner): ?>
+            <div class="partner-card">
+              <div class="partner-logo-box">
+                <?php if (!empty($partner['logo'])): ?>
+                  <img src="<?= event_h($partner['logo']) ?>" alt="<?= event_h($partner['name']) ?>">
+                <?php else: ?>
+                  <span style="font-weight:800; font-size:16px; color:var(--event-teal-dark);">مکسا</span>
+                <?php endif; ?>
+              </div>
+              <h3 class="partner-name"><?= event_h($partner['name']) ?></h3>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+      </div>
+    </section>
+  <?php endif; ?>
+
+  <!-- ==========================================================================
+       6. SECTION 5: اخبار همایش (در پایان صفحه بر اساس دستور کاربر)
+       ========================================================================== -->
+  <?php if (!empty($news)): ?>
+    <section class="event-section event-section-white" id="sec-news">
+      <div class="event-container">
+        
+        <div class="section-header">
+          <span class="section-kicker">رویدادنامه</span>
+          <h2 class="section-title">اخبار همایش</h2>
+          <p class="section-subtitle">آخرین اخبار، اطلاعیه‌ها و جزئیات برنامه‌های همایش</p>
+        </div>
+
         <div class="news-grid">
-          <?php foreach($news as $n): ?>
+          <?php foreach ($news as $n): ?>
+            <?php
+              $pubDate = !empty($n['published_at']) ? event_date_label(substr((string)$n['published_at'], 0, 10)) : 'تازه';
+            ?>
             <article class="news-card">
-              <?php if($n['image']): ?>
-                <img src="<?= event_h($n['image']) ?>" alt="<?= event_h($n['title']) ?>">
-              <?php endif; ?>
-              <div class="inner">
-                <h3><?= event_h($n['title']) ?></h3>
-                <p class="muted"><?= event_h($n['excerpt']) ?></p>
-                <a href="/event-news.php?slug=<?= rawurlencode($n['slug']) ?>">
-                  <span>ادامه خبر</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+              <div class="news-card-media">
+                <?php if (!empty($n['image'])): ?>
+                  <img src="<?= event_h($n['image']) ?>" alt="<?= event_h($n['title']) ?>">
+                <?php else: ?>
+                  <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--event-primary-light); color:var(--event-primary); font-size:13px; font-weight:700;">خبر اختصاصی همایش</div>
+                <?php endif; ?>
+                <span class="news-date-badge"><?= event_h($pubDate) ?></span>
+              </div>
+              <div class="news-card-body">
+                <h3 class="news-card-title"><?= event_h($n['title']) ?></h3>
+                <p class="news-card-desc"><?= event_h($n['excerpt'] ?: mb_substr(strip_tags((string)($n['content'] ?? '')), 0, 110) . '...') ?></p>
+                <a href="/event-news.php?slug=<?= rawurlencode((string)$n['slug']) ?>" class="news-card-btn">
+                  <span>مشاهده خبر</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
               </div>
             </article>
           <?php endforeach; ?>
         </div>
-      </section>
-    <?php endif; ?>
 
-    <?php if($partners): ?>
-      <section class="event-section">
-        <div class="section-kicker">همراهان و حامیان</div>
-        <h2>با همراهی شما</h2>
-        <div class="partner-grid">
-          <?php foreach($partners as $p): ?>
-            <div class="partner-card">
-              <?php if($p['logo']): ?>
-                <img src="<?= event_h($p['logo']) ?>" alt="<?= event_h($p['name']) ?>">
-              <?php endif; ?>
-              <h3><?= event_h($p['name']) ?></h3>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      </section>
-    <?php endif; ?>
-  </div>
-</main>
-<script>(function(){const root=document.querySelector('[data-countdown]');if(!root)return;const fa=n=>String(Math.max(0,n)).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);const tick=()=>{let left=Math.max(0,Date.parse(root.dataset.countdown)-Date.now()),s=Math.floor(left/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60),sec=s%60;[['days',d],['hours',h],['minutes',m],['seconds',sec]].forEach(([u,v])=>{const e=root.querySelector('[data-unit="'+u+'"]');if(e)e.textContent=fa(String(v).padStart(2,'0'))});};tick();setInterval(tick,1000)})();</script>
-<?php require __DIR__ . '/dashboard/components/footer/component.php';
+      </div>
+    </section>
+  <?php endif; ?>
+
+  <!-- Scripts: Countdown Timer & Interactive Hero Slider -->
+  <script>
+    (function() {
+      // 1. Countdown Timer
+      const root = document.querySelector('[data-countdown]');
+      if (root) {
+        const fa = n => String(Math.max(0, n)).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+        const tick = () => {
+          const target = Date.parse(root.dataset.countdown);
+          let left = Math.max(0, target - Date.now());
+          let s = Math.floor(left / 1000);
+          let d = Math.floor(s / 86400);
+          s %= 86400;
+          let h = Math.floor(s / 3600);
+          s %= 3600;
+          let m = Math.floor(s / 60);
+          let sec = s % 60;
+          [['days', d], ['hours', h], ['minutes', m], ['seconds', sec]].forEach(([u, v]) => {
+            const el = root.querySelector('[data-unit="' + u + '"]');
+            if (el) el.textContent = fa(String(v).padStart(2, '0'));
+          });
+        };
+        tick();
+        setInterval(tick, 1000);
+      }
+
+      // 2. Interactive Hero Carousel
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot');
+      const btnPrev = document.getElementById('heroPrevBtn');
+      const btnNext = document.getElementById('heroNextBtn');
+      if (slides.length > 1) {
+        let activeIdx = 0;
+        let timer = null;
+
+        function goToSlide(idx) {
+          activeIdx = (idx + slides.length) % slides.length;
+          slides.forEach((s, i) => s.classList.toggle('is-active', i === activeIdx));
+          dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
+        }
+
+        function startAuto() {
+          stopAuto();
+          timer = setInterval(() => goToSlide(activeIdx + 1), 5000);
+        }
+        function stopAuto() {
+          if (timer) clearInterval(timer);
+        }
+
+        if (btnNext) btnNext.addEventListener('click', () => { goToSlide(activeIdx + 1); startAuto(); });
+        if (btnPrev) btnPrev.addEventListener('click', () => { goToSlide(activeIdx - 1); startAuto(); });
+        dots.forEach((d, i) => d.addEventListener('click', () => { goToSlide(i); startAuto(); }));
+
+        const showcase = document.getElementById('heroShowcase');
+        if (showcase) {
+          showcase.addEventListener('mouseenter', stopAuto);
+          showcase.addEventListener('mouseleave', startAuto);
+        }
+        startAuto();
+      }
+    })();
+  </script>
+
+<?php
+if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/footer/component.php')) {
+    require __DIR__ . '/dashboard/components/footer/component.php';
+}
+?>
+</body>
+</html>

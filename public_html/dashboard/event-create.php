@@ -1172,6 +1172,80 @@ body {
     padding: 16px;
   }
 }
+
+/* Auto-save Draft Banner & Footer Indicator */
+.hq-draft-banner {
+  background: var(--hq-surface);
+  border: 1px solid #10b981;
+  border-right: 5px solid #10b981;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.12);
+  animation: slideDownFade 0.3s ease;
+}
+@keyframes slideDownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hq-draft-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hq-draft-banner-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hq-draft-banner-text {
+  font-size: 13.5px;
+  color: var(--hq-text-main);
+  line-height: 1.6;
+}
+.hq-draft-banner-text strong {
+  color: #10b981;
+  margin-left: 6px;
+}
+.hq-draft-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.hq-autosave-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hq-text-muted);
+}
+.hq-autosave-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  transition: all 0.3s ease;
+}
+.hq-autosave-dot.is-saving {
+  background: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+}
 </style>
 
 <form class="hq-form-container" action="event-save.php" method="post" enctype="multipart/form-data" id="eventForm"
@@ -1181,18 +1255,22 @@ body {
   <?= csrf_field() ?>
   <input type="hidden" name="id" value="<?= (int)$event['id'] ?>">
 
-  <!-- 1. HQ Header (#8:129) -->
-  <header class="hq-header">
-    <div class="hq-header-title-group">
-      <h1 class="hq-header-title">ستاد مرکزی (HQ)</h1>
-      <p class="hq-header-subtitle">فرم مدیریت رویداد · دسترسی اختصاصی ستاد مرکزی</p>
+  <!-- Auto-save Draft Restore Banner (Instant auto-draft) -->
+  <div id="draftRestoreBanner" class="hq-draft-banner" style="display:none;">
+    <div class="hq-draft-banner-content">
+      <div class="hq-draft-banner-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      </div>
+      <div class="hq-draft-banner-text">
+        <strong>پیش‌نویس ذخیره‌شده پیدا شد:</strong>
+        <span id="draftTimeLabel">اطلاعاتی از ویرایش قبلی شما به‌صورت لحظه‌ای در مرورگر ذخیره شده است.</span>
+      </div>
     </div>
-    <div class="hq-header-status-group">
-      <span class="hq-pill hq-pill-teal">ستاد مرکزی (HQ)</span>
-      <span class="hq-pill hq-pill-gray">دسترسی اختصاصی</span>
-      <span class="hq-pill hq-pill-danger">شعبه‌ها: غیرمجاز / قفل‌شده</span>
+    <div class="hq-draft-banner-actions">
+      <button type="button" class="hq-btn hq-btn-primary" id="btnRestoreDraft" style="padding:7px 16px; font-size:12.5px;">بازیابی اطلاعات</button>
+      <button type="button" class="hq-btn hq-btn-white" id="btnDiscardDraft" style="padding:7px 14px; font-size:12.5px;">حذف پیش‌نویس</button>
     </div>
-  </header>
+  </div>
 
   <!-- Step Wizard Stepper (Active on Mobile Phone Screens, <= 900px) -->
 
@@ -1388,34 +1466,35 @@ body {
 
             <!-- فایل برنامه همایش (#8:251) -->
             <div class="hq-state-box hq-state-box-tint" id="pdfBox">
+              <input type="hidden" name="delete_schedule_pdf" id="deleteSchedulePdf" value="0">
               <div class="hq-state-box-title" style="color:var(--hq-primary-dark);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 <span>فایل PDF برنامه</span>
               </div>
               <?php if ($event['schedule_pdf']): ?>
-                <div style="background:var(--hq-surface); border:1px solid var(--hq-border); border-radius:10px; padding:16px; display:flex; align-items:center; justify-content:space-between;">
+                <div id="pdfCurrentContainer" style="background:var(--hq-surface); border:1px solid var(--hq-border); border-radius:10px; padding:16px; display:flex; align-items:center; justify-content:space-between;">
                   <div>
                     <strong style="display:block; font-size:13px; color:var(--hq-text-main);"><?= basename((string)$event['schedule_pdf']) ?></strong>
                     <span style="font-size:11px; color:var(--hq-text-muted);">برنامه کامل زمان‌بندی همایش</span>
                   </div>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--hq-primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                 </div>
-              <?php else: ?>
-                <div class="hq-dropzone" onclick="document.getElementById('pdfInput').click();">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <span class="hq-dropzone-text">فایل PDF برنامه را انتخاب کنید</span>
-                  <span class="hq-dropzone-sub">حداکثر تا ۲۵ مگابایت</span>
-                </div>
               <?php endif; ?>
+              <div class="hq-dropzone" id="pdfDropzone" onclick="document.getElementById('pdfInput').click();" <?= $event['schedule_pdf'] ? 'style="display:none;"' : '' ?>>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="hq-dropzone-text">فایل PDF برنامه را انتخاب کنید</span>
+                <span class="hq-dropzone-sub">حداکثر تا ۲۵ مگابایت</span>
+              </div>
               <input type="file" name="schedule_pdf" id="pdfInput" accept="application/pdf" style="display:none;">
               <div class="hq-btn-row">
                 <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('pdfInput').click();">آپلود جدید</button>
                 <?php if ($event['schedule_pdf']): ?>
-                  <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" class="hq-btn hq-btn-white">مشاهده PDF</a>
+                  <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" class="hq-btn hq-btn-white" id="pdfViewBtn">مشاهده PDF</a>
+                  <button type="button" class="hq-btn hq-btn-danger" id="pdfDeleteBtn" onclick="deleteCurrentPdf()">حذف فایل PDF</button>
                 <?php endif; ?>
               </div>
             </div>
@@ -1440,12 +1519,19 @@ body {
                   <span class="hq-repeat-pill-number">هیرو <?= sprintf('%02d', $idx + 1) ?></span>
                   <span class="hq-repeat-pill-status">فعال</span>
                 </div>
-                <div class="hq-repeat-media">
+                <div class="hq-repeat-media" title="برای تغییر یا انتخاب تصویر کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($h['image'])): ?>
                     <img src="<?= event_h($h['image']) ?>" alt="<?= event_h($h['title']) ?>">
                   <?php else: ?>
-                    <div class="hq-repeat-media-empty">بدون تصویر</div>
+                    <div class="hq-repeat-media-empty">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                      <span>بدون تصویر (کلیک یا رهاسازی)</span>
+                    </div>
                   <?php endif; ?>
+                  <div class="hq-repeat-media-overlay">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>تغییر تصویر</span>
+                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($h['title']) ?: 'بدون عنوان' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($h['description']) ?: 'توضیحات هیرو وارد نشده است.' ?></p>
@@ -1482,12 +1568,19 @@ body {
                   <span class="hq-repeat-pill-number"><?= $p['role'] === 'scientific_secretary' ? 'دبیر علمی' : 'دبیر اجرایی' ?></span>
                   <span class="hq-repeat-pill-status">فعال</span>
                 </div>
-                <div class="hq-repeat-media">
+                <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($p['image'])): ?>
                     <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
                   <?php else: ?>
-                    <div class="hq-repeat-media-empty">بدون عکس</div>
+                    <div class="hq-repeat-media-empty">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <span>بدون عکس (کلیک یا رهاسازی)</span>
+                    </div>
                   <?php endif; ?>
+                  <div class="hq-repeat-media-overlay">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>تغییر عکس</span>
+                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام مشخص نشده' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($p['title']) ?: 'سمت مشخص نشده' ?></p>
@@ -1529,12 +1622,19 @@ body {
                   <span class="hq-repeat-pill-number">سخنران <?= sprintf('%02d', $idx + 1) ?></span>
                   <span class="hq-repeat-pill-status">فعال</span>
                 </div>
-                <div class="hq-repeat-media">
+                <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($s['image'])): ?>
                     <img src="<?= event_h($s['image']) ?>" alt="<?= event_h($s['name']) ?>">
                   <?php else: ?>
-                    <div class="hq-repeat-media-empty">بدون عکس</div>
+                    <div class="hq-repeat-media-empty">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <span>بدون عکس (کلیک یا رهاسازی)</span>
+                    </div>
                   <?php endif; ?>
+                  <div class="hq-repeat-media-overlay">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>تغییر عکس</span>
+                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($s['name']) ?: 'نام استاد' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($s['title']) ?: 'تخصص یا عنوان علمی' ?></p>
@@ -1570,12 +1670,19 @@ body {
                   <span class="hq-repeat-pill-number">همراه <?= sprintf('%02d', $idx + 1) ?></span>
                   <span class="hq-repeat-pill-status">فعال</span>
                 </div>
-                <div class="hq-repeat-media">
+                <div class="hq-repeat-media" title="برای تغییر یا انتخاب لوگو کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($p['logo'])): ?>
                     <img src="<?= event_h($p['logo']) ?>" alt="<?= event_h($p['name']) ?>">
                   <?php else: ?>
-                    <div class="hq-repeat-media-empty">بدون لوگو</div>
+                    <div class="hq-repeat-media-empty">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                      <span>بدون لوگو (کلیک یا رهاسازی)</span>
+                    </div>
                   <?php endif; ?>
+                  <div class="hq-repeat-media-overlay">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>تغییر لوگو</span>
+                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام سازمان / حامی' ?></h3>
                 <p class="hq-repeat-desc">سازمان همکار و حامی رویداد</p>
@@ -1883,7 +1990,11 @@ body {
           </button>
         </div>
       </div>
-      <div class="hq-actions-left">
+      <div class="hq-actions-left" style="display:flex; align-items:center; gap:12px;">
+        <div id="autoSaveIndicator" class="hq-autosave-indicator" title="پیش‌نویس اطلاعات این فرم به‌صورت لحظه‌ای در مرورگر ذخیره می‌شود">
+          <span class="hq-autosave-dot" id="autoSaveDot"></span>
+          <span id="autoSaveStatusText">ذخیره خودکار پیش‌نویس فعال است</span>
+        </div>
         <?php if ($event['slug']): ?>
           <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white" style="display:inline-flex; align-items:center; gap:6px;">
             <?= hq_iconoir('preview', '', 15) ?>
@@ -1905,9 +2016,19 @@ body {
 </form>
 
 <script>
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function toggleDrawer(btn) {
   const card = btn.closest('.hq-repeat-card');
-  const drawer = card.querySelector('.hq-repeat-drawer');
+  const drawer = card?.querySelector('.hq-repeat-drawer');
   if (drawer) {
     drawer.classList.toggle('is-open');
     btn.textContent = drawer.classList.contains('is-open') ? 'بستن ویرایش' : 'ویرایش';
@@ -1923,6 +2044,25 @@ function toggleAllDrawers(open) {
       if (btn) btn.textContent = open ? 'بستن ویرایش' : 'ویرایش';
     }
   });
+}
+
+function deleteCurrentPdf() {
+  if (confirm('آیا از حذف فایل PDF برنامه رویداد اطمینان دارید؟')) {
+    const hidden = document.getElementById('deleteSchedulePdf');
+    if (hidden) hidden.value = '1';
+    const container = document.getElementById('pdfCurrentContainer');
+    if (container) container.style.display = 'none';
+    const viewBtn = document.getElementById('pdfViewBtn');
+    if (viewBtn) viewBtn.style.display = 'none';
+    const delBtn = document.getElementById('pdfDeleteBtn');
+    if (delBtn) delBtn.style.display = 'none';
+    const drop = document.getElementById('pdfDropzone');
+    if (drop) {
+      drop.style.display = 'flex';
+      drop.innerHTML = '<span class="hq-dropzone-text" style="color:#ef4444;">فایل PDF برنامه حذف خواهد شد. می‌توانید در صورت تمایل فایل جدید انتخاب کنید.</span>';
+    }
+    if (typeof window.triggerAutoSave === 'function') window.triggerAutoSave();
+  }
 }
 
 (function() {
@@ -2022,6 +2162,18 @@ function toggleAllDrawers(open) {
     const chkAbout = document.getElementById('chk-about');
     if (chkAbout && shortDesc) chkAbout.classList.toggle('is-done', !!shortDesc.value.trim());
 
+    const chkHeroes = document.getElementById('chk-heroes');
+    if (chkHeroes) chkHeroes.classList.toggle('is-done', document.querySelectorAll('#hero-list .hq-repeat-card').length > 0);
+
+    const chkOrg = document.getElementById('chk-organizers');
+    if (chkOrg) chkOrg.classList.toggle('is-done', document.querySelectorAll('#person-list .hq-repeat-card').length > 0);
+
+    const chkSpk = document.getElementById('chk-speakers');
+    if (chkSpk) chkSpk.classList.toggle('is-done', document.querySelectorAll('#speaker-list .hq-repeat-card').length > 0);
+
+    const chkPart = document.getElementById('chk-partners');
+    if (chkPart) chkPart.classList.toggle('is-done', document.querySelectorAll('#partner-list .hq-repeat-card').length > 0);
+
     const doneCount = document.querySelectorAll('.hq-sidebar-links .hq-check.is-done').length;
     const countEl = document.getElementById('sidebarFilledCount');
     if (countEl) {
@@ -2029,6 +2181,7 @@ function toggleAllDrawers(open) {
       countEl.textContent = faCount + ' از ۹ پر شده';
     }
   }
+  window.updateCheckmarks = updateCheckmarks;
   updateCheckmarks();
   document.addEventListener('input', updateCheckmarks);
 
@@ -2082,6 +2235,7 @@ function toggleAllDrawers(open) {
       if (ctaEl) ctaEl.style.borderColor = tAcc.value;
     }
   }
+  window.syncBanner = syncBanner;
 
   [titleInput, labelInput, ctaInput].forEach(el => {
     if (el) el.addEventListener('input', syncBanner);
@@ -2121,7 +2275,7 @@ function toggleAllDrawers(open) {
   syncBanner();
 
   // =========================================================================
-  // 5. File upload previews
+  // 5. File upload previews & Dropzones (Poster & PDF)
   // =========================================================================
   const posterInput = document.getElementById('posterInput');
   const posterBox = document.getElementById('posterBox');
@@ -2140,8 +2294,23 @@ function toggleAllDrawers(open) {
             posterBox.insertBefore(img, posterBox.querySelector('.hq-btn-row') || posterInput);
           }
           img.src = e.target.result;
+          triggerAutoSave();
         };
         reader.readAsDataURL(file);
+      }
+    });
+
+    posterBox.addEventListener('dragover', e => { e.preventDefault(); posterBox.style.borderColor = 'var(--hq-primary)'; });
+    posterBox.addEventListener('dragleave', () => { posterBox.style.borderColor = ''; });
+    posterBox.addEventListener('drop', e => {
+      e.preventDefault();
+      posterBox.style.borderColor = '';
+      const file = e.dataTransfer?.files?.[0];
+      if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        posterInput.files = dt.files;
+        posterInput.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
   }
@@ -2154,116 +2323,211 @@ function toggleAllDrawers(open) {
       if (file) {
         const drop = pdfBox.querySelector('.hq-dropzone');
         if (drop) {
-          drop.innerHTML = '<span class="hq-dropzone-text" style="color:#16a37a;">فایل ' + file.name + ' انتخاب شد</span>';
+          drop.style.display = 'flex';
+          drop.innerHTML = '<span class="hq-dropzone-text" style="color:#16a37a;">فایل ' + escapeHtml(file.name) + ' با موفقیت انتخاب شد</span>';
         }
+        triggerAutoSave();
+      }
+    });
+
+    pdfBox.addEventListener('dragover', e => { e.preventDefault(); pdfBox.style.borderColor = 'var(--hq-primary)'; });
+    pdfBox.addEventListener('dragleave', () => { pdfBox.style.borderColor = ''; });
+    pdfBox.addEventListener('drop', e => {
+      e.preventDefault();
+      pdfBox.style.borderColor = '';
+      const file = e.dataTransfer?.files?.[0];
+      if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        pdfInput.files = dt.files;
+        pdfInput.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
   }
 
   // =========================================================================
-  // 6. Repeaters logic
+  // 6. Repeatables logic (Templates & Actions)
   // =========================================================================
   const templates = {
-    hero: () => `
-      <div class="hq-repeat-card">
-        <div class="hq-repeat-card-top">
-          <span class="hq-repeat-pill-number">هیرو جدید</span>
-          <span class="hq-repeat-pill-status">فعال</span>
-        </div>
-        <div class="hq-repeat-media">
-          <div class="hq-repeat-media-empty">تصویر هیرو جدید</div>
-        </div>
-        <h3 class="hq-repeat-title">عنوان هیرو جدید</h3>
-        <p class="hq-repeat-desc">توضیحات این بخش هیرو...</p>
-        <div class="hq-repeat-actions">
-          <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">بستن ویرایش</button>
-          <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-        </div>
-        <div class="hq-repeat-drawer is-open">
-          <label class="hq-field-label">عنوان هیرو<input name="hero_title[]" class="hq-input" placeholder="عنوان هیرو"></label>
-          <label class="hq-field-label">توضیح<input name="hero_description[]" class="hq-input" placeholder="توضیح هیرو"></label>
-          <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" class="hq-input" placeholder="مشاهده بیشتر"></label>
-          <label class="hq-field-label">لینک دکمه<input name="hero_link[]" dir="ltr" class="hq-input" placeholder="https://..."></label>
-          <label class="hq-field-label">تصویر هیرو<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
-          <input type="hidden" name="hero_existing[]" value="">
-        </div>
-      </div>`,
-    person: () => `
-      <div class="hq-repeat-card">
-        <div class="hq-repeat-card-top">
-          <span class="hq-repeat-pill-number">دبیر جدید</span>
-          <span class="hq-repeat-pill-status">فعال</span>
-        </div>
-        <div class="hq-repeat-media">
-          <div class="hq-repeat-media-empty">عکس دبیر</div>
-        </div>
-        <h3 class="hq-repeat-title">نام دبیر جدید</h3>
-        <p class="hq-repeat-desc">سمت دبیر...</p>
-        <div class="hq-repeat-actions">
-          <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">بستن ویرایش</button>
-          <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-        </div>
-        <div class="hq-repeat-drawer is-open">
-          <label class="hq-field-label">نوع سمت
-            <select name="person_role[]" class="hq-select">
-              <option value="scientific_secretary">دبیر علمی</option>
-              <option value="executive_secretary">دبیر اجرایی</option>
-            </select>
-          </label>
-          <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" class="hq-input" placeholder="دکتر ..."></label>
-          <label class="hq-field-label">سمت / عنوان<input name="person_title[]" class="hq-input" placeholder="دبیر علمی همایش..."></label>
-          <label class="hq-field-label">عکس<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
-          <input type="hidden" name="person_existing[]" value="">
-          <input type="hidden" name="person_order[]" value="0">
-        </div>
-      </div>`,
-    speaker: () => `
-      <div class="hq-repeat-card">
-        <div class="hq-repeat-card-top">
-          <span class="hq-repeat-pill-number">سخنران جدید</span>
-          <span class="hq-repeat-pill-status">فعال</span>
-        </div>
-        <div class="hq-repeat-media">
-          <div class="hq-repeat-media-empty">عکس سخنران</div>
-        </div>
-        <h3 class="hq-repeat-title">نام استاد / سخنران</h3>
-        <p class="hq-repeat-desc">تخصص / موضوع سخنرانی...</p>
-        <div class="hq-repeat-actions">
-          <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">بستن ویرایش</button>
-          <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-        </div>
-        <div class="hq-repeat-drawer is-open">
-          <label class="hq-field-label">نام استاد<input name="speaker_name[]" class="hq-input" placeholder="دکتر ..."></label>
-          <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" class="hq-input" placeholder="متخصص ..."></label>
-          <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" class="hq-input" value="0"></label>
-          <label class="hq-field-label">عکس<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
-          <input type="hidden" name="speaker_existing[]" value="">
-        </div>
-      </div>`,
-    partner: () => `
-      <div class="hq-repeat-card">
-        <div class="hq-repeat-card-top">
-          <span class="hq-repeat-pill-number">همراه جدید</span>
-          <span class="hq-repeat-pill-status">فعال</span>
-        </div>
-        <div class="hq-repeat-media">
-          <div class="hq-repeat-media-empty">لوگو همراه</div>
-        </div>
-        <h3 class="hq-repeat-title">نام همراه جدید</h3>
-        <p class="hq-repeat-desc">سازمان همکار یا حامی...</p>
-        <div class="hq-repeat-actions">
-          <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">بستن ویرایش</button>
-          <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-        </div>
-        <div class="hq-repeat-drawer is-open">
-          <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" class="hq-input" placeholder="شرکت یا سازمان"></label>
-          <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" class="hq-input" value="0"></label>
-          <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
-          <input type="hidden" name="partner_existing[]" value="">
-        </div>
-      </div>`
+    hero: (data = {}) => {
+      const title = data.title || '';
+      const desc = data.description || '';
+      const btnLabel = data.button_label || '';
+      const link = data.link || '';
+      const existing = data.existing || '';
+      const imgSrc = data.preview || existing;
+      const mediaHtml = imgSrc
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(title)}">`
+        : `<div class="hq-repeat-media-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>تصویر هیرو جدید (کلیک یا رهاسازی)</span>
+          </div>`;
+      const openClass = data.title ? '' : 'is-open';
+      const btnText = data.title ? 'ویرایش' : 'بستن ویرایش';
+      return `
+        <div class="hq-repeat-card">
+          <div class="hq-repeat-card-top">
+            <span class="hq-repeat-pill-number">بخش هیرو</span>
+            <span class="hq-repeat-pill-status">فعال</span>
+          </div>
+          <div class="hq-repeat-media" title="برای تغییر یا انتخاب تصویر کلیک کنید یا فایل را اینجا رها نمایید">
+            ${mediaHtml}
+            <div class="hq-repeat-media-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>تغییر تصویر</span>
+            </div>
+          </div>
+          <h3 class="hq-repeat-title">${escapeHtml(title) || 'عنوان هیرو جدید'}</h3>
+          <p class="hq-repeat-desc">${escapeHtml(desc) || 'توضیحات این بخش هیرو...'}</p>
+          <div class="hq-repeat-actions">
+            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">${btnText}</button>
+            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+          </div>
+          <div class="hq-repeat-drawer ${openClass}">
+            <label class="hq-field-label">عنوان هیرو<input name="hero_title[]" value="${escapeHtml(title)}" class="hq-input" placeholder="عنوان هیرو"></label>
+            <label class="hq-field-label">توضیح<input name="hero_description[]" value="${escapeHtml(desc)}" class="hq-input" placeholder="توضیح هیرو"></label>
+            <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" value="${escapeHtml(btnLabel)}" class="hq-input" placeholder="مشاهده بیشتر"></label>
+            <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="${escapeHtml(link)}" dir="ltr" class="hq-input" placeholder="https://..."></label>
+            <label class="hq-field-label">تصویر هیرو<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
+            <input type="hidden" name="hero_existing[]" value="${escapeHtml(existing)}">
+          </div>
+        </div>`;
+    },
+    person: (data = {}) => {
+      const role = data.role || 'scientific_secretary';
+      const name = data.name || '';
+      const title = data.title || '';
+      const order = data.order || '0';
+      const existing = data.existing || '';
+      const imgSrc = data.preview || existing;
+      const mediaHtml = imgSrc
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        : `<div class="hq-repeat-media-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>بدون عکس (کلیک یا رهاسازی)</span>
+          </div>`;
+      const openClass = data.name ? '' : 'is-open';
+      const btnText = data.name ? 'ویرایش' : 'بستن ویرایش';
+      const roleName = role === 'scientific_secretary' ? 'دبیر علمی' : 'دبیر اجرایی';
+      return `
+        <div class="hq-repeat-card">
+          <div class="hq-repeat-card-top">
+            <span class="hq-repeat-pill-number">${roleName}</span>
+            <span class="hq-repeat-pill-status">فعال</span>
+          </div>
+          <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
+            ${mediaHtml}
+            <div class="hq-repeat-media-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>تغییر عکس</span>
+            </div>
+          </div>
+          <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام دبیر جدید'}</h3>
+          <p class="hq-repeat-desc">${escapeHtml(title) || 'سمت دبیر...'}</p>
+          <div class="hq-repeat-actions">
+            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">${btnText}</button>
+            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+          </div>
+          <div class="hq-repeat-drawer ${openClass}">
+            <label class="hq-field-label">نوع سمت
+              <select name="person_role[]" class="hq-select">
+                <option value="scientific_secretary" ${role === 'scientific_secretary' ? 'selected' : ''}>دبیر علمی</option>
+                <option value="executive_secretary" ${role === 'executive_secretary' ? 'selected' : ''}>دبیر اجرایی</option>
+              </select>
+            </label>
+            <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="دکتر ..."></label>
+            <label class="hq-field-label">سمت / عنوان<input name="person_title[]" value="${escapeHtml(title)}" class="hq-input" placeholder="دبیر علمی همایش..."></label>
+            <label class="hq-field-label">عکس<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
+            <input type="hidden" name="person_existing[]" value="${escapeHtml(existing)}">
+            <input type="hidden" name="person_order[]" value="${escapeHtml(order)}">
+          </div>
+        </div>`;
+    },
+    speaker: (data = {}) => {
+      const name = data.name || '';
+      const title = data.title || '';
+      const order = data.order || '0';
+      const existing = data.existing || '';
+      const imgSrc = data.preview || existing;
+      const mediaHtml = imgSrc
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        : `<div class="hq-repeat-media-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>بدون عکس (کلیک یا رهاسازی)</span>
+          </div>`;
+      const openClass = data.name ? '' : 'is-open';
+      const btnText = data.name ? 'ویرایش' : 'بستن ویرایش';
+      return `
+        <div class="hq-repeat-card">
+          <div class="hq-repeat-card-top">
+            <span class="hq-repeat-pill-number">سخنران</span>
+            <span class="hq-repeat-pill-status">فعال</span>
+          </div>
+          <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
+            ${mediaHtml}
+            <div class="hq-repeat-media-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>تغییر عکس</span>
+            </div>
+          </div>
+          <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام استاد / سخنران'}</h3>
+          <p class="hq-repeat-desc">${escapeHtml(title) || 'تخصص یا موضوع سخنرانی...'}</p>
+          <div class="hq-repeat-actions">
+            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">${btnText}</button>
+            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+          </div>
+          <div class="hq-repeat-drawer ${openClass}">
+            <label class="hq-field-label">نام استاد<input name="speaker_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="دکتر ..."></label>
+            <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" value="${escapeHtml(title)}" class="hq-input" placeholder="متخصص ..."></label>
+            <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" class="hq-input" value="${escapeHtml(order)}"></label>
+            <label class="hq-field-label">عکس<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
+            <input type="hidden" name="speaker_existing[]" value="${escapeHtml(existing)}">
+          </div>
+        </div>`;
+    },
+    partner: (data = {}) => {
+      const name = data.name || '';
+      const order = data.order || '0';
+      const existing = data.existing || '';
+      const imgSrc = data.preview || existing;
+      const mediaHtml = imgSrc
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        : `<div class="hq-repeat-media-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>بدون لوگو (کلیک یا رهاسازی)</span>
+          </div>`;
+      const openClass = data.name ? '' : 'is-open';
+      const btnText = data.name ? 'ویرایش' : 'بستن ویرایش';
+      return `
+        <div class="hq-repeat-card">
+          <div class="hq-repeat-card-top">
+            <span class="hq-repeat-pill-number">همراه</span>
+            <span class="hq-repeat-pill-status">فعال</span>
+          </div>
+          <div class="hq-repeat-media" title="برای تغییر یا انتخاب لوگو کلیک کنید یا فایل را اینجا رها نمایید">
+            ${mediaHtml}
+            <div class="hq-repeat-media-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>تغییر لوگو</span>
+            </div>
+          </div>
+          <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام همراه جدید'}</h3>
+          <p class="hq-repeat-desc">سازمان همکار یا حامی...</p>
+          <div class="hq-repeat-actions">
+            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">${btnText}</button>
+            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+          </div>
+          <div class="hq-repeat-drawer ${openClass}">
+            <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="شرکت یا سازمان"></label>
+            <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" class="hq-input" value="${escapeHtml(order)}"></label>
+            <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
+            <input type="hidden" name="partner_existing[]" value="${escapeHtml(existing)}">
+          </div>
+        </div>`;
+    }
   };
 
+  // Add and remove repeatable items
   document.addEventListener('click', e => {
     const addBtn = e.target.closest('[data-add]');
     if (addBtn) {
@@ -2271,6 +2535,8 @@ function toggleAllDrawers(open) {
       const list = document.getElementById(type + '-list');
       if (list && templates[type]) {
         list.insertAdjacentHTML('beforeend', templates[type]());
+        triggerAutoSave();
+        updateCheckmarks();
       }
     }
     const remBtn = e.target.closest('.remove-row');
@@ -2278,9 +2544,329 @@ function toggleAllDrawers(open) {
       const card = remBtn.closest('.hq-repeat-card');
       if (card && confirm('آیا از حذف این مورد اطمینان دارید؟')) {
         card.remove();
+        triggerAutoSave();
+        updateCheckmarks();
       }
     }
   });
+
+  // Repeatable media click & drag-and-drop file upload
+  document.addEventListener('click', e => {
+    const media = e.target.closest('.hq-repeat-media');
+    if (media) {
+      const card = media.closest('.hq-repeat-card');
+      const fileInput = card?.querySelector('input[type="file"]');
+      if (fileInput) fileInput.click();
+    }
+  });
+
+  document.addEventListener('dragover', e => {
+    const media = e.target.closest('.hq-repeat-media');
+    if (media) {
+      e.preventDefault();
+      media.style.borderColor = 'var(--hq-primary)';
+      media.style.background = 'rgba(0, 123, 122, 0.08)';
+    }
+  });
+
+  document.addEventListener('dragleave', e => {
+    const media = e.target.closest('.hq-repeat-media');
+    if (media) {
+      media.style.borderColor = '';
+      media.style.background = '';
+    }
+  });
+
+  document.addEventListener('drop', e => {
+    const media = e.target.closest('.hq-repeat-media');
+    if (media) {
+      e.preventDefault();
+      media.style.borderColor = '';
+      media.style.background = '';
+      const file = e.dataTransfer?.files?.[0];
+      if (file && file.type.startsWith('image/')) {
+        const card = media.closest('.hq-repeat-card');
+        const fileInput = card?.querySelector('input[type="file"]');
+        if (fileInput) {
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+          fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    }
+  });
+
+  // Dynamic preview when file input changes in repeatable cards
+  document.addEventListener('change', e => {
+    if (e.target.matches('.hq-repeat-card input[type="file"]')) {
+      const file = e.target.files?.[0];
+      if (file && file.type.startsWith('image/')) {
+        const card = e.target.closest('.hq-repeat-card');
+        const media = card?.querySelector('.hq-repeat-media');
+        if (media) {
+          const reader = new FileReader();
+          reader.onload = ev => {
+            let img = media.querySelector('img');
+            if (!img) {
+              const empty = media.querySelector('.hq-repeat-media-empty');
+              if (empty) empty.style.display = 'none';
+              img = document.createElement('img');
+              media.insertBefore(img, media.firstChild);
+            }
+            img.src = ev.target.result;
+            triggerAutoSave();
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  });
+
+  // Live sync card text when typing in drawer inputs
+  document.addEventListener('input', e => {
+    const card = e.target.closest('.hq-repeat-card');
+    if (!card) return;
+    const name = e.target.name || '';
+    if (name.includes('title[]') || name.includes('name[]')) {
+      const titleEl = card.querySelector('.hq-repeat-title');
+      if (titleEl) titleEl.textContent = e.target.value.trim() || 'بدون عنوان';
+    } else if (name.includes('description[]') || name.includes('person_title[]') || name.includes('speaker_title[]')) {
+      const descEl = card.querySelector('.hq-repeat-desc');
+      if (descEl) descEl.textContent = e.target.value.trim() || 'توضیحات...';
+    }
+  });
+
+  // =========================================================================
+  // 7. Instant Auto-Save Draft System (ذخیره خودکار پیش‌نویس لحظه‌ای)
+  // =========================================================================
+  const eventId = document.querySelector('input[name="id"]')?.value || 'new';
+  const draftKey = 'maxa_event_draft_' + eventId;
+  const autoSaveDot = document.getElementById('autoSaveDot');
+  const autoSaveStatusText = document.getElementById('autoSaveStatusText');
+  let autoSaveTimeout = null;
+
+  function collectFormData() {
+    const form = document.getElementById('eventForm');
+    if (!form) return null;
+
+    // Collect standard inputs
+    const standardFields = {};
+    const standardNames = [
+      'title', 'slug', 'event_type', 'registration_status',
+      'start_time', 'end_time', 'location_address', 'location_map_url',
+      'short_description', 'about', 'banner_active', 'banner_label',
+      'banner_cta_text', 'banner_theme', 'banner_background',
+      'banner_text_color', 'banner_accent_color'
+    ];
+
+    standardNames.forEach(name => {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (el) {
+        if (el.type === 'checkbox') {
+          standardFields[name] = el.checked ? 1 : 0;
+        } else {
+          standardFields[name] = el.value;
+        }
+      }
+    });
+
+    // Collect repeatables
+    const heroes = [];
+    document.querySelectorAll('#hero-list .hq-repeat-card').forEach(card => {
+      heroes.push({
+        title: card.querySelector('input[name="hero_title[]"]')?.value || '',
+        description: card.querySelector('input[name="hero_description[]"]')?.value || '',
+        button_label: card.querySelector('input[name="hero_button_label[]"]')?.value || '',
+        link: card.querySelector('input[name="hero_link[]"]')?.value || '',
+        existing: card.querySelector('input[name="hero_existing[]"]')?.value || '',
+        preview: card.querySelector('.hq-repeat-media img')?.src || ''
+      });
+    });
+
+    const people = [];
+    document.querySelectorAll('#person-list .hq-repeat-card').forEach(card => {
+      people.push({
+        role: card.querySelector('select[name="person_role[]"]')?.value || 'scientific_secretary',
+        name: card.querySelector('input[name="person_name[]"]')?.value || '',
+        title: card.querySelector('input[name="person_title[]"]')?.value || '',
+        order: card.querySelector('input[name="person_order[]"]')?.value || '0',
+        existing: card.querySelector('input[name="person_existing[]"]')?.value || '',
+        preview: card.querySelector('.hq-repeat-media img')?.src || ''
+      });
+    });
+
+    const speakers = [];
+    document.querySelectorAll('#speaker-list .hq-repeat-card').forEach(card => {
+      speakers.push({
+        name: card.querySelector('input[name="speaker_name[]"]')?.value || '',
+        title: card.querySelector('input[name="speaker_title[]"]')?.value || '',
+        order: card.querySelector('input[name="speaker_order[]"]')?.value || '0',
+        existing: card.querySelector('input[name="speaker_existing[]"]')?.value || '',
+        preview: card.querySelector('.hq-repeat-media img')?.src || ''
+      });
+    });
+
+    const partners = [];
+    document.querySelectorAll('#partner-list .hq-repeat-card').forEach(card => {
+      partners.push({
+        name: card.querySelector('input[name="partner_name[]"]')?.value || '',
+        order: card.querySelector('input[name="partner_order[]"]')?.value || '0',
+        existing: card.querySelector('input[name="partner_existing[]"]')?.value || '',
+        preview: card.querySelector('.hq-repeat-media img')?.src || ''
+      });
+    });
+
+    return {
+      timestamp: Date.now(),
+      eventId: eventId,
+      fields: standardFields,
+      heroes,
+      people,
+      speakers,
+      partners
+    };
+  }
+
+  function saveDraft() {
+    try {
+      const data = collectFormData();
+      if (!data) return;
+      localStorage.setItem(draftKey, JSON.stringify(data));
+      if (autoSaveDot) autoSaveDot.classList.remove('is-saving');
+      if (autoSaveStatusText) {
+        const timeStr = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        autoSaveStatusText.textContent = `پیش‌نویس ذخیره شد (${timeStr})`;
+      }
+    } catch(err) {
+      console.warn('LocalStorage draft save error:', err);
+    }
+  }
+
+  function triggerAutoSave() {
+    if (autoSaveDot) autoSaveDot.classList.add('is-saving');
+    if (autoSaveStatusText) autoSaveStatusText.textContent = 'در حال ذخیره پیش‌نویس...';
+    clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(saveDraft, 600);
+  }
+  window.triggerAutoSave = triggerAutoSave;
+
+  // Hook input/change events across the form
+  const form = document.getElementById('eventForm');
+  if (form) {
+    form.addEventListener('input', triggerAutoSave);
+    form.addEventListener('change', triggerAutoSave);
+    // Clear draft on successful submit
+    form.addEventListener('submit', () => {
+      localStorage.removeItem(draftKey);
+    });
+  }
+
+  // Restore draft handler
+  function restoreDraftData() {
+    const raw = localStorage.getItem(draftKey);
+    if (!raw) return;
+    try {
+      const draft = JSON.parse(raw);
+      if (!draft) return;
+
+      // Restore standard fields
+      if (draft.fields) {
+        Object.entries(draft.fields).forEach(([name, val]) => {
+          const el = form?.querySelector(`[name="${name}"]`);
+          if (el) {
+            if (el.type === 'checkbox') {
+              el.checked = Boolean(val);
+            } else {
+              el.value = val;
+            }
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      }
+
+      // Restore repeatables if present in draft
+      if (Array.isArray(draft.heroes) && draft.heroes.length > 0) {
+        const heroList = document.getElementById('hero-list');
+        if (heroList) {
+          heroList.innerHTML = draft.heroes.map(h => templates.hero(h)).join('');
+        }
+      }
+
+      if (Array.isArray(draft.people) && draft.people.length > 0) {
+        const personList = document.getElementById('person-list');
+        if (personList) {
+          personList.innerHTML = draft.people.map(p => templates.person(p)).join('');
+        }
+      }
+
+      if (Array.isArray(draft.speakers) && draft.speakers.length > 0) {
+        const speakerList = document.getElementById('speaker-list');
+        if (speakerList) {
+          speakerList.innerHTML = draft.speakers.map(s => templates.speaker(s)).join('');
+        }
+      }
+
+      if (Array.isArray(draft.partners) && draft.partners.length > 0) {
+        const partnerList = document.getElementById('partner-list');
+        if (partnerList) {
+          partnerList.innerHTML = draft.partners.map(p => templates.partner(p)).join('');
+        }
+      }
+
+      // Hide restore banner
+      const banner = document.getElementById('draftRestoreBanner');
+      if (banner) banner.style.display = 'none';
+
+      // Update checks, counters & banner
+      updateCheckmarks();
+      syncBanner();
+
+      alert('اطلاعات پیش‌نویس ذخیره‌شده با موفقیت بازیابی شد.');
+    } catch(err) {
+      console.error('Failed to restore draft:', err);
+      alert('خطا در بازیابی پیش‌نویس.');
+    }
+  }
+
+  // Check draft existence on load
+  const rawDraft = localStorage.getItem(draftKey);
+  if (rawDraft) {
+    try {
+      const draft = JSON.parse(rawDraft);
+      if (draft && draft.timestamp) {
+        const banner = document.getElementById('draftRestoreBanner');
+        const timeLabel = document.getElementById('draftTimeLabel');
+        if (banner) {
+          const d = new Date(draft.timestamp);
+          const timeStr = d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+          const dateStr = d.toLocaleDateString('fa-IR');
+          if (timeLabel) {
+            timeLabel.textContent = `پیش‌نویس ذخیره‌شده از ویرایش قبلی شما در تاریخ ${dateStr} ساعت ${timeStr} در این مرورگر موجود است.`;
+          }
+          banner.style.display = 'flex';
+        }
+      }
+    } catch(err) {}
+  }
+
+  const btnRestore = document.getElementById('btnRestoreDraft');
+  if (btnRestore) {
+    btnRestore.addEventListener('click', restoreDraftData);
+  }
+
+  const btnDiscard = document.getElementById('btnDiscardDraft');
+  if (btnDiscard) {
+    btnDiscard.addEventListener('click', () => {
+      if (confirm('آیا از حذف پیش‌نویس ذخیره‌شده اطمینان دارید؟')) {
+        localStorage.removeItem(draftKey);
+        const banner = document.getElementById('draftRestoreBanner');
+        if (banner) banner.style.display = 'none';
+        if (autoSaveStatusText) autoSaveStatusText.textContent = 'پیش‌نویس حذف گردید';
+      }
+    });
+  }
 })();
 </script>
 
