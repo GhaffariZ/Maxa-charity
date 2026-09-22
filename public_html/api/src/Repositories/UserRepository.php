@@ -120,11 +120,16 @@ final class UserRepository
         string $phone,
         ?string $firstName = null,
         ?string $lastName = null,
-        ?string $nationalCode = null
+        ?string $nationalCode = null,
+        bool $phoneVerified = true
     ): array {
         $existing = $this->findByPhone($phone);
         if ($existing !== null) {
             $userId = (int) $existing['id'];
+
+            if (!$phoneVerified) {
+                return ['id' => $userId, 'is_new' => false];
+            }
 
             $updates = [];
             $params = [':uid' => $userId];
@@ -151,12 +156,15 @@ final class UserRepository
             return ['id' => $userId, 'is_new' => false];
         }
 
-        return (array) Database::transaction(function (PDO $db) use ($phone, $firstName, $lastName, $nationalCode) {
+        return (array) Database::transaction(function (PDO $db) use ($phone, $firstName, $lastName, $nationalCode, $phoneVerified) {
             $stmt = $db->prepare(
                 "INSERT INTO panel_users (phone, status, phone_verified_at)
-                 VALUES (:phone, 'active', UTC_TIMESTAMP())"
+                 VALUES (:phone, :status, " . ($phoneVerified ? 'UTC_TIMESTAMP()' : 'NULL') . ')'
             );
-            $stmt->execute([':phone' => $phone]);
+            $stmt->execute([
+                ':phone' => $phone,
+                ':status' => $phoneVerified ? 'active' : 'pending',
+            ]);
             $userId = (int) $db->lastInsertId();
 
             $bronze = $db->query("SELECT id FROM donor_tiers WHERE slug = 'bronze' LIMIT 1")->fetchColumn();

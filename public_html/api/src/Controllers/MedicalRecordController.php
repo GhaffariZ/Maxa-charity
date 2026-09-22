@@ -31,7 +31,6 @@ final class MedicalRecordController
             ->string('cancer_type', max: 100, required: false)
             ->string('diagnosis_status', max: 100, required: false)
             ->string('description', max: 5000, required: false)
-            ->string('code', min: 4, max: 8, required: false)
             ->bool('consent', required: true)
             ->validated();
 
@@ -50,13 +49,8 @@ final class MedicalRecordController
         $accessToken = null;
 
         if ($userId === null) {
-            if (empty($data['code'])) {
-                throw ApiException::badRequest('برای ساخت حساب، ابتدا شماره همراه را تأیید کنید.', 'otp_required');
-            }
-
-            (new OtpService())->verify($phone, $data['code'], 'medical_intake');
             [$firstName, $lastName] = $this->splitName($data['full_name']);
-            $account = $users->createOrGetDonorByPhone($phone, $firstName, $lastName);
+            $account = $users->createOrGetDonorByPhone($phone, $firstName, $lastName, null, false);
             $userId = $account['id'];
             $newUser = $account['is_new'];
         }
@@ -72,7 +66,7 @@ final class MedicalRecordController
             throw $e;
         }
 
-        if ($request->authUserId === null) {
+        if ($request->authUserId === null && $newUser) {
             $accessToken = Jwt::issueAccessToken($userId);
             $refreshToken = (new RefreshTokenService())->issueNewFamily($userId, $request->ip(), $request->userAgent());
             Cookie::setRefreshToken($refreshToken);

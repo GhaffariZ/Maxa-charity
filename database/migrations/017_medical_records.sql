@@ -1,9 +1,6 @@
 -- پرونده‌های پزشکی ثبت‌شده از فرم عمومی پذیرش بیمار
 SET NAMES utf8mb4;
 
-ALTER TABLE `otp_codes`
-  MODIFY COLUMN `purpose` ENUM('donation_auth','login','medical_intake') NOT NULL DEFAULT 'donation_auth';
-
 CREATE TABLE IF NOT EXISTS `medical_records` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT UNSIGNED NOT NULL,

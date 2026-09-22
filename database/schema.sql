@@ -2165,7 +2165,7 @@ CREATE TABLE IF NOT EXISTS `ticket_reads` (
 -- پایان مهاجرت 002
 -- ============================================================================
 
--- احراز هویت موبایلی موردنیاز فرم پذیرش بیمار
+-- فیلدهای موبایلی موردنیاز حساب بیمار
 ALTER TABLE `panel_users`
   MODIFY COLUMN `email` VARCHAR(255) NULL,
   MODIFY COLUMN `password_hash` VARCHAR(255) NULL,
@@ -2180,7 +2180,7 @@ CREATE TABLE IF NOT EXISTS `otp_codes` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `phone` VARCHAR(20) NOT NULL,
   `code_hash` VARCHAR(255) NOT NULL,
-  `purpose` ENUM('donation_auth','login','medical_intake') NOT NULL DEFAULT 'donation_auth',
+  `purpose` ENUM('donation_auth','login') NOT NULL DEFAULT 'donation_auth',
   `ip_address` VARCHAR(45) NOT NULL,
   `attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `expires_at` DATETIME NOT NULL,
@@ -2190,9 +2190,6 @@ CREATE TABLE IF NOT EXISTS `otp_codes` (
   KEY `idx_otp_phone_purpose_expires` (`phone`, `purpose`, `expires_at`),
   KEY `idx_otp_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-ALTER TABLE `otp_codes`
-  MODIFY COLUMN `purpose` ENUM('donation_auth','login','medical_intake') NOT NULL DEFAULT 'donation_auth';
-
 CREATE TABLE IF NOT EXISTS `medical_records` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT UNSIGNED NOT NULL,

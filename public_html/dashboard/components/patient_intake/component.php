@@ -117,12 +117,6 @@
 </label>
 </div>
 
-<div class="mi-group" id="miOtpGroup" hidden>
-<label for="miOtpCode">کد تأیید پیامک‌شده <span class="mi-required">*</span></label>
-<input type="text" name="code" id="miOtpCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
-<div class="mi-otp-hint">کد تأیید به شماره همراه واردشده ارسال شد.</div>
-</div>
-
 <button type="submit" class="mi-submit">ثبت پرونده</button>
 
 </form>
@@ -353,11 +347,6 @@ margin-top:20px;
     font-size: 20px;
     color: #3fb6b2;
 }
-.medical-intake .mi-otp-hint{
-color:#667085;
-font-size:13px;
-margin-top:6px;
-}
 .medical-intake .mi-form-message{
 margin:12px 0;
 padding:10px 12px;
@@ -375,8 +364,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var form = document.getElementById("medicalIntakeForm");
     var fileInput = document.getElementById("miFileInput");
     var preview = document.getElementById("miPreview");
-    var otpGroup = document.getElementById("miOtpGroup");
-    var otpInput = document.getElementById("miOtpCode");
     var submitButton = form.querySelector(".mi-submit");
     var filesArray = [];
 
@@ -458,40 +445,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         var token = localStorage.getItem("maksa_access_token");
-        if (!token && otpGroup.hidden) {
-            await sendOtp();
-            return;
-        }
-
         await saveRecord(token);
     });
-
-    async function sendOtp() {
-        var sent = false;
-        setBusy(true, "در حال ارسال کد تأیید...");
-        try {
-            var response = await fetch("/api/auth/otp/send", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    phone: form.elements.phone.value,
-                    purpose: "medical_intake"
-                })
-            });
-            var result = await response.json();
-            if (!response.ok) throw new Error(result.error && result.error.message || "ارسال کد تأیید ناموفق بود.");
-            otpGroup.hidden = false;
-            otpInput.required = true;
-            if (result.data && result.data.debug_code) otpInput.value = result.data.debug_code;
-            otpInput.focus();
-            sent = true;
-        } catch (error) {
-            showError(error.message);
-        } finally {
-            setBusy(false);
-            if (sent) submitButton.textContent = "تأیید و ثبت پرونده";
-        }
-    }
 
     async function saveRecord(token) {
         setBusy(true, "در حال ثبت پرونده...");
@@ -509,15 +464,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             var result = await response.json();
 
-            if (!response.ok) {
-                if (result.error && result.error.code === "otp_required") {
-                    localStorage.removeItem("maksa_access_token");
-                    setBusy(false);
-                    await sendOtp();
-                    return;
-                }
-                throw new Error(result.error && result.error.message || "ثبت پرونده ناموفق بود.");
-            }
+            if (!response.ok) throw new Error(result.error && result.error.message || "ثبت پرونده ناموفق بود.");
 
             if (result.data.access_token) {
                 localStorage.setItem("maksa_access_token", result.data.access_token);
