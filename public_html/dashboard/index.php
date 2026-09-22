@@ -1535,6 +1535,13 @@ body.spa-loading .spa-frame{opacity:.6}
       cur = (root.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
       apply(cur);
       try{ localStorage.setItem('maxa-theme',cur); }catch(e){}
+      try {
+        const iframe = document.getElementById('frame');
+        if (iframe && iframe.contentDocument && iframe.contentDocument.documentElement) {
+          if (cur === 'dark') iframe.contentDocument.documentElement.setAttribute('data-theme', 'dark');
+          else iframe.contentDocument.documentElement.removeAttribute('data-theme');
+        }
+      } catch(e) {}
     });
   })();
 

@@ -74,37 +74,160 @@ function rowVal(array $row, string $key, string $default = ''): string {
 }
 ?>
 <link rel="stylesheet" href="/assets/events/datepicker.css">
+<!-- Theme synchronizer for iframe / standalone -->
+<script>
+(function() {
+  function applyMaxaTheme() {
+    var isDark = false;
+    try {
+      var localVal = localStorage.getItem('maxa-theme');
+      if (localVal !== null) {
+        isDark = (localVal === 'dark');
+      } else if (window.parent && window.parent !== window) {
+        try {
+          isDark = window.parent.document.documentElement.getAttribute('data-theme') === 'dark';
+        } catch(e) {
+          isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+      } else {
+        isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+    } catch(e) {
+      isDark = false;
+    }
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (document.body) document.body.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (document.body) document.body.removeAttribute('data-theme');
+    }
+  }
+
+  applyMaxaTheme();
+  window.addEventListener('storage', function(e) {
+    if (!e || e.key === 'maxa-theme' || e.key === null) applyMaxaTheme();
+  });
+
+  if (window.parent && window.parent !== window) {
+    try {
+      const parentRoot = window.parent.document.documentElement;
+      const obs = new MutationObserver(function() { applyMaxaTheme(); });
+      obs.observe(parentRoot, { attributes: true, attributeFilter: ['data-theme'] });
+    } catch(e) {}
+  }
+})();
+</script>
+
 <style>
-/* Figma Design #2:286 "admin-event-form" (1440px canvas layout) */
-body {
-  background: #f3f4f6 !important;
-  color: #1f2937 !important;
-  font-family: 'Vazirmatn', sans-serif !important;
+/* ============================================================================
+   Figma Design #2:286 "admin-event-form" (1440px canvas layout)
+   Complete Dark & Light Mode Theme Support + 3 UX Layout Modes
+   ============================================================================ */
+
+:root {
+  --hq-bg: #f3f4f6;
+  --hq-surface: #ffffff;
+  --hq-surface-tint: #f0fdfa;
+  --hq-surface-tint-border: #0d7a87;
+  --hq-surface-muted: #f9fafb;
+  --hq-border: #e5e7eb;
+  --hq-border-subtle: #f3f4f6;
+  --hq-text-main: #1f2937;
+  --hq-text-muted: #4b5563;
+  --hq-text-light: #6b7280;
+  --hq-input-bg: #f9fafb;
+  --hq-input-border: #e5e7eb;
+  --hq-input-focus: #0d7a87;
+  --hq-primary: #0d7a87;
+  --hq-primary-dark: #0a5c66;
+  --hq-primary-light: #f0fdfa;
+  --hq-danger: #dc2626;
+  --hq-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --hq-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+  --hq-pill-gray-bg: #f3f4f6;
+  --hq-pill-gray-border: #e5e7eb;
+  --hq-pill-gray-text: #4b5563;
+  --hq-pill-danger-bg: #fef2f2;
+  --hq-pill-danger-border: #fca5a5;
+  --hq-pill-danger-text: #dc2626;
+  --hq-btn-white-bg: #ffffff;
+  --hq-btn-white-border: #d1d5db;
+  --hq-btn-white-text: #374151;
+  --hq-tab-active-bg: #0d7a87;
+  --hq-tab-active-text: #ffffff;
+  --hq-sidebar-active-bg: rgba(13, 122, 135, 0.08);
+  --hq-sidebar-active-border: #0d7a87;
+  --hq-sticky-footer-bg: rgba(255, 255, 255, 0.95);
 }
+
+:root[data-theme="dark"], body[data-theme="dark"] {
+  --hq-bg: #0f1518;
+  --hq-surface: #19232a;
+  --hq-surface-tint: rgba(13, 122, 135, 0.14);
+  --hq-surface-tint-border: #14b8a6;
+  --hq-surface-muted: #131b20;
+  --hq-border: #2a343a;
+  --hq-border-subtle: #222b31;
+  --hq-text-main: #e7ecee;
+  --hq-text-muted: #9ca3af;
+  --hq-text-light: #6b7280;
+  --hq-input-bg: #131b20;
+  --hq-input-border: #2e3840;
+  --hq-input-focus: #14b8a6;
+  --hq-primary: #14b8a6;
+  --hq-primary-dark: #0d7a87;
+  --hq-primary-light: rgba(20, 184, 166, 0.15);
+  --hq-danger: #ef4444;
+  --hq-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --hq-shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+  --hq-pill-gray-bg: #222b31;
+  --hq-pill-gray-border: #2e3840;
+  --hq-pill-gray-text: #9ca3af;
+  --hq-pill-danger-bg: rgba(220, 38, 38, 0.15);
+  --hq-pill-danger-border: rgba(239, 68, 68, 0.35);
+  --hq-pill-danger-text: #f87171;
+  --hq-btn-white-bg: #1f2937;
+  --hq-btn-white-border: #374151;
+  --hq-btn-white-text: #e5e7eb;
+  --hq-tab-active-bg: #14b8a6;
+  --hq-tab-active-text: #0f1518;
+  --hq-sidebar-active-bg: rgba(20, 184, 166, 0.15);
+  --hq-sidebar-active-border: #14b8a6;
+  --hq-sticky-footer-bg: rgba(25, 35, 42, 0.95);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--hq-bg) !important;
+  color: var(--hq-text-main) !important;
+  font-family: 'Vazirmatn', sans-serif !important;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
 .wrap {
   max-width: 1400px !important;
   margin: 0 auto !important;
   padding: 0 12px !important;
 }
 
-/* Base resets & typography */
 .hq-form-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin: 0 auto 60px;
+  margin: 0 auto 90px;
 }
 
-/* 1. HQ Header (#8:129) */
+/* 1. HQ Header */
 .hq-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--hq-shadow);
 }
 .hq-header-title-group {
   display: flex;
@@ -114,13 +237,13 @@ body {
 .hq-header-title {
   font-size: 24px;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--hq-text-main);
   margin: 0;
   line-height: 1.3;
 }
 .hq-header-subtitle {
   font-size: 14px;
-  color: #4b5563;
+  color: var(--hq-text-muted);
   margin: 0;
 }
 .hq-header-status-group {
@@ -141,72 +264,346 @@ body {
   white-space: nowrap;
 }
 .hq-pill-teal {
-  background: #0d7a87;
+  background: var(--hq-primary);
   color: #ffffff;
 }
 .hq-pill-gray {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
+  background: var(--hq-pill-gray-bg);
+  border: 1px solid var(--hq-pill-gray-border);
+  color: var(--hq-pill-gray-text);
 }
 .hq-pill-danger {
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #dc2626;
+  background: var(--hq-pill-danger-bg);
+  border: 1px solid var(--hq-pill-danger-border);
+  color: var(--hq-pill-danger-text);
 }
 
-/* 2. Intro Box (#8:141) */
+/* UX Layout Switcher Bar */
+.hq-switcher-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 14px;
+  padding: 10px 16px;
+  gap: 14px;
+  box-shadow: var(--hq-shadow);
+  flex-wrap: wrap;
+}
+.hq-switcher-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hq-text-main);
+}
+.hq-switcher-info svg {
+  color: var(--hq-primary);
+  width: 18px;
+  height: 18px;
+}
+.hq-switcher-buttons {
+  display: flex;
+  background: var(--hq-input-bg);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--hq-border);
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.hq-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--hq-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.hq-mode-btn:hover {
+  color: var(--hq-text-main);
+}
+.hq-mode-btn.is-active {
+  background: var(--hq-surface);
+  color: var(--hq-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Mode 1: Tabs Navigation */
+.hq-tabs-nav {
+  display: none;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: var(--hq-shadow);
+}
+.hq-tab-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--hq-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.hq-tab-item:hover {
+  background: var(--hq-input-bg);
+  color: var(--hq-text-main);
+}
+.hq-tab-item.is-active {
+  background: var(--hq-tab-active-bg);
+  color: var(--hq-tab-active-text);
+  box-shadow: var(--hq-shadow);
+}
+.hq-tab-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+}
+.hq-tab-item.is-active .hq-tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Mode 2: Wizard Stepper */
+.hq-wizard-stepper {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--hq-shadow);
+}
+.hq-wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+.hq-wizard-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+  background: var(--hq-surface);
+  padding: 0 8px;
+  cursor: pointer;
+}
+.hq-wizard-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  background: var(--hq-input-bg);
+  border: 2px solid var(--hq-border);
+  color: var(--hq-text-muted);
+  transition: all 0.2s ease;
+}
+.hq-wizard-step.is-active .hq-wizard-circle {
+  background: var(--hq-primary);
+  border-color: var(--hq-primary);
+  color: #fff;
+}
+.hq-wizard-step.is-done .hq-wizard-circle {
+  background: #16a37a;
+  border-color: #16a37a;
+  color: #fff;
+}
+.hq-wizard-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hq-text-muted);
+}
+.hq-wizard-step.is-active .hq-wizard-title {
+  color: var(--hq-text-main);
+}
+.hq-wizard-progress {
+  height: 4px;
+  background: var(--hq-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.hq-wizard-progress-bar {
+  height: 100%;
+  background: var(--hq-primary);
+  width: 25%;
+  transition: width 0.3s ease;
+}
+
+/* Mode 3: Sidebar Quick-Jump Layout */
+.hq-sidebar-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.hq-sidebar-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.hq-sidebar-nav {
+  display: none;
+  width: 280px;
+  position: sticky;
+  top: 20px;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--hq-shadow);
+  flex-direction: column;
+  gap: 12px;
+}
+.hq-sidebar-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--hq-text-main);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--hq-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hq-sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hq-sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hq-text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.hq-sidebar-link:hover {
+  background: var(--hq-input-bg);
+  color: var(--hq-text-main);
+}
+.hq-sidebar-link.is-active {
+  background: var(--hq-sidebar-active-bg);
+  color: var(--hq-primary);
+  font-weight: 700;
+}
+.hq-sidebar-tools {
+  padding-top: 10px;
+  border-top: 1px solid var(--hq-border);
+  display: flex;
+  gap: 6px;
+}
+.hq-sidebar-btn {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--hq-border);
+  background: var(--hq-input-bg);
+  color: var(--hq-text-muted);
+  cursor: pointer;
+}
+
+/* Active Mode Display Toggles */
+body[data-hq-layout="tabs"] .hq-tabs-nav { display: grid; }
+body[data-hq-layout="wizard"] .hq-wizard-stepper { display: flex; }
+body[data-hq-layout="sidebar"] .hq-sidebar-nav { display: flex; }
+
+body[data-hq-layout="tabs"] .hq-step-group:not(.is-active-tab),
+body[data-hq-layout="wizard"] .hq-step-group:not(.is-active-step) {
+  display: none !important;
+}
+
+.hq-step-group {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 2. Intro Box */
 .hq-intro-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
   border-radius: 16px;
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  gap: 16px;
+  box-shadow: var(--hq-shadow);
 }
 .hq-intro-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--hq-text-main);
   margin: 0;
 }
 .hq-intro-desc {
   font-size: 14px;
-  color: #4b5563;
   line-height: 1.8;
+  color: var(--hq-text-muted);
   margin: 0;
 }
 .hq-note-box {
+  background: var(--hq-surface-tint);
+  border: 1px solid var(--hq-surface-tint-border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hq-primary-dark);
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f0fdfa;
-  border-radius: 12px;
-  padding: 14px 16px;
-  color: #0a5c66;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.7;
 }
 .hq-note-box svg {
-  width: 20px;
-  height: 20px;
   flex-shrink: 0;
-  stroke: #0d7a87;
+  width: 18px;
+  height: 18px;
+  stroke: var(--hq-primary);
 }
 
-/* 3. Section Cards (#8:146) */
+/* 3. Cards */
 .hq-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
   border-radius: 16px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--hq-shadow);
+  scroll-margin-top: 40px;
 }
 .hq-card-header {
   display: flex;
@@ -216,56 +613,16 @@ body {
 .hq-card-title {
   font-size: 18px;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--hq-text-main);
   margin: 0;
 }
 .hq-card-subtitle {
   font-size: 13px;
-  color: #4b5563;
+  color: var(--hq-text-muted);
   margin: 0;
 }
 
-/* Form Controls */
-.hq-field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-.hq-field-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #4b5563;
-  margin: 0;
-}
-.hq-input, .hq-select, .hq-textarea {
-  width: 100%;
-  background: #f3f4f6;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  color: #1f2937;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-.hq-input:focus, .hq-select:focus, .hq-textarea:focus {
-  outline: none;
-  border-color: #0d7a87;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(13, 122, 135, 0.12);
-}
-.hq-textarea {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.8;
-}
-.hq-input-readonly {
-  background: #f9fafb;
-  color: #6b7280;
-  cursor: default;
-}
+/* Grids & Inputs */
 .hq-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -276,167 +633,181 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
-
-/* 4. Poster & PDF Cards (#8:218 & #8:260) */
-.hq-media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-}
-.hq-state-box {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+.hq-field-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
-.hq-state-box-title {
-  font-size: 14px;
+.hq-field-label {
+  font-size: 13px;
   font-weight: 700;
-  color: #1f2937;
-  margin: 0;
+  color: var(--hq-text-muted);
 }
-.hq-dropzone {
-  min-height: 180px;
-  border: 1.5px dashed #0d7a87;
-  border-radius: 12px;
-  background: #f0fdfa;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 20px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s ease;
-}
-.hq-dropzone:hover, .hq-dropzone.is-dragover {
-  background: #e0f7f5;
-  border-color: #0a5c66;
-}
-.hq-dropzone-text {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0a5c66;
-}
-.hq-dropzone-hint {
-  font-size: 11px;
-  color: #4b5563;
-}
-.hq-poster-preview-img {
+.hq-input, .hq-select, .hq-textarea {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 12px;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--hq-input-bg);
+  border: 1px solid var(--hq-input-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--hq-text-main);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
 }
-.hq-file-pills {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.hq-input:focus, .hq-select:focus, .hq-textarea:focus {
+  border-color: var(--hq-input-focus);
+  background: var(--hq-surface);
 }
-.hq-file-pill {
-  background: #f3f4f6;
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 12px;
-  color: #4b5563;
-  font-weight: 500;
+.hq-input-readonly {
+  background: var(--hq-surface-muted) !important;
+  color: var(--hq-text-muted) !important;
+  cursor: default;
 }
-.hq-btn-row {
-  display: flex;
-  gap: 12px;
-  margin-top: auto;
+.hq-textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.7;
 }
+
+/* Buttons */
 .hq-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-family: inherit;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: none;
+  transition: all 0.2s ease;
   text-decoration: none;
+  line-height: 1;
 }
 .hq-btn-primary {
-  background: #0d7a87;
+  background: var(--hq-primary);
   color: #ffffff;
 }
 .hq-btn-primary:hover {
-  background: #0a5c66;
-  color: #ffffff;
+  background: var(--hq-primary-dark);
 }
 .hq-btn-white {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
+  background: var(--hq-btn-white-bg);
+  border: 1px solid var(--hq-btn-white-border);
+  color: var(--hq-btn-white-text);
 }
 .hq-btn-white:hover {
-  border-color: #d1d5db;
-  background: #f9fafb;
+  background: var(--hq-input-bg);
 }
 .hq-btn-danger {
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #dc2626;
+  background: var(--hq-pill-danger-bg);
+  border: 1px solid var(--hq-pill-danger-border);
+  color: var(--hq-danger);
 }
 .hq-btn-danger:hover {
-  background: #fee2e2;
+  background: var(--hq-danger);
+  color: #fff;
 }
-
-/* PDF Box (#8:260) */
-.hq-pdf-container {
-  background: #f0fdfa;
-  border: 1px solid #0d7a87;
-  border-radius: 16px;
-  padding: 24px;
+.hq-btn-row {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.hq-pdf-header {
-  display: flex;
-  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
   align-items: center;
 }
-.hq-pdf-badge {
-  background: #ffffff;
-  color: #0a5c66;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(13, 122, 135, 0.2);
-}
 
-/* 5. Repeatable Cards (#8:301 - #8:574) */
-.hq-repeat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 20px;
-}
-.hq-repeat-card {
-  background: #f0fdfa;
-  border: 1px solid #0d7a87;
-  border-radius: 12px;
-  padding: 20px;
+/* Poster & PDF boxes */
+.hq-state-box {
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+}
+.hq-state-box-tint {
+  background: var(--hq-surface-tint);
+  border-color: var(--hq-surface-tint-border);
+}
+.hq-state-box-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--hq-text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hq-dropzone {
+  border: 2px dashed var(--hq-border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--hq-input-bg);
+  transition: all 0.2s;
+}
+.hq-dropzone:hover {
+  border-color: var(--hq-primary);
+}
+.hq-dropzone svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--hq-primary);
+}
+.hq-dropzone-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hq-text-main);
+}
+.hq-dropzone-sub {
+  font-size: 11px;
+  color: var(--hq-text-light);
+}
+.hq-poster-preview-img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--hq-border);
+}
+.hq-meta-pills {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.hq-meta-pill {
+  padding: 4px 10px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hq-text-muted);
+}
+
+/* Repeatable Cards */
+.hq-repeat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.hq-repeat-card {
+  background: var(--hq-surface-tint);
+  border: 1px solid var(--hq-surface-tint-border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hq-repeat-card:hover {
-  box-shadow: 0 4px 14px rgba(13, 122, 135, 0.08);
 }
 .hq-repeat-card-top {
   display: flex;
@@ -444,39 +815,33 @@ body {
   align-items: center;
 }
 .hq-repeat-pill-number {
-  background: #ffffff;
-  color: #0a5c66;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 4px 10px;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
   border-radius: 999px;
-  border: 1px solid rgba(13, 122, 135, 0.2);
+  color: var(--hq-primary-dark);
 }
 .hq-repeat-pill-status {
-  background: #ffffff;
-  color: #0a5c66;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 4px 10px;
+  background: var(--hq-surface);
+  border: 1px solid #10b981;
   border-radius: 999px;
-  border: 1px solid rgba(13, 122, 135, 0.2);
-}
-.hq-repeat-pill-status.off {
-  color: #dc2626;
-  border-color: #fca5a5;
-  background: #fef2f2;
+  color: #10b981;
 }
 .hq-repeat-media {
   width: 100%;
   height: 160px;
   border-radius: 10px;
-  background: #e5e7eb;
-  object-fit: cover;
+  overflow: hidden;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  position: relative;
 }
 .hq-repeat-media img {
   width: 100%;
@@ -484,128 +849,122 @@ body {
   object-fit: cover;
 }
 .hq-repeat-media-empty {
+  color: var(--hq-text-light);
+  font-size: 12px;
+  font-weight: 600;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  background: #ffffff;
-  border: 1px dashed #0d7a87;
-  color: #0a5c66;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
 }
 .hq-repeat-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--hq-text-main);
   margin: 0;
-  line-height: 1.4;
 }
 .hq-repeat-desc {
-  font-size: 13px;
-  color: #4b5563;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--hq-text-muted);
   margin: 0;
-  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .hq-repeat-actions {
   display: flex;
-  gap: 10px;
-  margin-top: auto;
-  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
 }
 .hq-repeat-drawer {
   display: none;
   flex-direction: column;
-  gap: 12px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 14px;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--hq-border);
   margin-top: 8px;
 }
 .hq-repeat-drawer.is-open {
   display: flex;
 }
 
-/* 6. Banner Settings (#8:576) */
+/* Banner Preview */
 .hq-banner-preview-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  min-height: 64px;
-  padding: 14px 44px 14px 16px;
   border-radius: 12px;
-  background: #007b7a;
-  color: #ffffff;
-  font-size: 13px;
-  text-align: center;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-.hq-banner-preview-box.amber { background: #e89a16; }
-.hq-banner-preview-box.dark { background: #123a3d; }
-.hq-banner-cta-btn {
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  padding: 6px 14px;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 12px;
-}
-.hq-banner-close-btn {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: inherit;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-}
-.hq-check-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #1f2937;
-  cursor: pointer;
-}
-.hq-check-card input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: #0d7a87;
-  cursor: pointer;
-}
-
-/* 7. Bottom Actions (#8:629) */
-.hq-actions-bar {
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 20px 24px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  color: #ffffff;
+  background-color: #007b7a;
+  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hq-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hq-banner-countdown {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Sticky Bottom Actions Bar */
+.hq-actions-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--hq-sticky-footer-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--hq-border);
+  padding: 14px 24px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+.hq-actions-bar-inner {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
 }
 .hq-actions-left {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
+}
+.hq-step-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--hq-border);
+  background: var(--hq-surface);
+  color: var(--hq-text-main);
+  transition: all 0.2s ease;
+}
+.hq-step-nav-btn:hover {
+  background: var(--hq-input-bg);
 }
 
 /* Responsive */
@@ -613,8 +972,11 @@ body {
   .hq-grid-3 { grid-template-columns: 1fr; }
   .hq-grid-2 { grid-template-columns: 1fr; }
   .hq-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .hq-actions-bar { flex-direction: column-reverse; gap: 14px; align-items: stretch; }
-  .hq-actions-left { flex-direction: column; }
+  .hq-tabs-nav { grid-template-columns: 1fr 1fr; }
+  .hq-sidebar-layout { flex-direction: column; }
+  .hq-sidebar-nav { display: none !important; }
+  .hq-actions-bar-inner { flex-direction: column-reverse; gap: 10px; }
+  .hq-actions-left { width: 100%; flex-direction: column; }
   .hq-btn { width: 100%; }
 }
 </style>
@@ -639,495 +1001,671 @@ body {
     </div>
   </header>
 
-  <!-- 2. Intro Box (#8:141) -->
-  <section class="hq-intro-card">
-    <h2 class="hq-intro-title">فرم مدیریت رویداد</h2>
-    <p class="hq-intro-desc">
-      این فرم برای مدیریت کامل یک رویداد در ستاد مرکزی طراحی شده است. بخش‌های تکرارشونده را می‌توانید ویرایش، مرتب‌سازی و فعال/غیرفعال کنید. برای هر فیلد و فایل، حالت‌های خالی، آپلود و ویرایش مشخص شده است.
-    </p>
-    <div class="hq-note-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="16" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  <!-- UX Mode Switcher Bar -->
+  <div class="hq-switcher-bar">
+    <div class="hq-switcher-info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="3" y1="9" x2="21" y2="9"></line>
+        <line x1="9" y1="21" x2="9" y2="9"></line>
       </svg>
-      <span>نکته مهم: فقط یک رویداد می‌تواند بنر سراسری فعال داشته باشد. در صورت فعال‌سازی برای رویداد دیگری، بنر فعلی غیرفعال می‌شود.</span>
+      <span>چیدمان و نحوه نمایش فرم:</span>
     </div>
-  </section>
+    <div class="hq-switcher-buttons">
+      <button type="button" class="hq-mode-btn is-active" data-set-layout="tabs">
+        🗂️ تب‌بندی موضوعی
+      </button>
+      <button type="button" class="hq-mode-btn" data-set-layout="wizard">
+        🪜 استپر مرحله‌ای
+      </button>
+      <button type="button" class="hq-mode-btn" data-set-layout="sidebar">
+        📑 سایدبار ناوبری سریع
+      </button>
+      <button type="button" class="hq-mode-btn" data-set-layout="full">
+        📄 نمایش کامل فیگما
+      </button>
+    </div>
+  </div>
 
-  <!-- 3. اطلاعات پایه (#8:146) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">اطلاعات پایه</h2>
-      <p class="hq-card-subtitle">اطلاعات اصلی رویداد را در این بخش مدیریت کنید.</p>
-    </div>
-    <div class="hq-field-group">
-      <label class="hq-field-label">عنوان کامل همایش / رویداد</label>
-      <input type="text" name="title" required class="hq-input" placeholder="مثال: ششمین همایش ملی مراقبت‌های حمایتی و تسکینی" value="<?= event_h($event['title']) ?>">
-    </div>
-    <div class="hq-grid-2">
-      <div class="hq-field-group">
-        <label class="hq-field-label">کد داخلی رویداد (Slug)</label>
-        <input type="text" name="slug" class="hq-input" placeholder="HQ-2024-018" value="<?= event_h($event['slug']) ?>">
-      </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">وضعیت انتشار</label>
-        <select name="status" class="hq-select">
-          <option value="draft" <?= $event['status'] === 'draft' ? 'selected' : '' ?>>پیش‌نویس</option>
-          <option value="published" <?= $event['status'] === 'published' ? 'selected' : '' ?>>منتشرشده</option>
-          <option value="archived" <?= $event['status'] === 'archived' ? 'selected' : '' ?>>آرشیو</option>
-        </select>
-      </div>
-    </div>
-    <div class="hq-grid-2">
-      <div class="hq-field-group">
-        <label class="hq-field-label">لینک ثبت‌نام</label>
-        <input type="url" name="registration_url" dir="ltr" class="hq-input" placeholder="https://hq.example.com/register/event-018" value="<?= event_h($event['registration_url']) ?>">
-      </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">لینک صفحه رویداد</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" readonly dir="ltr" class="hq-input hq-input-readonly" value="<?= $event['slug'] ? 'https://mymacsa.ir/event.php?slug=' . urlencode($event['slug']) : 'پس از ذخیره مشخص می‌شود' ?>">
-          <?php if ($event['slug']): ?>
-            <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white" title="مشاهده صفحه">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Mode 1: Tabs Navigation Bar -->
+  <nav class="hq-tabs-nav" id="tabsNav">
+    <button type="button" class="hq-tab-item is-active" data-tab-target="1">
+      <span>📋 اطلاعات پایه و زمان‌بندی</span>
+      <span class="hq-tab-badge">گام ۱</span>
+    </button>
+    <button type="button" class="hq-tab-item" data-tab-target="2">
+      <span>🖼️ رسانه و فایل‌ها</span>
+      <span class="hq-tab-badge">گام ۲</span>
+    </button>
+    <button type="button" class="hq-tab-item" data-tab-target="3">
+      <span>👥 عوامل و سخنرانان</span>
+      <span class="hq-tab-badge"><?= count($heroes) + count($people) + count($speakers) + count($partners) ?> مورد</span>
+    </button>
+    <button type="button" class="hq-tab-item" data-tab-target="4">
+      <span>📢 اخبار و بنر سراسری</span>
+      <span class="hq-tab-badge"><?= count($news) ?> خبر</span>
+    </button>
+  </nav>
 
-  <!-- 4. تاریخ شمسی و ساعت (#8:172) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">تاریخ شمسی و ساعت</h2>
-      <p class="hq-card-subtitle">تاریخ و ساعت برگزاری را بر اساس تقویم شمسی و ساعت تهران تنظیم کنید.</p>
-    </div>
-    <div class="hq-grid-3">
-      <div class="hq-field-group">
-        <label class="hq-field-label">تاریخ برگزاری</label>
-        <div data-persian-datepicker>
-          <input type="hidden" name="jalali_date" required value="<?= event_h($jalaliDate) ?>">
-          <input type="hidden" name="start_time" value="<?= event_h(substr((string)$event['start_time'], 0, 5)) ?>">
-        </div>
+  <!-- Mode 2: Wizard Stepper Progress Bar -->
+  <div class="hq-wizard-stepper" id="wizardStepper">
+    <div class="hq-wizard-steps">
+      <div class="hq-wizard-step is-active" data-step-target="1">
+        <div class="hq-wizard-circle">۱</div>
+        <div class="hq-wizard-title">اطلاعات پایه و زمان‌بندی</div>
       </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">ساعت شروع (به وقت تهران)</label>
-        <input type="text" class="hq-input" dir="ltr" value="<?= event_h(substr((string)$event['start_time'], 0, 5) ?: '08:00') ?>" readonly id="startTimeDisplay">
+      <div class="hq-wizard-step" data-step-target="2">
+        <div class="hq-wizard-circle">۲</div>
+        <div class="hq-wizard-title">پوستر و فایل برنامه</div>
       </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">ساعت پایان</label>
-        <input type="text" name="end_time" class="hq-input" dir="ltr" value="<?= event_h(substr((string)$event['end_time'], 0, 5) ?: '18:00') ?>">
+      <div class="hq-wizard-step" data-step-target="3">
+        <div class="hq-wizard-circle">۳</div>
+        <div class="hq-wizard-title">ارکان، اساتید و حامیان</div>
+      </div>
+      <div class="hq-wizard-step" data-step-target="4">
+        <div class="hq-wizard-circle">۴</div>
+        <div class="hq-wizard-title">اخبار و بنر سراسری</div>
       </div>
     </div>
-    <div class="hq-grid-2">
-      <div class="hq-field-group">
-        <label class="hq-field-label">تاریخ پایان ثبت‌نام</label>
-        <input type="text" name="registration_deadline_fa" class="hq-input" placeholder="مثال: ۱۴ مهر ۱۴۰۵" value="<?= event_h($formattedJalaliDate) ?>">
-      </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">زمان آخرین بروزرسانی</label>
-        <input type="text" readonly class="hq-input hq-input-readonly" value="<?= event_h($formattedUpdated) ?>">
-      </div>
+    <div class="hq-wizard-progress">
+      <div class="hq-wizard-progress-bar" id="wizardProgressBar"></div>
     </div>
-  </section>
+  </div>
 
-  <!-- 5. توضیح کوتاه (#8:198) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">توضیح کوتاه</h2>
-      <p class="hq-card-subtitle">خلاصه‌ای از رویداد برای نمایش در صفحات اصلی و بنرها.</p>
-    </div>
-    <div class="hq-field-group">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <label class="hq-field-label">توضیح کوتاه (حداکثر ۱۴۰ کاراکتر)</label>
-        <span id="shortDescCounter" style="font-size: 11px; color: #6b7280; font-weight:700;">۰ / ۱۴۰</span>
-      </div>
-      <input type="text" name="short_description" id="shortDescInput" maxlength="140" class="hq-input" placeholder="همایش ملی مراقبت‌های حمایتی و تسکینی" value="<?= event_h($event['short_description']) ?>">
-    </div>
-  </section>
+  <!-- Form Layout Container (with Sidebar mode support) -->
+  <div class="hq-sidebar-layout">
+    
+    <!-- Main Content Sections -->
+    <div class="hq-sidebar-content">
 
-  <!-- 6. درباره رویداد (#8:210) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">درباره رویداد</h2>
-      <p class="hq-card-subtitle">متن کامل رویداد برای صفحه اختصاصی و بخش‌های توضیحات.</p>
-    </div>
-    <div class="hq-field-group">
-      <label class="hq-field-label">متن کامل درباره رویداد</label>
-      <textarea name="about" class="hq-textarea" placeholder="متن توضیحات کامل رویداد..."><?= event_h($event['about']) ?></textarea>
-    </div>
-  </section>
-
-  <!-- 7. پوستر و فایل‌های همایش (#8:218 & #8:260) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">پوستر و فایل‌های همایش</h2>
-      <p class="hq-card-subtitle">پوستر اصلی، فایل PDF برنامه و فایل‌های کمکی را در این بخش مدیریت کنید.</p>
-    </div>
-    <div class="hq-media-grid">
-      <!-- Poster Box -->
-      <div class="hq-state-box" id="posterBox">
-        <h3 class="hq-state-box-title"><?= $event['poster'] ? 'پوستر آپلود شده' : 'پوستر خالی' ?></h3>
-        <?php if ($event['poster']): ?>
-          <img src="<?= event_h($event['poster']) ?>" alt="پوستر رویداد" class="hq-poster-preview-img" id="posterImg">
-          <div class="hq-file-pills">
-            <span class="hq-file-pill"><?= event_h(basename($event['poster'])) ?></span>
-            <span class="hq-file-pill">تصویر ثبت‌شده</span>
-          </div>
-          <div class="hq-btn-row">
-            <button type="button" class="hq-btn hq-btn-white" onclick="document.getElementById('posterInput').click()">ویرایش</button>
-            <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('posterInput').click()">آپلود جدید</button>
-          </div>
-        <?php else: ?>
-          <div class="hq-dropzone" onclick="document.getElementById('posterInput').click()" id="posterDropzone">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0d7a87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-              <polyline points="12 13 12 17"></polyline>
-              <polyline points="9 16 12 13 15 16"></polyline>
+      <!-- ================= GROUP 1: اطلاعات پایه و زمان‌بندی ================= -->
+      <div class="hq-step-group is-active-tab is-active-step" data-group="1">
+        
+        <!-- 2. Intro Box (#8:141) -->
+        <section class="hq-intro-card" id="sec-intro">
+          <h2 class="hq-intro-title">فرم مدیریت رویداد</h2>
+          <p class="hq-intro-desc">
+            این فرم برای مدیریت کامل یک رویداد در ستاد مرکزی طراحی شده است. بخش‌های تکرارشونده را می‌توانید ویرایش، مرتب‌سازی و فعال/غیرفعال کنید. برای هر فیلد و فایل، حالت‌های خالی، آپلود و ویرایش مشخص شده است.
+          </p>
+          <div class="hq-note-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <span class="hq-dropzone-text">فایل پوستر را اینجا بکشید یا کلیک کنید</span>
-            <span class="hq-dropzone-hint">حداکثر حجم مجاز: ۱۲ مگابایت</span>
+            <span>نکته مهم: فقط یک رویداد می‌تواند بنر سراسری فعال داشته باشد. در صورت فعال‌سازی برای رویداد دیگری، بنر فعلی غیرفعال می‌شود.</span>
           </div>
-          <div class="hq-btn-row">
-            <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('posterInput').click()">افزودن پوستر</button>
-          </div>
-        <?php endif; ?>
-        <input type="file" name="poster" id="posterInput" accept="image/*" style="display:none">
-      </div>
+        </section>
 
-      <!-- PDF Program Box (#8:260) -->
-      <div class="hq-pdf-container" id="pdfBox">
-        <div class="hq-pdf-header">
-          <span class="hq-pdf-badge">فایل PDF برنامه</span>
-          <h3 class="hq-state-box-title" style="margin:0;">فایل PDF برنامه</h3>
-        </div>
-        <?php if ($event['schedule_pdf']): ?>
-          <div style="display:flex; align-items:center; gap:12px; background:#ffffff; border-radius:12px; padding:16px; border:1px solid #e5e7eb;">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d7a87" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <div>
-              <div style="font-weight:700; color:#1f2937; font-size:14px;"><?= event_h(basename($event['schedule_pdf'])) ?></div>
-              <div style="font-size:12px; color:#4b5563;">فایل PDF ثبت‌شده در سرور</div>
+        <!-- 3. اطلاعات پایه (#8:154) -->
+        <section class="hq-card" id="sec-base">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">اطلاعات پایه</h2>
+            <p class="hq-card-subtitle">اطلاعات اصلی رویداد را در این بخش مدیریت کنید.</p>
+          </div>
+          <div class="hq-field-group">
+            <label class="hq-field-label">عنوان کامل همایش / رویداد <span style="color:var(--hq-danger)">*</span></label>
+            <input type="text" name="title" required class="hq-input" placeholder="ششمین همایش ملی مراقبت‌های حمایتی و تسکینی" value="<?= event_h($event['title']) ?>">
+          </div>
+          <div class="hq-grid-2">
+            <div class="hq-field-group">
+              <label class="hq-field-label">کد داخلی رویداد (Slug)</label>
+              <input type="text" name="slug" dir="ltr" class="hq-input" placeholder="HQ-2024-018" value="<?= event_h($event['slug']) ?>">
             </div>
-          </div>
-          <div class="hq-btn-row">
-            <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" class="hq-btn hq-btn-white">مشاهده PDF</a>
-            <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('pdfInput').click()">آپلود جدید</button>
-          </div>
-        <?php else: ?>
-          <div class="hq-dropzone" style="background:#ffffff; min-height:120px;" onclick="document.getElementById('pdfInput').click()" id="pdfDropzone">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d7a87" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            <span class="hq-dropzone-text">فایل PDF برنامه را آپلود کنید</span>
-            <span class="hq-dropzone-hint">حداکثر حجم مجاز: ۲۵ مگابایت</span>
-          </div>
-          <div class="hq-btn-row">
-            <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('pdfInput').click()">آپلود فایل</button>
-          </div>
-        <?php endif; ?>
-        <input type="file" name="schedule_pdf" id="pdfInput" accept="application/pdf" style="display:none">
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. هیروهای اختصاصی تکرارشونده (#8:301) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">هیروهای اختصاصی تکرارشونده</h2>
-      <p class="hq-card-subtitle">برای هر هیرو می‌توانید تصویر، عنوان، توضیح، وضعیت فعال و دکمه را مدیریت کنید.</p>
-    </div>
-    <div class="hq-repeat-grid" id="hero-list">
-      <?php foreach ($heroes as $idx => $r): ?>
-        <div class="hq-repeat-card">
-          <div class="hq-repeat-card-top">
-            <span class="hq-repeat-pill-number">هیرو <?= sprintf('%02d', $idx + 1) ?></span>
-            <span class="hq-repeat-pill-status">فعال</span>
-          </div>
-          <div class="hq-repeat-media">
-            <?php if (!empty($r['image'])): ?>
-              <img src="<?= event_h($r['image']) ?>" alt="<?= rowVal($r, 'title') ?>">
-            <?php else: ?>
-              <div class="hq-repeat-media-empty">تصویر ثبت نشده</div>
-            <?php endif; ?>
-          </div>
-          <h3 class="hq-repeat-title"><?= rowVal($r, 'title', 'عنوان هیرو') ?></h3>
-          <p class="hq-repeat-desc"><?= rowVal($r, 'description', 'توضیحات هیرو...') ?></p>
-          <div class="hq-repeat-actions">
-            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
-            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-          </div>
-          <div class="hq-repeat-drawer">
-            <label class="hq-field-label">عنوان هیرو<input name="hero_title[]" class="hq-input" value="<?= rowVal($r, 'title') ?>"></label>
-            <label class="hq-field-label">توضیح<input name="hero_description[]" class="hq-input" value="<?= rowVal($r, 'description') ?>"></label>
-            <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" class="hq-input" value="<?= rowVal($r, 'button_label') ?>"></label>
-            <label class="hq-field-label">لینک دکمه<input name="hero_link[]" dir="ltr" class="hq-input" value="<?= rowVal($r, 'button_link') ?>"></label>
-            <label class="hq-field-label">تصویر جدید<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
-            <input type="hidden" name="hero_existing[]" value="<?= rowVal($r, 'image') ?>">
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-    <div>
-      <button type="button" class="hq-btn hq-btn-primary" data-add="hero">＋ افزودن هیرو جدید</button>
-    </div>
-  </section>
-
-  <!-- 9. دبیر علمی و اجرایی (#8:356) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">دبیر علمی و اجرایی</h2>
-      <p class="hq-card-subtitle">اطلاعات دبیران علمی و اجرایی رویداد را در این بخش مدیریت کنید.</p>
-    </div>
-    <div class="hq-repeat-grid" id="person-list">
-      <?php foreach ($people as $idx => $r): ?>
-        <div class="hq-repeat-card">
-          <div class="hq-repeat-card-top">
-            <span class="hq-repeat-pill-number"><?= $r['role'] === 'executive_secretary' ? 'دبیر اجرایی' : 'دبیر علمی' ?></span>
-            <span class="hq-repeat-pill-status">فعال</span>
-          </div>
-          <div class="hq-repeat-media">
-            <?php if (!empty($r['image'])): ?>
-              <img src="<?= event_h($r['image']) ?>" alt="<?= rowVal($r, 'name') ?>">
-            <?php else: ?>
-              <div class="hq-repeat-media-empty">عکس ثبت نشده</div>
-            <?php endif; ?>
-          </div>
-          <h3 class="hq-repeat-title"><?= rowVal($r, 'name', 'نام دبیر') ?></h3>
-          <p class="hq-repeat-desc"><?= rowVal($r, 'title', 'سمت دبیر') ?></p>
-          <div class="hq-repeat-actions">
-            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
-            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-          </div>
-          <div class="hq-repeat-drawer">
-            <label class="hq-field-label">نوع سمت
-              <select name="person_role[]" class="hq-select">
-                <option value="scientific_secretary" <?= $r['role'] === 'scientific_secretary' ? 'selected' : '' ?>>دبیر علمی</option>
-                <option value="executive_secretary" <?= $r['role'] === 'executive_secretary' ? 'selected' : '' ?>>دبیر اجرایی</option>
+            <div class="hq-field-group">
+              <label class="hq-field-label">وضعیت انتشار</label>
+              <select name="status" class="hq-select">
+                <option value="draft" <?= $event['status'] === 'draft' ? 'selected' : '' ?>>پیش‌نویس</option>
+                <option value="published" <?= $event['status'] === 'published' ? 'selected' : '' ?>>منتشرشده</option>
+                <option value="archived" <?= $event['status'] === 'archived' ? 'selected' : '' ?>>بایگانی‌شده</option>
               </select>
-            </label>
-            <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" class="hq-input" value="<?= rowVal($r, 'name') ?>"></label>
-            <label class="hq-field-label">سمت / عنوان<input name="person_title[]" class="hq-input" value="<?= rowVal($r, 'title') ?>"></label>
-            <label class="hq-field-label">عکس جدید<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
-            <input type="hidden" name="person_existing[]" value="<?= rowVal($r, 'image') ?>">
-            <input type="hidden" name="person_order[]" value="<?= (int)($r['sort_order'] ?? 0) ?>">
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-    <div>
-      <button type="button" class="hq-btn hq-btn-primary" data-add="person">＋ افزودن دبیر جدید</button>
-    </div>
-  </section>
-
-  <!-- 10. اساتید تکرارشونده (#8:411) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">اساتید تکرارشونده</h2>
-      <p class="hq-card-subtitle">اسامی اساتید و سخنرانان را به صورت تکرارشونده مدیریت کنید.</p>
-    </div>
-    <div class="hq-repeat-grid" id="speaker-list">
-      <?php foreach ($speakers as $idx => $r): ?>
-        <div class="hq-repeat-card">
-          <div class="hq-repeat-card-top">
-            <span class="hq-repeat-pill-number">سخنران <?= sprintf('%02d', $idx + 1) ?></span>
-            <span class="hq-repeat-pill-status">فعال</span>
-          </div>
-          <div class="hq-repeat-media">
-            <?php if (!empty($r['image'])): ?>
-              <img src="<?= event_h($r['image']) ?>" alt="<?= rowVal($r, 'name') ?>">
-            <?php else: ?>
-              <div class="hq-repeat-media-empty">عکس ثبت نشده</div>
-            <?php endif; ?>
-          </div>
-          <h3 class="hq-repeat-title"><?= rowVal($r, 'name', 'نام استاد') ?></h3>
-          <p class="hq-repeat-desc"><?= rowVal($r, 'title', 'تخصص / سمت') ?></p>
-          <div class="hq-repeat-actions">
-            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
-            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-          </div>
-          <div class="hq-repeat-drawer">
-            <label class="hq-field-label">نام استاد<input name="speaker_name[]" class="hq-input" value="<?= rowVal($r, 'name') ?>"></label>
-            <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" class="hq-input" value="<?= rowVal($r, 'title') ?>"></label>
-            <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" class="hq-input" value="<?= rowVal($r, 'sort_order', '0') ?>"></label>
-            <label class="hq-field-label">عکس جدید<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
-            <input type="hidden" name="speaker_existing[]" value="<?= rowVal($r, 'image') ?>">
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-    <div>
-      <button type="button" class="hq-btn hq-btn-primary" data-add="speaker">＋ افزودن سخنران جدید</button>
-    </div>
-  </section>
-
-  <!-- 11. همراهان تکرارشونده (#8:466) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">همراهان تکرارشونده</h2>
-      <p class="hq-card-subtitle">همراهان و همکاران رویداد را به صورت تکرارشونده مدیریت کنید.</p>
-    </div>
-    <div class="hq-repeat-grid" id="partner-list">
-      <?php foreach ($partners as $idx => $r): ?>
-        <div class="hq-repeat-card">
-          <div class="hq-repeat-card-top">
-            <span class="hq-repeat-pill-number">همراه <?= sprintf('%02d', $idx + 1) ?></span>
-            <span class="hq-repeat-pill-status">فعال</span>
-          </div>
-          <div class="hq-repeat-media" style="background:#ffffff; padding:16px;">
-            <?php if (!empty($r['logo'])): ?>
-              <img src="<?= event_h($r['logo']) ?>" alt="<?= rowVal($r, 'name') ?>" style="object-fit:contain;">
-            <?php else: ?>
-              <div class="hq-repeat-media-empty">لوگو ثبت نشده</div>
-            <?php endif; ?>
-          </div>
-          <h3 class="hq-repeat-title"><?= rowVal($r, 'name', 'نام سازمان / شرکت') ?></h3>
-          <div class="hq-repeat-actions">
-            <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
-            <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
-          </div>
-          <div class="hq-repeat-drawer">
-            <label class="hq-field-label">نام شرکت / سازمان<input name="partner_name[]" class="hq-input" value="<?= rowVal($r, 'name') ?>"></label>
-            <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" class="hq-input" value="<?= rowVal($r, 'sort_order', '0') ?>"></label>
-            <label class="hq-field-label">لوگو جدید<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
-            <input type="hidden" name="partner_existing[]" value="<?= rowVal($r, 'logo') ?>">
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-    <div>
-      <button type="button" class="hq-btn hq-btn-primary" data-add="partner">＋ افزودن همراه جدید</button>
-    </div>
-  </section>
-
-  <!-- 12. ایجاد و ویرایش اخبار اختصاصی رویداد (#8:521) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">ایجاد و ویرایش اخبار اختصاصی رویداد</h2>
-      <p class="hq-card-subtitle">اخبار و اطلاعیه‌های اختصاصی رویداد را در این بخش مدیریت کنید.</p>
-    </div>
-    <?php if ($id && !empty($news)): ?>
-      <div class="hq-repeat-grid">
-        <?php foreach ($news as $idx => $n): ?>
-          <div class="hq-repeat-card">
-            <div class="hq-repeat-card-top">
-              <span class="hq-repeat-pill-number">خبر <?= sprintf('%02d', $idx + 1) ?></span>
-              <span class="hq-repeat-pill-status <?= ($n['status'] ?? 'published') === 'published' ? '' : 'off' ?>">
-                <?= ($n['status'] ?? 'published') === 'published' ? 'فعال' : 'پیش‌نویس' ?>
-              </span>
             </div>
-            <div class="hq-repeat-media">
-              <?php if (!empty($n['image'])): ?>
-                <img src="<?= event_h($n['image']) ?>" alt="<?= event_h($n['title']) ?>">
-              <?php else: ?>
-                <div class="hq-repeat-media-empty">تصویر خبر</div>
+          </div>
+          <div class="hq-grid-2">
+            <div class="hq-field-group">
+              <label class="hq-field-label">لینک ثبت‌نام</label>
+              <input type="url" name="registration_url" dir="ltr" class="hq-input" placeholder="https://hq.example.com/register/event-018" value="<?= event_h($event['registration_url']) ?>">
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">لینک صفحه رویداد</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" readonly dir="ltr" class="hq-input hq-input-readonly" value="<?= $event['slug'] ? 'https://mymacsa.ir/event.php?slug=' . urlencode($event['slug']) : 'پس از ذخیره مشخص می‌شود' ?>">
+                <?php if ($event['slug']): ?>
+                  <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white" title="مشاهده صفحه">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  </a>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. تاریخ شمسی و ساعت (#8:172) -->
+        <section class="hq-card" id="sec-date">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">تاریخ شمسی و ساعت</h2>
+            <p class="hq-card-subtitle">تاریخ و ساعت برگزاری را بر اساس تقویم شمسی و ساعت تهران تنظیم کنید.</p>
+          </div>
+          <div class="hq-grid-3">
+            <div class="hq-field-group">
+              <label class="hq-field-label">تاریخ برگزاری <span style="color:var(--hq-danger)">*</span></label>
+              <div data-persian-datepicker>
+                <input type="hidden" name="jalali_date" required value="<?= event_h($jalaliDate) ?>">
+                <input type="hidden" name="start_time" value="<?= event_h(substr((string)$event['start_time'], 0, 5)) ?>">
+              </div>
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">ساعت شروع (به وقت تهران)</label>
+              <input type="text" class="hq-input" dir="ltr" value="<?= event_h(substr((string)$event['start_time'], 0, 5) ?: '08:00') ?>" readonly id="startTimeDisplay">
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">ساعت پایان</label>
+              <input type="text" name="end_time" class="hq-input" dir="ltr" value="<?= event_h(substr((string)$event['end_time'], 0, 5) ?: '18:00') ?>">
+            </div>
+          </div>
+          <div class="hq-grid-2">
+            <div class="hq-field-group">
+              <label class="hq-field-label">تاریخ پایان ثبت‌نام</label>
+              <input type="text" name="registration_deadline_fa" class="hq-input" placeholder="مثال: ۱۴ مهر ۱۴۰۵" value="<?= event_h($formattedJalaliDate) ?>">
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">زمان آخرین بروزرسانی</label>
+              <input type="text" readonly class="hq-input hq-input-readonly" value="<?= event_h($formattedUpdated) ?>">
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. توضیح کوتاه (#8:198) & درباره رویداد (#8:210) -->
+        <section class="hq-card" id="sec-about">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">توضیحات و درباره رویداد</h2>
+            <p class="hq-card-subtitle">خلاصه رویداد برای نمایش در بنرها و متن تفصیلی برای صفحه رویداد.</p>
+          </div>
+          <div class="hq-field-group">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="hq-field-label">توضیح کوتاه (حداکثر ۱۴۰ کاراکتر)</label>
+              <span id="shortDescCounter" style="font-size: 11px; color: var(--hq-text-light); font-weight:700;">۰ / ۱۴۰</span>
+            </div>
+            <input type="text" name="short_description" id="shortDescInput" maxlength="140" class="hq-input" placeholder="همایش ملی مراقبت‌های حمایتی و تسکینی" value="<?= event_h($event['short_description']) ?>">
+          </div>
+          <div class="hq-field-group" style="margin-top: 10px;">
+            <label class="hq-field-label">متن کامل درباره رویداد</label>
+            <textarea name="about" class="hq-textarea" placeholder="متن توضیحات کامل رویداد..."><?= event_h($event['about']) ?></textarea>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ================= GROUP 2: رسانه و فایل‌ها ================= -->
+      <div class="hq-step-group" data-group="2">
+        
+        <!-- 7. پوستر و فایل‌های همایش (#8:221) -->
+        <section class="hq-card" id="sec-media">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">پوستر و فایل‌های همایش</h2>
+            <p class="hq-card-subtitle">پوستر اصلی، فایل PDF برنامه و فایل‌های کمکی را در این بخش مدیریت کنید.</p>
+          </div>
+          <div class="hq-grid-2">
+            <!-- پوستر رویداد (#8:225) -->
+            <div class="hq-state-box" id="posterBox">
+              <div class="hq-state-box-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>پوستر رویداد</span>
+              </div>
+              <div class="hq-dropzone" onclick="document.getElementById('posterInput').click();" <?= $event['poster'] ? 'style="display:none;"' : '' ?>>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="hq-dropzone-text">فایل را اینجا رها کنید یا برای انتخاب کلیک کنید</span>
+                <span class="hq-dropzone-sub">تصویر JPG, PNG یا WEBP تا ۱۲ مگابایت</span>
+              </div>
+              <?php if ($event['poster']): ?>
+                <img src="<?= event_h($event['poster']) ?>" alt="پوستر رویداد" class="hq-poster-preview-img" id="posterImg">
+                <div class="hq-meta-pills">
+                  <span class="hq-meta-pill"><?= basename((string)$event['poster']) ?></span>
+                  <span class="hq-meta-pill">تصویر ثبت‌شده</span>
+                </div>
               <?php endif; ?>
+              <input type="file" name="poster" id="posterInput" accept="image/*" style="display:none;">
+              <div class="hq-btn-row">
+                <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('posterInput').click();">آپلود جدید</button>
+                <?php if ($event['poster']): ?>
+                  <button type="button" class="hq-btn hq-btn-white" onclick="document.getElementById('posterInput').click();">ویرایش</button>
+                <?php endif; ?>
+              </div>
             </div>
-            <h3 class="hq-repeat-title"><?= event_h($n['title']) ?></h3>
-            <p class="hq-repeat-desc"><?= event_h(mb_substr(strip_tags((string)($n['summary'] ?? $n['content'] ?? '')), 0, 90)) ?>...</p>
-            <div class="hq-repeat-actions">
-              <a href="event-news-create.php?id=<?= (int)$n['id'] ?>&event_id=<?= $id ?>" class="hq-btn hq-btn-white">ویرایش خبر</a>
+
+            <!-- فایل برنامه همایش (#8:251) -->
+            <div class="hq-state-box hq-state-box-tint" id="pdfBox">
+              <div class="hq-state-box-title" style="color:var(--hq-primary-dark);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>فایل PDF برنامه</span>
+              </div>
+              <?php if ($event['schedule_pdf']): ?>
+                <div style="background:var(--hq-surface); border:1px solid var(--hq-border); border-radius:10px; padding:16px; display:flex; align-items:center; justify-content:space-between;">
+                  <div>
+                    <strong style="display:block; font-size:13px; color:var(--hq-text-main);"><?= basename((string)$event['schedule_pdf']) ?></strong>
+                    <span style="font-size:11px; color:var(--hq-text-muted);">برنامه کامل زمان‌بندی همایش</span>
+                  </div>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--hq-primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </div>
+              <?php else: ?>
+                <div class="hq-dropzone" onclick="document.getElementById('pdfInput').click();">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span class="hq-dropzone-text">فایل PDF برنامه را انتخاب کنید</span>
+                  <span class="hq-dropzone-sub">حداکثر تا ۲۵ مگابایت</span>
+                </div>
+              <?php endif; ?>
+              <input type="file" name="schedule_pdf" id="pdfInput" accept="application/pdf" style="display:none;">
+              <div class="hq-btn-row">
+                <button type="button" class="hq-btn hq-btn-primary" onclick="document.getElementById('pdfInput').click();">آپلود جدید</button>
+                <?php if ($event['schedule_pdf']): ?>
+                  <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" class="hq-btn hq-btn-white">مشاهده PDF</a>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
-        <?php endforeach; ?>
+        </section>
+
       </div>
-    <?php endif; ?>
-    <div>
-      <?php if ($id): ?>
-        <a href="event-news-create.php?event_id=<?= $id ?>" class="hq-btn hq-btn-primary">＋ افزودن خبر جدید</a>
-      <?php else: ?>
-        <p style="color:#6b7280; font-size:13px; margin:0;">پس از ذخیره اولیه رویداد، می‌توانید اخبار اختصاصی را به آن متصل کنید.</p>
-      <?php endif; ?>
+
+      <!-- ================= GROUP 3: ارکان، اساتید و حامیان ================= -->
+      <div class="hq-step-group" data-group="3">
+        
+        <!-- 8. بخش‌های هیرو تکرارشونده (#8:275) -->
+        <section class="hq-card" id="sec-heroes">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">بخش‌های هیرو (تکرارشونده)</h2>
+            <p class="hq-card-subtitle">اسلایدرها و هیروهای بالای صفحه رویداد را در این بخش مدیریت کنید.</p>
+          </div>
+          <div class="hq-repeat-grid" id="hero-list">
+            <?php foreach ($heroes as $idx => $h): ?>
+              <div class="hq-repeat-card">
+                <div class="hq-repeat-card-top">
+                  <span class="hq-repeat-pill-number">هیرو <?= sprintf('%02d', $idx + 1) ?></span>
+                  <span class="hq-repeat-pill-status">فعال</span>
+                </div>
+                <div class="hq-repeat-media">
+                  <?php if (!empty($h['image'])): ?>
+                    <img src="<?= event_h($h['image']) ?>" alt="<?= event_h($h['title']) ?>">
+                  <?php else: ?>
+                    <div class="hq-repeat-media-empty">بدون تصویر</div>
+                  <?php endif; ?>
+                </div>
+                <h3 class="hq-repeat-title"><?= event_h($h['title']) ?: 'بدون عنوان' ?></h3>
+                <p class="hq-repeat-desc"><?= event_h($h['description']) ?: 'توضیحات هیرو وارد نشده است.' ?></p>
+                <div class="hq-repeat-actions">
+                  <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
+                  <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+                </div>
+                <div class="hq-repeat-drawer">
+                  <label class="hq-field-label">عنوان هیرو<input name="hero_title[]" value="<?= event_h($h['title']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">توضیح<input name="hero_description[]" value="<?= event_h($h['description']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" value="<?= event_h($h['button_label']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="<?= event_h($h['link']) ?>" dir="ltr" class="hq-input"></label>
+                  <label class="hq-field-label">تغییر تصویر<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="hidden" name="hero_existing[]" value="<?= event_h($h['image']) ?>">
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div>
+            <button type="button" class="hq-btn hq-btn-primary" data-add="hero">+ افزودن هیرو جدید</button>
+          </div>
+        </section>
+
+        <!-- 9. دبیر علمی و اجرایی (#8:356) -->
+        <section class="hq-card" id="sec-organizers">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">دبیر علمی و اجرایی</h2>
+            <p class="hq-card-subtitle">اطلاعات دبیران علمی و اجرایی رویداد را در این بخش مدیریت کنید.</p>
+          </div>
+          <div class="hq-repeat-grid" id="person-list">
+            <?php foreach ($people as $idx => $p): ?>
+              <div class="hq-repeat-card">
+                <div class="hq-repeat-card-top">
+                  <span class="hq-repeat-pill-number"><?= $p['role'] === 'scientific_secretary' ? 'دبیر علمی' : 'دبیر اجرایی' ?></span>
+                  <span class="hq-repeat-pill-status">فعال</span>
+                </div>
+                <div class="hq-repeat-media">
+                  <?php if (!empty($p['image'])): ?>
+                    <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
+                  <?php else: ?>
+                    <div class="hq-repeat-media-empty">بدون عکس</div>
+                  <?php endif; ?>
+                </div>
+                <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام مشخص نشده' ?></h3>
+                <p class="hq-repeat-desc"><?= event_h($p['title']) ?: 'سمت مشخص نشده' ?></p>
+                <div class="hq-repeat-actions">
+                  <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
+                  <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+                </div>
+                <div class="hq-repeat-drawer">
+                  <label class="hq-field-label">نوع سمت
+                    <select name="person_role[]" class="hq-select">
+                      <option value="scientific_secretary" <?= $p['role'] === 'scientific_secretary' ? 'selected' : '' ?>>دبیر علمی</option>
+                      <option value="executive_secretary" <?= $p['role'] === 'executive_secretary' ? 'selected' : '' ?>>دبیر اجرایی</option>
+                    </select>
+                  </label>
+                  <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" value="<?= event_h($p['name']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">سمت / عنوان<input name="person_title[]" value="<?= event_h($p['title']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">عکس<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="hidden" name="person_existing[]" value="<?= event_h($p['image']) ?>">
+                  <input type="hidden" name="person_order[]" value="<?= (int)$p['sort_order'] ?>">
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div>
+            <button type="button" class="hq-btn hq-btn-primary" data-add="person">+ افزودن دبیر جدید</button>
+          </div>
+        </section>
+
+        <!-- 10. اساتید تکرارشونده (#8:411) -->
+        <section class="hq-card" id="sec-speakers">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">اساتید و سخنرانان</h2>
+            <p class="hq-card-subtitle">اسامی اساتید و سخنرانان را به صورت تکرارشونده مدیریت کنید.</p>
+          </div>
+          <div class="hq-repeat-grid" id="speaker-list">
+            <?php foreach ($speakers as $idx => $s): ?>
+              <div class="hq-repeat-card">
+                <div class="hq-repeat-card-top">
+                  <span class="hq-repeat-pill-number">سخنران <?= sprintf('%02d', $idx + 1) ?></span>
+                  <span class="hq-repeat-pill-status">فعال</span>
+                </div>
+                <div class="hq-repeat-media">
+                  <?php if (!empty($s['image'])): ?>
+                    <img src="<?= event_h($s['image']) ?>" alt="<?= event_h($s['name']) ?>">
+                  <?php else: ?>
+                    <div class="hq-repeat-media-empty">بدون عکس</div>
+                  <?php endif; ?>
+                </div>
+                <h3 class="hq-repeat-title"><?= event_h($s['name']) ?: 'نام استاد' ?></h3>
+                <p class="hq-repeat-desc"><?= event_h($s['title']) ?: 'تخصص یا عنوان علمی' ?></p>
+                <div class="hq-repeat-actions">
+                  <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
+                  <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+                </div>
+                <div class="hq-repeat-drawer">
+                  <label class="hq-field-label">نام استاد<input name="speaker_name[]" value="<?= event_h($s['name']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" value="<?= event_h($s['title']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" value="<?= (int)$s['sort_order'] ?>" class="hq-input"></label>
+                  <label class="hq-field-label">عکس<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="hidden" name="speaker_existing[]" value="<?= event_h($s['image']) ?>">
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div>
+            <button type="button" class="hq-btn hq-btn-primary" data-add="speaker">+ افزودن سخنران جدید</button>
+          </div>
+        </section>
+
+        <!-- 11. همراهان تکرارشونده (#8:466) -->
+        <section class="hq-card" id="sec-partners">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">همراهان و حامیان</h2>
+            <p class="hq-card-subtitle">همراهان و سازمان‌های همکار رویداد را به صورت تکرارشونده مدیریت کنید.</p>
+          </div>
+          <div class="hq-repeat-grid" id="partner-list">
+            <?php foreach ($partners as $idx => $p): ?>
+              <div class="hq-repeat-card">
+                <div class="hq-repeat-card-top">
+                  <span class="hq-repeat-pill-number">همراه <?= sprintf('%02d', $idx + 1) ?></span>
+                  <span class="hq-repeat-pill-status">فعال</span>
+                </div>
+                <div class="hq-repeat-media">
+                  <?php if (!empty($p['logo'])): ?>
+                    <img src="<?= event_h($p['logo']) ?>" alt="<?= event_h($p['name']) ?>">
+                  <?php else: ?>
+                    <div class="hq-repeat-media-empty">بدون لوگو</div>
+                  <?php endif; ?>
+                </div>
+                <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام سازمان / حامی' ?></h3>
+                <p class="hq-repeat-desc">سازمان همکار و حامی رویداد</p>
+                <div class="hq-repeat-actions">
+                  <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">ویرایش</button>
+                  <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
+                </div>
+                <div class="hq-repeat-drawer">
+                  <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" value="<?= event_h($p['name']) ?>" class="hq-input"></label>
+                  <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" value="<?= (int)$p['sort_order'] ?>" class="hq-input"></label>
+                  <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
+                  <input type="hidden" name="partner_existing[]" value="<?= event_h($p['logo']) ?>">
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div>
+            <button type="button" class="hq-btn hq-btn-primary" data-add="partner">+ افزودن همراه جدید</button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ================= GROUP 4: اخبار و بنر سراسری ================= -->
+      <div class="hq-step-group" data-group="4">
+        
+        <!-- 12. اخبار اختصاصی رویداد (#8:521) -->
+        <section class="hq-card" id="sec-news">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">ایجاد و ویرایش اخبار اختصاصی رویداد</h2>
+            <p class="hq-card-subtitle">اخبار و اطلاعیه‌های اختصاصی رویداد را در این بخش مدیریت کنید.</p>
+          </div>
+          <div class="hq-repeat-grid">
+            <?php foreach ($news as $idx => $n): ?>
+              <div class="hq-repeat-card">
+                <div class="hq-repeat-card-top">
+                  <span class="hq-repeat-pill-number">خبر <?= sprintf('%02d', $idx + 1) ?></span>
+                  <span class="hq-repeat-pill-status" style="<?= $n['status'] === 'published' ? '' : 'color:#f59e0b; border-color:#f59e0b;' ?>"><?= $n['status'] === 'published' ? 'فعال' : 'پیش‌نویس' ?></span>
+                </div>
+                <div class="hq-repeat-media">
+                  <?php if (!empty($n['image'])): ?>
+                    <img src="<?= event_h($n['image']) ?>" alt="<?= event_h($n['title']) ?>">
+                  <?php else: ?>
+                    <div class="hq-repeat-media-empty">بدون تصویر</div>
+                  <?php endif; ?>
+                </div>
+                <h3 class="hq-repeat-title"><?= event_h($n['title']) ?></h3>
+                <p class="hq-repeat-desc"><?= event_h($n['excerpt']) ?: mb_substr(strip_tags((string)$n['content']), 0, 100) . '...' ?></p>
+                <div class="hq-repeat-actions">
+                  <a href="event-news-create.php?id=<?= (int)$n['id'] ?>&event_id=<?= (int)$event['id'] ?>" class="hq-btn hq-btn-white" style="width: 100%;">ویرایش خبر</a>
+                </div>
+              </div>
+            <?php endforeach; ?>
+            <?php if (!$news): ?>
+              <div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--hq-text-muted); background: var(--hq-surface-muted); border: 1px dashed var(--hq-border); border-radius: 12px; font-size: 13px;">
+                هنوز خبری برای این رویداد ثبت نشده است. با دکمه زیر می‌توانید خبر اختصاصی جدید ایجاد نمایید.
+              </div>
+            <?php endif; ?>
+          </div>
+          <div>
+            <?php if ($event['id']): ?>
+              <a href="event-news-create.php?event_id=<?= (int)$event['id'] ?>" class="hq-btn hq-btn-primary">+ افزودن خبر جدید</a>
+            <?php else: ?>
+              <button type="button" class="hq-btn hq-btn-primary" onclick="alert('ابتدا رویداد را ذخیره نمایید سپس اخبار را اضافه کنید.');">+ افزودن خبر جدید</button>
+            <?php endif; ?>
+          </div>
+        </section>
+
+        <!-- 13. تنظیمات بنر سراسری (#8:576) -->
+        <section class="hq-card" id="sec-banner">
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">تنظیمات بنر سراسری</h2>
+            <p class="hq-card-subtitle">تنظیمات نمایش بنر سراسری و شمارش معکوس را در این بخش مدیریت کنید.</p>
+          </div>
+
+          <label style="display:flex; align-items:center; gap:10px; background:var(--hq-surface-muted); padding:14px; border-radius:10px; border:1px solid var(--hq-border); cursor:pointer; font-size:13px; font-weight:700; color:var(--hq-text-main);">
+            <input type="checkbox" name="banner_active" value="1" <?= (int)$event['banner_active'] ? 'checked' : '' ?> style="width:18px; height:18px; accent-color:var(--hq-primary);">
+            نمایش بنر این رویداد در بالای تمام صفحات وب‌سایت
+          </label>
+
+          <!-- پیش‌نمایش زنده بنر -->
+          <div class="hq-field-group">
+            <label class="hq-field-label">پیش‌نمایش زنده بنر بالای سایت</label>
+            <div id="bannerPreview" class="hq-banner-preview-box" style="background-color: <?= event_h($event['banner_background']) ?>; color: <?= event_h($event['banner_text_color']) ?>;">
+              <div class="hq-banner-left">
+                <span class="hq-banner-countdown">۱۲ روز ۰۸ ساعت ۲۴ دقیقه</span>
+                <span style="font-weight: 800; font-size: 13px;" data-preview="title"><?= event_h($event['title']) ?: 'عنوان رویداد' ?></span>
+                <span style="font-size: 12px; opacity: 0.9;" data-preview="label"><?= event_h($event['banner_label']) ?: 'رویداد پیش‌رو' ?></span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="hq-btn" style="background: transparent; border: 1px solid <?= event_h($event['banner_accent_color']) ?>; color: inherit; padding: 6px 14px; font-size: 12px;" data-preview="cta">
+                  <?= event_h($event['banner_cta']) ?: 'مشاهده رویداد' ?>
+                </span>
+                <span style="cursor: pointer; opacity: 0.8;">✕</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hq-grid-2">
+            <div class="hq-field-group">
+              <label class="hq-field-label">متن کوچک بنر</label>
+              <input type="text" name="banner_label" class="hq-input" value="<?= event_h($event['banner_label']) ?>" data-banner-preview="label">
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">متن دکمه اکشن (CTA)</label>
+              <input type="text" name="banner_cta" class="hq-input" value="<?= event_h($event['banner_cta']) ?>" data-banner-preview="cta">
+            </div>
+          </div>
+
+          <div class="hq-grid-2">
+            <div class="hq-field-group">
+              <label class="hq-field-label">لینک دکمه بنر</label>
+              <input type="text" name="banner_link" dir="ltr" class="hq-input" placeholder="https://..." value="<?= event_h($event['banner_link']) ?>">
+            </div>
+            <div class="hq-field-group">
+              <label class="hq-field-label">تم رنگی بنر</label>
+              <select name="banner_theme" class="hq-select" data-banner-preview="theme">
+                <option value="teal" <?= $event['banner_theme'] === 'teal' ? 'selected' : '' ?>>فیروزه‌ای مکسا</option>
+                <option value="amber" <?= $event['banner_theme'] === 'amber' ? 'selected' : '' ?>>کهربایی</option>
+                <option value="dark" <?= $event['banner_theme'] === 'dark' ? 'selected' : '' ?>>تیره اختصاصی</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Color Pickers -->
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; background:var(--hq-surface-muted); padding:14px; border-radius:10px; border:1px solid var(--hq-border);">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="color" id="pickerBg" value="<?= event_h($event['banner_background']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
+              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ زمینه:</span>
+              <input type="text" name="banner_background" id="textBg" value="<?= event_h($event['banner_background']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="color" id="pickerText" value="<?= event_h($event['banner_text_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
+              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ متن:</span>
+              <input type="text" name="banner_text_color" id="textText" value="<?= event_h($event['banner_text_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
+              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ تأکید:</span>
+              <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
+            </div>
+          </div>
+
+          <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--hq-text-muted); cursor:pointer; margin-top:8px;">
+            <input type="checkbox" name="banner_dismissible" value="1" <?= (int)$event['banner_dismissible'] ? 'checked' : '' ?> style="accent-color:var(--hq-primary);">
+            امکان بستن موقت بنر توسط کاربران سایت
+          </label>
+
+          <div class="hq-note-box" style="background:var(--hq-surface-muted); color:var(--hq-text-muted); border-color:var(--hq-border);">
+            <span>نکته مهم: فقط یک رویداد می‌تواند بنر سراسری فعال داشته باشد. در صورت فعال‌سازی برای رویداد دیگری، بنر فعلی غیرفعال می‌شود.</span>
+          </div>
+        </section>
+
+      </div>
+
     </div>
-  </section>
 
-  <!-- 13. تنظیمات بنر سراسری (#8:576) -->
-  <section class="hq-card">
-    <div class="hq-card-header">
-      <h2 class="hq-card-title">تنظیمات بنر سراسری</h2>
-      <p class="hq-card-subtitle">تنظیمات نمایش بنر سراسری و شمارش معکوس را در این بخش مدیریت کنید.</p>
-    </div>
-
-    <label class="hq-check-card">
-      <input type="checkbox" name="banner_active" value="1" <?= (int)$event['banner_active'] ? 'checked' : '' ?>>
-      <span>نمایش بنر این رویداد در بالای تمام صفحات وب‌سایت</span>
-    </label>
-
-    <div class="hq-field-group">
-      <label class="hq-field-label">پیش‌نمایش زنده بنر بالای سایت</label>
-      <div id="bannerPreview" class="hq-banner-preview-box <?= event_h($event['banner_theme']) ?>">
-        <span data-preview="label" style="font-weight:700; opacity:0.9;"><?= event_h($event['banner_label']) ?></span>
-        <strong data-preview="title" style="font-size:14px;"><?= event_h($event['title'] ?: 'عنوان رویداد') ?></strong>
-        <span style="font-size:12px; font-weight:700; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:6px;">۱۲ روز · ۰۸ ساعت · ۲۴ دقیقه</span>
-        <button type="button" class="hq-banner-cta-btn" data-preview="cta"><?= event_h($event['banner_cta']) ?></button>
-        <button type="button" class="hq-banner-close-btn" aria-label="بستن">×</button>
+    <!-- Mode 3: Sticky Quick-Jump Sidebar Navigation -->
+    <aside class="hq-sidebar-nav" id="sidebarNav">
+      <div class="hq-sidebar-title">
+        <span>فهرست سریع بخش‌ها</span>
+        <span style="font-size: 11px; font-weight: 600; color: var(--hq-primary);" id="sidebarFilledCount">۰ از ۹ پر شده</span>
       </div>
-    </div>
+      <div class="hq-sidebar-links">
+        <a href="#sec-intro" class="hq-sidebar-link is-active" data-anchor="sec-intro">
+          <span>معرفی فرم</span>
+          <span style="font-size:10px;">ℹ️</span>
+        </a>
+        <a href="#sec-base" class="hq-sidebar-link" data-anchor="sec-base">
+          <span>اطلاعات پایه رویداد</span>
+          <span class="hq-check" id="chk-base">⚪</span>
+        </a>
+        <a href="#sec-date" class="hq-sidebar-link" data-anchor="sec-date">
+          <span>تاریخ شمسی و زمان</span>
+          <span class="hq-check" id="chk-date">⚪</span>
+        </a>
+        <a href="#sec-about" class="hq-sidebar-link" data-anchor="sec-about">
+          <span>توضیح کوتاه و متن</span>
+          <span class="hq-check" id="chk-about">⚪</span>
+        </a>
+        <a href="#sec-media" class="hq-sidebar-link" data-anchor="sec-media">
+          <span>پوستر و برنامه PDF</span>
+          <span class="hq-check" id="chk-media">⚪</span>
+        </a>
+        <a href="#sec-heroes" class="hq-sidebar-link" data-anchor="sec-heroes">
+          <span>بخش‌های هیرو</span>
+          <span class="hq-check" id="chk-heroes"><?= count($heroes) ? '🟢' : '⚪' ?></span>
+        </a>
+        <a href="#sec-organizers" class="hq-sidebar-link" data-anchor="sec-organizers">
+          <span>دبیر علمی و اجرایی</span>
+          <span class="hq-check" id="chk-organizers"><?= count($people) ? '🟢' : '⚪' ?></span>
+        </a>
+        <a href="#sec-speakers" class="hq-sidebar-link" data-anchor="sec-speakers">
+          <span>اساتید و سخنرانان</span>
+          <span class="hq-check" id="chk-speakers"><?= count($speakers) ? '🟢' : '⚪' ?></span>
+        </a>
+        <a href="#sec-partners" class="hq-sidebar-link" data-anchor="sec-partners">
+          <span>همراهان و حامیان</span>
+          <span class="hq-check" id="chk-partners"><?= count($partners) ? '🟢' : '⚪' ?></span>
+        </a>
+        <a href="#sec-news" class="hq-sidebar-link" data-anchor="sec-news">
+          <span>اخبار اختصاصی</span>
+          <span class="hq-check" id="chk-news"><?= count($news) ? '🟢' : '⚪' ?></span>
+        </a>
+        <a href="#sec-banner" class="hq-sidebar-link" data-anchor="sec-banner">
+          <span>تنظیمات بنر سراسری</span>
+          <span class="hq-check" id="chk-banner"><?= (int)$event['banner_active'] ? '🟢' : '⚪' ?></span>
+        </a>
+      </div>
+      <div class="hq-sidebar-tools">
+        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(true)">باز کردن کارت‌ها</button>
+        <button type="button" class="hq-sidebar-btn" onclick="toggleAllDrawers(false)">بستن کارت‌ها</button>
+      </div>
+    </aside>
 
-    <div class="hq-grid-2">
-      <div class="hq-field-group">
-        <label class="hq-field-label">متن کوچک بنر</label>
-        <input type="text" name="banner_label" data-banner-preview="label" class="hq-input" value="<?= event_h($event['banner_label']) ?>">
-      </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">متن دکمه اکشن (CTA)</label>
-        <input type="text" name="banner_cta" data-banner-preview="cta" class="hq-input" value="<?= event_h($event['banner_cta']) ?>">
-      </div>
-    </div>
+  </div>
 
-    <div class="hq-grid-2">
-      <div class="hq-field-group">
-        <label class="hq-field-label">لینک دکمه بنر</label>
-        <input type="url" name="banner_link" dir="ltr" class="hq-input" placeholder="https://..." value="<?= event_h($event['banner_link']) ?>">
-      </div>
-      <div class="hq-field-group">
-        <label class="hq-field-label">تم رنگی بنر</label>
-        <select name="banner_theme" data-banner-preview="theme" class="hq-select">
-          <option value="teal" <?= $event['banner_theme'] === 'teal' ? 'selected' : '' ?>>فیروزه‌ای مکسا</option>
-          <option value="amber" <?= $event['banner_theme'] === 'amber' ? 'selected' : '' ?>>کهربایی</option>
-          <option value="dark" <?= $event['banner_theme'] === 'dark' ? 'selected' : '' ?>>تیره و رسمی</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Custom Hex Pickers -->
-    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;" id="customColorsContainer">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <input type="color" id="pickerBg" value="<?= event_h($event['banner_background']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-        <span style="font-size:12px; font-weight:700; color:#4b5563;">رنگ زمینه:</span>
-        <input type="text" name="banner_background" id="textBg" value="<?= event_h($event['banner_background']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-      </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <input type="color" id="pickerText" value="<?= event_h($event['banner_text_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-        <span style="font-size:12px; font-weight:700; color:#4b5563;">رنگ متن:</span>
-        <input type="text" name="banner_text_color" id="textText" value="<?= event_h($event['banner_text_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-      </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-        <span style="font-size:12px; font-weight:700; color:#4b5563;">رنگ تأکید:</span>
-        <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-      </div>
-    </div>
-
-    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#4b5563; cursor:pointer; margin-top:8px;">
-      <input type="checkbox" name="banner_dismissible" value="1" <?= (int)$event['banner_dismissible'] ? 'checked' : '' ?> style="accent-color:#0d7a87;">
-      امکان بستن موقت بنر توسط کاربران سایت
-    </label>
-
-    <div class="hq-note-box" style="background:#f3f4f6; color:#4b5563;">
-      <span>نکته مهم: فقط یک رویداد می‌تواند بنر سراسری فعال داشته باشد. در صورت فعال‌سازی برای رویداد دیگری، بنر فعلی غیرفعال می‌شود.</span>
-    </div>
-  </section>
-
-  <!-- 14. دکمه‌های پایین فرم (#8:629) -->
+  <!-- Sticky Bottom Actions Bar (#8:629) -->
   <footer class="hq-actions-bar">
-    <a href="event-list.php" class="hq-btn hq-btn-white" style="border-color:#4b5563; color:#4b5563; padding:10px 24px;">انصراف</a>
-    <div class="hq-actions-left">
-      <?php if ($event['slug']): ?>
-        <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white">پیش‌نمایش</a>
-      <?php else: ?>
-        <button type="button" class="hq-btn hq-btn-white" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')">پیش‌نمایش</button>
-      <?php endif; ?>
-      <button type="submit" class="hq-btn hq-btn-primary" style="padding:10px 28px; font-size:14px;">ذخیره تغییرات رویداد</button>
+    <div class="hq-actions-bar-inner">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a href="event-list.php" class="hq-btn hq-btn-white" style="padding:10px 22px;">انصراف</a>
+        <div id="stepNavButtons" style="display:none; gap:8px;">
+          <button type="button" class="hq-step-nav-btn" id="btnPrevStep">
+            <span>← گام قبلی</span>
+          </button>
+          <button type="button" class="hq-step-nav-btn" id="btnNextStep" style="background:var(--hq-primary-light); color:var(--hq-primary); border-color:var(--hq-primary);">
+            <span>گام بعدی →</span>
+          </button>
+        </div>
+      </div>
+      <div class="hq-actions-left">
+        <?php if ($event['slug']): ?>
+          <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white">پیش‌نمایش رویداد</a>
+        <?php else: ?>
+          <button type="button" class="hq-btn hq-btn-white" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')">پیش‌نمایش</button>
+        <?php endif; ?>
+        <button type="submit" class="hq-btn hq-btn-primary" style="padding:10px 28px; font-size:14px;">ذخیره تغییرات رویداد</button>
+      </div>
     </div>
   </footer>
 </form>
@@ -1142,8 +1680,140 @@ function toggleDrawer(btn) {
   }
 }
 
+function toggleAllDrawers(open) {
+  document.querySelectorAll('.hq-repeat-drawer').forEach(d => {
+    d.classList.toggle('is-open', open);
+    const card = d.closest('.hq-repeat-card');
+    if (card) {
+      const btn = card.querySelector('.hq-repeat-actions .hq-btn-white');
+      if (btn) btn.textContent = open ? 'بستن ویرایش' : 'ویرایش';
+    }
+  });
+}
+
 (function() {
-  // Character counter for short description
+  // =========================================================================
+  // 1. Layout Mode Switcher (Tabs, Wizard, Sidebar, Full)
+  // =========================================================================
+  const savedMode = localStorage.getItem('maxa-event-form-mode') || 'tabs';
+  let currentStep = 1;
+  const totalSteps = 4;
+
+  const modeButtons = document.querySelectorAll('[data-set-layout]');
+  const tabItems = document.querySelectorAll('.hq-tab-item');
+  const wizardSteps = document.querySelectorAll('.hq-wizard-step');
+  const groups = document.querySelectorAll('.hq-step-group');
+  const stepNav = document.getElementById('stepNavButtons');
+  const btnPrev = document.getElementById('btnPrevStep');
+  const btnNext = document.getElementById('btnNextStep');
+  const progressBar = document.getElementById('wizardProgressBar');
+
+  function setLayout(mode) {
+    document.body.setAttribute('data-hq-layout', mode);
+    localStorage.setItem('maxa-event-form-mode', mode);
+
+    modeButtons.forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.setLayout === mode);
+    });
+
+    if (mode === 'tabs' || mode === 'wizard') {
+      stepNav.style.display = 'inline-flex';
+      setStep(currentStep);
+    } else {
+      stepNav.style.display = 'none';
+      groups.forEach(g => {
+        g.classList.add('is-active-tab', 'is-active-step');
+      });
+    }
+  }
+
+  function setStep(stepNum) {
+    stepNum = Math.max(1, Math.min(totalSteps, stepNum));
+    currentStep = stepNum;
+
+    groups.forEach(g => {
+      const matches = g.dataset.group === String(stepNum);
+      g.classList.toggle('is-active-tab', matches);
+      g.classList.toggle('is-active-step', matches);
+    });
+
+    tabItems.forEach(t => {
+      t.classList.toggle('is-active', t.dataset.tabTarget === String(stepNum));
+    });
+
+    wizardSteps.forEach((s, idx) => {
+      const n = idx + 1;
+      s.classList.toggle('is-active', n === stepNum);
+      s.classList.toggle('is-done', n < stepNum);
+    });
+
+    if (progressBar) {
+      progressBar.style.width = (stepNum / totalSteps * 100) + '%';
+    }
+
+    if (btnPrev) btnPrev.style.visibility = stepNum === 1 ? 'hidden' : 'visible';
+    if (btnNext) {
+      btnNext.style.display = stepNum === totalSteps ? 'none' : 'inline-flex';
+    }
+
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  }
+
+  modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => setLayout(btn.dataset.setLayout));
+  });
+
+  tabItems.forEach(t => {
+    t.addEventListener('click', () => setStep(Number(t.dataset.tabTarget)));
+  });
+
+  wizardSteps.forEach(s => {
+    s.addEventListener('click', () => setStep(Number(s.dataset.stepTarget)));
+  });
+
+  if (btnPrev) btnPrev.addEventListener('click', () => setStep(currentStep - 1));
+  if (btnNext) btnNext.addEventListener('click', () => setStep(currentStep + 1));
+
+  // Initialize Layout
+  setLayout(savedMode);
+
+  // =========================================================================
+  // 2. Sidebar Scrollspy & Filled Counter
+  // =========================================================================
+  const sidebarLinks = document.querySelectorAll('.hq-sidebar-link');
+  function updateSidebarSpy() {
+    if (document.body.getAttribute('data-hq-layout') !== 'sidebar') return;
+    const scrollY = window.scrollY + 160;
+    sidebarLinks.forEach(link => {
+      const target = document.getElementById(link.dataset.anchor);
+      if (target) {
+        const top = target.offsetTop;
+        const height = target.offsetHeight;
+        if (scrollY >= top && scrollY < top + height) {
+          sidebarLinks.forEach(l => l.classList.remove('is-active'));
+          link.classList.add('is-active');
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll', updateSidebarSpy, { passive: true });
+
+  // Update checkmarks based on values
+  function updateCheckmarks() {
+    const title = document.querySelector('input[name="title"]');
+    const chkBase = document.getElementById('chk-base');
+    if (chkBase && title) chkBase.textContent = title.value.trim() ? '🟢' : '⚪';
+
+    const shortDesc = document.getElementById('shortDescInput');
+    const chkAbout = document.getElementById('chk-about');
+    if (chkAbout && shortDesc) chkAbout.textContent = shortDesc.value.trim() ? '🟢' : '⚪';
+  }
+  updateCheckmarks();
+  document.addEventListener('input', updateCheckmarks);
+
+  // =========================================================================
+  // 3. Short description counter
+  // =========================================================================
   const shortDesc = document.getElementById('shortDescInput');
   const counter = document.getElementById('shortDescCounter');
   if (shortDesc && counter) {
@@ -1154,7 +1824,9 @@ function toggleDrawer(btn) {
     updateCount();
   }
 
-  // Live banner preview sync
+  // =========================================================================
+  // 4. Live banner preview sync
+  // =========================================================================
   const preview = document.getElementById('bannerPreview');
   const titleInput = document.querySelector('input[name="title"]');
   const labelInput = document.querySelector('[data-banner-preview="label"]');
@@ -1227,7 +1899,9 @@ function toggleDrawer(btn) {
   bindColorPair(pAcc, tAcc);
   syncBanner();
 
-  // File Upload Handlers (Poster & PDF)
+  // =========================================================================
+  // 5. File upload previews
+  // =========================================================================
   const posterInput = document.getElementById('posterInput');
   const posterBox = document.getElementById('posterBox');
   if (posterInput && posterBox) {
@@ -1245,8 +1919,6 @@ function toggleDrawer(btn) {
             posterBox.insertBefore(img, posterBox.querySelector('.hq-btn-row') || posterInput);
           }
           img.src = e.target.result;
-          let title = posterBox.querySelector('.hq-state-box-title');
-          if (title) title.textContent = 'پوستر در حال ویرایش';
         };
         reader.readAsDataURL(file);
       }
@@ -1267,7 +1939,9 @@ function toggleDrawer(btn) {
     });
   }
 
-  // Repeater Templates & Logic
+  // =========================================================================
+  // 6. Repeaters logic
+  // =========================================================================
   const templates = {
     hero: () => `
       <div class="hq-repeat-card">
@@ -1351,16 +2025,17 @@ function toggleDrawer(btn) {
           <span class="hq-repeat-pill-number">همراه جدید</span>
           <span class="hq-repeat-pill-status">فعال</span>
         </div>
-        <div class="hq-repeat-media" style="background:#ffffff; padding:16px;">
+        <div class="hq-repeat-media">
           <div class="hq-repeat-media-empty">لوگو همراه</div>
         </div>
-        <h3 class="hq-repeat-title">نام سازمان / شرکت</h3>
+        <h3 class="hq-repeat-title">نام همراه جدید</h3>
+        <p class="hq-repeat-desc">سازمان همکار یا حامی...</p>
         <div class="hq-repeat-actions">
           <button type="button" class="hq-btn hq-btn-white" onclick="toggleDrawer(this)">بستن ویرایش</button>
           <button type="button" class="hq-btn hq-btn-danger remove-row">حذف</button>
         </div>
         <div class="hq-repeat-drawer is-open">
-          <label class="hq-field-label">نام شرکت / سازمان<input name="partner_name[]" class="hq-input" placeholder="شرکت دارویی..."></label>
+          <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" class="hq-input" placeholder="شرکت یا سازمان"></label>
           <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" class="hq-input" value="0"></label>
           <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
           <input type="hidden" name="partner_existing[]" value="">

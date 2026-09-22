@@ -91,6 +91,7 @@ if ($event_mode && $news_data && !empty($news_data['published_at'])) {
 <script>
 const EVENT_MODE = <?= $event_mode ? 'true' : 'false' ?>;
 const EVENT_ID = <?= (int)($event_id ?? 0) ?>;
+const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
 (function(){
   function applyMaxaTheme(){
     var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
@@ -3656,13 +3657,15 @@ async function saveNews() {
         showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
 
         const fd = new FormData();
+        fd.append("csrf_token", CSRF_TOKEN);
         fd.append("id", "<?= $id ?>");
         fd.append("title", title);
         fd.append("subtitle", document.getElementById("subtitle").value.trim());
         if (EVENT_MODE) {
             fd.append("event_id", String(EVENT_ID));
             fd.append("excerpt", document.getElementById("subtitle").value.trim());
-            fd.append("status", document.getElementById("event_status").value);
+            const statusEl = document.getElementById("event_status");
+            fd.append("status", statusEl ? statusEl.value : "draft");
         }
         fd.append("content", content);
         fd.append("author", document.getElementById("author").value);
@@ -3689,6 +3692,7 @@ async function saveNews() {
             const xhr = new XMLHttpRequest();
             xhr.open("POST", EVENT_MODE ? "event-news-save.php" : "news-save.php", true);
             xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("X-CSRF-Token", CSRF_TOKEN);
 
             if (featuredFile) {
                 showStatus("⏫ در حال آپلود به سرور...", true);
