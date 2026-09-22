@@ -308,7 +308,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin: 0 auto 90px;
+  margin: 0 auto;
+  padding-bottom: 120px;
 }
 
 /* 1. HQ Header */
@@ -1036,45 +1037,110 @@ body {
   .hq-sidebar-layout { flex-direction: column; }
   .hq-sidebar-nav { display: none !important; }
   
+  /* Normal flow on mobile: sits right under header, never slides under dashboard topbar */
   .hq-wizard-stepper {
     display: flex !important;
-    position: sticky;
-    top: 10px;
-    z-index: 90;
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.96);
+    position: relative !important;
+    top: auto !important;
+    z-index: 1 !important;
+    backdrop-filter: none !important;
+    margin-bottom: 20px;
+    background: var(--hq-surface) !important;
   }
   :root[data-theme="dark"] .hq-wizard-stepper,
   body[data-theme="dark"] .hq-wizard-stepper {
-    background: rgba(25, 35, 42, 0.96);
+    background: var(--hq-surface) !important;
   }
 
+  /* Generous bottom clearance so the last items of every list/step are 100% visible above the save footer */
+  .hq-form-container {
+    margin-bottom: 0 !important;
+    padding-bottom: 240px !important;
+  }
+  .hq-sidebar-content {
+    padding-bottom: 30px;
+  }
+  .hq-step-group {
+    padding-bottom: 30px;
+  }
   .hq-step-group:not(.is-active-step) {
     display: none !important;
   }
   .hq-step-group.is-active-step {
     display: flex !important;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  #stepNavButtons {
-    display: inline-flex !important;
+  .hq-repeat-grid {
+    margin-bottom: 16px;
+  }
+
+  /* Actions Bar Mobile Layout: 2 streamlined, touch-friendly rows */
+  .hq-actions-bar {
+    padding: 10px 14px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
   }
   .hq-actions-bar-inner {
-    flex-direction: column-reverse;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
   }
   .hq-actions-left {
     width: 100%;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
   }
-  .hq-btn {
+  .hq-actions-left .hq-btn-primary {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 14px;
+    font-size: 13.5px;
+  }
+  .hq-actions-left .hq-btn-white {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+  .hq-actions-nav {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .hq-actions-nav .hq-btn-white {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  #stepNavButtons {
+    display: inline-flex !important;
+    flex: 1;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  #stepNavButtons .hq-step-nav-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 }
 
 @media (max-width: 640px) {
+  body {
+    padding: 12px 10px !important;
+  }
+  .wrap {
+    padding: 0 !important;
+  }
   .hq-wizard-stepper {
-    padding: 14px 10px;
+    padding: 14px 8px;
+    margin-bottom: 16px;
   }
   .hq-wizard-steps {
     gap: 2px;
@@ -1098,6 +1164,12 @@ body {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  .hq-repeat-grid {
+    grid-template-columns: 1fr;
+  }
+  .hq-card {
+    padding: 16px;
   }
 }
 </style>
@@ -1795,7 +1867,7 @@ body {
   <!-- Sticky Bottom Actions Bar (#8:629) -->
   <footer class="hq-actions-bar">
     <div class="hq-actions-bar-inner">
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div class="hq-actions-nav" style="display:flex; align-items:center; gap:10px;">
         <a href="event-list.php" class="hq-btn hq-btn-white" style="padding:10px 20px; display:inline-flex; align-items:center; gap:6px;">
           <?= hq_iconoir('cancel', '', 15) ?>
           <span>انصراف</span>
