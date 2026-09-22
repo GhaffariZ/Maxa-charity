@@ -200,32 +200,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 // --- END OF BACKEND LOGIC ---
 
-// تابع تولید آیکون‌های استاندارد و برداری Iconoir (https://iconoir.com/)
-function iconoir_icon($name, $extraClass = '') {
-    $class = 'iconoir-icon' . ($extraClass ? ' ' . $extraClass : '');
-    $icons = [
-        'user' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/></svg>',
-        'user-plus' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12V8M17 10H21"/><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C14.1843 12 16.1432 12.999 17.4411 14.5684"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/></svg>',
-        'edit-pencil' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20H20.5"/><path d="M16.5 3.5L18.5 5.5L7 17H5V15L16.5 3.5Z"/></svg>',
-        'camera' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19V9C2 7.89543 2.89543 7 4 7H4.5C5.12951 7 5.72229 6.70361 6.1 6.2L8.32 3.24C8.43331 3.08892 8.61115 3 8.8 3H15.2C15.3889 3 15.5667 3.08892 15.68 3.24L17.9 6.2C18.2777 6.70361 18.8705 7 19.5 7H20C21.1046 7 22 7.89543 22 9V19C22 20.1046 21.1046 21 20 21H4C2.89543 21 2 20.1046 2 19Z"/><path d="M12 17C14.2091 17 16 15.2091 16 13C16 10.7909 14.2091 9 12 9C9.79086 9 8 10.7909 8 13C8 15.2091 9.79086 17 12 17Z"/></svg>',
-        'mail' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9L12 12.5L17 9"/><path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z"/></svg>',
-        'pin-alt' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.866 3 12 3C8.13401 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z"/><path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z"/></svg>',
-        'view-grid' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4H10V10H4V4Z"/><path d="M14 4H20V10H14V4Z"/><path d="M4 14H10V20H4V14Z"/><path d="M14 14H20V20H14V14Z"/></svg>',
-        'suitcase' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19V9C2 7.89543 2.89543 7 4 7H20C21.1046 7 22 7.89543 22 9V19C22 20.1046 21.1046 21 20 21H4C2.89543 21 2 20.1046 2 19Z"/><path d="M8 7V5C8 3.89543 8.89543 3 10 3H14C15.1046 3 16 3.89543 16 5V7"/><path d="M12 12V14"/></svg>',
-        'stethoscope' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4V10C4 14.4183 7.58172 18 12 18C16.4183 18 20 14.4183 20 10V4"/><path d="M2 4H6"/><path d="M18 4H22"/><path d="M12 18V21C12 21.5523 12.4477 22 13 22H15C16.1046 22 17 21.1046 17 20V19C17 17.8954 17.8954 17 19 17H20"/><path d="M20 16V18"/></svg>',
-        'graduation-cap' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10V16"/><path d="M12 4L2 9L12 14L22 9L12 4Z"/><path d="M6 11.5V16.5C6 16.5 8 19 12 19C16 19 18 16.5 18 16.5V11.5"/></svg>',
-        'calendar' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z"/></svg>',
-        'building' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21H21"/><path d="M6 21V5C6 3.89543 6.89543 3 8 3H16C17.1046 3 18 3.89543 18 5V21"/><path d="M10 7H14"/><path d="M10 11H14"/><path d="M10 15H14"/></svg>',
-        'instagram' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"/><path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z"/><path d="M17.5 6.51L17.51 6.49889"/></svg>',
-        'linkedin' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8Z"/><path d="M7 17V11"/><path d="M11 17V11"/><path d="M11 14C11 12.3431 12.3431 11 14 11C15.6569 11 17 12.3431 17 14V17"/><path d="M7 7.01L7.01 6.99889"/></svg>',
-        'notes' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14H16M8 18H12M10 3H14C16.8284 3 18.2426 3 19.1213 3.87868C20 4.75736 20 6.17157 20 9V15C20 17.8284 20 19.2426 19.1213 20.1213C18.2426 21 16.8284 21 14 21H10C7.17157 21 5.75736 21 4.87868 20.1213C4 19.2426 4 17.8284 4 15V9C4 6.17157 4 4.75736 4.87868 3.87868C5.75736 3 7.17157 3 10 3Z"/><path d="M10 7H14"/></svg>',
-        'microscope' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21H20"/><path d="M9 21V18C9 14.6863 11.6863 12 15 12V12C18.3137 12 21 14.6863 21 18V21"/><path d="M7.5 4.5L13.5 10.5M5.5 6.5L11.5 12.5"/><path d="M10 2L14 6L6 14L2 10L10 2Z"/></svg>',
-        'task-list' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6L20 6M9 12L20 12M9 18L20 18"/><path d="M4 6L5 7L7 5M4 12L5 13L7 11M4 18L5 19L7 17"/></svg>',
-        'floppy-disk' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21.4V2.6C4 2.26863 4.26863 2 4.6 2H16.2515C16.4106 2 16.5632 2.06321 16.6757 2.17574L19.8243 5.32426C19.9368 5.43679 20 5.5894 20 5.74853V21.4C20 21.7314 19.7314 22 19.4 22H4.6C4.26863 22 4 21.7314 4 21.4Z"/><path d="M8 2V8H16V2"/><path d="M8 22V14H16V22"/></svg>',
-        'eye' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12C3 12 6.5 5 12 5C17.5 5 21 12 21 12C21 12 17.5 19 12 19C6.5 19 3 12 3 12Z"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"/></svg>',
-        'xmark' => '<svg class="'.$class.'" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6L18 18M18 6L6 18"/></svg>',
-    ];
-    return $icons[$name] ?? '';
+// سیستم یکپارچه آیکون‌های برداری Iconoir (https://iconoir.com/)
+if (!function_exists('iconoir_icon')) {
+    function iconoir_icon($name, $extraClass = '', $size = null) {
+        return iconoir($name, $extraClass, $size);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -1073,11 +1052,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    const sunIcon = `<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>`;
-    const moonIcon = `<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>`;
-
     // تم از «داشبورد مدیریت» کنترل می‌شود (کلید مشترک: maxa-theme) — فقط روی body، بدونِ دست‌زدن به html/dir/فونت
     var applyMaxaTheme = function(){
         var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
@@ -1085,19 +1059,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     applyMaxaTheme();
     window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
-
-    if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
-        let theme = document.body.getAttribute('data-theme');
-        if (theme === 'dark') {
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-            themeToggleBtn.innerHTML = moonIcon;
-        } else {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            themeToggleBtn.innerHTML = sunIcon;
-        }
-    });
 });
 
 // حالت ویرایش (مقدار از PHP)

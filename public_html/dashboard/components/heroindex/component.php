@@ -211,7 +211,7 @@
 .cta-glass {
   /* Removed glass effect */
 }
-    /* ✅ منو افقی (حل عمودی شدن) */
+    /* منو افقی (حل عمودی شدن) */
     .cta-menu{
       list-style: none;
       margin: 0;
@@ -364,7 +364,7 @@
     position: relative;
   }
 
-/* ✅ مگا منو با عرض کامل صفحه */
+/* مگا منو با عرض کامل صفحه */
 .mega-menu .mega-menu-content {
   display: block;
   opacity: 0;
@@ -1576,7 +1576,7 @@
           </a>
         </div>
 
-        <!-- ✅ منوی افقی + مگا منو -->
+        <!-- منوی افقی + مگا منو -->
         <div class="cta-center">
           <nav class="cta-navbox" aria-label="منوی بالا">
             <ul class="cta-menu" id="menu">

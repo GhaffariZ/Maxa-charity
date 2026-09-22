@@ -42,7 +42,7 @@
 
 <div class="gf-newsletter">
 <input type="email" placeholder="آدرس ایمیل خود را وارد کنید">
-<button>➜</button>
+<button type="button" aria-label="عضویت در خبرنامه"><?= function_exists('iconoir') ? iconoir('arrow-left', '', 18) : '<svg width="18" height="18" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>' ?></button>
 </div>
 
 <p class="gf-privacy">
@@ -347,6 +347,9 @@ body {
 }
 
 .gf-newsletter button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: inherit;
   min-width: 54px;
   border: 0;

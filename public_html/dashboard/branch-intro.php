@@ -380,12 +380,7 @@ require_once __DIR__ . '/_panel_head.php';
 
   <div class="page-head">
     <div class="ph-ic">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
-        <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
-        <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
-        <path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
-      </svg>
+      <?= iconoir('building', 'ic', 28) ?>
     </div>
     <div>
       <h1>صفحه معرفی <?= e($branch['name']) ?></h1>
@@ -406,7 +401,7 @@ require_once __DIR__ . '/_panel_head.php';
     </span>
     <a href="/<?= e($branch['slug']) ?>/about" target="_blank">
       <span>مشاهده صفحه معرفی در سایت</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <?= iconoir('arrow-up-right', '', 16) ?>
     </a>
   </div>
 
@@ -416,7 +411,7 @@ require_once __DIR__ . '/_panel_head.php';
     <!-- بخش اول: متن و عنوان معرفی -->
     <div class="intro-card">
       <h2>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <?= iconoir('notes', '', 20) ?>
         متن معرفی و تاریخچه شعبه
       </h2>
       <p class="hint">درباره خدمات، کادر درمانی، امکانات، تاریخچه و رسالت شعبه خود برای بازدیدکنندگان توضیح دهید.</p>
@@ -435,7 +430,7 @@ require_once __DIR__ . '/_panel_head.php';
     <!-- بخش دوم: آدرس و اطلاعات تماس -->
     <div class="intro-card">
       <h2>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <?= iconoir('map-pin', '', 20) ?>
         آدرس و اطلاعات تماس شعبه
       </h2>
       <p class="hint">موقعیت دقیق فیزیکی و راه‌های ارتباطی با شعبه را مشخص کنید.</p>
@@ -460,7 +455,7 @@ require_once __DIR__ . '/_panel_head.php';
     <!-- بخش سوم: تصاویر و گالری شعبه -->
     <div class="intro-card">
       <h2>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <?= iconoir('media-image', '', 20) ?>
         گالری تصاویر شعبه
       </h2>
       <p class="hint">می‌توانید هر تعداد تصویر باکیفیت از ساختمان شعبه، امکانات، کادر و فعالیت‌ها بارگذاری کنید.</p>
@@ -468,7 +463,7 @@ require_once __DIR__ . '/_panel_head.php';
       <div class="uploader-box" id="dropZone">
         <input type="file" name="photos[]" id="fileInput" multiple accept="image/jpeg,image/png,image/webp">
         <div class="uploader-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <?= iconoir('upload', '', 24) ?>
         </div>
         <div class="uploader-title">برای انتخاب تصاویر کلیک کنید یا آن‌ها را به این کادر بکشید</div>
         <div class="uploader-desc">فرمت‌های مجاز: JPG, PNG, WEBP (بدون محدودیت تعداد)</div>
@@ -488,7 +483,7 @@ require_once __DIR__ . '/_panel_head.php';
                 <img src="<?= e($img) ?>" alt="تصویر شعبه">
                 <div class="gallery-item-actions">
                   <button type="button" class="btn-del-img" onclick="deleteImage('<?= e($img) ?>')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <?= iconoir('trash', '', 14) ?>
                     حذف تصویر
                   </button>
                 </div>
@@ -501,7 +496,7 @@ require_once __DIR__ . '/_panel_head.php';
 
     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
       <button type="submit" class="btn btn-primary" style="padding: 0 32px;">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <?= iconoir('floppy-disk', 'ic', 18) ?>
         ذخیره تغییرات معرفی شعبه
       </button>
     </div>

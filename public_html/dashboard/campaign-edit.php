@@ -428,12 +428,12 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 <?php if (!$campaign): ?>
     <div class="error-card">
         <div class="error-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <?= iconoir('warning-circle', '', 56) ?>
         </div>
         <h3 class="error-title">کمپین یافت نشد</h3>
         <p class="error-desc">کمپین درخواستی وجود ندارد یا شما دسترسی لازم برای ویرایش آن در این شعبه را ندارید.</p>
         <a href="campaign-status.php" class="btn-submit" style="display:inline-flex; width:auto; text-decoration:none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <?= iconoir('arrow-left', '', 16) ?>
             بازگشت به لیست کمپین‌ها
         </a>
     </div>
@@ -446,7 +446,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     <div class="header-bar">
         <div class="header-title-group">
             <h2>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <?= iconoir('edit-pencil', '', 22) ?>
                 ویرایش کمپین
             </h2>
             <div class="header-badges">
@@ -459,7 +459,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
             </div>
         </div>
         <a href="campaign-status.php" class="btn-back">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <?= iconoir('arrow-left', '', 15) ?>
             بازگشت به لیست کمپین‌ها
         </a>
     </div>
@@ -543,7 +543,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 
                     <div class="form-actions">
                         <button type="submit" class="btn-submit" id="submitBtn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            <?= iconoir('floppy-disk', '', 18) ?>
                             ذخیره تغییرات کمپین
                         </button>
                         <a href="campaign-status.php" class="btn-cancel">انصراف</a>

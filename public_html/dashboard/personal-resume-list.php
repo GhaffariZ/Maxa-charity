@@ -385,7 +385,7 @@ $treatment_roles = [
         background: var(--brand-teal); color: #ffffff; transition: all 0.25s var(--ease-premium);
     }
     .btn-more-info:hover { background: #0f766e; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25); transform: translateY(-1px); }
-    .btn-more-info svg { width: 18px; height: 18px; fill: currentColor; }
+    .btn-more-info svg { width: 18px; height: 18px; }
 
     /* منو فیلترها */
     .filter-sidebar {
@@ -501,7 +501,7 @@ $treatment_roles = [
     
     <div class="controls-row">
         <button id="filter-toggle-btn" class="filter-trigger-btn">
-            <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+            <?= iconoir('filter-list', '', 18) ?>
             <span>فیلتر همکاران</span>
         </button>
     </div>
@@ -555,7 +555,7 @@ $treatment_roles = [
                 echo '
                 <div class="action-drawer">
                     <button class="btn-more-info" onclick="event.stopPropagation(); window.location.href=\'personal-resume-detail.php?name=' . urlencode(str_replace(' ', '-', trim($row['fullname']))) . '\';">
-                        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        ' . iconoir('eye', '', 16) . '
                         اطلاعات بیشتر
                     </button>
                 </div>';

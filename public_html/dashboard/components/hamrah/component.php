@@ -265,7 +265,7 @@
     object-fit:cover;
   }
 
-  /* ✅ دکمه طلایی دقیقاً مثل دسکتاپ */
+  /* دکمه طلایی دقیقاً مثل دسکتاپ */
   .macsa-btn{
     display:block;
     margin-top:18px;

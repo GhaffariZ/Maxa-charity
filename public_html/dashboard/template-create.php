@@ -267,7 +267,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       <div class="builder-area" id="componentList"></div>
 
       <div style="margin-top:20px;">
-        <button type="button" class="btn btn-add" onclick="openModal()">+ افزودن کامپوننت جدید</button>
+        <button type="button" class="btn btn-add" onclick="openModal()"><?= iconoir('plus-circle', '', 18) ?> افزودن کامپوننت جدید</button>
       </div>
 
       <div id="actionButtons" class="builder-toolbar" style="display:none;">

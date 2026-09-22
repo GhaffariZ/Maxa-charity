@@ -231,7 +231,7 @@ td button:active{transform:scale(.95)}
   <div class="card">
     <div class="topbar">
       <h2 style="margin:0;display:inline-flex;align-items:center;gap:8px;"><?= iconoir('notes', '', 22) ?> لیست صفحات</h2>
-      <a class="new-btn" href="template-create.php">+ ساخت صفحه جدید</a>
+      <a class="new-btn" href="template-create.php"><?= iconoir('plus-circle', '', 17) ?> ساخت صفحه جدید</a>
     </div>
 
     <?php if ($errorMsg): ?>

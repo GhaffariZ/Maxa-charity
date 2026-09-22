@@ -1,4 +1,4 @@
 <?php
 require_once "config/database.php";
 
-echo "Database Connected ✅";
+echo "Database Connected (OK)";
