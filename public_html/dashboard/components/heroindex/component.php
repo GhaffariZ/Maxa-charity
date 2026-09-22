@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../core/icons.php'; ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -1794,7 +1795,7 @@
 
     <section class="cta-band" aria-label="Band">
       <div class="cta-container">
-        <a class="cta-band-cta" href="/onlinedonation">❤ می‌خواهم کمک کنم </a>
+        <a class="cta-band-cta" href="/onlinedonation"><?= iconoir('heart', 'cta-heart-ic', 18) ?> <span>می‌خواهم کمک کنم</span></a>
         <div class="cta-band-text">
           <h3>با هم برای جهانی بهتر</h3>
           <p>

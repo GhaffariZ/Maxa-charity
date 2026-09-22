@@ -11,6 +11,8 @@
  * ========================================================================== */
 declare(strict_types=1);
 
+require_once __DIR__ . '/../core/icons.php';
+
 if (!defined('MAXA_PEDIA_BOOT')) {
   define('MAXA_PEDIA_BOOT', 1);
   mb_internal_encoding('UTF-8');
@@ -77,12 +79,12 @@ if (!function_exists('e')) {
 /* ---------- تعریف بخش‌های شش‌گانه (هم‌راستا با کارت‌های صفحه‌ی عمومی) ---------- */
 if (!defined('MAXAPEDIA_SECTIONS')) {
   define('MAXAPEDIA_SECTIONS', [
-    'videos'    => ['title'=>'ویدیوهای آموزشی', 'icon'=>'🎬', 'desc'=>'مجموعه ویدیوهای آموزشی مکسا برای آشنایی با بیماری‌های نادر و مراقبت از بیماران.'],
-    'brochures' => ['title'=>'بروشورها',        'icon'=>'📄', 'desc'=>'بروشورهای اطلاع‌رسانی و آموزشی قابل دانلود و چاپ.'],
-    'books'     => ['title'=>'کتاب‌های آموزشی',  'icon'=>'📚', 'desc'=>'کتاب‌ها و جستارهای تخصصی در حوزه بیماری‌های نادر.'],
-    'podcasts'  => ['title'=>'پادکست‌ها',        'icon'=>'🎙️', 'desc'=>'گفت‌وگوها و برنامه‌های صوتی مکسا.'],
-    'clips'     => ['title'=>'کلیپ‌های مکسا',     'icon'=>'🎞️', 'desc'=>'کلیپ‌های کوتاه و انگیزشی مکسی.'],
-    'gallery'   => ['title'=>'گالری مکسا',        'icon'=>'🖼️', 'desc'=>'تصاویر و خاطرات تصویری از فعالیت‌های مکسا.'],
+    'videos'    => ['title'=>'ویدیوهای آموزشی', 'icon_key'=>'media-video', 'icon'=>function_exists('iconoir')?iconoir('media-video'):'', 'desc'=>'مجموعه ویدیوهای آموزشی مکسا برای آشنایی با بیماری‌های نادر و مراقبت از بیماران.'],
+    'brochures' => ['title'=>'بروشورها',        'icon_key'=>'notes',       'icon'=>function_exists('iconoir')?iconoir('notes'):'',       'desc'=>'بروشورهای اطلاع‌رسانی و آموزشی قابل دانلود و چاپ.'],
+    'books'     => ['title'=>'کتاب‌های آموزشی',  'icon_key'=>'book-stack',   'icon'=>function_exists('iconoir')?iconoir('book-stack'):'',   'desc'=>'کتاب‌ها و جستارهای تخصصی در حوزه بیماری‌های نادر.'],
+    'podcasts'  => ['title'=>'پادکست‌ها',        'icon_key'=>'microphone',   'icon'=>function_exists('iconoir')?iconoir('microphone'):'',   'desc'=>'گفت‌وگوها و برنامه‌های صوتی مکسا.'],
+    'clips'     => ['title'=>'کلیپ‌های مکسا',     'icon_key'=>'video-camera', 'icon'=>function_exists('iconoir')?iconoir('video-camera'):'', 'desc'=>'کلیپ‌های کوتاه و انگیزشی مکسی.'],
+    'gallery'   => ['title'=>'گالری مکسا',        'icon_key'=>'media-image',  'icon'=>function_exists('iconoir')?iconoir('media-image'):'',  'desc'=>'تصاویر و خاطرات تصویری از فعالیت‌های مکسا.'],
   ]);
 }
 

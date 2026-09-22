@@ -889,7 +889,7 @@ body.spa-loading .spa-frame{opacity:.6}
       <!-- welcome -->
       <section class="welcome reveal" style="animation-delay:.05s">
         <div class="welcome-text">
-          <h2>سلام، خوش آمدید 👋</h2>
+          <h2>سلام، خوش آمدید <span style="display:inline-block;vertical-align:middle;color:var(--color-secondary);"><?= iconoir('sparks', '', 22) ?></span></h2>
           <p id="welcomeDate">نگاهی سریع به وضعیت کمک‌ها، خیرین و فعالیت‌های اخیر خیریه مکسا.</p>
         </div>
         <div class="welcome-goal">

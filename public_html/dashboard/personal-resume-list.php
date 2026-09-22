@@ -530,9 +530,7 @@ $treatment_roles = [
                     echo '<img src="' . htmlspecialchars($row['profile_pic']) . '" class="card-img" alt="' . $fullname . '">';
                 } else {
                     echo '
-                    <div class="avatar-placeholder">
-                        <span class="icon">👤</span>
-                    </div>';
+                    <div class="avatar-placeholder">' . iconoir('user', 'icon', 36) . '</div>';
                 }
                 echo '</div>';
                 
@@ -553,7 +551,7 @@ $treatment_roles = [
                     </div>
                 </div>';
                 
-                // 🛠️ تنها بخش تغییر یافته: رفع خطای تگ‌های تودرتو و سینتکس کوتیشن‌ها در echo
+                // رفع خطای تگ‌های تودرتو و سینتکس کوتیشن‌ها در echo
                 echo '
                 <div class="action-drawer">
                     <button class="btn-more-info" onclick="event.stopPropagation(); window.location.href=\'personal-resume-detail.php?name=' . urlencode(str_replace(' ', '-', trim($row['fullname']))) . '\';">

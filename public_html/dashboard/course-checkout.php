@@ -115,7 +115,7 @@ course_site_head('تسویه‌حساب', $pageCss);
 <div class="ok-ov" id="okModal">
   <div class="ok-card">
     <div class="oic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-    <h2>ثبت‌نام موفق! 🎉</h2>
+    <h2>ثبت‌نام موفق!</h2>
     <p>دوره‌های شما با موفقیت ثبت شد. هم‌اکنون می‌توانید یادگیری را شروع کنید.</p>
     <a href="/courses/my" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
     <a href="/courses" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>

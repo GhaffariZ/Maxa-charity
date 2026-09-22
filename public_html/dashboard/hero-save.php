@@ -159,7 +159,7 @@ try {
 
         echo json_encode([
             'status'  => 'success',
-            'message' => 'تغییرات هیروها با موفقیت ذخیره شد ✅'
+            'message' => 'تغییرات هیروها با موفقیت ذخیره شد'
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
@@ -199,7 +199,7 @@ try {
 
     echo json_encode([
         'status'  => 'success',
-        'message' => 'هیرو با موفقیت ذخیره شد ✅'
+        'message' => 'هیرو با موفقیت ذخیره شد'
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {

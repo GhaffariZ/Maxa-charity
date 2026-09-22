@@ -1,5 +1,6 @@
 <?php
 /* صفحه‌ی عمومیِ یک بخش از مکساپدیا — محتوای منتشرشده‌ی همان بخش را نمایش می‌دهد. */
+require_once __DIR__ . '/core/icons.php';
 require __DIR__ . '/dashboard/maxapedia-db.php';
 
 $mpSlug = $_GET['section'] ?? '';
@@ -50,6 +51,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     padding: 48px 20px 80px;
     font-family: 'Vazirmatn', sans-serif;
   }
+  .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }
   .mp-breadcrumb { font-size: 14px; color: #8b8f96; margin-bottom: 20px; }
   .mp-breadcrumb a { color: var(--cta-orange, #f5a623); text-decoration: none; font-weight: 700; }
   .mp-header { text-align: center; margin-bottom: 40px; }
@@ -286,7 +288,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
         <input type="hidden" name="cat" value="<?= e($mpCat) ?>">
       <?php endif; ?>
       <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="جستجو در این بخش…" aria-label="جستجو">
-      <button type="submit" aria-label="جستجو">🔍</button>
+      <button type="submit" aria-label="جستجو"><?= iconoir('search', '', 18) ?></button>
     </form>
 
     <?php if (!empty($mpCats)): ?>
@@ -347,7 +349,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
             <h2 id="mpPlayerTitle"><?= e($first['title']) ?></h2>
             <p id="mpPlayerDesc"<?= empty($first['description']) ? ' style="display:none"' : '' ?>><?= e($first['description'] ?? '') ?></p>
             <a id="mpPlayerSource" class="mp-item-source" target="_blank" rel="noopener"
-               href="<?= e($first['url'] ?? '') ?>"<?= empty($first['url']) ? ' style="display:none"' : '' ?>>باز کردن در منبع ↗</a>
+               href="<?= e($first['url'] ?? '') ?>"<?= empty($first['url']) ? ' style="display:none"' : '' ?>>باز کردن در منبع <?= iconoir('arrow-up-right', '', 14) ?></a>
           </div>
         </div>
 
@@ -398,13 +400,13 @@ require __DIR__ . '/dashboard/components/header/component.php';
                   <?php if (!empty($it['thumbnail'])): ?>
                     <img src="<?= e($it['thumbnail']) ?>" alt="" loading="lazy">
                   <?php else: ?>
-                    <span>🎙️</span>
+                    <span><?= iconoir('microphone', '', 32) ?></span>
                   <?php endif; ?>
                 </div>
                 <div class="mp-pod-meta">
                   <h3 class="mp-pod-title"><?= e($it['title']) ?></h3>
                   <div class="mp-pod-tags">
-                    <?php if ($em): ?><span class="mp-pod-provider">🎧 <?= e($em['provider']) ?></span><?php endif; ?>
+                    <?php if ($em): ?><span class="mp-pod-provider"><?= iconoir('headset', '', 14) ?> <?= e($em['provider']) ?></span><?php endif; ?>
                     <?php if (!empty($it['category'])): ?><span class="mp-pod-cat"><?= e($it['category']) ?></span><?php endif; ?>
                   </div>
                 </div>
@@ -418,7 +420,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
                 <div class="mp-pod-player"><?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?></div>
               <?php elseif (!empty($it['url'])): ?>
                 <div class="mp-pod-foot">
-                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">شنیدن ↗</a>
+                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">شنیدن <?= iconoir('arrow-up-right', '', 14) ?></a>
                 </div>
               <?php endif; ?>
             </article>
@@ -449,11 +451,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
                 <?php endif; ?>
                 <?php if (!empty($it['url'])): ?>
                   <?php if ($em): ?>
-                    <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع ↗</a>
+                    <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php elseif ($mpSlug === 'books'): ?>
-                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">دانلود و مطالعه کتاب 📥</a>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود و مطالعه کتاب</a>
                   <?php else: ?>
-                    <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده ↗</a>
+                    <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php endif; ?>
                 <?php endif; ?>
               </div>

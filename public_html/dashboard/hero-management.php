@@ -393,7 +393,7 @@ body.hm-dragging .hm-drag{cursor:grabbing}
       .then(function(r){ return r.json(); })
       .then(function(data){
         if(data && data.status === 'success'){
-          showMsg(data.message || 'ذخیره شد ✅', true);
+          showMsg(data.message || 'ذخیره شد', true);
           // بارگذاری مجدد تا ردیف‌های جدید id واقعی بگیرند و دکمه‌ی حذف ظاهر شود
           setTimeout(function(){ location.reload(); }, 700);
         } else {

@@ -121,6 +121,9 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         flex-wrap: wrap;
     }
     .badge-branch {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         background: rgba(0, 125, 117, 0.1);
         color: var(--primary-color);
         font-size: 12px;
@@ -448,7 +451,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
             </h2>
             <div class="header-badges">
                 <?php if (!empty($campaign['branch_name'])): ?>
-                    <span class="badge-branch">🏢 <?= htmlspecialchars($campaign['branch_name']) ?></span>
+                    <span class="badge-branch"><?= iconoir('building', '', 14) ?> <?= htmlspecialchars($campaign['branch_name']) ?></span>
                 <?php endif; ?>
                 <?php if (!empty($campaign['campaign_code'])): ?>
                     <span class="badge-code"><?= htmlspecialchars($campaign['campaign_code']) ?></span>

@@ -87,6 +87,10 @@ body {
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: 0.3s;
 }
 .btn-add { background: #6c5ce7; color: white; }
@@ -267,8 +271,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
 
       <div id="actionButtons" class="builder-toolbar" style="display:none;">
-        <button type="button" class="btn btn-preview" onclick="previewPage()">👁️ پیش‌نمایش زنده</button>
-        <button type="button" class="btn btn-save" onclick="saveTemplate()">🚀 ثبت و انتشار نهایی</button>
+        <button type="button" class="btn btn-preview" onclick="previewPage()"><?= iconoir('eye', '', 18) ?> پیش‌نمایش زنده</button>
+        <button type="button" class="btn btn-save" onclick="saveTemplate()"><?= iconoir('rocket', '', 18) ?> ثبت و انتشار نهایی</button>
       </div>
     </div>
   </div>

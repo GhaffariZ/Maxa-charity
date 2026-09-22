@@ -334,7 +334,7 @@ $conn->close();
                 <?php if ($profile_pic): ?>
                     <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="<?php echo $fullname; ?>">
                 <?php else: ?>
-                    <div class="placeholder-icon">👤</div>
+                    <div class="placeholder-icon"><?= iconoir('user', '', 64) ?></div>
                 <?php endif; ?>
             </div>
 

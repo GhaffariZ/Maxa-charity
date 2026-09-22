@@ -822,7 +822,7 @@
                 </div>
                 <div class="card-body">
                     <h3 class="card-title" title="${camp.title}">${camp.title}</h3>
-                    ${camp.branch_name ? `<span class="branch-tag" style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;">🏢 ${camp.branch_name}</span>` : ''}
+                    ${camp.branch_name ? `<span class="branch-tag" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;"><svg class="iconoir-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H12V3.6C12 3.26863 12.2686 3 12.6 3H17.4C17.7314 3 18 3.26863 18 3.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z"/></svg> ${camp.branch_name}</span>` : ''}
                     <div class="card-desc">${descHtml}</div>
 
                     <div class="progress-container">

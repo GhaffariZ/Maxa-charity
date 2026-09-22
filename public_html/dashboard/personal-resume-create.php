@@ -1103,6 +1103,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // حالت ویرایش (مقدار از PHP)
 const EDIT_MODE = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
 
+const STATUS_ICONS = {
+    warn:    <?= json_encode(iconoir('warning-triangle', '', 18)) ?>,
+    loading: <?= json_encode(iconoir('hourglass', '', 18)) ?>,
+    ok:      <?= json_encode(iconoir('check-circle', '', 18)) ?>,
+    error:   <?= json_encode(iconoir('xmark-circle', '', 18)) ?>
+};
+
 function validateForm() {
     const missingFields = [];
     
@@ -1155,7 +1162,7 @@ function saveData() {
     const statusBox = document.getElementById("statusBox");
     
     if (errors.length > 0) {
-        statusBox.innerHTML = "⚠️ تکمیل فیلدهای اجباری زیر الزامی است:<br>" + errors.join("، ");
+        statusBox.innerHTML = STATUS_ICONS.warn + " تکمیل فیلدهای اجباری زیر الزامی است:<br>" + errors.join("، ");
         statusBox.className = "status-msg status-error";
         statusBox.style.backgroundColor = "";
         statusBox.style.color = "";
@@ -1163,7 +1170,7 @@ function saveData() {
         return;
     }
     
-    statusBox.textContent = "⏳ در حال ارسال و ذخیره‌سازی اطلاعات...";
+    statusBox.innerHTML = STATUS_ICONS.loading + " در حال ارسال و ذخیره‌سازی اطلاعات...";
     statusBox.className = "status-msg status-loading";
     statusBox.style.display = "block";
     statusBox.style.backgroundColor = "";
@@ -1230,10 +1237,10 @@ function saveData() {
         statusBox.style.borderColor = "";
         
         if(data.status === 'success') {
-            statusBox.textContent = "✅ " + data.message;
+            statusBox.innerHTML = STATUS_ICONS.ok + " " + data.message;
             statusBox.className = "status-msg status-ok";
         } else {
-            statusBox.innerHTML = "❌ خطا: " + data.message;
+            statusBox.innerHTML = STATUS_ICONS.error + " خطا: " + data.message;
             statusBox.className = "status-msg status-error";
         }
     })
@@ -1242,7 +1249,7 @@ function saveData() {
         statusBox.style.backgroundColor = "";
         statusBox.style.color = "";
         statusBox.style.borderColor = "";
-        statusBox.innerHTML = "❌ خطا در برقراری ارتباط با سرور.";
+        statusBox.innerHTML = STATUS_ICONS.error + " خطا در برقراری ارتباط با سرور.";
         statusBox.className = "status-msg status-error";
     });
 }
@@ -1252,7 +1259,7 @@ function openPreview() {
     const statusBox = document.getElementById("statusBox");
     
     if (errors.length > 0) {
-        statusBox.innerHTML = "⚠️ برای مشاهده پیش‌نمایش، ابتدا فیلدهای اجباری را تکمیل کنید:<br>" + errors.join("، ");
+        statusBox.innerHTML = STATUS_ICONS.warn + " برای مشاهده پیش‌نمایش، ابتدا فیلدهای اجباری را تکمیل کنید:<br>" + errors.join("، ");
         statusBox.className = "status-msg status-error";
         return;
     }

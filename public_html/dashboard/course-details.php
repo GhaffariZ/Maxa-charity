@@ -299,10 +299,11 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
   var addBtn=$('addCart');
   if(addBtn){
-    if(inCart()) addBtn.innerHTML='در سبد خرید ✓';
+    var inCartHtml = '<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید';
+    if(inCart()) addBtn.innerHTML=inCartHtml;
     addBtn.addEventListener('click', function(){
       var c=getCart();
-      if(!inCart()){ c.push(COURSE); setCart(c); toast('دوره به سبد خرید اضافه شد.'); addBtn.innerHTML='در سبد خرید ✓'; }
+      if(!inCart()){ c.push(COURSE); setCart(c); toast('دوره به سبد خرید اضافه شد.'); addBtn.innerHTML=inCartHtml; }
       else toast('این دوره از قبل در سبد شماست.');
       if(window.maxaCartSync) window.maxaCartSync();
     });

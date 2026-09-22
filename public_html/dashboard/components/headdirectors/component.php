@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../core/icons.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -285,25 +286,25 @@
 
             <div class="highlight-grid wow fadeInUp" data-wow-delay="0.8s">
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🩺</div>
+                    <div class="highlight-card-icon"><?= iconoir('stethoscope', '', 26) ?></div>
                     <h3>کمیسیون سلامت و طب تسکینی</h3>
                     <p>بررسی و هدایت راهبردی پروتکل‌های بالینی، طب حمایتی، خدمات پرستاری تسکینی و یکپارچه‌سازی مراقبت در منزل با بیمارستان‌های تخصصی.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🎓</div>
+                    <div class="highlight-card-icon"><?= iconoir('graduation-cap', '', 26) ?></div>
                     <h3>کمیسیون آموزش و پژوهش</h3>
                     <p>سیاست‌گذاری در حوزه تربیت نیروهای متخصص، ترویج مقالات علمی، برگزاری کنگره‌های بین‌المللی و همکاری با دانشگاه‌های معتبر داخلی و خارجی.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🤝</div>
+                    <div class="highlight-card-icon"><?= iconoir('handshake', '', 26) ?></div>
                     <h3>کمیسیون مشارکت‌های مردمی</h3>
                     <p>طراحی الگوهای نوین جلب مشارکت خیرین، گسترش شبکه‌های حامیان سلامت و شفاف‌سازی تخصیص منابع به پروژه‌های حمایتی.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🌐</div>
+                    <div class="highlight-card-icon"><?= iconoir('globe', '', 26) ?></div>
                     <h3>کمیسیون توسعه و روابط بین‌الملل</h3>
                     <p>انتقال دانش روز جهانی از مراکزی چون انستیتو کوری و دانشگاه‌های پیشرو، و ارتقای جایگاه مکسا در مراجع بین‌المللی مراقبت تسکینی.</p>
                 </div>

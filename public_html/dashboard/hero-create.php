@@ -557,7 +557,7 @@ select.input { appearance: none; cursor: pointer; }
                     <div class="publish-date-row">
                         <input type="hidden" id="publish_date">
                         <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
-                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
+                        <button type="button" class="btn-insert" onclick="openDatePicker()"><?= iconoir('calendar', '', 16) ?> انتخاب</button>
                         <button type="button" class="btn-insert" onclick="setNow()">همین الان</button>
                     </div>
                 </div>

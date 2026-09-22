@@ -686,7 +686,7 @@ $treatment_roles = [
                     <img src="<?php echo htmlspecialchars($row['profile_pic']); ?>"
                          class="card-img" alt="<?php echo $fullname; ?>">
                 <?php else: ?>
-                    <div class="avatar-placeholder"><span class="icon">👤</span></div>
+                    <div class="avatar-placeholder"><?= iconoir('user', 'icon', 36) ?></div>
                 <?php endif; ?>
             </div>
 
@@ -800,7 +800,7 @@ $treatment_roles = [
 
 <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true">
     <div class="modal-box">
-        <div id="modal-icon" class="modal-icon-wrap danger">⛔</div>
+        <div id="modal-icon" class="modal-icon-wrap danger"><?= iconoir('prohibition', '', 28) ?></div>
         <h3 id="modal-title" class="modal-title">غیرفعال کردن همکار</h3>
         <p  id="modal-desc"  class="modal-desc">
             آیا از غیرفعال کردن <span id="modal-name" class="modal-name">---</span> اطمینان دارید؟
@@ -971,22 +971,28 @@ function openModal(btn) {
     const nameEl  = document.getElementById('modal-name');
     const confirm = document.getElementById('modal-confirm');
 
+    const MODAL_ICONS = {
+        deactivate: <?= json_encode(iconoir('prohibition', '', 28)) ?>,
+        delete:     <?= json_encode(iconoir('trash', '', 28)) ?>,
+        activate:   <?= json_encode(iconoir('check-circle', '', 28)) ?>
+    };
+
     if (action === 'deactivate') {
-        icon.textContent  = '⛔';
+        icon.innerHTML    = MODAL_ICONS.deactivate;
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'غیرفعال کردن همکار';
         confirm.className = 'btn-modal-confirm danger';
         confirm.textContent = 'غیرفعال کن';
         desc.innerHTML = `آیا از غیرفعال کردن <span class="modal-name">${name}</span> اطمینان دارید؟<br>دسترسی این همکار به سیستم قطع خواهد شد.`;
     } else if (action === 'delete') {
-        icon.textContent  = '🗑️';
+        icon.innerHTML    = MODAL_ICONS.delete;
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'حذف همکار';
         confirm.className = 'btn-modal-confirm danger';
         confirm.textContent = 'حذف دائمی';
         desc.innerHTML = `آیا از حذف دائم <span class="modal-name">${name}</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.`;
     } else {
-        icon.textContent  = '✅';
+        icon.innerHTML    = MODAL_ICONS.activate;
         icon.className    = 'modal-icon-wrap success';
         title.textContent = 'فعال کردن همکار';
         confirm.className = 'btn-modal-confirm success';

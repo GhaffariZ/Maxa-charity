@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/icons.php';
 // ۱. اتصال به دیتابیس (اطلاعات از فایل کانفیگ خارج از گیت)
 $DB   = require __DIR__ . '/core/db-config.php';
 $host = $DB['host'];
@@ -420,7 +421,11 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
         padding-top: 20px;
         margin-top: auto;
     }
+    .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }
     .hero-read-time {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         font-size: 13px;
         color: var(--news-text-muted);
     }
@@ -959,7 +964,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
                 <p class="hero-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
                 
                 <div class="hero-post-footer">
-                    <span class="hero-read-time">⏱ <?= $readTimeFa ?> دقیقه مطالعه</span>
+                    <span class="hero-read-time"><?= iconoir('clock', '', 15) ?> <?= $readTimeFa ?> دقیقه مطالعه</span>
                     <a href="<?= htmlspecialchars($newsUrl) ?>" class="hero-more-btn">
                         ادامه مطلب
                         <i class="fas fa-chevron-left"></i>
@@ -1019,7 +1024,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
                                     <p class="card-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
                                     
                                     <div class="card-post-footer">
-                                        <span class="card-read-time">⏱ <?= $readTimeFa ?> دقیقه مطالعه</span>
+                                        <span class="card-read-time" style="display:inline-flex;align-items:center;gap:5px;"><?= iconoir('clock', '', 14) ?> <?= $readTimeFa ?> دقیقه مطالعه</span>
                                         <a href="<?= htmlspecialchars($newsUrl) ?>" class="card-more-btn">
                                             مشاهده خبر
                                             <i class="fas fa-chevron-left"></i>
@@ -1031,7 +1036,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
                     </div>
                 <?php else: ?>
                     <div class="news-empty-state">
-                        <div style="font-size: 32px; margin-bottom: 12px;">🔍</div>
+                        <div style="font-size: 32px; margin-bottom: 12px; color: var(--news-text-muted);"><?= iconoir('search', '', 36) ?></div>
                         موردی در این دسته‌بندی یا جستجو پیدا نشد.
                     </div>
                 <?php endif; ?>

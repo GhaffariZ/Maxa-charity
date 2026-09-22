@@ -52,6 +52,7 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+.iconoir-icon{display:inline-flex;vertical-align:middle;width:1.2em;height:1.2em;stroke-width:1.6;flex-shrink:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;padding:26px}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:920px;margin:0 auto}

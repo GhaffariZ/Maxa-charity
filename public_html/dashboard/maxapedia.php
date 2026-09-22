@@ -296,7 +296,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .2s,box-shadow .25s,transform .15s var(--ease)}
 .mx-tab:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .mx-tab.active{border-color:var(--color-primary);background:var(--primary-08)}
-.mx-tab .em{font-size:24px;line-height:1}
+.mx-tab .em{font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center}
+.mx-tab .em .iconoir-icon{width:26px;height:26px;stroke-width:1.6;color:var(--color-primary)}
 .mx-tab .lb{font-size:12.5px;font-weight:700}
 .mx-tab .cnt{font-size:11px;color:var(--color-muted)}
 
@@ -466,7 +467,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 <div class="mx-wrap">
 
   <div class="mx-head">
-    <div class="mx-head-ic">📖</div>
+    <div class="mx-head-ic"><?= iconoir('book', '', 26) ?></div>
     <div>
       <h1>مکساپدیا</h1>
       <p>محتوای آموزشی هر بخش از مکساپدیا را اینجا اضافه و مدیریت کنید.</p>
@@ -537,7 +538,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
           <label>آپلود فایل کتاب (PDF / EPUB / MOBI / ZIP و...)</label>
           <div class="mx-dropzone" id="bookDropzone">
             <input type="file" name="book_file" id="bookFileInput" accept=".pdf,.epub,.mobi,.doc,.docx,.zip,.rar">
-            <div class="mx-dropzone-icon">📥</div>
+            <div class="mx-dropzone-icon"><?= iconoir('download', '', 36) ?></div>
             <div class="mx-dropzone-title">فایل کتاب را بکشید و اینجا رها کنید یا برای انتخاب کلیک کنید</div>
             <div class="mx-dropzone-hint">فرمت‌های مجاز: PDF, EPUB, MOBI, DOC, DOCX, ZIP, RAR (حداکثر <?= ini_get('upload_max_filesize') ?>)</div>
           </div>
@@ -550,7 +551,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
           </div>
           <?php if ($isEditing && !empty($editItem['url'])): ?>
             <div class="mx-current-file">
-              <span>📄 فایل/لینک فعلی:</span>
+              <span><?= iconoir('notes', '', 15) ?> فایل/لینک فعلی:</span>
               <a href="<?= e($editItem['url']) ?>" target="_blank" rel="noopener">مشاهده / دانلود کتاب</a>
               <?php if (strpos($editItem['url'], '/uploads/books/') === 0): ?>
                 <span class="mx-badge-format">فایل ذخیره‌شده در سرور</span>
@@ -661,7 +662,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                 <div class="mx-row-title"><?= e($it['title']) ?></div>
                 <div class="mx-row-tags">
                   <?php if (!empty($it['category'])): ?>
-                    <span class="mx-chip">🏷 <?= e($it['category']) ?></span>
+                    <span class="mx-chip"><?= iconoir('label', '', 13) ?> <?= e($it['category']) ?></span>
                   <?php endif; ?>
                   <?php if ($emInfo): ?>
                     <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
@@ -670,7 +671,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                   if ($section === 'books' && !empty($it['url'])) {
                     $ext = strtolower(pathinfo(parse_url($it['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
                     if ($ext) {
-                      echo '<span class="mx-badge-format">📄 ' . strtoupper(e($ext)) . '</span>';
+                      echo '<span class="mx-badge-format">' . iconoir('notes', '', 13) . ' ' . strtoupper(e($ext)) . '</span>';
                     } elseif (strpos($it['url'], 'drive.google.com') !== false) {
                       echo '<span class="mx-badge-format">Google Drive</span>';
                     }
@@ -684,10 +685,10 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               </div>
 
               <div class="mx-row-actions">
-                <a class="mx-action-edit" href="maxapedia.php?section=<?= e($section) ?>&edit=<?= (int)$it['id'] ?>" title="ویرایش">✏️</a>
+                <a class="mx-action-edit" href="maxapedia.php?section=<?= e($section) ?>&edit=<?= (int)$it['id'] ?>" title="ویرایش"><?= iconoir('edit-pencil', '', 15) ?></a>
                 <?php if (!empty($it['url'])): ?>
                   <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="<?= $section === 'books' ? 'دانلود یا مطالعه کتاب' : 'باز کردن لینک' ?>">
-                    <?= $section === 'books' ? '📥' : '↗' ?>
+                    <?= $section === 'books' ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
                 <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">

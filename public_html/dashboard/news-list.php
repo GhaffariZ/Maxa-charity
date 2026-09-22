@@ -252,7 +252,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .main-row:last-child td { border-bottom: none; }
   .main-row:hover { background: var(--row-hover); }
   .news-title-text { font-weight: 700; }
-  .branch-chip { font-size: 11px; font-weight: 700; color: var(--primary-color); background: rgba(0,125,117,.10); padding: 3px 9px; border-radius: 999px; margin-inline-start: 6px; white-space: nowrap; }
+  .branch-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--primary-color); background: rgba(0,125,117,.10); padding: 3px 9px; border-radius: 999px; margin-inline-start: 6px; white-space: nowrap; }
 
   /* ===== چیپ وضعیت ===== */
   .st-badge { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-align: center; }
@@ -488,7 +488,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
               else echo '<span class="st-badge st-draft">'.$doc.'ذخیره شده</span>';
             ?>
           </td>
-          <td class="cell-title" data-label="عنوان خبر"><span class="news-title-text"><?= htmlspecialchars($news['title']) ?></span><?php if ($__isEditor && !empty($news['branch_name'])): ?><span class="branch-chip">🏢 <?= htmlspecialchars($news['branch_name']) ?></span><?php endif; ?></td>
+          <td class="cell-title" data-label="عنوان خبر"><span class="news-title-text"><?= htmlspecialchars($news['title']) ?></span><?php if ($__isEditor && !empty($news['branch_name'])): ?><span class="branch-chip"><?= iconoir('building', '', 14) ?> <?= htmlspecialchars($news['branch_name']) ?></span><?php endif; ?></td>
           <td class="cell-date" data-label="تاریخ انتشار" style="color: var(--text-muted); font-size: 13px; direction: ltr;"><?= faNumbers(formatJalaliDateTime($news['publish_date'] ?? null)) ?></td>
           <td data-label="جزییات" style="text-align: center;"><span class="arrow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></td>
         </tr>
@@ -628,11 +628,11 @@ if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
     if (htmlElement.getAttribute('data-theme') === 'light') {
         htmlElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
-        themeToggleBtn.innerText = '☀️';
+        themeToggleBtn.innerHTML = <?= json_encode(iconoir('sun-light', '', 18)) ?>;
     } else {
         htmlElement.setAttribute('data-theme', 'light');
         localStorage.setItem('theme', 'light');
-        themeToggleBtn.innerText = '🌙';
+        themeToggleBtn.innerHTML = <?= json_encode(iconoir('half-moon', '', 18)) ?>;
     }
 });
 

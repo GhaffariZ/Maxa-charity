@@ -99,7 +99,7 @@ course_site_head('دوره‌های من', $pageCss);
     html+='<div class="mc">'+
       '<div class="mc-thumb" style="background:linear-gradient(135deg,'+c.accent+','+c.accent+'cc)">'+
         (c.thumbnail?'<img src="'+c.thumbnail+'" alt="">':'<span class="ph">'+BOOK+'</span>')+
-        '<span class="mc-badge">'+(pct>=100?'تکمیل‌شده ✓':toFa(pct)+'٪')+'</span></div>'+
+        '<span class="mc-badge">'+(pct>=100?'<svg class="iconoir-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:3px;"><path d="M5 13L9 17L19 7"/></svg> تکمیل‌شده':toFa(pct)+'٪')+'</span></div>'+
       '<div class="mc-body">'+
         (c.category?'<span class="mc-cat">'+c.category+'</span>':'')+
         '<div class="mc-title">'+c.title+'</div>'+

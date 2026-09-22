@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../core/icons.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -286,25 +287,25 @@
 
             <div class="highlight-grid wow fadeInUp" data-wow-delay="0.8s">
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">📊</div>
+                    <div class="highlight-card-icon"><?= iconoir('graph-up', '', 26) ?></div>
                     <h3>کمیته حسابرسی و انطباق</h3>
                     <p>پایش مداوم اسناد مالی، انطباق با قوانین مالیاتی و خیریه‌ای، و اطمینان از سلامت کامل فرآیندهای مالی مؤسسه با همکاری حسابرسان رسمی.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🏥</div>
+                    <div class="highlight-card-icon"><?= iconoir('hospital', '', 26) ?></div>
                     <h3>کمیته کیفیت خدمات بالینی</h3>
                     <p>نظارت بر استانداردسازی خدمات مراقبت در منزل، کلینیک‌های سرپایی، ایمنی بیمار و سنجش مستمر رضایت بیماران و خانواده‌ها.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">🏗️</div>
+                    <div class="highlight-card-icon"><?= iconoir('building', '', 26) ?></div>
                     <h3>کمیته توسعه و زیرساخت</h3>
                     <p>برنامه‌ریزی برای گسترش مراکز فیزیکی، تأمین و نگهداری تجهیزات پیشرفته پزشکی و توسعه سامانه‌های دیجیتال و پرونده الکترونیک سلامت.</p>
                 </div>
 
                 <div class="highlight-card">
-                    <div class="highlight-card-icon">⚖️</div>
+                    <div class="highlight-card-icon"><?= iconoir('scale', '', 26) ?></div>
                     <h3>کمیته حقوقی و قراردادها</h3>
                     <p>بررسی حقوقی قراردادها، تفاهم‌نامه‌های دانشگاهی و سازمانی، و صیانت از چارچوب‌های قانونی فعالیت‌های عام‌المنفعه مؤسسه.</p>
                 </div>

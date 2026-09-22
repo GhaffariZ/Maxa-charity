@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../core/icons.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -745,15 +746,15 @@
 
                     <div class="contact-links">
                         <a href="#" class="contact-chip">
-                            <span class="contact-chip-icon">in</span>
+                            <span class="contact-chip-icon"><?= iconoir('linkedin', '', 18) ?></span>
                             <span>LinkedIn</span>
                         </a>
                         <a href="#" class="contact-chip">
-                            <span class="contact-chip-icon">🌐</span>
+                            <span class="contact-chip-icon"><?= iconoir('globe', '', 18) ?></span>
                             <span>وب‌سایت شخصی</span>
                         </a>
                         <a href="#" class="contact-chip">
-                            <span class="contact-chip-icon">📄</span>
+                            <span class="contact-chip-icon"><?= iconoir('notes', '', 18) ?></span>
                             <span>رزومه PDF</span>
                         </a>
                     </div>

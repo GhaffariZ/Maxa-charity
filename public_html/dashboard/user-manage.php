@@ -106,7 +106,7 @@ require __DIR__ . '/_panel_head.php';
 
 <div id="custom-modal" class="modal-overlay">
     <div class="modal-box">
-        <div id="cmodal-icon" class="modal-icon-wrap danger">⛔</div>
+        <div id="cmodal-icon" class="modal-icon-wrap danger"><?= iconoir('prohibition', '', 28) ?></div>
         <h3 id="cmodal-title" class="modal-title">تایید عملیات</h3>
         <p  id="cmodal-desc"  class="modal-desc">آیا مطمئن هستید؟</p>
         <div class="modal-actions">
@@ -118,6 +118,12 @@ require __DIR__ . '/_panel_head.php';
 
 <script>
 window._pfid = null;
+const CMODAL_ICONS = {
+    disable: <?= json_encode(iconoir('prohibition', '', 28)) ?>,
+    delete:  <?= json_encode(iconoir('trash', '', 28)) ?>,
+    enable:  <?= json_encode(iconoir('check-circle', '', 28)) ?>
+};
+
 function triggerUserModal(id, action, name) {
     const modal   = document.getElementById('custom-modal');
     const icon    = document.getElementById('cmodal-icon');
@@ -127,7 +133,7 @@ function triggerUserModal(id, action, name) {
 
     if (action === 'disable') {
         window._pfid = 'frm-status-' + id;
-        icon.textContent  = '⛔';
+        icon.innerHTML    = CMODAL_ICONS.disable;
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'غیرفعال کردن کاربر';
         confirm.className = 'btn-modal-confirm danger';
@@ -135,7 +141,7 @@ function triggerUserModal(id, action, name) {
         desc.innerHTML = 'آیا از غیرفعال کردن <span class="modal-name">'+name+'</span> اطمینان دارید؟';
     } else if (action === 'delete') {
         window._pfid = 'frm-delete-' + id;
-        icon.textContent  = '🗑️';
+        icon.innerHTML    = CMODAL_ICONS.delete;
         icon.className    = 'modal-icon-wrap danger';
         title.textContent = 'حذف کاربر';
         confirm.className = 'btn-modal-confirm danger';
@@ -143,7 +149,7 @@ function triggerUserModal(id, action, name) {
         desc.innerHTML = 'آیا از حذف دائم <span class="modal-name">'+name+'</span> اطمینان دارید؟<br>این عملیات غیرقابل بازگشت است و کاربر از دیتابیس حذف خواهد شد.';
     } else {
         window._pfid = 'frm-status-' + id;
-        icon.textContent  = '✅';
+        icon.innerHTML    = CMODAL_ICONS.enable;
         icon.className    = 'modal-icon-wrap success';
         title.textContent = 'فعال کردن کاربر';
         confirm.className = 'btn-modal-confirm success';

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/icons.php';
+
 /**
  * SECURITY: Safely render a component by name.
  * Checks for data.json first (new safe format), falls back to component.php

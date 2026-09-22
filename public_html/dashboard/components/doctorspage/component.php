@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../core/icons.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -146,7 +147,9 @@
         }
 
         .science-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: var(--primary-teal);
             color: #ffffff;
             font-size: 0.8rem;
@@ -808,7 +811,7 @@
             <!-- بخش تازه‌های علم و پژوهش -->
             <div class="science-highlight-box wow fadeInUp" data-wow-delay="0.4s">
                 <div class="science-text">
-                    <span class="science-badge">🔬 پژوهش و دانش بالینی</span>
+                    <span class="science-badge"><?= iconoir('microscope', '', 18) ?> پژوهش و دانش بالینی</span>
                     <h3>تازه‌های علم طب تسکینی و انکولوژی</h3>
                     <p>
                         مکسا به عنوان متولی ملی و علمی مراقبت‌های حمایتی و تسکینی در ایران، با همکاری انستیتو کوری فرانسه و دانشگاه‌های علوم پزشکی برتر کشور، جدیدترین گایدلاین‌های مدیریت درد، تسکین علائم، کنترل عوارض درمان و مداخلات روانشناختی انکولوژی را در قالب پروتکل‌های بالینی کاربردی در اختیار کادر درمان قرار می‌دهد.
@@ -918,7 +921,7 @@
             <div class="teams-grid wow fadeInUp" data-wow-delay="0.7s">
                 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🩺</div>
+                    <div class="team-icon-box"><?= iconoir('stethoscope', '', 24) ?></div>
                     <div class="team-info">
                         <h4>پزشکان طب تسکینی و انکولوژی</h4>
                         <p>ارزیابی بالینی جامع، پروتکل‌های تسکین درد، کنترل علائم گوارشی و تنفسی، و نظارت بر سیر بیماری.</p>
@@ -926,7 +929,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">💉</div>
+                    <div class="team-icon-box"><?= iconoir('healthcare', '', 24) ?></div>
                     <div class="team-info">
                         <h4>پرستاران بالینی و مراقبت در منزل</h4>
                         <p>مراقبت تخصصی از زخم و استومی، کنترل علائم حیاتی، پورت‌گذاری، شیمی‌درمانی حمایتی و آموزش مراقبت به خانواده.</p>
@@ -934,7 +937,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🧠</div>
+                    <div class="team-icon-box"><?= iconoir('brain', '', 24) ?></div>
                     <div class="team-info">
                         <h4>روانشناسان سلامت و مشاوره</h4>
                         <p>روان‌درمانی حمایتی، مداخلات مدیریت اضطراب و افسردگی بیماری، مشاوره سوگ و جلسات حمایتی خانوادگی.</p>
@@ -942,7 +945,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🤝</div>
+                    <div class="team-icon-box"><?= iconoir('handshake', '', 24) ?></div>
                     <div class="team-info">
                         <h4>مددکاران اجتماعی بالینی</h4>
                         <p>ارزیابی نیازهای اقتصادی و معیشتی، پیگیری امور بیمه و درمان، و اتصال بیمار به زنجیره خدمات خیریه.</p>
@@ -950,7 +953,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-info-box team-icon-box">🥗</div>
+                    <div class="team-info-box team-icon-box"><?= iconoir('apple', '', 24) ?></div>
                     <div class="team-info">
                         <h4>متخصصان تغذیه و رژیم‌درمانی</h4>
                         <p>تنظیم رژیم‌های اختصاصی در دوران درمان، مدیریت بی‌اشتهایی و کاشکسی، و تغذیه بالینی انترال/پارنترال.</p>
@@ -958,7 +961,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🏃‍♂️</div>
+                    <div class="team-icon-box"><?= iconoir('activity', '', 24) ?></div>
                     <div class="team-info">
                         <h4>فیزیوتراپی و مدیریت لنف‌ادم</h4>
                         <p>بازتوانی حرکتی، ماساژ تخصصی تخلیه لنفاوی (CDT)، بانداژ فشاری و پیشگیری از ناتوانی‌های اسکلتی عضلانی.</p>
@@ -966,7 +969,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🧬</div>
+                    <div class="team-icon-box"><?= iconoir('dna', '', 24) ?></div>
                     <div class="team-info">
                         <h4>مشاوره ژنتیک و غربالگری</h4>
                         <p>بررسی سندروم‌های توارثی سرطان، ارزیابی شجره‌نامه ژنتیکی و راهنمایی آزمایش‌های تشخیصی زودهنگام خانواده.</p>
@@ -974,7 +977,7 @@
                 </div>
 
                 <div class="team-pill-card">
-                    <div class="team-icon-box">🕊️</div>
+                    <div class="team-icon-box"><?= iconoir('heart', '', 24) ?></div>
                     <div class="team-info">
                         <h4>مشاوران مراقبت معنوی</h4>
                         <p>پاسخ به چالش‌های وجودی، بازیابی آرامش قلبی، امیدبخشی و تقویت تاب‌آوری معنوی بیمار و همراهان.</p>
@@ -1010,21 +1013,21 @@
 
                     <div class="resume-features-grid">
                         <div class="resume-feature-card">
-                            <span class="resume-feature-icon">🎓</span>
+                            <span class="resume-feature-icon"><?= iconoir('graduation-cap', '', 22) ?></span>
                             <div class="resume-feature-text">
                                 <strong>سوابق علمی و دانشگاهی</strong>
                                 <small>مدارک تخصصی و فلوشیپ‌ها</small>
                             </div>
                         </div>
                         <div class="resume-feature-card">
-                            <span class="resume-feature-icon">🏥</span>
+                            <span class="resume-feature-icon"><?= iconoir('hospital', '', 22) ?></span>
                             <div class="resume-feature-text">
                                 <strong>شعب و دپارتمان‌های خدمت</strong>
                                 <small>درمانگاه‌ها و مراقبت در منزل</small>
                             </div>
                         </div>
                         <div class="resume-feature-card">
-                            <span class="resume-feature-icon">🩺</span>
+                            <span class="resume-feature-icon"><?= iconoir('stethoscope', '', 22) ?></span>
                             <div class="resume-feature-text">
                                 <strong>حوزه‌های تخصصی و بالینی</strong>
                                 <small>طب تسکینی، درد و انکولوژی</small>
@@ -1055,9 +1058,9 @@
                     <div class="resume-preview-widget">
                         <div class="rpw-top">
                             <div class="rpw-avatars">
-                                <div class="rpw-avatar rpw-av1" title="پزشک متخصص">🩺</div>
-                                <div class="rpw-avatar rpw-av2" title="پرستار بالینی">💉</div>
-                                <div class="rpw-avatar rpw-av3" title="روانشناس سلامت">🧠</div>
+                                <div class="rpw-avatar rpw-av1" title="پزشک متخصص"><?= iconoir('stethoscope', '', 18) ?></div>
+                                <div class="rpw-avatar rpw-av2" title="پرستار بالینی"><?= iconoir('healthcare', '', 18) ?></div>
+                                <div class="rpw-avatar rpw-av3" title="روانشناس سلامت"><?= iconoir('brain', '', 18) ?></div>
                                 <div class="rpw-avatar rpw-av4">+</div>
                             </div>
                             <div class="rpw-stat-pill">

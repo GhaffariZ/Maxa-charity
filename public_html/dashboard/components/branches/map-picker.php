@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/icons.php';
 /* ============================================================================
  *  کامپوننت انتخابگر موقعیت شعبه روی نقشه ایران (Draggable Branch Map Picker)
  * ----------------------------------------------------------------------------
@@ -167,7 +168,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
   <div class="map-picker-foot">
     <div class="mp-guide-tips">
-      <span class="mp-tip-icon">💡</span>
+      <span class="mp-tip-icon"><?= iconoir('light-bulb', '', 18) ?></span>
       <span>روی نقشه کلیک کنید یا نشانگر قرمز را با ماوس/لمس گرفته و به شهر یا استان مورد نظر بکشید. مختصات به صورت خودکار محاسبه و ذخیره می‌شود.</span>
     </div>
   </div>

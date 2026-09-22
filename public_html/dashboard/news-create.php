@@ -1898,7 +1898,7 @@ figcaption.img-caption,
                     <div class="publish-date-row">
                         <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
                         <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
-                        <button type="button" class="btn-insert" onclick="openDatePicker()">📅 انتخاب</button>
+                        <button type="button" class="btn-insert" onclick="openDatePicker()"><?= iconoir('calendar', '', 16) ?> انتخاب</button>
                         <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
                     </div>
                 </div>
@@ -2640,7 +2640,7 @@ function replaceSelectedImage() {
     input.onchange = async () => {
         const file = input.files[0];
         if (!file) return;
-        showStatus("⏳ در حال بارگذاری تصویر جدید...", true);
+        showStatus("در حال بارگذاری تصویر جدید...", true);
         const fd = new FormData();
         fd.append("image", file);
         try {
@@ -2648,11 +2648,11 @@ function replaceSelectedImage() {
             const data = await res.json();
             if (data.url && activeSelectedImg) {
                 activeSelectedImg.src = data.url;
-                showStatus("✅ تصویر جایگزین شد.", true);
+                showStatus("تصویر جایگزین شد.", true);
                 setTimeout(updateFloatingToolbarPosition, 100);
             }
         } catch(err) {
-            showStatus("❌ خطا در آپلود تصویر جایگزین", false);
+            showStatus("خطا در آپلود تصویر جایگزین", false);
         }
     };
     input.click();
@@ -2856,7 +2856,7 @@ function applyImageSettingsModal() {
 
     closeImageSettings();
     selectEditorImage(activeSelectedImg);
-    showStatus("✅ تنظیمات تصویر با موفقیت ذخیره شد.", true);
+    showStatus("تنظیمات تصویر با موفقیت ذخیره شد.", true);
 }
 
 /* =================================================================
@@ -2900,7 +2900,7 @@ editor.addEventListener("drop", function(e) {
 });
 
 async function uploadAndInsertInlineFile(file) {
-    showStatus("⏳ در حال آپلود تصویر در متن...", true);
+    showStatus("در حال آپلود تصویر در متن...", true);
     const fd = new FormData();
     fd.append("image", file);
     try {
@@ -2908,10 +2908,10 @@ async function uploadAndInsertInlineFile(file) {
         const data = await res.json();
         if (data.url) {
             insertSingleImage(data.url);
-            showStatus("✅ تصویر در متن درج شد.", true);
+            showStatus("تصویر در متن درج شد.", true);
         }
     } catch (err) {
-        showStatus("❌ خطا در آپلود تصویر", false);
+        showStatus("خطا در آپلود تصویر", false);
     }
 }
 
@@ -2924,7 +2924,7 @@ function uploadSingleImage(){
         const file = input.files[0];
         if (!file) return;
 
-        showStatus("⏳ در حال آپلود تصویر...", true);
+        showStatus("در حال آپلود تصویر...", true);
         const fd = new FormData();
         fd.append("image", file);
 
@@ -2933,10 +2933,10 @@ function uploadSingleImage(){
         .then(d=>{
             if (d.url) {
                 insertSingleImage(d.url);
-                showStatus("✅ تصویر درج شد.", true);
+                showStatus("تصویر درج شد.", true);
             }
         })
-        .catch(() => showStatus("❌ خطا در ارسال تصویر", false));
+        .catch(() => showStatus("خطا در ارسال تصویر", false));
     };
     input.click();
 }
@@ -2990,7 +2990,7 @@ function uploadGalleryInline(){
         const files = Array.from(input.files);
         if (!files.length) return;
 
-        showStatus("⏳ در حال آپلود گالری تصاویر...", true);
+        showStatus("در حال آپلود گالری تصاویر...", true);
         let urls = [];
 
         Promise.all(files.map(file=>{
@@ -3001,8 +3001,8 @@ function uploadGalleryInline(){
                 .then(d=>{ if (d.url) urls.push(d.url); });
         })).then(()=> {
             insertGalleryRow(urls);
-            showStatus("✅ گالری تصاویر درج شد.", true);
-        }).catch(() => showStatus("❌ خطا در آپلود گالری", false));
+            showStatus("گالری تصاویر درج شد.", true);
+        }).catch(() => showStatus("خطا در آپلود گالری", false));
     };
     input.click();
 }
@@ -3620,7 +3620,7 @@ async function saveNews() {
         // تغییر وضعیت دکمه به لودینگ
         saveBtn.disabled = true;
         saveBtn.innerHTML = 'در حال ذخیره...';
-        showStatus("⏳ در حال آماده‌سازی اطلاعات...", true);
+        showStatus("در حال آماده‌سازی اطلاعات...", true);
 
         const fd = new FormData();
         fd.append("id", "<?= $id ?>");
@@ -3641,7 +3641,7 @@ async function saveNews() {
 
         let featuredFile = document.getElementById("featured_image").files[0];
         if (featuredFile) {
-            showStatus("🗜️ در حال بهینه‌سازی تصویر...", true);
+            showStatus("در حال بهینه‌سازی تصویر...", true);
             featuredFile = await compressFeaturedImage(featuredFile);
             fd.append("featured_image", featuredFile);
         }
@@ -3653,7 +3653,7 @@ async function saveNews() {
             xhr.setRequestHeader("Accept", "application/json");
 
             if (featuredFile) {
-                showStatus("⏫ در حال آپلود به سرور...", true);
+                showStatus("در حال آپلود به سرور...", true);
                 xhr.upload.onprogress = (e) => {
                     if (e.lengthComputable) {
                         const pct = Math.round((e.loaded / e.total) * 100);
@@ -3677,8 +3677,8 @@ async function saveNews() {
             xhr.send(fd);
         });
 
-        setUploadProgress(100, "✅ با موفقیت ذخیره شد");
-        showStatus(`✅ ${data.message} در حال انتقال...`, true);
+        setUploadProgress(100, "با موفقیت ذخیره شد");
+        showStatus(`${data.message} در حال انتقال...`, true);
         setTimeout(() => {
             window.location.href = "news-list.php";
         }, 1000);
@@ -3686,7 +3686,7 @@ async function saveNews() {
     } catch (err) {
         console.error("Save Error:", err);
         hideUploadProgress();
-        showStatus("❌ خطایی رخ داد: " + err.message, false);
+        showStatus("خطایی رخ داد: " + err.message, false);
     } finally {
         // بازگشت دکمه به حالت عادی در صورت خطا
         saveBtn.disabled = false;

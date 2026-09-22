@@ -125,7 +125,7 @@
     var slug=encodeURIComponent(String(name).trim().replace(/\s+/g,'-'));
     var img=emp.profile_pic
       ? '<img src="'+esc(emp.profile_pic)+'" alt="'+esc(name)+'">'
-      : '<div class="bp-ph">👤</div>';
+      : '<div class="bp-ph"><svg class="iconoir-icon" width="56" height="56" stroke-width="1.3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
     return '<article class="bp-card"><div class="bp-img">'+img+'</div>'
       +'<div class="bp-info"><h3 class="bp-name" title="'+esc(name)+'">'+esc(name)+'</h3>'
       +'<div class="bp-pills">'

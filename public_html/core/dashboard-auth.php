@@ -21,6 +21,8 @@ if (!defined('MAXA_DASH_AUTH')) {
     define('MAXA_DASH_AUTH', 1);
 }
 
+require_once __DIR__ . '/icons.php';
+
 /* ---------- ثابت‌های امنیتی ---------- */
 const DASH_IDLE_TIMEOUT     = 1800;   // ۳۰ دقیقه بیکاری
 const DASH_ABSOLUTE_TIMEOUT = 28800;  // ۸ ساعت سقفِ مطلقِ نشست
