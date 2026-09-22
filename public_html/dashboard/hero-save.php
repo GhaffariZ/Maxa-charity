@@ -5,8 +5,6 @@ dash_require('hero');
 
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . "/../../config/database.php";
-
 /**
  * تبدیل ورودیِ تاریخِ فرم به فرمت دیتابیس.
  * - datetime-local (مثل 2026-06-28T13:51) → 2026-06-28 13:51:00

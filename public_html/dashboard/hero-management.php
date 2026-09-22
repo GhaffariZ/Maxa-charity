@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('hero');
-require_once __DIR__ . "/../../config/database.php";
 
 // ایزولاسیون چندمستأجری: فقط هیروهای شعبه‌ی فعال
 $__branch = dash_active_branch_id();

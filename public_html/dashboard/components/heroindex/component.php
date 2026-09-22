@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../core/icons.php'; ?>
+<?php if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; } ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>

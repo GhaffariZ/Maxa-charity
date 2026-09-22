@@ -3,7 +3,6 @@ require_once __DIR__ . '/_guard.php';
 dash_require('hero');
 // hero-delete.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . "/../../config/database.php";
 
 try {
     csrf_check();
