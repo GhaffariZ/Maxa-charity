@@ -1921,7 +1921,7 @@ figcaption.img-caption,
 
             <!-- تنظیمات -->
             <div class="card settings-card">
-                <?php if ($event_mode): ?><div class="input-group event-news-status"><label class="field-label">وضعیت انتشار</label><select class="input" id="event_status"><option value="draft" <?= ($news_data['status'] ?? 'draft') === 'draft' ? 'selected' : '' ?>>پیش‌نویس</option><option value="published" <?= ($news_data['status'] ?? '') === 'published' ? 'selected' : '' ?>>منتشرشده</option></select></div><?php endif; ?>
+                <?php if ($event_mode): ?><div class="input-group event-news-status"><label class="field-label">وضعیت انتشار</label><select class="input" id="event_status"><option value="published" <?= ($news_data['status'] ?? 'published') === 'published' ? 'selected' : '' ?>>منتشرشده</option><option value="draft" <?= ($news_data['status'] ?? '') === 'draft' ? 'selected' : '' ?>>پیش‌نویس</option></select></div><?php endif; ?>
 
                 <div class="input-group">
                     <label class="field-label">

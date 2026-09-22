@@ -1543,7 +1543,7 @@ body {
                   <label class="hq-field-label">عنوان هیرو<input name="hero_title[]" value="<?= event_h($h['title']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">توضیح<input name="hero_description[]" value="<?= event_h($h['description']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" value="<?= event_h($h['button_label']) ?>" class="hq-input"></label>
-                  <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="<?= event_h($h['link']) ?>" dir="ltr" class="hq-input"></label>
+                  <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="<?= event_h($h['button_link'] ?? $h['link'] ?? '') ?>" dir="ltr" class="hq-input"></label>
                   <label class="hq-field-label">تغییر تصویر<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
                   <input type="hidden" name="hero_existing[]" value="<?= event_h($h['image']) ?>">
                 </div>
@@ -2353,7 +2353,7 @@ function deleteCurrentPdf() {
       const title = data.title || '';
       const desc = data.description || '';
       const btnLabel = data.button_label || '';
-      const link = data.link || '';
+      const link = data.link || data.button_link || '';
       const existing = data.existing || '';
       const imgSrc = data.preview || existing;
       const mediaHtml = imgSrc

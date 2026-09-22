@@ -14,9 +14,15 @@ $slug = trim((string)($_GET['slug'] ?? ''));
 $event = null;
 $heroes = $people = $speakers = $partners = $news = [];
 
-if ($pdo && $slug !== '') {
-    $st = $pdo->prepare("SELECT * FROM events WHERE slug = ? AND status = 'published' LIMIT 1");
-    $st->execute([$slug]);
+if ($pdo && ($slug !== '' || isset($_GET['id']))) {
+    $eventIdParam = (int)($_GET['id'] ?? 0);
+    if ($slug !== '') {
+        $st = $pdo->prepare("SELECT * FROM events WHERE (slug = ? OR id = ?) AND status != 'archived' LIMIT 1");
+        $st->execute([$slug, is_numeric($slug) ? (int)$slug : 0]);
+    } else {
+        $st = $pdo->prepare("SELECT * FROM events WHERE id = ? AND status != 'archived' LIMIT 1");
+        $st->execute([$eventIdParam]);
+    }
     $event = $st->fetch();
 
     if ($event) {
@@ -25,11 +31,38 @@ if ($pdo && $slug !== '') {
             $s->execute([(int)$event['id']]);
             return $s->fetchAll();
         };
-        $heroes = $q('SELECT * FROM event_heroes WHERE event_id = ? AND is_active = 1 ORDER BY sort_order, id');
-        $people = $q('SELECT * FROM event_people WHERE event_id = ? ORDER BY sort_order, id');
-        $speakers = $q('SELECT * FROM event_speakers WHERE event_id = ? ORDER BY sort_order, id');
-        $partners = $q('SELECT * FROM event_partners WHERE event_id = ? ORDER BY sort_order, id');
-        $news = $q("SELECT * FROM event_news WHERE event_id = ? AND status = 'published' ORDER BY published_at DESC, id DESC");
+
+        // 1. Heroes: query with resilience (no strict is_active=1 failure)
+        try {
+            $heroes = $q("SELECT * FROM event_heroes WHERE event_id = ? AND (is_active IS NULL OR is_active != 0) ORDER BY sort_order ASC, id ASC");
+        } catch (Throwable $e) {
+            try {
+                $heroes = $q("SELECT * FROM event_heroes WHERE event_id = ? ORDER BY sort_order ASC, id ASC");
+            } catch (Throwable $e2) {
+                $heroes = [];
+            }
+        }
+        if (empty($heroes)) {
+            try {
+                $heroes = $q("SELECT * FROM event_heroes WHERE event_id = ? ORDER BY sort_order ASC, id ASC");
+            } catch (Throwable $e) {}
+        }
+
+        // 2. Organizers, Speakers, Partners
+        try { $people = $q('SELECT * FROM event_people WHERE event_id = ? ORDER BY sort_order, id'); } catch (Throwable $e) { $people = []; }
+        try { $speakers = $q('SELECT * FROM event_speakers WHERE event_id = ? ORDER BY sort_order, id'); } catch (Throwable $e) { $speakers = []; }
+        try { $partners = $q('SELECT * FROM event_partners WHERE event_id = ? ORDER BY sort_order, id'); } catch (Throwable $e) { $partners = []; }
+
+        // 3. News: fetch all non-archived news (published or freshly created)
+        try {
+            $news = $q("SELECT * FROM event_news WHERE event_id = ? AND status != 'archived' ORDER BY COALESCE(published_at, created_at) DESC, id DESC");
+        } catch (Throwable $e) {
+            try {
+                $news = $q("SELECT * FROM event_news WHERE event_id = ? ORDER BY id DESC");
+            } catch (Throwable $e2) {
+                $news = [];
+            }
+        }
     }
 }
 
@@ -1003,23 +1036,41 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           <div class="hero-slider-track" id="heroSliderTrack">
             <?php if (!empty($heroes)): ?>
               <?php foreach ($heroes as $idx => $h): ?>
-                <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= !empty($h['image']) ? "background-image: url('" . event_h($h['image']) . "');" : "background-color: #0d7a87;" ?>">
+                <?php
+                  $hBtnLabel = trim((string)($h['button_label'] ?? ''));
+                  $hBtnLink = trim((string)($h['button_link'] ?? ($h['link'] ?? '')));
+                  $hBgStyle = !empty($h['image']) 
+                    ? "background-image: url('" . event_h($h['image']) . "'); background-size: cover; background-position: center;" 
+                    : "background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);";
+                ?>
+                <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= $hBgStyle ?>">
                   <div class="hero-slide-overlay"></div>
                   <div class="hero-slide-body">
-                    <span class="hero-slide-badge">بخش ویژه رویداد</span>
+                    <span class="hero-slide-badge">بخش ویژه رویداد <?= count($heroes) > 1 ? '(' . ($idx + 1) . ' از ' . count($heroes) . ')' : '' ?></span>
                     <h3 class="hero-slide-title"><?= event_h($h['title']) ?></h3>
-                    <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
-                    <?php if (!empty($h['button_label']) && !empty($h['button_link'])): ?>
-                      <a href="<?= event_h($h['button_link']) ?>" target="_blank" class="hero-slide-link">
-                        <span><?= event_h($h['button_label']) ?></span>
+                    <?php if (!empty($h['description'])): ?>
+                      <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
+                    <?php endif; ?>
+                    <?php if ($hBtnLabel !== ''): ?>
+                      <a href="<?= event_h($hBtnLink ?: '#sec-about') ?>" <?= ($hBtnLink !== '' && str_starts_with($hBtnLink, 'http')) ? 'target="_blank" rel="noopener"' : '' ?> class="hero-slide-link">
+                        <span><?= event_h($hBtnLabel) ?></span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                       </a>
                     <?php endif; ?>
                   </div>
                 </div>
               <?php endforeach; ?>
+            <?php elseif (!empty($event['poster'])): ?>
+              <div class="hero-slide is-active" style="background-image: url('<?= event_h($event['poster']) ?>'); background-size: cover; background-position: center;">
+                <div class="hero-slide-overlay"></div>
+                <div class="hero-slide-body">
+                  <span class="hero-slide-badge">پوستر رسمی همایش</span>
+                  <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
+                  <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
+                </div>
+              </div>
             <?php else: ?>
-              <div class="hero-slide is-active" style="background-color: #0d7a87;">
+              <div class="hero-slide is-active" style="background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);">
                 <div class="hero-slide-overlay"></div>
                 <div class="hero-slide-body">
                   <span class="hero-slide-badge">رویداد ملی</span>
@@ -1222,20 +1273,22 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   <!-- ==========================================================================
        6. SECTION 5: اخبار همایش (در پایان صفحه بر اساس دستور کاربر)
        ========================================================================== -->
-  <?php if (!empty($news)): ?>
-    <section class="event-section event-section-white" id="sec-news">
-      <div class="event-container">
-        
-        <div class="section-header">
-          <span class="section-kicker">رویدادنامه</span>
-          <h2 class="section-title">اخبار همایش</h2>
-          <p class="section-subtitle">آخرین اخبار، اطلاعیه‌ها و جزئیات برنامه‌های همایش</p>
-        </div>
+  <section class="event-section event-section-white" id="sec-news">
+    <div class="event-container">
+      
+      <div class="section-header">
+        <span class="section-kicker">رویدادنامه</span>
+        <h2 class="section-title">اخبار همایش</h2>
+        <p class="section-subtitle">آخرین اخبار، اطلاعیه‌ها و جزئیات برنامه‌های همایش</p>
+      </div>
 
+      <?php if (!empty($news)): ?>
         <div class="news-grid">
           <?php foreach ($news as $n): ?>
             <?php
-              $pubDate = !empty($n['published_at']) ? event_date_label(substr((string)$n['published_at'], 0, 10)) : 'تازه';
+              $pubDate = !empty($n['published_at']) 
+                ? event_date_label(substr((string)$n['published_at'], 0, 10)) 
+                : (!empty($n['created_at']) ? event_date_label(substr((string)$n['created_at'], 0, 10)) : 'تازه');
             ?>
             <article class="news-card">
               <div class="news-card-media">
@@ -1257,10 +1310,14 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
             </article>
           <?php endforeach; ?>
         </div>
+      <?php else: ?>
+        <div style="padding: 40px 24px; text-align: center; background: var(--event-bg-light); border: 1px dashed var(--event-border); border-radius: var(--event-radius); color: var(--event-text-muted); font-size: 14px;">
+          <p style="margin: 0; font-weight: 600;">در حال حاضر خبر جدیدی برای این رویداد منتشر نشده است. به زودی اطلاعیه‌های مربوط به این همایش در این بخش قرار می‌گیرد.</p>
+        </div>
+      <?php endif; ?>
 
-      </div>
-    </section>
-  <?php endif; ?>
+    </div>
+  </section>
 
   <!-- Scripts: Countdown Timer & Interactive Hero Slider -->
   <script>

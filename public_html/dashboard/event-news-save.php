@@ -59,7 +59,7 @@ try {
     }
 
     $slug = event_slug($title, $id);
-    $status = in_array($_POST['status'] ?? 'draft', ['draft', 'published'], true) ? $_POST['status'] : 'draft';
+    $status = in_array($_POST['status'] ?? 'published', ['draft', 'published'], true) ? $_POST['status'] : 'published';
 
     // مدیریت تصویر شاخص
     $image = null;
