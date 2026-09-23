@@ -153,14 +153,42 @@ final class CampaignServiceClient
     }
 
     /** @return array<string,mixed> */
-    public function startPayment(string $campaignId, string $mobile, string $fullName, int $amountIrr, string $idempotencyKey): array
+    public function startPayment(
+        string $campaignId,
+        string $mobile,
+        string $fullName,
+        int $amountIrr,
+        string $idempotencyKey,
+        ?string $callbackUrl = null
+    ): array
     {
+        $payload = ['mobile' => $mobile, 'full_name' => $fullName, 'amount' => $amountIrr];
+        if ($callbackUrl !== null && $callbackUrl !== '') {
+            $payload['callback_url'] = $callbackUrl;
+        }
         return $this->entity($this->request(
             'POST',
             '/public/v1/campaigns/' . rawurlencode($campaignId) . '/payments',
-            ['mobile' => $mobile, 'full_name' => $fullName, 'amount' => $amountIrr],
+            $payload,
             false,
             ['Idempotency-Key: ' . $idempotencyKey]
+        ));
+    }
+
+    /** @param array<string,string> $callback */
+    public function forwardPaymentCallback(string $gateway, array $callback): array
+    {
+        $gateway = strtolower(trim($gateway));
+        if (!preg_match('/^[a-z0-9_-]{2,30}$/', $gateway)) {
+            throw new CampaignServiceException('نام درگاه پرداخت نامعتبر است.');
+        }
+        return $this->entity($this->request(
+            'POST',
+            '/callbacks/v1/payments/' . rawurlencode($gateway),
+            $callback,
+            false,
+            [],
+            20
         ));
     }
 

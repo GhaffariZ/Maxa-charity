@@ -85,7 +85,40 @@ try {
         payment_json(['status' => 'error', 'message' => 'شناسه یکتای پرداخت نامعتبر است.'], 400);
     }
 
-    $payment = $client->startPayment($campaignId, $mobile, $fullName, $amountRial, $idempotencyKey);
+    $requestHost = strtolower(trim((string)($_SERVER['HTTP_HOST'] ?? '')));
+    if (!preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::443)?$/', $requestHost)) {
+        payment_json(['status' => 'error', 'message' => 'دامنه درخواست پرداخت معتبر نیست.'], 400);
+    }
+    $callbackUrl = 'https://' . $requestHost . '/dashboard/campaign-payment-callback.php';
+    $callbackParts = parse_url($callbackUrl);
+    if (
+        !is_array($callbackParts)
+        || ($callbackParts['scheme'] ?? '') !== 'https'
+        || empty($callbackParts['host'])
+        || !empty($callbackParts['port']) && (int)$callbackParts['port'] !== 443
+        || isset($callbackParts['user'])
+        || isset($callbackParts['pass'])
+        || isset($callbackParts['fragment'])
+    ) {
+        payment_json(['status' => 'error', 'message' => 'آدرس بازگشت پرداخت مکسا معتبر نیست.'], 500);
+    }
+
+    $payment = $client->startPayment(
+        $campaignId,
+        $mobile,
+        $fullName,
+        $amountRial,
+        $idempotencyKey,
+        $callbackUrl
+    );
+    if (
+        strtoupper((string)($payment['gateway'] ?? '')) === 'VANDAR'
+        && strtoupper((string)($payment['redirect_method'] ?? 'GET')) === 'GET'
+        && !empty($payment['redirect_url'])
+    ) {
+        $encodedTarget = rtrim(strtr(base64_encode((string)$payment['redirect_url']), '+/', '-_'), '=');
+        $payment['redirect_url'] = '/dashboard/campaign-payment-redirect.php?target=' . rawurlencode($encodedTarget);
+    }
     payment_json(['status' => 'success', 'data' => $payment], 201);
 } catch (CampaignServiceException $e) {
     $status = $e->status >= 400 && $e->status < 500 ? $e->status : 502;
