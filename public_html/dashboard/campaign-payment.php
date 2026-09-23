@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
+header('X-Macsa-Payment-Version: 2026-09-23.2');
 ini_set('display_errors', '0');
 
 require_once __DIR__ . '/../core/campaign-service.php';
@@ -85,22 +86,9 @@ try {
         payment_json(['status' => 'error', 'message' => 'شناسه یکتای پرداخت نامعتبر است.'], 400);
     }
 
-    $requestHost = strtolower(trim((string)($_SERVER['HTTP_HOST'] ?? '')));
-    if (!preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::443)?$/', $requestHost)) {
+    $callbackUrl = campaign_service_payment_callback_url((string)($_SERVER['HTTP_HOST'] ?? ''));
+    if ($callbackUrl === null) {
         payment_json(['status' => 'error', 'message' => 'دامنه درخواست پرداخت معتبر نیست.'], 400);
-    }
-    $callbackUrl = 'https://' . $requestHost . '/dashboard/campaign-payment-callback.php';
-    $callbackParts = parse_url($callbackUrl);
-    if (
-        !is_array($callbackParts)
-        || ($callbackParts['scheme'] ?? '') !== 'https'
-        || empty($callbackParts['host'])
-        || !empty($callbackParts['port']) && (int)$callbackParts['port'] !== 443
-        || isset($callbackParts['user'])
-        || isset($callbackParts['pass'])
-        || isset($callbackParts['fragment'])
-    ) {
-        payment_json(['status' => 'error', 'message' => 'آدرس بازگشت پرداخت مکسا معتبر نیست.'], 500);
     }
 
     $payment = $client->startPayment(

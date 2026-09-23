@@ -188,7 +188,8 @@ final class CampaignServiceClient
             $callback,
             false,
             [],
-            20
+            20,
+            false
         ));
     }
 
@@ -221,11 +222,19 @@ final class CampaignServiceClient
     }
 
     /** @return array<string,mixed> */
-    private function request(string $method, string $path, ?array $payload = null, bool $management = false, array $headers = [], int $timeoutSeconds = 30): array
+    private function request(
+        string $method,
+        string $path,
+        ?array $payload = null,
+        bool $management = false,
+        array $headers = [],
+        int $timeoutSeconds = 30,
+        bool $authenticatePublic = true
+    ): array
     {
         if ($management) {
             $headers[] = 'Authorization: Bearer ' . $this->managementToken();
-        } else {
+        } elseif ($authenticatePublic) {
             if ($this->publicKey === '') {
                 throw new CampaignServiceException('کلید عمومی کمپین‌ساز برای مرکز «' . $this->centerSlug . '» تنظیم نشده است.');
             }
@@ -347,6 +356,18 @@ function campaign_service_center_prefix(string $slug): string
 function campaign_service_is_uuid(string $value): bool
 {
     return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
+}
+
+function campaign_service_payment_callback_url(string $requestHost): ?string
+{
+    $host = strtolower(trim($requestHost));
+    if (!preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::443)?$/', $host)) {
+        return null;
+    }
+    $host = preg_replace('/:443$/', '', $host);
+    return is_string($host)
+        ? 'https://' . $host . '/dashboard/campaign-payment-callback.php'
+        : null;
 }
 
 function campaign_service_env(string $key, string $default = ''): string
