@@ -175,6 +175,27 @@ final class CampaignServiceClient
         ));
     }
 
+    /** @return array<string,mixed> Financial campaigns and successful system receipts, in IRR. */
+    public function financialReport(?string $from = null, ?string $to = null): array
+    {
+        $query = ['acquisition_type' => 'SYSTEM'];
+        if ($from !== null) $query['from'] = $from;
+        if ($to !== null) $query['to'] = $to;
+        return $this->entity($this->request('GET', '/api/v1/financial-reports?' . http_build_query($query), null, true));
+    }
+
+    /** @return array<string,mixed> */
+    public function campaignPaymentReport(string $campaignId, ?string $from = null, ?string $to = null): array
+    {
+        if (!campaign_service_is_uuid($campaignId)) {
+            throw new CampaignServiceException('شناسه کمپین نامعتبر است.');
+        }
+        $query = ['payment_status' => 'SUCCEEDED'];
+        if ($from !== null) $query['from'] = $from;
+        if ($to !== null) $query['to'] = $to;
+        return $this->entity($this->request('GET', '/api/v1/financial-reports/campaigns/' . rawurlencode($campaignId) . '/payments?' . http_build_query($query), null, true));
+    }
+
     /** @param array<string,string> $callback */
     public function forwardPaymentCallback(string $gateway, array $callback): array
     {
