@@ -151,7 +151,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     --event-teal-dark: #0A5C66;
     --event-primary: #0D7A87;
     --event-primary-light: #F0FDFA;
-    --event-amber: #D97706;
+    --event-amber: #F5A623;
+    --event-amber-dark: #D97706;
+    --event-amber-hover: #E0921B;
     --event-amber-light: #FFFBEB;
     --event-surface: #FFFFFF;
     --event-bg-light: #F8FAFB;
@@ -225,35 +227,6 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     gap: 20px;
   }
 
-  .event-hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
-    background: rgba(255, 251, 235, 0.16);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-    color: #FDE68A;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    align-self: flex-start;
-    backdrop-filter: blur(8px);
-  }
-
-  .badge-pulse-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #F59E0B;
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-    animation: badgePulse 2s infinite;
-  }
-  @keyframes badgePulse {
-    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
-    70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-  }
-
   .event-hero-title {
     font-size: clamp(26px, 3.6vw, 42px);
     font-weight: 900;
@@ -273,39 +246,55 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
 
   /* Event Hero Meta Chips */
   .event-hero-chips {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    margin: 4px 0 2px;
   }
   .event-hero-chip {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    padding: 7px 14px;
     font-size: 13px;
+    font-weight: 600;
     color: #FFFFFF;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .event-hero-chip:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
   }
   .event-hero-chip svg {
     flex-shrink: 0;
-    opacity: 0.9;
+    opacity: 0.95;
+    color: #A7F3D0;
   }
   .event-hero-chip-status {
-    background: rgba(217, 119, 6, 0.25);
-    border-color: rgba(245, 158, 11, 0.5);
-    color: #FDE68A;
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: #D1FAE5;
     font-weight: 700;
   }
   .chip-pulse-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #10B981;
-    box-shadow: 0 0 6px #10B981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: pulseDot 2s infinite;
+  }
+  @keyframes pulseDot {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
   }
 
   /* Countdown Timer */
@@ -350,72 +339,127 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     margin-top: 4px;
   }
   .btn-register-hero {
-    background: var(--event-amber);
+    background: linear-gradient(135deg, #F5A623 0%, #E0921B 100%);
     color: #FFFFFF;
-    padding: 14px 28px;
+    padding: 13px 26px;
     border-radius: 12px;
     font-size: 15px;
     font-weight: 800;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.38);
-    transition: transform 0.2s ease, background 0.2s ease;
+    box-shadow: 0 8px 24px rgba(245, 166, 35, 0.38);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
+    text-decoration: none;
   }
   .btn-register-hero:hover {
-    background: #B45309;
     transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(245, 166, 35, 0.48);
   }
   .btn-register-hero:active {
     transform: scale(0.98);
   }
   .btn-pdf-hero {
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.12);
     color: #FFFFFF;
-    padding: 13px 22px;
+    padding: 12px 22px;
     border-radius: 12px;
     font-size: 14px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transition: all 0.2s ease;
     cursor: pointer;
+    text-decoration: none;
   }
   .btn-pdf-hero:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.24);
     border-color: #FFFFFF;
     transform: translateY(-2px);
   }
 
-  /* Dedicated Hero Showcase Carousel */
-  .hero-showcase-wrapper {
+  /* Dedicated Hero Showcase Carousel & Animation Selector Toolbar */
+  .hero-showcase-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 100%;
     max-width: 560px;
+    margin-right: auto;
+  }
+  .hero-anim-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(4, 46, 52, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 4px 8px 4px 14px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    gap: 8px;
+  }
+  .anim-toolbar-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #A7F3D0;
+    white-space: nowrap;
+  }
+  .anim-toolbar-pills {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .anim-pill {
+    background: transparent;
+    border: none;
+    color: #E2E8F0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .anim-pill:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+  }
+  .anim-pill.is-active {
+    background: #F5A623;
+    color: #042E34;
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.45);
+  }
+
+  .hero-showcase-wrapper {
+    width: 100%;
     height: 420px;
     background: #042e34;
     border: 2px solid var(--event-primary);
     border-radius: var(--event-radius-lg);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
     user-select: none;
   }
   .hero-slider-track {
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
   }
   .hero-slide {
     position: absolute;
     inset: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    transform: scale(0.98);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -423,15 +467,10 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     background-size: cover;
     background-position: center;
   }
-  .hero-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-  }
   .hero-slide-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(4, 46, 52, 0.2) 0%, rgba(4, 46, 52, 0.88) 70%, #042e34 100%);
+    background: linear-gradient(180deg, rgba(4, 46, 52, 0.15) 0%, rgba(4, 46, 52, 0.85) 65%, #042e34 100%);
     z-index: 1;
   }
   .hero-slide-body {
@@ -472,16 +511,123 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     align-items: center;
     gap: 6px;
     padding: 8px 18px;
-    background: var(--event-amber);
+    background: linear-gradient(135deg, #F5A623 0%, #E0921B 100%);
     color: #FFFFFF;
     border-radius: 8px;
     font-size: 12.5px;
-    font-weight: 700;
+    font-weight: 800;
     margin-top: 4px;
-    transition: background 0.2s;
+    box-shadow: 0 4px 14px rgba(245, 166, 35, 0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
   .hero-slide-link:hover {
-    background: #B45309;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(245, 166, 35, 0.45);
+  }
+
+  /* -------------------------------------------------------------
+     ANIMATION MODEL 1: Cinematic 3D Parallax & Depth Drift
+     ------------------------------------------------------------- */
+  .hero-showcase-wrapper.anim-cinematic {
+    perspective: 1200px;
+  }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide {
+    transform-style: preserve-3d;
+    opacity: 0;
+    visibility: hidden;
+    filter: blur(4px);
+    transform: translate3d(0, 0, -90px) rotateY(-8deg) scale(0.93);
+    transition: opacity 0.75s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                filter 0.75s ease;
+  }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+    z-index: 2;
+  }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide-body > * {
+    transform: translateY(22px) translateZ(40px);
+    opacity: 0;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease;
+  }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active .hero-slide-body > * {
+    transform: translateY(0) translateZ(0);
+    opacity: 1;
+  }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active .hero-slide-badge { transition-delay: 0.15s; }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active .hero-slide-title { transition-delay: 0.25s; }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active .hero-slide-desc { transition-delay: 0.35s; }
+  .hero-showcase-wrapper.anim-cinematic .hero-slide.is-active .hero-slide-link { transition-delay: 0.45s; }
+
+  /* -------------------------------------------------------------
+     ANIMATION MODEL 2: Liquid Curtain & Dynamic Lens Zoom
+     ------------------------------------------------------------- */
+  .hero-showcase-wrapper.anim-curtain .hero-slide {
+    opacity: 1;
+    visibility: visible;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    transform: scale(1.1);
+    transition: clip-path 0.9s cubic-bezier(0.65, 0, 0.35, 1), 
+                transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+  }
+  .hero-showcase-wrapper.anim-curtain .hero-slide.is-active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    z-index: 2;
+  }
+  .hero-showcase-wrapper.anim-curtain .hero-slide-body {
+    transform: translateX(-24px);
+    opacity: 0;
+    transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s, opacity 0.75s ease 0.25s;
+  }
+  .hero-showcase-wrapper.anim-curtain .hero-slide.is-active .hero-slide-body {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  /* -------------------------------------------------------------
+     ANIMATION MODEL 3: Elastic Tactile Card Stack & Toss
+     ------------------------------------------------------------- */
+  .hero-showcase-wrapper.anim-cardstack {
+    overflow: visible;
+  }
+  .hero-showcase-wrapper.anim-cardstack::before {
+    content: '';
+    position: absolute;
+    inset: -8px -8px -14px -8px;
+    background: rgba(10, 92, 102, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: calc(var(--event-radius-lg) + 6px);
+    transform: rotate(-1.5deg) scale(0.975);
+    z-index: 0;
+    pointer-events: none;
+    transition: transform 0.4s ease;
+  }
+  .hero-showcase-wrapper.anim-cardstack .hero-slider-track {
+    border-radius: var(--event-radius-lg);
+    background: #042e34;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-showcase-wrapper.anim-cardstack .hero-slide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(110%) rotate(5deg) scale(0.92);
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+  }
+  .hero-showcase-wrapper.anim-cardstack .hero-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) rotate(0deg) scale(1);
+    z-index: 2;
+  }
+  .hero-showcase-wrapper.anim-cardstack .hero-slide.is-prev {
+    opacity: 0;
+    transform: translateX(-110%) rotate(-5deg) scale(0.92);
   }
 
   .hero-slider-nav {
@@ -573,43 +719,24 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   }
 
   /* ============================================================================
-     SECTION 1: معرفی و محورهای همایش (About & Schedule PDF)
+     SECTION 1: معرفی و محورهای همایش (About Trio Layout)
+     Layout: Right = Poster | Center = Title & Copy | Left = 2 Action Spotlight Cards
      ============================================================================ */
-  .about-main-grid {
+  .about-trio-layout {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 40px;
-    align-items: start;
+    grid-template-columns: 320px minmax(0, 1.25fr) 340px;
+    gap: 30px;
+    align-items: stretch;
   }
-  .about-text-column {
+
+  /* 1. Right Column: Poster Card */
+  .about-poster-col {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-  }
-  .about-copy {
-    font-size: 15.5px;
-    line-height: 1.85;
-    color: var(--event-text-main);
-    white-space: pre-line;
-    background: #FFFFFF;
-    border: 1px solid var(--event-border);
-    border-radius: var(--event-radius);
-    padding: 28px;
-    box-shadow: var(--event-shadow);
-  }
-  .about-register-bar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .about-side-column {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
   }
   .event-poster-card {
-    background: var(--event-primary-light);
-    border: 2px solid var(--event-primary);
+    background: #FFFFFF;
+    border: 1.5px solid rgba(13, 122, 135, 0.22);
     border-radius: var(--event-radius);
     padding: 16px;
     display: flex;
@@ -617,116 +744,322 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     align-items: center;
     gap: 12px;
     text-align: center;
-    box-shadow: var(--event-shadow);
+    box-shadow: 0 8px 24px rgba(10, 92, 102, 0.07);
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .event-poster-card:hover {
+    box-shadow: 0 14px 32px rgba(10, 92, 102, 0.12);
+  }
+  .poster-card-top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--event-primary-light);
+    color: var(--event-teal-dark);
+    font-size: 12px;
+    font-weight: 800;
+    align-self: center;
   }
   .event-poster-media {
     position: relative;
     width: 100%;
+    flex: 1;
+    min-height: 380px;
     cursor: pointer;
     border-radius: 12px;
     overflow: hidden;
+    background: #F8FAFB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .event-poster-img {
     width: 100%;
-    max-height: 440px;
+    height: 100%;
+    max-height: 480px;
     object-fit: contain;
     border-radius: 12px;
-    background: #FFFFFF;
     display: block;
-    transition: transform 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .event-poster-media:hover .event-poster-img {
-    transform: scale(1.02);
+    transform: scale(1.03);
   }
   .poster-zoom-badge {
     position: absolute;
     bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(10, 92, 102, 0.9);
+    background: rgba(10, 92, 102, 0.92);
     color: #FFFFFF;
     border-radius: 999px;
-    padding: 5px 14px;
+    padding: 6px 14px;
     font-size: 11.5px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     pointer-events: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+  .event-poster-media:hover .poster-zoom-badge {
+    background: #0A5C66;
   }
   .poster-empty-state {
     width: 100%;
-    min-height: 280px;
+    min-height: 360px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--event-teal-dark);
     font-weight: 700;
     font-size: 14px;
     border: 2px dashed rgba(13, 122, 135, 0.35);
     border-radius: 12px;
+    background: var(--event-primary-light);
   }
 
-  /* Schedule PDF Card */
-  .schedule-pdf-card {
+  /* 2. Middle Column: Title & Description */
+  .about-content-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .about-content-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .about-content-title {
+    font-size: clamp(22px, 2.2vw, 30px);
+    font-weight: 900;
+    color: var(--event-teal-dark);
+    line-height: 1.35;
+    margin: 0;
+  }
+  .about-content-subtitle {
+    font-size: 14.5px;
+    color: var(--event-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .about-copy-box {
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: var(--event-text-main);
+    white-space: pre-line;
     background: #FFFFFF;
     border: 1px solid var(--event-border);
     border-radius: var(--event-radius);
-    padding: 24px;
+    padding: 28px;
+    box-shadow: var(--event-shadow);
+    flex: 1;
+  }
+
+  /* 3. Left Column: 2 Distinct Spotlight Action Cards */
+  .about-actions-col {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    box-shadow: var(--event-shadow);
+    gap: 20px;
   }
-  .schedule-pdf-header {
+
+  /* Base Spotlight Card */
+  .action-card {
+    background: #FFFFFF;
+    border-radius: var(--event-radius);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 6px 20px rgba(10, 92, 102, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .action-card:hover {
+    transform: translateY(-3px);
+  }
+  .action-card-badge-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: space-between;
+    gap: 8px;
   }
-  .pdf-icon-badge {
-    width: 48px;
-    height: 48px;
+  .badge-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  .badge-pdf-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: #E6F4F5;
+    color: var(--event-teal-dark);
+  }
+  .action-card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+  }
+  .action-card-tag.action-tag-teal {
+    color: var(--event-primary);
+  }
+  .action-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .action-icon-wrap {
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
-    background: #FEE2E2;
-    border: 1px solid #FECACA;
-    color: #DC2626;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
-    font-size: 13px;
     flex-shrink: 0;
   }
-  .schedule-pdf-info h3 {
+  .action-icon-amber {
+    background: #FFFBEB;
+    color: #F5A623;
+    border: 1px solid #FDE68A;
+  }
+  .action-icon-teal {
+    background: var(--event-primary-light);
+    color: var(--event-primary);
+    border: 1px solid #CCFBF1;
+  }
+  .action-card-title {
     font-size: 16px;
     font-weight: 800;
     color: var(--event-teal-dark);
-    margin: 0 0 4px;
+    margin: 0 0 2px;
   }
-  .schedule-pdf-info p {
+  .action-card-desc {
     font-size: 12px;
     color: var(--event-text-muted);
     margin: 0;
+    line-height: 1.5;
   }
-  .btn-download-pdf {
+
+  /* Card 1 Specific: Registration */
+  .action-card-register {
+    border: 1.5px solid rgba(245, 166, 35, 0.45);
+    background: linear-gradient(180deg, #FFFDF8 0%, #FFFFFF 100%);
+  }
+  .action-card-register:hover {
+    box-shadow: 0 12px 28px rgba(245, 166, 35, 0.18);
+    border-color: #F5A623;
+  }
+  .action-card-features {
+    list-style: none;
+    margin: 2px 0 4px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .action-card-features li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--event-text-main);
+    line-height: 1.4;
+  }
+  .btn-action-primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 13px 18px;
+    background: linear-gradient(135deg, #F5A623 0%, #E0921B 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(245, 166, 35, 0.35);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-action-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(245, 166, 35, 0.48);
+  }
+  .btn-action-primary.is-disabled {
+    background: #E5E7EB;
+    color: #9CA3AF;
+    box-shadow: none;
+    cursor: not-allowed;
+    justify-content: center;
+  }
+
+  /* Card 2 Specific: PDF Schedule */
+  .action-card-pdf {
+    border: 1.5px solid rgba(13, 122, 135, 0.25);
+    background: linear-gradient(180deg, #F8FAFB 0%, #FFFFFF 100%);
+  }
+  .action-card-pdf:hover {
+    box-shadow: 0 12px 28px rgba(10, 92, 102, 0.14);
+    border-color: var(--event-primary);
+  }
+  .action-pdf-lead {
+    font-size: 12.5px;
+    color: var(--event-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .btn-action-secondary {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     padding: 12px 18px;
-    background: var(--event-primary);
+    background: linear-gradient(135deg, #0D7A87 0%, #0A5C66 100%);
     color: #FFFFFF;
-    border-radius: 10px;
-    font-size: 13.5px;
-    font-weight: 700;
-    transition: background 0.2s, transform 0.2s;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(10, 92, 102, 0.22);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .btn-download-pdf:hover {
-    background: var(--event-teal-dark);
-    transform: translateY(-1px);
+  .btn-action-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(10, 92, 102, 0.32);
+  }
+  .pdf-not-available {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--event-text-light);
+    text-align: center;
+    padding: 10px;
+    background: #F3F4F6;
+    border-radius: 8px;
   }
 
   /* ============================================================================
@@ -978,18 +1311,22 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     align-self: flex-start;
     margin-top: 8px;
     padding: 8px 16px;
-    background: var(--event-amber);
-    color: #FFFFFF;
+    background: var(--event-primary-light);
+    color: var(--event-primary);
+    border: 1px solid rgba(13, 122, 135, 0.28);
     border-radius: 8px;
     font-size: 12.5px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
   }
   .news-card-btn:hover {
-    background: #B45309;
+    background: var(--event-primary);
+    color: #FFFFFF;
+    border-color: var(--event-primary);
+    transform: translateY(-1px);
   }
 
   /* ============================================================================
@@ -1062,18 +1399,33 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   /* ============================================================================
      RESPONSIVE BREAKPOINTS (Tablets: <= 990px)
      ============================================================================ */
+  @media (max-width: 1120px) {
+    .about-trio-layout {
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 24px;
+    }
+    .about-actions-col {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+
+  /* ============================================================================
+     RESPONSIVE BREAKPOINTS (Tablets: <= 990px)
+     ============================================================================ */
   @media (max-width: 990px) {
     .event-hero-inner {
       grid-template-columns: 1fr;
       gap: 36px;
     }
+    .hero-showcase-container {
+      max-width: 100%;
+    }
     .hero-showcase-wrapper {
       max-width: 100%;
       height: 380px;
-    }
-    .about-main-grid {
-      grid-template-columns: 1fr;
-      gap: 32px;
     }
     .people-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -1118,10 +1470,6 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     .event-hero-content {
       gap: 16px;
     }
-    .event-hero-badge {
-      font-size: 11.5px;
-      padding: 5px 12px;
-    }
     .event-hero-title {
       font-size: clamp(21px, 6.2vw, 28px);
       line-height: 1.35;
@@ -1137,8 +1485,8 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     }
     .event-hero-chip {
       font-size: 11.5px;
-      padding: 5px 10px;
-      border-radius: 8px;
+      padding: 6px 11px;
+      border-radius: 999px;
     }
 
     /* Countdown Grid: Strict 4-Col Fluid Grid */
@@ -1176,6 +1524,23 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     }
 
     /* Hero Showcase Frame Mobile */
+    .hero-showcase-container {
+      max-width: 100%;
+    }
+    .hero-anim-toolbar {
+      overflow-x: auto;
+      border-radius: 12px;
+      padding: 6px 10px;
+      gap: 6px;
+    }
+    .anim-toolbar-title {
+      font-size: 10.5px;
+    }
+    .anim-pill {
+      font-size: 10.5px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
     .hero-showcase-wrapper {
       height: auto;
       aspect-ratio: 16 / 10;
@@ -1222,24 +1587,38 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     }
 
     /* About Section Mobile */
-    .about-copy {
+    .about-trio-layout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .about-actions-col {
+      grid-column: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .about-copy-box {
       padding: 18px 14px;
       font-size: 14.5px;
-      line-height: 1.8;
-    }
-    .about-register-bar .btn-register-hero {
-      width: 100%;
-      justify-content: center;
+      line-height: 1.85;
     }
     .event-poster-card {
       padding: 12px;
     }
+    .event-poster-media {
+      min-height: 260px;
+    }
     .event-poster-img {
       max-height: 320px;
     }
-    .schedule-pdf-card {
-      padding: 16px;
+    .action-card {
+      padding: 18px 14px;
       gap: 12px;
+    }
+    .btn-action-primary,
+    .btn-action-secondary {
+      padding: 12px 16px;
+      font-size: 14px;
     }
 
     /* Section 2: Organizers Horizontal Cards on Mobile */
@@ -1391,7 +1770,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       font-weight: 600;
     }
     .mobile-sticky-btn {
-      background: #D97706;
+      background: linear-gradient(135deg, #F5A623 0%, #E0921B 100%);
       color: #FFFFFF;
       font-size: 13px;
       font-weight: 800;
@@ -1401,7 +1780,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       align-items: center;
       gap: 6px;
       text-decoration: none;
-      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+      box-shadow: 0 4px 14px rgba(245, 166, 35, 0.4);
       flex-shrink: 0;
     }
   }
@@ -1430,30 +1809,33 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
         
         <!-- Content Column: Event Info, Countdown & CTAs -->
         <div class="event-hero-content">
-          <div class="event-hero-badge">
-            <span class="badge-pulse-dot"></span>
-            <span>بزرگترین گردهمایی علمی حمایتی کشور</span>
-          </div>
-
           <h1 class="event-hero-title"><?= event_h($event['title']) ?></h1>
 
           <p class="event-hero-desc">
             <?= event_h($event['short_description'] ?: 'همایشی ملی برای همگرایی دانش نوین و ارتقای کیفیت زندگی بیماران مبتلا به سرطان.') ?>
           </p>
 
-          <!-- Quick Meta Chips Bar -->
+          <?php
+            $startTime = !empty($event['start_time']) ? substr((string)$event['start_time'], 0, 5) : '۰۸:۰۰';
+            $endTime = !empty($event['end_time']) ? substr((string)$event['end_time'], 0, 5) : '';
+            $timeText = ($endTime !== '' && $endTime !== $startTime) 
+              ? "ساعت {$startTime} تا {$endTime}" 
+              : "ساعت {$startTime}";
+          ?>
+
+          <!-- Quick Meta Chips Bar (Ordered: Date -> Time -> Active Registration) -->
           <div class="event-hero-chips">
             <div class="event-hero-chip">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
               <span><?= event_h(event_date_label($event['event_date'])) ?></span>
             </div>
             <div class="event-hero-chip">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              <span>ساعت <?= event_h(substr((string)($event['start_time'] ?: '08:00'), 0, 5)) ?> تا <?= event_h(substr((string)($event['end_time'] ?: '18:00'), 0, 5)) ?></span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span><?= event_h($timeText) ?></span>
             </div>
             <div class="event-hero-chip event-hero-chip-status">
               <span class="chip-pulse-dot"></span>
-              <span>ثبت‌نام فعال</span>
+              <span><?= !empty($event['registration_url']) ? 'ثبت‌نام فعال' : 'ثبت‌نام به‌زودی' ?></span>
             </div>
           </div>
 
@@ -1500,67 +1882,82 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           </div>
         </div>
 
-        <!-- Showcase Column: Dedicated Hero Carousel -->
-        <div class="hero-showcase-wrapper" id="heroShowcase">
-          <div class="hero-slider-track" id="heroSliderTrack">
-            <?php if (!empty($heroes)): ?>
-              <?php foreach ($heroes as $idx => $h): ?>
-                <?php
-                  $hBtnLabel = trim((string)($h['button_label'] ?? ''));
-                  $hBtnLink = trim((string)($h['button_link'] ?? ($h['link'] ?? '')));
-                  $hBgStyle = !empty($h['image']) 
-                    ? "background-image: url('" . event_h($h['image']) . "'); background-size: cover; background-position: center;" 
-                    : "background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);";
-                ?>
-                <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= $hBgStyle ?>">
+        <!-- Showcase Column: Dedicated Hero Carousel with 3 Animation Models -->
+        <div class="hero-showcase-container">
+          <!-- Animation Model Switcher Toolbar -->
+          <div class="hero-anim-toolbar" id="heroAnimToolbar" title="تغییر زنده مدل انیمیشن اسلایدر">
+            <span class="anim-toolbar-title">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              حالت انیمیشن:
+            </span>
+            <div class="anim-toolbar-pills">
+              <button type="button" class="anim-pill is-active" data-model="anim-cinematic">۱. سینمایی ۳D</button>
+              <button type="button" class="anim-pill" data-model="anim-curtain">۲. پرده‌ای مایع</button>
+              <button type="button" class="anim-pill" data-model="anim-cardstack">۳. کارت شناور</button>
+            </div>
+          </div>
+
+          <div class="hero-showcase-wrapper anim-cinematic" id="heroShowcase">
+            <div class="hero-slider-track" id="heroSliderTrack">
+              <?php if (!empty($heroes)): ?>
+                <?php foreach ($heroes as $idx => $h): ?>
+                  <?php
+                    $hBtnLabel = trim((string)($h['button_label'] ?? ''));
+                    $hBtnLink = trim((string)($h['button_link'] ?? ($h['link'] ?? '')));
+                    $hBgStyle = !empty($h['image']) 
+                      ? "background-image: url('" . event_h($h['image']) . "'); background-size: cover; background-position: center;" 
+                      : "background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);";
+                  ?>
+                  <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= $hBgStyle ?>">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-body">
+                      <span class="hero-slide-badge">بخش ویژه رویداد <?= count($heroes) > 1 ? '(' . ($idx + 1) . ' از ' . count($heroes) . ')' : '' ?></span>
+                      <h3 class="hero-slide-title"><?= event_h($h['title']) ?></h3>
+                      <?php if (!empty($h['description'])): ?>
+                        <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
+                      <?php endif; ?>
+                      <?php if ($hBtnLabel !== ''): ?>
+                        <a href="<?= event_h($hBtnLink ?: '#sec-about') ?>" <?= ($hBtnLink !== '' && str_starts_with($hBtnLink, 'http')) ? 'target="_blank" rel="noopener"' : '' ?> class="hero-slide-link">
+                          <span><?= event_h($hBtnLabel) ?></span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              <?php elseif (!empty($event['poster'])): ?>
+                <div class="hero-slide is-active" style="background-image: url('<?= event_h($event['poster']) ?>'); background-size: cover; background-position: center;">
                   <div class="hero-slide-overlay"></div>
                   <div class="hero-slide-body">
-                    <span class="hero-slide-badge">بخش ویژه رویداد <?= count($heroes) > 1 ? '(' . ($idx + 1) . ' از ' . count($heroes) . ')' : '' ?></span>
-                    <h3 class="hero-slide-title"><?= event_h($h['title']) ?></h3>
-                    <?php if (!empty($h['description'])): ?>
-                      <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
-                    <?php endif; ?>
-                    <?php if ($hBtnLabel !== ''): ?>
-                      <a href="<?= event_h($hBtnLink ?: '#sec-about') ?>" <?= ($hBtnLink !== '' && str_starts_with($hBtnLink, 'http')) ? 'target="_blank" rel="noopener"' : '' ?> class="hero-slide-link">
-                        <span><?= event_h($hBtnLabel) ?></span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                      </a>
-                    <?php endif; ?>
+                    <span class="hero-slide-badge">پوستر رسمی همایش</span>
+                    <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
+                    <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
                   </div>
                 </div>
-              <?php endforeach; ?>
-            <?php elseif (!empty($event['poster'])): ?>
-              <div class="hero-slide is-active" style="background-image: url('<?= event_h($event['poster']) ?>'); background-size: cover; background-position: center;">
-                <div class="hero-slide-overlay"></div>
-                <div class="hero-slide-body">
-                  <span class="hero-slide-badge">پوستر رسمی همایش</span>
-                  <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
-                  <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
+              <?php else: ?>
+                <div class="hero-slide is-active" style="background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);">
+                  <div class="hero-slide-overlay"></div>
+                  <div class="hero-slide-body">
+                    <span class="hero-slide-badge">رویداد ملی</span>
+                    <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
+                    <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
+                  </div>
                 </div>
+              <?php endif; ?>
+            </div>
+
+            <?php if (count($heroes) > 1): ?>
+              <div class="hero-slider-nav">
+                <button type="button" class="hero-slider-btn" id="heroPrevBtn" aria-label="اسلاید قبلی">❮</button>
+                <button type="button" class="hero-slider-btn" id="heroNextBtn" aria-label="اسلاید بعدی">❯</button>
               </div>
-            <?php else: ?>
-              <div class="hero-slide is-active" style="background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);">
-                <div class="hero-slide-overlay"></div>
-                <div class="hero-slide-body">
-                  <span class="hero-slide-badge">رویداد ملی</span>
-                  <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
-                  <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
-                </div>
+              <div class="hero-slider-dots" id="heroDots">
+                <?php foreach ($heroes as $idx => $h): ?>
+                  <span class="hero-dot <?= $idx === 0 ? 'is-active' : '' ?>" data-dot-index="<?= $idx ?>"></span>
+                <?php endforeach; ?>
               </div>
             <?php endif; ?>
           </div>
-
-          <?php if (count($heroes) > 1): ?>
-            <div class="hero-slider-nav">
-              <button type="button" class="hero-slider-btn" id="heroPrevBtn" aria-label="اسلاید قبلی">❮</button>
-              <button type="button" class="hero-slider-btn" id="heroNextBtn" aria-label="اسلاید بعدی">❯</button>
-            </div>
-            <div class="hero-slider-dots" id="heroDots">
-              <?php foreach ($heroes as $idx => $h): ?>
-                <span class="hero-dot <?= $idx === 0 ? 'is-active' : '' ?>" data-dot-index="<?= $idx ?>"></span>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
         </div>
 
       </div>
@@ -1568,36 +1965,21 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   </section>
 
   <!-- ==========================================================================
-       2. SECTION 1: معرفی و محورهای همایش (About & Schedule PDF)
+       2. SECTION 1: معرفی و محورهای همایش (About Trio Layout)
+       Right: Poster Card | Center: Title & Description | Left: 2 Spotlight Cards
        ========================================================================== -->
   <section class="event-section event-section-white" id="sec-about">
     <div class="event-container">
       
-      <div class="section-header">
-        <span class="section-kicker">معرفی و محورهای همایش</span>
-        <h2 class="section-title"><?= event_h($event['title']) ?></h2>
-        <p class="section-subtitle">اطلاعات تفصیلی، محورهای علمی و جدول زمان‌بندی کامل همایش</p>
-      </div>
+      <div class="about-trio-layout">
 
-      <div class="about-main-grid">
-        <!-- Text Column -->
-        <div class="about-text-column">
-          <div class="about-copy"><?= event_h($event['about'] ?: $event['short_description']) ?></div>
-
-          <?php if (!empty($event['registration_url'])): ?>
-            <div class="about-register-bar">
-              <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-register-hero">
-                <span>ثبت‌نام در این همایش</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-            </div>
-          <?php endif; ?>
-        </div>
-
-        <!-- Side Column: Official Poster + Schedule PDF Download -->
-        <div class="about-side-column">
-          <!-- Poster Card -->
+        <!-- 1. RIGHT: Official Poster Card (پوستر رسمی همایش) -->
+        <div class="about-poster-col">
           <div class="event-poster-card">
+            <div class="poster-card-top-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>پوستر رسمی رویداد</span>
+            </div>
             <?php if (!empty($event['poster'])): ?>
               <div class="event-poster-media" id="posterMediaTrigger" title="کلیک برای بزرگ‌نمایی تصویر پوستر">
                 <img src="<?= event_h($event['poster']) ?>" alt="پوستر <?= event_h($event['title']) ?>" class="event-poster-img">
@@ -1613,28 +1995,109 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
               </div>
             <?php endif; ?>
           </div>
+        </div>
 
-          <!-- Schedule PDF Download Card -->
-          <div class="schedule-pdf-card">
-            <div class="schedule-pdf-header">
-              <div class="pdf-icon-badge">PDF</div>
-              <div class="schedule-pdf-info">
-                <h3>سین همایش</h3>
-                <p>جدول زمان‌بندی سخنرانی‌ها، پنل‌ها و کارگاه‌ها</p>
+        <!-- 2. CENTER: Title, Kicker & Full Description (تیتر و توضیحات همایش کنار پوستر) -->
+        <div class="about-content-col">
+          <div class="about-content-header">
+            <span class="section-kicker">معرفی و محورهای همایش</span>
+            <h2 class="about-content-title"><?= event_h($event['title']) ?></h2>
+            <p class="about-content-subtitle">اطلاعات تفصیلی، اهداف برگزاری و محورهای علمی همایش</p>
+          </div>
+          <div class="about-copy-box">
+            <?= event_h($event['about'] ?: $event['short_description']) ?>
+          </div>
+        </div>
+
+        <!-- 3. LEFT: Two Distinct Spotlight Cards (دکمه ثبت‌نام و دانلود پی‌دی‌اف مجزا) -->
+        <div class="about-actions-col">
+          
+          <!-- Card A: Registration Spotlight Card -->
+          <div class="action-card action-card-register">
+            <div class="action-card-badge-row">
+              <span class="badge-status-pill">
+                <span class="chip-pulse-dot"></span>
+                <span>ثبت‌نام آنلاین</span>
+              </span>
+              <span class="action-card-tag">ظرفیت محدود</span>
+            </div>
+
+            <div class="action-card-header">
+              <div class="action-icon-wrap action-icon-amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              </div>
+              <div>
+                <h3 class="action-card-title">ثبت‌نام در این همایش</h3>
+                <p class="action-card-desc">رزرو جایگاه و دریافت شناسه اختصاصی</p>
               </div>
             </div>
+
+            <ul class="action-card-features">
+              <li>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>حضور در سخنرانی‌ها و پنل‌های تخصصی</span>
+              </li>
+              <li>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>صدور گواهی رسمی حضور در همایش</span>
+              </li>
+              <li>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>دسترسی به پکیج خلاصه مقالات</span>
+              </li>
+            </ul>
+
+            <?php if (!empty($event['registration_url'])): ?>
+              <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-action-primary">
+                <span>ثبت‌نام در این همایش</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            <?php else: ?>
+              <button type="button" class="btn-action-primary is-disabled" disabled>
+                <span>ثبت‌نام به‌زودی فعال می‌شود</span>
+              </button>
+            <?php endif; ?>
+          </div>
+
+          <!-- Card B: Schedule PDF Spotlight Card -->
+          <div class="action-card action-card-pdf">
+            <div class="action-card-badge-row">
+              <span class="badge-pdf-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>سند رویداد (PDF)</span>
+              </span>
+              <span class="action-card-tag action-tag-teal">نسخه رسمی</span>
+            </div>
+
+            <div class="action-card-header">
+              <div class="action-icon-wrap action-icon-teal">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <div>
+                <h3 class="action-card-title">سین همایش و زمان‌بندی</h3>
+                <p class="action-card-desc">جدول دقیق ساعت سخنرانی‌ها و پنل‌ها</p>
+              </div>
+            </div>
+
+            <p class="action-pdf-lead">
+              جدول زمان‌بندی کامل برنامه‌ها شامل اسامی سخنرانان، کارگاه‌ها و نشست‌های تخصصی در قالب فایل PDF قابل دریافت است.
+            </p>
+
             <?php if (!empty($event['schedule_pdf'])): ?>
-              <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-download-pdf">
+              <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-action-secondary">
                 <span>دریافت فایل برنامه (PDF)</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               </a>
             <?php else: ?>
-              <div style="font-size:12.5px; color:var(--event-text-light); text-align:center; padding:10px; background:var(--event-bg-light); border-radius:8px;">
-                فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.
+              <div class="pdf-not-available">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.</span>
               </div>
             <?php endif; ?>
           </div>
+
         </div>
+
       </div>
 
     </div>
@@ -1850,31 +2313,72 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       setInterval(tick, 1000);
     }
 
-    // 2. Interactive Hero Carousel with Touch Gestures
+    // 2. Interactive Hero Carousel with 3 Animation Models & Gestures
     const showcase = document.getElementById('heroShowcase');
     const slides = document.querySelectorAll('.hero-slide');
     const dots = document.querySelectorAll('.hero-dot');
     const btnPrev = document.getElementById('heroPrevBtn');
     const btnNext = document.getElementById('heroNextBtn');
+    const animPills = document.querySelectorAll('#heroAnimToolbar .anim-pill');
 
-    if (slides.length > 1) {
-      let activeIdx = 0;
-      let timer = null;
+    let activeIdx = 0;
+    let timer = null;
 
-      function goToSlide(idx) {
-        activeIdx = (idx + slides.length) % slides.length;
-        slides.forEach((s, i) => s.classList.toggle('is-active', i === activeIdx));
-        dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
+    function goToSlide(idx) {
+      if (slides.length <= 1) return;
+      const prevIdx = activeIdx;
+      activeIdx = (idx + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        s.classList.remove('is-active', 'is-prev');
+        if (i === activeIdx) {
+          s.classList.add('is-active');
+        } else if (i === prevIdx) {
+          s.classList.add('is-prev');
+        }
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
+    }
+
+    function setHeroAnimModel(modelName, advanceSlide = false) {
+      if (!showcase) return;
+      showcase.classList.remove('anim-cinematic', 'anim-curtain', 'anim-cardstack');
+      showcase.classList.add(modelName);
+      try {
+        localStorage.setItem('hero_anim_model', modelName);
+      } catch (e) {}
+      animPills.forEach(pill => {
+        pill.classList.toggle('is-active', pill.dataset.model === modelName);
+      });
+      if (advanceSlide && slides.length > 1) {
+        goToSlide(activeIdx + 1);
+        startAuto();
       }
+    }
 
-      function startAuto() {
-        stopAuto();
+    animPills.forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.preventDefault();
+        setHeroAnimModel(pill.dataset.model, true);
+      });
+    });
+
+    let savedModel = 'anim-cinematic';
+    try {
+      savedModel = localStorage.getItem('hero_anim_model') || 'anim-cinematic';
+    } catch (e) {}
+    setHeroAnimModel(savedModel, false);
+
+    function startAuto() {
+      stopAuto();
+      if (slides.length > 1) {
         timer = setInterval(() => goToSlide(activeIdx + 1), 5000);
       }
-      function stopAuto() {
-        if (timer) clearInterval(timer);
-      }
+    }
+    function stopAuto() {
+      if (timer) clearInterval(timer);
+    }
 
+    if (slides.length > 1) {
       if (btnNext) btnNext.addEventListener('click', () => { goToSlide(activeIdx + 1); startAuto(); });
       if (btnPrev) btnPrev.addEventListener('click', () => { goToSlide(activeIdx - 1); startAuto(); });
       dots.forEach((d, i) => d.addEventListener('click', () => { goToSlide(i); startAuto(); }));
