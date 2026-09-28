@@ -154,7 +154,7 @@
           onSuccess: function () { showMessage("پرداخت با موفقیت تأیید شد. سپاسگزاریم.", false); },
           onFailure: function () { showMessage("پرداخت ناموفق بود یا لغو شد.", true); }
         });
-        showMessage("درگاه پرداخت باز شد؛ فرایند را در پنجره جدید تکمیل کنید.", false);
+        showMessage("در حال انتقال به درگاه پرداخت…", false);
       } catch (error) {
         showMessage(error && error.message ? error.message : "اتصال به درگاه ناموفق بود.", true);
       } finally {

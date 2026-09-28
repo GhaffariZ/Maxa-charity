@@ -10,32 +10,26 @@
     return "macsa:payment:" + random;
   }
 
-  function popupMessage(popup, message) {
-    if (!popup || popup.closed) return;
-    popup.document.open();
-    popup.document.write("<!doctype html><html lang='fa' dir='rtl'><meta charset='utf-8'><title>پرداخت مکسا</title><body style='font-family:Tahoma,sans-serif;text-align:center;padding:12vh 20px;color:#174b49'><h2>" + message + "</h2></body></html>");
-    popup.document.close();
-  }
-
-  function redirectPopup(popup, payment) {
+  function redirectToGateway(payment) {
     if (!payment.redirect_url) throw new Error("آدرس درگاه از سرویس دریافت نشد.");
     if ((payment.redirect_method || "GET").toUpperCase() === "POST") {
-      popup.document.open();
-      popup.document.write("<!doctype html><html><meta charset='utf-8'><body><form id='gateway' method='post'></form></body></html>");
-      popup.document.close();
-      const form = popup.document.getElementById("gateway");
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.target = "_self";
+      form.hidden = true;
       form.action = payment.redirect_url;
       Object.entries(payment.redirect_fields || {}).forEach(function (entry) {
-        const input = popup.document.createElement("input");
+        const input = document.createElement("input");
         input.type = "hidden";
         input.name = entry[0];
         input.value = String(entry[1]);
         form.appendChild(input);
       });
-      form.submit();
+      document.body.appendChild(form);
+      HTMLFormElement.prototype.submit.call(form);
       return;
     }
-    popup.location.replace(payment.redirect_url);
+    window.location.assign(payment.redirect_url);
   }
 
   async function status(centerSlug, paymentId) {
@@ -47,10 +41,6 @@
   }
 
   async function start(options) {
-    const popup = window.open("about:blank", "macsaCampaignPayment", "width=520,height=720");
-    if (!popup) throw new Error("برای اتصال به درگاه، نمایش پنجره جدید را در مرورگر مجاز کنید.");
-    popupMessage(popup, "در حال اتصال به درگاه امن…");
-
     const payload = Object.assign({}, options, { idempotency_key: idempotencyKey() });
     delete payload.onSuccess;
     delete payload.onFailure;
@@ -62,40 +52,18 @@
         body: JSON.stringify(payload),
       });
     } catch (error) {
-      popup.close();
       throw error;
     }
     const body = await response.json().catch(function () { return {}; });
     if (!response.ok || body.status !== "success") {
-      popup.close();
       throw new Error(body.message || "شروع پرداخت ناموفق بود.");
     }
     const payment = body.data;
     if (!payment || !payment.id) {
-      popup.close();
       throw new Error("شناسه پرداخت از سرویس دریافت نشد.");
     }
-    redirectPopup(popup, payment);
-
-    let attempts = 0;
-    const timer = window.setInterval(async function () {
-      attempts += 1;
-      try {
-        const current = await status(options.center_slug || "hq", payment.id);
-        if (current.status === "SUCCEEDED") {
-          window.clearInterval(timer);
-          if (!popup.closed) popup.close();
-          if (typeof options.onSuccess === "function") options.onSuccess(current);
-        } else if (current.status === "FAILED") {
-          window.clearInterval(timer);
-          if (!popup.closed) popup.close();
-          if (typeof options.onFailure === "function") options.onFailure(current);
-        }
-      } catch (error) {
-        if (attempts >= 80) window.clearInterval(timer);
-      }
-      if (attempts >= 120) window.clearInterval(timer);
-    }, 5000);
+    // Verification and the final receipt are handled by the MACSA callback page.
+    redirectToGateway(payment);
     return payment;
   }
 

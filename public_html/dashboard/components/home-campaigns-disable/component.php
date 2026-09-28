@@ -128,8 +128,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
 </style>
 
-<script src="/js/campaign-payment.js"></script>
-<script src="/js/campaign-donation-ui.js"></script>
+<script src="/js/campaign-payment.js?v=20260927"></script>
+<script src="/js/campaign-donation-ui.js?v=20260927"></script>
 <script>
 (function(){
   'use strict';

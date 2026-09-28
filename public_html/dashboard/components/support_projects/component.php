@@ -711,8 +711,8 @@
 
   </div>
 
-  <script src="/js/campaign-payment.js"></script>
-  <script src="/js/campaign-donation-ui.js"></script>
+  <script src="/js/campaign-payment.js?v=20260927"></script>
+  <script src="/js/campaign-donation-ui.js?v=20260927"></script>
   <script>
     // تصویر جایگزین بهصورت SVG درونخطی (بدون درخواست شبکهای تا صفحه هرگز معلق نماند)
     var PLACEHOLDER_IMG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+";

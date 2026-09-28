@@ -734,7 +734,7 @@
 </style>
 
 
-<script src="/js/campaign-payment.js"></script>
+<script src="/js/campaign-payment.js?v=20260927"></script>
 <script>
   function setAmount(val, event) {
     const amountInput = document.getElementById('customAmount');

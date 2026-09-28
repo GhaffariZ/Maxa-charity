@@ -109,12 +109,12 @@ header("Content-Security-Policy: default-src 'none'; img-src 'self'; font-src 's
     <?php endif; ?>
     <div class="actions">
       <a class="btn btn-primary" href="/">بازگشت به سایت مکسا</a>
-      <button class="btn btn-ghost" type="button" id="close-window">بستن پنجره</button>
+      <button class="btn btn-ghost" type="button" id="close-window">چاپ رسید</button>
     </div>
   </div>
 </main>
 <script nonce="<?= htmlspecialchars($nonce, ENT_QUOTES, 'UTF-8') ?>">
-  document.getElementById('close-window').addEventListener('click', function(){ window.close(); });
+  document.getElementById('close-window').addEventListener('click', function(){ window.print(); });
   if (window.opener) {
     window.opener.postMessage({
       type: 'macsa-payment-result',
