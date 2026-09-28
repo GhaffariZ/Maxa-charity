@@ -29,8 +29,11 @@
         const days = Math.floor(remaining / 86400000);
         remaining %= 86400000;
         const hours = Math.floor(remaining / 3600000);
-        const minutes = Math.floor(remaining / 60000) % 60;
-        output.textContent = fa(days) + ' روز · ' + fa(hours) + ' ساعت · ' + fa(minutes) + ' دقیقه';
+        if (window.innerWidth <= 640) {
+            output.textContent = fa(days) + ' روز و ' + fa(hours) + 'س';
+        } else {
+            output.textContent = fa(days) + ' روز · ' + fa(hours) + ' ساعت · ' + fa(minutes) + ' دقیقه';
+        }
     }
     tick();
     updatePosition();

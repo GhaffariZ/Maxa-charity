@@ -1751,11 +1751,16 @@ body {
           </div>
         </section>
 
-        <!-- 13. تنظیمات بنر سراسری (#8:576) -->
+        <!-- 13. تنظیمات بنر سراسری (Figma Node #8:648) -->
         <section class="hq-card" id="sec-banner">
-          <div class="hq-card-header">
-            <h2 class="hq-card-title">تنظیمات بنر سراسری</h2>
-            <p class="hq-card-subtitle">تنظیمات نمایش بنر سراسری و شمارش معکوس را در این بخش مدیریت کنید.</p>
+          <div class="hq-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 class="hq-card-title">تنظیمات بنر سراسری</h2>
+              <p class="hq-card-subtitle">تنظیمات نمایش بنر سراسری و شمارش معکوس را در این بخش مدیریت کنید.</p>
+            </div>
+            <a href="global-banner-settings.php" target="_blank" class="hq-btn" style="background:#0D7A87; color:#fff; font-size:12px; padding:6px 14px;">
+              ⚡ صفحه مدیریت سراسری بنر (HQ)
+            </a>
           </div>
 
           <label style="display:flex; align-items:center; gap:10px; background:var(--hq-surface-muted); padding:14px; border-radius:10px; border:1px solid var(--hq-border); cursor:pointer; font-size:13px; font-weight:700; color:var(--hq-text-main);">

@@ -15,13 +15,13 @@ function event_global_banner(PDO $pdo): string {
     <link rel="stylesheet" href="/assets/events/banner.css">
     <div class="event-global-banner" style="--banner-bg:<?= $bg ?>;--banner-text:<?= $text ?>;--banner-accent:<?= $accent ?>"
          data-banner-id="<?= (int)$e['id'] ?>" data-banner-target="<?= event_h($target) ?>" role="status">
+        <?= $dismiss ?>
         <div class="event-banner-copy">
-            <span><?= event_h($e['banner_label']) ?></span>
-            <b><?= event_h($e['title']) ?></b>
+            <span class="event-banner-label"><?= event_h($e['banner_label']) ?></span>
+            <b class="event-banner-title"><?= event_h($e['title']) ?></b>
             <span class="event-banner-count">در حال آماده‌سازی...</span>
         </div>
-        <a href="<?= event_h($link) ?>"><?= event_h($e['banner_cta']) ?></a>
-        <?= $dismiss ?>
+        <a href="<?= event_h($link) ?>" class="event-banner-cta"><?= event_h($e['banner_cta'] ?: 'ثبت‌نام مستقیم') ?></a>
     </div>
     <script src="/assets/events/banner.js"></script>
     <?php
