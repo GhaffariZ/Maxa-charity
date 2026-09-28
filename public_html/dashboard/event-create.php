@@ -859,6 +859,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 16px;
+  align-items: start;
 }
 .hq-repeat-card {
   background: var(--hq-surface-tint);
@@ -869,7 +870,11 @@ body {
   flex-direction: column;
   gap: 12px;
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  height: fit-content;
+}
+.hq-repeat-card:hover {
+  border-color: rgba(0, 123, 122, 0.4);
 }
 .hq-repeat-card-top {
   display: flex;
@@ -901,14 +906,48 @@ body {
   overflow: hidden;
   background: var(--hq-surface);
   border: 1px solid var(--hq-border);
+  position: relative;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+.hq-repeat-media:hover {
+  border-color: var(--hq-primary);
+  box-shadow: 0 4px 14px rgba(0, 123, 122, 0.16);
 }
 .hq-repeat-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+.hq-repeat-media:hover img {
+  transform: scale(1.02);
+}
+.hq-repeat-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 25, 30, 0.76);
+  backdrop-filter: blur(2px);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 2;
+}
+.hq-repeat-media:hover .hq-repeat-media-overlay {
+  opacity: 1;
 }
 .hq-repeat-media-empty {
   color: var(--hq-text-light);
@@ -917,7 +956,19 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  background: var(--hq-surface-muted);
+  border: 1.5px dashed var(--hq-border);
+  border-radius: 9px;
+  transition: all 0.2s ease;
+}
+.hq-repeat-media:hover .hq-repeat-media-empty {
+  border-color: var(--hq-primary);
+  color: var(--hq-primary-dark);
+  background: rgba(0, 123, 122, 0.06);
 }
 .hq-repeat-title {
   font-size: 15px;
@@ -943,13 +994,18 @@ body {
 .hq-repeat-drawer {
   display: none;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
+  gap: 12px;
+  padding-top: 14px;
   border-top: 1px dashed var(--hq-border);
   margin-top: 8px;
+  animation: hqDrawerFade 0.2s ease;
 }
 .hq-repeat-drawer.is-open {
   display: flex;
+}
+@keyframes hqDrawerFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Banner Preview */
@@ -980,22 +1036,19 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* Sticky Bottom Actions Bar */
+/* Sticky Bottom Actions Bar (#8:629) */
 .hq-actions-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  z-index: 1000;
   background: var(--hq-sticky-footer-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--hq-border);
-  padding: 14px 24px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  padding: 12px 24px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }
 .hq-actions-bar-inner {
   max-width: 1400px;
@@ -1004,18 +1057,28 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+}
+.hq-actions-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .hq-actions-left {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 12px;
+}
+.hq-step-nav-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .hq-step-nav-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
@@ -1024,153 +1087,15 @@ body {
   background: var(--hq-surface);
   color: var(--hq-text-main);
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 .hq-step-nav-btn:hover {
   background: var(--hq-input-bg);
 }
-
-/* Mobile Structure (<= 900px): Step Wizard */
-@media (max-width: 900px) {
-  .hq-grid-3 { grid-template-columns: 1fr; }
-  .hq-grid-2 { grid-template-columns: 1fr; }
-  .hq-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .hq-sidebar-layout { flex-direction: column; }
-  .hq-sidebar-nav { display: none !important; }
-  
-  /* Normal flow on mobile: sits right under header, never slides under dashboard topbar */
-  .hq-wizard-stepper {
-    display: flex !important;
-    position: relative !important;
-    top: auto !important;
-    z-index: 1 !important;
-    backdrop-filter: none !important;
-    margin-bottom: 20px;
-    background: var(--hq-surface) !important;
-  }
-  :root[data-theme="dark"] .hq-wizard-stepper,
-  body[data-theme="dark"] .hq-wizard-stepper {
-    background: var(--hq-surface) !important;
-  }
-
-  /* Generous bottom clearance so the last items of every list/step are 100% visible above the save footer */
-  .hq-form-container {
-    margin-bottom: 0 !important;
-    padding-bottom: 240px !important;
-  }
-  .hq-sidebar-content {
-    padding-bottom: 30px;
-  }
-  .hq-step-group {
-    padding-bottom: 30px;
-  }
-  .hq-step-group:not(.is-active-step) {
-    display: none !important;
-  }
-  .hq-step-group.is-active-step {
-    display: flex !important;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .hq-repeat-grid {
-    margin-bottom: 16px;
-  }
-
-  /* Actions Bar Mobile Layout: 2 streamlined, touch-friendly rows */
-  .hq-actions-bar {
-    padding: 10px 14px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
-  }
-  .hq-actions-bar-inner {
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-  .hq-actions-left {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-  }
-  .hq-actions-left .hq-btn-primary {
-    flex: 1;
-    justify-content: center;
-    padding: 10px 14px;
-    font-size: 13.5px;
-  }
-  .hq-actions-left .hq-btn-white {
-    flex: 0 0 auto;
-    padding: 10px 14px;
-    font-size: 12.5px;
-    white-space: nowrap;
-  }
-  .hq-actions-nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .hq-actions-nav .hq-btn-white {
-    flex: 0 0 auto;
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-  #stepNavButtons {
-    display: inline-flex !important;
-    flex: 1;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  #stepNavButtons .hq-step-nav-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 8px 10px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 640px) {
-  body {
-    padding: 12px 10px !important;
-  }
-  .wrap {
-    padding: 0 !important;
-  }
-  .hq-wizard-stepper {
-    padding: 14px 8px;
-    margin-bottom: 16px;
-  }
-  .hq-wizard-steps {
-    gap: 2px;
-  }
-  .hq-wizard-step {
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 4px;
-    text-align: center;
-  }
-  .hq-wizard-circle {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-  .hq-wizard-title {
-    font-size: 11px;
-    max-width: 68px;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .hq-repeat-grid {
-    grid-template-columns: 1fr;
-  }
-  .hq-card {
-    padding: 16px;
-  }
+.hq-step-nav-btn.hq-step-next {
+  background: var(--hq-primary-light);
+  color: var(--hq-primary);
+  border-color: var(--hq-primary);
 }
 
 /* Auto-save Draft Banner & Footer Indicator */
@@ -1196,6 +1121,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 .hq-draft-banner-icon {
   width: 38px;
@@ -1226,25 +1152,243 @@ body {
 .hq-autosave-indicator {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   padding: 6px 14px;
   background: var(--hq-surface-muted);
   border: 1px solid var(--hq-border);
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--hq-text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .hq-autosave-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #10b981;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 .hq-autosave-dot.is-saving {
   background: #f59e0b;
   box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+}
+
+/* Mobile & Tablet Responsive Engine (<= 900px) */
+@media (max-width: 900px) {
+  .hq-grid-3 { grid-template-columns: 1fr; }
+  .hq-grid-2 { grid-template-columns: 1fr; }
+  .hq-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .hq-sidebar-layout { flex-direction: column; }
+  .hq-sidebar-nav { display: none !important; }
+  
+  /* Normal flow on mobile: sits right under header, smooth horizontal touch scroll */
+  .hq-wizard-stepper {
+    display: flex !important;
+    position: relative !important;
+    top: auto !important;
+    z-index: 1 !important;
+    backdrop-filter: none !important;
+    margin-bottom: 20px;
+    background: var(--hq-surface) !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hq-wizard-stepper::-webkit-scrollbar { display: none; }
+  :root[data-theme="dark"] .hq-wizard-stepper,
+  body[data-theme="dark"] .hq-wizard-stepper {
+    background: var(--hq-surface) !important;
+  }
+
+  /* Generous bottom clearance so the last items of every list/step are 100% visible above the save footer */
+  .hq-form-container {
+    margin-bottom: 0 !important;
+    padding-bottom: 220px !important;
+  }
+  .hq-sidebar-content {
+    padding-bottom: 24px;
+  }
+  .hq-step-group {
+    padding-bottom: 24px;
+  }
+  .hq-step-group:not(.is-active-step) {
+    display: none !important;
+  }
+  .hq-step-group.is-active-step {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .hq-repeat-grid {
+    margin-bottom: 16px;
+  }
+
+  /* Actions Bar Mobile Layout: 3 organized, non-colliding tiers */
+  .hq-actions-bar {
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+  }
+  .hq-actions-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Tier 1: AutoSave Status Badge (Centered, never squished) */
+  .hq-actions-bar-inner .hq-autosave-indicator {
+    order: 1;
+    align-self: center;
+    font-size: 11px;
+    padding: 3px 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Tier 2: Navigation row (Cancel, Next/Prev, Preview) */
+  .hq-actions-nav {
+    order: 2;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .hq-actions-nav .hq-btn-cancel {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .hq-actions-nav .hq-step-nav-cluster {
+    display: inline-flex !important;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 6px;
+  }
+  .hq-actions-nav .hq-step-nav-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .hq-actions-nav .hq-btn-preview-link {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Tier 3: Primary Save Button (100% full width, prominent, high contrast) */
+  .hq-actions-submit-wrap {
+    order: 3;
+    width: 100%;
+  }
+  .hq-actions-submit-wrap .hq-btn-submit-main {
+    width: 100% !important;
+    min-height: 46px !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
+  }
+}
+
+/* Mobile Screens (<= 768px): Fix Draft Banner squish & form rows */
+@media (max-width: 768px) {
+  .hq-draft-banner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px 16px !important;
+    border-right-width: 4px !important;
+  }
+  .hq-draft-banner-content {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .hq-draft-banner-icon {
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+    margin-top: 2px !important;
+  }
+  .hq-draft-banner-text {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    font-size: 12.5px !important;
+    line-height: 1.6 !important;
+  }
+  .hq-draft-banner-text strong {
+    display: block !important;
+    margin-bottom: 4px !important;
+    margin-left: 0 !important;
+    font-size: 13px !important;
+  }
+  .hq-draft-banner-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .hq-draft-banner-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 9px 12px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 12px 10px !important;
+  }
+  .wrap {
+    padding: 0 !important;
+  }
+  .hq-wizard-stepper {
+    padding: 12px 6px;
+    margin-bottom: 16px;
+  }
+  .hq-wizard-steps {
+    gap: 2px;
+  }
+  .hq-wizard-step {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .hq-wizard-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  .hq-wizard-title {
+    font-size: 10.5px;
+    max-width: 68px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .hq-repeat-grid {
+    grid-template-columns: 1fr;
+  }
+  .hq-card {
+    padding: 16px;
+  }
 }
 
 /* ============================================================================
@@ -1529,96 +1673,260 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.figma-specimen-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .figma-specimen-title {
   font-size: 15px;
   font-weight: 800;
   color: var(--hq-text-main);
 }
-.figma-specimen-dot {
-  width: 8px;
-  height: 8px;
+.figma-live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.figma-live-status-pill.is-active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.figma-live-status-pill.is-inactive {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+[data-theme="dark"] .figma-live-status-pill.is-inactive {
+  color: #fbbf24;
+}
+.figma-status-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  background: currentColor;
+  flex-shrink: 0;
+}
+.figma-live-status-pill.is-active .figma-status-dot {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
 }
 
-.figma-specimen-banner {
-  border-radius: 8px;
-  padding: 14px 16px;
+/* Preview Mode Switcher (Desktop vs Mobile Digikala style) */
+.figma-specimen-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--hq-surface-muted);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--hq-border);
+}
+.figma-specimen-tab {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--hq-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.figma-specimen-tab:hover {
+  color: var(--hq-text-main);
+}
+.figma-specimen-tab.is-active {
+  background: var(--hq-surface);
+  color: var(--hq-primary);
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Inactive banner notice banner */
+.figma-specimen-inactive-notice {
+  background: #FFFBEB;
+  border: 1px solid #F59E0B;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #92400E;
   display: flex;
   align-items: center;
+  gap: 10px;
+  line-height: 1.5;
+}
+[data-theme="dark"] .figma-specimen-inactive-notice {
+  background: rgba(245, 158, 11, 0.12);
+  color: #FCD34D;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Frame Wrapper (supports Phone simulation) */
+.figma-specimen-frame-wrap {
+  width: 100%;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+.figma-specimen-frame-wrap.is-mobile-view {
+  max-width: 375px;
+  margin: 0 auto;
+  background: #0f172a;
+  border: 3px solid #334155;
+  border-radius: 24px;
+  padding: 8px 8px 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+}
+.figma-phone-notch-bar {
+  display: flex;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  padding: 2px 12px 6px;
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-weight: 700;
+  direction: ltr;
+}
+.figma-phone-camera {
+  width: 50px;
+  height: 4px;
+  border-radius: 999px;
+  background: #334155;
+}
+
+/* Live Specimen Banner - Desktop Mode (58px height) */
+.figma-specimen-banner {
+  border-radius: 10px;
+  height: 58px;
+  min-height: 58px;
+  padding: 0 48px 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, height 0.2s ease, padding 0.2s ease;
   direction: rtl;
+  box-sizing: border-box;
+  width: 100%;
+}
+.figma-specimen-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  justify-content: center;
 }
 .figma-specimen-x {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
-  opacity: 0.8;
-  padding: 2px 4px;
+  opacity: 0.85;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: opacity 0.15s ease;
 }
 .figma-specimen-x:hover { opacity: 1; }
 .figma-specimen-cta {
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 11.5px;
-  font-weight: 800;
-  text-decoration: none;
-  white-space: nowrap;
   flex-shrink: 0;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none !important;
+  white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   transition: filter 0.15s ease, transform 0.15s ease;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .figma-specimen-cta:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.12);
   transform: translateY(-1px);
-}
-.figma-specimen-countdown {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 .figma-specimen-countdown-val {
   font-weight: 900;
-}
-.figma-specimen-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow: hidden;
-  min-width: 0;
+  font-size: 13px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 .figma-specimen-badge {
-  background: #F0FDFA;
-  color: #0A5C66;
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 800;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .figma-specimen-event-title {
-  font-size: 12.5px;
+  font-size: 14.5px;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 440px;
 }
+
+/* Live Specimen Banner - Digikala-Inspired Mobile Mode (46px height) */
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-banner {
+  height: 46px;
+  min-height: 46px;
+  max-height: 46px;
+  padding: 0 34px 0 8px;
+  gap: 8px;
+  border-radius: 8px;
+  font-size: 11.5px;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-copy {
+  gap: 8px;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-badge {
+  display: none !important;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-event-title {
+  font-size: 11.5px;
+  max-width: 140px;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-countdown-val {
+  font-size: 10.5px;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-cta {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+.figma-specimen-frame-wrap.is-mobile-view .figma-specimen-x {
+  right: 5px;
+  font-size: 18px;
+}
+
 .figma-specimen-caption {
   font-size: 12px;
   color: var(--hq-text-muted);
@@ -1930,16 +2238,16 @@ body {
                 <div class="hq-repeat-media" title="برای تغییر یا انتخاب تصویر کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($h['image'])): ?>
                     <img src="<?= event_h($h['image']) ?>" alt="<?= event_h($h['title']) ?>">
+                    <div class="hq-repeat-media-overlay">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span>تغییر تصویر</span>
+                    </div>
                   <?php else: ?>
                     <div class="hq-repeat-media-empty">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                       <span>بدون تصویر (کلیک یا رهاسازی)</span>
                     </div>
                   <?php endif; ?>
-                  <div class="hq-repeat-media-overlay">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>تغییر تصویر</span>
-                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($h['title']) ?: 'بدون عنوان' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($h['description']) ?: 'توضیحات هیرو وارد نشده است.' ?></p>
@@ -1952,7 +2260,7 @@ body {
                   <label class="hq-field-label">توضیح<input name="hero_description[]" value="<?= event_h($h['description']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" value="<?= event_h($h['button_label']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="<?= event_h($h['button_link'] ?? $h['link'] ?? '') ?>" dir="ltr" class="hq-input"></label>
-                  <label class="hq-field-label">تغییر تصویر<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="file" name="hero_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
                   <input type="hidden" name="hero_existing[]" value="<?= event_h($h['image']) ?>">
                 </div>
               </div>
@@ -1979,16 +2287,16 @@ body {
                 <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($p['image'])): ?>
                     <img src="<?= event_h($p['image']) ?>" alt="<?= event_h($p['name']) ?>">
+                    <div class="hq-repeat-media-overlay">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span>تغییر عکس</span>
+                    </div>
                   <?php else: ?>
                     <div class="hq-repeat-media-empty">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                       <span>بدون عکس (کلیک یا رهاسازی)</span>
                     </div>
                   <?php endif; ?>
-                  <div class="hq-repeat-media-overlay">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>تغییر عکس</span>
-                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام مشخص نشده' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($p['title']) ?: 'سمت مشخص نشده' ?></p>
@@ -2005,7 +2313,7 @@ body {
                   </label>
                   <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" value="<?= event_h($p['name']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">سمت / عنوان<input name="person_title[]" value="<?= event_h($p['title']) ?>" class="hq-input"></label>
-                  <label class="hq-field-label">عکس<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="file" name="person_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
                   <input type="hidden" name="person_existing[]" value="<?= event_h($p['image']) ?>">
                   <input type="hidden" name="person_order[]" value="<?= (int)$p['sort_order'] ?>">
                 </div>
@@ -2033,16 +2341,16 @@ body {
                 <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($s['image'])): ?>
                     <img src="<?= event_h($s['image']) ?>" alt="<?= event_h($s['name']) ?>">
+                    <div class="hq-repeat-media-overlay">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span>تغییر عکس</span>
+                    </div>
                   <?php else: ?>
                     <div class="hq-repeat-media-empty">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                       <span>بدون عکس (کلیک یا رهاسازی)</span>
                     </div>
                   <?php endif; ?>
-                  <div class="hq-repeat-media-overlay">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>تغییر عکس</span>
-                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($s['name']) ?: 'نام استاد' ?></h3>
                 <p class="hq-repeat-desc"><?= event_h($s['title']) ?: 'تخصص یا عنوان علمی' ?></p>
@@ -2054,7 +2362,7 @@ body {
                   <label class="hq-field-label">نام استاد<input name="speaker_name[]" value="<?= event_h($s['name']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" value="<?= event_h($s['title']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" value="<?= (int)$s['sort_order'] ?>" class="hq-input"></label>
-                  <label class="hq-field-label">عکس<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
+                  <input type="file" name="speaker_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
                   <input type="hidden" name="speaker_existing[]" value="<?= event_h($s['image']) ?>">
                 </div>
               </div>
@@ -2081,16 +2389,16 @@ body {
                 <div class="hq-repeat-media" title="برای تغییر یا انتخاب لوگو کلیک کنید یا فایل را اینجا رها نمایید">
                   <?php if (!empty($p['logo'])): ?>
                     <img src="<?= event_h($p['logo']) ?>" alt="<?= event_h($p['name']) ?>">
+                    <div class="hq-repeat-media-overlay">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span>تغییر لوگو</span>
+                    </div>
                   <?php else: ?>
                     <div class="hq-repeat-media-empty">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                       <span>بدون لوگو (کلیک یا رهاسازی)</span>
                     </div>
                   <?php endif; ?>
-                  <div class="hq-repeat-media-overlay">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>تغییر لوگو</span>
-                  </div>
                 </div>
                 <h3 class="hq-repeat-title"><?= event_h($p['name']) ?: 'نام سازمان / حامی' ?></h3>
                 <p class="hq-repeat-desc">سازمان همکار و حامی رویداد</p>
@@ -2101,7 +2409,7 @@ body {
                 <div class="hq-repeat-drawer">
                   <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" value="<?= event_h($p['name']) ?>" class="hq-input"></label>
                   <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" value="<?= (int)$p['sort_order'] ?>" class="hq-input"></label>
-                  <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
+                  <input type="file" name="partner_logo[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
                   <input type="hidden" name="partner_existing[]" value="<?= event_h($p['logo']) ?>">
                 </div>
               </div>
@@ -2161,17 +2469,9 @@ body {
 
         <!-- 13. تنظیمات بنر سراسری هوشمند (Figma Node #8:648) -->
         <section class="hq-card" id="sec-banner">
-          <!-- Figma Header (8:649) -->
-          <div class="figma-banner-header">
-            <div class="figma-banner-badges">
-              <span class="figma-badge-hq">ستاد مرکزی (HQ)</span>
-              <span class="figma-badge-lock">دسترسی اختصاصی</span>
-              <span class="figma-badge-branch">شعب سراسر کشور: غیرمجاز / قفل‌شده 🔒</span>
-            </div>
-            <div class="figma-banner-title-wrap">
-              <h2 class="hq-card-title">تنظیمات بنر سراسری هوشمند</h2>
-              <p class="hq-card-subtitle">مدیریت نمایش بنر شمارش معکوس و اطلاع‌رسانی همایش‌ها در بالاترین بخش سایت</p>
-            </div>
+          <div class="hq-card-header">
+            <h2 class="hq-card-title">تنظیمات بنر سراسری هوشمند</h2>
+            <p class="hq-card-subtitle">مدیریت نمایش بنر شمارش معکوس و اطلاع‌رسانی همایش‌ها در بالاترین بخش سایت</p>
           </div>
 
           <!-- Figma 2-Column Content Layout (8:660) -->
@@ -2287,41 +2587,72 @@ body {
             <!-- Left Column: Live Desktop Specimen Banner & System Constraint (8:661) -->
             <div class="figma-banner-preview-col">
               
-              <!-- Card: Desktop Live Preview (8:662) -->
+              <!-- Card: Live Preview (Figma 8:662 + Mobile Digikala Simulation) -->
               <div class="figma-specimen-card">
                 <div class="figma-specimen-header">
-                  <span class="figma-specimen-title">پیش‌نمایش زنده بنر دسکتاپ</span>
-                  <span class="figma-specimen-dot"></span>
-                </div>
-
-                <div id="bannerSpecimenBox" class="figma-specimen-banner" style="background-color: <?= event_h($event['banner_background'] ?: '#0a5c66') ?>; color: <?= event_h($event['banner_text_color'] ?: '#ffffff') ?>;">
-                  <!-- Dismiss X button (8:666) -->
-                  <button type="button" class="figma-specimen-x" aria-label="بستن" id="specimenCloseBtn" style="display: <?= (int)$event['banner_dismissible'] ? 'block' : 'none' ?>;">×</button>
-
-                  <!-- CTA Button (8:668) -->
-                  <a href="javascript:void(0)" class="figma-specimen-cta" id="specimenCtaBtn" style="background-color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>; color: #ffffff;">
-                    <?= event_h($event['banner_cta'] ?: 'ثبت‌نام مستقیم') ?>
-                  </a>
-
-                  <!-- Countdown (8:670) -->
-                  <div class="figma-specimen-countdown">
-                    <span>مانده تا آغاز:</span>
-                    <b class="figma-specimen-countdown-val" id="specimenCountdownText" style="color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>;">۲۴ روز و ۱۸ ساعت</b>
-                  </div>
-
-                  <!-- Badge and Title (8:676) -->
-                  <div class="figma-specimen-meta">
-                    <span class="figma-specimen-badge" id="specimenBadge">
-                      <?= event_h($event['banner_label'] ?: 'رویداد ویژه جاری') ?>
+                  <div class="figma-specimen-title-group">
+                    <span class="figma-specimen-title">پیش‌نمایش زنده بنر</span>
+                    <span class="figma-live-status-pill <?= (int)$event['banner_active'] ? 'is-active' : 'is-inactive' ?>" id="specimenActiveStatusBadge">
+                      <span class="figma-status-dot"></span>
+                      <span id="specimenActiveStatusText"><?= (int)$event['banner_active'] ? 'فعال در سایت' : 'غیرفعال و خاموش' ?></span>
                     </span>
-                    <b class="figma-specimen-event-title" id="specimenTitle">
-                      <?= event_h($event['title']) ?: 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی مکسا' ?>
-                    </b>
+                  </div>
+
+                  <!-- Mode Tabs: Desktop vs Mobile -->
+                  <div class="figma-specimen-tabs" role="tablist">
+                    <button type="button" class="figma-specimen-tab is-active" id="tabSpecimenDesktop" data-mode="desktop" role="tab" title="مشاهده بنر در نمایشگر دسکتاپ">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                      <span>دسکتاپ</span>
+                    </button>
+                    <button type="button" class="figma-specimen-tab" id="tabSpecimenMobile" data-mode="mobile" role="tab" title="مشاهده بنر در ابعاد فشرده موبایل (مشابه دیجی‌کالا)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                      <span>موبایل (دیجی‌کالا)</span>
+                    </button>
                   </div>
                 </div>
 
-                <p class="figma-specimen-caption">
-                  * این بنر به‌صورت رسپانسیو طراحی شده و در موبایل المان‌های ثانویه آن خودکار حذف می‌شوند.
+                <!-- Inactive Banner Notice Overlay -->
+                <div id="specimenInactiveNotice" class="figma-specimen-inactive-notice" style="display: <?= (int)$event['banner_active'] ? 'none' : 'flex' ?>;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M12 9v4M12 17h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                  <span>این بنر اکنون خاموش است و در صفحات سایت نمایش داده نمی‌شود. برای فعال‌سازی، کلید <strong>وضعیت نمایش بنر</strong> را در ستون کناری روشن کنید.</span>
+                </div>
+
+                <!-- Mockup Frame (Normal width for desktop, phone shell for mobile) -->
+                <div class="figma-specimen-frame-wrap" id="specimenFrameWrap">
+                  <!-- Phone Top Notch Bar (shown only when mobile tab is active) -->
+                  <div class="figma-phone-notch-bar" id="specimenPhoneNotch" style="display:none;">
+                    <span>۹:۴۱</span>
+                    <div class="figma-phone-camera"></div>
+                    <span>LTE 100%</span>
+                  </div>
+
+                  <!-- Specimen Banner (Matching real site layout structure) -->
+                  <div id="bannerSpecimenBox" class="figma-specimen-banner" style="background-color: <?= event_h($event['banner_background'] ?: '#0a5c66') ?>; color: <?= event_h($event['banner_text_color'] ?: '#ffffff') ?>;">
+                    <!-- Dismiss X button (right in RTL) -->
+                    <button type="button" class="figma-specimen-x" aria-label="بستن موقت" id="specimenCloseBtn" style="display: <?= (int)$event['banner_dismissible'] ? 'flex' : 'none' ?>;">×</button>
+
+                    <!-- Center Copy Content -->
+                    <div class="figma-specimen-copy">
+                      <span class="figma-specimen-badge" id="specimenBadge">
+                        <?= event_h($event['banner_label'] ?: 'رویداد پیش‌رو') ?>
+                      </span>
+                      <b class="figma-specimen-event-title" id="specimenTitle">
+                        <?= event_h($event['title']) ?: 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی مکسا' ?>
+                      </b>
+                      <span class="figma-specimen-countdown-val" id="specimenCountdownText" style="color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>;">
+                        در حال محاسبه...
+                      </span>
+                    </div>
+
+                    <!-- CTA Button (left in RTL) -->
+                    <a href="javascript:void(0)" class="figma-specimen-cta" id="specimenCtaBtn" style="background-color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>; color: #ffffff;">
+                      <?= event_h($event['banner_cta'] ?: 'مشاهده رویداد') ?>
+                    </a>
+                  </div>
+                </div>
+
+                <p class="figma-specimen-caption" id="specimenCaptionText">
+                  💡 با تغییر تاریخ و زمان رویداد، شمارش معکوس به‌صورت خودکار محاسبه شده و می‌توانید نمای آن در دسکتاپ و موبایل را بررسی کنید.
                 </p>
               </div>
 
@@ -2478,39 +2809,44 @@ body {
   <!-- Sticky Bottom Actions Bar (#8:629) -->
   <footer class="hq-actions-bar">
     <div class="hq-actions-bar-inner">
-      <div class="hq-actions-nav" style="display:flex; align-items:center; gap:10px;">
-        <a href="event-list.php" class="hq-btn hq-btn-white" style="padding:10px 20px; display:inline-flex; align-items:center; gap:6px;">
+      <!-- Tier 1: Auto-Save Status Badge (Centered on mobile, compact and clear) -->
+      <div id="autoSaveIndicator" class="hq-autosave-indicator" title="پیش‌نویس اطلاعات این فرم به‌صورت لحظه‌ای در مرورگر ذخیره می‌شود">
+        <span class="hq-autosave-dot" id="autoSaveDot"></span>
+        <span id="autoSaveStatusText">ذخیره خودکار پیش‌نویس فعال است</span>
+      </div>
+
+      <!-- Tier 2: Navigation & Utility Controls (Cancel, Step Buttons, Preview) -->
+      <div class="hq-actions-nav">
+        <a href="event-list.php" class="hq-btn hq-btn-white hq-btn-cancel">
           <?= hq_iconoir('cancel', '', 15) ?>
           <span>انصراف</span>
         </a>
-        <div id="stepNavButtons" style="display:none; gap:8px;">
-          <button type="button" class="hq-step-nav-btn" id="btnPrevStep" style="display:inline-flex; align-items:center; gap:6px;">
+        <div id="stepNavButtons" class="hq-step-nav-cluster" style="display:none;">
+          <button type="button" class="hq-step-nav-btn" id="btnPrevStep">
             <?= hq_iconoir('prev', '', 15) ?>
             <span>گام قبلی</span>
           </button>
-          <button type="button" class="hq-step-nav-btn" id="btnNextStep" style="background:var(--hq-primary-light); color:var(--hq-primary); border-color:var(--hq-primary); display:inline-flex; align-items:center; gap:6px;">
+          <button type="button" class="hq-step-nav-btn hq-step-next" id="btnNextStep">
             <span>گام بعدی</span>
             <?= hq_iconoir('next', '', 15) ?>
           </button>
         </div>
-      </div>
-      <div class="hq-actions-left" style="display:flex; align-items:center; gap:12px;">
-        <div id="autoSaveIndicator" class="hq-autosave-indicator" title="پیش‌نویس اطلاعات این فرم به‌صورت لحظه‌ای در مرورگر ذخیره می‌شود">
-          <span class="hq-autosave-dot" id="autoSaveDot"></span>
-          <span id="autoSaveStatusText">ذخیره خودکار پیش‌نویس فعال است</span>
-        </div>
         <?php if ($event['slug']): ?>
-          <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white" style="display:inline-flex; align-items:center; gap:6px;">
+          <a href="/event.php?slug=<?= urlencode($event['slug']) ?>" target="_blank" class="hq-btn hq-btn-white hq-btn-preview-link">
             <?= hq_iconoir('preview', '', 15) ?>
-            <span>پیش‌نمایش رویداد</span>
+            <span>پیش‌نمایش</span>
           </a>
         <?php else: ?>
-          <button type="button" class="hq-btn hq-btn-white" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')" style="display:inline-flex; align-items:center; gap:6px;">
+          <button type="button" class="hq-btn hq-btn-white hq-btn-preview-link" onclick="alert('برای مشاهده پیش‌نمایش ابتدا رویداد را ذخیره نمایید.')">
             <?= hq_iconoir('preview', '', 15) ?>
             <span>پیش‌نمایش</span>
           </button>
         <?php endif; ?>
-        <button type="submit" class="hq-btn hq-btn-primary" style="padding:10px 24px; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+      </div>
+
+      <!-- Tier 3: Primary Save Action (100% full-width on mobile, thumb-friendly) -->
+      <div class="hq-actions-submit-wrap">
+        <button type="submit" class="hq-btn hq-btn-primary hq-btn-submit-main">
           <?= hq_iconoir('save', '', 16) ?>
           <span>ذخیره تغییرات رویداد</span>
         </button>
@@ -2533,9 +2869,31 @@ function escapeHtml(str) {
 function toggleDrawer(btn) {
   const card = btn.closest('.hq-repeat-card');
   const drawer = card?.querySelector('.hq-repeat-drawer');
-  if (drawer) {
-    drawer.classList.toggle('is-open');
-    btn.textContent = drawer.classList.contains('is-open') ? 'بستن ویرایش' : 'ویرایش';
+  if (!drawer) return;
+
+  const isOpen = drawer.classList.contains('is-open');
+
+  // Close any other open drawers in the same grid to prevent visual clutter and layout shifts
+  const grid = card.closest('.hq-repeat-grid');
+  if (grid) {
+    grid.querySelectorAll('.hq-repeat-card').forEach(otherCard => {
+      if (otherCard !== card) {
+        const otherDrawer = otherCard.querySelector('.hq-repeat-drawer');
+        const otherBtn = otherCard.querySelector('.hq-repeat-actions .hq-btn-white');
+        if (otherDrawer && otherDrawer.classList.contains('is-open')) {
+          otherDrawer.classList.remove('is-open');
+          if (otherBtn) otherBtn.textContent = 'ویرایش';
+        }
+      }
+    });
+  }
+
+  if (isOpen) {
+    drawer.classList.remove('is-open');
+    btn.textContent = 'ویرایش';
+  } else {
+    drawer.classList.add('is-open');
+    btn.textContent = 'بستن ویرایش';
   }
 }
 
@@ -2703,9 +3061,17 @@ function deleteCurrentPdf() {
   }
 
   // =========================================================================
-  // 4. Live banner preview sync (Figma Node #8:648)
+  // 4. Live banner preview sync (Figma Node #8:648 + Device Switcher)
   // =========================================================================
   const specimenBox = document.getElementById('bannerSpecimenBox');
+  const specimenFrameWrap = document.getElementById('specimenFrameWrap');
+  const specimenPhoneNotch = document.getElementById('specimenPhoneNotch');
+  const tabDesktop = document.getElementById('tabSpecimenDesktop');
+  const tabMobile = document.getElementById('tabSpecimenMobile');
+  const specimenActiveStatusBadge = document.getElementById('specimenActiveStatusBadge');
+  const specimenActiveStatusText = document.getElementById('specimenActiveStatusText');
+  const specimenInactiveNotice = document.getElementById('specimenInactiveNotice');
+
   const mainTitleInput = document.querySelector('input[name="title"]');
   const bannerDisplayTitle = document.getElementById('bannerDisplayTitleInput');
   const eventDisplayTitle = document.getElementById('bannerEventDisplayTitle');
@@ -2716,6 +3082,29 @@ function deleteCurrentPdf() {
   const specimenCtaBtn = document.getElementById('specimenCtaBtn');
   const dismissInput = document.getElementById('bannerDismissibleInput');
   const specimenCloseBtn = document.getElementById('specimenCloseBtn');
+
+  // Preview Mode State: 'desktop' or 'mobile'
+  let currentPreviewMode = 'desktop';
+
+  if (tabDesktop && tabMobile && specimenFrameWrap) {
+    tabDesktop.addEventListener('click', () => {
+      currentPreviewMode = 'desktop';
+      tabDesktop.classList.add('is-active');
+      tabMobile.classList.remove('is-active');
+      specimenFrameWrap.classList.remove('is-mobile-view');
+      if (specimenPhoneNotch) specimenPhoneNotch.style.display = 'none';
+      syncBanner();
+    });
+
+    tabMobile.addEventListener('click', () => {
+      currentPreviewMode = 'mobile';
+      tabMobile.classList.add('is-active');
+      tabDesktop.classList.remove('is-active');
+      specimenFrameWrap.classList.add('is-mobile-view');
+      if (specimenPhoneNotch) specimenPhoneNotch.style.display = 'flex';
+      syncBanner();
+    });
+  }
 
   // Switch Toggle
   const switchWrap = document.getElementById('bannerSwitchWrap');
@@ -2729,6 +3118,7 @@ function deleteCurrentPdf() {
       const isActive = activeInput.checked;
       switchWrap.classList.toggle('is-active', isActive);
       switchLabel.textContent = isActive ? 'فعال و روشن' : 'غیرفعال و خاموش';
+      syncBanner();
       triggerAutoSave();
     });
   }
@@ -2736,9 +3126,73 @@ function deleteCurrentPdf() {
   // Dismissible toggle
   if (dismissInput && specimenCloseBtn) {
     dismissInput.addEventListener('change', () => {
-      specimenCloseBtn.style.display = dismissInput.checked ? 'block' : 'none';
+      specimenCloseBtn.style.display = dismissInput.checked ? 'flex' : 'none';
       triggerAutoSave();
     });
+  }
+
+  // Helper: Exact Jalali to Gregorian
+  function toGregorianDate(jy, jm, jd) {
+    let gy = jy > 979 ? 1600 : 621;
+    jy -= jy > 979 ? 979 : 0;
+    let days = (365 * jy) + (Math.floor(jy / 33) * 8) + Math.floor(((jy % 33) + 3) / 4) + 78 + jd + (jm < 7 ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+    gy += 400 * Math.floor(days / 146097);
+    days %= 146097;
+    if (days > 36524) {
+      gy += 100 * Math.floor(--days / 36524);
+      days %= 36524;
+      if (days >= 365) days++;
+    }
+    gy += 4 * Math.floor(days / 1461);
+    days %= 1461;
+    if (days > 365) {
+      gy += Math.floor((days - 1) / 365);
+      days = (days - 1) % 365;
+    }
+    let gd = days + 1;
+    const gmd = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let gm = 0;
+    while (gm < 12 && gd > gmd[gm]) {
+      gd -= gmd[gm];
+      gm++;
+    }
+    return { gy, gm, gd };
+  }
+
+  function getCalculatedCountdown(isMobile) {
+    const jalaliInput = document.querySelector('input[name="jalali_date"]');
+    const timeInput = document.querySelector('input[name="start_time"]');
+    let dateStr = jalaliInput ? jalaliInput.value.trim() : '';
+    let timeStr = timeInput ? timeInput.value.trim() : '08:00';
+
+    const fa = n => String(Math.max(0, n)).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+    if (!dateStr) return 'به‌زودی';
+
+    const p = dateStr.replace(/-/g, '/').split('/').map(v => parseInt(v.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)), 10));
+    if (p.length !== 3 || isNaN(p[0]) || isNaN(p[1]) || isNaN(p[2])) {
+      return 'به‌زودی';
+    }
+
+    const g = toGregorianDate(p[0], p[1], p[2]);
+    const tParts = (timeStr || '08:00').split(':').map(v => parseInt(v.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)), 10));
+    const hh = tParts[0] || 8;
+    const mm = tParts[1] || 0;
+
+    // Tehran is UTC+3:30 (approx 210 mins offset)
+    const targetMs = Date.UTC(g.gy, g.gm - 1, g.gd, hh - 3, mm - 30);
+    const diff = targetMs - Date.now();
+
+    if (diff <= 0) return 'در حال برگزاری';
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+
+    if (isMobile) {
+      return fa(days) + ' روز و ' + fa(hours) + 'س';
+    }
+    return fa(days) + ' روز · ' + fa(hours) + ' ساعت · ' + fa(minutes) + ' دقیقه';
   }
 
   // Color Pickers & Swatches
@@ -2776,6 +3230,19 @@ function deleteCurrentPdf() {
   function syncBanner() {
     if (!specimenBox) return;
 
+    const isMobileMode = currentPreviewMode === 'mobile';
+    const isActive = activeInput ? activeInput.checked : true;
+
+    // Active status pill & notice
+    if (specimenActiveStatusBadge && specimenActiveStatusText) {
+      specimenActiveStatusBadge.classList.toggle('is-active', isActive);
+      specimenActiveStatusBadge.classList.toggle('is-inactive', !isActive);
+      specimenActiveStatusText.textContent = isActive ? 'فعال در سایت' : 'غیرفعال و خاموش';
+    }
+    if (specimenInactiveNotice) {
+      specimenInactiveNotice.style.display = isActive ? 'none' : 'flex';
+    }
+
     // Title Sync
     const titleVal = (bannerDisplayTitle?.value || mainTitleInput?.value || '').trim();
     if (specimenTitle) specimenTitle.textContent = titleVal || 'عنوان رویداد';
@@ -2783,12 +3250,18 @@ function deleteCurrentPdf() {
 
     // Label / Badge Sync
     if (specimenBadge && labelInput) {
-      specimenBadge.textContent = labelInput.value.trim() || 'رویداد ویژه جاری';
+      specimenBadge.textContent = labelInput.value.trim() || 'رویداد پیش‌رو';
     }
 
     // CTA Button Sync
     if (specimenCtaBtn && ctaInput) {
-      specimenCtaBtn.textContent = ctaInput.value.trim() || 'ثبت‌نام مستقیم';
+      specimenCtaBtn.textContent = ctaInput.value.trim() || (isMobileMode ? 'مشاهده' : 'مشاهده رویداد');
+    }
+
+    // Countdown calculation
+    const countdownVal = document.getElementById('specimenCountdownText');
+    if (countdownVal) {
+      countdownVal.textContent = getCalculatedCountdown(isMobileMode);
     }
 
     // Colors Sync
@@ -2802,7 +3275,6 @@ function deleteCurrentPdf() {
       specimenCtaBtn.style.backgroundColor = accVal;
       specimenCtaBtn.style.color = '#ffffff';
     }
-    const countdownVal = document.getElementById('specimenCountdownText');
     if (countdownVal) countdownVal.style.color = accVal;
 
     // Check if background matches one of the 4 circles
@@ -2833,6 +3305,18 @@ function deleteCurrentPdf() {
   }
   if (labelInput) labelInput.addEventListener('input', syncBanner);
   if (ctaInput) ctaInput.addEventListener('input', syncBanner);
+
+  // Hook datepicker changes to sync banner countdown
+  const pdpDateInput = document.querySelector('input[name="jalali_date"]');
+  const pdpTimeInput = document.querySelector('input[name="start_time"]');
+  if (pdpDateInput) {
+    pdpDateInput.addEventListener('change', syncBanner);
+    pdpDateInput.addEventListener('input', syncBanner);
+  }
+  if (pdpTimeInput) {
+    pdpTimeInput.addEventListener('change', syncBanner);
+    pdpTimeInput.addEventListener('input', syncBanner);
+  }
 
   function bindColorPair(picker, text) {
     if (!picker || !text) return;
@@ -2937,7 +3421,11 @@ function deleteCurrentPdf() {
       const existing = data.existing || '';
       const imgSrc = data.preview || existing;
       const mediaHtml = imgSrc
-        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(title)}">`
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(title)}">
+           <div class="hq-repeat-media-overlay">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+             <span>تغییر تصویر</span>
+           </div>`
         : `<div class="hq-repeat-media-empty">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <span>تصویر هیرو جدید (کلیک یا رهاسازی)</span>
@@ -2952,10 +3440,6 @@ function deleteCurrentPdf() {
           </div>
           <div class="hq-repeat-media" title="برای تغییر یا انتخاب تصویر کلیک کنید یا فایل را اینجا رها نمایید">
             ${mediaHtml}
-            <div class="hq-repeat-media-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>تغییر تصویر</span>
-            </div>
           </div>
           <h3 class="hq-repeat-title">${escapeHtml(title) || 'عنوان هیرو جدید'}</h3>
           <p class="hq-repeat-desc">${escapeHtml(desc) || 'توضیحات این بخش هیرو...'}</p>
@@ -2968,7 +3452,7 @@ function deleteCurrentPdf() {
             <label class="hq-field-label">توضیح<input name="hero_description[]" value="${escapeHtml(desc)}" class="hq-input" placeholder="توضیح هیرو"></label>
             <label class="hq-field-label">متن دکمه<input name="hero_button_label[]" value="${escapeHtml(btnLabel)}" class="hq-input" placeholder="مشاهده بیشتر"></label>
             <label class="hq-field-label">لینک دکمه<input name="hero_link[]" value="${escapeHtml(link)}" dir="ltr" class="hq-input" placeholder="https://..."></label>
-            <label class="hq-field-label">تصویر هیرو<input type="file" name="hero_image[]" accept="image/*" class="hq-input"></label>
+            <input type="file" name="hero_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
             <input type="hidden" name="hero_existing[]" value="${escapeHtml(existing)}">
           </div>
         </div>`;
@@ -2981,7 +3465,11 @@ function deleteCurrentPdf() {
       const existing = data.existing || '';
       const imgSrc = data.preview || existing;
       const mediaHtml = imgSrc
-        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">
+           <div class="hq-repeat-media-overlay">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+             <span>تغییر عکس</span>
+           </div>`
         : `<div class="hq-repeat-media-empty">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>بدون عکس (کلیک یا رهاسازی)</span>
@@ -2997,10 +3485,6 @@ function deleteCurrentPdf() {
           </div>
           <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
             ${mediaHtml}
-            <div class="hq-repeat-media-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>تغییر عکس</span>
-            </div>
           </div>
           <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام دبیر جدید'}</h3>
           <p class="hq-repeat-desc">${escapeHtml(title) || 'سمت دبیر...'}</p>
@@ -3017,7 +3501,7 @@ function deleteCurrentPdf() {
             </label>
             <label class="hq-field-label">نام و نام خانوادگی<input name="person_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="دکتر ..."></label>
             <label class="hq-field-label">سمت / عنوان<input name="person_title[]" value="${escapeHtml(title)}" class="hq-input" placeholder="دبیر علمی همایش..."></label>
-            <label class="hq-field-label">عکس<input type="file" name="person_image[]" accept="image/*" class="hq-input"></label>
+            <input type="file" name="person_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
             <input type="hidden" name="person_existing[]" value="${escapeHtml(existing)}">
             <input type="hidden" name="person_order[]" value="${escapeHtml(order)}">
           </div>
@@ -3030,7 +3514,11 @@ function deleteCurrentPdf() {
       const existing = data.existing || '';
       const imgSrc = data.preview || existing;
       const mediaHtml = imgSrc
-        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">
+           <div class="hq-repeat-media-overlay">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+             <span>تغییر عکس</span>
+           </div>`
         : `<div class="hq-repeat-media-empty">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>بدون عکس (کلیک یا رهاسازی)</span>
@@ -3045,10 +3533,6 @@ function deleteCurrentPdf() {
           </div>
           <div class="hq-repeat-media" title="برای تغییر یا انتخاب عکس کلیک کنید یا فایل را اینجا رها نمایید">
             ${mediaHtml}
-            <div class="hq-repeat-media-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>تغییر عکس</span>
-            </div>
           </div>
           <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام استاد / سخنران'}</h3>
           <p class="hq-repeat-desc">${escapeHtml(title) || 'تخصص یا موضوع سخنرانی...'}</p>
@@ -3060,7 +3544,7 @@ function deleteCurrentPdf() {
             <label class="hq-field-label">نام استاد<input name="speaker_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="دکتر ..."></label>
             <label class="hq-field-label">سمت / تخصص<input name="speaker_title[]" value="${escapeHtml(title)}" class="hq-input" placeholder="متخصص ..."></label>
             <label class="hq-field-label">ترتیب نمایش<input name="speaker_order[]" type="text" dir="ltr" class="hq-input" value="${escapeHtml(order)}"></label>
-            <label class="hq-field-label">عکس<input type="file" name="speaker_image[]" accept="image/*" class="hq-input"></label>
+            <input type="file" name="speaker_image[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
             <input type="hidden" name="speaker_existing[]" value="${escapeHtml(existing)}">
           </div>
         </div>`;
@@ -3071,7 +3555,11 @@ function deleteCurrentPdf() {
       const existing = data.existing || '';
       const imgSrc = data.preview || existing;
       const mediaHtml = imgSrc
-        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">`
+        ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(name)}">
+           <div class="hq-repeat-media-overlay">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+             <span>تغییر لوگو</span>
+           </div>`
         : `<div class="hq-repeat-media-empty">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
             <span>بدون لوگو (کلیک یا رهاسازی)</span>
@@ -3086,10 +3574,6 @@ function deleteCurrentPdf() {
           </div>
           <div class="hq-repeat-media" title="برای تغییر یا انتخاب لوگو کلیک کنید یا فایل را اینجا رها نمایید">
             ${mediaHtml}
-            <div class="hq-repeat-media-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span>تغییر لوگو</span>
-            </div>
           </div>
           <h3 class="hq-repeat-title">${escapeHtml(name) || 'نام همراه جدید'}</h3>
           <p class="hq-repeat-desc">سازمان همکار یا حامی...</p>
@@ -3100,7 +3584,7 @@ function deleteCurrentPdf() {
           <div class="hq-repeat-drawer ${openClass}">
             <label class="hq-field-label">نام همراه / حامی<input name="partner_name[]" value="${escapeHtml(name)}" class="hq-input" placeholder="شرکت یا سازمان"></label>
             <label class="hq-field-label">ترتیب نمایش<input name="partner_order[]" type="text" dir="ltr" class="hq-input" value="${escapeHtml(order)}"></label>
-            <label class="hq-field-label">لوگو<input type="file" name="partner_logo[]" accept="image/*" class="hq-input"></label>
+            <input type="file" name="partner_logo[]" accept="image/*" style="display:none;" class="hq-repeat-file-input">
             <input type="hidden" name="partner_existing[]" value="${escapeHtml(existing)}">
           </div>
         </div>`;
@@ -3188,13 +3672,20 @@ function deleteCurrentPdf() {
           const reader = new FileReader();
           reader.onload = ev => {
             let img = media.querySelector('img');
+            let overlay = media.querySelector('.hq-repeat-media-overlay');
+            const empty = media.querySelector('.hq-repeat-media-empty');
+            if (empty) empty.style.display = 'none';
             if (!img) {
-              const empty = media.querySelector('.hq-repeat-media-empty');
-              if (empty) empty.style.display = 'none';
               img = document.createElement('img');
-              media.insertBefore(img, media.firstChild);
+              media.appendChild(img);
             }
             img.src = ev.target.result;
+            if (!overlay) {
+              overlay = document.createElement('div');
+              overlay.className = 'hq-repeat-media-overlay';
+              overlay.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>تغییر تصویر</span>`;
+              media.appendChild(overlay);
+            }
             triggerAutoSave();
           };
           reader.readAsDataURL(file);

@@ -396,59 +396,6 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     max-width: 560px;
     margin-right: auto;
   }
-  .hero-anim-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    background: rgba(4, 46, 52, 0.68);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 14px;
-    padding: 6px 10px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    gap: 8px;
-  }
-  .anim-toolbar-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    font-weight: 700;
-    color: #A7F3D0;
-    white-space: nowrap;
-  }
-  .anim-toolbar-pills {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    justify-content: flex-end;
-  }
-  .anim-pill {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #E2E8F0;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 9px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-  .anim-pill:hover {
-    background: rgba(255, 255, 255, 0.18);
-    color: #FFFFFF;
-  }
-  .anim-pill.is-active {
-    background: #F5A623;
-    color: #042E34;
-    border-color: #F5A623;
-    font-weight: 800;
-    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.45);
-  }
-
   .hero-showcase-wrapper {
     width: 100%;
     height: 420px;
@@ -535,217 +482,62 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   }
 
   /* -------------------------------------------------------------
-     RARE UI MODEL 1: Morphing Glass & Radiant Aurora Contour
+     HERO CARD ANIMATION: Frosted Glass Prism & Light Beam Sheen (منشور شیشه‌ای)
      ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide {
+  .hero-showcase-wrapper .hero-slide {
     opacity: 0;
     visibility: hidden;
-    filter: blur(14px) brightness(1.2);
-    transform: scale(0.94);
+    filter: blur(12px) brightness(1.15);
+    transform: scale(0.92);
     transition: opacity 0.75s ease, 
                 transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), 
                 filter 0.75s ease;
   }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active {
+  .hero-showcase-wrapper .hero-slide.is-active {
     opacity: 1;
     visibility: visible;
     filter: blur(0) brightness(1);
     transform: scale(1);
     z-index: 2;
   }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide::before {
+  .hero-showcase-wrapper .hero-slide.is-prev {
+    opacity: 0;
+    visibility: hidden;
+    filter: blur(8px) brightness(1.08);
+    transform: scale(0.95);
+    transition: opacity 0.65s ease, 
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), 
+                filter 0.65s ease;
+  }
+  .hero-showcase-wrapper .hero-slide::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 80% 20%, rgba(245, 166, 35, 0.25) 0%, transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(13, 122, 135, 0.35) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 1s ease;
+    background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.4) 50%, transparent 75%);
+    transform: translateX(-150%);
+    z-index: 3;
     pointer-events: none;
-    z-index: 1;
   }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active::before {
+  .hero-showcase-wrapper .hero-slide.is-active::after {
+    transform: translateX(150%);
+    transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-showcase-wrapper .hero-slide-body {
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.18s, opacity 0.65s ease 0.18s;
+  }
+  .hero-showcase-wrapper .hero-slide.is-active .hero-slide-body {
+    transform: translateY(0);
     opacity: 1;
   }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide-body > * {
-    transform: translateY(18px);
-    opacity: 0;
+  .hero-showcase-wrapper .hero-slide-body > * {
     transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease;
   }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active .hero-slide-body > * {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active .hero-slide-badge { transition-delay: 0.12s; }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active .hero-slide-title { transition-delay: 0.22s; }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active .hero-slide-desc { transition-delay: 0.32s; }
-  .hero-showcase-wrapper.rare-morph-glass .hero-slide.is-active .hero-slide-link { transition-delay: 0.42s; }
-
-  /* -------------------------------------------------------------
-     RARE UI MODEL 2: Dual-Split Vertical Shutter
-     ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-split-shutter .hero-slide {
-    opacity: 0;
-    visibility: hidden;
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0, 0 100%, 100% 100%, 100% 100%, 0 100%);
-    transform: scale(1.08);
-    transition: clip-path 0.85s cubic-bezier(0.77, 0, 0.175, 1), 
-                transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.4s ease;
-  }
-  .hero-showcase-wrapper.rare-split-shutter .hero-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%, 0 50%, 100% 50%, 100% 100%, 0 100%);
-    transform: scale(1);
-    z-index: 2;
-  }
-  .hero-showcase-wrapper.rare-split-shutter .hero-slide-body {
-    transform: scale(0.92) translateY(14px);
-    opacity: 0;
-    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s, opacity 0.5s ease 0.25s;
-  }
-  .hero-showcase-wrapper.rare-split-shutter .hero-slide.is-active .hero-slide-body {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-
-  /* -------------------------------------------------------------
-     RARE UI MODEL 3: Magnetic 3D Gyro Float
-     ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-magnetic-float {
-    perspective: 1400px;
-  }
-  .hero-showcase-wrapper.rare-magnetic-float .hero-slide {
-    transform-style: preserve-3d;
-    opacity: 0;
-    visibility: hidden;
-    transform: rotateX(8deg) rotateY(-5deg) translateY(-18px) scale(0.94);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.65s ease, 
-                box-shadow 0.9s ease;
-  }
-  .hero-showcase-wrapper.rare-magnetic-float .hero-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    transform: rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
-    box-shadow: 0 24px 48px rgba(4, 46, 52, 0.45);
-    z-index: 2;
-  }
-  .hero-showcase-wrapper.rare-magnetic-float .hero-slide.is-prev {
-    opacity: 0;
-    transform: rotateX(-8deg) rotateY(5deg) translateY(18px) scale(0.94);
-  }
-  .hero-showcase-wrapper.rare-magnetic-float .hero-slide-body {
-    transform: translateZ(36px);
-    transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
-  }
-
-  /* -------------------------------------------------------------
-     RARE UI MODEL 4: Cyber Wave & Chromatic Pulse
-     ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide {
-    opacity: 0;
-    visibility: hidden;
-    filter: contrast(1.3) hue-rotate(-25deg);
-    transform: translateX(40px) scale(0.97);
-    transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1), 
-                opacity 0.45s ease, 
-                filter 0.6s ease;
-  }
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    filter: contrast(1) hue-rotate(0deg);
-    transform: translateX(0) scale(1);
-    z-index: 2;
-  }
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide.is-prev {
-    opacity: 0;
-    transform: translateX(-40px) scale(0.97);
-  }
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.05) 0px, rgba(0, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-  }
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide.is-active::after {
-    opacity: 1;
-    animation: cyberScanlines 2s infinite linear;
-  }
-  @keyframes cyberScanlines {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(8px); }
-  }
-  .hero-showcase-wrapper.rare-glitch-cyber .hero-slide.is-active .hero-slide-title {
-    text-shadow: 2px 0 rgba(0, 255, 255, 0.6), -2px 0 rgba(245, 166, 35, 0.6);
-    transition: text-shadow 0.4s ease;
-  }
-
-  /* -------------------------------------------------------------
-     RARE UI MODEL 5: Isometric Depth & Elevation
-     ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-isometric-depth {
-    perspective: 1600px;
-  }
-  .hero-showcase-wrapper.rare-isometric-depth .hero-slide {
-    transform-style: preserve-3d;
-    opacity: 0;
-    visibility: hidden;
-    transform: rotateX(20deg) rotateZ(-4deg) translateY(42px) scale(0.91);
-    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
-  }
-  .hero-showcase-wrapper.rare-isometric-depth .hero-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    transform: rotateX(0deg) rotateZ(0deg) translateY(0) scale(1);
-    z-index: 2;
-  }
-  .hero-showcase-wrapper.rare-isometric-depth .hero-slide.is-prev {
-    opacity: 0;
-    transform: rotateX(-20deg) rotateZ(4deg) translateY(-42px) scale(0.91);
-  }
-  .hero-showcase-wrapper.rare-isometric-depth .hero-slide-body {
-    transform: translateY(20px);
-    opacity: 0;
-    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.18s, opacity 0.7s ease 0.18s;
-  }
-  .hero-showcase-wrapper.rare-isometric-depth .hero-slide.is-active .hero-slide-body {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  /* -------------------------------------------------------------
-     RARE UI MODEL 6: Radial Liquid Bloom & Aperture Flare
-     ------------------------------------------------------------- */
-  .hero-showcase-wrapper.rare-ripple-bloom .hero-slide {
-    opacity: 1;
-    visibility: visible;
-    clip-path: circle(0% at 50% 50%);
-    transform: scale(1.15);
-    transition: clip-path 0.9s cubic-bezier(0.65, 0, 0.15, 1), 
-                transform 1.25s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 1;
-  }
-  .hero-showcase-wrapper.rare-ripple-bloom .hero-slide.is-active {
-    clip-path: circle(160% at 50% 50%);
-    transform: scale(1);
-    z-index: 2;
-  }
-  .hero-showcase-wrapper.rare-ripple-bloom .hero-slide-body {
-    transform: scale(0.88);
-    opacity: 0;
-    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.25s, opacity 0.65s ease 0.25s;
-  }
-  .hero-showcase-wrapper.rare-ripple-bloom .hero-slide.is-active .hero-slide-body {
-    transform: scale(1);
-    opacity: 1;
-  }
+  .hero-showcase-wrapper .hero-slide.is-active .hero-slide-badge { transition-delay: 0.14s; }
+  .hero-showcase-wrapper .hero-slide.is-active .hero-slide-title { transition-delay: 0.22s; }
+  .hero-showcase-wrapper .hero-slide.is-active .hero-slide-desc { transition-delay: 0.30s; }
+  .hero-showcase-wrapper .hero-slide.is-active .hero-slide-link { transition-delay: 0.38s; }
 
   .hero-slider-nav {
     position: absolute;
@@ -1992,25 +1784,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           </div>
         </div>
 
-        <!-- Showcase Column: Dedicated Hero Carousel with 6 Rare UI Animation Models -->
+        <!-- Showcase Column: Dedicated Hero Carousel with Glass Prism Animation (منشور شیشه‌ای) -->
         <div class="hero-showcase-container">
-          <!-- Animation Model Switcher Toolbar -->
-          <div class="hero-anim-toolbar" id="heroAnimToolbar" title="تغییر زنده مدل انیمیشن اسلایدر Rare UI">
-            <span class="anim-toolbar-title">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-              انیمیشن Rare UI:
-            </span>
-            <div class="anim-toolbar-pills">
-              <button type="button" class="anim-pill is-active" data-model="rare-morph-glass">۱. شیشه متغیر</button>
-              <button type="button" class="anim-pill" data-model="rare-split-shutter">۲. شاتر عمودی</button>
-              <button type="button" class="anim-pill" data-model="rare-magnetic-float">۳. شناور سه‌بعدی</button>
-              <button type="button" class="anim-pill" data-model="rare-glitch-cyber">۴. جهش سایبری</button>
-              <button type="button" class="anim-pill" data-model="rare-isometric-depth">۵. عمق ایزومتریک</button>
-              <button type="button" class="anim-pill" data-model="rare-ripple-bloom">۶. شکوفایی شعاعی</button>
-            </div>
-          </div>
-
-          <div class="hero-showcase-wrapper rare-morph-glass" id="heroShowcase">
+          <div class="hero-showcase-wrapper anim-prism-sheen" id="heroShowcase">
             <div class="hero-slider-track" id="heroSliderTrack">
               <?php if (!empty($heroes)): ?>
                 <?php foreach ($heroes as $idx => $h): ?>
@@ -2425,13 +2201,12 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       setInterval(tick, 1000);
     }
 
-    // 2. Interactive Hero Carousel with 3 Animation Models & Gestures
+    // 2. Interactive Hero Carousel with Glass Prism Animation & Gestures
     const showcase = document.getElementById('heroShowcase');
     const slides = document.querySelectorAll('.hero-slide');
     const dots = document.querySelectorAll('.hero-dot');
     const btnPrev = document.getElementById('heroPrevBtn');
     const btnNext = document.getElementById('heroNextBtn');
-    const animPills = document.querySelectorAll('#heroAnimToolbar .anim-pill');
 
     let activeIdx = 0;
     let timer = null;
@@ -2450,41 +2225,6 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       });
       dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
     }
-
-    const heroAnimModels = ['rare-morph-glass', 'rare-split-shutter', 'rare-magnetic-float', 'rare-glitch-cyber', 'rare-isometric-depth', 'rare-ripple-bloom'];
-
-    function setHeroAnimModel(modelName, advanceSlide = false) {
-      if (!showcase) return;
-      heroAnimModels.forEach(m => showcase.classList.remove(m));
-      const targetModel = heroAnimModels.includes(modelName) ? modelName : 'rare-morph-glass';
-      showcase.classList.add(targetModel);
-      try {
-        localStorage.setItem('hero_anim_model', targetModel);
-      } catch (e) {}
-      animPills.forEach(pill => {
-        pill.classList.toggle('is-active', pill.dataset.model === targetModel);
-      });
-      if (advanceSlide && slides.length > 1) {
-        goToSlide(activeIdx + 1);
-        startAuto();
-      }
-    }
-
-    animPills.forEach(pill => {
-      pill.addEventListener('click', e => {
-        e.preventDefault();
-        setHeroAnimModel(pill.dataset.model, true);
-      });
-    });
-
-    let savedModel = 'rare-morph-glass';
-    try {
-      const stored = localStorage.getItem('hero_anim_model');
-      if (stored && heroAnimModels.includes(stored)) {
-        savedModel = stored;
-      }
-    } catch (e) {}
-    setHeroAnimModel(savedModel, false);
 
     function startAuto() {
       stopAuto();
