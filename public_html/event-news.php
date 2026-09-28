@@ -5,9 +5,78 @@ require_once __DIR__ . '/core/database.php';
 require_once __DIR__ . '/event-lib.php';
 require_once __DIR__ . '/core/html-sanitizer.php';
 
-$st = $pdo->prepare("SELECT n.*, e.title AS event_title, e.slug AS event_slug FROM event_news n JOIN events e ON e.id = n.event_id WHERE n.slug = ? AND n.status = 'published' LIMIT 1");
-$st->execute([trim((string)($_GET['slug'] ?? ''))]);
-$news = $st->fetch();
+$slugParam = trim((string)($_GET['slug'] ?? ''));
+$idParam = (int)($_GET['id'] ?? 0);
+$news = null;
+
+if ($slugParam !== '' || $idParam > 0) {
+    $slugDecoded = urldecode($slugParam);
+    $slugRawDecoded = rawurldecode($slugParam);
+
+    $candidates = array_values(array_unique(array_filter([
+        $slugParam,
+        $slugDecoded,
+        $slugRawDecoded,
+        str_replace('-', ' ', $slugDecoded),
+        str_replace(' ', '-', $slugDecoded),
+        str_replace('-', ' ', $slugParam),
+        str_replace(' ', '-', $slugParam),
+    ])));
+
+    $extractedId = 0;
+    if (preg_match('/-(\d+)$/', $slugDecoded, $m)) {
+        $extractedId = (int)$m[1];
+    }
+
+    $potentialIds = array_values(array_unique(array_filter([
+        $idParam,
+        is_numeric($slugParam) ? (int)$slugParam : 0,
+        is_numeric($slugDecoded) ? (int)$slugDecoded : 0,
+        $extractedId,
+    ])));
+
+    $whereParts = [];
+    $params = [];
+
+    if (!empty($candidates)) {
+        $ph = implode(',', array_fill(0, count($candidates), '?'));
+        $whereParts[] = "n.slug IN ($ph)";
+        $params = array_merge($params, $candidates);
+    }
+    if (!empty($potentialIds)) {
+        $phId = implode(',', array_fill(0, count($potentialIds), '?'));
+        $whereParts[] = "n.id IN ($phId)";
+        $params = array_merge($params, $potentialIds);
+    }
+
+    if (!empty($whereParts)) {
+        $matchCondition = '(' . implode(' OR ', $whereParts) . ')';
+
+        // 1. Primary search: status != 'archived'
+        $sql = "SELECT n.*, e.title AS event_title, e.slug AS event_slug 
+                FROM event_news n 
+                LEFT JOIN events e ON e.id = n.event_id 
+                WHERE {$matchCondition} AND (n.status != 'archived' OR n.status IS NULL) 
+                ORDER BY CASE WHEN n.status = 'published' THEN 0 ELSE 1 END, n.id DESC 
+                LIMIT 1";
+        $st = $pdo->prepare($sql);
+        $st->execute($params);
+        $news = $st->fetch();
+
+        // 2. Fallback search: any status (including preview or draft)
+        if (!$news) {
+            $sql = "SELECT n.*, e.title AS event_title, e.slug AS event_slug 
+                    FROM event_news n 
+                    LEFT JOIN events e ON e.id = n.event_id 
+                    WHERE {$matchCondition} 
+                    ORDER BY n.id DESC 
+                    LIMIT 1";
+            $st = $pdo->prepare($sql);
+            $st->execute($params);
+            $news = $st->fetch();
+        }
+    }
+}
 
 if (!$news) {
     http_response_code(404);
@@ -18,12 +87,20 @@ if (!$news) {
     exit;
 }
 
-$pageTitle = $news['title'] . ' · ' . $news['event_title'];
+$eventTitle = (string)($news['event_title'] ?? '');
+$pageTitle = $news['title'] . ($eventTitle !== '' ? ' · ' . $eventTitle : '');
 require __DIR__ . '/dashboard/components/header/component.php';
 
-$relatedStmt = $pdo->prepare("SELECT id, title, slug, published_at, created_at, image FROM event_news WHERE event_id = ? AND status = 'published' AND id <> ? ORDER BY published_at DESC, id DESC LIMIT 5");
-$relatedStmt->execute([(int)$news['event_id'], (int)$news['id']]);
-$related = $relatedStmt->fetchAll();
+$related = [];
+if (!empty($news['event_id'])) {
+    $relatedStmt = $pdo->prepare("SELECT id, title, slug, published_at, created_at, image 
+                                  FROM event_news 
+                                  WHERE event_id = ? AND (status != 'archived' OR status IS NULL) AND id <> ? 
+                                  ORDER BY COALESCE(published_at, created_at) DESC, id DESC 
+                                  LIMIT 5");
+    $relatedStmt->execute([(int)$news['event_id'], (int)$news['id']]);
+    $related = $relatedStmt->fetchAll();
+}
 ?>
 <style>
 .event-news-page {
@@ -226,8 +303,10 @@ $related = $relatedStmt->fetchAll();
       <!-- Breadcrumbs -->
       <nav class="event-news-breadcrumbs" aria-label="موقعیت در سایت">
         <a href="/events.php">رویدادهای مکسا</a>
-        <span>/</span>
-        <a href="/event.php?slug=<?= rawurlencode($news['event_slug']) ?>"><?= event_h($news['event_title']) ?></a>
+        <?php if (!empty($news['event_slug']) || !empty($news['event_title'])): ?>
+          <span>/</span>
+          <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>"><?= event_h($news['event_title'] ?: 'همایش') ?></a>
+        <?php endif; ?>
         <span>/</span>
         <span>خبر اختصاصی</span>
       </nav>
@@ -235,7 +314,7 @@ $related = $relatedStmt->fetchAll();
       <div class="event-news-card">
         <div class="event-news-tag">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-          <span>خبر رویداد · <?= event_h($news['event_title']) ?></span>
+          <span>خبر رویداد<?= !empty($news['event_title']) ? ' · ' . event_h($news['event_title']) : '' ?></span>
         </div>
 
         <h1><?= event_h($news['title']) ?></h1>
@@ -260,19 +339,21 @@ $related = $relatedStmt->fetchAll();
     </article>
 
     <aside class="event-news-sidebar">
-      <div class="event-news-sidebox">
-        <h3>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-          <span>همایش مرتبط</span>
-        </h3>
-        <p style="font-size:13px;color:#475569;line-height:1.7;margin:0 0 14px;">
-          <?= event_h($news['event_title']) ?>
-        </p>
-        <a href="/event.php?slug=<?= rawurlencode($news['event_slug']) ?>" style="display:inline-flex;align-items:center;gap:6px;color:#007b7a;font-size:13px;font-weight:800;text-decoration:none;">
-          <span>مشاهده صفحه همایش</span>
-          <span>→</span>
-        </a>
-      </div>
+      <?php if (!empty($news['event_title'])): ?>
+        <div class="event-news-sidebox">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>همایش مرتبط</span>
+          </h3>
+          <p style="font-size:13px;color:#475569;line-height:1.7;margin:0 0 14px;">
+            <?= event_h($news['event_title']) ?>
+          </p>
+          <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>" style="display:inline-flex;align-items:center;gap:6px;color:#007b7a;font-size:13px;font-weight:800;text-decoration:none;">
+            <span>مشاهده صفحه همایش</span>
+            <span>→</span>
+          </a>
+        </div>
+      <?php endif; ?>
 
       <?php if (!empty($related)): ?>
         <div class="event-news-sidebox">
@@ -281,7 +362,7 @@ $related = $relatedStmt->fetchAll();
             <span>سایر اخبار این همایش</span>
           </h3>
           <?php foreach ($related as $rel): ?>
-            <a class="event-related-link" href="/event-news.php?slug=<?= rawurlencode($rel['slug']) ?>">
+            <a class="event-related-link" href="/event-news.php?slug=<?= rawurlencode((string)$rel['slug']) ?>">
               <div><?= event_h($rel['title']) ?></div>
               <span class="event-related-date">
                 <?= event_h(event_date_label(substr((string)($rel['published_at'] ?: $rel['created_at']), 0, 10))) ?>
