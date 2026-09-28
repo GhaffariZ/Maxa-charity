@@ -59,6 +59,17 @@ check(
     'Legacy component image placeholder was not replaced.'
 );
 
+foreach (['{{image2}}', '%7B%7Bimage2%7D%7D', '/uploads/editor/{{image2}}', '/uploads/editor/%7B%7Bimage2%7D%7D'] as $token) {
+    $markup = '<img src="' . $token . '">';
+    $expected = '<img src="/dashboard/components/hamrah/images/2.png">';
+    check(dashboard_component_replace_images($markup, 'hamrah') === $expected, 'Legacy encoded image token was not repaired.');
+    $safe = HtmlSanitizer::sanitizeComponent($markup);
+    check(!str_contains($safe, '/uploads/editor/'), 'Component token was treated as an uploaded filename.');
+    check(str_contains(dashboard_component_replace_images($safe, 'hamrah'), '/dashboard/components/hamrah/images/2.png'), 'Saved component image was not resolved.');
+}
+check(str_contains(HtmlSanitizer::sanitizeComponent('<img src="photo.png">'), '/uploads/editor/photo.png'), 'Real uploaded filename normalization changed.');
+check(str_contains(HtmlSanitizer::sanitizeComponent('<img src="/dashboard/components/hamrah/images/1.png">'), '/dashboard/components/hamrah/images/1.png'), 'Existing absolute image URL changed.');
+
 $legacyFile = __DIR__ . '/../public_html/dashboard/components/فونت/component.php';
 ob_start();
 include $legacyFile;

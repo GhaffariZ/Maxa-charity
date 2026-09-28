@@ -50,6 +50,13 @@ function dashboard_component_replace_images(string $html, string $name): string
 {
     $images = dashboard_component_images($name);
 
+    // Repair tokens in immutable legacy markup as well as saved content.
+    $html = preg_replace_callback(
+        '~(?:/?uploads/editor/)?(?:\{\{image([1-9][0-9]*)\}\}|%7B%7Bimage([1-9][0-9]*)%7D%7D)~i',
+        static fn(array $match): string => '{{image' . ($match[1] !== '' ? $match[1] : $match[2]) . '}}',
+        $html
+    ) ?? $html;
+
     return preg_replace_callback('/{{image(\\d+)}}/', static function (array $match) use ($name, $images): string {
         $index = (int)$match[1] - 1;
         if ($index < 0 || !isset($images[$index])) {

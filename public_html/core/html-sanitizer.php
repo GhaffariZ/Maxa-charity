@@ -359,6 +359,12 @@ final class HtmlSanitizer
     private static function normalizeImageUrl(string $url): string
     {
         $url = trim($url);
+        // Preserve component tokens and repair URLs saved by older editors.
+        // Decode only exact tokens, not arbitrary user-supplied URLs.
+        $token = rawurldecode($url);
+        if (preg_match('~^(?:/?uploads/editor/)?\{\{image([1-9][0-9]*)\}\}$~i', $token, $match)) {
+            return '{{image' . $match[1] . '}}';
+        }
         if ($url === '' || preg_match('/^(?:https?:|\/|data:)/i', $url)) {
             return $url;
         }
