@@ -39,7 +39,10 @@ $event = [
     'updated_at' => date('Y-m-d H:i:s'),
 ];
 
-$heroes = $people = $speakers = $partners = $news = [];
+$heroes = $people = $speakers = $partners = [];
+if (!isset($news)) {
+    $news = [];
+}
 
 if ($id && $pdo) {
     $st = $pdo->prepare('SELECT * FROM events WHERE id = ?');
@@ -860,6 +863,9 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 16px;
   align-items: start;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .hq-repeat-card {
   background: var(--hq-surface-tint);
@@ -872,6 +878,11 @@ body {
   position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   height: fit-content;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .hq-repeat-card:hover {
   border-color: rgba(0, 123, 122, 0.4);
@@ -1213,6 +1224,10 @@ body {
   }
   .hq-step-group {
     padding-bottom: 24px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .hq-step-group:not(.is-active-step) {
     display: none !important;
@@ -1221,10 +1236,17 @@ body {
     display: flex !important;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .hq-repeat-grid {
     margin-bottom: 16px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   /* Actions Bar Mobile Layout: 3 organized, non-colliding tiers */
@@ -1384,10 +1406,16 @@ body {
     overflow: hidden;
   }
   .hq-repeat-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
   }
   .hq-card {
-    padding: 16px;
+    padding: 16px 14px;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
   }
 }
 
@@ -1450,13 +1478,20 @@ body {
 
 .figma-banner-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 @media (max-width: 1024px) {
   .figma-banner-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -1468,6 +1503,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .figma-card-inner-title {
   font-size: 16px;
@@ -1481,12 +1520,19 @@ body {
   gap: 16px;
   align-items: flex-start;
   flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .figma-field-col {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+}
+.figma-field-switch-col {
+  width: 200px;
+  flex-shrink: 0;
 }
 .figma-readonly-event-box {
   display: flex;
@@ -1498,6 +1544,12 @@ body {
   border-radius: 8px;
   min-height: 44px;
   gap: 10px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.figma-readonly-event-box #bannerEventDisplayTitle {
+  min-width: 0;
+  word-break: break-word;
 }
 .figma-badge-pill {
   font-size: 11px;
@@ -1659,6 +1711,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .figma-specimen-card {
   background: var(--hq-surface);
@@ -1668,6 +1724,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .figma-specimen-header {
   display: flex;
@@ -1778,10 +1839,13 @@ body {
 /* Frame Wrapper (supports Phone simulation) */
 .figma-specimen-frame-wrap {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 .figma-specimen-frame-wrap.is-mobile-view {
+  width: 100%;
   max-width: 375px;
   margin: 0 auto;
   background: #0f172a;
@@ -1789,6 +1853,7 @@ body {
   border-radius: 24px;
   padding: 8px 8px 16px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  box-sizing: border-box;
 }
 .figma-phone-notch-bar {
   display: flex;
@@ -1903,9 +1968,14 @@ body {
   gap: 8px;
   border-radius: 8px;
   font-size: 11.5px;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 .figma-specimen-frame-wrap.is-mobile-view .figma-specimen-copy {
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 .figma-specimen-frame-wrap.is-mobile-view .figma-specimen-badge {
   display: none !important;
@@ -1913,6 +1983,10 @@ body {
 .figma-specimen-frame-wrap.is-mobile-view .figma-specimen-event-title {
   font-size: 11.5px;
   max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 .figma-specimen-frame-wrap.is-mobile-view .figma-specimen-countdown-val {
   font-size: 10.5px;
@@ -1943,6 +2017,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 [data-theme="dark"] .figma-system-rule-box {
   background: rgba(217, 119, 6, 0.12);
@@ -1961,6 +2039,98 @@ body {
   line-height: 1.65;
   color: var(--hq-text-main);
   margin: 0;
+}
+
+/* Mobile & Tablet Specific Overrides for Banner & Step 4 (<= 768px) */
+@media (max-width: 768px) {
+  .figma-form-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+  .figma-field-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    box-sizing: border-box !important;
+  }
+  .figma-field-switch-col {
+    width: 100% !important;
+    flex-shrink: 1 !important;
+  }
+  .figma-readonly-event-box {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .figma-readonly-event-box #bannerEventDisplayTitle {
+    word-break: break-word !important;
+  }
+  .figma-specimen-frame-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+  }
+  .figma-specimen-frame-wrap:not(.is-mobile-view) .figma-specimen-banner {
+    min-width: 600px !important;
+    width: max-content !important;
+  }
+  .figma-specimen-frame-wrap.is-mobile-view {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .figma-banner-form-card {
+    padding: 16px 14px !important;
+  }
+  .figma-color-presets-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .figma-custom-colors-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 14px !important;
+  }
+  .figma-color-chip {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .figma-specimen-card {
+    padding: 16px 12px !important;
+  }
+  .figma-specimen-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .figma-specimen-title-group {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+  .figma-specimen-tabs {
+    width: 100% !important;
+    display: flex !important;
+    box-sizing: border-box !important;
+  }
+  .figma-specimen-tab {
+    flex: 1 !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .figma-system-rule-box {
+    padding: 16px 14px !important;
+  }
 }
 </style>
 
@@ -2495,7 +2665,7 @@ body {
                   </div>
                 </div>
 
-                <div class="figma-field-col" style="width:200px; flex-shrink:0;">
+                <div class="figma-field-col figma-field-switch-col">
                   <label class="hq-field-label">وضعیت نمایش بنر</label>
                   <label class="figma-switch-wrap <?= (int)$event['banner_active'] ? 'is-active' : '' ?>" id="bannerSwitchWrap">
                     <input type="checkbox" name="banner_active" id="bannerActiveInput" value="1" <?= (int)$event['banner_active'] ? 'checked' : '' ?> style="display:none;">
@@ -3104,6 +3274,11 @@ function deleteCurrentPdf() {
       if (specimenPhoneNotch) specimenPhoneNotch.style.display = 'flex';
       syncBanner();
     });
+
+    // On mobile devices (<= 768px), auto-activate mobile preview so banner fits screen naturally
+    if (window.innerWidth <= 768) {
+      tabMobile.click();
+    }
   }
 
   // Switch Toggle
