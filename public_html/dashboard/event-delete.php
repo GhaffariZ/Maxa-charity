@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); require_once __DIR__.'/_guard.php'; dash_require('events'); dash_require_hq(); if($_SERVER['REQUEST_METHOD']!=='POST'){ http_response_code(405); exit('روش درخواست مجاز نیست.'); } csrf_check(); $id=(int)($_POST['id']??0); if($id) dash_pdo()->prepare('DELETE FROM events WHERE id=?')->execute([$id]); header('Location: event-list.php');

@@ -18,7 +18,7 @@ if (!dash_is_super()) {
 dash_require_hq();
 
 $FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
+    'hero' => 'هیروها', 'news' => 'خبرها', 'events' => 'رویدادها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
     'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
     'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
 ];

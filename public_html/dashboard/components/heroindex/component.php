@@ -92,6 +92,10 @@
       height: 68px;
     }
 
+    .cta-navbar-spacer {
+      height: var(--cta-nav-h);
+    }
+
     .cta-header{
       display:flex;
       align-items:center;
@@ -1564,6 +1568,11 @@
 
 <body>
 
+<?php
+require_once __DIR__ . '/../../../event-lib.php';
+require_once __DIR__ . '/../../../event-banner.php';
+echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
+?>
   <section class="cta">
 
     <div class="cta-topbar">
@@ -1684,6 +1693,7 @@
 
               <li><a href="/branches.php">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
+              <li><a href="/events.php">رویدادها و همایش‌ها</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
@@ -1756,6 +1766,7 @@
 
       </div>
     </div>
+    <div class="cta-navbar-spacer" aria-hidden="true"></div>
 
     <section class="cta-hero" aria-label="CTA Hero Slider">
 

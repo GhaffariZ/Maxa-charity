@@ -25,6 +25,7 @@ $FEATURE_LABELS = [
 ];
 // دسترسی‌های ویژه‌ی ستاد مرکزی فقط آن‌جا قابل‌واگذاری‌اند.
 if (dash_is_hq_view()) {
+    $FEATURE_LABELS['events']     = 'رویدادها';
     $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
     $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
 }

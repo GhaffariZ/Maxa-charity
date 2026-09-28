@@ -31,7 +31,7 @@ const DASH_LOCK_MINUTES     = 15;     // مدت قفل (دقیقه)
 
 /* فهرست کامل بخش‌های قابل‌واگذاری (مرجعِ واحد در کل سامانه) */
 const DASH_FEATURES = [
-    'hero', 'news', 'campaigns', 'partners', 'courses',
+    'hero', 'news', 'events', 'campaigns', 'partners', 'courses',
     'pages', 'financial', 'feedback', 'medical', 'stands',
 ];
 
@@ -441,7 +441,7 @@ function dash_is_finance_user(): bool
     }
     $perms = $u['permissions'] ?? [];
     if (in_array('financial', $perms, true)) {
-        $generalPerms = ['hero', 'news', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
+        $generalPerms = ['hero', 'news', 'events', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
         if (empty(array_intersect($perms, $generalPerms))) {
             return true;
         }

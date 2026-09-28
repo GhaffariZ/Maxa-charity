@@ -313,6 +313,7 @@ $MENU = [
   'can'           => [
     'hero'      => $visible('hero'),
     'news'      => $visible('news'),
+    'events'    => $visible('events'),
     'campaigns' => $visible('campaigns'),
     'partners'  => $visible('partners'),
     'courses'   => $visible('courses'),
@@ -1040,6 +1041,7 @@ body.spa-loading .spa-frame{opacity:.6}
     grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/>',
     award:'<circle cx="12" cy="9" r="5.5"/><path d="M8.2 13.2 6.5 21l5.5-3 5.5 3-1.7-7.8"/>',
     news:'<path d="M4 5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/><path d="M18 8h1.5A1.5 1.5 0 0 1 21 9.5V18a2 2 0 0 1-2 2"/><line x1="8" y1="8" x2="14" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/>',
+    calendar:'<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 9.5h18"/><path d="m8.5 15 2 2 5-5"/>',
     users:'<path d="M16 21v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V21"/><circle cx="9.5" cy="7" r="3.5"/><path d="M21 21v-1.5a4 4 0 0 0-3-3.87"/><path d="M16.5 3.6a3.5 3.5 0 0 1 0 6.8"/>',
     flag:'<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>',
     box:'<path d="M21 8.5 12 3 3 8.5 12 14l9-5.5Z"/><path d="M3 8.5v7L12 21l9-5.5v-7"/><line x1="12" y1="14" x2="12" y2="21"/>',
@@ -1097,6 +1099,10 @@ body.spa-loading .spa-frame{opacity:.6}
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
   }
+  if (CAN.events && MENU.isHqView) content.push({label:'رویدادها',icon:'calendar',children:[
+                       {label:'ساخت رویداد جدید',icon:'plus',href:'event-create.php'},
+                       {label:'مدیریت رویدادها',icon:'list',href:'event-list.php'},
+                       {label:'اخبار رویدادها',icon:'news',href:'event-news-list.php'}]});
   if (CAN.partners)  content.push({label:'همکاران',icon:'users',children:[
                        {label:'ساخت همکار جدید',icon:'plus',href:'personal-resume-create.php'},
                        {label:'مدیریت همکاران',icon:'list',href:'Admin-personal-resume-list.php'}]});
@@ -1529,6 +1535,13 @@ body.spa-loading .spa-frame{opacity:.6}
       cur = (root.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
       apply(cur);
       try{ localStorage.setItem('maxa-theme',cur); }catch(e){}
+      try {
+        const iframe = document.getElementById('frame');
+        if (iframe && iframe.contentDocument && iframe.contentDocument.documentElement) {
+          if (cur === 'dark') iframe.contentDocument.documentElement.setAttribute('data-theme', 'dark');
+          else iframe.contentDocument.documentElement.removeAttribute('data-theme');
+        }
+      } catch(e) {}
     });
   })();
 

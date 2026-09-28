@@ -482,7 +482,7 @@
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       border-left: 1px solid rgba(245, 166, 35, 0.25);
       box-shadow: -12px 0 36px rgba(0, 0, 0, 0.15);
-      z-index: 99999;
+      z-index: 200000;
       display: flex;
       flex-direction: column;
       padding: 0;
@@ -804,7 +804,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,.45);
-      z-index: 99998;
+      z-index: 199999;
       opacity: 0;
       pointer-events: none;
       transition: .3s;
@@ -1044,6 +1044,11 @@
 </head>
 
 <body>
+<?php 
+require_once __DIR__ . '/../../../event-lib.php'; 
+require_once __DIR__ . '/../../../event-banner.php'; 
+echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null); 
+?>
 
   <div class="cta">
 
@@ -1165,6 +1170,7 @@
 
               <li><a href="/branches.php">شعب</a></li>
               <li><a href="/news.php">اخبار</a></li>
+              <li class="events-nav-link"><a href="/events.php">رویدادها و همایش‌ها</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>

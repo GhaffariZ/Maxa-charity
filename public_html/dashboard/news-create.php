@@ -1,12 +1,33 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-dash_require('news');
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+$event_mode = isset($_GET['event_id']) || isset($_GET['event_news_id']);
+if ($event_mode) {
+    dash_require('events');
+    dash_require_hq();
+    require_once __DIR__ . '/../event-lib.php';
+    $pdo = dash_pdo();
+} else {
+    dash_require('news');
+    require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+}
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $news_data = null;
 
-if ($id > 0) {
+if ($event_mode) {
+    $event_id = (int)($_GET['event_id'] ?? 0);
+    if ($id > 0) {
+        $stmt = $pdo->prepare('SELECT * FROM event_news WHERE id = ?');
+        $stmt->execute([$id]);
+        $news_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $event_id = (int)($news_data['event_id'] ?? $event_id);
+    }
+    if ($event_id <= 0) die('رویداد مشخص نشده است.');
+    $event_stmt = $pdo->prepare("SELECT id,title FROM events WHERE id=? AND status<>'archived'");
+    $event_stmt->execute([$event_id]);
+    $event_context = $event_stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$event_context) die('رویداد معتبر نیست.');
+} elseif ($id > 0) {
     $stmt = $pdo->prepare("SELECT * FROM news WHERE id = ?");
     $stmt->execute([$id]);
     $news_data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -41,7 +62,9 @@ try {
 }
 // بارگذاری مسیر تصویر موجود برای نمایش در حالت ویرایش
 $existing_image_url = '';
-if ($id > 0 && !empty($news_data['featured_image'])) {
+if ($event_mode && !empty($news_data['image'])) {
+    $existing_image_url = (string)$news_data['image'];
+} elseif ($id > 0 && !empty($news_data['featured_image'])) {
     $existing_image_url = "/uploads/news/{$news_data['news_code']}/{$news_data['featured_image']}";
 }
 
@@ -50,7 +73,9 @@ $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
 
 // آماده‌سازی زمان برای فرمت datetime-local مرورگر
 $pub_val = '';
-if ($news_data && !empty($news_data['publish_date'])) {
+if ($event_mode && $news_data && !empty($news_data['published_at'])) {
+    $pub_val = date('Y-m-d\TH:i', strtotime($news_data['published_at']));
+} elseif ($news_data && !empty($news_data['publish_date'])) {
     $pub_val = date('Y-m-d\TH:i', strtotime($news_data['publish_date']));
 }
 
@@ -60,10 +85,13 @@ if ($news_data && !empty($news_data['publish_date'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر' ?></title>
+<title><?= $event_mode ? ($id > 0 ? 'ویرایش خبر رویداد' : 'ایجاد خبر رویداد') : ($id > 0 ? 'ویرایش خبر' : 'ایجاد خبر') ?></title>
 
 <!-- تم دارک/لایت از «داشبورد مدیریت» تبعیت می‌کند (کلید مشترک: maxa-theme) -->
 <script>
+const EVENT_MODE = <?= $event_mode ? 'true' : 'false' ?>;
+const EVENT_ID = <?= (int)($event_id ?? 0) ?>;
+const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
 (function(){
   function applyMaxaTheme(){
     var d=false; try{ d=localStorage.getItem('maxa-theme')==='dark'; }catch(e){}
@@ -1561,10 +1589,14 @@ figcaption.img-caption,
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+.event-news-mode #categoryGroup,
+.event-news-mode .settings-card > .input-group:nth-of-type(3),
+.event-news-mode .settings-card > .input-group:nth-of-type(4),
+.event-news-mode .settings-card > .input-group:nth-of-type(5) { display:none; }
 </style>
 </head>
 
-<body>
+<body class="<?= $event_mode ? 'event-news-mode' : '' ?>">
 
 <div class="container">
 
@@ -1575,8 +1607,8 @@ figcaption.img-caption,
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </span>
             <div>
-                <h1><?= $id > 0 ? 'ویرایش خبر' : 'ایجاد خبر جدید' ?></h1>
-                <p>مدیریت محتوای دیجیتال</p>
+                <h1><?= $event_mode ? ($id > 0 ? 'ویرایش خبر رویداد' : 'ایجاد خبر رویداد') : ($id > 0 ? 'ویرایش خبر' : 'ایجاد خبر جدید') ?></h1>
+                <p><?= $event_mode ? 'خبر اختصاصی: '.htmlspecialchars((string)$event_context['title']) : 'مدیریت محتوای دیجیتال' ?></p>
             </div>
             <span class="draft-badge">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1590,7 +1622,7 @@ figcaption.img-caption,
             </button>
             <button type="button" class="btn btn-save" onclick="saveNews()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <?= $id > 0 ? 'ذخیره ویرایش' : 'ثبت خبر نهایی' ?>
+                <?= $event_mode ? ($id > 0 ? 'ذخیره ویرایش خبر رویداد' : 'ثبت خبر رویداد') : ($id > 0 ? 'ذخیره ویرایش' : 'ثبت خبر نهایی') ?>
             </button>
         </div>
     </div>
@@ -1615,7 +1647,7 @@ figcaption.img-caption,
 
             <!-- زیرعنوان خبر -->
             <div class="subtitle-card" id="subtitleCard">
-                <textarea id="subtitle" maxlength="200" rows="2" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..."><?= $news_data ? htmlspecialchars($news_data['subtitle'] ?? '') : '' ?></textarea>
+                <textarea id="subtitle" maxlength="200" rows="2" placeholder="زیرعنوان (توضیح کوتاه) خبر را اینجا بنویسید..."><?= htmlspecialchars((string)($news_data[$event_mode ? 'excerpt' : 'subtitle'] ?? '')) ?></textarea>
                 <div class="subtitle-meta">
                     <span>حداکثر ۲۰۰ کاراکتر</span>
                     <span id="subtitleCounter">0/200</span>
@@ -1889,6 +1921,7 @@ figcaption.img-caption,
 
             <!-- تنظیمات -->
             <div class="card settings-card">
+                <?php if ($event_mode): ?><div class="input-group event-news-status"><label class="field-label">وضعیت انتشار</label><select class="input" id="event_status"><option value="published" <?= ($news_data['status'] ?? 'published') === 'published' ? 'selected' : '' ?>>منتشرشده</option><option value="draft" <?= ($news_data['status'] ?? '') === 'draft' ? 'selected' : '' ?>>پیش‌نویس</option></select></div><?php endif; ?>
 
                 <div class="input-group">
                     <label class="field-label">
@@ -1896,7 +1929,7 @@ figcaption.img-caption,
                         تاریخ و زمان انتشار
                     </label>
                     <div class="publish-date-row">
-                        <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars($news_data['publish_date'] ?? '') ?>">
+                        <input type="hidden" id="publish_date" name="publish_date" value="<?= htmlspecialchars((string)($news_data[$event_mode ? 'published_at' : 'publish_date'] ?? '')) ?>">
                         <input type="text" id="publish_date_display" class="input" readonly placeholder="تاریخ و زمان شمسی را انتخاب کنید">
                         <button type="button" class="btn-insert" onclick="openDatePicker()"><?= iconoir('calendar', '', 16) ?> انتخاب</button>
                         <button type="button" class="btn-insert now-btn" onclick="setNow()">همین الان</button>
@@ -1927,7 +1960,7 @@ figcaption.img-caption,
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         نویسنده
                     </label>
-                    <input type="text" class="input" id="author" value="<?= $news_data ? htmlspecialchars($news_data['author']) : '' ?>" placeholder="نام نویسنده">
+                    <input type="text" class="input" id="author" value="<?= htmlspecialchars((string)($news_data['author'] ?? '')) ?>" placeholder="نام نویسنده">
                 </div>
 
                 <div class="input-group">
@@ -1935,7 +1968,7 @@ figcaption.img-caption,
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><circle cx="12" cy="12" r="2"/></svg>
                         کلمات کلیدی
                     </label>
-                    <input type="text" class="input" id="keywords" value="<?= $news_data ? htmlspecialchars($news_data['keywords']) : '' ?>" placeholder="کلمات کلیدی را وارد کنید">
+                    <input type="text" class="input" id="keywords" value="<?= htmlspecialchars((string)($news_data['keywords'] ?? '')) ?>" placeholder="کلمات کلیدی را وارد کنید">
                 </div>
 
                 <div class="input-group">
@@ -1943,7 +1976,7 @@ figcaption.img-caption,
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                         تگ‌های سئو
                     </label>
-                    <input type="text" class="input" id="tags" value="<?= $news_data ? htmlspecialchars($news_data['tags']) : '' ?>" placeholder="تگ‌ها را با کاما جدا کنید">
+                    <input type="text" class="input" id="tags" value="<?= htmlspecialchars((string)($news_data['tags'] ?? '')) ?>" placeholder="تگ‌ها را با کاما جدا کنید">
                     <div class="chips" id="tagsChips"></div>
                 </div>
 
@@ -2642,6 +2675,7 @@ function replaceSelectedImage() {
         if (!file) return;
         showStatus("در حال بارگذاری تصویر جدید...", true);
         const fd = new FormData();
+        fd.append("csrf_token", "<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>");
         fd.append("image", file);
         try {
             const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });
@@ -3574,13 +3608,13 @@ function setFieldError(boxId, errId, on){
 /* با اولین تعاملِ کاربر، خطای همان فیلد پاک می‌شود */
 document.getElementById("title").addEventListener("input", () => setFieldError("titleCard", "titleError", false));
 document.getElementById("editor").addEventListener("input", () => setFieldError("editorShell", "contentError", false));
-document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
+if (!EVENT_MODE && document.getElementById("category_id")) document.getElementById("category_id").addEventListener("change", () => setFieldError("category_id", "categoryError", false));
 
 function validateNewsForm(){
     const title = document.getElementById("title").value.trim();
     const editorEl = document.getElementById("editor");
     const contentText = editorEl.innerText.trim();
-    const categoryVal = document.getElementById("category_id").value;
+    const categoryVal = EVENT_MODE ? "event" : document.getElementById("category_id").value;
 
     const titleBad = !title;
     const contentBad = contentText === "";
@@ -3588,7 +3622,7 @@ function validateNewsForm(){
 
     setFieldError("titleCard", "titleError", titleBad);
     setFieldError("editorShell", "contentError", contentBad);
-    setFieldError("category_id", "categoryError", categoryBad);
+    if (!EVENT_MODE) setFieldError("category_id", "categoryError", categoryBad);
 
     // اسکرول و فوکوس به اولین فیلدِ خطادار
     let firstBad = null;
@@ -3623,9 +3657,16 @@ async function saveNews() {
         showStatus("در حال آماده‌سازی اطلاعات...", true);
 
         const fd = new FormData();
+        fd.append("csrf_token", CSRF_TOKEN);
         fd.append("id", "<?= $id ?>");
         fd.append("title", title);
         fd.append("subtitle", document.getElementById("subtitle").value.trim());
+        if (EVENT_MODE) {
+            fd.append("event_id", String(EVENT_ID));
+            fd.append("excerpt", document.getElementById("subtitle").value.trim());
+            const statusEl = document.getElementById("event_status");
+            fd.append("status", statusEl ? statusEl.value : "draft");
+        }
         fd.append("content", content);
         fd.append("author", document.getElementById("author").value);
         fd.append("category_id", document.getElementById("category_id").value);
@@ -3643,14 +3684,15 @@ async function saveNews() {
         if (featuredFile) {
             showStatus("در حال بهینه‌سازی تصویر...", true);
             featuredFile = await compressFeaturedImage(featuredFile);
-            fd.append("featured_image", featuredFile);
+            fd.append(EVENT_MODE ? "image" : "featured_image", featuredFile);
         }
 
         // استفاده از XMLHttpRequest برای نمایش درصد پیشرفت آپلود
         const data = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", "news-save.php", true);
+            xhr.open("POST", EVENT_MODE ? "event-news-save.php" : "news-save.php", true);
             xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("X-CSRF-Token", CSRF_TOKEN);
 
             if (featuredFile) {
                 showStatus("در حال آپلود به سرور...", true);
@@ -3680,7 +3722,7 @@ async function saveNews() {
         setUploadProgress(100, "با موفقیت ذخیره شد");
         showStatus(`${data.message} در حال انتقال...`, true);
         setTimeout(() => {
-            window.location.href = "news-list.php";
+            window.location.href = EVENT_MODE ? "event-news-list.php?event_id=" + encodeURIComponent(EVENT_ID) : "news-list.php";
         }, 1000);
 
     } catch (err) {

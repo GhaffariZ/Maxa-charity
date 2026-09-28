@@ -4,7 +4,7 @@
 <!-- ستون بزرگ -->
 <div class="gf-col gf-cta">
 <div class="gf-logo">
-<img src="{{image1}}">
+<img src="/dashboard/components/footer/images/1.png" alt="مکسا">
 </div>
 
 <h2 class="gf-title">

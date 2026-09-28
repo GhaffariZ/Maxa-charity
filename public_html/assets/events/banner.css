@@ -1,0 +1,174 @@
+/* Variable defaults for smooth topbar pushdown */
+:root {
+    --event-banner-h: 58px;
+}
+@media (max-width: 640px) {
+    :root {
+        --event-banner-h: 46px;
+    }
+}
+
+/* Ensure no stray margin/padding pushes the body or creates gaps */
+body:has(.event-global-banner),
+body.has-event-banner {
+    margin-top: 0 !important;
+}
+
+/* Ensure navbar is immediately offset when banner exists, with JS dynamic scroll sync */
+body:has(.event-global-banner) .cta-topbar,
+body:has(.event-global-banner) .cta-topbar.scrolled,
+body.has-event-banner .cta-topbar,
+body.has-event-banner .cta-topbar.scrolled {
+    top: var(--event-banner-offset, var(--event-banner-h)) !important;
+    transition-property: transform, height;
+}
+
+/* 
+ * CRITICAL: The banner is position:relative in the page flow and ALREADY pushes content down.
+ * The spacer only reserves the fixed navbar's height (--cta-nav-h).
+ * NEVER add banner-offset here, otherwise a double-offset creates an empty white gap below the header!
+ */
+body:has(.event-global-banner) .cta-navbar-spacer,
+body.has-event-banner .cta-navbar-spacer {
+    height: var(--cta-nav-h, 78px) !important;
+}
+
+body:has(.event-global-banner) .mega-menu .mega-menu-content,
+body.has-event-banner .mega-menu .mega-menu-content {
+    top: calc(var(--event-banner-offset, var(--event-banner-h)) + var(--cta-nav-h, 78px) + 10px);
+}
+
+/* Banner container - z-index 100000 ensures it is above topbar (99999) but below mobile drawer (200000) */
+.event-global-banner {
+    position: relative;
+    z-index: 100000;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 !important;
+    height: var(--event-banner-h, 58px);
+    min-height: var(--event-banner-h, 58px);
+    max-height: var(--event-banner-h, 58px);
+    padding: 0 52px 0 24px;
+    background: var(--banner-bg, #0A5C66);
+    color: var(--banner-text, #ffffff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-family: Vazirmatn, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    white-space: nowrap;
+    direction: rtl;
+}
+
+.event-global-banner .event-banner-copy {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    font-size: 13.5px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.event-global-banner .event-banner-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.event-global-banner .event-banner-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 480px;
+}
+
+.event-global-banner .event-banner-count {
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    color: var(--banner-accent, #f4a61e);
+    flex-shrink: 0;
+    font-size: 13px;
+}
+
+.event-global-banner .event-banner-cta {
+    flex-shrink: 0;
+    color: #FFFFFF !important;
+    background: var(--banner-accent, #f4a61e);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none !important;
+    line-height: 1.4;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.event-global-banner .event-banner-cta:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+.event-banner-dismiss {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--banner-text, #ffffff);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    font-family: inherit;
+}
+
+.event-banner-dismiss:hover {
+    opacity: 1;
+}
+
+/* Digikala-inspired sleek mobile single-row bar */
+@media (max-width: 640px) {
+    .event-global-banner {
+        height: 46px;
+        min-height: 46px;
+        max-height: 46px;
+        gap: 8px;
+        padding: 0 36px 0 10px;
+    }
+    .event-global-banner .event-banner-label {
+        display: none;
+    }
+    .event-global-banner .event-banner-title {
+        max-width: 160px;
+        font-size: 12px;
+    }
+    .event-global-banner .event-banner-count {
+        font-size: 11px;
+    }
+    .event-global-banner .event-banner-cta {
+        padding: 5px 12px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+    .event-banner-dismiss {
+        right: 6px;
+        font-size: 20px;
+    }
+}
