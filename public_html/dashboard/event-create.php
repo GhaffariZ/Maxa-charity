@@ -2606,7 +2606,7 @@ body {
                     </button>
                     <button type="button" class="figma-specimen-tab" id="tabSpecimenMobile" data-mode="mobile" role="tab" title="مشاهده بنر در ابعاد فشرده موبایل (مشابه دیجی‌کالا)">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                      <span>موبایل (دیجی‌کالا)</span>
+                      <span>موبایل</span>
                     </button>
                   </div>
                 </div>
