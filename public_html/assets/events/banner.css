@@ -1,31 +1,54 @@
-/* The banner occupies document flow; the spacer only reserves the navbar. */
-body .cta-topbar,
-body .cta-topbar.scrolled {
-    top: var(--event-banner-offset, 0px);
+/* Variable defaults for smooth topbar pushdown */
+:root {
+    --event-banner-h: 42px;
+}
+@media (max-width: 640px) {
+    :root {
+        --event-banner-h: 38px;
+    }
+}
+
+/* Ensure navbar and spacer are immediately offset when banner exists, with JS dynamic scroll sync */
+body:has(.event-global-banner) .cta-topbar,
+body:has(.event-global-banner) .cta-topbar.scrolled,
+body.has-event-banner .cta-topbar,
+body.has-event-banner .cta-topbar.scrolled {
+    top: var(--event-banner-offset, var(--event-banner-h)) !important;
     transition-property: transform, height;
 }
-body .cta-navbar-spacer { height: var(--cta-nav-h, 78px); }
-body .mega-menu .mega-menu-content {
-    top: calc(var(--event-banner-offset, 0px) + var(--cta-nav-h, 78px) + 10px);
+
+body:has(.event-global-banner) .cta-navbar-spacer,
+body.has-event-banner .cta-navbar-spacer {
+    height: calc(var(--cta-nav-h, 78px) + var(--event-banner-offset, var(--event-banner-h))) !important;
 }
+
+body:has(.event-global-banner) .mega-menu .mega-menu-content,
+body.has-event-banner .mega-menu .mega-menu-content {
+    top: calc(var(--event-banner-offset, var(--event-banner-h)) + var(--cta-nav-h, 78px) + 10px);
+}
+
+/* Banner container - z-index 100000 ensures it is above topbar (99999) but below mobile drawer (200000) */
 .event-global-banner {
     position: relative;
-    z-index: 1000;
+    z-index: 100000;
     box-sizing: border-box;
-    height: 42px;
-    min-height: 42px;
-    max-height: 44px;
+    width: 100%;
+    height: var(--event-banner-h, 42px);
+    min-height: var(--event-banner-h, 42px);
+    max-height: var(--event-banner-h, 42px);
     padding: 0 44px 0 16px;
-    background: var(--banner-bg);
-    color: var(--banner-text);
+    background: var(--banner-bg, #0A5C66);
+    color: var(--banner-text, #ffffff);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 14px;
-    font-family: Vazirmatn, sans-serif;
+    font-family: Vazirmatn, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow: hidden;
     white-space: nowrap;
+    direction: rtl;
 }
+
 .event-global-banner .event-banner-copy {
     display: flex;
     align-items: center;
@@ -36,6 +59,7 @@ body .mega-menu .mega-menu-content {
     min-width: 0;
     overflow: hidden;
 }
+
 .event-global-banner .event-banner-label {
     display: inline-flex;
     align-items: center;
@@ -46,37 +70,43 @@ body .mega-menu .mega-menu-content {
     font-weight: 700;
     flex-shrink: 0;
 }
+
 .event-global-banner .event-banner-title {
     font-size: 13px;
     font-weight: 800;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 320px;
+    max-width: 380px;
 }
+
 .event-global-banner .event-banner-count {
     font-variant-numeric: tabular-nums;
     font-weight: 900;
-    color: var(--banner-accent);
+    color: var(--banner-accent, #f4a61e);
     flex-shrink: 0;
     font-size: 12px;
 }
+
 .event-global-banner .event-banner-cta {
     flex-shrink: 0;
-    color: #FFFFFF;
-    background: var(--banner-accent);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF !important;
+    background: var(--banner-accent, #f4a61e);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 6px;
     padding: 4px 12px;
     font-size: 11.5px;
     font-weight: 800;
-    text-decoration: none;
+    text-decoration: none !important;
+    line-height: 1.4;
     transition: transform 0.15s ease, filter 0.15s ease;
 }
+
 .event-global-banner .event-banner-cta:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.12);
     transform: translateY(-1px);
 }
+
 .event-banner-dismiss {
     position: absolute;
     right: 12px;
@@ -84,45 +114,49 @@ body .mega-menu .mega-menu-content {
     transform: translateY(-50%);
     border: 0;
     background: transparent;
-    color: var(--banner-text);
+    color: var(--banner-text, #ffffff);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 6px;
     opacity: 0.8;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: opacity 0.2s;
+    font-family: inherit;
 }
-.event-banner-dismiss:hover { opacity: 1; }
 
-/* Digikala-inspired sleek mobile bar */
+.event-banner-dismiss:hover {
+    opacity: 1;
+}
+
+/* Digikala-inspired sleek mobile single-row bar */
 @media (max-width: 640px) {
     .event-global-banner {
         height: 38px;
         min-height: 38px;
         max-height: 38px;
         gap: 6px;
-        padding: 0 34px 0 8px;
+        padding: 0 32px 0 8px;
     }
     .event-global-banner .event-banner-label {
         display: none;
     }
     .event-global-banner .event-banner-title {
-        max-width: 125px;
+        max-width: 130px;
         font-size: 11px;
     }
     .event-global-banner .event-banner-count {
-        font-size: 10.5px;
+        font-size: 10px;
     }
     .event-global-banner .event-banner-cta {
         padding: 3px 8px;
-        font-size: 10.5px;
+        font-size: 10px;
         border-radius: 5px;
     }
     .event-banner-dismiss {
-        right: 6px;
-        font-size: 18px;
+        right: 4px;
+        font-size: 17px;
     }
 }

@@ -1044,7 +1044,11 @@
 </head>
 
 <body>
-<?php if (isset($pdo) && $pdo instanceof PDO) { require_once __DIR__ . '/../../../event-lib.php'; require_once __DIR__ . '/../../../event-banner.php'; echo event_global_banner($pdo); } ?>
+<?php 
+require_once __DIR__ . '/../../../event-lib.php'; 
+require_once __DIR__ . '/../../../event-banner.php'; 
+echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null); 
+?>
 
   <div class="cta">
 
