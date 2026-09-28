@@ -1,4 +1,4 @@
--- Add the temporary-dismiss option to installations that already ran 017_events.
+-- Add the temporary-dismiss option to installations that already ran 018_events.
 SET @event_banner_dismissible_exists := (
   SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'events' AND COLUMN_NAME = 'banner_dismissible'
