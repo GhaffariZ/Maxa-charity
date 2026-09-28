@@ -2987,23 +2987,38 @@ function uploadGalleryInline(){
     input.accept = "image/*";
     input.multiple = true;
 
-    input.onchange = ()=>{
+    input.onchange = async ()=>{
         const files = Array.from(input.files);
         if (!files.length) return;
 
-        showStatus("⏳ در حال آپلود گالری تصاویر...", true);
-        let urls = [];
-
-        Promise.all(files.map(file=>{
+        if (files.length > 4) {
+            showStatus("برای هر گالری حداکثر ۴ تصویر انتخاب کنید.", false);
+            return;
+        }
+        showStatus("در حال آپلود گالری تصاویر...", "info");
+        const results = await Promise.allSettled(files.map(async (file) => {
+            if (file.size > 8 * 1024 * 1024) throw new Error("حجم «" + file.name + "» بیشتر از ۸ مگابایت است.");
             const fd = new FormData();
             fd.append("image", file);
-            return fetch("upload-inline-image.php", {method:"POST", body:fd})
-                .then(r=>r.json())
-                .then(d=>{ if (d.url) urls.push(d.url); });
-        })).then(()=> {
-            insertGalleryRow(urls);
-            showStatus("✅ گالری تصاویر درج شد.", true);
-        }).catch(() => showStatus("❌ خطا در آپلود گالری", false));
+            const response = await fetch("upload-inline-image.php", {method:"POST", body:fd, credentials:"same-origin"});
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data || !data.url) {
+                const reason = data && data.error ? data.error :
+                    response.status === 413 ? "حجم درخواست از حد مجاز هاست بیشتر است." :
+                    response.redirected ? "نشست مدیریت منقضی شده است؛ دوباره وارد شوید." :
+                    "پاسخ نامعتبر از سرور دریافت شد (HTTP " + response.status + ").";
+                throw new Error("«" + file.name + "»: " + reason);
+            }
+            return data.url;
+        }));
+        const urls = results.filter(result => result.status === "fulfilled").map(result => result.value);
+        if (urls.length) insertGalleryRow(urls);
+        const failures = results.filter(result => result.status === "rejected");
+        if (failures.length) {
+            showStatus(urls.length + " تصویر درج شد؛ " + failures.length + " تصویر ناموفق: " + failures[0].reason.message, false);
+        } else {
+            showStatus("گالری تصاویر درج شد.", true);
+        }
     };
     input.click();
 }
