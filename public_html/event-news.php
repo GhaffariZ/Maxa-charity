@@ -295,6 +295,29 @@ if (!empty($news['event_id'])) {
     padding: 24px;
   }
 }
+@media (max-width: 640px) {
+  .event-news-page {
+    padding: 24px 14px 48px;
+  }
+  .event-news-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+  .event-news-card h1 {
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .event-news-figure {
+    max-height: 240px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  .event-news-body {
+    font-size: 14.5px;
+    line-height: 2;
+  }
+}
 </style>
 
 <main class="event-news-page">
