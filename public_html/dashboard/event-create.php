@@ -1246,6 +1246,414 @@ body {
   background: #f59e0b;
   box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
 }
+
+/* ============================================================================
+   Figma Node #8:648 "global-banner-settings" Section Styles
+   ============================================================================ */
+.figma-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--hq-border);
+  margin-bottom: 24px;
+}
+.figma-banner-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.figma-badge-hq {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: #0D7A87;
+  color: #FFFFFF;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.figma-badge-lock {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  color: var(--hq-text-muted);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.figma-badge-branch {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: #FEE2E2;
+  border: 1px solid #FCA5A5;
+  color: #DC2626;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+[data-theme="dark"] .figma-badge-branch {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: #f87171;
+}
+
+.figma-banner-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .figma-banner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.figma-banner-form-card {
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.figma-card-inner-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--hq-text-main);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hq-border);
+}
+.figma-form-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.figma-field-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.figma-readonly-event-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  border-radius: 8px;
+  min-height: 44px;
+  gap: 10px;
+}
+.figma-badge-pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--hq-primary-light);
+  color: var(--hq-primary);
+  border-radius: 6px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+}
+
+/* Switch toggle */
+.figma-switch-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.figma-switch-wrap.is-active {
+  background: #F0FDFA;
+  border-color: #0D7A87;
+}
+[data-theme="dark"] .figma-switch-wrap.is-active {
+  background: rgba(13, 122, 135, 0.18);
+  border-color: #0D7A87;
+}
+.figma-switch-btn {
+  width: 38px;
+  height: 22px;
+  background: #D1D5DB;
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+.figma-switch-wrap.is-active .figma-switch-btn {
+  background: #0D7A87;
+}
+.figma-switch-knob {
+  width: 18px;
+  height: 18px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.figma-switch-wrap.is-active .figma-switch-knob {
+  transform: translateX(-16px);
+}
+.figma-switch-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--hq-text-muted);
+}
+.figma-switch-wrap.is-active .figma-switch-label {
+  color: #0A5C66;
+}
+[data-theme="dark"] .figma-switch-wrap.is-active .figma-switch-label {
+  color: #5eead4;
+}
+
+/* Color swatches */
+.figma-color-presets-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 4px 0;
+}
+.figma-swatches {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.figma-color-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.figma-color-circle:hover {
+  transform: scale(1.12);
+}
+.figma-color-circle.is-selected {
+  border-color: #FFFFFF;
+  box-shadow: 0 0 0 2px #0D7A87;
+  transform: scale(1.1);
+}
+.figma-color-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--hq-text-muted);
+}
+.figma-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hq-text-main);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+/* Custom color inputs */
+.figma-custom-colors-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--hq-surface-muted);
+  border: 1px solid var(--hq-border);
+  border-radius: 10px;
+}
+.figma-color-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--hq-text-muted);
+}
+.figma-color-chip input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+}
+.hq-input-nano {
+  width: 82px;
+  height: 32px;
+  font-size: 11.5px;
+  padding: 4px 8px;
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 6px;
+  color: var(--hq-text-main);
+}
+
+/* Specimen Card (Left Column) */
+.figma-banner-preview-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.figma-specimen-card {
+  background: var(--hq-surface);
+  border: 1px solid var(--hq-border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.figma-specimen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.figma-specimen-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--hq-text-main);
+}
+.figma-specimen-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.figma-specimen-banner {
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  direction: rtl;
+}
+.figma-specimen-x {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 2px 4px;
+  transition: opacity 0.15s ease;
+}
+.figma-specimen-x:hover { opacity: 1; }
+.figma-specimen-cta {
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.figma-specimen-cta:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.figma-specimen-countdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.figma-specimen-countdown-val {
+  font-weight: 900;
+}
+.figma-specimen-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+.figma-specimen-badge {
+  background: #F0FDFA;
+  color: #0A5C66;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.figma-specimen-event-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+.figma-specimen-caption {
+  font-size: 12px;
+  color: var(--hq-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* System Rule Box (8:681) */
+.figma-system-rule-box {
+  background: #FFFBEB;
+  border: 1px solid #D97706;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+[data-theme="dark"] .figma-system-rule-box {
+  background: rgba(217, 119, 6, 0.12);
+  border-color: rgba(217, 119, 6, 0.45);
+}
+.figma-system-rule-head {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #B45309;
+}
+[data-theme="dark"] .figma-system-rule-head {
+  color: #fbbf24;
+}
+.figma-system-rule-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--hq-text-main);
+  margin: 0;
+}
 </style>
 
 <form class="hq-form-container" action="event-save.php" method="post" enctype="multipart/form-data" id="eventForm"
@@ -1751,93 +2159,184 @@ body {
           </div>
         </section>
 
-        <!-- 13. تنظیمات بنر سراسری (Figma Node #8:648) -->
+        <!-- 13. تنظیمات بنر سراسری هوشمند (Figma Node #8:648) -->
         <section class="hq-card" id="sec-banner">
-          <div class="hq-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div>
-              <h2 class="hq-card-title">تنظیمات بنر سراسری</h2>
-              <p class="hq-card-subtitle">تنظیمات نمایش بنر سراسری و شمارش معکوس را در این بخش مدیریت کنید.</p>
+          <!-- Figma Header (8:649) -->
+          <div class="figma-banner-header">
+            <div class="figma-banner-badges">
+              <span class="figma-badge-hq">ستاد مرکزی (HQ)</span>
+              <span class="figma-badge-lock">دسترسی اختصاصی</span>
+              <span class="figma-badge-branch">شعب سراسر کشور: غیرمجاز / قفل‌شده 🔒</span>
             </div>
-            <a href="global-banner-settings.php" target="_blank" class="hq-btn" style="background:#0D7A87; color:#fff; font-size:12px; padding:6px 14px;">
-              ⚡ صفحه مدیریت سراسری بنر (HQ)
-            </a>
+            <div class="figma-banner-title-wrap">
+              <h2 class="hq-card-title">تنظیمات بنر سراسری هوشمند</h2>
+              <p class="hq-card-subtitle">مدیریت نمایش بنر شمارش معکوس و اطلاع‌رسانی همایش‌ها در بالاترین بخش سایت</p>
+            </div>
           </div>
 
-          <label style="display:flex; align-items:center; gap:10px; background:var(--hq-surface-muted); padding:14px; border-radius:10px; border:1px solid var(--hq-border); cursor:pointer; font-size:13px; font-weight:700; color:var(--hq-text-main);">
-            <input type="checkbox" name="banner_active" value="1" <?= (int)$event['banner_active'] ? 'checked' : '' ?> style="width:18px; height:18px; accent-color:var(--hq-primary);">
-            نمایش بنر این رویداد در بالای تمام صفحات وب‌سایت
-          </label>
-
-          <!-- پیش‌نمایش زنده بنر -->
-          <div class="hq-field-group">
-            <label class="hq-field-label">پیش‌نمایش زنده بنر بالای سایت</label>
-            <div id="bannerPreview" class="hq-banner-preview-box" style="background-color: <?= event_h($event['banner_background']) ?>; color: <?= event_h($event['banner_text_color']) ?>;">
-              <div class="hq-banner-left">
-                <span class="hq-banner-countdown">۱۲ روز ۰۸ ساعت ۲۴ دقیقه</span>
-                <span style="font-weight: 800; font-size: 13px;" data-preview="title"><?= event_h($event['title']) ?: 'عنوان رویداد' ?></span>
-                <span style="font-size: 12px; opacity: 0.9;" data-preview="label"><?= event_h($event['banner_label']) ?: 'رویداد پیش‌رو' ?></span>
+          <!-- Figma 2-Column Content Layout (8:660) -->
+          <div class="figma-banner-grid">
+            
+            <!-- Right Column: Settings Form (8:685) -->
+            <div class="figma-banner-form-card">
+              <div class="figma-card-inner-title">
+                <span>تنظیمات محتوا و رفتار بنر</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <span class="hq-btn" style="background: transparent; border: 1px solid <?= event_h($event['banner_accent_color']) ?>; color: inherit; padding: 6px 14px; font-size: 12px;" data-preview="cta">
-                  <?= event_h($event['banner_cta']) ?: 'مشاهده رویداد' ?>
-                </span>
-                <span style="cursor: pointer; opacity: 0.8;">✕</span>
+
+              <!-- Row 1: Banner Active Switch (8:696) -->
+              <div class="figma-form-row">
+                <div class="figma-field-col" style="flex:1;">
+                  <label class="hq-field-label">انتخاب رویداد مرجع برای بنر و شمارش معکوس</label>
+                  <div class="figma-readonly-event-box">
+                    <span id="bannerEventDisplayTitle" style="font-weight:700; color:var(--hq-text-main); font-size:13px;">
+                      <?= event_h($event['title']) ?: 'همین رویداد (عنوان را در فرم وارد نمایید)' ?>
+                    </span>
+                    <span class="figma-badge-pill">رویداد در حال ویرایش</span>
+                  </div>
+                </div>
+
+                <div class="figma-field-col" style="width:200px; flex-shrink:0;">
+                  <label class="hq-field-label">وضعیت نمایش بنر</label>
+                  <label class="figma-switch-wrap <?= (int)$event['banner_active'] ? 'is-active' : '' ?>" id="bannerSwitchWrap">
+                    <input type="checkbox" name="banner_active" id="bannerActiveInput" value="1" <?= (int)$event['banner_active'] ? 'checked' : '' ?> style="display:none;">
+                    <div class="figma-switch-btn" id="bannerSwitchUi">
+                      <div class="figma-switch-knob"></div>
+                    </div>
+                    <span class="figma-switch-label" id="bannerSwitchLabel"><?= (int)$event['banner_active'] ? 'فعال و روشن' : 'غیرفعال و خاموش' ?></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Row 2: Title and Label/Badge (8:702) -->
+              <div class="figma-form-row">
+                <div class="figma-field-col" style="flex:1.5;">
+                  <label class="hq-field-label">عنوان بنر (تا حداکثر ۷۰ کاراکتر)</label>
+                  <input type="text" id="bannerDisplayTitleInput" class="hq-input" maxlength="70" 
+                         value="<?= event_h($event['title']) ?: 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی مکسا' ?>" 
+                         placeholder="عنوان بنر بالای سایت...">
+                </div>
+                <div class="figma-field-col" style="flex:1;">
+                  <label class="hq-field-label">متن برچسب (Badge)</label>
+                  <input type="text" name="banner_label" id="bannerLabelInput" class="hq-input" 
+                         value="<?= event_h($event['banner_label'] ?: 'رویداد ویژه جاری') ?>" 
+                         data-banner-preview="label" placeholder="رویداد ویژه جاری">
+                </div>
+              </div>
+
+              <!-- Row 3: CTA and Link (8:711) -->
+              <div class="figma-form-row">
+                <div class="figma-field-col" style="flex:1.5;">
+                  <label class="hq-field-label">لینک کلیک دکمه (URL)</label>
+                  <input type="text" name="banner_link" id="bannerLinkInput" dir="ltr" class="hq-input" 
+                         placeholder="https://mymacsa.ir/event.php?slug=..." 
+                         value="<?= event_h($event['banner_link']) ?>">
+                </div>
+                <div class="figma-field-col" style="flex:1;">
+                  <label class="hq-field-label">متن دکمه (CTA)</label>
+                  <input type="text" name="banner_cta" id="bannerCtaInput" class="hq-input" 
+                         value="<?= event_h($event['banner_cta'] ?: 'ثبت‌نام مستقیم') ?>" 
+                         data-banner-preview="cta" placeholder="ثبت‌نام مستقیم">
+                </div>
+              </div>
+
+              <!-- Row 4: Color Palette & Dismissible (8:720) -->
+              <div class="figma-form-row" style="align-items:flex-end;">
+                <div class="figma-field-col" style="flex:1.5;">
+                  <label class="hq-field-label">تم رنگی بنر سراسری</label>
+                  <div class="figma-color-presets-row">
+                    <div class="figma-swatches" id="figmaSwatches">
+                      <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#1e293b' ? 'is-selected' : '' ?>" data-color="#1E293B" data-title="دودی زغالی تیره" style="background:#1E293B;" title="دودی زغالی تیره"></button>
+                      <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#701a75' ? 'is-selected' : '' ?>" data-color="#701A75" data-title="زرشکی عمیق" style="background:#701A75;" title="زرشکی عمیق"></button>
+                      <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#1e3a8a' ? 'is-selected' : '' ?>" data-color="#1E3A8A" data-title="سرمه‌ای کلاسیک" style="background:#1E3A8A;" title="سرمه‌ای کلاسیک"></button>
+                      <button type="button" class="figma-color-circle <?= empty($event['banner_background']) || strtolower($event['banner_background']) === '#0a5c66' || strtolower($event['banner_background']) === '#007b7a' ? 'is-selected' : '' ?>" data-color="#0A5C66" data-title="سرمه‌ای تیره مکسا (پیش‌فرض)" style="background:#0A5C66;" title="سرمه‌ای تیره مکسا"></button>
+                    </div>
+                    <span class="figma-color-name" id="colorPresetLabel">سرمه‌ای تیره مکسا (پیش‌فرض)</span>
+                  </div>
+                </div>
+
+                <div class="figma-field-col" style="flex:1;">
+                  <label class="hq-field-label">قابلیت بستن موقت توسط کاربر</label>
+                  <label class="figma-checkbox-label">
+                    <input type="checkbox" name="banner_dismissible" id="bannerDismissibleInput" value="1" <?= (int)$event['banner_dismissible'] ? 'checked' : '' ?> style="accent-color:var(--hq-primary); width:18px; height:18px;">
+                    <span>بله، دکمه ضربدر فعال باشد</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Custom Color Controls (advanced palette) -->
+              <div class="figma-custom-colors-bar">
+                <span style="font-size:11.5px; font-weight:700; color:var(--hq-text-muted);">شخصی‌سازی دقیق کدهای رنگ:</span>
+                <div class="figma-color-chip">
+                  <input type="color" id="pickerBg" value="<?= event_h($event['banner_background'] ?: '#0a5c66') ?>">
+                  <span>پس‌زمینه:</span>
+                  <input type="text" name="banner_background" id="textBg" value="<?= event_h($event['banner_background'] ?: '#0a5c66') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
+                </div>
+                <div class="figma-color-chip">
+                  <input type="color" id="pickerText" value="<?= event_h($event['banner_text_color'] ?: '#ffffff') ?>">
+                  <span>متن:</span>
+                  <input type="text" name="banner_text_color" id="textText" value="<?= event_h($event['banner_text_color'] ?: '#ffffff') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
+                </div>
+                <div class="figma-color-chip">
+                  <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>">
+                  <span>تأکید/دکمه:</span>
+                  <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="hq-grid-2">
-            <div class="hq-field-group">
-              <label class="hq-field-label">متن کوچک بنر</label>
-              <input type="text" name="banner_label" class="hq-input" value="<?= event_h($event['banner_label']) ?>" data-banner-preview="label">
-            </div>
-            <div class="hq-field-group">
-              <label class="hq-field-label">متن دکمه اکشن (CTA)</label>
-              <input type="text" name="banner_cta" class="hq-input" value="<?= event_h($event['banner_cta']) ?>" data-banner-preview="cta">
-            </div>
-          </div>
+            <!-- Left Column: Live Desktop Specimen Banner & System Constraint (8:661) -->
+            <div class="figma-banner-preview-col">
+              
+              <!-- Card: Desktop Live Preview (8:662) -->
+              <div class="figma-specimen-card">
+                <div class="figma-specimen-header">
+                  <span class="figma-specimen-title">پیش‌نمایش زنده بنر دسکتاپ</span>
+                  <span class="figma-specimen-dot"></span>
+                </div>
 
-          <div class="hq-grid-2">
-            <div class="hq-field-group">
-              <label class="hq-field-label">لینک دکمه بنر</label>
-              <input type="text" name="banner_link" dir="ltr" class="hq-input" placeholder="https://..." value="<?= event_h($event['banner_link']) ?>">
-            </div>
-            <div class="hq-field-group">
-              <label class="hq-field-label">تم رنگی بنر</label>
-              <select name="banner_theme" class="hq-select" data-banner-preview="theme">
-                <option value="teal" <?= $event['banner_theme'] === 'teal' ? 'selected' : '' ?>>فیروزه‌ای مکسا</option>
-                <option value="amber" <?= $event['banner_theme'] === 'amber' ? 'selected' : '' ?>>کهربایی</option>
-                <option value="dark" <?= $event['banner_theme'] === 'dark' ? 'selected' : '' ?>>تیره اختصاصی</option>
-              </select>
-            </div>
-          </div>
+                <div id="bannerSpecimenBox" class="figma-specimen-banner" style="background-color: <?= event_h($event['banner_background'] ?: '#0a5c66') ?>; color: <?= event_h($event['banner_text_color'] ?: '#ffffff') ?>;">
+                  <!-- Dismiss X button (8:666) -->
+                  <button type="button" class="figma-specimen-x" aria-label="بستن" id="specimenCloseBtn" style="display: <?= (int)$event['banner_dismissible'] ? 'block' : 'none' ?>;">×</button>
 
-          <!-- Color Pickers -->
-          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; background:var(--hq-surface-muted); padding:14px; border-radius:10px; border:1px solid var(--hq-border);">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="color" id="pickerBg" value="<?= event_h($event['banner_background']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ زمینه:</span>
-              <input type="text" name="banner_background" id="textBg" value="<?= event_h($event['banner_background']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="color" id="pickerText" value="<?= event_h($event['banner_text_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ متن:</span>
-              <input type="text" name="banner_text_color" id="textText" value="<?= event_h($event['banner_text_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color']) ?>" style="width:36px; height:36px; border:none; border-radius:6px; cursor:pointer;">
-              <span style="font-size:12px; font-weight:700; color:var(--hq-text-muted);">رنگ تأکید:</span>
-              <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color']) ?>" maxlength="7" dir="ltr" style="width:80px; font-size:12px;" class="hq-input">
-            </div>
-          </div>
+                  <!-- CTA Button (8:668) -->
+                  <a href="javascript:void(0)" class="figma-specimen-cta" id="specimenCtaBtn" style="background-color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>; color: #ffffff;">
+                    <?= event_h($event['banner_cta'] ?: 'ثبت‌نام مستقیم') ?>
+                  </a>
 
-          <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--hq-text-muted); cursor:pointer; margin-top:8px;">
-            <input type="checkbox" name="banner_dismissible" value="1" <?= (int)$event['banner_dismissible'] ? 'checked' : '' ?> style="accent-color:var(--hq-primary);">
-            امکان بستن موقت بنر توسط کاربران سایت
-          </label>
+                  <!-- Countdown (8:670) -->
+                  <div class="figma-specimen-countdown">
+                    <span>مانده تا آغاز:</span>
+                    <b class="figma-specimen-countdown-val" id="specimenCountdownText" style="color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>;">۲۴ روز و ۱۸ ساعت</b>
+                  </div>
 
-          <div class="hq-note-box" style="background:var(--hq-surface-muted); color:var(--hq-text-muted); border-color:var(--hq-border);">
-            <span>نکته مهم: فقط یک رویداد می‌تواند بنر سراسری فعال داشته باشد. در صورت فعال‌سازی برای رویداد دیگری، بنر فعلی غیرفعال می‌شود.</span>
+                  <!-- Badge and Title (8:676) -->
+                  <div class="figma-specimen-meta">
+                    <span class="figma-specimen-badge" id="specimenBadge">
+                      <?= event_h($event['banner_label'] ?: 'رویداد ویژه جاری') ?>
+                    </span>
+                    <b class="figma-specimen-event-title" id="specimenTitle">
+                      <?= event_h($event['title']) ?: 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی مکسا' ?>
+                    </b>
+                  </div>
+                </div>
+
+                <p class="figma-specimen-caption">
+                  * این بنر به‌صورت رسپانسیو طراحی شده و در موبایل المان‌های ثانویه آن خودکار حذف می‌شوند.
+                </p>
+              </div>
+
+              <!-- Card: System Rule Warning Box (8:681) -->
+              <div class="figma-system-rule-box">
+                <div class="figma-system-rule-head">
+                  <span>قانون سراسری و محدودیت سیستم ⚠️</span>
+                </div>
+                <p class="figma-system-rule-desc">
+                  فقط یک رویداد فعال می‌تواند در هر لحظه بنر سراسری داشته باشد. فعال‌سازی بنر برای هر همایش، خودکار بنر همایش قبلی را متوقف و آرشیو می‌کند.
+                </p>
+              </div>
+
+            </div>
+
           </div>
         </section>
 
@@ -2204,73 +2703,149 @@ function deleteCurrentPdf() {
   }
 
   // =========================================================================
-  // 4. Live banner preview sync
+  // 4. Live banner preview sync (Figma Node #8:648)
   // =========================================================================
-  const preview = document.getElementById('bannerPreview');
-  const titleInput = document.querySelector('input[name="title"]');
-  const labelInput = document.querySelector('[data-banner-preview="label"]');
-  const ctaInput = document.querySelector('[data-banner-preview="cta"]');
-  const themeSelect = document.querySelector('[data-banner-preview="theme"]');
+  const specimenBox = document.getElementById('bannerSpecimenBox');
+  const mainTitleInput = document.querySelector('input[name="title"]');
+  const bannerDisplayTitle = document.getElementById('bannerDisplayTitleInput');
+  const eventDisplayTitle = document.getElementById('bannerEventDisplayTitle');
+  const specimenTitle = document.getElementById('specimenTitle');
+  const labelInput = document.getElementById('bannerLabelInput');
+  const specimenBadge = document.getElementById('specimenBadge');
+  const ctaInput = document.getElementById('bannerCtaInput');
+  const specimenCtaBtn = document.getElementById('specimenCtaBtn');
+  const dismissInput = document.getElementById('bannerDismissibleInput');
+  const specimenCloseBtn = document.getElementById('specimenCloseBtn');
 
+  // Switch Toggle
+  const switchWrap = document.getElementById('bannerSwitchWrap');
+  const activeInput = document.getElementById('bannerActiveInput');
+  const switchLabel = document.getElementById('bannerSwitchLabel');
+
+  if (switchWrap && activeInput && switchLabel) {
+    switchWrap.addEventListener('click', (e) => {
+      e.preventDefault();
+      activeInput.checked = !activeInput.checked;
+      const isActive = activeInput.checked;
+      switchWrap.classList.toggle('is-active', isActive);
+      switchLabel.textContent = isActive ? 'فعال و روشن' : 'غیرفعال و خاموش';
+      triggerAutoSave();
+    });
+  }
+
+  // Dismissible toggle
+  if (dismissInput && specimenCloseBtn) {
+    dismissInput.addEventListener('change', () => {
+      specimenCloseBtn.style.display = dismissInput.checked ? 'block' : 'none';
+      triggerAutoSave();
+    });
+  }
+
+  // Color Pickers & Swatches
   const pBg = document.getElementById('pickerBg');
   const tBg = document.getElementById('textBg');
   const pText = document.getElementById('pickerText');
   const tText = document.getElementById('textText');
   const pAcc = document.getElementById('pickerAccent');
   const tAcc = document.getElementById('textAccent');
+  const colorPresetLabel = document.getElementById('colorPresetLabel');
+  const swatchButtons = document.querySelectorAll('.figma-color-circle');
 
-  function syncBanner() {
-    if (!preview) return;
-    if (titleInput) {
-      const titleEl = preview.querySelector('[data-preview="title"]');
-      if (titleEl) titleEl.textContent = titleInput.value || 'عنوان رویداد';
-    }
-    if (labelInput) {
-      const labelEl = preview.querySelector('[data-preview="label"]');
-      if (labelEl) labelEl.textContent = labelInput.value || 'رویداد پیش‌رو';
-    }
-    if (ctaInput) {
-      const ctaEl = preview.querySelector('[data-preview="cta"]');
-      if (ctaEl) ctaEl.textContent = ctaInput.value || 'مشاهده رویداد';
-    }
-    if (tBg && tText && tAcc) {
-      preview.style.backgroundColor = tBg.value;
-      preview.style.color = tText.value;
-      const ctaEl = preview.querySelector('[data-preview="cta"]');
-      if (ctaEl) ctaEl.style.borderColor = tAcc.value;
-    }
-  }
-  window.syncBanner = syncBanner;
-
-  [titleInput, labelInput, ctaInput].forEach(el => {
-    if (el) el.addEventListener('input', syncBanner);
-  });
-
-  const presets = {
-    teal: ['#007b7a', '#ffffff', '#f4a61e'],
-    amber: ['#e89a16', '#123a3d', '#007b7a'],
-    dark: ['#123a3d', '#ffffff', '#f4a61e']
+  const figmaPresets = {
+    '#1e293b': { name: 'دودی زغالی تیره', text: '#ffffff', accent: '#f4a61e' },
+    '#701a75': { name: 'زرشکی عمیق', text: '#ffffff', accent: '#f59e0b' },
+    '#1e3a8a': { name: 'سرمه‌ای کلاسیک', text: '#ffffff', accent: '#38bdf8' },
+    '#0a5c66': { name: 'سرمه‌ای تیره مکسا (پیش‌فرض)', text: '#ffffff', accent: '#f4a61e' }
   };
 
-  if (themeSelect) {
-    themeSelect.addEventListener('change', () => {
-      const c = presets[themeSelect.value];
-      if (c && pBg && tBg && pText && tText && pAcc && tAcc) {
-        pBg.value = tBg.value = c[0];
-        pText.value = tText.value = c[1];
-        pAcc.value = tAcc.value = c[2];
-        syncBanner();
+  swatchButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const color = btn.dataset.color.toLowerCase();
+      const preset = figmaPresets[color] || { name: btn.dataset.title, text: '#ffffff', accent: '#f4a61e' };
+      swatchButtons.forEach(b => b.classList.remove('is-selected'));
+      btn.classList.add('is-selected');
+      if (colorPresetLabel) colorPresetLabel.textContent = preset.name;
+      if (pBg && tBg) pBg.value = tBg.value = color;
+      if (pText && tText) pText.value = tText.value = preset.text;
+      if (pAcc && tAcc) pAcc.value = tAcc.value = preset.accent;
+      syncBanner();
+      triggerAutoSave();
+    });
+  });
+
+  function syncBanner() {
+    if (!specimenBox) return;
+
+    // Title Sync
+    const titleVal = (bannerDisplayTitle?.value || mainTitleInput?.value || '').trim();
+    if (specimenTitle) specimenTitle.textContent = titleVal || 'عنوان رویداد';
+    if (eventDisplayTitle && mainTitleInput) eventDisplayTitle.textContent = mainTitleInput.value.trim() || 'همین رویداد (در حال ویرایش)';
+
+    // Label / Badge Sync
+    if (specimenBadge && labelInput) {
+      specimenBadge.textContent = labelInput.value.trim() || 'رویداد ویژه جاری';
+    }
+
+    // CTA Button Sync
+    if (specimenCtaBtn && ctaInput) {
+      specimenCtaBtn.textContent = ctaInput.value.trim() || 'ثبت‌نام مستقیم';
+    }
+
+    // Colors Sync
+    const bgVal = tBg?.value || '#0a5c66';
+    const textVal = tText?.value || '#ffffff';
+    const accVal = tAcc?.value || '#f4a61e';
+
+    specimenBox.style.backgroundColor = bgVal;
+    specimenBox.style.color = textVal;
+    if (specimenCtaBtn) {
+      specimenCtaBtn.style.backgroundColor = accVal;
+      specimenCtaBtn.style.color = '#ffffff';
+    }
+    const countdownVal = document.getElementById('specimenCountdownText');
+    if (countdownVal) countdownVal.style.color = accVal;
+
+    // Check if background matches one of the 4 circles
+    swatchButtons.forEach(b => {
+      const isMatch = b.dataset.color.toLowerCase() === bgVal.toLowerCase();
+      b.classList.toggle('is-selected', isMatch);
+      if (isMatch && colorPresetLabel) {
+        colorPresetLabel.textContent = b.dataset.title;
       }
     });
   }
+  window.syncBanner = syncBanner;
+
+  if (mainTitleInput) {
+    mainTitleInput.addEventListener('input', () => {
+      if (bannerDisplayTitle && (!bannerDisplayTitle.value || bannerDisplayTitle.dataset.synced === 'true')) {
+        bannerDisplayTitle.value = mainTitleInput.value;
+        bannerDisplayTitle.dataset.synced = 'true';
+      }
+      syncBanner();
+    });
+  }
+  if (bannerDisplayTitle) {
+    bannerDisplayTitle.addEventListener('input', () => {
+      bannerDisplayTitle.dataset.synced = 'false';
+      syncBanner();
+    });
+  }
+  if (labelInput) labelInput.addEventListener('input', syncBanner);
+  if (ctaInput) ctaInput.addEventListener('input', syncBanner);
 
   function bindColorPair(picker, text) {
     if (!picker || !text) return;
-    picker.addEventListener('input', () => { text.value = picker.value; syncBanner(); });
+    picker.addEventListener('input', () => {
+      text.value = picker.value;
+      syncBanner();
+      triggerAutoSave();
+    });
     text.addEventListener('input', () => {
       if (/^#[0-9a-fA-F]{6}$/.test(text.value)) {
         picker.value = text.value;
         syncBanner();
+        triggerAutoSave();
       }
     });
   }
