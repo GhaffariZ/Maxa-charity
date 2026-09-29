@@ -1,0 +1,14 @@
+# robots.txt for MACSA Charity (https://mymacsa.ir)
+User-agent: *
+Allow: /
+
+# Private, administration, and API paths
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /benefactor-dashboard/
+Disallow: /api/
+Disallow: /core/
+Disallow: /config/
+
+# Sitemap location
+Sitemap: https://mymacsa.ir/sitemap.xml
