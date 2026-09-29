@@ -183,8 +183,8 @@ require __DIR__ . '/dashboard/components/header/component.php';
   a.br-item:hover,
   a.br-item.br-item--hovered {
     transform: translateX(-4px);
-    box-shadow: 0 10px 24px rgba(0,123,122,.1);
-    border-color: #007b7a;
+    box-shadow: 0 10px 24px rgba(0, 143, 138,.1);
+    border-color: #008f8a;
     background: #f8fdfd;
   }
   .br-icon {
@@ -192,8 +192,8 @@ require __DIR__ . '/dashboard/components/header/component.php';
     width: 42px; height: 42px;
     display: inline-flex; align-items: center; justify-content: center;
     border-radius: 11px;
-    background: rgba(0,123,122,.08);
-    color: #007b7a;
+    background: rgba(0, 143, 138,.08);
+    color: #008f8a;
     flex-shrink: 0;
     transition: transform .18s ease, background-color .18s ease, color .18s ease;
   }
@@ -203,15 +203,15 @@ require __DIR__ . '/dashboard/components/header/component.php';
     display: block;
   }
   .br-item--hq .br-icon {
-    background: rgba(244,166,30,.14);
+    background: rgba(250, 166, 26,.14);
     color: #b45309;
   }
   a.br-item:hover .br-icon {
     transform: scale(1.08);
-    background: rgba(0,123,122,.14);
+    background: rgba(0, 143, 138,.14);
   }
   a.br-item--hq:hover .br-icon {
-    background: rgba(244,166,30,.22);
+    background: rgba(250, 166, 26,.22);
   }
   .br-arrow {
     margin-right: auto;
@@ -222,7 +222,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     transition: transform .18s ease, color .18s ease;
   }
   a.br-item:hover .br-arrow {
-    color: #007b7a;
+    color: #008f8a;
     transform: translateX(-3px);
   }
   a.br-item--hq:hover .br-arrow {
@@ -234,14 +234,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
     margin-top: 4px;
     font-size: 11.5px;
     font-weight: 700;
-    color: #007b7a;
-    background: rgba(0,123,122,.08);
+    color: #008f8a;
+    background: rgba(0, 143, 138,.08);
     padding: 2px 8px;
     border-radius: 6px;
   }
   .br-item .br-tag--hq {
     color: #b45309;
-    background: rgba(244,166,30,.14);
+    background: rgba(250, 166, 26,.14);
   }
 
   .br-empty {

@@ -266,7 +266,7 @@ body{font-family:'Vazirmatn',Tahoma,sans-serif;background:#f3f7f7;color:#2f3437;
 .na-wrap{max-width:860px;margin:0 auto;padding:0 20px}
 .na-back{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:18px}
 .na-back:hover{color:#fff}
-.na-tag{display:inline-block;background:#f5a623;color:#1a1a1a;font-size:12px;font-weight:700;padding:5px 13px;border-radius:999px;margin-bottom:14px}
+.na-tag{display:inline-block;background:#faa61a;color:#1a1a1a;font-size:12px;font-weight:700;padding:5px 13px;border-radius:999px;margin-bottom:14px}
 .na-hero h1{margin:0;font-size:30px;line-height:1.4;font-weight:800}
 .na-meta{margin-top:14px;color:rgba(255,255,255,.8);font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
 .na-card{max-width:860px;margin:-60px auto 50px;background:#fff;border:1px solid #e6e8ea;border-radius:20px;

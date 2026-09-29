@@ -279,9 +279,9 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
 <!-- استایل اختصاصی، واکنش‌گرا و پریمیوم صفحه اخبار -->
 <style>
     :root {
-        --news-primary: #0899A9;      /* سبز کله‌غازی برند مکسا */
-        --news-primary-hover: #067d8a;
-        --news-accent: #f5a623;       /* خردلی/نارنجی برند مکسا */
+        --news-primary: #008f8a;      /* سبز کله‌غازی برند مکسا */
+        --news-primary-hover: #00736f;
+        --news-accent: #faa61a;       /* خردلی/نارنجی برند مکسا */
         --news-bg: #f8fafc;
         --news-card-bg: #ffffff;
         --news-text: #2f3437;

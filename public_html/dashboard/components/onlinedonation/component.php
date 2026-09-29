@@ -165,7 +165,7 @@
         <div class="otp-modal-box">
           <div class="otp-modal-header">
             <div class="otp-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10aeb8" stroke-width="2">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#008f8a" stroke-width="2">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
                 <line x1="12" y1="18" x2="12.01" y2="18"></line>
               </svg>
@@ -219,9 +219,9 @@
     --text-main: #1e293b;
     --text-muted: #64748b;
 
-    --primary-color: #10aeb8;
-    --primary-dark: #05646e;
-    --primary-mid: #07828e;
+    --primary-color: #008f8a;
+    --primary-dark: #00605d;
+    --primary-mid: #00736f;
     --primary-light: #e9fbfc;
 
     --accent-gold: #fff3c4;
@@ -533,7 +533,7 @@
     background:
       radial-gradient(circle at 12% 10%, rgba(255,255,255,0.24), transparent 34%),
       radial-gradient(circle at 88% 88%, rgba(255,255,255,0.14), transparent 38%),
-      linear-gradient(155deg, #10aeb8 0%, #07828e 54%, #05646e 100%);
+      linear-gradient(155deg, #05a8a2 0%, #008f8a 54%, #00605d 100%);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.20),
       0 22px 48px rgba(15, 159, 170, 0.16);
@@ -838,7 +838,7 @@
     border-radius: 16px;
     border: 2px solid #b2e8eb;
     background: #f8fcfc;
-    color: #05646e;
+    color: #00605d;
     transition: all 0.2s;
   }
 

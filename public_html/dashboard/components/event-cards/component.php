@@ -24,10 +24,10 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
 <style>
 /* تعریف پالت رنگی هماهنگ با دیزاین سیستم مکسا */
 :root {
-    --color-primary: #007b7a;
-    --color-primary-dark: #006665;
+    --color-primary: #008f8a;
+    --color-primary-dark: #00736f;
     --color-primary-light: #4fb2b0;
-    --color-secondary: #f4a61e;
+    --color-secondary: #faa61a;
     --color-text: #2f3437;
     --color-muted: #7b8389;
     --color-border: #e6e8ea;
@@ -107,7 +107,7 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
 .branch-select-icon {
     width: 38px;
     height: 38px;
-    background: rgba(0, 123, 122, 0.12);
+    background: rgba(0, 143, 138, 0.12);
     color: var(--color-primary);
     border-radius: 10px;
     display: grid;
@@ -140,11 +140,11 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
     cursor: pointer;
     min-width: 240px;
     transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 123, 122, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 143, 138, 0.08);
 }
 .home-branch-select:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(0, 123, 122, 0.16);
+    box-shadow: 0 0 0 3px rgba(0, 143, 138, 0.16);
 }
 
 /* باکس هشدار و یادآوری محدوده شهری (Refined & Formal Notice) */
@@ -217,7 +217,7 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
     height: 10px;
     border-radius: 50%;
 }
-.congrats-header .badge { background: var(--color-primary); box-shadow: 0 0 0 3px rgba(0,123,122,0.2); }
+.congrats-header .badge { background: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 143, 138,0.2); }
 .condolence-header .badge { background: #475569; box-shadow: 0 0 0 3px rgba(71,85,105,0.2); }
 
 .block-header h3 {

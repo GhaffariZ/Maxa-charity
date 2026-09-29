@@ -58,7 +58,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
 }
 
 :root {
-  --ms-primary: #0899A9;
+  --ms-primary: #008f8a;
   --ms-primary-dark: #067c89;
   --ms-primary-light: #e0f4f5;
   --ms-accent: #f3a21b;
@@ -206,7 +206,7 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0899A9, #067c89);
+  background: linear-gradient(135deg, #008f8a, #00736f);
   color: #fff;
   display: grid;
   place-items: center;
@@ -310,7 +310,7 @@ body {
 
 /* Call to Action Box inside card */
 .story-cta-box {
-  background: linear-gradient(135deg, #0899A9 0%, #066974 100%);
+  background: linear-gradient(135deg, #008f8a 0%, #00605d 100%);
   border-radius: 20px;
   padding: 32px 28px;
   color: #fff;
@@ -541,7 +541,7 @@ body {
   <?php if (!empty($relatedStories)): ?>
     <section class="related-stories-wrap">
       <h3 class="related-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0899A9" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#008f8a" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         سایر روایت‌های امید مکسا
       </h3>
       <div class="related-grid">

@@ -170,14 +170,14 @@ transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 
 .travel-stat:hover{
 transform:translateY(-4px);
-box-shadow:0 12px 28px rgba(0,123,122,.09);
-border-color:#10aeb8;
+box-shadow:0 12px 28px rgba(0, 143, 138,.09);
+border-color: #008f8a;
 }
 
 .travel-number{
 font-size:clamp(28px, 3vw, 38px);
 font-weight:900;
-color:#007b7a;
+color:#008f8a;
 line-height:1.2;
 margin-bottom:6px;
 letter-spacing:-0.5px;
@@ -205,7 +205,7 @@ max-width:560px;
 height:auto;
 margin:0 auto;
 transform:none;
-filter:drop-shadow(0 8px 20px rgba(0,123,122,.06));
+filter:drop-shadow(0 8px 20px rgba(0, 143, 138,.06));
 }
 
 /* Map SVG styling */
@@ -231,7 +231,7 @@ outline: none;
 .iran-map-box #Iran .province-item.is-active .province-shape,
 .iran-map-box #Iran g.is-active path,
 .iran-map-box #Iran [data-province].is-active path {
-fill: #007b7a !important;
+fill: #008f8a !important;
 stroke: #004d4c !important;
 stroke-width: 1.25 !important;
 transition: all 0.25s ease;
@@ -242,8 +242,8 @@ cursor: pointer !important;
 .iran-map-box #Iran path.province-shape.is-active:hover,
 .iran-map-box #Iran a.province-link:hover path.province-shape.is-active,
 .iran-map-box #Iran a.province-link:hover polygon.province-shape.is-active {
-fill: #10aeb8 !important;
-filter: drop-shadow(0 6px 14px rgba(0,123,122,.4)) !important;
+fill: #008f8a !important;
+filter: drop-shadow(0 6px 14px rgba(0, 143, 138,.4)) !important;
 }
 
 
@@ -278,16 +278,16 @@ display:inline-block;
 
 .mql-dot--active{
 background:#10aeb8;
-border:1px solid #007b7a;
+border:1px solid #008f8a;
 }
 
 .mql-dot--cover{
-background:#f4a61e;
+background:#faa61a;
 border:1px solid #d98c0a;
 }
 
 .mql-link{
-color:#007b7a;
+color:#008f8a;
 text-decoration:none;
 font-weight:700;
 transition:color .2s, transform .2s;
@@ -297,7 +297,7 @@ gap:4px;
 }
 
 .mql-link:hover{
-color:#f4a61e;
+color:#faa61a;
 transform:translateX(-3px);
 }
 

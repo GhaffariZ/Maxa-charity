@@ -40,8 +40,8 @@
 .rnhv2-side-time{margin-top:8px;font-size:10px;color:#a3a3a3}.rnhv2-more{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed #e5e5e5;border-radius:24px;min-height:92px;color:#a3a3a3;text-decoration:none;font-weight:700;transition:all .2s ease}
 .rnhv2-more:hover{color:#2563eb;border-color:#2563eb}.rnhv2-more-arrow{font-size:20px;line-height:1;transition:transform .2s ease}.rnhv2-more:hover .rnhv2-more-arrow{transform:translateX(-4px)}
 .rnhv2-empty{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;color:#6b7280}
-.rnhv2-soon{grid-column:1/-1;text-align:center;padding:54px 20px;border:1.5px dashed #d6e0e0;border-radius:24px;background:rgba(0,123,122,.03);color:#7e858a}
-.rnhv2-soon svg{width:40px;height:40px;color:#007b7a;opacity:.7;margin-bottom:12px}
+.rnhv2-soon{grid-column:1/-1;text-align:center;padding:54px 20px;border:1.5px dashed #d6e0e0;border-radius:24px;background:rgba(0, 143, 138,.03);color:#7e858a}
+.rnhv2-soon svg{width:40px;height:40px;color:#008f8a;opacity:.7;margin-bottom:12px}
 .rnhv2-soon b{display:block;font-size:18px;font-weight:800;color:#2f3437;margin-bottom:6px}
 .rnhv2-soon span{font-size:13.5px}
 @media (min-width:1024px){.rnhv2-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.rnhv2-main{grid-column:span 7}.rnhv2-side{grid-column:span 5}}

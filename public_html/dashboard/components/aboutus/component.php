@@ -130,7 +130,7 @@
 }
 
 .skill-hero-btn{
-  background:#f5a623;
+  background:#faa61a;
   color:#000;
   padding:12px 28px;
   border-radius:10px;

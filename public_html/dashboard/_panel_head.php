@@ -33,11 +33,11 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
-  --danger:#e0556b; --success:#16a37a; --warning:#f4a61e;
-  --primary-08:rgba(0,123,122,.08); --secondary-12:rgba(244,166,30,.14);
+  --danger:#e0556b; --success:#16a37a; --warning:#faa61a;
+  --primary-08:rgba(0, 143, 138,.08); --secondary-12:rgba(250, 166, 26,.14);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06),0 2px 6px rgba(16,40,40,.04);
@@ -47,7 +47,7 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
 :root[data-theme="dark"]{
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a; --primary-08:rgba(79,178,176,.10);
-  --secondary-12:rgba(244,166,30,.18);
+  --secondary-12:rgba(250, 166, 26,.18);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
   color-scheme:dark;
@@ -83,8 +83,8 @@ a{color:inherit;text-decoration:none}
 .check.on{border-color:var(--color-primary);background:var(--primary-08)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border:none;border-radius:13px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s var(--ease),box-shadow .22s}
 .btn .ic{width:18px;height:18px}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 12px 24px -12px rgba(0,123,122,.8)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0,123,122,.9)}
+.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 12px 24px -12px rgba(0, 143, 138,.8)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0, 143, 138,.9)}
 .btn-ghost{background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border)}
 .msg{border-radius:12px;padding:12px 15px;font-size:13px;font-weight:600;margin-bottom:18px;line-height:1.8}
 .msg.err{background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22)}

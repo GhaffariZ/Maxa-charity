@@ -15,7 +15,7 @@ if (!$isHq) {
         <script>try{if(localStorage.getItem('maxa-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
         <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
         <style>
-            :root{--color-primary:#007b7a;--color-text:#2f3437;--color-bg:#f8f9fa;--color-surface:#ffffff;--color-border:#e6e8ea;}
+            :root{--color-primary:#008f8a;--color-text:#2f3437;--color-bg:#f8f9fa;--color-surface:#ffffff;--color-border:#e6e8ea;}
             :root[data-theme="dark"]{--color-text:#e7ecee;--color-bg:#0f1518;--color-surface:#19232a;--color-border:#2a343a;}
             body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px;text-align:center;}
             .box{background:var(--color-surface);border:1px solid var(--color-border);padding:40px;border-radius:24px;max-width:480px;box-shadow:0 10px 30px rgba(0,0,0,.08);}
@@ -205,10 +205,10 @@ unset($_SESSION['stories_flash']);
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
   --color-text:#2f3437; --color-muted:#8a9499;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
-  --accent-gold:#f5a623; --accent-gold-bg:rgba(245,166,35,0.12);
+  --accent-gold:#faa61a; --accent-gold-bg:rgba(250, 166, 26,0.12);
   --success:#16a37a; --danger:#e0556b;
   --success-12:rgba(22,163,122,.14); --danger-12:rgba(224,85,107,.12);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
@@ -245,7 +245,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .btn{font-family:inherit;font-weight:700;border:none;cursor:pointer;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
   transition:all .2s var(--ease); text-decoration:none;font-size:13.5px;padding:10px 18px}
 .btn svg{width:17px;height:17px}
-.btn-primary{background:linear-gradient(135deg,#0899A9,#007b7a);color:#fff;box-shadow:0 8px 18px -6px rgba(8,153,169,.6)}
+.btn-primary{background:linear-gradient(135deg,#0899A9,#008f8a);color:#fff;box-shadow:0 8px 18px -6px rgba(8,153,169,.6)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px -6px rgba(8,153,169,.8);color:#fff}
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border)}
 .btn-ghost:hover{border-color:var(--color-primary);color:var(--color-primary)}
@@ -262,7 +262,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .stat-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex-shrink:0}
 .stat-ic.teal{background:rgba(8,153,169,0.12);color:#0899A9}
 .stat-ic.green{background:var(--success-12);color:var(--success)}
-.stat-ic.gold{background:rgba(245,166,35,0.14);color:#d97706}
+.stat-ic.gold{background:rgba(250, 166, 26,0.14);color:#d97706}
 .stat-ic.purple{background:rgba(124,77,219,0.14);color:#7c4ddb}
 .stat-title{font-size:12px;color:var(--color-muted);margin-bottom:2px}
 .stat-val{font-size:22px;font-weight:900;color:var(--color-text)}

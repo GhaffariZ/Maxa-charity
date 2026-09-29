@@ -38,12 +38,12 @@ require __DIR__ . '/dashboard/components/header/component.php';
 <style>
 /* CSS Variables & Base Theme */
 :root {
-  --ev-primary: #007b7a;
+  --ev-primary: #008f8a;
   --ev-primary-dark: #07474e;
   --ev-primary-deep: #0a5c66;
   --ev-primary-light: #e6f6f5;
   --ev-primary-hover: #006362;
-  --ev-accent: #f4a61e;
+  --ev-accent: #faa61a;
   --ev-accent-light: #fff8eb;
   --ev-text-main: #123a3d;
   --ev-text-body: #4a5e62;
@@ -92,7 +92,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   right: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(244, 166, 30, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(250, 166, 26, 0.12) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -155,7 +155,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
 }
 
 .events-search-form:focus-within {
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), 0 0 0 3px rgba(0, 123, 122, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), 0 0 0 3px rgba(0, 143, 138, 0.35);
   transform: translateY(-2px);
 }
 

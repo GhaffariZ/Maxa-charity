@@ -270,11 +270,11 @@ $isFiltered = ($q !== '' || $catFilter !== '');
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
   --success-12:rgba(22,163,122,.14); --danger-12:rgba(224,85,107,.12);
   --radius-sm:12px; --radius:18px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
@@ -293,14 +293,14 @@ $isFiltered = ($q !== '' || $catFilter !== '');
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;padding:28px 22px;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .mx-wrap{max-width:1040px;margin:0 auto}
 
 .mx-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
 .mx-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;font-size:26px;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .mx-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .mx-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 
@@ -331,7 +331,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-field input:focus,.mx-field textarea:focus,.mx-field select:focus{outline:none;border-color:var(--color-primary)}
 .mx-field textarea{resize:vertical;min-height:80px}
 .mx-btn{width:100%;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:none;border-radius:12px;padding:12px;
-  color:#fff;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 10px 20px -10px rgba(0,123,122,.6);transition:transform .15s,box-shadow .2s}
+  color:#fff;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 10px 20px -10px rgba(0, 143, 138,.6);transition:transform .15s,box-shadow .2s}
 .mx-btn:hover{transform:translateY(-2px)}
 
 /* لیست محتوا */
@@ -464,7 +464,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-btn-cancel:hover { background: var(--color-border); }
 .mx-badge-format {
   font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px;
-  background: rgba(0, 123, 122, 0.15); color: var(--color-primary-dark);
+  background: rgba(0, 143, 138, 0.15); color: var(--color-primary-dark);
 }
 .mx-action-edit {
   display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px;

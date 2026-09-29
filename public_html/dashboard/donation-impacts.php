@@ -71,7 +71,7 @@ $isCreateView = isset($_GET['view']) && $_GET['view'] === 'create';
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
   --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b;
@@ -96,7 +96,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .head-ic svg{width:27px;height:27px}
 .head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .head p{font-size:13px;color:var(--color-muted);margin-top:3px}
@@ -106,7 +106,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   transition:filter .2s,transform .14s,box-shadow .22s,border-color .2s; text-decoration:none;}
 .btn svg{width:16px;height:16px}
 .btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0,123,122,.8)}
+.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0, 143, 138,.8)}
 .btn-primary:hover{transform:translateY(-1px); color:#fff;}
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border);padding:10px 15px;font-size:12.5px}
 .btn-ghost:hover{border-color:var(--color-primary-light)}
@@ -118,7 +118,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 /* Cards Grid */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
 .card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--color-border); }
-.card-icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 16px; object-fit: cover; align-self: flex-start; background: #007b7a; display: flex; align-items: center; justify-content: center; }
+.card-icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 16px; object-fit: cover; align-self: flex-start; background: #008f8a; display: flex; align-items: center; justify-content: center; }
 .card-icon img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
 .card-title { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 16px; text-align: right; flex-grow: 1; }
 .card-divider { height: 1px; background: var(--color-border); margin: 0 0 16px 0; border: none; }

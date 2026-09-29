@@ -8,9 +8,9 @@
   --card-foreground: #2f3437;
   --popover: #ffffff;
   --popover-foreground: #2f3437;
-  --primary: #007b7a;
+  --primary: #008f8a;
   --primary-foreground: #ffffff;
-  --secondary: #f4a61e;
+  --secondary: #faa61a;
   --secondary-foreground: #ffffff;
   --muted: #f1f3f5;
   --muted-foreground: #9d9d9d;
@@ -24,16 +24,16 @@
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #007b7a;
+  --ring: #008f8a;
   --radius: 1rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #2f3437;
-  --sidebar-primary: #007b7a;
+  --sidebar-primary: #008f8a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f8f9fa;
-  --sidebar-accent-foreground: #007b7a;
+  --sidebar-accent-foreground: #008f8a;
   --sidebar-border: #e6e8ea;
-  --sidebar-ring: #007b7a;
+  --sidebar-ring: #008f8a;
 }
 
 .dark {
@@ -74,7 +74,7 @@
 }
 
 @theme inline {
-  --color-primary-dark: #006665;
+  --color-primary-dark: #00736f;
   --color-primary-light: #4fb2b0;
   --color-surface: #ffffff;
   --color-background: var(--background);

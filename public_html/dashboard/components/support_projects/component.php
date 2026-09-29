@@ -20,10 +20,10 @@
   <style>
     /* ============ توکن‌های طراحی (برگرفته از داشبورد مدیریت) ============ */
     :root {
-      --color-primary: #007b7a;
-      --color-primary-dark: #006665;
+      --color-primary: #008f8a;
+      --color-primary-dark: #00736f;
       --color-primary-light: #4fb2b0;
-      --color-secondary: #f4a61e;
+      --color-secondary: #faa61a;
       --color-text: #2f3437;
       --color-muted: #9d9d9d;
       --color-border: #e6e8ea;
@@ -31,11 +31,11 @@
       --color-surface: #ffffff;
       --success: #16a37a;
       --danger: #e0556b;
-      --warning: #f4a61e;
-      --primary-08: rgba(0, 123, 122, .08);
-      --primary-12: rgba(0, 123, 122, .12);
-      --primary-16: rgba(0, 123, 122, .16);
-      --secondary-12: rgba(244, 166, 30, .14);
+      --warning: #faa61a;
+      --primary-08: rgba(0, 143, 138, .08);
+      --primary-12: rgba(0, 143, 138, .12);
+      --primary-16: rgba(0, 143, 138, .16);
+      --secondary-12: rgba(250, 166, 26, .14);
       --radius-sm: 12px;
       --radius: 18px;
       --radius-lg: 24px;
@@ -84,7 +84,7 @@
     }
 
     *::-webkit-scrollbar-thumb {
-      background: rgba(0, 123, 122, .18);
+      background: rgba(0, 143, 138, .18);
       border-radius: 99px;
       border: 2px solid transparent;
       background-clip: padding-box
@@ -157,7 +157,7 @@
       border-color: var(--color-primary);
       background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
       color: #fff;
-      box-shadow: 0 10px 20px -10px rgba(0, 123, 122, .75);
+      box-shadow: 0 10px 20px -10px rgba(0, 143, 138, .75);
     }
 
     /* ============ شبکه کارتها و اسلایدر ============ */
@@ -397,13 +397,13 @@
       border-radius: 13px;
       font-weight: 700;
       font-size: .92rem;
-      box-shadow: 0 10px 22px -10px rgba(0, 123, 122, .7);
+      box-shadow: 0 10px 22px -10px rgba(0, 143, 138, .7);
       transition: transform .15s var(--ease), box-shadow .22s;
     }
 
     .btn-help:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 30px -10px rgba(0, 123, 122, .85);
+      box-shadow: 0 16px 30px -10px rgba(0, 143, 138, .85);
     }
 
     .empty-state {
@@ -580,13 +580,13 @@
       font-weight: 700;
       width: 100%;
       margin-top: 18px;
-      box-shadow: 0 10px 22px -10px rgba(0, 123, 122, .7);
+      box-shadow: 0 10px 22px -10px rgba(0, 143, 138, .7);
       transition: transform .15s var(--ease), box-shadow .22s;
     }
 
     .btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 30px -10px rgba(0, 123, 122, .85);
+      box-shadow: 0 16px 30px -10px rgba(0, 143, 138, .85);
     }
 
     .close-btn {
@@ -832,7 +832,7 @@
                 </div>
                 <div class="card-body">
                     <h3 class="card-title" title="${camp.title}">${camp.title}</h3>
-                    ${camp.branch_name ? `<span class="branch-tag" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;"><svg class="iconoir-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H12V3.6C12 3.26863 12.2686 3 12.6 3H17.4C17.7314 3 18 3.26863 18 3.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z"/></svg> ${camp.branch_name}</span>` : ''}
+                    ${camp.branch_name ? `<span class="branch-tag" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;"><svg class="iconoir-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H12V3.6C12 3.26863 12.2686 3 12.6 3H17.4C17.7314 3 18 3.26863 18 3.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z"/></svg> ${camp.branch_name}</span>` : ''}
                     <div class="card-desc">${descHtml}</div>
 
                     <div class="progress-container">

@@ -234,9 +234,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 
 .mp-badge.is-set {
-  background: rgba(0, 123, 122, 0.09);
-  color: #007b7a;
-  border-color: rgba(0, 123, 122, 0.3);
+  background: rgba(0, 143, 138, 0.09);
+  color: #008f8a;
+  border-color: rgba(0, 143, 138, 0.3);
 }
 
 .mp-badge-dot {
@@ -280,7 +280,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   max-width: 860px;
   margin: 0 auto;
   background: #f8fafc;
-  border: 1.5px solid rgba(0, 123, 122, 0.16);
+  border: 1.5px solid rgba(0, 143, 138, 0.16);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
@@ -320,7 +320,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 .mp-country-layer .province-shape:hover {
   fill: #e6f6f6 !important;
-  stroke: #007b7a !important;
+  stroke: #008f8a !important;
   stroke-width: 1.4 !important;
 }
 
@@ -356,7 +356,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 /* پین‌های مرجع (Reference Branches) */
 .mp-ref-dot {
-  fill: #007b7a;
+  fill: #008f8a;
   stroke: #ffffff;
   stroke-width: 1.2;
 }
@@ -414,8 +414,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 
 .mp-pin-radar {
-  fill: rgba(244, 166, 30, 0.2);
-  stroke: #f4a61e;
+  fill: rgba(250, 166, 26, 0.2);
+  stroke: #faa61a;
   pointer-events: none;
   animation: mpPulse 2.2s cubic-bezier(0.1, 0.7, 0.3, 1) infinite;
 }
@@ -450,14 +450,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 
 .mp-pin-head-inner {
-  fill: #f4a61e;
+  fill: #faa61a;
   pointer-events: none;
 }
 
 /* تولتیپ برچسب بالای پین */
 .mp-tt-bg {
   fill: #0f172a;
-  stroke: #f4a61e;
+  stroke: #faa61a;
   stroke-width: 1.2;
   pointer-events: none;
 }
@@ -481,8 +481,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
   gap: 8px;
   font-size: 12.5px;
   color: var(--color-muted, #64748b);
-  background: rgba(0, 123, 122, 0.05);
-  border: 1px dashed rgba(0, 123, 122, 0.2);
+  background: rgba(0, 143, 138, 0.05);
+  border: 1px dashed rgba(0, 143, 138, 0.2);
   border-radius: 10px;
   padding: 10px 14px;
 }

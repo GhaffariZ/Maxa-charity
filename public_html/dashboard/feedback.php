@@ -8,8 +8,8 @@ dash_require('feedback');
  *    read (bool), approved (bool: تأیید جهت نمایش در سایت), replied (bool)
  * ========================================================================== */
 $items = [
-  ['name'=>'سارا محمدی','type'=>'suggestion','message'=>'پیشنهاد می‌کنم امکان پرداختِ اقساطی برای کمک‌ها اضافه شود تا خیرینِ بیشتری بتوانند مشارکت کنند.','date'=>'۱۴۰۳/۰۵/۱۸ – ۱۴:۳۰','read'=>false,'approved'=>false,'replied'=>false,'color'=>'#007b7a'],
-  ['name'=>'علی رضایی','type'=>'criticism','message'=>'بارگذاریِ صفحهٔ کمپین‌ها روی موبایل کمی کند است؛ لطفاً بررسی کنید.','date'=>'۱۴۰۳/۰۵/۱۷ – ۰۹:۱۲','read'=>false,'approved'=>false,'replied'=>false,'color'=>'#f4a61e'],
+  ['name'=>'سارا محمدی','type'=>'suggestion','message'=>'پیشنهاد می‌کنم امکان پرداختِ اقساطی برای کمک‌ها اضافه شود تا خیرینِ بیشتری بتوانند مشارکت کنند.','date'=>'۱۴۰۳/۰۵/۱۸ – ۱۴:۳۰','read'=>false,'approved'=>false,'replied'=>false,'color'=>'#008f8a'],
+  ['name'=>'علی رضایی','type'=>'criticism','message'=>'بارگذاریِ صفحهٔ کمپین‌ها روی موبایل کمی کند است؛ لطفاً بررسی کنید.','date'=>'۱۴۰۳/۰۵/۱۷ – ۰۹:۱۲','read'=>false,'approved'=>false,'replied'=>false,'color'=>'#faa61a'],
   ['name'=>'مریم احمدی','type'=>'suggestion','message'=>'اگر گزارشِ شفاف از محلِ هزینهٔ کمک‌ها منتشر شود، اعتمادِ بیشتری ایجاد می‌شود.','date'=>'۱۴۰۳/۰۵/۱۵ – ۱۹:۴۵','read'=>true,'approved'=>true,'replied'=>false,'color'=>'#8b5cf6'],
   ['name'=>'حسین کریمی','type'=>'criticism','message'=>'پیامکِ تأییدِ پرداخت با تأخیر ارسال می‌شود؛ گاهی چند ساعت طول می‌کشد.','date'=>'۱۴۰۳/۰۵/۱۲ – ۱۱:۰۰','read'=>true,'approved'=>false,'replied'=>true,'reply_text'=>'سلام و سپاس از اطلاع‌رسانی شما. مشکلِ تأخیرِ پیامک بررسی و درگاهِ ارسال به‌روزرسانی شد.','color'=>'#16a37a'],
   ['name'=>'زهرا نیک‌نام','type'=>'suggestion','message'=>'یک بخشِ «داستانِ خیرین» اضافه کنید تا تجربهٔ کمک‌کنندگان به اشتراک گذاشته شود.','date'=>'۱۴۰۳/۰۵/۱۰ – ۰۸:۲۰','read'=>true,'approved'=>true,'replied'=>true,'reply_text'=>'پیشنهادِ بسیار خوبی است؛ بخشِ «داستانِ خیرین» در برنامهٔ توسعهٔ سایت قرار گرفت. سپاس‌گزاریم.','color'=>'#e0556b'],
@@ -41,12 +41,12 @@ if(!function_exists('fb_initials')){
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b; --violet:#7c4ddb;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
-  --secondary-12:rgba(244,166,30,.16); --danger-12:rgba(224,85,107,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
+  --secondary-12:rgba(250, 166, 26,.16); --danger-12:rgba(224,85,107,.12);
   --success-12:rgba(22,163,122,.14); --violet-12:rgba(124,77,219,.14);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
@@ -58,7 +58,7 @@ if(!function_exists('fb_initials')){
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a; --color-secondary-dark:#e0a528;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16);
-  --secondary-12:rgba(244,166,30,.18); --danger-12:rgba(224,85,107,.16);
+  --secondary-12:rgba(250, 166, 26,.18); --danger-12:rgba(224,85,107,.16);
   --success-12:rgba(22,163,122,.18); --violet-12:rgba(124,77,219,.20);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
@@ -68,14 +68,14 @@ if(!function_exists('fb_initials')){
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;padding:28px 22px;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .fb-wrap{max-width:900px;margin:0 auto}
 
 .fb-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .fb-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .fb-head-ic svg{width:27px;height:27px}
 .fb-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .fb-head p{font-size:13px;color:var(--color-muted);margin-top:3px}

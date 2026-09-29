@@ -19,10 +19,10 @@
 
     <style>
         :root {
-            --primary-teal: #00a8a8;
-            --primary-dark: #006665;
+            --primary-teal: #008f8a;
+            --primary-dark: #00736f;
             --primary-light: #e6f7f7;
-            --accent-gold: #f5a623;
+            --accent-gold: #faa61a;
             --accent-gold-dark: #d97706;
             --header-bg: #eef3f6;
             --text-dark: #1e293b;
@@ -337,7 +337,7 @@
 
         /* ---------------- کپسول نقل قول و همکاری ---------------- */
         .quote-capsule {
-            background: linear-gradient(135deg, rgba(0, 168, 168, 0.06) 0%, rgba(245, 166, 35, 0.08) 100%);
+            background: linear-gradient(135deg, rgba(0, 143, 138, 0.06) 0%, rgba(250, 166, 26, 0.08) 100%);
             border-right: 4px solid var(--accent-gold);
             border-radius: 20px;
             padding: 26px 30px;
@@ -390,7 +390,7 @@
             border-radius: 50px;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(245, 166, 35, 0.3);
+            box-shadow: 0 4px 14px rgba(250, 166, 26, 0.3);
         }
 
         .cta-btn-primary:hover {
@@ -442,7 +442,7 @@
             left: -60px;
             width: 180px;
             height: 180px;
-            background: radial-gradient(circle, rgba(0, 168, 168, 0.15) 0%, rgba(0, 168, 168, 0) 70%);
+            background: radial-gradient(circle, rgba(0, 143, 138, 0.15) 0%, rgba(0, 143, 138, 0) 70%);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -475,14 +475,14 @@
             font-weight: 700;
             padding: 5px 14px;
             border-radius: 20px;
-            box-shadow: 0 3px 10px rgba(0, 168, 168, 0.25);
+            box-shadow: 0 3px 10px rgba(0, 143, 138, 0.25);
         }
 
         .resume-badge-tag {
             display: inline-block;
-            background: rgba(245, 166, 35, 0.15);
+            background: rgba(250, 166, 26, 0.15);
             color: var(--accent-gold-dark);
-            border: 1px solid rgba(245, 166, 35, 0.35);
+            border: 1px solid rgba(250, 166, 26, 0.35);
             font-size: 0.8rem;
             font-weight: 700;
             padding: 4px 12px;
@@ -568,7 +568,7 @@
             padding: 13px 26px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 8px 20px -4px rgba(0, 168, 168, 0.4);
+            box-shadow: 0 8px 20px -4px rgba(0, 143, 138, 0.4);
             transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 

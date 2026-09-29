@@ -22,8 +22,8 @@
     overflow-x: hidden;
   }
     :root{
-      --cta-orange:#f5a623;
-      --cta-orange-2:#f39a20;
+      --cta-orange:#faa61a;
+      --cta-orange-2:#e99508;
       --cta-text:#ffffff;
       --cta-muted: rgba(255,255,255,.78);
       --cta-container: 1440px;
@@ -235,11 +235,11 @@
     }
 
     .highlighted-menu > a{
-      background: rgba(245,166,35,.18);
-      border: 1px solid rgba(245,166,35,.35);
+      background: rgba(250, 166, 26,.18);
+      border: 1px solid rgba(250, 166, 26,.35);
     }
     .highlighted-menu > a:hover{
-      background: rgba(245,166,35,.26);
+      background: rgba(250, 166, 26,.26);
     }
 
     /* چپ: سرچ + ورود/ثبت‌نام */
@@ -283,8 +283,8 @@
     .cta-auth {
       height: 38px;
       border-radius: 10px;
-      border: 1px solid rgba(8, 153, 169, 0.4);
-      background: linear-gradient(135deg, #0899A9, #067d8a);
+      border: 1px solid rgba(0, 143, 138, 0.4);
+      background: linear-gradient(135deg, #008f8a, #00736f);
       color: #ffffff !important;
       padding: 0 16px;
       cursor: pointer;
@@ -294,19 +294,19 @@
       gap: 8px;
       white-space: nowrap;
       font-weight: 700;
-      box-shadow: 0 0 12px rgba(8, 153, 169, 0.3);
+      box-shadow: 0 0 12px rgba(0, 143, 138, 0.3);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     .cta-auth:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(8, 153, 169, 0.6);
-      background: linear-gradient(135deg, #0ab2c5, #0899A9);
+      box-shadow: 0 0 20px rgba(0, 143, 138, 0.6);
+      background: linear-gradient(135deg, #05a8a2, #008f8a);
     }
 
     .cta-auth:active {
       transform: translateY(1px);
-      box-shadow: 0 0 8px rgba(8, 153, 169, 0.4);
+      box-shadow: 0 0 8px rgba(0, 143, 138, 0.4);
     }
 
     /* ===== Mega Menu ===== */
@@ -331,7 +331,7 @@
       left: 16px;
       max-width: var(--cta-container);
       margin-inline: auto;
-      background: rgba(8, 153, 169, 0.88); /* Translucent premium teal glass */
+      background: rgba(0, 143, 138, 0.88); /* Translucent premium teal glass */
       backdrop-filter: blur(20px) saturate(140%);
       -webkit-backdrop-filter: blur(20px) saturate(140%);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -480,7 +480,7 @@
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border-left: 1px solid rgba(245, 166, 35, 0.25);
+      border-left: 1px solid rgba(250, 166, 26, 0.25);
       box-shadow: -12px 0 36px rgba(0, 0, 0, 0.15);
       z-index: 200000;
       display: flex;
@@ -595,7 +595,7 @@
       flex: 1;
       height: 42px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #0899A9, #067d8a);
+      background: linear-gradient(135deg, #008f8a, #00736f);
       color: #ffffff !important;
       display: flex;
       align-items: center;
@@ -603,14 +603,14 @@
       gap: 7px;
       font-weight: 700;
       font-size: 13.5px;
-      box-shadow: 0 4px 14px rgba(8, 153, 169, 0.28);
+      box-shadow: 0 4px 14px rgba(0, 143, 138, 0.28);
       text-decoration: none;
       transition: all 0.25s ease;
     }
 
     .mobile-action-auth:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(8, 153, 169, 0.38);
+      box-shadow: 0 6px 18px rgba(0, 143, 138, 0.38);
     }
 
     /* Drawer Navigation Body */
@@ -662,17 +662,17 @@
     }
 
     .mobile-menu > li > a:hover {
-      background: rgba(245, 166, 35, 0.12) !important;
-      color: #0899A9 !important;
+      background: rgba(250, 166, 26, 0.12) !important;
+      color: #008f8a !important;
     }
 
     .mobile-menu > li > a:active {
-      background: rgba(245, 166, 35, 0.18) !important;
+      background: rgba(250, 166, 26, 0.18) !important;
     }
 
     /* Highlighted / Special Menu item */
     .mobile-menu .highlighted-menu > a {
-      background: rgba(245, 166, 35, 0.15);
+      background: rgba(250, 166, 26, 0.15);
       color: #d97706;
       font-weight: 800;
     }
@@ -715,12 +715,12 @@
     }
 
     .mobile-menu .mega-col h6 {
-      color: #0899A9;
+      color: #008f8a;
       font-size: 13px;
       font-weight: 800;
       margin: 10px 0 6px 0;
       padding-bottom: 4px;
-      border-bottom: 1px dashed rgba(8, 153, 169, 0.2);
+      border-bottom: 1px dashed rgba(0, 143, 138, 0.2);
     }
 
     .mobile-menu .mega-col:first-child h6 {
@@ -741,7 +741,7 @@
 
     .mobile-menu .mega-col a:hover {
       background: #ffffff;
-      color: #f5a623;
+      color: #faa61a;
       padding-right: 14px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
@@ -987,13 +987,13 @@
     .cta-auth-slot{position:relative;display:inline-flex;align-items:center}
     .cta-account{position:relative}
     .cta-account-btn{
-      height:38px;border-radius:10px;border:1px solid rgba(8,153,169,.4);
-      background:linear-gradient(135deg,#0899A9,#067d8a);color:#fff;
+      height:38px;border-radius:10px;border:1px solid rgba(0, 143, 138,.4);
+      background:linear-gradient(135deg, #008f8a, #00736f);color:#fff;
       padding:0 12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
-      white-space:nowrap;font-weight:700;box-shadow:0 0 12px rgba(8,153,169,.3);
+      white-space:nowrap;font-weight:700;box-shadow:0 0 12px rgba(0, 143, 138,.3);
       transition:all .3s cubic-bezier(.16,1,.3,1);
     }
-    .cta-account-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(8,153,169,.6);background:linear-gradient(135deg,#0ab2c5,#0899A9)}
+    .cta-account-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(0, 143, 138,.6);background:linear-gradient(135deg, #05a8a2, #008f8a)}
     .cta-account-btn:active{transform:translateY(1px)}
     .cta-account-avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);
       display:grid;place-items:center;font-weight:800;font-size:13px;overflow:hidden;flex-shrink:0;color:#fff}

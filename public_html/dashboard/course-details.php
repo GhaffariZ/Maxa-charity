@@ -41,7 +41,7 @@ $related = array_slice($related, 0, 3);
 
 $pageCss = course_card_styles() . <<<CSS
 .cd-hero{background:linear-gradient(120deg,#01514f,#013533);color:#fff;position:relative;overflow:hidden}
-.cd-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(70% 120% at 90% 0,rgba(0,123,122,.4),transparent 60%)}
+.cd-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(70% 120% at 90% 0,rgba(0, 143, 138,.4),transparent 60%)}
 .cd-hero-in{max-width:1320px;margin:0 auto;padding:34px 22px 40px;position:relative;z-index:1;max-width:760px;margin-inline-start:max(22px,calc((100% - 1320px)/2 + 22px))}
 .crumb{font-size:12.5px;opacity:.85;margin-bottom:14px;display:flex;gap:7px;align-items:center}
 .crumb a{opacity:.9}.crumb a:hover{opacity:1;text-decoration:underline}
@@ -76,8 +76,8 @@ $pageCss = course_card_styles() . <<<CSS
 .acc-lesson{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--color-border);font-size:13.5px}
 .acc-lesson .lt{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;color:#fff}
 .acc-lesson .lt .ic{width:16px;height:16px}
-.lt-video{background:linear-gradient(135deg,#007b7a,#006665)}.lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
-.lt-image{background:linear-gradient(135deg,#f4a61e,#db8d0c)}.lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}.lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
+.lt-video{background:linear-gradient(135deg,#008f8a,#00736f)}.lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
+.lt-image{background:linear-gradient(135deg,#faa61a,#db8d0c)}.lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}.lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
 .acc-lesson .l-name{flex:1}
 .acc-lesson .l-dur{font-size:11.5px;color:var(--color-muted);font-variant-numeric:tabular-nums}
 .acc-lesson .l-prev{font-size:10.5px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:3px 9px;border-radius:99px}

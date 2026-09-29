@@ -37,7 +37,7 @@ if (!function_exists('tk_initials')) {
   function tk_initials($n){ $n=trim((string)$n); if($n==='') return '؟'; $p=preg_split('/\s+/',$n); $a=mb_substr($p[0]??'',0,1,'UTF-8'); $b=isset($p[1])?mb_substr($p[1],0,1,'UTF-8'):''; return $a.$b; }
 }
 if (!function_exists('tk_color')) {
-  function tk_color($id){ $pal=['#007b7a','#f4a61e','#8b5cf6','#16a37a','#e0556b','#2f9e9c','#dd8d0c','#7c4ddb']; return $pal[((int)$id) % count($pal)]; }
+  function tk_color($id){ $pal=['#008f8a','#faa61a','#8b5cf6','#16a37a','#e0556b','#2f9e9c','#dd8d0c','#7c4ddb']; return $pal[((int)$id) % count($pal)]; }
 }
 $ROLE_LABEL = ['user'=>'کاربر شعبه','branch_admin'=>'مدیر شعبه','super'=>'ستاد مرکزی'];
 $PRIO_LABEL = ['low'=>'کم','normal'=>'عادی','high'=>'فوری'];
@@ -382,12 +382,12 @@ $CREATE_TO  = ($MY_ROLE === 'user' && !$IS_HQ_BRANCH) ? 'مدیرِ شعبه' : 
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b; --violet:#7c4ddb;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
-  --secondary-12:rgba(244,166,30,.16); --danger-12:rgba(224,85,107,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
+  --secondary-12:rgba(250, 166, 26,.16); --danger-12:rgba(224,85,107,.12);
   --success-12:rgba(22,163,122,.14); --violet-12:rgba(124,77,219,.14);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
@@ -399,7 +399,7 @@ $CREATE_TO  = ($MY_ROLE === 'user' && !$IS_HQ_BRANCH) ? 'مدیرِ شعبه' : 
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a; --color-secondary-dark:#e0a528;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16);
-  --secondary-12:rgba(244,166,30,.18); --danger-12:rgba(224,85,107,.16);
+  --secondary-12:rgba(250, 166, 26,.18); --danger-12:rgba(224,85,107,.16);
   --success-12:rgba(22,163,122,.18); --violet-12:rgba(124,77,219,.20);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
@@ -409,14 +409,14 @@ $CREATE_TO  = ($MY_ROLE === 'user' && !$IS_HQ_BRANCH) ? 'مدیرِ شعبه' : 
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;padding:28px 22px;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .tk-wrap{max-width:920px;margin:0 auto}
 
 .tk-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .tk-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .tk-head-ic svg{width:27px;height:27px}
 .tk-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .tk-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
@@ -427,7 +427,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   transition:filter .2s,transform .14s,box-shadow .22s,border-color .2s}
 .btn svg{width:16px;height:16px}
 .btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0,123,122,.8)}
+.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0, 143, 138,.8)}
 .btn-primary:hover{transform:translateY(-1px)}
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border);padding:10px 15px;font-size:12.5px}
 .btn-ghost:hover{border-color:var(--color-primary-light)}
@@ -521,7 +521,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-msg.other{align-self:flex-end;border-bottom-left-radius:2px}
 .tk-msg.role-user{background:var(--success-12);border-color:rgba(22,163,122,.25)}
 .tk-msg.role-branch_admin{background:var(--violet-12);border-color:rgba(124,77,219,.25)}
-.tk-msg.role-super{background:var(--secondary-12);border-color:rgba(244,166,30,.35)}
+.tk-msg.role-super{background:var(--secondary-12);border-color:rgba(250, 166, 26,.35)}
 .tk-msg .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
 .tk-msg .mwho{font-size:12px;font-weight:800}
 .tk-msg .mrole{font-size:10.5px;font-weight:700;color:var(--color-muted)}

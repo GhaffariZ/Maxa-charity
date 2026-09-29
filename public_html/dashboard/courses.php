@@ -44,7 +44,7 @@ $pageCss = course_card_styles() . <<<CSS
 .cat-bar{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:22px}
 .cat-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:99px;border:1.5px solid var(--color-border);background:var(--color-surface);font-weight:700;font-size:13px;color:#5b6469;white-space:nowrap;transition:all .2s;cursor:pointer}
 .cat-chip:hover{border-color:var(--color-primary-light);color:var(--color-primary-dark)}
-.cat-chip.on{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;border-color:transparent;box-shadow:0 10px 20px -10px rgba(0,123,122,.6)}
+.cat-chip.on{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;border-color:transparent;box-shadow:0 10px 20px -10px rgba(0, 143, 138,.6)}
 .cat-chip .n{font-size:11px;opacity:.7;font-variant-numeric:tabular-nums}
 
 .results-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}

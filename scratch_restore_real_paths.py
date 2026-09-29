@@ -100,7 +100,7 @@ svg_parts.append("""<svg
 g.is-inactive,
 g.is-inactive path,
 g.is-inactive polygon {
-  fill: #f4a61e !important;
+  fill: #faa61a !important;
   stroke: #b86a00 !important;
   stroke-width: 1.05 !important;
   cursor: default !important;
@@ -117,11 +117,11 @@ a.province-link {
   display: block;
 }
 a.province-link .province-shape.is-active {
-  fill: #007b7a !important;
+  fill: #008f8a !important;
   stroke: #004544 !important;
   stroke-width: 1.25 !important;
   cursor: pointer !important;
-  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3));
+  filter: drop-shadow(0 2px 6px rgba(0, 143, 138, 0.3));
 }
 a.province-link:hover .province-shape.is-active,
 a.province-link:focus-visible .province-shape.is-active {

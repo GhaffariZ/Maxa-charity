@@ -180,7 +180,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     display: inline-flex; align-items: center; gap: 6px;
     margin-top: 10px;
     font-size: 13.5px; font-weight: 700;
-    color: #f39a20; text-decoration: none;
+    color: #e99508; text-decoration: none;
     transition: color .18s ease, transform .18s ease;
   }
   .cu-map svg {

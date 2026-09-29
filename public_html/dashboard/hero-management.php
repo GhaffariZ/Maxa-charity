@@ -34,11 +34,11 @@ if(!function_exists('hm_fa')){
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --success:#16a37a; --danger:#e0556b; --violet:#7c4ddb;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
-  --secondary-12:rgba(244,166,30,.14); --danger-12:rgba(224,85,107,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
+  --secondary-12:rgba(250, 166, 26,.14); --danger-12:rgba(224,85,107,.12);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06),0 2px 6px rgba(16,40,40,.04);
@@ -49,7 +49,7 @@ if(!function_exists('hm_fa')){
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16);
-  --secondary-12:rgba(244,166,30,.16); --danger-12:rgba(224,85,107,.16);
+  --secondary-12:rgba(250, 166, 26,.16); --danger-12:rgba(224,85,107,.16);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
@@ -59,14 +59,14 @@ if(!function_exists('hm_fa')){
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;padding:28px 22px;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .hm-wrap{max-width:1000px;margin:0 auto}
 
 .hm-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
 .hm-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .hm-head-ic svg{width:27px;height:27px}
 .hm-head-txt{flex:1;min-width:0}
 .hm-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
@@ -147,12 +147,12 @@ body.hm-dragging .hm-drag{cursor:grabbing}
   padding:13px 28px;border-radius:14px;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
 .btn svg{width:18px;height:18px}
 .btn:active{transform:scale(.97)}
-.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 12px 26px -10px rgba(0,123,122,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(0,123,122,.8)}
+.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 12px 26px -10px rgba(0, 143, 138,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(0, 143, 138,.8)}
 /* دکمه‌ی «ساخت هیرو جدید» در هدر */
 .btn-new{flex-shrink:0;color:#fff;padding:11px 20px;font-size:13.5px;border-radius:12px;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 22px -10px rgba(0,123,122,.7)}
-.btn-new:hover{transform:translateY(-2px);box-shadow:0 16px 28px -10px rgba(0,123,122,.8)}
+  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
+.btn-new:hover{transform:translateY(-2px);box-shadow:0 16px 28px -10px rgba(0, 143, 138,.8)}
 
 /* دکمه‌ی حذفِ هر اسلاید (داخل آکاردئون) */
 .hm-row-actions{display:flex;justify-content:flex-end;margin-top:16px}

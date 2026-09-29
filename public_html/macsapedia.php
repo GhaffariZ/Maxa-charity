@@ -57,7 +57,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .mp-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 28px rgba(0,0,0,.08);
-    border-color: var(--cta-orange, #f5a623);
+    border-color: var(--cta-orange, #faa61a);
   }
   .mp-icon {
     font-size: 34px;
@@ -80,7 +80,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     margin-top: auto;
     font-size: 13.5px;
     font-weight: 700;
-    color: var(--cta-orange, #f5a623);
+    color: var(--cta-orange, #faa61a);
     display: inline-flex;
     align-items: center;
     gap: 6px;

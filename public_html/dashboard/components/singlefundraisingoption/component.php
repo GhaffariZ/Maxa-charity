@@ -153,7 +153,7 @@
     width:0;
     height:3px;
 
-    background:linear-gradient(90deg,#10aeb8,#07828e);
+    background:linear-gradient(90deg, #05a8a2, #008f8a);
 
     border-radius:2px;
 
@@ -172,7 +172,7 @@
 
     transform:translateY(-10px);
 
-    border-color:#10aeb8;
+    border-color: #008f8a;
 
     box-shadow:
         0 28px 60px rgba(16,174,184,0.20),
@@ -218,7 +218,7 @@
 
 .support-card:hover .card-icon{
 
-    background:linear-gradient(145deg,#10aeb8,#07828e);
+    background:linear-gradient(145deg, #05a8a2, #008f8a);
 
     color:#ffffff;
 
@@ -246,7 +246,7 @@
 }
 
 .support-card:hover h3{
-    color:#07828e;
+    color: #00736f;
 }
 
 .support-card p{

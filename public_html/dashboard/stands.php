@@ -213,7 +213,7 @@ if ($targetBranch && (int)$targetBranch['is_hq'] === 0) {
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
   --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b; --warning:#f59e0b;
@@ -248,10 +248,10 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .head-left{display:flex;align-items:center;gap:16px}
 .head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .head-ic svg{width:27px;height:27px}
 
-.branch-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(0,123,122,.1);border:1px solid rgba(0,123,122,.2);border-radius:20px;font-size:13px;font-weight:700;color:var(--color-primary)}
+.branch-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(0, 143, 138,.1);border:1px solid rgba(0, 143, 138,.2);border-radius:20px;font-size:13px;font-weight:700;color:var(--color-primary)}
 
 .alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:10px}
 .alert-success{background:var(--success-12);color:var(--success);border:1px solid rgba(22,163,122,.3)}
@@ -268,7 +268,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--color-border);flex-wrap:wrap;gap:12px}
 .card-title{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
 
-.btn-add{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--color-primary);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 6px 16px -4px rgba(0,123,122,.4)}
+.btn-add{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--color-primary);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 6px 16px -4px rgba(0, 143, 138,.4)}
 .btn-add:hover{background:var(--color-primary-dark);transform:translateY(-1px)}
 .btn-add svg{width:16px;height:16px}
 

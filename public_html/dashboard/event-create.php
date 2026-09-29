@@ -33,9 +33,9 @@ $event = [
     'banner_link' => '',
     'banner_theme' => 'teal',
     'banner_dismissible' => 1,
-    'banner_background' => '#007b7a',
+    'banner_background' => '#008f8a',
     'banner_text_color' => '#ffffff',
-    'banner_accent_color' => '#f4a61e',
+    'banner_accent_color' => '#faa61a',
     'updated_at' => date('Y-m-d H:i:s'),
 ];
 
@@ -885,7 +885,7 @@ body {
   overflow: hidden;
 }
 .hq-repeat-card:hover {
-  border-color: rgba(0, 123, 122, 0.4);
+  border-color: rgba(0, 143, 138, 0.4);
 }
 .hq-repeat-card-top {
   display: flex;
@@ -927,7 +927,7 @@ body {
 }
 .hq-repeat-media:hover {
   border-color: var(--hq-primary);
-  box-shadow: 0 4px 14px rgba(0, 123, 122, 0.16);
+  box-shadow: 0 4px 14px rgba(0, 143, 138, 0.16);
 }
 .hq-repeat-media img {
   width: 100%;
@@ -979,7 +979,7 @@ body {
 .hq-repeat-media:hover .hq-repeat-media-empty {
   border-color: var(--hq-primary);
   color: var(--hq-primary-dark);
-  background: rgba(0, 123, 122, 0.06);
+  background: rgba(0, 143, 138, 0.06);
 }
 .hq-repeat-title {
   font-size: 15px;
@@ -1027,7 +1027,7 @@ body {
   justify-content: space-between;
   align-items: center;
   color: #ffffff;
-  background-color: #007b7a;
+  background-color: #008f8a;
   transition: all 0.2s ease;
   flex-wrap: wrap;
   gap: 12px;
@@ -2718,7 +2718,7 @@ body {
                       <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#1e293b' ? 'is-selected' : '' ?>" data-color="#1E293B" data-title="دودی زغالی تیره" style="background:#1E293B;" title="دودی زغالی تیره"></button>
                       <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#701a75' ? 'is-selected' : '' ?>" data-color="#701A75" data-title="زرشکی عمیق" style="background:#701A75;" title="زرشکی عمیق"></button>
                       <button type="button" class="figma-color-circle <?= $event['banner_background'] === '#1e3a8a' ? 'is-selected' : '' ?>" data-color="#1E3A8A" data-title="سرمه‌ای کلاسیک" style="background:#1E3A8A;" title="سرمه‌ای کلاسیک"></button>
-                      <button type="button" class="figma-color-circle <?= empty($event['banner_background']) || strtolower($event['banner_background']) === '#0a5c66' || strtolower($event['banner_background']) === '#007b7a' ? 'is-selected' : '' ?>" data-color="#0A5C66" data-title="سرمه‌ای تیره مکسا (پیش‌فرض)" style="background:#0A5C66;" title="سرمه‌ای تیره مکسا"></button>
+                      <button type="button" class="figma-color-circle <?= empty($event['banner_background']) || strtolower($event['banner_background']) === '#0a5c66' || strtolower($event['banner_background']) === '#008f8a' ? 'is-selected' : '' ?>" data-color="#0A5C66" data-title="سرمه‌ای تیره مکسا (پیش‌فرض)" style="background:#0A5C66;" title="سرمه‌ای تیره مکسا"></button>
                     </div>
                     <span class="figma-color-name" id="colorPresetLabel">سرمه‌ای تیره مکسا (پیش‌فرض)</span>
                   </div>
@@ -2747,9 +2747,9 @@ body {
                   <input type="text" name="banner_text_color" id="textText" value="<?= event_h($event['banner_text_color'] ?: '#ffffff') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
                 </div>
                 <div class="figma-color-chip">
-                  <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>">
+                  <input type="color" id="pickerAccent" value="<?= event_h($event['banner_accent_color'] ?: '#faa61a') ?>">
                   <span>تأکید/دکمه:</span>
-                  <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
+                  <input type="text" name="banner_accent_color" id="textAccent" value="<?= event_h($event['banner_accent_color'] ?: '#faa61a') ?>" maxlength="7" dir="ltr" class="hq-input-nano">
                 </div>
               </div>
             </div>
@@ -2809,13 +2809,13 @@ body {
                       <b class="figma-specimen-event-title" id="specimenTitle">
                         <?= event_h($event['title']) ?: 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی مکسا' ?>
                       </b>
-                      <span class="figma-specimen-countdown-val" id="specimenCountdownText" style="color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>;">
+                      <span class="figma-specimen-countdown-val" id="specimenCountdownText" style="color: <?= event_h($event['banner_accent_color'] ?: '#faa61a') ?>;">
                         در حال محاسبه...
                       </span>
                     </div>
 
                     <!-- CTA Button (left in RTL) -->
-                    <a href="javascript:void(0)" class="figma-specimen-cta" id="specimenCtaBtn" style="background-color: <?= event_h($event['banner_accent_color'] ?: '#f4a61e') ?>; color: #ffffff;">
+                    <a href="javascript:void(0)" class="figma-specimen-cta" id="specimenCtaBtn" style="background-color: <?= event_h($event['banner_accent_color'] ?: '#faa61a') ?>; color: #ffffff;">
                       <?= event_h($event['banner_cta'] ?: 'مشاهده رویداد') ?>
                     </a>
                   </div>
@@ -3381,16 +3381,16 @@ function deleteCurrentPdf() {
   const swatchButtons = document.querySelectorAll('.figma-color-circle');
 
   const figmaPresets = {
-    '#1e293b': { name: 'دودی زغالی تیره', text: '#ffffff', accent: '#f4a61e' },
+    '#1e293b': { name: 'دودی زغالی تیره', text: '#ffffff', accent: '#faa61a' },
     '#701a75': { name: 'زرشکی عمیق', text: '#ffffff', accent: '#f59e0b' },
     '#1e3a8a': { name: 'سرمه‌ای کلاسیک', text: '#ffffff', accent: '#38bdf8' },
-    '#0a5c66': { name: 'سرمه‌ای تیره مکسا (پیش‌فرض)', text: '#ffffff', accent: '#f4a61e' }
+    '#0a5c66': { name: 'سرمه‌ای تیره مکسا (پیش‌فرض)', text: '#ffffff', accent: '#faa61a' }
   };
 
   swatchButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const color = btn.dataset.color.toLowerCase();
-      const preset = figmaPresets[color] || { name: btn.dataset.title, text: '#ffffff', accent: '#f4a61e' };
+      const preset = figmaPresets[color] || { name: btn.dataset.title, text: '#ffffff', accent: '#faa61a' };
       swatchButtons.forEach(b => b.classList.remove('is-selected'));
       btn.classList.add('is-selected');
       if (colorPresetLabel) colorPresetLabel.textContent = preset.name;
@@ -3442,7 +3442,7 @@ function deleteCurrentPdf() {
     // Colors Sync
     const bgVal = tBg?.value || '#0a5c66';
     const textVal = tText?.value || '#ffffff';
-    const accVal = tAcc?.value || '#f4a61e';
+    const accVal = tAcc?.value || '#faa61a';
 
     specimenBox.style.backgroundColor = bgVal;
     specimenBox.style.color = textVal;
@@ -3804,7 +3804,7 @@ function deleteCurrentPdf() {
     if (media) {
       e.preventDefault();
       media.style.borderColor = 'var(--hq-primary)';
-      media.style.background = 'rgba(0, 123, 122, 0.08)';
+      media.style.background = 'rgba(0, 143, 138, 0.08)';
     }
   });
 

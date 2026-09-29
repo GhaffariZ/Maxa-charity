@@ -228,7 +228,7 @@ Generate compliant XML with `<Workbook ss:RightToLeft="1">`:
  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
  ...
 ```
-Include custom cell styles: Header style (teal `#007b7a` with white text), Subheader style (gold `#f4a61e`), Currency/Number style (`#,##0`), and Date style.
+Include custom cell styles: Header style (teal `#008f8a` with white text), Subheader style (gold `#faa61a`), Currency/Number style (`#,##0`), and Date style.
 
 - [ ] **Step 3: Populate the 3 Worksheets**
 

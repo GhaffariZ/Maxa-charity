@@ -142,7 +142,7 @@
 <style>
 /* ── design tokens ── */
 .po-section {
-  --po-teal: #0f9faa;
+  --po-teal: #008f8a;
   --po-teal-dark: #078994;
   --po-teal-light: rgba(15,159,170,0.09);
   --po-text: #1e293b;
@@ -389,7 +389,7 @@
 
 .po-card-cta svg {
   transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-  color: #f4a61e;
+  color: #faa61a;
 }
 
 .po-card:hover .po-card-cta {
@@ -462,7 +462,7 @@
 
 .po-feature-btn svg {
   transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-  color: #f4a61e;
+  color: #faa61a;
 }
 
 .po-feature-btn:hover svg {

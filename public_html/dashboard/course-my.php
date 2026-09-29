@@ -55,7 +55,7 @@ course_site_head('دوره‌های من', $pageCss);
   </div>
 
   <div class="mc-stats" id="mcStats" style="display:none">
-    <div class="mc-stat" style="--accent:#007b7a;--accent-bg:var(--primary-08)"><div class="si"><?= cic('book') ?></div><div><div class="sv" id="stCount">۰</div><div class="sl">دوره‌ی فعال</div></div></div>
+    <div class="mc-stat" style="--accent:#008f8a;--accent-bg:var(--primary-08)"><div class="si"><?= cic('book') ?></div><div><div class="sv" id="stCount">۰</div><div class="sl">دوره‌ی فعال</div></div></div>
     <div class="mc-stat" style="--accent:#16a37a;--accent-bg:rgba(22,163,122,.12)"><div class="si"><?= cic('check') ?></div><div><div class="sv" id="stDone">۰</div><div class="sl">دوره‌ی تکمیل‌شده</div></div></div>
     <div class="mc-stat" style="--accent:#7c4ddb;--accent-bg:var(--violet-12)"><div class="si"><?= cic('target') ?></div><div><div class="sv" id="stAvg">۰٪</div><div class="sl">میانگین پیشرفت</div></div></div>
   </div>

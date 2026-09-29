@@ -113,7 +113,7 @@ export function CtaButton({
   );
 }
 
-const STRENGTH_COLORS = ["#d4183d", "#f4a61e", "#4fb2b0", "#007b7a"];
+const STRENGTH_COLORS = ["#d4183d", "#faa61a", "#4fb2b0", "#008f8a"];
 const STRENGTH_NAMES = ["ضعیف", "متوسط", "خوب", "قوی"];
 
 export function scorePassword(v: string): number {

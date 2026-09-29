@@ -112,13 +112,13 @@ $initialProvincesList = array_values($initialProvinces);
 .so-form-col h2 svg {
     width: 22px;
     height: 22px;
-    color: #007b7a;
+    color: #008f8a;
 }
 
 .so-section-title {
     font-size: 14px;
     font-weight: 800;
-    color: #007b7a;
+    color: #008f8a;
     margin: 24px 0 14px;
     display: flex;
     align-items: center;
@@ -128,7 +128,7 @@ $initialProvincesList = array_values($initialProvinces);
     content: "";
     width: 6px;
     height: 18px;
-    background: #007b7a;
+    background: #008f8a;
     border-radius: 3px;
 }
 
@@ -171,9 +171,9 @@ $initialProvincesList = array_values($initialProvinces);
 .so-field input:focus,
 .so-field select:focus,
 .so-field textarea:focus {
-    border-color: #007b7a;
+    border-color: #008f8a;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(0,123,122,0.1);
+    box-shadow: 0 0 0 3px rgba(0, 143, 138,0.1);
 }
 .so-field textarea {
     resize: vertical;
@@ -206,7 +206,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-submit {
     width: 100%;
     padding: 15px;
-    background: #007b7a;
+    background: #008f8a;
     color: #ffffff;
     border: none;
     border-radius: 14px;
@@ -215,7 +215,7 @@ $initialProvincesList = array_values($initialProvinces);
     font-weight: 800;
     cursor: pointer;
     transition: all 0.25s;
-    box-shadow: 0 6px 18px rgba(0,123,122,0.3);
+    box-shadow: 0 6px 18px rgba(0, 143, 138,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,9 +223,9 @@ $initialProvincesList = array_values($initialProvinces);
     margin-top: 10px;
 }
 .so-submit:hover {
-    background: #006665;
+    background: #00736f;
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0,123,122,0.4);
+    box-shadow: 0 8px 22px rgba(0, 143, 138,0.4);
 }
 .so-submit svg { width: 20px; height: 20px; }
 
@@ -240,7 +240,7 @@ $initialProvincesList = array_values($initialProvinces);
     gap: 6px;
 }
 .so-note svg {
-    color: #007b7a;
+    color: #008f8a;
     width: 15px;
     height: 15px;
 }
@@ -266,8 +266,8 @@ $initialProvincesList = array_values($initialProvinces);
     width: 72px;
     height: 72px;
     border-radius: 20px;
-    background: rgba(0,123,122,0.08);
-    color: #007b7a;
+    background: rgba(0, 143, 138,0.08);
+    color: #008f8a;
     display: grid;
     place-items: center;
     margin: 0 auto 20px;
@@ -300,8 +300,8 @@ $initialProvincesList = array_values($initialProvinces);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(0, 123, 122, 0.08);
-    color: #007b7a;
+    background: rgba(0, 143, 138, 0.08);
+    color: #008f8a;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 13px;
@@ -373,7 +373,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-stand-face.back svg {
     width: 40px;
     height: 40px;
-    color: #007b7a;
+    color: #008f8a;
     margin-bottom: 8px;
 }
 
@@ -401,7 +401,7 @@ $initialProvincesList = array_values($initialProvinces);
     gap: 5px;
     margin-bottom: 12px;
 }
-.so-360-hint svg { width: 14px; height: 14px; color: #007b7a; }
+.so-360-hint svg { width: 14px; height: 14px; color: #008f8a; }
 
 /* قیمت و عنوان متناسب با بنر انتخابی */
 .so-selected-meta {
@@ -423,7 +423,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-meta-price {
     font-size: 18px;
     font-weight: 900;
-    color: #007b7a;
+    color: #008f8a;
     display: flex;
     align-items: baseline;
     gap: 4px;
@@ -454,9 +454,9 @@ $initialProvincesList = array_values($initialProvinces);
     transition: all 0.2s;
 }
 .so-tab-btn.active {
-    background: #007b7a;
+    background: #008f8a;
     color: #ffffff;
-    border-color: #007b7a;
+    border-color: #008f8a;
 }
 
 /* ================== ساختار لیست‌گونه استندها (Stands List View) ================== */
@@ -487,9 +487,9 @@ $initialProvincesList = array_values($initialProvinces);
     transform: translateX(-3px);
 }
 .so-stand-list-item.active {
-    border-color: #007b7a;
-    background: rgba(0, 123, 122, 0.04);
-    box-shadow: 0 4px 14px rgba(0, 123, 122, 0.12);
+    border-color: #008f8a;
+    background: rgba(0, 143, 138, 0.04);
+    box-shadow: 0 4px 14px rgba(0, 143, 138, 0.12);
 }
 
 .so-list-thumb {
@@ -548,7 +548,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-list-price {
     font-size: 13px;
     font-weight: 800;
-    color: #007b7a;
+    color: #008f8a;
 }
 
 .so-list-check {
@@ -563,8 +563,8 @@ $initialProvincesList = array_values($initialProvinces);
     transition: all 0.2s;
 }
 .so-stand-list-item.active .so-list-check {
-    border-color: #007b7a;
-    background: #007b7a;
+    border-color: #008f8a;
+    background: #008f8a;
 }
 .so-stand-list-item.active .so-list-check::after {
     content: "";
@@ -589,12 +589,12 @@ $initialProvincesList = array_values($initialProvinces);
     left: 14px;
     width: 20px;
     height: 20px;
-    color: #007b7a;
+    color: #008f8a;
     pointer-events: none;
     transition: color 0.2s;
 }
 .so-input-icon-wrap input:focus + .so-field-icon {
-    color: #006665;
+    color: #00736f;
 }
 
 /* ================== استایل اختصاصی و مدرن تقویم و ساعت شمسی ================== */
@@ -605,8 +605,8 @@ $initialProvincesList = array_values($initialProvinces);
 }
 .datepicker-plot-area {
     border-radius: 20px !important;
-    box-shadow: 0 20px 45px -10px rgba(0, 123, 122, 0.28), 0 8px 24px rgba(0,0,0,0.08) !important;
-    border: 1.5px solid rgba(0, 123, 122, 0.22) !important;
+    box-shadow: 0 20px 45px -10px rgba(0, 143, 138, 0.28), 0 8px 24px rgba(0,0,0,0.08) !important;
+    border: 1.5px solid rgba(0, 143, 138, 0.22) !important;
     background: #ffffff !important;
     padding: 16px !important;
     min-width: 290px !important;
@@ -633,7 +633,7 @@ $initialProvincesList = array_values($initialProvinces);
     line-height: 32px !important;
     border-radius: 10px !important;
     background: #f0fdfa !important;
-    color: #007b7a !important;
+    color: #008f8a !important;
     font-size: 16px !important;
     font-weight: 900 !important;
     display: grid !important;
@@ -642,7 +642,7 @@ $initialProvincesList = array_values($initialProvinces);
     cursor: pointer !important;
 }
 .datepicker-navigator .pwt-btn:hover {
-    background: #007b7a !important;
+    background: #008f8a !important;
     color: #ffffff !important;
 }
 .datepicker-navigator .pwt-btn-switch {
@@ -661,8 +661,8 @@ $initialProvincesList = array_values($initialProvinces);
     justify-content: center !important;
 }
 .datepicker-navigator .pwt-btn-switch:hover {
-    border-color: #007b7a !important;
-    color: #007b7a !important;
+    border-color: #008f8a !important;
+    color: #008f8a !important;
 }
 .datepicker-day-view .month-grid-box {
     margin: 0 !important;
@@ -674,7 +674,7 @@ $initialProvincesList = array_values($initialProvinces);
 .datepicker-day-view .month-grid-box .header .header-row-cell {
     font-size: 11.5px !important;
     font-weight: 800 !important;
-    color: #007b7a !important;
+    color: #008f8a !important;
     height: 28px !important;
     line-height: 28px !important;
 }
@@ -700,17 +700,17 @@ $initialProvincesList = array_values($initialProvinces);
 }
 .table-days td:hover span {
     background: #f0fdfa !important;
-    color: #007b7a !important;
+    color: #008f8a !important;
 }
 .table-days td.selected span {
-    background: #007b7a !important;
+    background: #008f8a !important;
     color: #ffffff !important;
     font-weight: 900 !important;
-    box-shadow: 0 4px 12px rgba(0, 123, 122, 0.35) !important;
+    box-shadow: 0 4px 12px rgba(0, 143, 138, 0.35) !important;
 }
 .table-days td.today span {
-    border: 1.5px solid #007b7a !important;
-    color: #007b7a !important;
+    border: 1.5px solid #008f8a !important;
+    color: #008f8a !important;
     font-weight: 900 !important;
 }
 .table-days td.disabled span {
@@ -756,7 +756,7 @@ $initialProvincesList = array_values($initialProvinces);
 .datepicker-plot-area.datepicker-state-only-time .time-segment input {
     font-size: 22px !important;
     font-weight: 900 !important;
-    color: #007b7a !important;
+    color: #008f8a !important;
     font-family: 'Vazirmatn', sans-serif !important;
     height: 36px !important;
     line-height: 36px !important;
@@ -776,13 +776,13 @@ $initialProvincesList = array_values($initialProvinces);
 }
 .datepicker-plot-area.datepicker-state-only-time .up-btn:hover,
 .datepicker-plot-area.datepicker-state-only-time .down-btn:hover {
-    color: #007b7a !important;
+    color: #008f8a !important;
     background: #f0fdfa !important;
 }
 .datepicker-plot-area.datepicker-state-only-time .divider {
     font-size: 22px !important;
     font-weight: 900 !important;
-    color: #007b7a !important;
+    color: #008f8a !important;
     height: auto !important;
     line-height: normal !important;
 }
@@ -804,7 +804,7 @@ $initialProvincesList = array_values($initialProvinces);
 }
 .datepicker-plot-area .toolbox .pwt-btn-today,
 .datepicker-plot-area .toolbox .pwt-btn-submit {
-    background: #007b7a !important;
+    background: #008f8a !important;
     color: #ffffff !important;
     border-radius: 10px !important;
     padding: 8px 18px !important;
@@ -813,13 +813,13 @@ $initialProvincesList = array_values($initialProvinces);
     border: none !important;
     cursor: pointer !important;
     transition: all 0.2s !important;
-    box-shadow: 0 4px 10px rgba(0, 123, 122, 0.25) !important;
+    box-shadow: 0 4px 10px rgba(0, 143, 138, 0.25) !important;
     float: none !important;
     width: 100% !important;
 }
 .datepicker-plot-area .toolbox .pwt-btn-today:hover,
 .datepicker-plot-area .toolbox .pwt-btn-submit:hover {
-    background: #006665 !important;
+    background: #00736f !important;
     transform: translateY(-1px) !important;
 }
 
@@ -852,7 +852,7 @@ $initialProvincesList = array_values($initialProvinces);
     position: relative;
     text-align: center;
     animation: soModalZoom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid rgba(0, 123, 122, 0.12);
+    border: 1px solid rgba(0, 143, 138, 0.12);
     box-sizing: border-box;
 }
 @keyframes soModalZoom {
@@ -896,9 +896,9 @@ $initialProvincesList = array_values($initialProvinces);
     position: relative;
 }
 .so-modal-icon.auth {
-    background: linear-gradient(135deg, rgba(0,123,122,0.12), rgba(79,178,176,0.22));
-    color: #007b7a;
-    box-shadow: 0 10px 24px -6px rgba(0,123,122,0.3);
+    background: linear-gradient(135deg, rgba(0, 143, 138,0.12), rgba(79,178,176,0.22));
+    color: #008f8a;
+    box-shadow: 0 10px 24px -6px rgba(0, 143, 138,0.3);
 }
 .so-modal-icon.success {
     background: linear-gradient(135deg, rgba(22,163,122,0.14), rgba(34,197,94,0.22));
@@ -942,7 +942,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-m-feat svg {
     width: 16px;
     height: 16px;
-    color: #007b7a;
+    color: #008f8a;
     flex-shrink: 0;
 }
 
@@ -954,7 +954,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-btn-primary {
     width: 100%;
     padding: 14px;
-    background: #007b7a;
+    background: #008f8a;
     color: #ffffff !important;
     border: none;
     border-radius: 14px;
@@ -963,7 +963,7 @@ $initialProvincesList = array_values($initialProvinces);
     font-weight: 800;
     cursor: pointer;
     transition: all 0.25s;
-    box-shadow: 0 6px 18px rgba(0,123,122,0.3);
+    box-shadow: 0 6px 18px rgba(0, 143, 138,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -972,9 +972,9 @@ $initialProvincesList = array_values($initialProvinces);
     box-sizing: border-box;
 }
 .so-btn-primary:hover {
-    background: #006665;
+    background: #00736f;
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0,123,122,0.4);
+    box-shadow: 0 8px 22px rgba(0, 143, 138,0.4);
     color: #ffffff !important;
 }
 .so-btn-primary svg { width: 18px; height: 18px; }
@@ -1002,7 +1002,7 @@ $initialProvincesList = array_values($initialProvinces);
 /* کارت کد رهگیری سفارش موفق */
 .so-tracking-card {
     background: #f0fdfa;
-    border: 1.5px dashed #007b7a;
+    border: 1.5px dashed #008f8a;
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 24px;
@@ -1010,7 +1010,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-tr-lbl {
     display: block;
     font-size: 12.5px;
-    color: #006665;
+    color: #00736f;
     font-weight: 700;
     margin-bottom: 8px;
 }
@@ -1024,14 +1024,14 @@ $initialProvincesList = array_values($initialProvinces);
 .so-tr-val-row strong {
     font-size: 24px;
     font-weight: 900;
-    color: #007b7a;
+    color: #008f8a;
     letter-spacing: 1.5px;
     font-family: inherit;
 }
 .so-btn-copy {
     background: #ffffff;
     border: 1px solid #99f6e4;
-    color: #007b7a;
+    color: #008f8a;
     border-radius: 10px;
     padding: 5px 10px;
     font-family: inherit;
@@ -1044,7 +1044,7 @@ $initialProvincesList = array_values($initialProvinces);
     transition: all 0.2s;
 }
 .so-btn-copy:hover {
-    background: #007b7a;
+    background: #008f8a;
     color: #ffffff;
 }
 .so-btn-copy svg { width: 14px; height: 14px; }

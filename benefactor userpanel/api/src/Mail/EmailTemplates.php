@@ -92,12 +92,12 @@ final class EmailTemplates
             $safeLabel = htmlspecialchars($ctaLabel, ENT_QUOTES, 'UTF-8');
             $cta = <<<HTML
                 <tr><td style="padding:8px 0 24px;">
-                  <a href="{$safeUrl}" style="display:inline-block;background:#007b7a;color:#fff;text-decoration:none;
+                  <a href="{$safeUrl}" style="display:inline-block;background:#008f8a;color:#fff;text-decoration:none;
                      padding:14px 28px;border-radius:12px;font-weight:bold;font-size:15px;">{$safeLabel}</a>
                 </td></tr>
                 <tr><td style="padding-bottom:16px;color:#6b7280;font-size:12px;line-height:1.9;">
                   اگر دکمه کار نکرد، این نشانی را در مرورگر باز کنید:<br>
-                  <span style="word-break:break-all;color:#007b7a;">{$safeUrl}</span>
+                  <span style="word-break:break-all;color:#008f8a;">{$safeUrl}</span>
                 </td></tr>
                 HTML;
         }
@@ -112,7 +112,7 @@ final class EmailTemplates
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f3f5;padding:24px 0;">
                 <tr><td align="center">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:20px;overflow:hidden;">
-                    <tr><td style="background:#007b7a;padding:24px 32px;color:#fff;font-size:20px;font-weight:bold;">{$appName}</td></tr>
+                    <tr><td style="background:#008f8a;padding:24px 32px;color:#fff;font-size:20px;font-weight:bold;">{$appName}</td></tr>
                     <tr><td style="padding:32px;text-align:right;color:#111827;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                         <tr><td style="font-size:18px;font-weight:bold;padding-bottom:12px;">{$safeTitle}</td></tr>

@@ -6,7 +6,7 @@
      window.__MAXA_BRANCH__ می‌گیرد (هیرو/کمپین/خبر/دوره). در نبودِ داده، حالتِ
      مودبانه‌ی «به‌زودی» نمایش داده می‌شود.
 
-     زبان بصری (فونت وزیرمتن، فیروزه‌ای #007b7a + نارنجی #f5a623، گرادیانِ فوتر،
+     زبان بصری (فونت وزیرمتن، فیروزه‌ای #008f8a + نارنجی #faa61a، گرادیانِ فوتر،
      کارت‌های تصویردار با سایه‌ی نرم) عیناً از کامپوننت‌های زنده‌ی سایت گرفته شده تا
      کاملاً هم‌خانواده‌ی صفحه‌ی اصلی باشد؛ اما چیدمان مدرن و مختص یک شعبه است.
 ============================================================================ -->
@@ -18,8 +18,8 @@
     font-weight:100 900; font-style:normal; font-display:swap;
   }
   .bh{
-    --teal:#007b7a; --teal-d:#006665; --teal-l:#10aeb8;
-    --orange:#f5a623; --orange-2:#f39a20;
+    --teal:#008f8a; --teal-d:#00736f; --teal-l: #05a8a2;
+    --orange:#faa61a; --orange-2:#e99508;
     --text:#2f3437; --muted:#7e858a; --line:#e6e8ea; --bg:#f8f9fa; --surface:#fff;
     --radius:18px; --radius-sm:12px;
     --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 6px rgba(16,40,40,.05);
@@ -48,12 +48,12 @@
   .bh-hero-inner{position:relative;z-index:5;width:100%;padding:140px 0 90px}
   .bh-hero-text{width:min(580px,100%);color:#fff;text-align:right}
   .bh-kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
-      color:#fff;background:rgba(245,166,35,.92);padding:6px 14px;border-radius:999px;margin-bottom:16px}
+      color:#fff;background:rgba(250, 166, 26,.92);padding:6px 14px;border-radius:999px;margin-bottom:16px}
   .bh-hero-title{font-size:42px;line-height:1.18;margin:0 0 14px;font-weight:800;text-shadow:0 10px 18px rgba(0,0,0,.22)}
   .bh-hero-desc{margin:0 0 22px;color:rgba(255,255,255,.86);font-size:15px;line-height:1.95;max-width:56ch}
   .bh-hero-btn{display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;
       background:var(--orange);color:#1a1a1a;font-weight:800;font-size:15px;padding:13px 24px;border-radius:12px;
-      box-shadow:0 12px 24px rgba(245,166,35,.26);transition:.2s var(--ease)}
+      box-shadow:0 12px 24px rgba(250, 166, 26,.26);transition:.2s var(--ease)}
   .bh-hero-btn:hover{transform:translateY(-2px);filter:brightness(1.03)}
   .bh-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:7;width:44px;height:44px;border-radius:999px;
       border:1px solid rgba(255,255,255,.24);background:rgba(0,0,0,.26);backdrop-filter:blur(6px);color:#fff;
@@ -72,7 +72,7 @@
      نواری که می‌گوید این صفحه مربوط به کدام شعبه است، با طراحیِ شاخص. */
   .bh-id{position:relative;overflow:hidden;color:#fff;
       background:
-        radial-gradient(circle at 86% -10%,rgba(245,166,35,.28),transparent 42%),
+        radial-gradient(circle at 86% -10%,rgba(250, 166, 26,.28),transparent 42%),
         radial-gradient(circle at 8% 120%,rgba(16,174,184,.30),transparent 46%),
         linear-gradient(135deg,#063a3c 0%,#0a5c5b 55%,#063a3c 100%)}
   .bh-id::before{content:"";position:absolute;inset:0;opacity:.06;pointer-events:none;
@@ -102,7 +102,7 @@
   .bh-intro-btn svg{width:18px;height:18px;transition:transform .2s var(--ease)}
   .bh-intro-btn:hover{
     background:var(--orange);color:#0a3a3a;border-color:transparent;
-    transform:translateY(-2px);box-shadow:0 12px 28px -6px rgba(245,166,35,0.5);
+    transform:translateY(-2px);box-shadow:0 12px 28px -6px rgba(250, 166, 26,0.5);
   }
   .bh-intro-btn:hover svg.arrow{
     transform:translateX(-4px);
@@ -122,14 +122,14 @@
   .bh-content{position:relative;overflow:hidden;
       background:
         radial-gradient(60% 50% at 88% -4%,rgba(16,174,184,.22),transparent 70%),
-        radial-gradient(52% 44% at 6% 14%,rgba(245,166,35,.16),transparent 68%),
-        radial-gradient(60% 50% at 50% 108%,rgba(0,123,122,.18),transparent 72%),
+        radial-gradient(52% 44% at 6% 14%,rgba(250, 166, 26,.16),transparent 68%),
+        radial-gradient(60% 50% at 50% 108%,rgba(0, 143, 138,.18),transparent 72%),
         linear-gradient(165deg,#eaf5f4 0%,#eef6f1 36%,#fbf4e6 72%,#e9f4f3 100%)}
   /* یک خطِ گرادیانِ نازکِ برندی در بالای ناحیه برای جداسازیِ نرم از نوار هویت */
   .bh-content::after{content:"";position:absolute;top:0;inset-inline:0;height:3px;
       background:linear-gradient(90deg,var(--teal),var(--teal-l) 45%,var(--orange));opacity:.85}
   .bh-content::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
-      background-image:radial-gradient(rgba(0,123,122,.07) 1px,transparent 1px);background-size:28px 28px}
+      background-image:radial-gradient(rgba(0, 143, 138,.07) 1px,transparent 1px);background-size:28px 28px}
   .bh-content>*{position:relative;z-index:1}
 
   /* ===== SECTIONS ===== */
@@ -149,16 +149,16 @@
   /* ===== CARD (shared grammar) ===== */
   .bh-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
       border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s}
-  .bh-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(0,123,122,.28)}
+  .bh-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(0, 143, 138,.28)}
   .bh-thumb{position:relative;aspect-ratio:16/9;background:#eef1f2}
   .bh-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .bh-body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
   .bh-tag{display:inline-flex;align-items:center;gap:5px;align-self:flex-start;font-size:11px;font-weight:700;
-      color:var(--teal);background:rgba(0,123,122,.10);padding:3px 10px;border-radius:999px}
+      color:var(--teal);background:rgba(0, 143, 138,.10);padding:3px 10px;border-radius:999px}
   .bh-card h3{margin:0;font-size:17px;line-height:1.6;font-weight:800;color:#1c2022}
   .bh-card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.9}
   .bh-meta{display:flex;align-items:center;gap:10px;color:#a3a9ad;font-size:12px;flex-wrap:wrap}
-  .bh-cat{background:rgba(0,123,122,.08);color:var(--teal);border-radius:6px;padding:2px 8px;font-weight:700}
+  .bh-cat{background:rgba(0, 143, 138,.08);color:var(--teal);border-radius:6px;padding:2px 8px;font-weight:700}
   .bh-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
   .bh-link{font-size:12.5px;font-weight:800;color:var(--teal);display:inline-flex;align-items:center;gap:6px}
 
@@ -196,8 +196,8 @@
   .bh-help{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;
       padding:12px 18px;border:none;cursor:pointer;border-radius:13px;color:#fff;font-weight:700;font-size:14px;
       font-family:inherit;background:linear-gradient(135deg,var(--teal),var(--teal-d));
-      box-shadow:0 10px 22px -10px rgba(0,123,122,.7);transition:transform .15s var(--ease),box-shadow .22s var(--ease)}
-  .bh-help:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.85)}
+      box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7);transition:transform .15s var(--ease),box-shadow .22s var(--ease)}
+  .bh-help:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.85)}
 
   /* ===== DONATION MODAL ===== */
   .bh-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(6,40,40,.55);
@@ -213,10 +213,10 @@
   .bh-fg{margin-bottom:13px}
   .bh-fg label{display:block;font-size:13px;font-weight:700;color:#3a4548;margin-bottom:6px}
   .bh-fg input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:14px;color:var(--text);background:#fafcfc}
-  .bh-fg input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,123,122,.12)}
+  .bh-fg input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0, 143, 138,.12)}
   .bh-fg-row{display:flex;gap:12px}.bh-fg-row .bh-fg{flex:1}
   .bh-submit{width:100%;margin-top:6px;padding:13px;border:none;cursor:pointer;border-radius:13px;color:#fff;font-weight:800;font-size:15px;
-      font-family:inherit;background:linear-gradient(135deg,var(--orange),var(--orange-2));box-shadow:0 12px 24px -10px rgba(245,166,35,.7);transition:transform .15s var(--ease)}
+      font-family:inherit;background:linear-gradient(135deg,var(--orange),var(--orange-2));box-shadow:0 12px 24px -10px rgba(250, 166, 26,.7);transition:transform .15s var(--ease)}
   .bh-submit:hover{transform:translateY(-2px)}
 
   /* course price */
@@ -231,11 +231,11 @@
   .bh-ccard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
       border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);
       transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s}
-  .bh-ccard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:rgba(0,123,122,.28)}
+  .bh-ccard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:rgba(0, 143, 138,.28)}
   .bh-ccard-thumb{position:relative;aspect-ratio:5/3;background:#eef1f2}
   .bh-ccard-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .bh-ccard-cat{position:absolute;top:8px;inset-inline-end:8px;font-size:10px;font-weight:700;color:#fff;
-      background:rgba(0,123,122,.92);padding:2px 8px;border-radius:999px;backdrop-filter:blur(2px)}
+      background:rgba(0, 143, 138,.92);padding:2px 8px;border-radius:999px;backdrop-filter:blur(2px)}
   .bh-ccard-body{padding:11px 13px 13px;display:flex;flex-direction:column;gap:5px;flex:1}
   .bh-ccard-body h3{margin:0;font-size:14px;line-height:1.55;font-weight:800;color:#1c2022;
       display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -248,7 +248,7 @@
 
   /* empty / coming soon */
   .bh-soon{grid-column:1/-1;text-align:center;padding:54px 20px;border:1.5px dashed var(--line);
-      border-radius:var(--radius);background:rgba(0,123,122,.02);color:var(--muted)}
+      border-radius:var(--radius);background:rgba(0, 143, 138,.02);color:var(--muted)}
   .bh-soon svg{width:40px;height:40px;color:var(--teal);opacity:.7;margin-bottom:12px}
   .bh-soon b{display:block;font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
   .bh-soon span{font-size:13.5px}

@@ -51,12 +51,12 @@ if(!function_exists('acc_initials')){
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-secondary-dark:#b9760a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
-  --secondary-12:rgba(244,166,30,.16); --danger-12:rgba(224,85,107,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
+  --secondary-12:rgba(250, 166, 26,.16); --danger-12:rgba(224,85,107,.12);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06),0 2px 6px rgba(16,40,40,.04);
@@ -67,7 +67,7 @@ if(!function_exists('acc_initials')){
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a; --color-secondary-dark:#e0a528;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16);
-  --secondary-12:rgba(244,166,30,.18); --danger-12:rgba(224,85,107,.16);
+  --secondary-12:rgba(250, 166, 26,.18); --danger-12:rgba(224,85,107,.16);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
@@ -76,14 +76,14 @@ if(!function_exists('acc_initials')){
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;padding:28px 22px;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .ac-wrap{max-width:820px;margin:0 auto}
 
 .ac-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
 .ac-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .ac-head-ic svg{width:27px;height:27px}
 .ac-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .ac-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
@@ -95,7 +95,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .ac-profile::after{content:'';position:absolute;inset-inline-end:-40px;top:-60px;width:190px;height:190px;border-radius:50%;
   background:radial-gradient(circle,var(--secondary-12),transparent 70%);pointer-events:none}
 .ac-avatar{width:78px;height:78px;border-radius:22px;flex-shrink:0;display:grid;place-items:center;font-size:28px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 26px -10px rgba(0,123,122,.6);position:relative;z-index:1}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 26px -10px rgba(0, 143, 138,.6);position:relative;z-index:1}
 .ac-profile-info{position:relative;z-index:1;min-width:0}
 .ac-profile-info h2{font-size:20px;font-weight:800;letter-spacing:-.01em}
 .ac-role{display:inline-block;font-size:12px;font-weight:800;color:var(--color-secondary-dark);background:var(--secondary-12);
@@ -132,10 +132,10 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   padding:12px 24px;border-radius:13px;transition:transform .15s var(--ease),box-shadow .25s,filter .2s;text-decoration:none}
 .btn svg{width:18px;height:18px}
 .btn:active{transform:scale(.97)}
-.btn-gold{color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));box-shadow:0 10px 24px -10px rgba(244,166,30,.75)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(244,166,30,.9)}
-.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 24px -10px rgba(0,123,122,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.8)}
+.btn-gold{color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));box-shadow:0 10px 24px -10px rgba(250, 166, 26,.75)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(250, 166, 26,.9)}
+.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 24px -10px rgba(0, 143, 138,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
 .btn-danger{color:var(--danger);background:var(--danger-12)}
 .btn-danger:hover{filter:brightness(.97)}
 

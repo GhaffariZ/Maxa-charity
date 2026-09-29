@@ -18,7 +18,7 @@
 
     <style>
         :root {
-            --primary-teal: #00a8a8;
+            --primary-teal: #008f8a;
             --header-bg: #eef3f6;
             --text-dark: #1e293b;
             --text-muted: #475569;

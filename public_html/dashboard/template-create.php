@@ -168,11 +168,11 @@ body {
    بازطراحیِ UI مطابق تمِ داشبورد مکسا (همان نام کلاس‌ها — منطق دست‌نخورده)
    ============================================================ */
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06),0 2px 6px rgba(16,40,40,.04);
@@ -194,7 +194,7 @@ body {
 *{box-sizing:border-box}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.20);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);background-clip:padding-box}
 
 .page-builder-wrapper{margin-right:0;padding:28px 22px;min-height:100vh}
@@ -211,7 +211,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .btn{border:none;padding:12px 22px;border-radius:13px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:800;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:scale(.97)}
-.btn-add{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0,123,122,.7)}
+.btn-add{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
 .btn-preview{background:var(--primary-08);color:var(--color-primary-dark)}
 .btn-preview:hover{filter:brightness(.97)}
 .btn-save{background:linear-gradient(135deg,#1bb98a,var(--success));color:#fff;box-shadow:0 10px 22px -10px rgba(22,163,122,.7)}

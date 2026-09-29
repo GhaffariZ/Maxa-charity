@@ -196,7 +196,7 @@ function maxapedia_embed(string $url): ?array {
   }
   if ($host === 'soundcloud.com') {
     return ['type'=>'iframe', 'kind'=>'audio', 'provider'=>'ساندکلاد',
-            'src'=>'https://w.soundcloud.com/player/?url='.rawurlencode($url).'&color=%23007b7a&auto_play=false&show_comments=false&visual=false'];
+            'src'=>'https://w.soundcloud.com/player/?url='.rawurlencode($url).'&color=%23008f8a&auto_play=false&show_comments=false&visual=false'];
   }
 
   return null;

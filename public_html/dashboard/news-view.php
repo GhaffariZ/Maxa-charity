@@ -267,8 +267,8 @@ require_once __DIR__ . '/components/header/component.php';
 <!-- استایل‌های اختصاصی و پریمیوم صفحه نمایش خبر -->
 <style>
     :root {
-        --news-primary: #0899A9;      /* سبز برند مکسا */
-        --news-accent: #f5a623;       /* نارنجی/خردلی برند مکسا */
+        --news-primary: #008f8a;      /* سبز برند مکسا */
+        --news-accent: #faa61a;       /* نارنجی/خردلی برند مکسا */
         --news-bg: #f8fafc;
         --news-card-bg: #ffffff;
         --news-text: #2f3437;

@@ -108,11 +108,11 @@
 <style>
 /* === Branches Map & Centers — Modern Maxa Design System ==================== */
 .branches {
-  --color-primary: #007b7a;
+  --color-primary: #008f8a;
   --color-primary-dark: #004d4c;
   --color-primary-light: #0ea5e9;
-  --color-primary-soft: rgba(0, 123, 122, 0.08);
-  --color-secondary: #f4a61e;
+  --color-primary-soft: rgba(0, 143, 138, 0.08);
+  --color-secondary: #faa61a;
   --color-secondary-dark: #d97706;
   --color-text: #1e293b;
   --color-muted: #64748b;
@@ -138,7 +138,7 @@
   max-width: 1050px;
   margin: 0 auto;
   background: #ffffff;
-  border: 1px solid rgba(0, 123, 122, 0.12);
+  border: 1px solid rgba(0, 143, 138, 0.12);
   border-radius: 24px;
   padding: clamp(20px, 3.5vw, 36px);
   box-shadow: 0 10px 30px rgba(0, 77, 76, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
@@ -156,7 +156,7 @@
   font-weight: 700;
   color: var(--color-primary);
   background: var(--color-primary-soft);
-  border: 1px solid rgba(0, 123, 122, 0.15);
+  border: 1px solid rgba(0, 143, 138, 0.15);
   padding: 5px 16px;
   border-radius: 999px;
   margin-bottom: 10px;
@@ -177,7 +177,7 @@
   height: 4px;
   margin: 10px auto 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #007b7a, #f4a61e);
+  background: linear-gradient(90deg, #008f8a, #faa61a);
 }
 
 .branches__subtitle {
@@ -218,7 +218,7 @@
 #Iran .province-shape.is-inactive,
 #Iran g.is-inactive path,
 #Iran g.is-inactive polygon {
-  fill: #f4a61e !important;
+  fill: #faa61a !important;
   stroke: #b86a00 !important;
   stroke-width: 1.05 !important;
   cursor: default !important;
@@ -245,12 +245,12 @@
 #Iran a.province-link .province-shape.is-active,
 #Iran [data-province].is-active path,
 #Iran [data-province].is-active polygon {
-  fill: #007b7a !important;
+  fill: #008f8a !important;
   stroke: #004544 !important;
   stroke-width: 1.25 !important;
   cursor: pointer !important;
   pointer-events: auto !important;
-  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3)) !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 143, 138, 0.3)) !important;
 }
 
 #Iran .province-shape.is-active:hover,
@@ -311,11 +311,11 @@
 }
 
 .branches__swatch--active {
-  background: #007b7a;
+  background: #008f8a;
 }
 
 .branches__swatch--inactive {
-  background: #f4a61e;
+  background: #faa61a;
 }
 
 .branches__legend-text strong {
@@ -355,12 +355,12 @@
 }
 
 .bqc-pill--hq {
-  border-color: rgba(244, 166, 30, 0.3);
+  border-color: rgba(250, 166, 26, 0.3);
   background: #fffdfa;
 }
 .bqc-pill--hq:hover {
   background: #fff8eb;
-  border-color: #f4a61e;
+  border-color: #faa61a;
   color: #b45309;
 }
 .bqc-pill--hq .bqc-icon {
@@ -368,16 +368,16 @@
 }
 
 .bqc-pill--telemed {
-  border-color: rgba(0, 123, 122, 0.25);
+  border-color: rgba(0, 143, 138, 0.25);
   background: #f8fdfd;
 }
 .bqc-pill--telemed:hover {
   background: #edfafa;
-  border-color: #007b7a;
-  color: #007b7a;
+  border-color: #008f8a;
+  color: #008f8a;
 }
 .bqc-pill--telemed .bqc-icon {
-  color: #007b7a;
+  color: #008f8a;
 }
 
 .bqc-pill--student {
@@ -464,7 +464,7 @@
   border-radius: 22px;
   padding: 26px 24px;
   box-shadow: 0 24px 50px rgba(0, 77, 76, 0.24), 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 123, 122, 0.16);
+  border: 1px solid rgba(0, 143, 138, 0.16);
   transform: translateY(16px) scale(0.96);
   transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 2;
@@ -505,9 +505,9 @@
   display: inline-block;
   font-size: 0.78rem;
   font-weight: 800;
-  color: #007b7a;
-  background: rgba(0, 123, 122, 0.08);
-  border: 1px solid rgba(0, 123, 122, 0.16);
+  color: #008f8a;
+  background: rgba(0, 143, 138, 0.08);
+  border: 1px solid rgba(0, 143, 138, 0.16);
   padding: 3px 12px;
   border-radius: 999px;
   margin-bottom: 8px;
@@ -543,25 +543,25 @@
   transition: all 0.2s ease;
 }
 .branch-popover__card:hover {
-  border-color: #007b7a;
+  border-color: #008f8a;
   background: #f8fdfd;
   transform: translateX(-4px);
-  box-shadow: 0 8px 20px rgba(0, 123, 122, 0.12);
+  box-shadow: 0 8px 20px rgba(0, 143, 138, 0.12);
 }
 .branch-popover__icon {
   flex: 0 0 42px;
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: rgba(0, 123, 122, 0.1);
-  color: #007b7a;
+  background: rgba(0, 143, 138, 0.1);
+  color: #008f8a;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .branch-popover__icon--kashan {
-  background: rgba(244, 166, 30, 0.14);
+  background: rgba(250, 166, 26, 0.14);
   color: #b45309;
 }
 .branch-popover__card:hover .branch-popover__icon {
@@ -589,7 +589,7 @@
   transition: transform 0.2s ease, color 0.2s ease;
 }
 .branch-popover__card:hover .branch-popover__arrow {
-  color: #007b7a;
+  color: #008f8a;
   transform: translateX(-4px);
 }
 </style>
@@ -622,14 +622,14 @@
         shapes.forEach(function(shape) {
           shape.classList.remove('is-inactive');
           shape.classList.add('is-active');
-          shape.style.setProperty('fill', '#007b7a', 'important');
+          shape.style.setProperty('fill', '#008f8a', 'important');
           shape.style.setProperty('stroke', '#004544', 'important');
           shape.style.setProperty('stroke-width', '1.25', 'important');
           shape.style.setProperty('cursor', 'pointer', 'important');
         });
 
         if (el.classList.contains('province-shape') || el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'polygon') {
-          el.style.setProperty('fill', '#007b7a', 'important');
+          el.style.setProperty('fill', '#008f8a', 'important');
           el.style.setProperty('stroke', '#004544', 'important');
           el.style.setProperty('stroke-width', '1.25', 'important');
           el.style.setProperty('cursor', 'pointer', 'important');

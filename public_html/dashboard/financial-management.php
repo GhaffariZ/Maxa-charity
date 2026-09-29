@@ -325,11 +325,11 @@ $SERVER = [
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
-  --violet:#8b5cf6; --success:#16a37a; --danger:#e0556b; --warning:#f4a61e;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12);
+  --violet:#8b5cf6; --success:#16a37a; --danger:#e0556b; --warning:#faa61a;
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12);
   --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04), 0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06), 0 2px 6px rgba(16,40,40,.04);
@@ -391,12 +391,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 /* ============ بهبودِ UI (افزوده‌شده؛ قواعدِ بالاتر را override می‌کند) ============ */
 :root{
   --color-secondary-dark:#b9760a; --radius-sm:12px; --color-primary-light:#4fb2b0;
-  --secondary-12:rgba(244,166,30,.14); --violet-12:rgba(124,77,219,.14); --success-12:rgba(22,163,122,.12);
+  --secondary-12:rgba(250, 166, 26,.14); --violet-12:rgba(124,77,219,.14); --success-12:rgba(22,163,122,.12);
   --shadow-lg:0 20px 44px -14px rgba(0,102,101,.20), 0 8px 20px -10px rgba(16,40,40,.12);
 }
 :root[data-theme="dark"]{
   --color-secondary-dark:#e0a528;
-  --secondary-12:rgba(244,166,30,.16); --violet-12:rgba(124,77,219,.20); --success-12:rgba(22,163,122,.16);
+  --secondary-12:rgba(250, 166, 26,.16); --violet-12:rgba(124,77,219,.20); --success-12:rgba(22,163,122,.16);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
 }
 body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
@@ -405,7 +405,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 /* هدرِ صفحه */
 .fm-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .fm-head-ic{width:56px;height:56px;border-radius:17px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 14px 26px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 14px 26px -10px rgba(0, 143, 138,.6)}
 .fm-head-ic svg{width:28px;height:28px}
 .fm-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--color-text)}
 .fm-head p{font-size:13px;color:var(--color-muted);margin-top:3px;font-weight:500}
@@ -460,8 +460,8 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 .fm-head-text{flex:1;min-width:200px}
 .fm-report-btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;
   padding:12px 22px;border-radius:13px;color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));
-  box-shadow:0 12px 26px -10px rgba(244,166,30,.7);transition:transform .15s var(--ease),box-shadow .25s}
-.fm-report-btn:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(244,166,30,.85)}
+  box-shadow:0 12px 26px -10px rgba(250, 166, 26,.7);transition:transform .15s var(--ease),box-shadow .25s}
+.fm-report-btn:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(250, 166, 26,.85)}
 .fm-report-btn:active{transform:scale(.97)}
 .fm-report-btn svg{width:18px;height:18px}
 
@@ -572,7 +572,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   border: 1px solid var(--color-border); background: var(--color-bg); text-decoration: none; transition: all .2s;
 }
 .fm-chip:hover { border-color: var(--color-primary-light); color: var(--color-primary-dark); }
-.fm-chip.active { background: linear-gradient(135deg,var(--color-primary),var(--color-primary-dark)); color: #fff; border-color: transparent; font-weight: 700; box-shadow: 0 4px 12px -4px rgba(0,123,122,.6); }
+.fm-chip.active { background: linear-gradient(135deg,var(--color-primary),var(--color-primary-dark)); color: #fff; border-color: transparent; font-weight: 700; box-shadow: 0 4px 12px -4px rgba(0, 143, 138,.6); }
 .fm-chip.custom-btn { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
 .fm-chip.custom-btn svg { width: 14px; height: 14px; color: var(--color-secondary); }
 
@@ -782,14 +782,14 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   font-size: 13.5px;
   color: #5c3d00;
   background: linear-gradient(135deg, #ffc24d, var(--color-secondary));
-  box-shadow: 0 8px 20px -8px rgba(244, 166, 30, 0.6);
+  box-shadow: 0 8px 20px -8px rgba(250, 166, 26, 0.6);
   border: none;
   cursor: pointer;
   transition: all 0.2s var(--ease);
 }
 .modal-btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -8px rgba(244, 166, 30, 0.75);
+  box-shadow: 0 12px 24px -8px rgba(250, 166, 26, 0.75);
 }
 .modal-btn-submit:active {
   transform: translateY(0);
@@ -1158,7 +1158,7 @@ const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | 
     chDist = new Chart(document.getElementById('distributionChart').getContext('2d'), {
       type:'doughnut',
       data:{ labels:SERVER.distribution.labels, datasets:[{ data:SERVER.distribution.data,
-        backgroundColor:['#16a37a','#f4a61e','#7c4ddb','#4fb2b0'], borderWidth:3, borderColor:c.surface, hoverOffset:8 }] },
+        backgroundColor:['#16a37a','#faa61a','#7c4ddb','#4fb2b0'], borderWidth:3, borderColor:c.surface, hoverOffset:8 }] },
       options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
         transitions:{ resize:{ animation:{ duration:400 } } },
         plugins:{ legend:legendOpts(c),
@@ -1169,7 +1169,7 @@ const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | 
       type:'bar',
       data:{ labels:SERVER.monthly.labels, datasets:[
         { label:'کمک آنلاین مستقیم', data:SERVER.monthly.free, backgroundColor:'#16a37a', borderRadius:6, maxBarThickness:30 },
-        { label:'کمک‌های کمپین‌ها', data:SERVER.monthly.campaigns, backgroundColor:'#f4a61e', borderRadius:6, maxBarThickness:30 }
+        { label:'کمک‌های کمپین‌ها', data:SERVER.monthly.campaigns, backgroundColor:'#faa61a', borderRadius:6, maxBarThickness:30 }
       ]},
       options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
         transitions:{ resize:{ animation:{ duration:400 } } },

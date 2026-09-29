@@ -82,7 +82,7 @@ if (!$news) {
     http_response_code(404);
     $pageTitle = 'خبر یافت نشد';
     require __DIR__ . '/dashboard/components/header/component.php';
-    echo '<div style="direction:rtl;text-align:center;padding:100px 20px;font-family:Vazirmatn,sans-serif;"><h2>خبر مورد نظر یافت نشد.</h2><p><a href="/events.php" style="color:#007b7a;">مشاهده رویدادها</a></p></div>';
+    echo '<div style="direction:rtl;text-align:center;padding:100px 20px;font-family:Vazirmatn,sans-serif;"><h2>خبر مورد نظر یافت نشد.</h2><p><a href="/events.php" style="color:#008f8a;">مشاهده رویدادها</a></p></div>';
     require __DIR__ . '/dashboard/components/footer/component.php';
     exit;
 }
@@ -135,7 +135,7 @@ if (!empty($news['event_id'])) {
 }
 
 .event-news-breadcrumbs a {
-  color: #007b7a;
+  color: #008f8a;
   text-decoration: none;
   font-weight: 700;
   display: inline-flex;
@@ -161,7 +161,7 @@ if (!empty($news['event_id'])) {
   align-items: center;
   gap: 6px;
   background: #e6f6f5;
-  color: #007b7a;
+  color: #008f8a;
   padding: 5px 12px;
   border-radius: 8px;
   font-size: 12px;
@@ -222,7 +222,7 @@ if (!empty($news['event_id'])) {
 }
 
 .event-news-body a {
-  color: #007b7a;
+  color: #008f8a;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -273,7 +273,7 @@ if (!empty($news['event_id'])) {
 }
 
 .event-related-link:hover {
-  color: #007b7a;
+  color: #008f8a;
   transform: translateX(-3px);
 }
 
@@ -371,7 +371,7 @@ if (!empty($news['event_id'])) {
           <p style="font-size:13px;color:#475569;line-height:1.7;margin:0 0 14px;">
             <?= event_h($news['event_title']) ?>
           </p>
-          <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>" style="display:inline-flex;align-items:center;gap:6px;color:#007b7a;font-size:13px;font-weight:800;text-decoration:none;">
+          <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>" style="display:inline-flex;align-items:center;gap:6px;color:#008f8a;font-size:13px;font-weight:800;text-decoration:none;">
             <span>مشاهده صفحه همایش</span>
             <span>→</span>
           </a>

@@ -168,9 +168,9 @@ $pageCss = <<<CSS
 .lesson .grip{color:var(--color-muted);cursor:grab;flex-shrink:0;display:grid;place-items:center}
 .lesson-type-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;color:#fff}
 .lesson-type-ic .ic{width:18px;height:18px}
-.lt-video{background:linear-gradient(135deg,#007b7a,#006665)}
+.lt-video{background:linear-gradient(135deg,#008f8a,#00736f)}
 .lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
-.lt-image{background:linear-gradient(135deg,#f4a61e,#db8d0c)}
+.lt-image{background:linear-gradient(135deg,#faa61a,#db8d0c)}
 .lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}
 .lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
 .lesson-main{flex:1;min-width:0}
@@ -218,7 +218,7 @@ $pageCss = <<<CSS
 .rail-actions{display:flex;flex-direction:column;gap:10px}
 .tag-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .tag-pill{display:inline-flex;align-items:center;gap:7px;background:var(--primary-08);color:var(--color-primary-dark);padding:6px 8px 6px 12px;border-radius:99px;font-size:12px;font-weight:600}
-.tag-pill button{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:var(--color-primary-dark);background:rgba(0,123,122,.12)}
+.tag-pill button{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:var(--color-primary-dark);background:rgba(0, 143, 138,.12)}
 .tag-pill button .ic{width:11px;height:11px}
 .empty-cur{text-align:center;padding:30px;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:16px;font-size:13px}
 CSS;

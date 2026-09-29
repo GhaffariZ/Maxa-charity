@@ -230,7 +230,7 @@ if ($db) {
 g.is-inactive,
 g.is-inactive path,
 g.is-inactive polygon {
-  fill: #f4a61e !important;
+  fill: #faa61a !important;
   stroke: #b86a00 !important;
   stroke-width: 1.05 !important;
   cursor: default !important;
@@ -247,7 +247,7 @@ a.province-link {
   display: block;
 }
 
-/* All Active Provinces: Absolute enforcement of Maxa Teal #007b7a for any active province */
+/* All Active Provinces: Absolute enforcement of Maxa Teal #008f8a for any active province */
 .province-shape.is-active,
 path.province-shape.is-active,
 polygon.province-shape.is-active,
@@ -270,12 +270,12 @@ a.province-link .province-shape.is-active,
 #Iran a.province-link .province-shape.is-active,
 #Iran [data-province].is-active path,
 #Iran [data-province].is-active polygon {
-  fill: #007b7a !important;
+  fill: #008f8a !important;
   stroke: #004544 !important;
   stroke-width: 1.25 !important;
   cursor: pointer !important;
   pointer-events: auto !important;
-  filter: drop-shadow(0 2px 6px rgba(0, 123, 122, 0.3)) !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 143, 138, 0.3)) !important;
 }
 
 /* Hover and focus on any active province */
@@ -438,7 +438,7 @@ a.branch-pin-link.is-hovered .branch-pill-bg,
 .pin-kashan:hover .kashan-pill-bg,
 .pin-kashan:focus-visible .kashan-pill-bg,
 .pin-kashan.is-hovered .kashan-pill-bg {
-  fill: #007b7a !important;
+  fill: #008f8a !important;
   stroke: #ffffff !important;
   stroke-width: 1.7px !important;
   filter: drop-shadow(0 4px 14px rgba(250, 204, 21, 0.8)) !important;
@@ -616,14 +616,14 @@ window.__activeBranchProvinces = <?= json_encode(array_values(array_unique($acti
         shapes.forEach(function(shape) {
           shape.classList.remove('is-inactive');
           shape.classList.add('is-active');
-          shape.style.setProperty('fill', '#007b7a', 'important');
+          shape.style.setProperty('fill', '#008f8a', 'important');
           shape.style.setProperty('stroke', '#004544', 'important');
           shape.style.setProperty('stroke-width', '1.25', 'important');
           shape.style.setProperty('cursor', 'pointer', 'important');
         });
 
         if (el.classList.contains('province-shape') || el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'polygon') {
-          el.style.setProperty('fill', '#007b7a', 'important');
+          el.style.setProperty('fill', '#008f8a', 'important');
           el.style.setProperty('stroke', '#004544', 'important');
           el.style.setProperty('stroke-width', '1.25', 'important');
           el.style.setProperty('cursor', 'pointer', 'important');

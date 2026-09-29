@@ -134,7 +134,7 @@ course_html_head('مدیریت دوره‌ها', $pageCss);
 
   <!-- آمار -->
   <div class="stat-row">
-    <div class="card mstat" style="--accent:#007b7a;--accent-bg:var(--primary-08)">
+    <div class="card mstat" style="--accent:#008f8a;--accent-bg:var(--primary-08)">
       <div class="top"><div class="mi"><?= cic('book') ?></div></div>
       <div class="v"><?= fa_digits($cTotal) ?></div><div class="l">کل دوره‌ها</div>
     </div>
@@ -187,7 +187,7 @@ course_html_head('مدیریت دوره‌ها', $pageCss);
                   <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><?= cic('book') ?><?php endif; ?>
                 </div>
                 <div>
-                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?><?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?> <span style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:2px 8px;border-radius:99px;"><?= iconoir('building', '', 13) ?> <?= e($c['branch_name']) ?></span><?php endif; ?></div>
+                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?><?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?> <span style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:2px 8px;border-radius:99px;"><?= iconoir('building', '', 13) ?> <?= e($c['branch_name']) ?></span><?php endif; ?></div>
                   <div class="c-meta"><?= e($c['instructor'] ?? 'مدرس نامشخص') ?> · <?= fa_digits((int)($c['lessons'] ?? 0)) ?> درس</div>
                 </div>
               </div>

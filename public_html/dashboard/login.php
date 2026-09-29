@@ -66,20 +66,20 @@ $csrf = csrf_token();
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --danger:#e0556b; --success:#16a37a;
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
-  --primary-08:rgba(0,123,122,.08);
+  --primary-08:rgba(0, 143, 138,.08);
   --shadow-lg:0 20px 44px -14px rgba(0,102,101,.20), 0 8px 20px -10px rgba(16,40,40,.12);
   --ease:cubic-bezier(.4,0,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);
   min-height:100vh;display:grid;place-items:center;padding:20px;
-  background-image:radial-gradient(120% 80% at 100% 0,rgba(0,123,122,.10),transparent 55%),
-                   radial-gradient(90% 70% at 0 100%,rgba(244,166,30,.08),transparent 60%);}
+  background-image:radial-gradient(120% 80% at 100% 0,rgba(0, 143, 138,.10),transparent 55%),
+                   radial-gradient(90% 70% at 0 100%,rgba(250, 166, 26,.08),transparent 60%);}
 .auth-card{width:100%;max-width:410px;background:var(--color-surface);border:1px solid var(--color-border);
   border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:34px 30px;animation:rise .5s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -100,12 +100,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .btn-submit{width:100%;height:50px;margin-top:8px;border:none;border-radius:14px;cursor:pointer;
   font-family:inherit;font-weight:800;font-size:14.5px;color:#fff;
   background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-  box-shadow:0 12px 24px -12px rgba(0,123,122,.8);transition:transform .15s var(--ease),box-shadow .22s}
-.btn-submit:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0,123,122,.9)}
+  box-shadow:0 12px 24px -12px rgba(0, 143, 138,.8);transition:transform .15s var(--ease),box-shadow .22s}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0, 143, 138,.9)}
 .btn-submit:active{transform:scale(.97)}
 .msg{border-radius:12px;padding:11px 14px;font-size:12.5px;font-weight:600;margin-bottom:18px;line-height:1.7}
 .msg.err{background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22)}
-.msg.note{background:var(--primary-08);color:var(--color-primary-dark);border:1px solid rgba(0,123,122,.18)}
+.msg.note{background:var(--primary-08);color:var(--color-primary-dark);border:1px solid rgba(0, 143, 138,.18)}
 .foot{text-align:center;margin-top:20px;font-size:11.5px;color:var(--color-muted)}
 </style>
 </head>

@@ -164,10 +164,10 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
    سیستم طراحی و متغیرهای رنگی یکپارچه با پنل مکسا + استایل مستندات مهندسی
    ========================================================================== */
 :root {
-  --color-primary: #007b7a;
-  --color-primary-dark: #006665;
+  --color-primary: #008f8a;
+  --color-primary-dark: #00736f;
   --color-primary-light: #4fb2b0;
-  --color-secondary: #f4a61e;
+  --color-secondary: #faa61a;
   --color-text: #1e293b;
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
@@ -179,9 +179,9 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
   --kbd-bg: #f3f4f6;
   --header-bg: rgba(255, 255, 255, 0.94);
 
-  --primary-08: rgba(0, 123, 122, 0.08);
-  --primary-14: rgba(0, 123, 122, 0.14);
-  --secondary-12: rgba(244, 166, 30, 0.14);
+  --primary-08: rgba(0, 143, 138, 0.08);
+  --primary-14: rgba(0, 143, 138, 0.14);
+  --secondary-12: rgba(250, 166, 26, 0.14);
 
   --callout-note-bg: rgba(9, 105, 218, 0.08);
   --callout-note-border: #0969da;
@@ -214,9 +214,9 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
 
 :root[data-theme="dark"] {
   --color-primary: #4fb2b0;
-  --color-primary-dark: #007b7a;
+  --color-primary-dark: #008f8a;
   --color-primary-light: #77d3d1;
-  --color-secondary: #f4a61e;
+  --color-secondary: #faa61a;
   --color-text: #f1f5f9;
   --color-text-muted: #94a3b8;
   --color-border: #334155;
@@ -230,7 +230,7 @@ $initialContent = ($initialResolved && file_exists($initialResolved)) ? file_get
 
   --primary-08: rgba(79, 178, 176, 0.12);
   --primary-14: rgba(79, 178, 176, 0.20);
-  --secondary-12: rgba(244, 166, 30, 0.20);
+  --secondary-12: rgba(250, 166, 26, 0.20);
 
   --callout-note-bg: rgba(56, 139, 253, 0.12);
   --callout-note-border: #388bfd;
@@ -328,12 +328,12 @@ body::before {
   transform: translateX(-50%);
   width: 960px;
   height: 420px;
-  background: radial-gradient(ellipse at center, rgba(0, 123, 122, 0.12) 0%, rgba(79, 178, 176, 0.04) 50%, transparent 75%);
+  background: radial-gradient(ellipse at center, rgba(0, 143, 138, 0.12) 0%, rgba(79, 178, 176, 0.04) 50%, transparent 75%);
   pointer-events: none;
   z-index: 0;
 }
 :root[data-theme="dark"] body::before {
-  background: radial-gradient(ellipse at center, rgba(79, 178, 176, 0.16) 0%, rgba(0, 123, 122, 0.04) 50%, transparent 75%);
+  background: radial-gradient(ellipse at center, rgba(79, 178, 176, 0.16) 0%, rgba(0, 143, 138, 0.04) 50%, transparent 75%);
 }
 
 /* ==========================================================================
@@ -376,11 +376,11 @@ body::before {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #007b7a, #005554);
+  background: linear-gradient(135deg, #008f8a, #005554);
   color: #ffffff;
   display: grid;
   place-items: center;
-  box-shadow: 0 6px 14px -4px rgba(0, 123, 122, 0.6);
+  box-shadow: 0 6px 14px -4px rgba(0, 143, 138, 0.6);
   flex-shrink: 0;
 }
 .brand-icon svg { width: 22px; height: 22px; }
@@ -700,13 +700,13 @@ body::before {
   z-index: 99999;
 }
 .header-btn-primary {
-  background: linear-gradient(135deg, #007b7a, #005c5b);
+  background: linear-gradient(135deg, #008f8a, #005c5b);
   border-color: transparent;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px -2px rgba(0, 123, 122, 0.4);
+  box-shadow: 0 4px 12px -2px rgba(0, 143, 138, 0.4);
 }
 .header-btn-primary:hover {
-  background: linear-gradient(135deg, #006665, #004b4a);
+  background: linear-gradient(135deg, #00736f, #004b4a);
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -1242,9 +1242,9 @@ body::before {
   border: 1px solid rgba(22, 163, 122, 0.25);
 }
 .status-warning {
-  background: rgba(244, 166, 30, 0.12);
+  background: rgba(250, 166, 26, 0.12);
   color: #d97706;
-  border: 1px solid rgba(244, 166, 30, 0.25);
+  border: 1px solid rgba(250, 166, 26, 0.25);
 }
 :root[data-theme="dark"] .status-warning {
   color: #f59e0b;
@@ -1472,7 +1472,7 @@ body::before {
 }
 .mermaid-diagram-card:hover {
   box-shadow: var(--shadow-md);
-  border-color: rgba(0, 123, 122, 0.4);
+  border-color: rgba(0, 143, 138, 0.4);
 }
 :root[data-theme="dark"] .mermaid-diagram-card:hover {
   border-color: rgba(79, 178, 176, 0.5);
@@ -1483,7 +1483,7 @@ body::before {
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: rgba(0, 123, 122, 0.05);
+  background: rgba(0, 143, 138, 0.05);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 :root[data-theme="dark"] .mermaid-diagram-header {
@@ -1634,7 +1634,7 @@ body::before {
   overflow: hidden;
   isolation: isolate;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(0, 123, 122, 0.18);
+  border: 1px solid rgba(0, 143, 138, 0.18);
 }
 :root[data-theme="dark"] .border-beam-card {
   border-color: rgba(79, 178, 176, 0.22);
@@ -1648,7 +1648,7 @@ body::before {
     from 0deg,
     transparent 0deg,
     transparent 280deg,
-    rgba(0, 123, 122, 0.25) 300deg,
+    rgba(0, 143, 138, 0.25) 300deg,
     rgba(79, 178, 176, 0.95) 345deg,
     transparent 360deg
   );
@@ -1756,14 +1756,14 @@ body::before {
   box-shadow: 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.03);
 }
 .doc-accordion-item:hover {
-  border-color: rgba(0, 123, 122, 0.35);
+  border-color: rgba(0, 143, 138, 0.35);
 }
 :root[data-theme="dark"] .doc-accordion-item:hover {
   border-color: rgba(79, 178, 176, 0.45);
 }
 .doc-accordion-item[data-open="true"] {
   border-color: var(--color-primary);
-  box-shadow: 0 4px 16px rgba(0, 123, 122, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 143, 138, 0.08);
 }
 .doc-accordion-head {
   width: 100%;
@@ -1848,7 +1848,7 @@ body::before {
 }
 .markdown-body details[open] {
   border-color: var(--color-primary);
-  box-shadow: 0 4px 16px rgba(0, 123, 122, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 143, 138, 0.08);
 }
 .markdown-body summary {
   cursor: pointer;
@@ -1881,7 +1881,7 @@ body::before {
 }
 .doc-step-card:hover {
   transform: translateY(-2.5px);
-  border-color: rgba(0, 123, 122, 0.4);
+  border-color: rgba(0, 143, 138, 0.4);
   box-shadow: var(--shadow-md);
 }
 :root[data-theme="dark"] .doc-step-card:hover {
@@ -1892,7 +1892,7 @@ body::before {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #007b7a, #005c5b);
+  background: linear-gradient(135deg, #008f8a, #005c5b);
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
@@ -1900,10 +1900,10 @@ body::before {
   place-items: center;
   flex-shrink: 0;
   isolation: isolate;
-  box-shadow: 0 2px 8px rgba(0, 123, 122, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 143, 138, 0.3);
 }
 :root[data-theme="dark"] .doc-step-badge {
-  background: linear-gradient(135deg, #007b7a, #4fb2b0);
+  background: linear-gradient(135deg, #008f8a, #4fb2b0);
 }
 /* هاله نورانی دور نشانگر عدد (Glowing Ambient Halo) */
 .doc-step-badge::before {
@@ -3470,8 +3470,8 @@ async function renderAllMermaidDiagrams() {
       } : {
         primaryColor: '#e6f7f6',
         primaryTextColor: '#005554',
-        primaryBorderColor: '#007b7a',
-        lineColor: '#007b7a',
+        primaryBorderColor: '#008f8a',
+        lineColor: '#008f8a',
         secondaryColor: '#f8fafc',
         tertiaryColor: '#ffffff',
         mainBkg: '#ffffff',

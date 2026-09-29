@@ -17,7 +17,7 @@
   <!-- Default initial cards, replaced/augmented dynamically via API -->
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700">روایت کادر درمان</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
       <span style="font-size:11px;color:#888">۴ دقیقه مطالعه</span>
     </div>
     <div class="maxsa-author">دکتر زهرا جعفری</div>
@@ -27,7 +27,7 @@
 
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700">روایت کادر درمان</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
       <span style="font-size:11px;color:#888">۴ دقیقه مطالعه</span>
     </div>
     <div class="maxsa-author">آقای جواد چنگی</div>
@@ -37,7 +37,7 @@
 
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700">روایت کادر درمان</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
       <span style="font-size:11px;color:#888">۵ دقیقه مطالعه</span>
     </div>
     <div class="maxsa-author">آقای علی یزدانی</div>
@@ -92,7 +92,7 @@
           return `
             <a href="/macsa-story.php?id=${st.id}" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(8,153,169,.12);color:#0899A9;font-size:11px;font-weight:700">${escapeHtml(tag)}</span>
+                <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">${escapeHtml(tag)}</span>
                 <span style="font-size:11px;color:#888">${escapeHtml(readTime)}</span>
               </div>
               <div class="maxsa-author">${escapeHtml(st.narrator_name)}</div>
@@ -134,7 +134,7 @@ z-index:-1;
 pointer-events:none;
 
 background:
-radial-gradient(circle at 10% 20%, rgba(8,153,169,0.08), transparent 40%),
+radial-gradient(circle at 10% 20%, rgba(0, 143, 138,0.08), transparent 40%),
 radial-gradient(circle at 90% 70%, rgba(243,162,27,0.10), transparent 45%),
 linear-gradient(180deg,#fffdf9 0%, #f6fbfb 100%);
 }
@@ -157,7 +157,7 @@ letter-spacing:.3px;
 }
 
 .maxsa-title span{
-color:#0899A9;
+color:#008f8a;
 font-weight:600;
 }
 
@@ -287,7 +287,7 @@ color:#555;
     margin-top: 40px;
     padding: 16px 26px;
 
-    background: linear-gradient(135deg, #0899A9, #067c89);
+    background: linear-gradient(135deg, #008f8a, #00736f);
     color: #fff;
 
     border-radius: 14px;
@@ -296,13 +296,13 @@ color:#555;
     font-size: 16px;
     font-weight: 700;
 
-    box-shadow: 0 10px 25px rgba(8,153,169,.3);
+    box-shadow: 0 10px 25px rgba(0, 143, 138,.3);
     transition: .3s;
 }
 
 .maxsa-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(8,153,169,.45);
+    box-shadow: 0 15px 35px rgba(0, 143, 138,.45);
     color:#fff;
 }
 

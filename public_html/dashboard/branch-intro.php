@@ -347,7 +347,7 @@ require_once __DIR__ . '/_panel_head.php';
     gap: 12px;
     padding: 12px 18px;
     background: var(--primary-08);
-    border: 1px solid rgba(0,123,122,0.2);
+    border: 1px solid rgba(0, 143, 138,0.2);
     border-radius: 14px;
     margin-bottom: 22px;
   }

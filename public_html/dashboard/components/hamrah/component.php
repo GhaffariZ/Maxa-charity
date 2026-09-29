@@ -90,7 +90,7 @@
 }
 
 .macsa-hero-header h1 span{
-  color: #007b7a;   /* سبز برند مکسا */
+  color: #008f8a;   /* سبز برند مکسا */
   font-size:0.72em; /* کمی کوچکتر از متن اصلی */
   font-weight:700;  /* وزن مشخص‌تر */
   display:inline-block;
@@ -189,7 +189,7 @@
 /* دکمه زیر عکس */
 .macsa-btn{
   width:100%;          /* دقیقاً هم‌عرض عکس */
-  background:#f5a623;
+  background:#faa61a;
   border:none;
   padding:12px 0;
   border-radius:14px;

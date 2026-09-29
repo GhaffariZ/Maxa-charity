@@ -348,7 +348,7 @@ echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
   <Style ss:ID="TitleStyle">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Font ss:FontName="Vazirmatn" ss:Size="14" ss:Color="#FFFFFF" ss:Bold="1"/>
-   <Interior ss:Color="#007B7A" ss:Pattern="Solid"/>
+   <Interior ss:Color="#008F8A" ss:Pattern="Solid"/>
   </Style>
   <!-- زیرعنوان -->
   <Style ss:ID="SubTitleStyle">
@@ -360,11 +360,11 @@ echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
   <Style ss:ID="HeaderStyle">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#006665"/>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#006665"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#00736f"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#00736f"/>
    </Borders>
    <Font ss:FontName="Vazirmatn" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
-   <Interior ss:Color="#006665" ss:Pattern="Solid"/>
+   <Interior ss:Color="#00736f" ss:Pattern="Solid"/>
   </Style>
   <!-- ردیف عادی جدول -->
   <Style ss:ID="DataCell">
@@ -385,26 +385,26 @@ echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
    <Borders>
     <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E6E8EA"/>
    </Borders>
-   <Font ss:FontName="Vazirmatn" ss:Size="11" ss:Bold="1" ss:Color="#006665"/>
+   <Font ss:FontName="Vazirmatn" ss:Size="11" ss:Bold="1" ss:Color="#00736f"/>
    <NumberFormat ss:Format="#,##0"/>
   </Style>
   <!-- جمع کل (Total) -->
   <Style ss:ID="TotalRow">
    <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2" ss:Color="#007B7A"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Double" ss:Weight="3" ss:Color="#007B7A"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2" ss:Color="#008F8A"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Double" ss:Weight="3" ss:Color="#008F8A"/>
    </Borders>
-   <Font ss:FontName="Vazirmatn" ss:Size="12" ss:Bold="1" ss:Color="#007B7A"/>
+   <Font ss:FontName="Vazirmatn" ss:Size="12" ss:Bold="1" ss:Color="#008F8A"/>
    <Interior ss:Color="#EEF6F6" ss:Pattern="Solid"/>
   </Style>
   <Style ss:ID="TotalAmount">
    <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2" ss:Color="#007B7A"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Double" ss:Weight="3" ss:Color="#007B7A"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2" ss:Color="#008F8A"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Double" ss:Weight="3" ss:Color="#008F8A"/>
    </Borders>
-   <Font ss:FontName="Vazirmatn" ss:Size="12" ss:Bold="1" ss:Color="#007B7A"/>
+   <Font ss:FontName="Vazirmatn" ss:Size="12" ss:Bold="1" ss:Color="#008F8A"/>
    <Interior ss:Color="#EEF6F6" ss:Pattern="Solid"/>
    <NumberFormat ss:Format="#,##0"/>
   </Style>

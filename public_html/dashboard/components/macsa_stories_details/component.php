@@ -204,7 +204,7 @@
 }
 
 .ps-title span {
-  color:#0899A9;
+  color:#008f8a;
   font-weight:600;
   font-size:.7em;
 }
@@ -234,12 +234,12 @@
 
 .ps-filters button:hover {
   border-color:rgba(8,153,169,.45);
-  color:#0899A9;
+  color:#008f8a;
   transform:translateY(-1px);
 }
 
 .ps-filters .active {
-  background:linear-gradient(135deg, #0899A9, #067c89);
+  background:linear-gradient(135deg, #008f8a, #00736f);
   border-color:transparent;
   color:#fff;
   box-shadow:0 6px 16px rgba(8,153,169,.25);
@@ -312,7 +312,7 @@
 
 .ps-narrator-info {
   font-size: 13px;
-  color: #0899A9;
+  color: #008f8a;
   font-weight: 700;
   margin-bottom: 10px;
   position: relative;
@@ -360,7 +360,7 @@
   align-items:center;
   gap:6px;
   text-decoration:none;
-  color:#0899A9;
+  color:#008f8a;
   font-weight:600;
   transition:.25s ease;
 }
@@ -370,7 +370,7 @@
 }
 
 .ps-read:hover{
-  color:#067c89;
+  color:#00736f;
 }
 
 .ps-read:hover svg{

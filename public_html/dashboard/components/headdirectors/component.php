@@ -19,10 +19,10 @@
 
     <style>
         :root {
-            --primary-teal: #00a8a8;
-            --primary-dark: #006665;
+            --primary-teal: #008f8a;
+            --primary-dark: #00736f;
             --primary-light: #e6f7f7;
-            --accent-gold: #f5a623;
+            --accent-gold: #faa61a;
             --header-bg: #eef3f6;
             --text-dark: #1e293b;
             --text-muted: #475569;
@@ -187,7 +187,7 @@
 
         /* باکس نقل قول یا بیانیه راهبردی */
         .quote-capsule {
-            background: linear-gradient(135deg, rgba(0, 168, 168, 0.06) 0%, rgba(245, 166, 35, 0.06) 100%);
+            background: linear-gradient(135deg, rgba(0, 143, 138, 0.06) 0%, rgba(250, 166, 26, 0.06) 100%);
             border-right: 4px solid var(--accent-gold);
             border-radius: 16px;
             padding: 24px 28px;

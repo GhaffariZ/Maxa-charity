@@ -141,11 +141,11 @@ body {
   background:
     radial-gradient(circle at 12% 10%, rgba(255,255,255,0.24), transparent 34%),
     radial-gradient(circle at 88% 88%, rgba(255,255,255,0.14), transparent 38%),
-    linear-gradient(155deg, #10aeb8 0%, #07828e 54%, #05646e 100%);
+    linear-gradient(155deg, #05a8a2 0%, #008f8a 54%, #00605d 100%);
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.20),
-    0 -18px 44px rgba(15, 159, 170, 0.16);
+    0 -18px 44px rgba(0, 143, 138, 0.16);
 }
 
 /* حباب‌های پس‌زمینه */
@@ -356,7 +356,7 @@ body {
   cursor: pointer;
 
   background: linear-gradient(180deg, #ffffff 0%, #f1ffff 100%);
-  color: #087985;
+  color: #008f8a;
   font-size: 20px;
   font-weight: 950;
 
@@ -368,7 +368,7 @@ body {
 
 .gf-newsletter button:hover {
   background: #ffffff;
-  color: #05636d;
+  color: #00736f;
   transform: translateX(-2px);
 }
 

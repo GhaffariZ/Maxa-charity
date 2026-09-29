@@ -137,8 +137,8 @@ export function Dashboard() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#007b7a" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#007b7a" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#008f8a" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#008f8a" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f3f5" />
@@ -148,7 +148,7 @@ export function Dashboard() {
                     formatter={(v: number) => [faToman(v), "مبلغ"]}
                     contentStyle={{ borderRadius: "1rem", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)", textAlign: "right" }}
                   />
-                  <Area type="monotone" dataKey="amount" stroke="#007b7a" strokeWidth={4} fillOpacity={1} fill="url(#colorAmount)" />
+                  <Area type="monotone" dataKey="amount" stroke="#008f8a" strokeWidth={4} fillOpacity={1} fill="url(#colorAmount)" />
                 </AreaChart>
               </ResponsiveContainer>
             )}

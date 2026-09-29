@@ -12,10 +12,10 @@ $csrfToken = csrf_token();
     <link rel="stylesheet" href="/font.css">
     <style>
         :root {
-            --color-primary: #007b7a;
-            --color-primary-dark: #006665;
+            --color-primary: #008f8a;
+            --color-primary-dark: #00736f;
             --color-primary-light: #4fb2b0;
-            --color-secondary: #f4a61e;
+            --color-secondary: #faa61a;
             --color-text: #2f3437;
             --color-muted: #9d9d9d;
             --color-border: #e6e8ea;
@@ -115,7 +115,7 @@ $csrfToken = csrf_token();
 
         .image-card.selected {
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(0, 123, 122, 0.15);
+            box-shadow: 0 0 0 3px rgba(0, 143, 138, 0.15);
         }
 
         .image-card img {
@@ -252,7 +252,7 @@ $csrfToken = csrf_token();
 
         /* باکس قیمت کل */
         .price-summary-box {
-            background: rgba(0, 123, 122, 0.04);
+            background: rgba(0, 143, 138, 0.04);
             border: 1px dashed var(--color-primary-light);
             border-radius: 8px;
             padding: 0 12px;

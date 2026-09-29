@@ -8,9 +8,9 @@
   --pdp-text: #1e293b;
   --pdp-text-muted: #64748b;
   --pdp-border: #e2e8f0;
-  --pdp-primary: #007b7a;
+  --pdp-primary: #008f8a;
   --pdp-primary-hover: #006362;
-  --pdp-primary-light: rgba(0, 123, 122, 0.1);
+  --pdp-primary-light: rgba(0, 143, 138, 0.1);
   --pdp-primary-text: #ffffff;
   --pdp-hover-bg: #f1f5f9;
   --pdp-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.16), 0 8px 16px -6px rgba(15, 23, 42, 0.08);

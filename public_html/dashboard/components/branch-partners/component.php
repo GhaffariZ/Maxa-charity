@@ -7,11 +7,11 @@
      مکسا است ولی فقط همکارانِ همین شعبه را نشان می‌دهد.
 
      دیزاین کاملاً منطبق با صفحه‌ی شبکه‌ی همکاران (کارتِ گرد، پیلِ محل خدمت/سمت) و با
-     پالتِ برندِ مکسا (فیروزه‌ای #007b7a + طلایی/نارنجی) هم‌خانواده با بقیه‌ی سایت.
+     پالتِ برندِ مکسا (فیروزه‌ای #008f8a + طلایی/نارنجی) هم‌خانواده با بقیه‌ی سایت.
 ============================================================================ -->
 <style>
   @font-face{font-family:'Vazirmatn';src:url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');font-weight:100 900;font-style:normal;font-display:swap}
-  .bp{--teal:#007b7a;--teal-d:#006665;--teal-l:#0d9488;--gold:#d97706;--gold-glow:rgba(217,119,6,.10);
+  .bp{--teal:#008f8a;--teal-d:#00736f;--teal-l:#0d9488;--gold:#d97706;--gold-glow:rgba(217,119,6,.10);
       --text:#1e293b;--muted:#64748b;--line:#e2e8f0;--surface:#fff;--bg:#f4f7f6;
       --ease:cubic-bezier(.25,1,.5,1);font-family:'Vazirmatn',Tahoma,sans-serif;direction:rtl;color:var(--text);
       background:var(--bg);padding:60px 0}
@@ -24,8 +24,8 @@
   .bp-head .bp-sub{margin:6px 0 0;color:var(--muted);font-size:13.5px}
   .bp-all{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--teal),var(--teal-d));
       color:#fff;font-weight:700;font-size:14px;padding:11px 20px;border-radius:13px;white-space:nowrap;
-      box-shadow:0 10px 22px -10px rgba(0,123,122,.7);transition:transform .15s var(--ease),box-shadow .22s}
-  .bp-all:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.85)}
+      box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7);transition:transform .15s var(--ease),box-shadow .22s}
+  .bp-all:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.85)}
 
   /* slider */
   .bp-slider{position:relative}
@@ -35,7 +35,7 @@
   .bp-card{flex:0 0 250px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);
       border-radius:22px;overflow:hidden;box-shadow:0 10px 30px -12px rgba(0,0,0,.07);
       transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s var(--ease)}
-  .bp-card:hover{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(0,123,122,.28);border-color:var(--teal)}
+  .bp-card:hover{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(0, 143, 138,.28);border-color:var(--teal)}
   .bp-img{width:100%;height:240px;background:var(--bg);overflow:hidden;position:relative}
   .bp-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
   .bp-card:hover .bp-img img{transform:scale(1.06)}
@@ -64,7 +64,7 @@
   .bp-nav[hidden]{display:none}
 
   .bp-soon{text-align:center;padding:54px 20px;border:1.5px dashed var(--line);border-radius:18px;
-      background:rgba(0,123,122,.02);color:var(--muted)}
+      background:rgba(0, 143, 138,.02);color:var(--muted)}
   .bp-soon svg{width:40px;height:40px;color:var(--teal);opacity:.7;margin-bottom:12px}
   .bp-soon b{display:block;font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
 

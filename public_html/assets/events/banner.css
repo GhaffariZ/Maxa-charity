@@ -95,7 +95,7 @@ body.has-event-banner .mega-menu .mega-menu-content {
 .event-global-banner .event-banner-count {
     font-variant-numeric: tabular-nums;
     font-weight: 900;
-    color: var(--banner-accent, #f4a61e);
+    color: var(--banner-accent, #faa61a);
     flex-shrink: 0;
     font-size: 13px;
 }
@@ -103,7 +103,7 @@ body.has-event-banner .mega-menu .mega-menu-content {
 .event-global-banner .event-banner-cta {
     flex-shrink: 0;
     color: #FFFFFF !important;
-    background: var(--banner-accent, #f4a61e);
+    background: var(--banner-accent, #faa61a);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 8px;
     padding: 7px 18px;

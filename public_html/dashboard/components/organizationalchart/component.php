@@ -144,7 +144,7 @@
 }
 
 .page-header-breadcrumb {
-    background-color: #00a8a8;
+    background-color: #008f8a;
     color: #ffffff;
     padding: 6px 20px;
     border-radius: 50px;
@@ -340,24 +340,24 @@ padding:6px 18px;
 
 .mex-branch-pending{
   border-style:dashed;
-  border-color:rgba(245,166,35,.5);
+  border-color:rgba(250, 166, 26,.5);
   background:#fffdfa;
 }
 
 .mex-badge-pending{
-  background:rgba(245,166,35,.16);
+  background:rgba(250, 166, 26,.16);
   color:#b45309;
-  border:1px solid rgba(245,166,35,.35);
+  border:1px solid rgba(250, 166, 26,.35);
   font-size:9px;
   font-weight:800;
 }
 
 .mex-branch-pending:hover,
 .mex-branch-pending.is-active{
-  border-color:#f5a623;
-  background:#f5a623;
+  border-color:#faa61a;
+  background:#faa61a;
   color:#fff;
-  box-shadow:0 12px 30px rgba(245,166,35,.28);
+  box-shadow:0 12px 30px rgba(250, 166, 26,.28);
 }
 
 .mex-branch-pending:hover .mex-branch-name,

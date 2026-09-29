@@ -354,13 +354,13 @@ $MENU = [
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
-  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --violet:#8b5cf6;
-  --success:#16a37a; --danger:#e0556b; --warning:#f4a61e;
-  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12); --primary-16:rgba(0,123,122,.16);
-  --secondary-12:rgba(244,166,30,.14); --violet-12:rgba(139,92,246,.14);
+  --success:#16a37a; --danger:#e0556b; --warning:#faa61a;
+  --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12); --primary-16:rgba(0, 143, 138,.16);
+  --secondary-12:rgba(250, 166, 26,.14); --violet-12:rgba(139,92,246,.14);
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04), 0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06), 0 2px 6px rgba(16,40,40,.04);
@@ -379,8 +379,8 @@ input{font-family:inherit}
 svg.ic{display:block}
 
 *::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:rgba(0,123,122,.34);background-clip:padding-box}
+*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(0, 143, 138,.34);background-clip:padding-box}
 *::-webkit-scrollbar-track{background:transparent}
 
 .app{min-height:100vh}
@@ -392,8 +392,8 @@ svg.ic{display:block}
 
 .sb-header{padding:22px 20px 16px;display:flex;align-items:center;gap:13px;position:relative;overflow:hidden;flex-shrink:0}
 .sb-header::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(120% 110% at 100% 0,rgba(0,123,122,.12),transparent 58%),
-  radial-gradient(90% 90% at 0 0,rgba(244,166,30,.10),transparent 60%);pointer-events:none}
+  radial-gradient(120% 110% at 100% 0,rgba(0, 143, 138,.12),transparent 58%),
+  radial-gradient(90% 90% at 0 0,rgba(250, 166, 26,.10),transparent 60%);pointer-events:none}
 .brand-logo{width:48px;height:48px;border-radius:15px;object-fit:cover;box-shadow:0 6px 16px -6px rgba(0,102,101,.5);flex-shrink:0;position:relative;z-index:1}
 .brand-text{position:relative;z-index:1}
 .brand-name{font-weight:800;font-size:19px;letter-spacing:-.01em;line-height:1.2}
@@ -407,7 +407,7 @@ svg.ic{display:block}
 
 .nav-item,.nav-group-header{width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-weight:600;font-size:13.5px;color:#5b6469;transition:background .22s,color .22s,box-shadow .22s;position:relative}
 .nav-item:hover,.nav-group-header:hover{background:var(--primary-08);color:var(--color-primary-dark)}
-.nav-item.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 20px -10px rgba(0,123,122,.75)}
+.nav-item.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 20px -10px rgba(0, 143, 138,.75)}
 .nav-item .ic,.nav-group-header .ic{width:20px;height:20px;flex-shrink:0;opacity:.92}
 .nav-item.active .ic{opacity:1}
 .nav-item>span,.nav-group-header>span{flex:1;text-align:start}
@@ -455,7 +455,7 @@ svg.ic{display:block}
 .search .ic{width:18px;height:18px;color:var(--color-muted);flex-shrink:0}
 .search input{border:none;background:none;outline:none;flex:1;font-size:13px;color:var(--color-text);width:100%}
 .search input::placeholder{color:var(--color-muted)}
-.bell-dot{position:absolute;top:8px;left:9px;width:9px;height:9px;border-radius:50%;background:var(--color-secondary);border:2px solid #fff;box-shadow:0 0 0 2px rgba(244,166,30,.25)}
+.bell-dot{position:absolute;top:8px;left:9px;width:9px;height:9px;border-radius:50%;background:var(--color-secondary);border:2px solid #fff;box-shadow:0 0 0 2px rgba(250, 166, 26,.25)}
 .profile{display:flex;align-items:center;gap:10px;padding:5px 8px 5px 5px;border-radius:14px;transition:background .2s}
 .profile:hover{background:var(--primary-08)}
 .profile .av{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-secondary),#e08e12);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
@@ -507,12 +507,12 @@ svg.ic{display:block}
 .btn:active{transform:scale(.96)}
 .btn-light{background:#fff;color:var(--color-primary-dark);box-shadow:0 8px 22px -10px rgba(0,0,0,.45)}
 .btn-light:hover{box-shadow:0 14px 28px -10px rgba(0,0,0,.5);transform:translateY(-2px)}
-.btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;box-shadow:0 10px 24px -10px rgba(244,166,30,.75)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(244,166,30,.9)}
+.btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;box-shadow:0 10px 24px -10px rgba(250, 166, 26,.75)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(250, 166, 26,.9)}
 .btn-ghost-light{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.30)}
 .btn-ghost-light:hover{background:rgba(255,255,255,.24)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0,123,122,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.8)}
+.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
 
 /* stat cards */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px}
@@ -618,7 +618,7 @@ svg.ic{display:block}
 .badge.type-period{background:var(--secondary-12);color:#b9760a} .type-period .bd{background:var(--color-secondary)}
 .badge.type-free{background:var(--violet-12);color:#6d3fd1} .type-free .bd{background:var(--violet)}
 .badge.st-ok{background:rgba(22,163,122,.12);color:var(--success)} .st-ok .bd{background:var(--success)}
-.badge.st-wait{background:rgba(244,166,30,.14);color:#b9760a} .st-wait .bd{background:var(--warning)}
+.badge.st-wait{background:rgba(250, 166, 26,.14);color:#b9760a} .st-wait .bd{background:var(--warning)}
 .badge.st-fail{background:rgba(224,85,107,.12);color:var(--danger)} .st-fail .bd{background:var(--danger)}
 .date-cell{color:#6c7479;font-size:12.5px;white-space:nowrap}
 .tbtn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--color-muted);transition:background .2s,color .2s}
@@ -633,7 +633,7 @@ svg.ic{display:block}
 .pager-controls{display:flex;align-items:center;gap:6px}
 .page-btn{min-width:36px;height:36px;padding:0 11px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-weight:700;font-size:13px;color:#5b6469;transition:background .2s,color .2s,box-shadow .2s,opacity .2s}
 .page-btn:hover:not(:disabled):not(.active){background:var(--primary-08);color:var(--color-primary-dark)}
-.page-btn.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 8px 16px -8px rgba(0,123,122,.65)}
+.page-btn.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 8px 16px -8px rgba(0, 143, 138,.65)}
 .page-btn:disabled{opacity:.38;cursor:not-allowed}
 .page-btn .ic{width:16px;height:16px}
 .page-nav{border:1px solid var(--color-border);background:#fff;font-size:12px}
@@ -675,14 +675,14 @@ body.spa-loading .spa-frame{opacity:.6}
 .spa-bar-wrap{position:fixed;top:0;right:0;left:0;height:3.5px;z-index:999999;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
 .spa-bar-wrap.show{opacity:1}
 .spa-bar{position:absolute;top:0;right:0;width:100%;height:100%;
-  background:linear-gradient(to left, #007b7a, #0ab2c5, #f4a61e, #ff9500);
+  background:linear-gradient(to left, #008f8a, #0ab2c5, #faa61a, #ff9500);
   background-size:200% 100%;
-  box-shadow:0 0 10px rgba(10,178,197,.8), 0 0 5px rgba(244,166,30,.9);
+  box-shadow:0 0 10px rgba(10,178,197,.8), 0 0 5px rgba(250, 166, 26,.9);
   transform:translate3d(100%,0,0);
   transition:transform .28s cubic-bezier(.1,.6,.1,1);
   animation:spaBarShimmer 2s linear infinite}
 .spa-bar-peg{position:absolute;left:0;top:0;bottom:0;width:100px;height:100%;
-  box-shadow:0 0 14px 3px #f4a61e,0 0 8px 1px #0ab2c5;
+  box-shadow:0 0 14px 3px #faa61a,0 0 8px 1px #0ab2c5;
   border-radius:99px;opacity:1;pointer-events:none}
 @keyframes spaBarShimmer{
   0%{background-position:100% 0}
@@ -771,7 +771,7 @@ body.spa-loading .spa-frame{opacity:.6}
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16); --primary-16:rgba(79,178,176,.24);
-  --secondary-12:rgba(244,166,30,.18); --violet-12:rgba(139,92,246,.20);
+  --secondary-12:rgba(250, 166, 26,.18); --violet-12:rgba(139,92,246,.20);
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
@@ -897,7 +897,7 @@ body.spa-loading .spa-frame{opacity:.6}
           <div class="ring" data-pct="<?= $ringPct ?>">
             <svg viewBox="0 0 120 120">
               <defs><linearGradient id="ringg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#f4a61e"/>
+                <stop offset="0%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#faa61a"/>
               </linearGradient></defs>
               <circle class="ring-bg" cx="60" cy="60" r="50"/>
               <circle class="ring-fg" cx="60" cy="60" r="50"/>
@@ -941,11 +941,11 @@ body.spa-loading .spa-frame{opacity:.6}
             </div>
           </div>
           <div class="chips" id="chips">
-            <button class="chip on" type="button" data-ds="0" style="--c:#007b7a;--cbg:rgba(0,123,122,.08)">
+            <button class="chip on" type="button" data-ds="0" style="--c:#008f8a;--cbg:rgba(0, 143, 138,.08)">
               <span class="check"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
               <span class="dot"></span><span>کمک به کمپین‌ها</span><span class="chip-total"></span>
             </button>
-            <button class="chip on" type="button" data-ds="1" style="--c:#f4a61e;--cbg:rgba(244,166,30,.10)">
+            <button class="chip on" type="button" data-ds="1" style="--c:#faa61a;--cbg:rgba(250, 166, 26,.10)">
               <span class="check"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
               <span class="dot"></span><span>دوره‌ها</span><span class="chip-total"></span>
             </button>
@@ -1557,8 +1557,8 @@ body.spa-loading .spa-frame{opacity:.6}
 
     // اعلان‌های نمونه (بعداً می‌توان از سرور پر کرد)
     const NOTIFS=[
-      {ic:'wallet',accent:'#007b7a',bg:'rgba(0,123,122,.12)',title:'کمک جدید ثبت شد',text:'یک حمایت موفق ۲٬۵۰۰٬۰۰۰ تومانی دریافت شد.',time:'چند لحظه پیش',unread:true},
-      {ic:'users', accent:'#dd8d0c',bg:'rgba(244,166,30,.16)',title:'همکار جدید',text:'پروفایل یک همکار جدید در انتظار تأیید است.',time:'۲۰ دقیقه پیش',unread:true},
+      {ic:'wallet',accent:'#008f8a',bg:'rgba(0, 143, 138,.12)',title:'کمک جدید ثبت شد',text:'یک حمایت موفق ۲٬۵۰۰٬۰۰۰ تومانی دریافت شد.',time:'چند لحظه پیش',unread:true},
+      {ic:'users', accent:'#dd8d0c',bg:'rgba(250, 166, 26,.16)',title:'همکار جدید',text:'پروفایل یک همکار جدید در انتظار تأیید است.',time:'۲۰ دقیقه پیش',unread:true},
       {ic:'flag',  accent:'#7c4ddb',bg:'rgba(139,92,246,.16)',title:'کمپین به هدف رسید',text:'کمپین «مهر تحصیلی» به ۱۰۰٪ هدف رسید.',time:'۳ ساعت پیش',unread:false},
       {ic:'news',  accent:'#2f9e9c',bg:'rgba(79,178,176,.18)',title:'خبر منتشر شد',text:'خبر تازه با موفقیت روی سایت منتشر شد.',time:'دیروز',unread:false}
     ];
@@ -1589,8 +1589,8 @@ body.spa-loading .spa-frame{opacity:.6}
   /* ---------- stat cards ---------- */
   const SS=(SERVER&&SERVER.stats)||{}, TR=SS.trends||{};
   const STATS=[
-    {label:'تعداد کل خیرین',icon:'users',target:+SS.totalDonors||0,dec:0,unit:'نفر',trend:TR.donors||'',up:true,accent:'#007b7a',bg:'rgba(0,123,122,.10)',metric:'totalDonors'},
-    {label:'خیرین فعال',icon:'activity',target:+SS.activeDonors||0,dec:0,unit:'نفر',trend:TR.active||'',up:true,accent:'#dd8d0c',bg:'rgba(244,166,30,.14)',metric:'activeDonors'},
+    {label:'تعداد کل خیرین',icon:'users',target:+SS.totalDonors||0,dec:0,unit:'نفر',trend:TR.donors||'',up:true,accent:'#008f8a',bg:'rgba(0, 143, 138,.10)',metric:'totalDonors'},
+    {label:'خیرین فعال',icon:'activity',target:+SS.activeDonors||0,dec:0,unit:'نفر',trend:TR.active||'',up:true,accent:'#dd8d0c',bg:'rgba(250, 166, 26,.14)',metric:'activeDonors'},
     {label:'مجموع کمک‌های جمع‌آوری‌شده',icon:'wallet',target:(+SS.totalCollected||0)/1e9,dec:2,unit:'میلیارد تومان',trend:TR.collected||'',up:true,accent:'#7c4ddb',bg:'rgba(139,92,246,.14)',metric:'amount'},
     {label:'کمپین‌های فعال',icon:'target',target:+SS.activeCampaigns||0,dec:0,unit:'کمپین',trend:TR.campaigns||'',up:true,accent:'#2f9e9c',bg:'rgba(79,178,176,.18)'}
   ];
@@ -1618,7 +1618,7 @@ body.spa-loading .spa-frame{opacity:.6}
   setTimeout(()=>{ statsEl.querySelectorAll('[data-count]').forEach((el,i)=>countUp(el,STATS[i].target,STATS[i].dec)); },250);
 
   /* ---------- donors ---------- */
-  const AVC=['#007b7a','#f4a61e','#8b5cf6','#4fb2b0','#e0556b','#2f9e9c','#dd8d0c','#5b8def'];
+  const AVC=['#008f8a','#faa61a','#8b5cf6','#4fb2b0','#e0556b','#2f9e9c','#dd8d0c','#5b8def'];
   const DONORS=((SERVER&&SERVER.donors)||[]);
   const RANKBG=['linear-gradient(135deg,#f6c453,#e0a528)','linear-gradient(135deg,#cdd5dd,#a9b3bc)','linear-gradient(135deg,#e7b182,#cf8a4f)'];
   const donorsEl=document.getElementById('donorsList');
@@ -1668,15 +1668,15 @@ body.spa-loading .spa-frame{opacity:.6}
       title:'روند کمک‌های جمع‌آوری‌شده', sub:'مجموع مبالغ اهدایی در بازه‌ی انتخابی',
       money:true,
       series:[
-        {key:'campaigns',label:'کمک به کمپین‌ها',color:'#007b7a'},
-        {key:'periods',   label:'دوره‌ها',        color:'#f4a61e'},
+        {key:'campaigns',label:'کمک به کمپین‌ها',color:'#008f8a'},
+        {key:'periods',   label:'دوره‌ها',        color:'#faa61a'},
         {key:'free',      label:'پرداخت آزاد',     color:'#8b5cf6'}
       ]
     },
     totalDonors:{
       title:'روند تعداد کل خیرین', sub:'تعداد تجمعی خیرین ثبت‌شده تا هر بازه',
       money:false, unit:'نفر',
-      series:[{key:'totalDonors', label:'تعداد کل خیرین', color:'#007b7a'}]
+      series:[{key:'totalDonors', label:'تعداد کل خیرین', color:'#008f8a'}]
     },
     activeDonors:{
       title:'روند خیرین فعال', sub:'تعداد خیرین فعال در هر بازه',

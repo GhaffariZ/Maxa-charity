@@ -129,7 +129,7 @@ try {
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
+  --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
   --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --success:#16a37a; --danger:#e0556b; --warning:#f59e0b;
@@ -164,16 +164,16 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .head-left{display:flex;align-items:center;gap:16px}
 .head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0,123,122,.6)}
+  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
 .head-ic svg{width:27px;height:27px}
 
-.branch-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(0,123,122,.1);border:1px solid rgba(0,123,122,.2);border-radius:20px;font-size:12.5px;font-weight:700;color:var(--color-primary)}
+.branch-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(0, 143, 138,.1);border:1px solid rgba(0, 143, 138,.2);border-radius:20px;font-size:12.5px;font-weight:700;color:var(--color-primary)}
 
 /* Stats Bar */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:22px}
 .stat-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:18px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px}
 .stat-ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
-.stat-ic.orders{background:rgba(0,123,122,.12);color:var(--color-primary)}
+.stat-ic.orders{background:rgba(0, 143, 138,.12);color:var(--color-primary)}
 .stat-ic.amount{background:rgba(22,163,122,.12);color:var(--success)}
 .stat-ic.branch{background:rgba(245,158,11,.12);color:var(--warning)}
 .stat-ic svg{width:22px;height:22px}
@@ -206,7 +206,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .order-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:30px;background:var(--success-12);color:var(--success);font-weight:800;font-size:12.5px}
 .order-badge svg{width:15px;height:15px}
-.badge-branch{background:rgba(0,123,122,.12);color:var(--color-primary);font-weight:700;font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid rgba(0,123,122,.2)}
+.badge-branch{background:rgba(0, 143, 138,.12);color:var(--color-primary);font-weight:700;font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid rgba(0, 143, 138,.2)}
 .badge-geo{background:rgba(245,158,11,.12);color:var(--warning);font-weight:700;font-size:12px;padding:4px 10px;border-radius:20px}
 .badge-type{font-size:11.5px;padding:3px 8px;border-radius:14px;font-weight:700}
 .badge-type.congrats{background:rgba(22,163,122,.15);color:var(--success)}

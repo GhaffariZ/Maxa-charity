@@ -53,7 +53,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   }
   .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }
   .mp-breadcrumb { font-size: 14px; color: #8b8f96; margin-bottom: 20px; }
-  .mp-breadcrumb a { color: var(--cta-orange, #f5a623); text-decoration: none; font-weight: 700; }
+  .mp-breadcrumb a { color: var(--cta-orange, #faa61a); text-decoration: none; font-weight: 700; }
   .mp-header { text-align: center; margin-bottom: 40px; }
   .mp-header .mp-icon { font-size: 44px; margin-bottom: 12px; }
   .mp-header h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 900; color: #2f3437; margin: 0 0 12px; }
@@ -75,14 +75,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #fff; border: 1.5px solid #e1e4e8; border-radius: 12px; overflow: hidden;
     transition: border-color .2s ease;
   }
-  .mp-search:focus-within { border-color: #0899A9; }
+  .mp-search:focus-within { border-color: #008f8a; }
   .mp-search input[type="search"] {
     width: 260px; max-width: 60vw; font-family: inherit; font-size: 14px; color: #2f3437;
     background: transparent; border: 0; outline: none; padding: 10px 14px;
   }
   .mp-search button {
     border: 0; cursor: pointer; flex-shrink: 0;
-    background: #0899A9; color: #fff; font-size: 16px; padding: 10px 16px;
+    background: #008f8a; color: #fff; font-size: 16px; padding: 10px 16px;
   }
   .mp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .mp-chip {
@@ -90,10 +90,10 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: #fff; border: 1.5px solid #e6e8ea; border-radius: 99px; padding: 7px 16px;
     transition: border-color .2s ease, color .2s ease, background .2s ease;
   }
-  .mp-chip:hover { border-color: #0899A9; color: #2f3437; }
-  .mp-chip.active { background: #0899A9; border-color: #0899A9; color: #fff; }
+  .mp-chip:hover { border-color: #008f8a; color: #2f3437; }
+  .mp-chip.active { background: #008f8a; border-color: #008f8a; color: #fff; }
   .mp-result-note { font-size: 13.5px; color: #6b7280; margin-bottom: 22px; }
-  .mp-result-clear { color: #0899A9; font-weight: 700; text-decoration: none; margin-right: 8px; }
+  .mp-result-clear { color: #008f8a; font-weight: 700; text-decoration: none; margin-right: 8px; }
   .mp-result-clear:hover { text-decoration: underline; }
 
   /* ---------- چیدمان تماشا: پلیر بزرگ + فهرست ویدیوها ---------- */
@@ -136,7 +136,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     background: rgba(0,0,0,.55); color: #fff; font-size: 28px; padding-right: 4px;
     transition: background .2s ease, transform .2s ease; pointer-events: none;
   }
-  .mp-player-poster:hover .mp-play { background: var(--cta-orange, #f5a623); transform: translate(-50%, -50%) scale(1.06); }
+  .mp-player-poster:hover .mp-play { background: var(--cta-orange, #faa61a); transform: translate(-50%, -50%) scale(1.06); }
 
   .mp-player-info { margin-top: 16px; }
   .mp-player-info h2 { font-size: 20px; font-weight: 800; color: #2f3437; margin: 0 0 8px; }
@@ -153,7 +153,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
   }
   .mp-pl-item:hover { box-shadow: 0 6px 16px rgba(0,0,0,.07); }
-  .mp-pl-item.active { border-color: var(--cta-orange, #f5a623); background: #fff8ef; }
+  .mp-pl-item.active { border-color: var(--cta-orange, #faa61a); background: #fff8ef; }
   .mp-pl-thumb {
     position: relative; flex: 0 0 132px; width: 132px; aspect-ratio: 16 / 9;
     border-radius: 8px; overflow: hidden; background: #e9edf0;
@@ -185,15 +185,15 @@ require __DIR__ . '/dashboard/components/header/component.php';
   /* نوار رنگیِ نازک در لبه‌ی کارت (لهجه‌ی مدرن، هم‌رنگِ برندِ سایت) */
   .mp-pod-card::before {
     content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 4px;
-    background: linear-gradient(180deg, #0ab2c5, #067d8a);
+    background: linear-gradient(180deg, #05a8a2, #00736f);
   }
   .mp-pod-card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(20,20,40,.11); }
   .mp-pod-head { display: flex; gap: 14px; align-items: center; padding: 20px 22px 14px; }
   .mp-pod-cover {
     flex: 0 0 64px; width: 64px; height: 64px; border-radius: 16px; overflow: hidden;
     display: grid; place-items: center; font-size: 30px; color: #fff;
-    background: linear-gradient(135deg, #0ab2c5, #0899A9);
-    box-shadow: 0 10px 22px -8px rgba(8,153,169,.55);
+    background: linear-gradient(135deg, #05a8a2, #008f8a);
+    box-shadow: 0 10px 22px -8px rgba(0, 143, 138,.55);
   }
   .mp-pod-cover img { width: 100%; height: 100%; object-fit: cover; }
   .mp-pod-meta { min-width: 0; flex: 1; }
@@ -202,7 +202,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .mp-pod-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .mp-pod-provider { font-size: 11.5px; font-weight: 700; color: #067d8a; background: rgba(8,153,169,.12); padding: 3px 10px; border-radius: 99px; }
+  .mp-pod-provider { font-size: 11.5px; font-weight: 700; color: #00736f; background: rgba(0, 143, 138,.12); padding: 3px 10px; border-radius: 99px; }
   .mp-pod-cat { font-size: 11.5px; font-weight: 700; color: #6b7280; background: #f1f3f5; padding: 3px 10px; border-radius: 99px; }
   .mp-pod-desc {
     font-size: 13.5px; color: #8b8f96; line-height: 1.95; margin: 0; padding: 0 22px 16px;
@@ -232,15 +232,15 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .mp-item-link {
     margin-top: auto; display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
     font-size: 14px; font-weight: 700; color: #fff; text-decoration: none;
-    background: var(--cta-orange, #f5a623); padding: 9px 16px; border-radius: 10px;
+    background: var(--cta-orange, #faa61a); padding: 9px 16px; border-radius: 10px;
     transition: background .2s ease, transform .15s ease;
   }
   .mp-item-link:hover { transform: translateY(-1px); }
   .mp-item-link--book {
-    background: linear-gradient(135deg, #0ab2c5, #0899A9);
+    background: linear-gradient(135deg, #05a8a2, #008f8a);
   }
   .mp-item-link--book:hover {
-    background: linear-gradient(135deg, #0899A9, #067d8a);
+    background: linear-gradient(135deg, #008f8a, #00736f);
   }
   .mp-item-thumb--book {
     aspect-ratio: 3 / 4;
@@ -254,14 +254,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
     align-self: flex-start;
     font-size: 11px;
     font-weight: 700;
-    color: #067d8a;
-    background: rgba(8,153,169,.12);
+    color: #00736f;
+    background: rgba(0, 143, 138,.12);
     padding: 2px 8px;
     border-radius: 6px;
     margin-bottom: 8px;
   }
   .mp-item-source { margin-top: auto; align-self: flex-start; font-size: 12.5px; font-weight: 700; color: #8b8f96; text-decoration: none; }
-  .mp-item-source:hover { color: var(--cta-orange, #f5a623); }
+  .mp-item-source:hover { color: var(--cta-orange, #faa61a); }
 
   /* پخش‌کننده‌ی صوت (درون‌خطی) */
   .mxp-embed { width: 100%; background: #000; }

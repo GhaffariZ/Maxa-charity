@@ -79,7 +79,7 @@ function event_global_banner(?PDO $pdo = null): string {
             'banner_link' => '/event.php?slug=cancer-palliative-care-national-congress-2026',
             'banner_background' => '#0A5C66',
             'banner_text_color' => '#ffffff',
-            'banner_accent_color' => '#f4a61e',
+            'banner_accent_color' => '#faa61a',
             'banner_dismissible' => 1
         ];
     }
@@ -97,7 +97,7 @@ function event_global_banner(?PDO $pdo = null): string {
     };
     $bg = $hex($e['banner_background'] ?? '', ($e['banner_theme'] ?? '') === 'amber' ? '#e89a16' : (($e['banner_theme'] ?? '') === 'dark' ? '#123a3d' : '#0a5c66'));
     $text = $hex($e['banner_text_color'] ?? '', '#ffffff');
-    $accent = $hex($e['banner_accent_color'] ?? '', '#f4a61e');
+    $accent = $hex($e['banner_accent_color'] ?? '', '#faa61a');
     $dismissible = (int)($e['banner_dismissible'] ?? 1) === 1;
     $dismiss = $dismissible ? '<button type="button" class="event-banner-dismiss" aria-label="بستن موقت بنر">×</button>' : '';
 

@@ -142,7 +142,7 @@ course_site_head('تسویه‌حساب', $pageCss);
   var coupon=0; // درصد تخفیف کد
 
   function info(item){ var c=COURSES[item.id]; if(c) return c; // fallback به داده‌ی ذخیره‌شده
-    return {id:item.id,title:item.title||'دوره',instructor:item.instructor||'مدرس مکسا',category:'',thumbnail:'',accent:'#007b7a',price:item.price||0,eff:item.price||0,free:(item.price||0)===0?1:0}; }
+    return {id:item.id,title:item.title||'دوره',instructor:item.instructor||'مدرس مکسا',category:'',thumbnail:'',accent:'#008f8a',price:item.price||0,eff:item.price||0,free:(item.price||0)===0?1:0}; }
 
   function render(){
     var cart=getCart();

@@ -18,8 +18,8 @@
   </style>
   <style>
     :root {
-      --primary-teal: #00a8a8;
-      --sidebar-teal: #0f9faa;
+      --primary-teal: #008f8a;
+      --sidebar-teal: #008f8a;
       --header-bg: #eef3f6;
       --text-dark: #1e293b;
       --text-muted: #475569;
@@ -165,7 +165,7 @@
 
 /* ظاهر جدید باکس تماس */
 .contact-card {
-  background: linear-gradient(135deg, #0f9faa 0%, #086b73 100%);
+  background: linear-gradient(135deg, #008f8a 0%, #00605d 100%);
   color: #fff;
   border-radius: 35px;
   padding: 40px 25px; /* کشیده‌تر */
@@ -201,7 +201,7 @@
 
 .contact-card-btn {
   background: #fff;
-  color: #0f9faa;
+  color: #008f8a;
   border: none;
   padding: 15px 40px;
   border-radius: 999px;
@@ -226,7 +226,7 @@
   font-weight: 600;
   transition: 0.2s;
 }
-.related-list a:hover { background: #eef3f6; color: #0f9faa; }
+.related-list a:hover { background: #eef3f6; color: #008f8a; }
 
 /* استایل پاپ‌آپ */
 .call-popup-overlay {
@@ -262,7 +262,7 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 8px;
-  background: linear-gradient(90deg, #00a8a8, #10b981, #00a8a8);
+  background: linear-gradient(90deg, #008f8a, #10b981, #008f8a);
 }
 
 
@@ -274,7 +274,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 26px;
-  color: #0f9faa;
+  color: #008f8a;
   background:
     linear-gradient(180deg, rgba(0,168,168,0.13), rgba(0,168,168,0.06));
   box-shadow: 0 14px 28px rgba(0, 168, 168, 0.12);
@@ -310,7 +310,7 @@
   background:
     linear-gradient(180deg, #f8ffff 0%, #f1fbfb 100%);
   border: 1px solid rgba(0,168,168,0.16);
-  color: #0f9faa;
+  color: #008f8a;
   transition: 0.22s ease;
 }
 
@@ -333,7 +333,7 @@
   font-size: 1.65rem;
   font-weight: 950;
   letter-spacing: 0.02em;
-  color: #0f9faa;
+  color: #008f8a;
 }
 
 .popup-actions {
@@ -510,7 +510,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 34%),
-    linear-gradient(160deg, #0f9faa 0%, #078994 100%);
+    linear-gradient(160deg, #008f8a 0%, #00736f 100%);
   color: #fff;
   border-radius: 30px;
   padding: 26px 24px 24px;
@@ -629,7 +629,7 @@
   padding: 12px 18px;
   border-radius: 999px;
   background: #ffffff;
-  color: #0f9faa;
+  color: #008f8a;
   text-decoration: none;
   font-weight: 900;
   font-size: 0.98rem;
@@ -640,7 +640,7 @@
 .contact-card-btn:hover {
   transform: translateY(-2px);
   background: #f8fafc;
-  color: #078994;
+  color: #00736f;
   text-decoration: none;
 }
 
@@ -999,7 +999,7 @@
   background:
     radial-gradient(circle at 20% 10%, rgba(255,255,255,0.28), transparent 30%),
     radial-gradient(circle at 90% 95%, rgba(255,255,255,0.16), transparent 34%),
-    linear-gradient(155deg, #10aeb8 0%, #07828e 54%, #05646e 100%);
+    linear-gradient(155deg, #05a8a2 0%, #008f8a 54%, #00605d 100%);
   color: #fff;
   border-radius: 34px;
   padding: 34px 26px 28px;
