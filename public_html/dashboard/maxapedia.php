@@ -30,46 +30,65 @@ if (empty($_POST) && empty($_FILES) && isset($_SERVER['CONTENT_LENGTH']) && (int
   exit;
 }
 
-/* توابع کمکی آپلود فایل کتاب و تصویر جلد */
-if (!function_exists('maxapedia_upload_book_file')) {
-  function maxapedia_upload_book_file(array $file): string {
+/* توابع کمکی آپلود و حذف فایل محتوا و تصویر شاخص/جلد */
+if (!function_exists('maxapedia_delete_local_file')) {
+  function maxapedia_delete_local_file(?string $path): void {
+    if (!$path || strpos($path, '/uploads/') !== 0) return;
+    $baseDir = realpath(dirname(__DIR__) . '/uploads');
+    $fullPath = realpath(dirname(__DIR__) . $path);
+    if ($fullPath && $baseDir && strpos($fullPath, $baseDir) === 0 && is_file($fullPath)) {
+      @unlink($fullPath);
+    }
+  }
+}
+
+if (!function_exists('maxapedia_upload_file')) {
+  function maxapedia_upload_file(array $file, string $section = 'general'): string {
     if ($file['error'] !== UPLOAD_ERR_OK) {
       switch ($file['error']) {
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
           $max = ini_get('upload_max_filesize');
-          throw new Exception("حجم فایل کتاب بیشتر از سقف مجاز سرور است (حداکثر $max).");
+          throw new Exception("حجم فایل بیشتر از سقف مجاز سرور است (حداکثر $max).");
         case UPLOAD_ERR_PARTIAL:
-          throw new Exception("آپلود فایل کتاب ناقص ماند. لطفاً دوباره تلاش کنید.");
+          throw new Exception("آپلود فایل ناقص ماند. لطفاً دوباره تلاش کنید.");
         default:
-          throw new Exception("خطا در آپلود فایل کتاب (کد خطا: {$file['error']}).");
+          throw new Exception("خطا در آپلود فایل (کد خطا: {$file['error']}).");
       }
     }
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['pdf', 'epub', 'mobi', 'doc', 'docx', 'zip', 'rar'];
+    $allowed = ['pdf', 'epub', 'mobi', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'zip', 'rar', '7z', 'mp4', 'mp3', 'ogg', 'wav', 'webm', 'jpg', 'jpeg', 'png', 'webp'];
     if (!in_array($ext, $allowed, true)) {
-      throw new Exception("فرمت فایل کتاب نامعتبر است. فرمت‌های مجاز: " . implode(', ', $allowed));
+      throw new Exception("فرمت فایل نامعتبر است. فرمت‌های مجاز: " . implode(', ', $allowed));
     }
 
-    $uploadDir = dirname(__DIR__) . '/uploads/books';
+    $subDir = in_array($section, ['books', 'brochures'], true) ? $section : 'maxapedia';
+    $uploadDir = dirname(__DIR__) . '/uploads/' . $subDir;
     if (!is_dir($uploadDir)) {
       @mkdir($uploadDir, 0775, true);
     }
 
-    $safeName = 'book_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+    $prefix = $section . '_';
+    $safeName = $prefix . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
     $destination = $uploadDir . '/' . $safeName;
 
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
-      throw new Exception("امکان ذخیره فایل کتاب در پوشه uploads وجود ندارد. لطفاً دسترسی پوشه را بررسی کنید.");
+      throw new Exception("امکان ذخیره فایل در پوشه uploads وجود ندارد. لطفاً دسترسی پوشه را بررسی کنید.");
     }
 
-    return '/uploads/books/' . $safeName;
+    return '/uploads/' . $subDir . '/' . $safeName;
+  }
+}
+
+if (!function_exists('maxapedia_upload_book_file')) {
+  function maxapedia_upload_book_file(array $file): string {
+    return maxapedia_upload_file($file, 'books');
   }
 }
 
 if (!function_exists('maxapedia_upload_cover_file')) {
-  function maxapedia_upload_cover_file(array $file): string {
+  function maxapedia_upload_cover_file(array $file, string $section = 'general'): string {
     if ($file['error'] !== UPLOAD_ERR_OK) {
       return '';
     }
@@ -77,22 +96,23 @@ if (!function_exists('maxapedia_upload_cover_file')) {
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
     if (!in_array($ext, $allowed, true)) {
-      throw new Exception("فرمت تصویر جلد نامعتبر است. فرمت‌های مجاز: jpg, png, webp");
+      throw new Exception("فرمت تصویر شاخص/جلد نامعتبر است. فرمت‌های مجاز: jpg, jpeg, png, webp");
     }
 
-    $uploadDir = dirname(__DIR__) . '/uploads/books/covers';
+    $subDir = in_array($section, ['books', 'brochures'], true) ? ($section . '/covers') : 'maxapedia/covers';
+    $uploadDir = dirname(__DIR__) . '/uploads/' . $subDir;
     if (!is_dir($uploadDir)) {
       @mkdir($uploadDir, 0775, true);
     }
 
-    $safeName = 'cover_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+    $safeName = 'cover_' . $section . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
     $destination = $uploadDir . '/' . $safeName;
 
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
-      throw new Exception("امکان ذخیره تصویر جلد کتاب وجود ندارد.");
+      throw new Exception("امکان ذخیره تصویر شاخص در پوشه uploads وجود ندارد.");
     }
 
-    return '/uploads/books/covers/' . $safeName;
+    return '/uploads/' . $subDir . '/' . $safeName;
   }
 }
 
@@ -107,18 +127,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       $url       = trim((string)($_POST['url'] ?? ''));
       $thumbnail = trim((string)($_POST['thumbnail'] ?? ''));
 
-      // ۱. آپلود فایل کتاب (ویژه بخش کتاب‌ها)
-      if ($section === 'books' && isset($_FILES['book_file']) && $_FILES['book_file']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $url = maxapedia_upload_book_file($_FILES['book_file']);
+      // ۱. آپلود فایل محتوا (PDF، کتاب، بروشور یا سند ضمیمه)
+      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? null;
+      if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
+        $url = maxapedia_upload_file($uploadedFile, $section);
       } else {
         $url = maxapedia_extract_url($url);
       }
 
-      // ۲. آپلود تصویر جلد (اختیاری)
-      if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $uploadedCover = maxapedia_upload_cover_file($_FILES['thumbnail_file']);
-        if ($uploadedCover !== '') {
-          $thumbnail = $uploadedCover;
+      // ۲. آپلود تصویر جلد / شاخص (اختیاری)
+      $uploadedCover = $_FILES['thumbnail_file'] ?? null;
+      if ($uploadedCover && $uploadedCover['error'] !== UPLOAD_ERR_NO_FILE) {
+        $uploadedCoverUrl = maxapedia_upload_cover_file($uploadedCover, $section);
+        if ($uploadedCoverUrl !== '') {
+          $thumbnail = $uploadedCoverUrl;
         }
       }
 
@@ -149,27 +171,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       $url       = $existing['url'];
       $thumbnail = $existing['thumbnail'];
 
-      // آیا فایل کتاب جدیدی انتخاب شده؟
-      if ($section === 'books' && isset($_FILES['book_file']) && $_FILES['book_file']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $newBookUrl = maxapedia_upload_book_file($_FILES['book_file']);
-        // حذف فایل قدیمی در صورت وجود
-        if (!empty($existing['url']) && strpos($existing['url'], '/uploads/books/') === 0) {
-          $oldF = dirname(__DIR__) . $existing['url'];
-          if (is_file($oldF)) { @unlink($oldF); }
-        }
-        $url = $newBookUrl;
+      // آیا فایل جدیدی انتخاب شده؟
+      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? null;
+      if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
+        $newUrl = maxapedia_upload_file($uploadedFile, $section);
+        maxapedia_delete_local_file($existing['url']);
+        $url = $newUrl;
       } elseif (isset($_POST['url']) && trim($_POST['url']) !== '') {
         $url = maxapedia_extract_url((string)$_POST['url']);
       }
 
-      // آیا تصویر جلد جدیدی آپلود شده؟
-      if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $newCoverUrl = maxapedia_upload_cover_file($_FILES['thumbnail_file']);
+      // آیا تصویر جلد/شاخص جدیدی آپلود شده؟
+      $uploadedCover = $_FILES['thumbnail_file'] ?? null;
+      if ($uploadedCover && $uploadedCover['error'] !== UPLOAD_ERR_NO_FILE) {
+        $newCoverUrl = maxapedia_upload_cover_file($uploadedCover, $section);
         if ($newCoverUrl !== '') {
-          if (!empty($existing['thumbnail']) && strpos($existing['thumbnail'], '/uploads/books/covers/') === 0) {
-            $oldC = dirname(__DIR__) . $existing['thumbnail'];
-            if (is_file($oldC)) { @unlink($oldC); }
-          }
+          maxapedia_delete_local_file($existing['thumbnail']);
           $thumbnail = $newCoverUrl;
         }
       } elseif (isset($_POST['thumbnail']) && trim($_POST['thumbnail']) !== '') {
@@ -196,14 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       $delId = (int)($_POST['id'] ?? 0);
       $existing = maxapedia_find($pdo, $delId);
       if ($existing) {
-        if (!empty($existing['url']) && strpos($existing['url'], '/uploads/books/') === 0) {
-          $oldF = dirname(__DIR__) . $existing['url'];
-          if (is_file($oldF)) { @unlink($oldF); }
-        }
-        if (!empty($existing['thumbnail']) && strpos($existing['thumbnail'], '/uploads/books/covers/') === 0) {
-          $oldC = dirname(__DIR__) . $existing['thumbnail'];
-          if (is_file($oldC)) { @unlink($oldC); }
-        }
+        maxapedia_delete_local_file($existing['url']);
+        maxapedia_delete_local_file($existing['thumbnail']);
       }
       maxapedia_delete($pdo, $delId);
       $msg = 'deleted';
@@ -455,7 +466,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   color: var(--color-text); text-decoration: none; font-size: 13px; transition: border-color .2s;
 }
 .mx-action-edit:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.mx-row-thumb--book {
+.mx-row-thumb--book, .mx-row-thumb--doc {
   width: 46px;
   height: 60px;
   border-radius: 6px;
@@ -532,28 +543,33 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <textarea name="description" maxlength="2000" placeholder="توضیح مختصر درباره این محتوا…"><?= e($isEditing ? ($editItem['description'] ?? '') : '') ?></textarea>
       </div>
 
-      <?php if ($section === 'books'): ?>
-        <!-- بخش اختصاصی آپلود کتاب -->
+      <?php
+        $isDocSection = in_array($section, ['books', 'brochures'], true);
+        $docLabel = ($section === 'books') ? 'کتاب' : (($section === 'brochures') ? 'بروشور' : 'فایل');
+      ?>
+
+      <?php if ($isDocSection): ?>
+        <!-- بخش اختصاصی آپلود کتاب و بروشور -->
         <div class="mx-field">
-          <label>آپلود فایل کتاب (PDF / EPUB / MOBI / ZIP و...)</label>
-          <div class="mx-dropzone" id="bookDropzone">
-            <input type="file" name="book_file" id="bookFileInput" accept=".pdf,.epub,.mobi,.doc,.docx,.zip,.rar">
+          <label>آپلود فایل <?= $docLabel ?> (PDF / <?= $section === 'books' ? 'EPUB / MOBI / ZIP' : 'سند آموزشی / ZIP' ?> و...)</label>
+          <div class="mx-dropzone" id="mxDropzone">
+            <input type="file" name="file" id="mxFileInput" accept=".pdf,.epub,.mobi,.doc,.docx,.zip,.rar">
             <div class="mx-dropzone-icon"><?= iconoir('download', '', 36) ?></div>
-            <div class="mx-dropzone-title">فایل کتاب را بکشید و اینجا رها کنید یا برای انتخاب کلیک کنید</div>
+            <div class="mx-dropzone-title">فایل <?= $docLabel ?> (PDF) را بکشید و اینجا رها کنید یا برای انتخاب کلیک کنید</div>
             <div class="mx-dropzone-hint">فرمت‌های مجاز: PDF, EPUB, MOBI, DOC, DOCX, ZIP, RAR (حداکثر <?= ini_get('upload_max_filesize') ?>)</div>
           </div>
-          <div class="mx-file-info" id="bookFileInfo">
+          <div class="mx-file-info" id="mxFileInfo">
             <div>
-              <span class="mx-file-name" id="bookFileName"></span>
-              <span class="mx-file-size" id="bookFileSize"></span>
+              <span class="mx-file-name" id="mxFileName"></span>
+              <span class="mx-file-size" id="mxFileSize"></span>
             </div>
-            <button type="button" class="mx-file-clear" id="bookFileClear" title="حذف انتخاب">&times;</button>
+            <button type="button" class="mx-file-clear" id="mxFileClear" title="حذف انتخاب">&times;</button>
           </div>
           <?php if ($isEditing && !empty($editItem['url'])): ?>
             <div class="mx-current-file">
               <span><?= iconoir('notes', '', 15) ?> فایل/لینک فعلی:</span>
-              <a href="<?= e($editItem['url']) ?>" target="_blank" rel="noopener">مشاهده / دانلود کتاب</a>
-              <?php if (strpos($editItem['url'], '/uploads/books/') === 0): ?>
+              <a href="<?= e($editItem['url']) ?>" target="_blank" rel="noopener">مشاهده / دانلود <?= $docLabel ?></a>
+              <?php if (strpos($editItem['url'], '/uploads/') === 0): ?>
                 <span class="mx-badge-format">فایل ذخیره‌شده در سرور</span>
               <?php endif; ?>
             </div>
@@ -561,13 +577,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         </div>
 
         <div class="mx-field">
-          <label>یا لینکِ مطالعه / دانلود مستقیم کتاب (اختیاری در صورت آپلود فایل)</label>
-          <input type="text" name="url" value="<?= e($isEditing ? ($editItem['url'] ?? '') : '') ?>" placeholder="https://… (اگر فایل کتاب را آپلود کردید، این فیلد را خالی بگذارید)">
-          <p class="mx-hint">اگر فایل کتاب را در کادر بالا آپلود کنید، این آدرس به‌طور خودکار تنظیم می‌شود. در صورت تمایل به قرار دادن لینک خارجی، آن را اینجا بنویسید.</p>
+          <label>یا لینکِ مطالعه / دانلود مستقیم <?= $docLabel ?> (اختیاری در صورت آپلود فایل)</label>
+          <input type="text" name="url" value="<?= e($isEditing ? ($editItem['url'] ?? '') : '') ?>" placeholder="https://… (اگر فایل <?= $docLabel ?> را آپلود کردید، این فیلد را خالی بگذارید)">
+          <p class="mx-hint">اگر فایل <?= $docLabel ?> را در کادر بالا آپلود کنید، این آدرس به‌طور خودکار تنظیم می‌شود. در صورت تمایل به قرار دادن لینک خارجی، آن را اینجا بنویسید.</p>
         </div>
 
         <div class="mx-field">
-          <label>تصویر جلد کتاب</label>
+          <label>تصویر جلد / پیش‌نمایش <?= $docLabel ?></label>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <input type="file" name="thumbnail_file" id="coverFileInput" accept="image/jpeg,image/png,image/webp,image/gif">
             <input type="url" name="thumbnail" id="coverUrlInput" value="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" placeholder="یا آدرس اینترنتی تصویر جلد (https://…)">
@@ -577,16 +593,45 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         </div>
 
       <?php else: ?>
-        <!-- بخش‌های غیرکتابی (ویدیو، پادکست، بروشور، کلیپ، گالری) -->
+        <!-- بخش‌های رسانه‌ای (ویدیو، پادکست، کلیپ، گالری) -->
         <div class="mx-field">
-          <label>لینک یا کدِ امبدِ محتوا (ویدیو / صوت / فایل)</label>
-          <textarea name="url" maxlength="6000" rows="3" placeholder="https://…  یا کلِ کدِ امبد (مثلاً &lt;iframe …&gt;…&lt;/iframe&gt;)"><?= e($isEditing ? ($editItem['url'] ?? '') : '') ?></textarea>
-          <p class="mx-hint">می‌توانید لینکِ معمولیِ یوتیوب، آپارات، نماشا، کست‌باکس، اسپاتیفای، ساندکلاد یا فایل مستقیم (mp4/mp3) را بگذارید — یا کلِ کدِ امبدی که این سرویس‌ها می‌دهند (iframe یا اسکریپتِ آپارات) را همین‌جا بچسبانید؛ آدرسِ پخش به‌صورت خودکار استخراج می‌شود.</p>
+          <label>آپلود فایل مستقیم یا سند ضمیمه (اختیاری — PDF / رسانه)</label>
+          <div class="mx-dropzone" id="mxDropzone">
+            <input type="file" name="file" id="mxFileInput" accept=".pdf,.doc,.docx,.zip,.rar,.mp4,.mp3,.webm">
+            <div class="mx-dropzone-icon"><?= iconoir('download', '', 32) ?></div>
+            <div class="mx-dropzone-title">فایل PDF یا رسانه‌ای را بکشید و اینجا رها کنید یا برای انتخاب کلیک کنید</div>
+            <div class="mx-dropzone-hint">فرمت‌های مجاز: PDF, MP4, MP3, ZIP, DOCX و... (حداکثر <?= ini_get('upload_max_filesize') ?>)</div>
+          </div>
+          <div class="mx-file-info" id="mxFileInfo">
+            <div>
+              <span class="mx-file-name" id="mxFileName"></span>
+              <span class="mx-file-size" id="mxFileSize"></span>
+            </div>
+            <button type="button" class="mx-file-clear" id="mxFileClear" title="حذف انتخاب">&times;</button>
+          </div>
+          <?php if ($isEditing && !empty($editItem['url']) && strpos($editItem['url'], '/uploads/') === 0): ?>
+            <div class="mx-current-file">
+              <span><?= iconoir('notes', '', 15) ?> فایل آپلودشده فعلی:</span>
+              <a href="<?= e($editItem['url']) ?>" target="_blank" rel="noopener">مشاهده / دریافت فایل</a>
+              <span class="mx-badge-format">فایل ذخیره‌شده در سرور</span>
+            </div>
+          <?php endif; ?>
         </div>
 
         <div class="mx-field">
-          <label>تصویر شاخص (لینک)</label>
-          <input type="url" name="thumbnail" maxlength="1024" value="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" placeholder="https://… (اختیاری)">
+          <label>یا لینک یا کدِ امبدِ محتوا (ویدیو / صوت / فایل / لینک خارجی)</label>
+          <textarea name="url" maxlength="6000" rows="3" placeholder="https://…  یا کلِ کدِ امبد (مثلاً &lt;iframe …&gt;…&lt;/iframe&gt;)"><?= e($isEditing ? ($editItem['url'] ?? '') : '') ?></textarea>
+          <p class="mx-hint">اگر فایلی در کادر بالا آپلود نکرده‌اید، لینکِ معمولیِ یوتیوب، آپارات، نماشا، کست‌باکس، اسپاتیفای، ساندکلاد یا فایل مستقیم را بگذارید — یا کلِ کدِ امبد را همین‌جا بچسبانید.</p>
+        </div>
+
+        <div class="mx-field">
+          <label>تصویر شاخص / کاور</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input type="file" name="thumbnail_file" id="coverFileInput" accept="image/jpeg,image/png,image/webp,image/gif">
+            <input type="url" name="thumbnail" id="coverUrlInput" value="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" placeholder="یا آدرس اینترنتی تصویر شاخص (https://…)">
+          </div>
+          <img id="coverPreview" class="mx-cover-preview <?= ($isEditing && !empty($editItem['thumbnail'])) ? 'active' : '' ?>" src="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" alt="پیش‌نمایش تصویر">
+          <p class="mx-hint">می‌توانید تصویر شاخص را از سیستم آپلود کنید یا آدرس اینترنتی آن را وارد نمایید.</p>
         </div>
       <?php endif; ?>
 
@@ -650,12 +695,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
             $emInfo = maxapedia_embed((string)($it['url'] ?? ''));
           ?>
             <div class="mx-row">
+              <?php $isDocItem = in_array($section, ['books', 'brochures'], true); ?>
               <?php if (!empty($it['thumbnail'])): ?>
-                <img class="mx-row-thumb <?= $section === 'books' ? 'mx-row-thumb--book' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="">
+                <img class="mx-row-thumb <?= $isDocItem ? 'mx-row-thumb--doc' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="">
               <?php elseif ($emInfo && !empty($emInfo['poster'])): ?>
                 <img class="mx-row-thumb" src="<?= e($emInfo['poster']) ?>" alt="">
               <?php else: ?>
-                <div class="mx-row-thumb <?= $section === 'books' ? 'mx-row-thumb--book' : '' ?> mx-row-thumb--icon"><?= $meta['icon'] ?></div>
+                <div class="mx-row-thumb <?= $isDocItem ? 'mx-row-thumb--doc' : '' ?> mx-row-thumb--icon"><?= $meta['icon'] ?></div>
               <?php endif; ?>
 
               <div class="mx-row-main">
@@ -668,10 +714,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
                   <?php endif; ?>
                   <?php
-                  if ($section === 'books' && !empty($it['url'])) {
+                  if (!empty($it['url'])) {
                     $ext = strtolower(pathinfo(parse_url($it['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
                     if ($ext) {
-                      echo '<span class="mx-badge-format">' . iconoir('notes', '', 13) . ' ' . strtoupper(e($ext)) . '</span>';
+                      $prefix = ($section === 'books') ? 'کتاب ' : (($section === 'brochures') ? 'بروشور ' : '');
+                      echo '<span class="mx-badge-format">' . iconoir('notes', '', 13) . ' ' . $prefix . strtoupper(e($ext)) . '</span>';
                     } elseif (strpos($it['url'], 'drive.google.com') !== false) {
                       echo '<span class="mx-badge-format">Google Drive</span>';
                     }
@@ -687,8 +734,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               <div class="mx-row-actions">
                 <a class="mx-action-edit" href="maxapedia.php?section=<?= e($section) ?>&edit=<?= (int)$it['id'] ?>" title="ویرایش"><?= iconoir('edit-pencil', '', 15) ?></a>
                 <?php if (!empty($it['url'])): ?>
-                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="<?= $section === 'books' ? 'دانلود یا مطالعه کتاب' : 'باز کردن لینک' ?>">
-                    <?= $section === 'books' ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
+                  <?php
+                    $isDocLink = ($isDocItem || preg_match('/\.(pdf|epub|mobi|docx?|zip|rar)$/i', parse_url($it['url'], PHP_URL_PATH) ?? ''));
+                  ?>
+                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="<?= $isDocLink ? 'دانلود یا مطالعه فایل' : 'باز کردن لینک' ?>">
+                    <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
                 <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">
@@ -715,14 +765,14 @@ window.addEventListener('storage',function(e){
   }
 });
 
-/* دراگ و دراپ و پیش‌نمایش فایل برای بخش کتاب‌ها */
+/* دراگ و دراپ و پیش‌نمایش فایل و جلد برای مکساپدیا */
 (function() {
-  var dropzone  = document.getElementById('bookDropzone');
-  var fileInput = document.getElementById('bookFileInput');
-  var fileInfo  = document.getElementById('bookFileInfo');
-  var fileName  = document.getElementById('bookFileName');
-  var fileSize  = document.getElementById('bookFileSize');
-  var fileClear = document.getElementById('bookFileClear');
+  var dropzone  = document.getElementById('mxDropzone') || document.getElementById('bookDropzone');
+  var fileInput = document.getElementById('mxFileInput') || document.getElementById('bookFileInput');
+  var fileInfo  = document.getElementById('mxFileInfo') || document.getElementById('bookFileInfo');
+  var fileName  = document.getElementById('mxFileName') || document.getElementById('bookFileName');
+  var fileSize  = document.getElementById('mxFileSize') || document.getElementById('bookFileSize');
+  var fileClear = document.getElementById('mxFileClear') || document.getElementById('bookFileClear');
 
   if (dropzone && fileInput) {
     ['dragenter', 'dragover'].forEach(function(evt) {
@@ -778,7 +828,7 @@ window.addEventListener('storage',function(e){
     }
   }
 
-  // پیش‌نمایش تصویر جلد
+  // پیش‌نمایش تصویر جلد / شاخص
   var coverInput = document.getElementById('coverFileInput');
   var coverUrl   = document.getElementById('coverUrlInput');
   var coverPrev  = document.getElementById('coverPreview');

@@ -431,20 +431,28 @@ require __DIR__ . '/dashboard/components/header/component.php';
         <div class="mp-items">
           <?php foreach ($mpOthers as $it): $em = $it['_em']; ?>
             <article class="mp-item">
+              <?php $isPortraitCard = in_array($mpSlug, ['books', 'brochures'], true); ?>
               <?php if ($em && $em['kind'] === 'audio'): ?>
                 <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
               <?php elseif (!empty($it['thumbnail'])): ?>
-                <img class="mp-item-thumb <?= $mpSlug === 'books' ? 'mp-item-thumb--book' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
+                <img class="mp-item-thumb <?= $isPortraitCard ? 'mp-item-thumb--book' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
               <?php else: ?>
-                <div class="mp-item-thumb <?= $mpSlug === 'books' ? 'mp-item-thumb--book' : '' ?>"><?= $mpSection['icon'] ?></div>
+                <div class="mp-item-thumb <?= $isPortraitCard ? 'mp-item-thumb--book' : '' ?>"><?= $mpSection['icon'] ?></div>
               <?php endif; ?>
               <div class="mp-item-body">
-                <?php if ($mpSlug === 'books' && !empty($it['url'])):
-                  $bookExt = strtolower(pathinfo(parse_url($it['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
-                  if ($bookExt):
+                <?php
+                  $bookExt = strtolower(pathinfo(parse_url($it['url'] ?? '', PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+                  $isDownloadable = in_array($bookExt, ['pdf', 'epub', 'mobi', 'doc', 'docx', 'zip', 'rar'], true) || in_array($mpSlug, ['books', 'brochures'], true);
                 ?>
-                  <span class="mp-book-badge">کتاب <?= strtoupper(e($bookExt)) ?></span>
-                <?php endif; endif; ?>
+                <?php if ($bookExt): ?>
+                  <?php if ($mpSlug === 'books'): ?>
+                    <span class="mp-book-badge">کتاب <?= strtoupper(e($bookExt)) ?></span>
+                  <?php elseif ($mpSlug === 'brochures'): ?>
+                    <span class="mp-book-badge">بروشور <?= strtoupper(e($bookExt)) ?></span>
+                  <?php elseif ($isDownloadable): ?>
+                    <span class="mp-book-badge">فایل <?= strtoupper(e($bookExt)) ?></span>
+                  <?php endif; ?>
+                <?php endif; ?>
                 <h3><?= e($it['title']) ?></h3>
                 <?php if (!empty($it['description'])): ?>
                   <p><?= nl2br(e($it['description'])) ?></p>
@@ -454,6 +462,10 @@ require __DIR__ . '/dashboard/components/header/component.php';
                     <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php elseif ($mpSlug === 'books'): ?>
                     <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود و مطالعه کتاب</a>
+                  <?php elseif ($mpSlug === 'brochures'): ?>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود و مطالعه بروشور</a>
+                  <?php elseif ($isDownloadable): ?>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود فایل (<?= strtoupper(e($bookExt ?: 'PDF')) ?>)</a>
                   <?php else: ?>
                     <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php endif; ?>
