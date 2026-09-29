@@ -16,12 +16,21 @@ if (!function_exists('course_base_css')):
 function course_base_css(): string {
   return <<<'CSS'
 :root{
+<<<<<<< HEAD
   --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
   --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --violet:#8b5cf6; --success:#16a37a; --danger:#e0556b; --warning:#faa61a;
   --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12); --primary-16:rgba(0, 143, 138,.16);
   --secondary-12:rgba(250, 166, 26,.14); --violet-12:rgba(139,92,246,.14);
+=======
+  --color-primary:#007b7a; --color-primary-dark:#006665; --color-primary-light:#4fb2b0;
+  --color-secondary:#f4a61e; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
+  --violet:#8b5cf6; --success:#16a37a; --danger:#e0556b; --warning:#f4a61e;
+  --primary-08:rgba(0,123,122,.08); --primary-12:rgba(0,123,122,.12); --primary-16:rgba(0,123,122,.16);
+  --secondary-12:rgba(244,166,30,.14); --violet-12:rgba(139,92,246,.14);
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
   --radius-sm:12px; --radius:18px; --radius-lg:24px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04), 0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06), 0 2px 6px rgba(16,40,40,.04);
@@ -32,7 +41,11 @@ function course_base_css(): string {
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
   --color-bg:#0f1518; --color-surface:#19232a;
   --primary-08:rgba(79,178,176,.10); --primary-12:rgba(79,178,176,.16); --primary-16:rgba(79,178,176,.24);
+<<<<<<< HEAD
   --secondary-12:rgba(250, 166, 26,.18); --violet-12:rgba(139,92,246,.20);
+=======
+  --secondary-12:rgba(244,166,30,.18); --violet-12:rgba(139,92,246,.20);
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
   --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);
   --shadow-md:0 4px 14px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
@@ -54,10 +67,17 @@ function course_base_css(): string {
   transition:transform .15s var(--ease),box-shadow .22s,background .2s,color .2s,border-color .2s;white-space:nowrap}
 .btn .ic{width:17px;height:17px}
 .btn:active{transform:scale(.96)}
+<<<<<<< HEAD
 .btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
 .btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;box-shadow:0 10px 24px -10px rgba(250, 166, 26,.75)}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(250, 166, 26,.9)}
+=======
+.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0,123,122,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0,123,122,.8)}
+.btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;box-shadow:0 10px 24px -10px rgba(244,166,30,.75)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(244,166,30,.9)}
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border)}
 .btn-ghost:hover{border-color:var(--color-primary-light);color:var(--color-primary-dark);background:var(--primary-08)}
 .btn-soft{background:var(--primary-08);color:var(--color-primary-dark)}
@@ -100,7 +120,11 @@ function course_base_css(): string {
 .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
 .badge .bd{width:6px;height:6px;border-radius:50%}
 .badge.b-ok{background:rgba(22,163,122,.12);color:var(--success)} .b-ok .bd{background:var(--success)}
+<<<<<<< HEAD
 .badge.b-draft{background:rgba(250, 166, 26,.14);color:#b9760a} .b-draft .bd{background:var(--warning)}
+=======
+.badge.b-draft{background:rgba(244,166,30,.14);color:#b9760a} .b-draft .bd{background:var(--warning)}
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
 .badge.b-free{background:var(--violet-12);color:#6d3fd1} .b-free .bd{background:var(--violet)}
 .badge.b-primary{background:var(--primary-08);color:var(--color-primary-dark)} .b-primary .bd{background:var(--color-primary)}
 
@@ -143,8 +167,13 @@ input,textarea,select{font-family:inherit}
 svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 ::selection{background:var(--primary-16);color:var(--color-primary-dark)}
 *::-webkit-scrollbar{width:9px;height:9px}
+<<<<<<< HEAD
 *::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
 *::-webkit-scrollbar-thumb:hover{background:rgba(0, 143, 138,.34);background-clip:padding-box}
+=======
+*::-webkit-scrollbar-thumb{background:rgba(0,123,122,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(0,123,122,.34);background-clip:padding-box}
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
 [data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
 <?= course_base_css() ?>
 <?= $pageStyles ?>
@@ -200,7 +229,11 @@ function course_cart_marker(): void { ?>
   #maxaCartFab:hover{transform:translateY(-3px);box-shadow:0 16px 34px -8px rgba(8,153,169,.85)}
   #maxaCartFab svg{width:24px;height:24px}
   #maxaCartFab .mx-cart-count{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;
+<<<<<<< HEAD
     background:#faa61a;color:#3a2a00;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;font-family:'Vazirmatn',sans-serif}
+=======
+    background:#f5a623;color:#3a2a00;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;font-family:'Vazirmatn',sans-serif}
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
 </style>
 <a id="maxaCartFab" href="/courses/checkout" target="_top" aria-label="سبد خرید" title="سبد خرید">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.6"/><circle cx="19" cy="21" r="1.6"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L23 7H5.6"/></svg>
@@ -319,7 +352,11 @@ function course_card(array $c): void {
     </div>
     <div class="ccard-body">
       <span class="ccard-cat"><?= e($c['category'] ?? 'عمومی') ?></span>
+<<<<<<< HEAD
       <?php if (!empty($c['branch_name'])): ?><span class="ccard-branch" style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:2px 9px;border-radius:99px;margin-inline-start:6px;"><?= function_exists('iconoir') ? iconoir('building', '', 13) : '' ?> <?= e($c['branch_name']) ?></span><?php endif; ?>
+=======
+      <?php if (!empty($c['branch_name'])): ?><span class="ccard-branch" style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:2px 9px;border-radius:99px;margin-inline-start:6px;"><?= function_exists('iconoir') ? iconoir('building', '', 13) : '' ?> <?= e($c['branch_name']) ?></span><?php endif; ?>
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
       <h3 class="ccard-title"><?= e($c['title'] ?? 'بدون عنوان') ?></h3>
       <div class="ccard-inst"><?= e($c['instructor'] ?? 'مدرس مکسا') ?></div>
       <div class="ccard-meta">
@@ -350,7 +387,11 @@ function course_card_styles(): string {
 .ccard-thumb{height:160px;position:relative;display:grid;place-items:center;color:#fff;overflow:hidden}
 .ccard-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ccard-thumb .ph{opacity:.55}.ccard-thumb .ph .ic{width:46px;height:46px}
+<<<<<<< HEAD
 .ccard-off{position:absolute;top:11px;right:11px;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;box-shadow:0 6px 14px -6px rgba(250, 166, 26,.7)}
+=======
+.ccard-off{position:absolute;top:11px;right:11px;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;box-shadow:0 6px 14px -6px rgba(244,166,30,.7)}
+>>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
 .ccard-play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff;opacity:0;transform:scale(.7);transition:opacity .3s,transform .3s var(--ease)}
 .ccard-play .ic{width:22px;height:22px;margin-right:-2px}
 .ccard:hover .ccard-play{opacity:1;transform:scale(1)}
