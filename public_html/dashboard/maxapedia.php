@@ -87,6 +87,12 @@ if (!function_exists('maxapedia_upload_book_file')) {
   }
 }
 
+if (!function_exists('maxapedia_upload_brochure_file')) {
+  function maxapedia_upload_brochure_file(array $file): string {
+    return maxapedia_upload_file($file, 'brochures');
+  }
+}
+
 if (!function_exists('maxapedia_upload_cover_file')) {
   function maxapedia_upload_cover_file(array $file, string $section = 'general'): string {
     if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -128,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       $thumbnail = trim((string)($_POST['thumbnail'] ?? ''));
 
       // ۱. آپلود فایل محتوا (PDF، کتاب، بروشور یا سند ضمیمه)
-      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? null;
+      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? $_FILES['brochure_file'] ?? null;
       if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
         $url = maxapedia_upload_file($uploadedFile, $section);
       } else {
@@ -172,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       $thumbnail = $existing['thumbnail'];
 
       // آیا فایل جدیدی انتخاب شده؟
-      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? null;
+      $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? $_FILES['brochure_file'] ?? null;
       if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
         $newUrl = maxapedia_upload_file($uploadedFile, $section);
         maxapedia_delete_local_file($existing['url']);
@@ -521,9 +527,26 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         <input type="hidden" name="id" value="<?= (int)$editItem['id'] ?>">
       <?php endif; ?>
 
+      <?php
+        $isDocSection = in_array($section, ['books', 'brochures'], true);
+        $docLabel = ($section === 'books') ? 'کتاب' : (($section === 'brochures') ? 'بروشور' : 'فایل');
+
+        $titlePlaceholder = ($section === 'books')
+          ? 'مثلاً: راهنمای جامع مراقبت تسکینی'
+          : (($section === 'brochures')
+            ? 'مثلاً: بروشور راهنمای خودمراقبتی لنف‌ادم یا تغذیه'
+            : 'مثلاً: آشنایی با بیماری‌های نادر');
+
+        $descPlaceholder = ($section === 'books')
+          ? 'توضیح مختصر درباره کتاب و پدیدآورندگان…'
+          : (($section === 'brochures')
+            ? 'توضیح مختصر درباره موضوع بروشور و جامعه هدف…'
+            : 'توضیح مختصر درباره این محتوا…');
+      ?>
+
       <div class="mx-field">
         <label>عنوان <span style="color:var(--danger)">*</span></label>
-        <input type="text" name="title" maxlength="255" required value="<?= e($isEditing ? ($editItem['title'] ?? '') : '') ?>" placeholder="مثلاً: آشنایی با بیماری‌های نادر">
+        <input type="text" name="title" maxlength="255" required value="<?= e($isEditing ? ($editItem['title'] ?? '') : '') ?>" placeholder="<?= e($titlePlaceholder) ?>">
       </div>
 
       <div class="mx-field">
@@ -540,23 +563,18 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
       <div class="mx-field">
         <label>توضیح کوتاه</label>
-        <textarea name="description" maxlength="2000" placeholder="توضیح مختصر درباره این محتوا…"><?= e($isEditing ? ($editItem['description'] ?? '') : '') ?></textarea>
+        <textarea name="description" maxlength="2000" placeholder="<?= e($descPlaceholder) ?>"><?= e($isEditing ? ($editItem['description'] ?? '') : '') ?></textarea>
       </div>
-
-      <?php
-        $isDocSection = in_array($section, ['books', 'brochures'], true);
-        $docLabel = ($section === 'books') ? 'کتاب' : (($section === 'brochures') ? 'بروشور' : 'فایل');
-      ?>
 
       <?php if ($isDocSection): ?>
         <!-- بخش اختصاصی آپلود کتاب و بروشور -->
         <div class="mx-field">
-          <label>آپلود فایل <?= $docLabel ?> (PDF / <?= $section === 'books' ? 'EPUB / MOBI / ZIP' : 'سند آموزشی / ZIP' ?> و...)</label>
+          <label>آپلود فایل <?= $docLabel ?> (PDF / <?= $section === 'books' ? 'EPUB / MOBI / ZIP' : 'سند آموزشی یا ZIP' ?> و...)</label>
           <div class="mx-dropzone" id="mxDropzone">
             <input type="file" name="file" id="mxFileInput" accept=".pdf,.epub,.mobi,.doc,.docx,.zip,.rar">
             <div class="mx-dropzone-icon"><?= iconoir('download', '', 36) ?></div>
             <div class="mx-dropzone-title">فایل <?= $docLabel ?> (PDF) را بکشید و اینجا رها کنید یا برای انتخاب کلیک کنید</div>
-            <div class="mx-dropzone-hint">فرمت‌های مجاز: PDF, EPUB, MOBI, DOC, DOCX, ZIP, RAR (حداکثر <?= ini_get('upload_max_filesize') ?>)</div>
+            <div class="mx-dropzone-hint">فرمت‌های مجاز: PDF, <?= $section === 'books' ? 'EPUB, MOBI, ' : '' ?>DOC, DOCX, ZIP, RAR (حداکثر <?= ini_get('upload_max_filesize') ?>)</div>
           </div>
           <div class="mx-file-info" id="mxFileInfo">
             <div>
@@ -660,9 +678,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     <!-- لیست محتوای بخش -->
     <div>
-      <div class="mx-list-head">
-        <h2>محتوای «<?= e($meta['title']) ?>»</h2>
-        <span class="mx-count-pill"><?= fa_digits(count($items)) ?> مورد</span>
+      <div class="mx-list-head" style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <h2>محتوای «<?= e($meta['title']) ?>»</h2>
+          <span class="mx-count-pill"><?= fa_digits(count($items)) ?> مورد</span>
+        </div>
+        <a href="/macsapedia/<?= e($section) ?>" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:var(--color-primary);text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:var(--primary-08);padding:5px 12px;border-radius:8px;border:1px solid var(--primary-12);transition:background .2s;">
+          <?= iconoir('open-new-window', '', 14) ?> مشاهده صفحه در سایت
+        </a>
       </div>
 
       <!-- نوار ابزار: جستجو + فیلتر دسته‌بندی -->
@@ -737,7 +760,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                   <?php
                     $isDocLink = ($isDocItem || preg_match('/\.(pdf|epub|mobi|docx?|zip|rar)$/i', parse_url($it['url'], PHP_URL_PATH) ?? ''));
                   ?>
-                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="<?= $isDocLink ? 'دانلود یا مطالعه فایل' : 'باز کردن لینک' ?>">
+                  <a class="mx-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener" title="<?= $isDocLink ? ('دانلود یا مطالعه ' . $docLabel) : 'باز کردن لینک' ?>">
                     <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
