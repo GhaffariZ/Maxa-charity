@@ -1172,7 +1172,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               <li><a href="/news.php">اخبار</a></li>
               <li class="events-nav-link"><a href="/events.php">رویدادها و همایش‌ها</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
-              <li><a href="/dashboard/courses.php">دوره‌ها</a></li>
+              <li><a href="/courses">دوره‌ها</a></li>
               <li><a href="contactus.html">تماس با ما</a></li>
             </ul>
           </nav>
