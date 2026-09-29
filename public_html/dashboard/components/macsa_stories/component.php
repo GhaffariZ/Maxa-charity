@@ -141,7 +141,7 @@ linear-gradient(180deg,#fffdf9 0%, #f6fbfb 100%);
 
 
 .maxsa-glass{
-padding:100px 0;
+padding:40px 0;
 font-family:'Vazirmatn', Tahoma, sans-serif;
 position:relative;
 }
@@ -151,7 +151,7 @@ position:relative;
 text-align:center;
 font-size:32px;
 line-height:1.9;
-margin-bottom:60px;
+margin-bottom:32px;
 font-weight:700;
 letter-spacing:.3px;
 }
@@ -166,7 +166,7 @@ font-weight:600;
 max-width:1200px;
 margin:auto;
 display:flex;
-gap:70px;
+gap:48px;
 align-items:center;
 }
 

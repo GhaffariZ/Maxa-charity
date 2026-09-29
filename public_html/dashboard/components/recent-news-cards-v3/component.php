@@ -19,7 +19,7 @@
   </div>
 </section>
 <style>
-.rncv3-sec{padding:64px 0;background:#fff;font-family:'Vazirmatn',Tahoma,sans-serif}.rncv3-wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.rncv3-sec{padding:40px 0;background:#fff;font-family:'Vazirmatn',Tahoma,sans-serif}.rncv3-wrap{max-width:1280px;margin:0 auto;padding:0 16px}
 .rncv3-head{display:flex;align-items:center;gap:12px;margin-bottom:40px}.rncv3-head span{width:48px;height:4px;background:#2563eb;border-radius:999px}.rncv3-head h2{margin:0;font-size:32px;font-weight:800}
 .rncv3-grid{display:grid;grid-template-columns:1fr;gap:24px}.rncv3-card{background:#fff;border:1px solid #f5f5f5;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column}
 .rncv3-img{aspect-ratio:16/9}.rncv3-img img{width:100%;height:100%;object-fit:cover}.rncv3-body{padding:20px;display:flex;flex-direction:column;gap:12px}

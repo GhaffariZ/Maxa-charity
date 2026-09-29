@@ -85,7 +85,7 @@ font-display: swap;
 }
 
 .travel-stats-section{
-padding:70px 20px 80px;
+padding:40px 20px;
 background:transparent;
 font-family:'Vazirmatn', Tahoma, sans-serif;
 direction:rtl;
@@ -335,7 +335,7 @@ max-width:480px;
 
 @media(max-width:600px){
 .travel-stats-section{
-padding:40px 14px 60px;
+padding:32px 14px;
 }
 
 .travel-box{

@@ -93,7 +93,7 @@
     .projects-section .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 22px 120px;
+      padding: 32px 22px 40px;
     }
 
     /* ============ سربرگ ============ */

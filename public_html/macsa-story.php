@@ -91,7 +91,7 @@ body {
 .story-wrapper {
   max-width: 960px;
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 32px 20px 48px;
   direction: rtl;
 }
 
@@ -372,7 +372,7 @@ body {
 
 /* Related Stories Section */
 .related-stories-wrap {
-  margin-top: 60px;
+  margin-top: 40px;
 }
 .related-title {
   font-size: 22px;

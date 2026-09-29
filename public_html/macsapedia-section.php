@@ -48,7 +48,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .mp-wrap {
     max-width: var(--cta-container, 1440px);
     margin: 0 auto;
-    padding: 48px 20px 80px;
+    padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
   }
   .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }

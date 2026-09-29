@@ -35,7 +35,7 @@
   color: var(--ceo-dark);
   line-height: 1.7;
   background: var(--ceo-bg);
-  padding: 0 0 60px;
+  padding: 0 0 40px;
 }
 
 .ceo-office *, .ceo-office *::before, .ceo-office *::after {
@@ -93,7 +93,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 32px 60px;
+  padding: 48px 32px 40px;
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 48px;
@@ -322,7 +322,7 @@
 .ceo-section {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 32px 0;
+  padding: 40px 32px 0;
 }
 
 .ceo-section-header {
@@ -737,7 +737,7 @@
   .ceo-hero-inner {
     grid-template-columns: 1fr;
     text-align: center;
-    padding: 60px 24px 40px;
+    padding: 40px 24px 32px;
   }
 
   .ceo-hero-desc {

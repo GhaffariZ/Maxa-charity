@@ -182,7 +182,7 @@
 
 /* CONTAINER */
 .pro-stories {
-  padding:90px 0;
+  padding:40px 0;
   font-family:'Vazirmatn', Tahoma, sans-serif;
   position:relative;
 }
@@ -392,7 +392,7 @@
 
 /* responsive */
 @media(max-width:600px){
-  .pro-stories{ padding:60px 0; }
+  .pro-stories{ padding:32px 0; }
   .ps-title{ font-size:23px; line-height:1.8; }
   .ps-card{ font-size:13px; padding:22px; }
 }

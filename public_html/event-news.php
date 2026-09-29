@@ -106,7 +106,7 @@ if (!empty($news['event_id'])) {
 .event-news-page {
   direction: rtl;
   background: #f4f8f7;
-  padding: 56px 20px 88px;
+  padding: 32px 20px 48px;
   min-height: 75vh;
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }

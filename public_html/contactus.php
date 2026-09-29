@@ -11,7 +11,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
   .cu-wrap {
     max-width: var(--cta-container, 1440px);
     margin: 0 auto;
-    padding: 56px 20px 90px;
+    padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
     direction: rtl;
   }

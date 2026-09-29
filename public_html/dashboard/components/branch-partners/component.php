@@ -14,7 +14,7 @@
   .bp{--teal:#008f8a;--teal-d:#00736f;--teal-l:#0d9488;--gold:#d97706;--gold-glow:rgba(217,119,6,.10);
       --text:#1e293b;--muted:#64748b;--line:#e2e8f0;--surface:#fff;--bg:#f4f7f6;
       --ease:cubic-bezier(.25,1,.5,1);font-family:'Vazirmatn',Tahoma,sans-serif;direction:rtl;color:var(--text);
-      background:var(--bg);padding:60px 0}
+      background:var(--bg);padding:40px 0}
   .bp *{box-sizing:border-box}
   .bp-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
   .bp a{text-decoration:none;color:inherit}

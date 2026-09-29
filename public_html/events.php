@@ -60,14 +60,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--ev-bg-soft);
   min-height: 80vh;
-  padding-bottom: 80px;
+  padding-bottom: 48px;
 }
 
 /* Hero Section */
 .events-hero {
   background: linear-gradient(135deg, #06393f 0%, #0a5c66 55%, #0d7a87 100%);
   color: var(--ev-white);
-  padding: 56px 24px 64px;
+  padding: 40px 24px 48px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(7, 71, 78, 0.15);

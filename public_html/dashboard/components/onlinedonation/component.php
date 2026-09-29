@@ -240,7 +240,7 @@
   }
 
   .donation-shell {
-    padding: 70px 20px;
+    padding: 40px 20px;
     direction: rtl;
     font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
     background:
