@@ -303,7 +303,7 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
     .news-wrapper {
         max-width: var(--cta-container, 1440px);
         margin: 0 auto;
-        padding: 48px 20px 80px;
+        padding: 32px 20px 48px;
         direction: rtl;
     }
 

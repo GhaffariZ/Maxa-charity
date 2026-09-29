@@ -200,7 +200,7 @@
 
 <style>
 .books-archive-section {
-  padding: 80px 20px;
+  padding: 40px 20px;
   background: transparent; /* حذف رنگ پس‌زمینه */
   text-align: center;
   font-family: 'Vazirmatn', Tahoma, sans-serif;

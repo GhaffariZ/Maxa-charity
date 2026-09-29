@@ -25,7 +25,7 @@
 
 </section>
 <style>
-.rnhv2-section{padding:64px 0;  background:transparent !important;font-family:'Vazirmatn',Tahoma,sans-serif}.rnhv2-container{max-width:1280px;margin:0 auto;padding:0 16px}
+.rnhv2-section{padding:40px 0;  background:transparent !important;font-family:'Vazirmatn',Tahoma,sans-serif}.rnhv2-container{max-width:1280px;margin:0 auto;padding:0 16px}
 .rnhv2-head{margin-bottom:48px}.rnhv2-kicker{color:#2563eb;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:8px}
 .rnhv2-title{font-size:42px;line-height:1.1;font-weight:900;margin:0;color:#0a0a0a}.rnhv2-grid{display:grid;grid-template-columns:1fr;gap:32px}
 .rnhv2-main{position:relative;overflow:hidden;border-radius:24px;background:#000;aspect-ratio:16/10;display:block;text-decoration:none}.rnhv2-main-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;transition:transform 1s ease}

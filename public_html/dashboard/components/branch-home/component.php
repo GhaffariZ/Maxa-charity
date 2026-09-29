@@ -133,7 +133,7 @@
   .bh-content>*{position:relative;z-index:1}
 
   /* ===== SECTIONS ===== */
-  .bh-sec{padding:60px 0}
+  .bh-sec{padding:40px 0}
   .bh-sec.tight{padding-bottom:24px}
   .bh-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:34px}
   .bh-head h2{margin:0;font-size:28px;font-weight:800;position:relative;padding-bottom:12px}

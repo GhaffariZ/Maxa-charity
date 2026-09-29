@@ -47,7 +47,7 @@ $initialProvincesList = array_values($initialProvinces);
 .so-wrap {
     max-width: var(--cta-container, 1360px);
     margin: 0 auto;
-    padding: 36px 20px 80px;
+    padding: 32px 20px 48px;
     font-family: 'Vazirmatn', Tahoma, sans-serif;
     direction: rtl;
 }

@@ -22,7 +22,7 @@
   </div>
 </section>
 <style>
-.rncv1-sec{padding:64px 0;background:#fff;font-family:'Vazirmatn',Tahoma,sans-serif}.rncv1-wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.rncv1-sec{padding:40px 0;background:#fff;font-family:'Vazirmatn',Tahoma,sans-serif}.rncv1-wrap{max-width:1280px;margin:0 auto;padding:0 16px}
 .rncv1-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:44px}.rncv1-head h2{margin:0;font-size:30px;font-weight:800;border-right:4px solid #111;padding-right:14px}
 .rncv1-head a{text-decoration:none;color:#737373;font-size:14px;font-weight:600}.rncv1-head a:hover{color:#111}
 .rncv1-grid{display:grid;grid-template-columns:1fr;gap:28px}.rncv1-card{text-decoration:none;color:inherit;display:block}.rncv1-img-box{aspect-ratio:4/3;overflow:hidden;border-radius:8px;margin-bottom:16px}

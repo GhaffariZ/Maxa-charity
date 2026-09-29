@@ -152,7 +152,7 @@
   --po-bg-alt: #f8fafc;
   --po-radius: 22px;
 
-  padding: 80px 20px;
+  padding: 40px 20px;
   direction: rtl;
   text-align: right;
   font-family: 'Vazirmatn', Tahoma, sans-serif;

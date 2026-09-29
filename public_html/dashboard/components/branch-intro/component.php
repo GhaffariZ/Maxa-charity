@@ -99,7 +99,7 @@ function bi_esc($s) {
     direction: rtl;
     background: var(--bg-page);
     color: var(--text);
-    padding-bottom: 70px;
+    padding-bottom: 40px;
     overflow-x: hidden;
   }
 

@@ -53,7 +53,7 @@
 
 <style>
 .skill-hero{
-  padding:90px 0;
+  padding:40px 0;
   direction:rtl;
   position:relative;
   font-family:'Vazirmatn', Tahoma, sans-serif;
@@ -63,7 +63,7 @@
   max-width:1200px;
   margin:auto;
   display:flex;
-  gap:70px;
+  gap:48px;
   align-items:center;
   flex-wrap:wrap;
   flex-direction:row-reverse;
@@ -280,7 +280,7 @@
 .skill-divider{
   width:100%;
   height:1px;
-  margin:70px 0;
+  margin:0;
   background:linear-gradient(
     90deg,
     transparent,
@@ -319,7 +319,7 @@
 }
 
 @media(max-width:560px){
-  .skill-hero{ padding:50px 0; }
+  .skill-hero{ padding:32px 0; }
   .skill-hero-title{ font-size:28px; }
   .skill-hero-features{ grid-template-columns:1fr; }
   .skill-hero-right{ flex-direction:column !important; align-items:center; }

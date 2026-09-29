@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "database/schema.sql": {
-    "mtime": 1790633033.4128988,
-    "ast_hash": "12594fb2442667339762717a5644c330",
+    "mtime": 1790718631.941881,
+    "ast_hash": "5cbc047204183bd51344b6bf643f9b3c",
     "semantic_hash": ""
   },
   "database/seed-admin.php": {
@@ -1000,8 +1000,8 @@
     "semantic_hash": ""
   },
   "public_html/contactus.php": {
-    "mtime": 1790692787.1751485,
-    "ast_hash": "36f3ea3ab09ada9d74e27fa30e394fe0",
+    "mtime": 1790722673.0986698,
+    "ast_hash": "0cf6c4e441a9f806943a3a51b54d05e3",
     "semantic_hash": ""
   },
   "public_html/core/auth.php": {
@@ -1480,8 +1480,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/aboutus/component.php": {
-    "mtime": 1790692789.429125,
-    "ast_hash": "0427b3eceb3422d677052a2f79cb247a",
+    "mtime": 1790722613.887564,
+    "ast_hash": "6ced6298ccfaf79ae0226e5c8fcca897",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/aboutus/meta.json": {
@@ -1500,8 +1500,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/booksarchive/component.php": {
-    "mtime": 1789998934.0004447,
-    "ast_hash": "528c27c0e2d4b345fc9df00dc14312e8",
+    "mtime": 1790722651.7912366,
+    "ast_hash": "0a10f818affd5d31e4b01630ff324f33",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/booksarchive/meta.json": {
@@ -1520,13 +1520,13 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branch-home/component.php": {
-    "mtime": 1790692789.4361267,
-    "ast_hash": "72be51e11e7181898d565255c941afb9",
+    "mtime": 1790722651.9137106,
+    "ast_hash": "d0d2551361049aa182e792edcc66939c",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branch-partners/component.php": {
-    "mtime": 1790692789.4402153,
-    "ast_hash": "0c1e261e6e04ce7ff64af5f45ce90500",
+    "mtime": 1790722651.8981402,
+    "ast_hash": "76b58d6c4f0521ad26b0a69c1f4a0abe",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branch-partners/meta.json": {
@@ -1565,8 +1565,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/footer/component.php": {
-    "mtime": 1790692789.4750328,
-    "ast_hash": "e86b3f93a031a8803c0e48c497a170d2",
+    "mtime": 1790722652.0646336,
+    "ast_hash": "733863f3ea51cb098609b0d79307cace",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/footer/meta.json": {
@@ -1585,8 +1585,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/hamrah/component.php": {
-    "mtime": 1790692789.479393,
-    "ast_hash": "254a318c1d563466d327084d4f9d0410",
+    "mtime": 1790722614.0127687,
+    "ast_hash": "31802685dc844a6f6b3d6a4acbf7bd3c",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/hamrah/meta.json": {
@@ -1595,8 +1595,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/header/component.php": {
-    "mtime": 1790692789.4868517,
-    "ast_hash": "9293d926cb87d01ffae730abd6a2c49d",
+    "mtime": 1790718631.945181,
+    "ast_hash": "32092b2ce05b16a45cff6c769709d6a6",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/header/meta.json": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/heroindex/component.php": {
-    "mtime": 1790692789.4950042,
-    "ast_hash": "18914f9ca879633537f31751733453ed",
+    "mtime": 1790722651.5326345,
+    "ast_hash": "6973dcf37db05c0f307efb2a44fa210d",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/heroindex/meta.json": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/macsa_stories/component.php": {
-    "mtime": 1790692789.503008,
-    "ast_hash": "fe59b9cb385f73f39b2c7c5d99d9c94d",
+    "mtime": 1790722613.966964,
+    "ast_hash": "83eda1c2eaf7ea05dd1c72e0f60db20b",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/macsa_stories/meta.json": {
@@ -1645,8 +1645,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/macsa_stories_details/component.php": {
-    "mtime": 1790692789.5040045,
-    "ast_hash": "0f326021c0fa658c7e36c4b2acd26fa1",
+    "mtime": 1790722651.8319733,
+    "ast_hash": "71a55e36b02e6245fe8d2ffb8381828c",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/macsa_stories_details/meta.json": {
@@ -1705,8 +1705,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/onlinedonation/component.php": {
-    "mtime": 1790692789.5231793,
-    "ast_hash": "d84b735ee242737a1138d85d2c37cf50",
+    "mtime": 1790722651.7335253,
+    "ast_hash": "97f0e7a89d0f2bfff035b265cd802d19",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/onlinedonation/meta.json": {
@@ -1725,8 +1725,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/ourexcellence/component.php": {
-    "mtime": 1790692789.5273898,
-    "ast_hash": "3a9d2c3ee83aad531bc299a46e7bf6be",
+    "mtime": 1790722651.7131026,
+    "ast_hash": "72fec540ca6258d6cd64f4a15d9088b7",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/ourexcellence/meta.json": {
@@ -1795,8 +1795,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-cards-v3/component.php": {
-    "mtime": 1789998934.0150373,
-    "ast_hash": "30b62d79b7b6d8d9779e81e41ef7e9b9",
+    "mtime": 1790722652.1177168,
+    "ast_hash": "c26b96f50efcc78f636e0fede4d33840",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-cards-v3/meta.json": {
@@ -1805,8 +1805,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-classic-v1/component.php": {
-    "mtime": 1789998934.0160384,
-    "ast_hash": "c5d432b5ae26dd76c1796619a221c682",
+    "mtime": 1790722652.0881267,
+    "ast_hash": "915fdf399925f84d5fd2e99940106091",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-classic-v1/meta.json": {
@@ -1815,8 +1815,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-hero-v2/component.php": {
-    "mtime": 1790692789.5468214,
-    "ast_hash": "36f380662dbc76ad1edd544b083772f7",
+    "mtime": 1790722652.1412232,
+    "ast_hash": "5f3ebdffba61288c5dfd26fab233d930",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/recent-news-hero-v2/meta.json": {
@@ -1825,8 +1825,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/singlefundraisingoption/component.php": {
-    "mtime": 1790692789.5477362,
-    "ast_hash": "c43c6246cfaa1c467466823c1e4ba49c",
+    "mtime": 1790722651.7510314,
+    "ast_hash": "3d21a843d2c63619d8ce921813e76579",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/singlefundraisingoption/meta.json": {
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/support_projects/component.php": {
-    "mtime": 1790692789.5690775,
-    "ast_hash": "bfc27e87a829e3c5b2a95cfa094fee0d",
+    "mtime": 1790722651.8519757,
+    "ast_hash": "a37572c7225e0f1f58de3c685f9a0a3f",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/support_projects/meta.json": {
@@ -1905,33 +1905,33 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/course-checkout.php": {
-    "mtime": 1790692787.6029353,
-    "ast_hash": "cec41ff379219817e4ea90e4cfe372b0",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "f1c7bd3ff811eafc1bff7673869c3d68",
     "semantic_hash": ""
   },
   "public_html/dashboard/course-db.php": {
-    "mtime": 1790692787.6038437,
-    "ast_hash": "490189e8b59d5f134f76f10e302253e7",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "2d92ce1c0090832a60fbd26d33b60b0a",
     "semantic_hash": ""
   },
   "public_html/dashboard/course-details.php": {
-    "mtime": 1790692787.6048453,
-    "ast_hash": "63e24cd09ca66108a40b9373953b5e1f",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "e2768a85cbe9f0bead20ef4bd25766a6",
     "semantic_hash": ""
   },
   "public_html/dashboard/course-learn.php": {
-    "mtime": 1789852956.5725634,
-    "ast_hash": "238b6b7f9aaec33e509e23c8b1b95e6e",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "6338cec530d6b0068121a61a989b6ce1",
     "semantic_hash": ""
   },
   "public_html/dashboard/course-my.php": {
-    "mtime": 1790692787.6084177,
-    "ast_hash": "8e960a994843222ed4f084b80008b7f0",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "8e130ff7d43b7e404742884068bcfc62",
     "semantic_hash": ""
   },
   "public_html/dashboard/course-ui.php": {
-    "mtime": 1790692787.610309,
-    "ast_hash": "ca7230f42d792a127e1b60f4ed39bb3f",
+    "mtime": 1790718631.9461806,
+    "ast_hash": "4e755d4bc2924c7fa73b75ab7c750f44",
     "semantic_hash": ""
   },
   "public_html/dashboard/courses-create.php": {
@@ -1940,13 +1940,13 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/courses-manage.php": {
-    "mtime": 1790692787.615106,
-    "ast_hash": "261eb7628c4becfc1296d7428c8badf1",
+    "mtime": 1790718631.9476843,
+    "ast_hash": "09d83e61cb81b9d198ba7bc999e35fe3",
     "semantic_hash": ""
   },
   "public_html/dashboard/courses.php": {
-    "mtime": 1790692787.61612,
-    "ast_hash": "7b66bcd40a9a44005759129d81324802",
+    "mtime": 1790718631.9476843,
+    "ast_hash": "14153490ab0becf0f5a9674a8f8e397e",
     "semantic_hash": ""
   },
   "public_html/dashboard/data/news.json": {
@@ -2195,13 +2195,13 @@
     "semantic_hash": ""
   },
   "public_html/macsapedia-section.php": {
-    "mtime": 1790692787.196025,
-    "ast_hash": "38426b7856864e00b3e863a20a17cfb3",
+    "mtime": 1790722673.139656,
+    "ast_hash": "c5b7c3ba8d35fc1b21ef2410d725820e",
     "semantic_hash": ""
   },
   "public_html/macsapedia.php": {
-    "mtime": 1790692787.1970062,
-    "ast_hash": "b3f79e0c8286bf6cd1cedc4d5fdaded5",
+    "mtime": 1790722673.1161308,
+    "ast_hash": "8efbe93cae07c413d0988d4b210f245a",
     "semantic_hash": ""
   },
   "public_html/migrate-orders.php": {
@@ -2210,8 +2210,8 @@
     "semantic_hash": ""
   },
   "public_html/news.php": {
-    "mtime": 1790692787.2021148,
-    "ast_hash": "b7935060aabff01c9cc7198fab718196",
+    "mtime": 1790722673.0802555,
+    "ast_hash": "c7c45790243198018f1e1ce9c7a6e0d8",
     "semantic_hash": ""
   },
   "public_html/redis.php": {
@@ -5375,8 +5375,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branch-intro/component.php": {
-    "mtime": 1790692789.4380426,
-    "ast_hash": "e838b1c4499a368bb59c4cb0672c0a7b",
+    "mtime": 1790722651.933236,
+    "ast_hash": "b8de7001e245bd637005c7b7b071e3a3",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/branches/map-picker.php": {
@@ -5390,8 +5390,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/ceo-office/component.php": {
-    "mtime": 1789998934.0029705,
-    "ast_hash": "dd9e05fd9ffd6ba774ed3d024e4b6848",
+    "mtime": 1790722652.02384,
+    "ast_hash": "986af8baf9b21e2da95f46550b5d54d8",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/ceo-office/meta.json": {
@@ -5430,8 +5430,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/patientoption/component.php": {
-    "mtime": 1790692789.5292993,
-    "ast_hash": "019e36acffa03fab7544777d9a0c0e4a",
+    "mtime": 1790722651.771846,
+    "ast_hash": "98238b63bd2406d4173e6935848857aa",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/patientoption/meta.json": {
@@ -5440,8 +5440,8 @@
     "semantic_hash": ""
   },
   "public_html/dashboard/components/stand-order/component.php": {
-    "mtime": 1790692789.5602314,
-    "ast_hash": "d4977a3833d7bb7409c96d4f8d8642d8",
+    "mtime": 1790722651.870968,
+    "ast_hash": "fba33c5145b079f501d0f1bc5a6d4978",
     "semantic_hash": ""
   },
   "public_html/dashboard/components/stand-order/meta.json": {
@@ -5565,23 +5565,23 @@
     "semantic_hash": ""
   },
   "public_html/event-news.php": {
-    "mtime": 1790692787.1791463,
-    "ast_hash": "9efe0d170a464072e3574ceb187bc662",
+    "mtime": 1790722673.197659,
+    "ast_hash": "eef22fd73f3bf0c00ff963dea19e8289",
     "semantic_hash": ""
   },
   "public_html/event.php": {
-    "mtime": 1790692787.186424,
-    "ast_hash": "b4f3dbc74ba4f5120f6c7d4bcd3dae31",
+    "mtime": 1790722673.2211835,
+    "ast_hash": "86b46311ff5547e9ff7d103eb599a509",
     "semantic_hash": ""
   },
   "public_html/events.php": {
-    "mtime": 1790692787.1903222,
-    "ast_hash": "fbf9aeaaca661636ec12b5f55fd8a2f2",
+    "mtime": 1790722673.0622537,
+    "ast_hash": "cacbeac0a61a88ee7b2dfbd073a7e0b6",
     "semantic_hash": ""
   },
   "public_html/macsa-story.php": {
-    "mtime": 1790692787.1934042,
-    "ast_hash": "d4c1f0e34c54cdc6b918483c203067da",
+    "mtime": 1790722673.1816514,
+    "ast_hash": "943a15404a0f2b903e01585181916cf0",
     "semantic_hash": ""
   },
   "public_html/network.php": {
@@ -6467,6 +6467,51 @@
   "public_html/favicon.png": {
     "mtime": 1789852956.6303153,
     "ast_hash": "e0a24e18fdd86d5edb9b20fa625620de",
+    "semantic_hash": ""
+  },
+  "public_html/course-checkout.php": {
+    "mtime": 1790718631.9428806,
+    "ast_hash": "21cfba0110b340943a685310062fa9a5",
+    "semantic_hash": ""
+  },
+  "public_html/course-db.php": {
+    "mtime": 1790718631.9428806,
+    "ast_hash": "ff8e21da492bc6ad957f8fe3f5ea3fde",
+    "semantic_hash": ""
+  },
+  "public_html/course-details.php": {
+    "mtime": 1790718631.9428806,
+    "ast_hash": "a578cc5dbae00b8e714e363bf9cad212",
+    "semantic_hash": ""
+  },
+  "public_html/course-learn.php": {
+    "mtime": 1790718631.9428806,
+    "ast_hash": "238b6b7f9aaec33e509e23c8b1b95e6e",
+    "semantic_hash": ""
+  },
+  "public_html/course-my.php": {
+    "mtime": 1790718631.9428806,
+    "ast_hash": "f46b1b46aba8d8cdeb41c00c078306d6",
+    "semantic_hash": ""
+  },
+  "public_html/course-ui.php": {
+    "mtime": 1790718631.9441776,
+    "ast_hash": "caceb33a9eb2a4c45c30a5e4154e1693",
+    "semantic_hash": ""
+  },
+  "public_html/courses.php": {
+    "mtime": 1790718631.9441776,
+    "ast_hash": "bb863b528d1cb1372e95d53af22bc8bc",
+    "semantic_hash": ""
+  },
+  "public_html/sitemap.php": {
+    "mtime": 1790718631.9476843,
+    "ast_hash": "e94fa6983ba26ffde089813f8b28c80c",
+    "semantic_hash": ""
+  },
+  "public_html/robots.txt": {
+    "mtime": 1790718631.9476843,
+    "ast_hash": "b1f6e4aeee40f28694cfef9e10211a37",
     "semantic_hash": ""
   }
 }

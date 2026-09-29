@@ -136,7 +136,7 @@ body {
   direction: rtl;
   font-family: inherit;
   color: #ffffff;
-  padding-top: 80px;
+  padding-top: 56px;
 
   background:
     radial-gradient(circle at 12% 10%, rgba(255,255,255,0.24), transparent 34%),
@@ -385,7 +385,7 @@ body {
 
 .gf-contact {
   max-width: 1200px;
-  margin: 62px auto 0;
+  margin: 40px auto 0;
   padding: 28px 20px;
 
   display: grid;

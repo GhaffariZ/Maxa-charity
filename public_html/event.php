@@ -205,7 +205,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   .event-hero {
     background: radial-gradient(circle at 15% 25%, #0d7a87 0%, #0A5C66 70%, #053b42 100%);
     color: #FFFFFF;
-    padding: 64px 0 72px;
+    padding: 44px 0 48px;
     position: relative;
     overflow: hidden;
   }

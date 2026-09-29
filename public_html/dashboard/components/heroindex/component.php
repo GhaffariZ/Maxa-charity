@@ -1143,7 +1143,7 @@
     .cta-cards-wrap{
       position:relative;
       margin-top: -52px;
-      padding-bottom: 52px;
+      padding-bottom: 40px;
     }
 
     .cta-cards{

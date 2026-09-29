@@ -70,7 +70,7 @@
 .macsa-hero-section{
   background:transparent; /* یا کلاً این خط را حذف کن */
   width:100%;
-  padding:80px 0 70px;
+  padding:40px 0;
   text-align:center;
   font-family:'Vazirmatn', Tahoma, sans-serif;
 }
@@ -78,7 +78,7 @@
 /* عنوان */
 .macsa-hero-header{
   max-width:780px;
-  margin:0 auto 60px;
+  margin:0 auto 32px;
   padding:0 16px;
 }
 
