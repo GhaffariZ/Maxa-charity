@@ -44,34 +44,52 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^macsapedia/([a-zA-Z0-9_-]+)/?$ macsapedia-section.php?section=$1 [L,QSA]
 
 # ---------------------------------------------------------
+# 0.55) هدایت آدرس‌های قدیمی داشبورد به آدرس‌های تمیز دوره (301)
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+dashboard/courses\.php[\s?] [NC]
+RewriteRule ^dashboard/courses\.php$ /courses [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-checkout\.php[\s?] [NC]
+RewriteRule ^dashboard/course-checkout\.php$ /courses/checkout [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-my\.php[\s?] [NC]
+RewriteRule ^dashboard/course-my\.php$ /courses/my [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-learn\.php\?id=([0-9]+)[\s&] [NC]
+RewriteRule ^dashboard/course-learn\.php$ /courses/learn/%1? [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-details\.php\?id=([0-9]+)[\s&] [NC]
+RewriteRule ^dashboard/course-details\.php$ /courses/%1? [R=301,L]
+
+# ---------------------------------------------------------
 # 0.6) دوره‌ها (Courses) clean URLs
 #      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
 #      /courses/{...} به‌جای page-view.php به صفحه‌های دوره برود.
-#      /courses                 -> dashboard/courses.php (کاتالوگ)
-#      /courses/checkout        -> dashboard/course-checkout.php (سبد خرید)
-#      /courses/my              -> dashboard/course-my.php (دوره‌های من)
-#      /courses/learn/{id}      -> dashboard/course-learn.php?id={id} (پخش‌کننده)
-#      /courses/{id}            -> dashboard/course-details.php?id={id} (جزئیات)
+#      /courses                 -> courses.php (کاتالوگ)
+#      /courses/checkout        -> course-checkout.php (سبد خرید)
+#      /courses/my              -> course-my.php (دوره‌های من)
+#      /courses/learn/{id}      -> course-learn.php?id={id} (پخش‌کننده)
+#      /courses/{id}            -> course-details.php?id={id} (جزئیات)
 # ---------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^courses/?$ dashboard/courses.php [L,QSA]
+RewriteRule ^courses/?$ courses.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^courses/checkout/?$ dashboard/course-checkout.php [L,QSA]
+RewriteRule ^courses/checkout/?$ course-checkout.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^courses/my/?$ dashboard/course-my.php [L,QSA]
+RewriteRule ^courses/my/?$ course-my.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^courses/learn/([0-9]+)/?$ dashboard/course-learn.php?id=$1 [L,QSA]
+RewriteRule ^courses/learn/([0-9]+)/?$ course-learn.php?id=$1 [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^courses/([0-9]+)/?$ dashboard/course-details.php?id=$1 [L,QSA]
+RewriteRule ^courses/([0-9]+)/?$ course-details.php?id=$1 [L,QSA]
 
 # ---------------------------------------------------------
 # 0.7) تماس با ما (Contact us) clean URL

@@ -27,5 +27,25 @@ Options -Indexes
 # ---------------------------------------------------------
 RewriteCond %{THE_REQUEST} \s/dashboard/news-view\.php [NC]
 RewriteRule ^news-view\.php$ / [R=301,L]
+
+# ---------------------------------------------------------
+# Prevent direct access to public course pages from dashboard
+# (must be accessed only from /courses clean URLs)
+# ---------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+dashboard/courses\.php[\s?] [NC]
+RewriteRule ^courses\.php$ /courses [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-checkout\.php[\s?] [NC]
+RewriteRule ^course-checkout\.php$ /courses/checkout [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-my\.php[\s?] [NC]
+RewriteRule ^course-my\.php$ /courses/my [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-learn\.php\?id=([0-9]+)[\s&] [NC]
+RewriteRule ^course-learn\.php$ /courses/learn/%1? [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+dashboard/course-details\.php\?id=([0-9]+)[\s&] [NC]
+RewriteRule ^course-details\.php$ /courses/%1? [R=301,L]
+
 # ارجاع آدرس تمیز به فایل PHP
 RewriteRule ^personal-resume-detail/(.*)$ personal-resume-detail.php?name=$1 [L,QSA]
