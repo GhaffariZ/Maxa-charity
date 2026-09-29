@@ -148,11 +148,7 @@ function maxa_demo_courses(): array {
       'category'=>'برنامه‌نویسی','level'=>'beginner','price'=>1290000,'discount_price'=>790000,'is_free'=>0,
       'instructor'=>'مهندس سارا کریمی','rating'=>4.8,'students'=>2431,'status'=>'published',
       'thumbnail'=>'','duration'=>740,'lessons'=>52,
-<<<<<<< HEAD
       'accent'=>'#008f8a','created_at'=>'2025-09-12',
-=======
-      'accent'=>'#007b7a','created_at'=>'2025-09-12',
->>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
     ],
     [
       'id'=>2,'title'=>'مبانی هوش مصنوعی و یادگیری ماشین','subtitle'=>'مفاهیم پایه تا پیاده‌سازی مدل‌های واقعی با پایتون',
@@ -166,11 +162,7 @@ function maxa_demo_courses(): array {
       'category'=>'توسعه فردی','level'=>'all','price'=>0,'discount_price'=>null,'is_free'=>1,
       'instructor'=>'مریم حسینی','rating'=>4.7,'students'=>3902,'status'=>'published',
       'thumbnail'=>'','duration'=>320,'lessons'=>24,
-<<<<<<< HEAD
       'accent'=>'#faa61a','created_at'=>'2025-08-21',
-=======
-      'accent'=>'#f4a61e','created_at'=>'2025-08-21',
->>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
     ],
     [
       'id'=>4,'title'=>'دوره مقدماتی زبان انگلیسی کاربردی','subtitle'=>'مکالمه‌ی روزمره و گرامر پایه به‌زبان ساده',
@@ -262,11 +254,7 @@ function load_course_full(?PDO $pdo, bool $ready, int $id): ?array {
 
 /* پالت رنگی پایدار برای کارت‌ها بر اساس شناسه */
 function course_accent($id): string {
-<<<<<<< HEAD
   $palette = ['#008f8a','#7c4ddb','#faa61a','#16a37a','#2f9e9c','#e0556b','#3b82f6','#db8d0c'];
-=======
-  $palette = ['#007b7a','#7c4ddb','#f4a61e','#16a37a','#2f9e9c','#e0556b','#3b82f6','#db8d0c'];
->>>>>>> ac86287 (feat: add course management system with frontend and dashboard pages)
   return $palette[((int)$id) % count($palette)];
 }
 function level_label(string $lv): string {
