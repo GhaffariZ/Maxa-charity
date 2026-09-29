@@ -20,6 +20,9 @@ RewriteRule ^$ /home [R=301,L]
 # ---- Leave the API alone (handled by api/.htaccess) -----------------------------
 RewriteRule ^api(/|$) - [L]
 
+# ---- Sitemap --------------------------------------------------------------------
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
 # ---- Redirect /benefactor-dashboard  ->  /benefactor-dashboard/ ----------------
 RewriteRule ^benefactor-dashboard$ /benefactor-dashboard/ [R=301,L]
 
