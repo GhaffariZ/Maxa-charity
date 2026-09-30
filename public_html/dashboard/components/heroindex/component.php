@@ -48,13 +48,21 @@
     }
 
     /* ===== HERO ===== */
+    .cta-hero-wrap{
+      background:#0b0c10;
+      padding: 20px 16px 32px;
+    }
+
     .cta-hero{
       position:relative;
-      width:100%;
-      min-height: 640px;
+      width:min(var(--cta-container), 100%);
+      margin-inline:auto;
+      min-height: 560px;
+      border-radius: 28px;
       isolation:isolate;
       overflow:hidden;
       background:#111;
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
     }
 
     .cta-hero::before{
@@ -964,23 +972,38 @@
     .cta-content{
       position:relative;
       z-index:6;
-      padding-top: calc(var(--cta-nav-h) + 30px);
-      padding-bottom: 72px;
-      min-height: 640px;
+      padding: 32px 0;
+      min-height: 560px;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
     }
 
     .cta-content .cta-container{
       display:flex;
-      align-items:center;
-      justify-content:flex-start;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 24px;
+      flex-wrap: wrap;
     }
 
     .cta-text{
-      width:min(560px, 100%);
+      width:min(640px, 100%);
       color: var(--cta-text);
       text-align:right;
+    }
+
+    .cta-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background: rgba(250,166,26,.14);
+      border: 1px solid rgba(250,166,26,.35);
+      color: var(--cta-orange);
+      font-size:12px;
+      font-weight:700;
+      padding:6px 12px;
+      border-radius:999px;
+      margin-bottom:14px;
     }
 
     .cta-kicker{
@@ -989,14 +1012,17 @@
       margin-bottom:10px;
     }
     .cta-title{
-      font-size:52px;
-      line-height:1.15;
-      margin:0 0 14px 0;
+      font-size:40px;
+      line-height:1.25;
+      margin:0 0 12px 0;
       font-weight:800;
+      letter-spacing:-.01em;
+      text-wrap: balance;
       text-shadow: 0 10px 18px rgba(0,0,0,.20);
     }
+
     .cta-desc{
-      margin:0 0 18px 0;
+      margin:0 0 22px 0;
       color: var(--cta-muted);
       font-size:15px;
       line-height:1.9;
@@ -1045,6 +1071,7 @@
   box-shadow: var(--cta-shadow-soft);
 }
     .cta-arrow:hover{ background: rgba(0,0,0,.40); }
+    .cta-arrow:focus-visible{ outline:none; box-shadow: 0 0 0 3px rgba(250,166,26,.45); }
     .cta-arrow.prev{ right:10px; left: auto; }
     .cta-arrow.next{ left:16px; right: auto; }
     .cta-arrow svg{ width:18px; height:18px; opacity:.9; }
@@ -1073,6 +1100,7 @@
       background: var(--cta-orange);
       border-color: transparent;
     }
+    .cta-dot:focus-visible{ outline:none; box-shadow: 0 0 0 3px rgba(250,166,26,.45); }
 
     /* ===== ORANGE BAND ===== */
     .cta-band{
@@ -1379,12 +1407,12 @@
     @media (max-width: 768px) {
       .cta-hero {
         min-height: 480px;
+        border-radius: 18px;
       }
 
       .cta-content {
         min-height: 480px;
-        padding-top: calc(var(--cta-nav-h) + 24px);
-        padding-bottom: 30px;
+        padding: 24px 0;
       }
 
       .cta-content .cta-container {
@@ -1768,41 +1796,44 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     </div>
     <div class="cta-navbar-spacer" aria-hidden="true"></div>
 
-    <section class="cta-hero" aria-label="CTA Hero Slider">
+    <div class="cta-hero-wrap">
+      <section class="cta-hero" aria-label="CTA Hero Slider">
 
-      <div class="cta-slider" id="ctaSlider">
-         <div class="cta-track" id="ctaTrack">
-        </div>
-      </div>
-
-      <div class="cta-content">
-        <div class="cta-container">
-          <div class="cta-text">
-            <h1 class="cta-title" id="heroTitle"></h1>
-            <p class="cta-desc" id="heroDesc"></p>
-            <a class="cta-btn" id="heroBtn" href="#">
-              <span id="heroBtnText">مشاهده بیشتر</span>
-              <span aria-hidden="true">←</span>
-            </a>
+        <div class="cta-slider" id="ctaSlider">
+           <div class="cta-track" id="ctaTrack">
           </div>
         </div>
-      </div>
 
-      <button class="cta-arrow prev" id="ctaPrev" aria-label="اسلاید قبلی" type="button">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M9.5 5L16 12l-6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+        <div class="cta-content">
+          <div class="cta-container">
+            <div class="cta-text">
+              <span class="cta-badge"><?= iconoir('heart', '', 14) ?> مشارکت در خیریه</span>
+              <h1 class="cta-title" id="heroTitle"></h1>
+              <p class="cta-desc" id="heroDesc"></p>
+              <a class="cta-btn" id="heroBtn" href="#">
+                <span id="heroBtnText">مشاهده بیشتر</span>
+                <span aria-hidden="true">←</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
-      <button class="cta-arrow next" id="ctaNext" aria-label="اسلاید بعدی" type="button">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M14.5 5L8 12l6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+        <button class="cta-arrow prev" id="ctaPrev" aria-label="اسلاید قبلی" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9.5 5L16 12l-6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
 
-      <div class="cta-dots" id="ctaDots" aria-label="نشانگر اسلایدها"></div>
+        <button class="cta-arrow next" id="ctaNext" aria-label="اسلاید بعدی" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M14.5 5L8 12l6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
 
-    </section>
+        <div class="cta-dots" id="ctaDots" aria-label="نشانگر اسلایدها"></div>
+
+      </section>
+    </div>
 
     <section class="cta-band" aria-label="Band">
       <div class="cta-container">
