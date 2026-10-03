@@ -130,33 +130,14 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
 
-    $pageTitle = htmlspecialchars((string)$page['title'], ENT_QUOTES, 'UTF-8');
+    $meta = get_page_meta($slug, (string)$page['title'], $branchName);
+    render_html_head($meta, $branchSlug, $branchName);
 
-    $hasHeader = false;
-    foreach ($components as $c) {
-        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
-            $hasHeader = true;
-            break;
-        }
-    }
+    echo "<main id=\"main-content\" role=\"main\">\n";
+    echo_components($components, $meta['title']);
+    echo "\n</main>\n";
 
-    if (!$hasHeader) {
-        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
-        echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        echo '<title>' . $pageTitle . "</title>\n";
-        echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
-        echo "</head>\n<body>\n";
-    }
-
-    // شعبه‌ی جاری برای کامپوننت‌ها
-    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
-       . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
-
-    echo_components($components, $pageTitle);
-
-    if (!$hasHeader) {
-        echo "\n</body>\n</html>";
-    }
+    render_html_foot();
 }
 
 /**
@@ -165,32 +146,117 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
  */
 function render_branch_components(PDO $pdo, array $components, string $branchSlug, string $branchName, string $title): void
 {
-    $pageTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    $meta = get_page_meta($branchSlug ?: 'branch', $title, $branchName);
+    render_html_head($meta, $branchSlug, $branchName);
 
-    $hasHeader = false;
-    foreach ($components as $c) {
-        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
-            $hasHeader = true;
-            break;
-        }
+    echo "<main id=\"main-content\" role=\"main\">\n";
+    echo_components($components, $meta['title']);
+    echo "\n</main>\n";
+
+    render_html_foot();
+}
+
+function get_page_meta(string $slug, string $title, string $branchName = ''): array
+{
+    $defaultDesc = 'مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)؛ ارائه‌دهنده خدمات تخصصی، جامع و کاملاً رایگان مراقبت‌های حمایتی و تسکینی (پالیاتیو) به بیماران مبتلا به سرطان و خانواده‌های آنان در سراسر کشور.';
+    $cleanSlug = strtolower(trim($slug));
+
+    if ($cleanSlug === 'home' || $cleanSlug === '') {
+        return [
+            'title' => 'مکسا | مؤسسه نیکوکاری کنترل سرطان - مراقبت‌های حمایتی و تسکینی',
+            'description' => $defaultDesc,
+            'canonical' => 'https://mymacsa.ir/',
+            'is_home' => true
+        ];
     }
 
-    if (!$hasHeader) {
-        echo "<!DOCTYPE html>\n<html lang=\"fa\" dir=\"rtl\">\n<head>\n<meta charset=\"utf-8\">\n";
-        echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        echo '<title>' . $pageTitle . "</title>\n";
-        echo "<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{overflow-x:hidden}</style>\n";
-        echo "</head>\n<body>\n";
+    $cleanTitle = trim($title);
+    if ($cleanTitle === '' || $cleanTitle === 'home') {
+        $cleanTitle = 'مکسا';
     }
 
+    $fullTitle = $branchName !== ''
+        ? $cleanTitle . ' - شعبه ' . $branchName . ' | مکسا'
+        : $cleanTitle . ' | مکسا';
+
+    return [
+        'title' => $fullTitle,
+        'description' => $defaultDesc,
+        'canonical' => 'https://mymacsa.ir/' . rawurlencode($cleanSlug),
+        'is_home' => false
+    ];
+}
+
+function render_html_head(array $meta, string $branchSlug = '', string $branchName = ''): void
+{
+    static $headRendered = false;
+    if ($headRendered) return;
+    $headRendered = true;
+
+    if (!ini_get('zlib.output_compression')) {
+        @ini_set('zlib.output_compression', '1');
+    }
+
+    $title = htmlspecialchars($meta['title'], ENT_QUOTES, 'UTF-8');
+    $desc  = htmlspecialchars($meta['description'], ENT_QUOTES, 'UTF-8');
+    $canon = htmlspecialchars($meta['canonical'], ENT_QUOTES, 'UTF-8');
+    $isHome = !empty($meta['is_home']);
+
+    echo "<!DOCTYPE html>\n";
+    echo "<html lang=\"fa\" dir=\"rtl\">\n";
+    echo "<head>\n";
+    echo "<meta charset=\"utf-8\">\n";
+    echo "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
+    echo "<title>{$title}</title>\n";
+    echo "<meta name=\"description\" content=\"{$desc}\">\n";
+    echo "<link rel=\"canonical\" href=\"{$canon}\">\n";
+    echo "<meta name=\"robots\" content=\"index, follow\">\n";
+
+    // OpenGraph & Twitter
+    echo "<meta property=\"og:title\" content=\"{$title}\">\n";
+    echo "<meta property=\"og:description\" content=\"{$desc}\">\n";
+    echo "<meta property=\"og:url\" content=\"{$canon}\">\n";
+    echo "<meta property=\"og:type\" content=\"website\">\n";
+    echo "<meta property=\"og:site_name\" content=\"مکسا\">\n";
+    echo "<meta name=\"twitter:card\" content=\"summary_large_image\">\n";
+
+    // Favicon
+    echo "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\">\n";
+    echo "<link rel=\"shortcut icon\" href=\"/favicon.ico\">\n";
+
+    // Preload critical Persian font
+    echo "<link rel=\"preload\" href=\"/webfont/Vazirmatn[wght].woff2\" as=\"font\" type=\"font/woff2\" crossorigin>\n";
+
+    // Preload LCP hero image on homepage
+    if ($isHome) {
+        echo "<link rel=\"preload\" as=\"image\" href=\"/uploads/hero/hero_1790160692_9543.webp\" type=\"image/webp\">\n";
+    }
+
+    // Critical Base Styles
+    echo "<style>
+@font-face{
+  font-family:'Vazirmatn';
+  src:url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),url('/webfont/Vazirmatn[wght].woff2') format('woff2');
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{font-family:'Vazirmatn',Tahoma,sans-serif !important;color:#111;background:#fff;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto}
+</style>\n";
+
+    // Branch context for JS
     echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
-    echo_components($components, $pageTitle);
+    echo "</head>\n<body>\n";
+}
 
-    if (!$hasHeader) {
-        echo "\n</body>\n</html>";
-    }
+function render_html_foot(): void
+{
+    echo "\n</body>\n</html>";
 }
 
 /** حلقه‌ی مشترکِ رندر کردنِ کامپوننت‌ها (با اجرای صحیح PHP و جایگزینی {{imageN}}). */
@@ -218,9 +284,24 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
             include $componentPath;
             $code = ob_get_clean();
 
+            // پاکسازی تگ‌های سراسری صفحه اگر در کامپوننت وجود داشته باشند
+            $code = preg_replace('/<!doctype[^>]*>/i', '', $code);
+            $code = preg_replace('/<\/?html[^>]*>/i', '', $code);
+            $code = preg_replace('/<\/?head[^>]*>/i', '', $code);
+            $code = preg_replace('/<title\b[^>]*>.*?<\/title>/is', '', $code);
+            $code = preg_replace('/<meta[^>]*(?:charset|viewport)[^>]*>/i', '', $code);
+            $code = preg_replace('/<link[^>]*rel=[\'"](?:icon|shortcut icon)[\'"][^>]*>/i', '', $code);
+            $code = preg_replace('/<\/?body[^>]*>/i', '', $code);
+
+            // پشتیبانی از فرمت سبک‌تر WebP برای تصاویر کامپوننت‌ها
             $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) use ($cleanComponent) {
+                $compDir = __DIR__ . '/components/' . $cleanComponent . '/images/';
+                if (file_exists($compDir . $m[1] . '.webp')) {
+                    return '/dashboard/components/' . rawurlencode($cleanComponent) . '/images/' . $m[1] . '.webp';
+                }
                 return '/dashboard/components/' . rawurlencode($cleanComponent) . '/images/' . $m[1] . '.png';
             }, $code);
+
             echo $code;
         } else {
             echo '<!-- Component not found: ' . htmlspecialchars($cleanComponent, ENT_QUOTES, 'UTF-8') . ' -->';

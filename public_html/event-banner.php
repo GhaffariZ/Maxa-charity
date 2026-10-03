@@ -114,7 +114,7 @@ function event_global_banner(?PDO $pdo = null): string {
         </div>
         <a href="<?= event_h($link) ?>" class="event-banner-cta"><?= event_h(!empty($e['banner_cta']) ? $e['banner_cta'] : 'ثبت‌نام مستقیم') ?></a>
     </div>
-    <script src="/assets/events/banner.js"></script>
+    <script src="/assets/events/banner.js" defer></script>
     <?php
     return (string)ob_get_clean();
 }

@@ -54,7 +54,7 @@
 
 <!-- RIGHT -->
 <div class="maxsa-right">
-<img src="{{image1}}">
+<img src="{{image1}}" alt="داستان‌های امید و ایستادگی نجات‌یافتگان مکسا" width="600" height="600" loading="lazy" decoding="async">
 </div>
 
 </div>

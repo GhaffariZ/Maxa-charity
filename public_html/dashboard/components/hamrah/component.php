@@ -2,11 +2,11 @@
 
 <!-- عنوان -->
 <div class="macsa-hero-header">
-  <h1>
+  <h2>
     همراهی مکسا در مسیر درمان و امید
     <br>
     <span>راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور</span>
-  </h1>
+  </h2>
 
   <p>
     در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.
@@ -17,35 +17,35 @@
 
   <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/1.png" alt="شعب مکسا" loading="lazy">
+      <img src="/dashboard/components/hamrah/images/1.webp" alt="شعب مکسا" width="600" height="600" loading="lazy" decoding="async">
     </div>
     <span class="macsa-btn">شعب مکسا</span>
   </a>
 
   <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/2.png" alt="مرکز تماس کشوری" loading="lazy">
+      <img src="/dashboard/components/hamrah/images/2.webp" alt="مرکز تماس کشوری" width="600" height="600" loading="lazy" decoding="async">
     </div>
     <span class="macsa-btn">مرکز تماس کشوری</span>
   </a>
 
   <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
-      <img src="/dashboard/components/hamrah/images/3.png" alt="حامیان و داوطلبان" loading="lazy">
+      <img src="/dashboard/components/hamrah/images/3.webp" alt="حامیان و داوطلبان" width="600" height="600" loading="lazy" decoding="async">
     </div>
     <span class="macsa-btn">حامیان و داوطلبان</span>
   </a>
 
   <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/4.png" alt="کادر درمان" loading="lazy">
+      <img src="/dashboard/components/hamrah/images/4.webp" alt="کادر درمان" width="600" height="600" loading="lazy" decoding="async">
     </div>
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
   <a href="/patient-option" class="gallery-item" aria-disabled="true">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/5.png" alt="بیماران و مراقبین" loading="lazy">
+      <img src="/dashboard/components/hamrah/images/5.webp" alt="بیماران و مراقبین" width="600" height="600" loading="lazy" decoding="async">
     </div>
     <span class="macsa-btn">بیماران و مراقبین</span>
   </a>
@@ -53,7 +53,7 @@
 </div>
 
 <!-- نقاط راهنما (فقط موبایل) -->
-<div class="macsa-dots" aria-hidden="true">
+<div class="macsa-dots">
   <button class="macsa-dot" type="button" aria-label="اسلاید ۱"></button>
   <button class="macsa-dot" type="button" aria-label="اسلاید ۲"></button>
   <button class="macsa-dot" type="button" aria-label="اسلاید ۳"></button>
@@ -82,14 +82,16 @@
   padding:0 16px;
 }
 
-.macsa-hero-header h1{
+.macsa-hero-header h1,
+.macsa-hero-header h2{
   font-size:2.2rem;
   font-weight:800;
   line-height:1.4;
   margin-bottom:18px;
 }
 
-.macsa-hero-header h1 span{
+.macsa-hero-header h1 span,
+.macsa-hero-header h2 span{
   color: #008f8a;   /* سبز برند مکسا */
   font-size:0.72em; /* کمی کوچکتر از متن اصلی */
   font-weight:700;  /* وزن مشخص‌تر */
