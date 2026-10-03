@@ -8,9 +8,8 @@
  */
 declare(strict_types=1);
 
-// Send appropriate XML headers
-header('Content-Type: application/xml; charset=utf-8');
-header('X-Robots-Tag: noindex');
+// Prevent any whitespace or warnings from leaking before XML declaration
+ob_start();
 
 $baseUrl = 'https://mymacsa.ir';
 
@@ -209,4 +208,12 @@ $output = implode("\n", $xml);
 // Attempt to keep static sitemap.xml refreshed if writable
 @file_put_contents(__DIR__ . '/sitemap.xml', $output);
 
-echo $output;
+// Clear any whitespace, BOM, or notices produced during DB loading
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+
+header('Content-Type: application/xml; charset=utf-8');
+header('X-Robots-Tag: noindex');
+echo trim($output);
+exit;

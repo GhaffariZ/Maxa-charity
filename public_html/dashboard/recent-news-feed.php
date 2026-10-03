@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: public, max-age=300');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 
 function slugify_feed($text) {

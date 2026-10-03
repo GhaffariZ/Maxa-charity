@@ -2,10 +2,10 @@
   <div class="skill-hero-container">
 
     <div class="skill-hero-left">
-      <h1 class="skill-hero-title">
+      <h2 class="skill-hero-title">
         خدمات مکسا <br>
         <span>در حیطه مراقبت های حمایتی و تسکینی سرطان</span>
-      </h1>
+      </h2>
 
       <ul class="skill-hero-features">
         <li>خدمات پزشکی و مراقبتی</li>
@@ -18,7 +18,7 @@
         <li>مرکز پاسخگویی ۲۴ ساعته</li>
       </ul>
 
-      <a href="MACSAservices.html" class="skill-hero-btn">
+      <a href="/MACSAservices.html" class="skill-hero-btn">
         اطلاعات بیشتر درباره خدمات مکسا
       </a>
     </div>
@@ -28,7 +28,7 @@
       <!-- ستون ویدئو -->
       <div class="skill-video-column">
         <div class="skill-video-box">
-          <img src="{{image1}}">
+          <img src="{{image1}}" alt="تیم درمان و مراقبت در منزل مکسا" width="800" height="800" loading="lazy" decoding="async">
         </div>
 
         <div class="skill-exp-box">
@@ -39,7 +39,7 @@
 
       <!-- تصویر بلند سمت راست -->
       <div class="skill-main-image">
-        <img src="{{image2}}">
+        <img src="{{image2}}" alt="خدمات تخصصی مراقبت‌های حمایتی و تسکینی مکسا" width="600" height="800" loading="lazy" decoding="async">
       </div>
 
     </div>

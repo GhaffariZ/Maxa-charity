@@ -1,12 +1,3 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') : 'مکسا' ?></title>
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -374,7 +365,8 @@
     }
 
     /* استایل متن‌ها */
-    .mega-menu-content h6 {
+    .mega-menu-content h6,
+    .mega-menu-content .mega-col-title {
       font-weight: bold;
       margin: 0 0 12px 0;
       color: #fff;
@@ -714,7 +706,8 @@
       padding: 0;
     }
 
-    .mobile-menu .mega-col h6 {
+    .mobile-menu .mega-col h6,
+    .mobile-menu .mega-col .mega-col-title {
       color: #008f8a;
       font-size: 13px;
       font-weight: 800;
@@ -723,7 +716,8 @@
       border-bottom: 1px dashed rgba(0, 143, 138, 0.2);
     }
 
-    .mobile-menu .mega-col:first-child h6 {
+    .mobile-menu .mega-col:first-child h6,
+    .mobile-menu .mega-col:first-child .mega-col-title {
       margin-top: 0;
     }
 
@@ -1041,9 +1035,7 @@
     .cta-account-logout:hover{background:rgba(229,57,53,.28) !important;color:#fff !important}
     [hidden]{display:none !important}
   </style>
-</head>
 
-<body>
 <?php 
 require_once __DIR__ . '/../../../event-lib.php'; 
 require_once __DIR__ . '/../../../event-banner.php'; 
@@ -1058,7 +1050,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
         <div class="cta-right">
           <div class="cta-glass-underlay" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
-            <img src="/dashboard/components/header/images/1.png" alt="مکسا">
+            <img src="/dashboard/components/header/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="182" height="52" decoding="async">
           </a>
         </div>
 
@@ -1072,11 +1064,11 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="/history">آشنایی با مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>معرفی</h6>
+                      <div class="mega-col-title">معرفی</div>
                       <a href="/history">تاریخچه و نحوه تاسیس</a>
                       <a href="/mission-vision">ماموریت و چشم انداز</a>
                       <a href="/association">اساسنامه</a>
@@ -1087,12 +1079,12 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                       <a href="/network.php">شبکه همکاران</a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراکز تابعه مکسا</h6>
+                      <div class="mega-col-title">مراکز تابعه مکسا</div>
                       <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
                       <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
                     </div>
                     <div class="mega-col">
-                      <h6>گزارش‌ها</h6>
+                      <div class="mega-col-title">گزارش‌ها</div>
                       <a href="/image-gallery.html">گزارش‌های سالانه</a>
                       <a href="/video-gallery.html">صورت‌های مالی</a>
                     </div>
@@ -1101,11 +1093,11 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="javascript:void(0);">خدمات مکسا</a>
+                <a class="mega-toggle" href="/supportiveandpalliativecare">خدمات مکسا</a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
+                      <div class="mega-col-title">مراقبت های حمایتی و تسکینی</div>
                       <a href="/supportiveandpalliativecare">مفهوم مراقبت های حمایتی و تسکینی</a>
                       <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
                       <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
@@ -1113,7 +1105,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                       <a href="/doctorspage">نقش کادر درمان</a>
                     </div>
                     <div class="mega-col">
-                      <h6>مراقبت های حمایتی و تسکینی</h6>
+                      <div class="mega-col-title">مراقبت های حمایتی و تسکینی</div>
                       <a href="/medicalcare">مراقبت های پزشکی تسکینی</a>
                       <a href="/nursecare">مراقبت های پرستاری تسکینی</a>
                       <a href="/psychologicalcare">مراقبت های روانشناختی</a>
@@ -1125,16 +1117,16 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                       <a href="/medicalequipments">تامین تجهیزات پزشکی</a>
                     </div>
                     <div class="mega-col">
-                      <h6>بخش‌ها</h6>
-                      <a href="#">مراقبت در منزل</a>
-                      <a href="#">بستری</a>
-                      <a href="#">سرپایی</a>
-                      <a href="#">کلینیک</a>
+                      <div class="mega-col-title">بخش‌ها</div>
+                      <a href="/supportiveandpalliativecare">مراقبت در منزل</a>
+                      <a href="/MACSAservices.html">بستری</a>
+                      <a href="/MACSAservices.html">سرپایی</a>
+                      <a href="/MACSAservices.html">کلینیک</a>
                     </div>
                     <div class="mega-col">
-                      <h6>پذیرش بیمار</h6>
-                      <a href="#">نوبت دهی</a>
-                      <a href="#">مدارک موردنیاز</a>
+                      <div class="mega-col-title">پذیرش بیمار</div>
+                      <a href="/patientintake">نوبت دهی</a>
+                      <a href="/patientintake">مدارک موردنیاز</a>
                     </div>
                   </div>
                 </div>
@@ -1145,22 +1137,22 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <h6>همیاری مالی</h6>
+                      <div class="mega-col-title">همیاری مالی</div>
                       <a href="/onlinedonation">حمایت مالی آنلاین</a>
                       <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری اجتماعی و فرهنگی</h6>
+                      <div class="mega-col-title">همیاری اجتماعی و فرهنگی</div>
                       <a href="/under-construction.html">مسئولیت اجتماعی</a>
                       <a href="/under-construction.html">حمایت های خلاقانه و هنری</a>
                     </div>
                     <div class="mega-col">
-                      <h6>همیاری علمی و تخصصی</h6>
+                      <div class="mega-col-title">همیاری علمی و تخصصی</div>
                       <a href="/under-construction.html">حمایت علمی و تخصصی</a>
                       <a href="/under-construction.html">اهدای تجهیزات پزشکی</a>
                     </div>
                     <div class="mega-col">
-                      <h6>مشارکت داوطلبی</h6>
+                      <div class="mega-col-title">مشارکت داوطلبی</div>
                       <a href="/under-construction.html">همکاری داوطلبانه</a>
                       <a href="/under-construction.html">شرایط جذب داوطلبان</a>
                     </div>
@@ -1173,7 +1165,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               <li class="events-nav-link"><a href="/events.php">رویدادها و همایش‌ها</a></li>
               <li><a href="/macsapedia.php">مکساپدیا</a></li>
               <li><a href="/courses">دوره‌ها</a></li>
-              <li><a href="contactus.html">تماس با ما</a></li>
+              <li><a href="/contactus">تماس با ما</a></li>
             </ul>
           </nav>
         </div>
@@ -1251,7 +1243,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   <nav class="mobile-menu-sidebar" id="mobileMenu" aria-label="منوی موبایل">
     <div class="mobile-menu-header">
       <div class="mobile-menu-brand">
-        <img src="/dashboard/components/header/images/1.png" alt="مکسا">
+        <img src="/dashboard/components/header/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="182" height="52" loading="lazy" decoding="async">
       </div>
       <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
         <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
@@ -1554,5 +1546,3 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   })();
   </script>
 
-</body>
-</html>

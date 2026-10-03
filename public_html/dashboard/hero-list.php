@@ -28,6 +28,8 @@ try {
         if ($row) { $branchId = (int)$row['id']; }
     }
 
+    header('Cache-Control: public, max-age=300');
+
     // هیروهای فعالِ همان شعبه
     $stmt = $pdo->prepare(
         "SELECT title, description, image, button_link
@@ -37,6 +39,18 @@ try {
     );
     $stmt->execute([$branchId]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // جایگزینی تصویر با نسخه WebP سبک‌تر در صورت وجود
+    foreach ($data as &$slide) {
+        if (!empty($slide['image'])) {
+            $webp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $slide['image']);
+            $localWebp = dirname(__DIR__) . '/' . ltrim($webp, '/');
+            if (file_exists($localWebp)) {
+                $slide['image'] = $webp;
+            }
+        }
+    }
+    unset($slide);
 
     echo json_encode(["status" => "success", "data" => $data], JSON_UNESCAPED_UNICODE);
 
