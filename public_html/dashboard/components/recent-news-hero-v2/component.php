@@ -55,7 +55,7 @@
   const ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-size="56" font-family="Vazirmatn,Tahoma">بدون تصویر</text></svg>');
   const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
   fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
-    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز خبری برای نمایش منتشر نشده است.</span></div>'; return;}
+    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-soon">'+<?= json_encode(macsa_icon('clock', '', 40), JSON_UNESCAPED_UNICODE) ?>+'<b>به‌زودی</b><span>هنوز خبری برای نمایش منتشر نشده است.</span></div>'; return;}
     const first=items[0], rest=items.slice(1);
     grid.innerHTML='<a class="rnhv2-main" href="'+first.url+'"><img class="rnhv2-main-img" src="'+(first.image||ph)+'" alt=""><div class="rnhv2-overlay"></div><div class="rnhv2-main-content"><span class="rnhv2-badge">'+first.category+'</span><h3 class="rnhv2-main-title">'+first.title+'</h3><div class="rnhv2-meta"><span>'+fa(first.date)+'</span><span class="rnhv2-dot"></span><span>'+fa(first.read_time)+' دقیقه مطالعه</span></div></div></a><div class="rnhv2-side"></div>';
     const side=grid.querySelector('.rnhv2-side');

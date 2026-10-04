@@ -1,0 +1,10 @@
+import { LangGraphOptions } from '@sentry/core';
+/**
+ * EXPERIMENTAL — orchestrion-driven LangGraph integration. Subscribes to the diagnostics_channels
+ * injected into `@langchain/langgraph`'s `StateGraph.compile` and `createReactAgent`, so it requires
+ * the orchestrion runtime hook or bundler plugin.
+ */
+export declare const langGraphChannelIntegration: (options?: LangGraphOptions | undefined) => import("@sentry/core").Integration & {
+    name: "LangGraph";
+};
+//# sourceMappingURL=langgraph.d.ts.map

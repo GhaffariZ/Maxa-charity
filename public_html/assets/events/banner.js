@@ -36,23 +36,6 @@
     // Add helper class on body
     document.body.classList.add('has-event-banner');
 
-    let frame = 0;
-    function updatePosition() {
-        frame = 0;
-        if (!banner.isConnected) {
-            root.style.removeProperty('--event-banner-offset');
-            document.body.classList.remove('has-event-banner');
-            return;
-        }
-        const rect = banner.getBoundingClientRect();
-        const offset = Math.max(0, Math.round(rect.bottom));
-        root.style.setProperty('--event-banner-offset', offset + 'px');
-    }
-
-    function schedulePosition() {
-        if (!frame) frame = requestAnimationFrame(updatePosition);
-    }
-
     const output = banner.querySelector('.event-banner-count');
     const fa = n => String(Math.max(0, n)).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 
@@ -84,31 +67,15 @@
     }
 
     try { tick(); } catch (e) { console.error('Banner tick err:', e); }
-    updatePosition();
 
     const timer = setInterval(tick, 60000);
-    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(schedulePosition) : null;
-    if (observer) observer.observe(banner);
-
-    window.addEventListener('scroll', schedulePosition, {passive: true});
-    window.addEventListener('resize', schedulePosition);
-    window.addEventListener('pageshow', schedulePosition);
-    window.addEventListener('load', schedulePosition);
-    document.addEventListener('DOMContentLoaded', schedulePosition, {once: true});
-
     const close = banner.querySelector('.event-banner-dismiss');
     if (close) {
         close.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             try { sessionStorage.setItem(key, String(Date.now())); } catch (_) {}
-            if (observer) observer.disconnect();
             clearInterval(timer);
-            cancelAnimationFrame(frame);
-            window.removeEventListener('scroll', schedulePosition);
-            window.removeEventListener('resize', schedulePosition);
-            window.removeEventListener('pageshow', schedulePosition);
-            window.removeEventListener('load', schedulePosition);
             if (banner.parentNode) banner.parentNode.removeChild(banner);
             root.style.removeProperty('--event-banner-offset');
             document.body.classList.remove('has-event-banner');

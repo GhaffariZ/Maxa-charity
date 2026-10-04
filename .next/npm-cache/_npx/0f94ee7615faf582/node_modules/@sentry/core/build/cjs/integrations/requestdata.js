@@ -1,0 +1,168 @@
+Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+
+const currentScopes = require('../currentScopes.js');
+const integration = require('../integration.js');
+const semanticAttributes = require('../semanticAttributes.js');
+const cookie = require('../utils/cookie.js');
+const filterQueryParams = require('../utils/data-collection/filterQueryParams.js');
+const filterUrlQuery = require('../utils/data-collection/filterUrlQuery.js');
+const request = require('../utils/request.js');
+const getIpAddress = require('../vendor/getIpAddress.js');
+const captureSpan = require('../tracing/spans/captureSpan.js');
+const attributes = require('@sentry/conventions/attributes');
+
+const INTEGRATION_NAME = "RequestData";
+const _requestDataIntegration = ((options = {}) => {
+  function resolveIncludeAndDataCollection(client) {
+    const dc = client.getDataCollectionOptions();
+    const dataCollection = {
+      ...dc,
+      ...options.include?.cookies === true && dc.cookies === false && { cookies: true },
+      ...options.include?.headers === true && dc.httpHeaders.request === false && {
+        httpHeaders: { ...dc.httpHeaders, request: true }
+      },
+      ...options.include?.query_string === true && dc.urlQueryParams === false && { urlQueryParams: true }
+    };
+    return {
+      dataCollection,
+      include: {
+        cookies: dataCollection.cookies !== false,
+        // Always attach body data that's already on the scope — dataCollection.httpBodies gates write-time, not read-time
+        data: true,
+        headers: dataCollection.httpHeaders.request !== false,
+        ip: dataCollection.userInfo,
+        query_string: dataCollection.urlQueryParams !== false,
+        // No dataCollection equivalent — URL is always included
+        url: true,
+        ...options.include
+      }
+    };
+  }
+  return {
+    name: INTEGRATION_NAME,
+    processEvent(event, _hint, client) {
+      const { sdkProcessingMetadata = {} } = event;
+      const { normalizedRequest, ipAddress } = sdkProcessingMetadata;
+      const { include, dataCollection } = resolveIncludeAndDataCollection(client);
+      if (normalizedRequest) {
+        addNormalizedRequestDataToEvent(event, normalizedRequest, { ipAddress }, include, dataCollection);
+      }
+      return event;
+    },
+    processSegmentSpan(span, client) {
+      const { sdkProcessingMetadata = {} } = currentScopes.getIsolationScope().getScopeData();
+      const { normalizedRequest, ipAddress } = sdkProcessingMetadata;
+      if (!normalizedRequest) {
+        return;
+      }
+      const { include, dataCollection } = resolveIncludeAndDataCollection(client);
+      addNormalizedRequestDataToSpan(span, normalizedRequest, ipAddress, include, dataCollection);
+    }
+  };
+});
+const requestDataIntegration = integration.defineIntegration(_requestDataIntegration);
+function addNormalizedRequestDataToEvent(event, req, additionalData, include, dataCollection) {
+  const requestData = extractNormalizedRequestData(req, include);
+  if (requestData.query_string) {
+    requestData.query_string = normalizeAndFilterQueryString(requestData.query_string, dataCollection.urlQueryParams);
+  }
+  if (requestData.url) {
+    requestData.url = filterUrlQuery.filterUrlQuery(requestData.url, dataCollection.urlQueryParams);
+  }
+  event.request = {
+    ...event.request,
+    ...requestData
+  };
+  if (include.ip) {
+    const ip = req.headers && getIpAddress.getClientIPAddress(req.headers) || additionalData.ipAddress;
+    if (ip) {
+      event.user = {
+        ...event.user,
+        ip_address: ip
+      };
+    }
+  }
+}
+function addNormalizedRequestDataToSpan(span, normalizedRequest, ipAddress, include, dataCollection) {
+  const requestData = extractNormalizedRequestData(normalizedRequest, include);
+  const attributes$1 = {};
+  if (requestData.url) {
+    attributes$1[attributes.URL_FULL] = filterUrlQuery.filterUrlQuery(requestData.url, dataCollection.urlQueryParams);
+  }
+  if (requestData.method) {
+    attributes$1["http.request.method"] = requestData.method;
+  }
+  if (requestData.query_string) {
+    attributes$1[attributes.URL_QUERY] = normalizeAndFilterQueryString(requestData.query_string, dataCollection.urlQueryParams);
+  }
+  captureSpan.safeSetSpanJSONAttributes(span, attributes$1);
+  if (requestData.cookies && Object.keys(requestData.cookies).length > 0) {
+    const cookieString = Object.entries(requestData.cookies).map(([name, value]) => `${name}=${value}`).join("; ");
+    const cookieAttributes = request.httpHeadersToSpanAttributes({ cookie: cookieString }, dataCollection, "request");
+    captureSpan.safeSetSpanJSONAttributes(span, cookieAttributes);
+  }
+  if (requestData.headers) {
+    const headerAttributes = request.httpHeadersToSpanAttributes(requestData.headers, dataCollection, "request");
+    captureSpan.safeSetSpanJSONAttributes(span, headerAttributes);
+  }
+  if (requestData.data != null) {
+    const serialized = typeof requestData.data === "string" ? requestData.data : JSON.stringify(requestData.data);
+    if (serialized) {
+      captureSpan.safeSetSpanJSONAttributes(span, { "http.request.body.data": serialized });
+    }
+  }
+  if (include.ip) {
+    const ip = normalizedRequest.headers && getIpAddress.getClientIPAddress(normalizedRequest.headers) || ipAddress || void 0;
+    if (ip) {
+      captureSpan.safeSetSpanJSONAttributes(span, { [semanticAttributes.SEMANTIC_ATTRIBUTE_USER_IP_ADDRESS]: ip });
+    }
+  }
+}
+function extractNormalizedRequestData(normalizedRequest, include) {
+  const requestData = {};
+  const headers = { ...normalizedRequest.headers };
+  if (include.headers) {
+    requestData.headers = headers;
+    if (!include.cookies) {
+      delete headers.cookie;
+    }
+    if (!include.ip) {
+      const ipHeaderNamesLower = new Set(getIpAddress.ipHeaderNames.map((name) => name.toLowerCase()));
+      for (const key of Object.keys(headers)) {
+        if (ipHeaderNamesLower.has(key.toLowerCase())) {
+          delete headers[key];
+        }
+      }
+    }
+  }
+  requestData.method = normalizedRequest.method;
+  if (include.url) {
+    requestData.url = normalizedRequest.url;
+  }
+  if (include.cookies) {
+    const cookies = normalizedRequest.cookies || (headers?.cookie ? cookie.parseCookie(headers.cookie) : void 0);
+    requestData.cookies = cookies || {};
+  }
+  if (include.query_string) {
+    requestData.query_string = normalizedRequest.query_string;
+  }
+  if (include.data) {
+    requestData.data = normalizedRequest.data;
+  }
+  return requestData;
+}
+function normalizeAndFilterQueryString(queryString, behavior) {
+  const normalized = normalizeQueryString(queryString);
+  return normalized ? filterQueryParams.filterQueryParams(normalized, behavior) : void 0;
+}
+function normalizeQueryString(queryString) {
+  if (typeof queryString === "string") {
+    return queryString || void 0;
+  }
+  const pairs = Array.isArray(queryString) ? queryString : Object.entries(queryString);
+  const normalized = new URLSearchParams(pairs).toString();
+  return normalized || void 0;
+}
+
+exports.requestDataIntegration = requestDataIntegration;
+//# sourceMappingURL=requestdata.js.map

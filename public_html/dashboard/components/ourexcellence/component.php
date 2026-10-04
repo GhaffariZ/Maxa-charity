@@ -373,47 +373,8 @@ gap:10px 14px;
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  const counters = document.querySelectorAll(".travel-stats-section .travel-number");
-  if (!counters.length) return;
-
-  const startCounter = (counter) => {
-    const target = parseInt(counter.dataset.target, 10);
-    if (isNaN(target)) return;
-
-    const duration = 1800; // ms
-    const startTime = performance.now();
-
-    const updateCount = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const currentVal = Math.floor(ease * target);
-      
-      counter.innerText = currentVal.toLocaleString('fa-IR');
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCount);
-      } else {
-        counter.innerText = target.toLocaleString('fa-IR');
-      }
-    };
-
-    requestAnimationFrame(updateCount);
-  };
-
-  const section = document.querySelector(".travel-stats-section");
-  if (!section) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        counters.forEach((counter) => startCounter(counter));
-        observer.disconnect();
-      }
-    });
-  }, { threshold: 0.2 });
-
-  observer.observe(section);
+document.querySelectorAll('.travel-number').forEach(counter => {
+  const target = Number(counter.dataset.target);
+  if (Number.isFinite(target)) counter.textContent = target.toLocaleString('fa-IR');
 });
 </script>

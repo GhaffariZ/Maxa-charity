@@ -1,0 +1,1 @@
+{"version":3,"file":"s3.d.ts","sourceRoot":"","sources":["../../../../../../src/integrations/tracing-channel/aws-sdk/services/s3.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,iBAAiB,EAAE,MAAM,UAAU,CAAC;AAClD,OAAO,KAAK,EAAE,eAAe,EAAE,gBAAgB,EAAE,MAAM,oBAAoB,CAAC;AAE5E,qBAAa,kBAAmB,YAAW,gBAAgB;IAClD,kBAAkB,CAAC,OAAO,EAAE,iBAAiB,GAAG,eAAe;CAavE"}

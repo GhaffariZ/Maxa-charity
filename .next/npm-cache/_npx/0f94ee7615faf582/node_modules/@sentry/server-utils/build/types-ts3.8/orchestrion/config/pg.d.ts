@@ -1,0 +1,35 @@
+import { InstrumentationConfig } from '..';
+export declare const pgConfig: ({
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Auto";
+        expressionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        expressionName: string;
+        kind: "Auto";
+        className?: undefined;
+        methodName?: undefined;
+    };
+})[];
+export declare const pgChannels: {
+    readonly PG_QUERY: "orchestrion:pg:query";
+    readonly PG_CONNECT: "orchestrion:pg:connect";
+    readonly PGPOOL_CONNECT: "orchestrion:pg-pool:connect";
+};
+export declare const pgSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=pg.d.ts.map

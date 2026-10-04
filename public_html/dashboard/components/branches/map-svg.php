@@ -461,16 +461,16 @@ a.branch-pin-link.is-hovered .branch-pill-text,
 }
 </style>
 <g id="layercountry" transform="translate(-14.397255,-27.439554)">
-  <g class="province-item is-inactive is-island"><path id="path4392" class="province-shape is-inactive" d="path4392" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4406" class="province-shape is-inactive" d="path4406" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4408" class="province-shape is-inactive" d="path4408" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4410" class="province-shape is-inactive" d="path4410" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4412" class="province-shape is-inactive" d="path4412" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4414" class="province-shape is-inactive" d="path4414" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4416" class="province-shape is-inactive" d="path4416" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4418" class="province-shape is-inactive" d="path4418" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4420" class="province-shape is-inactive" d="path4420" /></g>
-  <g class="province-item is-inactive is-island"><path id="path4422" class="province-shape is-inactive" d="path4422" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4392" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4406" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4408" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4410" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4412" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4414" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4416" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4418" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4420" class="province-shape is-inactive" d="" /></g>
+  <g class="province-item is-inactive is-island"><path id="path4422" class="province-shape is-inactive" d="" /></g>
   <g class="province-item is-inactive is-island"><polygon id="polygon11" class="province-shape is-inactive" points="408.247,752.618 407.35,752.419 407.449,753.817 408.149,755.919 409.048,757.419 409.447,756.317 409.647,755.017 409.747,753.618 409.447,752.618 409.048,753.017 408.747,753.017 " /></g>
   <g class="province-item is-inactive is-island"><polygon id="polygon12" class="province-shape is-inactive" points="626.149,942.118 626.149,941.519 626.046,941.019 625.149,940.718 623.046,940.417 622.046,940.116 620.849,940.017 619.849,940.317 618.948,941.017 618.349,942.017 619.546,944.017 621.446,945.017 626.246,945.317 626.849,944.917 627.149,944.116 627.046,943.317 626.649,942.917 626.248,942.618 " /></g>
   <g class="province-item is-inactive is-island"><polygon id="polygon13" class="province-shape is-inactive" points="768.852,902.618 767.852,902.919 766.749,904.419 766.548,906.218 768.448,906.919 769.349,906.817 770.149,906.317 770.749,905.716 770.948,904.817 770.649,903.817 770.149,903.317 769.451,903.118 " /></g>

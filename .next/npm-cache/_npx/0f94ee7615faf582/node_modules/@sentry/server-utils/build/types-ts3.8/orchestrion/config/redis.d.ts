@@ -1,0 +1,39 @@
+import { InstrumentationConfig } from '..';
+export declare const redisConfig: ({
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        expressionName: string;
+        kind: "Sync";
+        className?: undefined;
+        methodName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Async";
+        expressionName?: undefined;
+    };
+})[];
+export declare const redisChannels: {
+    readonly REDIS_COMMAND: "orchestrion:redis:command";
+    readonly NODE_REDIS_COMMAND: "orchestrion:@redis/client:command";
+    readonly NODE_REDIS_EXECUTOR: "orchestrion:@redis/client:executor";
+    readonly NODE_REDIS_CONNECT: "orchestrion:@redis/client:connect";
+    readonly NODE_REDIS_MULTI: "orchestrion:@redis/client:multi";
+    readonly NODE_REDIS_PIPELINE: "orchestrion:@redis/client:pipeline";
+    readonly NODE_REDIS_BATCH: "orchestrion:@redis/client:batch";
+};
+export declare const redisSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=redis.d.ts.map

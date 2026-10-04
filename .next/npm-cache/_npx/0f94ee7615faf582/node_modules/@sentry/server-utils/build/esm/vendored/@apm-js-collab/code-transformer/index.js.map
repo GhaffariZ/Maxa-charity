@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../../../../../../../node_modules/@apm-js-collab/code-transformer/index.js"],"sourcesContent":["'use strict'\n\nmodule.exports = require('./lib')\n"],"names":["require$$0"],"mappings":";;AAEA,CAAA,CAAA,CAAA,CAAA,eAAO,CAAA,CAAA,CAAUA,CAAAA,CAAAA,CAAAA;;","x_google_ignoreList":[0]}

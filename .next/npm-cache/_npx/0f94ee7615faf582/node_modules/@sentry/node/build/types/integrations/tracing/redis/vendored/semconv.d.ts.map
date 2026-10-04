@@ -1,0 +1,1 @@
+{"version":3,"file":"semconv.d.ts","sourceRoot":"","sources":["../../../../../../src/integrations/tracing/redis/vendored/semconv.ts"],"names":[],"mappings":"AAkBA,eAAO,MAAM,yBAAyB,yBAAyB,CAAC;AAChE,eAAO,MAAM,0BAA0B,UAAU,CAAC;AAClD,eAAO,MAAM,qBAAqB,UAAU,CAAC"}

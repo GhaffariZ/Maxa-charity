@@ -1,11 +1,19 @@
+<?php
+if (defined('MACSA_PUBLIC_HEADER')) return;
+define('MACSA_PUBLIC_HEADER', true);
+require_once __DIR__ . '/../../../core/public-icons.php';
+require_once __DIR__ . '/../../../core/icons.php';
+?>
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)، همراه بیماران و خانواده‌ها در مسیر مراقبت‌های حمایتی و تسکینی سرطان." />
   <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') : 'مکسا' ?></title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="preload" as="font" href="/webfont/Vazirmatn[wght].woff2" type="font/woff2" crossorigin>
 
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -1041,9 +1049,12 @@
     .cta-account-logout:hover{background:rgba(229,57,53,.28) !important;color:#fff !important}
     [hidden]{display:none !important}
   </style>
+<?php if (!empty($macsaHeroContext)): ?><link rel="preload" as="image" href="/uploads/hero/hero_1780827718_9482.png.webp" type="image/webp" fetchpriority="high" media="(min-width: 768px)"><link rel="preload" as="image" href="/uploads/hero/hero_1780827718_9482.mobile.webp" type="image/webp" fetchpriority="high" media="(max-width: 767px)"><?php endif; ?>
+<style><?php readfile(__DIR__ . '/../../../assets/public-site.css'); ?></style>
+<script src="/assets/public-site.js" defer></script>
 </head>
 
-<body>
+<body class="macsa-public">
 <?php 
 require_once __DIR__ . '/../../../event-lib.php'; 
 require_once __DIR__ . '/../../../event-banner.php'; 
@@ -1058,7 +1069,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
         <div class="cta-right">
           <div class="cta-glass-underlay" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
-            <img src="/dashboard/components/header/images/1.png" alt="مکسا">
+            <img width="182" height="52" src="/dashboard/components/header/images/1.png" alt="مکسا">
           </a>
         </div>
 
@@ -1179,34 +1190,32 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
         </div>
 
         <div class="cta-left">
-          <div class="menu-icon" id="menuToggle" aria-label="منوی موبایل">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
+          <button type="button" class="menu-icon" id="menuToggle" aria-label="منوی موبایل" aria-controls="mobileMenu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
 
           <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
             کمک آنلاین
           </a>
 
           <div class="cta-auth-slot">
-            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
+            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/">
               ورود / ثبت‌نام
             </a>
 
             <div class="cta-account js-cta-account" hidden>
               <button class="cta-account-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="حساب کاربری">
                 <span class="cta-account-avatar js-acc-avatar">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <?= macsa_icon('user', '', 24) ?>
                 </span>
                 <span class="cta-account-name js-acc-name">حساب کاربری</span>
-                <svg class="cta-account-caret" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <?= macsa_icon('chevron-down', 'cta-account-caret', 24) ?>
               </button>
 
               <div class="cta-account-menu" role="menu">
                 <div class="cta-account-head">
                   <span class="cta-account-avatar js-acc-avatar-lg">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <?= macsa_icon('user', '', 24) ?>
                   </span>
                   <div>
                     <strong class="js-acc-fullname">کاربر مکسا</strong>
@@ -1215,24 +1224,24 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                 </div>
 
                 <a role="menuitem" href="/benefactor-dashboard/">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+                  <?= macsa_icon('layout-dashboard', '', 24) ?>
                   داشبورد من
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/profile">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <?= macsa_icon('user', '', 24) ?>
                   پروفایل کاربری
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/history">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10h18" stroke="currentColor" stroke-width="2"/></svg>
+                  <?= macsa_icon('credit-card', '', 18) ?>
                   پرداخت‌های من
                 </a>
                 <a role="menuitem" href="/onlinedonation">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <?= macsa_icon('heart', '', 24) ?>
                   کمک آنلاین
                 </a>
 
                 <button type="button" class="cta-account-logout js-cta-logout" role="menuitem">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17l-5-5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <?= macsa_icon('logout', '', 24) ?>
                   خروج از حساب
                 </button>
               </div>
@@ -1251,22 +1260,20 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   <nav class="mobile-menu-sidebar" id="mobileMenu" aria-label="منوی موبایل">
     <div class="mobile-menu-header">
       <div class="mobile-menu-brand">
-        <img src="/dashboard/components/header/images/1.png" alt="مکسا">
+        <img width="182" height="52" src="/dashboard/components/header/images/1.png" alt="مکسا">
       </div>
       <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
-        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <?= macsa_icon('x', '', 18) ?>
       </button>
     </div>
 
     <div class="mobile-menu-actions">
       <a class="mobile-action-donate" href="/onlinedonation">
-        <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <?= macsa_icon('heart', '', 17) ?>
         کمک آنلاین
       </a>
       <a class="mobile-action-auth js-mobile-login" href="/benefactor-dashboard/">
-        <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <?= macsa_icon('user', '', 17) ?>
         ورود / ثبت‌نام
       </a>
     </div>
@@ -1275,7 +1282,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 
     <div class="mobile-menu-footer">
       <div class="mobile-footer-info">
-        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
+        <?= macsa_icon('phone', '', 24) ?>
         <span>پشتیبانی: <a href="tel:02191092030" dir="ltr" style="display:inline-block; font-family:inherit; color:inherit; text-decoration:none; unicode-bidi:isolate;">021-91092030</a></span>
       </div>
       <div class="mobile-footer-tagline">مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</div>
@@ -1283,142 +1290,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   </nav>
   <div class="mobile-backdrop" id="mobileBackdrop"></div>
 
-  <script>
-  (function(){
-    const toggleBtn = document.getElementById("menuToggle");
-    const closeBtn = document.getElementById("mobileMenuClose");
-    const menu = document.getElementById("mobileMenu");
-    const backdrop = document.getElementById("mobileBackdrop");
 
-    if(!toggleBtn || !menu) return;
-
-    function openMenu(){
-      menu.classList.add("open");
-      if(backdrop) backdrop.classList.add("show");
-      toggleBtn.classList.add("active");
-      document.body.classList.add("mobile-menu-open");
-    }
-
-    function closeMenu(){
-      menu.classList.remove("open");
-      if(backdrop) backdrop.classList.remove("show");
-      toggleBtn.classList.remove("active");
-      document.body.classList.remove("mobile-menu-open");
-    }
-
-    toggleBtn.addEventListener("click", function(e){
-      e.stopPropagation();
-      menu.classList.contains("open") ? closeMenu() : openMenu();
-    });
-
-    if(closeBtn) closeBtn.addEventListener("click", closeMenu);
-    if(backdrop) backdrop.addEventListener("click", closeMenu);
-
-    document.querySelectorAll(".toggle-sub").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        const sub = btn.nextElementSibling;
-        if(sub) sub.classList.toggle("active");
-      });
-    });
-
-    // مگا منو دسکتاپ: باز/بسته شدن با هاور
-    (function () {
-      const DELAY = 200; // مدت ماندگاری (ms)
-      const menus = document.querySelectorAll(".mega-menu");
-
-      menus.forEach(function (menu) {
-        let closeTimer = null;
-
-        function openMenu() {
-          if (closeTimer) {
-            clearTimeout(closeTimer);
-            closeTimer = null;
-          }
-
-          // بستن فوری بقیه مگا منوها بدون تاخیر
-          menus.forEach(function (other) {
-            if (other !== menu) {
-              if (other.__closeTimer__) {
-                clearTimeout(other.__closeTimer__);
-                other.__closeTimer__ = null;
-              }
-              other.classList.remove("open");
-            }
-          });
-
-          menu.classList.add("open");
-        }
-
-        function closeMenu() {
-          if (closeTimer) clearTimeout(closeTimer);
-
-          closeTimer = setTimeout(function () {
-            menu.classList.remove("open");
-            closeTimer = null;
-            menu.__closeTimer__ = null;
-          }, DELAY);
-
-          menu.__closeTimer__ = closeTimer;
-        }
-
-        const toggle = menu.querySelector(".mega-toggle");
-        const content = menu.querySelector(".mega-menu-content");
-
-        if (toggle) {
-          toggle.addEventListener("mouseenter", openMenu);
-          toggle.addEventListener("mouseleave", closeMenu);
-        }
-
-        if (content) {
-          content.addEventListener("mouseenter", openMenu);
-          content.addEventListener("mouseleave", closeMenu);
-        }
-      });
-    })();
-
-    document.addEventListener("DOMContentLoaded", function(){
-      const desktopMenu = document.querySelector(".cta-menu");
-      const container = document.getElementById("mobileMenuContainer");
-
-      if(!desktopMenu || !container) return;
-
-      // کپی کامل منو در کانتینر مخصوص اسکرول سایدبار
-      const clonedMenu = desktopMenu.cloneNode(true);
-      clonedMenu.classList.remove("cta-menu");
-      clonedMenu.classList.add("mobile-menu");
-      container.appendChild(clonedMenu);
-
-      // تبدیل مگا منو به آکاردئون
-      container.querySelectorAll(".mega-menu").forEach(function(item){
-        const toggle = item.querySelector(".mega-toggle");
-        const content = item.querySelector(".mega-menu-content");
-
-        if(toggle && content){
-          toggle.addEventListener("click", function(e){
-            e.preventDefault();
-            content.classList.toggle("active");
-            toggle.classList.toggle("open");
-          });
-        }
-      });
-
-      // هدر همیشه ثابت و قابل مشاهده؛ فقط ظاهر «جداشده» هنگام اسکرول
-      (function() {
-        const topbar = document.querySelector(".cta-topbar");
-        if (!topbar) return;
-
-        window.addEventListener("scroll", function() {
-          // اگر اسکرول بیشتر از 50 پیکسل بود هدر جدا شود (بدون مخفی شدن)
-          if (window.scrollY > 50) {
-            topbar.classList.add("scrolled");
-          } else {
-            topbar.classList.remove("scrolled");
-          }
-        });
-      })();
-    });
-  })();
-  </script>
 
   <!-- ===== وضعیت ورود کاربر: تبدیل دکمه «ورود/ثبت‌نام» به منوی حساب کاربری ===== -->
   <script>
@@ -1458,7 +1330,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
       var mobLogin = document.querySelector('.js-mobile-login');
       if(mobLogin){
         mobLogin.href = '/benefactor-dashboard/';
-        mobLogin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> داشبورد من';
+        mobLogin.innerHTML = ''+<?= json_encode(macsa_icon('layout-dashboard', '', 17), JSON_UNESCAPED_UNICODE) ?>+' داشبورد من';
       }
 
       if(!account) return;
@@ -1514,9 +1386,8 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
       if(!slots.length) return;
 
       // فقط در صورتی که نشانه لاگین وجود داشته باشد تلاش برای رفرش انجام می‌شود تا خطای ۴۰۱ برای مهمان در کنسول ثبت نشود
-      var hasSession = document.cookie.indexOf('maksa_session=1') !== -1 ||
-                       localStorage.getItem('maksa_logged') === '1' ||
-                       sessionStorage.getItem('maxa_access_token');
+      var hasSession = document.cookie.indexOf('maksa_session=1') !== -1;
+      try { hasSession = hasSession || localStorage.getItem('maksa_logged') === '1' || sessionStorage.getItem('maxa_access_token'); } catch (_) {}
       if(!hasSession) return;
 
       // با کوکی رفرش (httpOnly) یک access_token تازه می‌گیریم؛ این کار نشست را هم تمدید می‌کند.
@@ -1553,6 +1424,3 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     });
   })();
   </script>
-
-</body>
-</html>

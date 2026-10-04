@@ -249,7 +249,9 @@ function buildLocalPlaceholderImageDetail($text = 'بدون تصویر') {
 function getFooterHTML() {
     $footerFile = __DIR__ . '/components/footer/component.php';
     if (file_exists($footerFile)) {
-        $code = file_get_contents($footerFile);
+        ob_start();
+        require $footerFile;
+        $code = ob_get_clean();
         $code = str_replace('{{image1}}', '/dashboard/components/footer/images/1.png', $code);
         return $code;
     }
@@ -1143,5 +1145,3 @@ document.addEventListener('DOMContentLoaded', () => {
 // بارگذاری فوتر سراسری اصلاح‌شده
 echo getFooterHTML();
 ?>
-</body>
-</html>

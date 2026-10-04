@@ -1,0 +1,3 @@
+declare const codeTransformerLoader: (this: unknown, code: string, inputSourceMap?: unknown) => void;
+export default codeTransformerLoader;
+//# sourceMappingURL=webpack-loader.d.ts.map

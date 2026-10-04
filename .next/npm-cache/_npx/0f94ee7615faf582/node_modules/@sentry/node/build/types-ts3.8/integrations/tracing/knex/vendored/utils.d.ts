@@ -1,0 +1,9 @@
+export declare const getFormatter: (runner: any) => any;
+export declare const mapSystem: (knexSystem: string) => string;
+export declare const getName: (db: string, operation?: string, table?: string) => string;
+export declare const limitLength: (str: string, maxLength: number) => string;
+export declare const extractDatabaseFromConnectionString: (connectionString?: string) => string | undefined;
+export declare const extractHostFromConnectionString: (connectionString?: string) => string | undefined;
+export declare const extractPortFromConnectionString: (connectionString?: string) => number | undefined;
+export declare const extractTableName: (builder: any) => string;
+//# sourceMappingURL=utils.d.ts.map

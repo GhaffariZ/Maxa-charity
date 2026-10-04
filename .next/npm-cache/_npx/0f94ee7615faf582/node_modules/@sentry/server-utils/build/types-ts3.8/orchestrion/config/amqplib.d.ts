@@ -1,0 +1,68 @@
+import { InstrumentationConfig } from '..';
+export declare const amqplibConfig: ({
+    channelName: string;
+    module: {
+        filePath: string;
+        name: "amqplib";
+        versionRange: ">=0.5.5 <2";
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Sync";
+        functionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        filePath: string;
+        name: "amqplib";
+        versionRange: ">=0.5.5 <2";
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Callback";
+        functionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        filePath: string;
+        name: "amqplib";
+        versionRange: ">=0.5.5 <2";
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Async";
+        functionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        filePath: string;
+        name: "amqplib";
+        versionRange: ">=0.5.5 <2";
+    };
+    functionQuery: {
+        functionName: string;
+        kind: "Callback";
+        className?: undefined;
+        methodName?: undefined;
+    };
+})[];
+export declare const amqplibChannels: {
+    readonly AMQPLIB_PUBLISH: "orchestrion:amqplib:publish";
+    readonly AMQPLIB_CONFIRM_PUBLISH: "orchestrion:amqplib:confirmPublish";
+    readonly AMQPLIB_CONSUME: "orchestrion:amqplib:consume";
+    readonly AMQPLIB_DISPATCH: "orchestrion:amqplib:dispatch";
+    readonly AMQPLIB_ACK: "orchestrion:amqplib:ack";
+    readonly AMQPLIB_NACK: "orchestrion:amqplib:nack";
+    readonly AMQPLIB_REJECT: "orchestrion:amqplib:reject";
+    readonly AMQPLIB_ACK_ALL: "orchestrion:amqplib:ackAll";
+    readonly AMQPLIB_NACK_ALL: "orchestrion:amqplib:nackAll";
+    readonly AMQPLIB_CONNECT: "orchestrion:amqplib:connect";
+};
+export declare const amqplibSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=amqplib.d.ts.map

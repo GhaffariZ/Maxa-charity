@@ -1,0 +1,29 @@
+import type { Span } from '@sentry/core';
+/** The subset of mongoose's `Collection` that the legacy span shape reads. */
+export interface MongooseLegacyCollection {
+    name?: string;
+    conn?: {
+        name?: string;
+        user?: string;
+        host?: string;
+        port?: number;
+    };
+}
+export interface StartMongooseLegacySpanOptions {
+    collection: MongooseLegacyCollection | undefined;
+    modelName: string | undefined;
+    operation: string;
+    /** Span origin: distinguishes the OTel/IITM caller from orchestrion */
+    origin: string;
+    parentSpan?: Span;
+}
+/**
+ * Start a mongoose client span with the legacy (pre-stable) db/net semantic
+ * conventions.
+ *
+ * Shared by the vendored OTel/IITM instrumentation (`@sentry/node`) and the
+ * orchestrion channel subscriber so the two emit an identical span shape,
+ * differing only by `origin`.
+ */
+export declare function startMongooseLegacySpan({ collection, modelName, operation, origin, parentSpan, }: StartMongooseLegacySpanOptions): Span;
+//# sourceMappingURL=mongoose-legacy-span.d.ts.map

@@ -1,0 +1,15 @@
+/**
+ * EXPERIMENTAL — orchestrion-driven aws-sdk (v3) integration.
+ *
+ * Subscribes to the `orchestrion:@smithy/smithy-client:send` (and equivalent) diagnostics_channel
+ * the orchestrion code transform injects into the AWS SDK's smithy `Client.prototype.send`, emitting
+ * spans identical to the OTel `@opentelemetry/instrumentation-aws-sdk` integration (with a distinct
+ * `auto.aws.orchestrion.aws_sdk` origin). Requires the orchestrion runtime hook or bundler plugin —
+ * wire it up via `experimentalUseDiagnosticsChannelInjection()`.
+ *
+ * @experimental
+ */
+export declare const awsChannelIntegration: () => import("@sentry/core").Integration & {
+    name: "Aws";
+};
+//# sourceMappingURL=index.d.ts.map

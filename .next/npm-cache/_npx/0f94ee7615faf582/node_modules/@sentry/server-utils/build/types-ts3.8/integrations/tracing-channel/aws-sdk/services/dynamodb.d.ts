@@ -1,0 +1,8 @@
+import { Span } from '@sentry/core';
+import { NormalizedRequest, NormalizedResponse } from '../types';
+import { RequestMetadata, ServiceExtension } from './ServiceExtension';
+export declare class DynamodbServiceExtension implements ServiceExtension {
+    requestPreSpanHook(normalizedRequest: NormalizedRequest): RequestMetadata;
+    responseHook(response: NormalizedResponse, span: Span): void;
+}
+//# sourceMappingURL=dynamodb.d.ts.map

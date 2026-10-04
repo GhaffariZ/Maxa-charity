@@ -1,0 +1,7 @@
+/**
+ * Records a Session for the current process to track release health.
+ */
+export declare const processSessionIntegration: () => import("@sentry/core").Integration & {
+    name: "ProcessSession";
+};
+//# sourceMappingURL=processSession.d.ts.map

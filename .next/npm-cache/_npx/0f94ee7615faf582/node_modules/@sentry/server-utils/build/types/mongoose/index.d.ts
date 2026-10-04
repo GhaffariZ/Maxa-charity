@@ -1,0 +1,13 @@
+export type { MongooseLegacyCollection, StartMongooseLegacySpanOptions } from './mongoose-legacy-span';
+export { startMongooseLegacySpan } from './mongoose-legacy-span';
+/**
+ * Auto-instrument the [mongoose](https://www.npmjs.com/package/mongoose) library via its native
+ * `node:diagnostics_channel` tracing channels (mongoose >= 9.7).
+ *
+ * On older mongoose versions the channels are never published to, so this integration is inert and
+ * the IITM-based patcher (gated to `< 9.7.0`) handles instrumentation instead.
+ */
+export declare const mongooseIntegration: () => import("@sentry/core").Integration & {
+    name: string;
+};
+//# sourceMappingURL=index.d.ts.map

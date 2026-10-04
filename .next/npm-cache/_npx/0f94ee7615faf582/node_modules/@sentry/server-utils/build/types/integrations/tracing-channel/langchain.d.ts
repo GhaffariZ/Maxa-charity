@@ -1,0 +1,10 @@
+import type { LangChainOptions } from '@sentry/core';
+/**
+ * EXPERIMENTAL — orchestrion-driven LangChain integration. Subscribes to the diagnostics_channels
+ * injected into `@langchain/core`'s `BaseChatModel` (to inject the Sentry callback handler) and into
+ * `@langchain/openai`'s embedding methods, so it requires the orchestrion runtime hook or bundler plugin.
+ */
+export declare const langChainChannelIntegration: (options?: LangChainOptions | undefined) => import("@sentry/core").Integration & {
+    name: "LangChain";
+};
+//# sourceMappingURL=langchain.d.ts.map

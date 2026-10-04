@@ -1,0 +1,58 @@
+Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+
+const subscribeInjection = require('./subscribe-injection.js');
+
+const remixInstrumentationConfig = (dir) => [
+  // `createRequestHandler` returns `async function requestHandler(request, loadContext)` — the main
+  // server span. We target the returned handler (so the span wraps each request, not the one-time
+  // handler construction). It's a *named function expression*, which name-based `functionQuery`
+  // can't match (that only sees declarations), so we select it with `astQuery`; `functionQuery`
+  // then just carries the behaviour (`kind: 'Async'`).
+  {
+    channelName: "requestHandler",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.0.0 <3", filePath: `${dir}/server.js` },
+    astQuery: 'FunctionExpression[id.name="requestHandler"]',
+    functionQuery: { kind: "Async" }
+  },
+  // Sync; the subscriber reads its result to set `http.route` on the active request span.
+  {
+    channelName: "matchServerRoutes",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.0.0 <3", filePath: `${dir}/routeMatching.js` },
+    functionQuery: { functionName: "matchServerRoutes", kind: "Sync" }
+  },
+  // Remix >= 2.9.0
+  {
+    channelName: "callRouteLoader",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.9.0 <3", filePath: `${dir}/data.js` },
+    functionQuery: { functionName: "callRouteLoader", kind: "Async" }
+  },
+  {
+    channelName: "callRouteAction",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.9.0 <3", filePath: `${dir}/data.js` },
+    functionQuery: { functionName: "callRouteAction", kind: "Async" }
+  },
+  // Remix 2.0.0 – 2.8.x: the same functions were suffixed `…RR`. Same channels as above.
+  {
+    channelName: "callRouteLoader",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.0.0 <2.9.0", filePath: `${dir}/data.js` },
+    functionQuery: { functionName: "callRouteLoaderRR", kind: "Async" }
+  },
+  {
+    channelName: "callRouteAction",
+    module: { name: "@remix-run/server-runtime", versionRange: ">=2.0.0 <2.9.0", filePath: `${dir}/data.js` },
+    functionQuery: { functionName: "callRouteActionRR", kind: "Async" }
+  }
+];
+const remixConfig = ["dist", "dist/esm"].flatMap(remixInstrumentationConfig);
+const remixChannels = {
+  REMIX_REQUEST_HANDLER: "orchestrion:@remix-run/server-runtime:requestHandler",
+  REMIX_MATCH_SERVER_ROUTES: "orchestrion:@remix-run/server-runtime:matchServerRoutes",
+  REMIX_CALL_ROUTE_LOADER: "orchestrion:@remix-run/server-runtime:callRouteLoader",
+  REMIX_CALL_ROUTE_ACTION: "orchestrion:@remix-run/server-runtime:callRouteAction"
+};
+const remixSubscribeInjection = subscribeInjection.toSubscribeInjections(remixConfig);
+
+exports.remixChannels = remixChannels;
+exports.remixConfig = remixConfig;
+exports.remixSubscribeInjection = remixSubscribeInjection;
+//# sourceMappingURL=remix.js.map

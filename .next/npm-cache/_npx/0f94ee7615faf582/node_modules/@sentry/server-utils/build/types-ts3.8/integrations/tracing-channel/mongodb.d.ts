@@ -1,0 +1,12 @@
+/**
+ * EXPERIMENTAL: orchestrion-driven mongodb integration.
+ *
+ * Reproduces the vendored `@opentelemetry/instrumentation-mongodb` span shape
+ * (legacy db/net semantic conventions, `mongodb.<op>` names, scrubbed
+ * `db.statement`) via the `orchestrion:mongodb:*` diagnostics_channels
+ * injected by the orchestrion code transform.
+ */
+export declare const mongodbChannelIntegration: () => import("@sentry/core").Integration & {
+    name: "Mongo";
+};
+//# sourceMappingURL=mongodb.d.ts.map

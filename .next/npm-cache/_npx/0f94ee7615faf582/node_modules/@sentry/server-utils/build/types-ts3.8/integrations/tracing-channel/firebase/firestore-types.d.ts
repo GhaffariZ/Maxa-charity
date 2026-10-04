@@ -1,0 +1,38 @@
+export interface FirebaseOptions {
+    [key: string]: unknown;
+    apiKey?: string;
+    projectId?: string;
+    appId?: string;
+    messagingSenderId?: string;
+    storageBucket?: string;
+}
+export interface FirebaseApp {
+    name: string;
+    options: FirebaseOptions;
+}
+export interface FirestoreSettings {
+    host?: string;
+}
+interface FirestoreLike {
+    app: FirebaseApp;
+    toJSON: () => {
+        settings?: FirestoreSettings;
+    };
+}
+export interface DocumentReference {
+    id: string;
+    firestore: FirestoreLike;
+    type: string;
+    path: string;
+    parent: CollectionReference | null;
+}
+export interface CollectionReference {
+    id: string;
+    firestore: FirestoreLike;
+    type: string;
+    path: string;
+    parent: DocumentReference | null;
+}
+export type FirestoreReference = CollectionReference | DocumentReference;
+export {};
+//# sourceMappingURL=firestore-types.d.ts.map

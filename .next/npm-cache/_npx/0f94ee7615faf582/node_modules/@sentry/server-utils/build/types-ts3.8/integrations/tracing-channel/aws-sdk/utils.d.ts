@@ -1,0 +1,5 @@
+import { CommandInput, NormalizedRequest } from './types';
+export declare function removeSuffixFromStringIfExists(str: string, suffixToRemove: string): string;
+export declare function normalizeV3Request(serviceName: string, commandNameWithSuffix: string, commandInput: CommandInput, region: string | undefined): NormalizedRequest;
+export declare function extractAttributesFromNormalizedRequest(normalizedRequest: NormalizedRequest): Record<string, unknown>;
+//# sourceMappingURL=utils.d.ts.map

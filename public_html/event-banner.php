@@ -103,7 +103,7 @@ function event_global_banner(?PDO $pdo = null): string {
 
     ob_start();
     ?>
-    <link rel="stylesheet" href="/assets/events/banner.css">
+    <style><?php readfile(__DIR__ . '/assets/events/banner.css'); ?></style>
     <div class="event-global-banner" style="--banner-bg:<?= $bg ?>;--banner-text:<?= $text ?>;--banner-accent:<?= $accent ?>"
          data-banner-id="<?= (int)($e['id'] ?? 1) ?>" data-banner-target="<?= event_h($target) ?>" role="status">
         <?= $dismiss ?>
@@ -114,7 +114,7 @@ function event_global_banner(?PDO $pdo = null): string {
         </div>
         <a href="<?= event_h($link) ?>" class="event-banner-cta"><?= event_h(!empty($e['banner_cta']) ? $e['banner_cta'] : 'ثبت‌نام مستقیم') ?></a>
     </div>
-    <script src="/assets/events/banner.js"></script>
+    <script src="/assets/events/banner.js" defer></script>
     <?php
     return (string)ob_get_clean();
 }

@@ -1,0 +1,20 @@
+import { InstrumentationConfig } from '..';
+export declare const openaiConfig: {
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Auto";
+    };
+}[];
+export declare const openaiChannels: {
+    readonly OPENAI_CHAT: "orchestrion:openai:chat";
+    readonly OPENAI_EMBEDDINGS: "orchestrion:openai:embeddings";
+};
+export declare const openaiSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=openai.d.ts.map

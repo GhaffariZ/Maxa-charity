@@ -1,0 +1,31 @@
+import { InstrumentationConfig } from '..';
+export declare const graphqlConfig: ({
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        functionName: string;
+        kind: "Sync";
+    };
+} | {
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        functionName: string;
+        kind: "Auto";
+    };
+})[];
+export declare const graphqlChannels: {
+    readonly GRAPHQL_PARSE: "orchestrion:graphql:parse";
+    readonly GRAPHQL_VALIDATE: "orchestrion:graphql:validate";
+    readonly GRAPHQL_EXECUTE: "orchestrion:graphql:execute";
+};
+export declare const graphqlSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=graphql.d.ts.map

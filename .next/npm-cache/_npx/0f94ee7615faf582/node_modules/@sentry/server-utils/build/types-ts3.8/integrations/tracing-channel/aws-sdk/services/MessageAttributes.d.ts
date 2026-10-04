@@ -1,0 +1,23 @@
+import { SerializedTraceData } from '@sentry/core';
+import { SNS, SQS } from '../aws-sdk.types';
+export declare const MAX_MESSAGE_ATTRIBUTES = 10;
+export interface AwsSdkContextObject {
+    [key: string]: {
+        StringValue?: string;
+        Value?: string;
+    };
+}
+/**
+ * Inject trace-propagation headers (from `getTraceData({ span })`) into an SQS/SNS message-attribute
+ * map, so the consumer can continue the trace. Respects the SQS 10-attribute quota. Mirrors the OTel
+ * integration's `injectPropagationContext`, but writes Sentry's `sentry-trace`/`baggage` instead of
+ * W3C headers. Callers pass the precomputed headers so batch sends serialize them only once.
+ */
+export declare function injectPropagationContext(attributesMap: SQS.MessageBodyAttributeMap | SNS.MessageAttributeMap | undefined, traceData: SerializedTraceData): SQS.MessageBodyAttributeMap | SNS.MessageAttributeMap;
+/** Read the propagation headers back off a received SQS message, if present. */
+export declare function extractPropagationHeaders(message: SQS.Message): {
+    sentryTrace?: string;
+    baggage?: string;
+} | undefined;
+export declare function addPropagationFieldsToAttributeNames(messageAttributeNames?: string[]): string[];
+//# sourceMappingURL=MessageAttributes.d.ts.map

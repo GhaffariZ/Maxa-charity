@@ -1,0 +1,10 @@
+import type { Span } from '@sentry/core';
+import type { NormalizedRequest, NormalizedResponse, RequestMetadata } from '../types';
+import type { ServiceExtension } from './ServiceExtension';
+export declare class ServicesExtensions implements ServiceExtension {
+    private _services;
+    requestPreSpanHook(request: NormalizedRequest): RequestMetadata;
+    requestPostSpanHook(request: NormalizedRequest, span: Span): void;
+    responseHook(response: NormalizedResponse, span: Span): void;
+}
+//# sourceMappingURL=ServicesExtensions.d.ts.map

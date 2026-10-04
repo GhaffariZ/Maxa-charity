@@ -1,0 +1,1 @@
+{"version":3,"file":"koa.d.ts","sourceRoot":"","sources":["../../../../src/integrations/tracing-channel/koa.ts"],"names":[],"mappings":"AAyEA,MAAM,WAAW,4BAA4B;IAC3C,+EAA+E;IAC/E,gBAAgB,CAAC,EAAE,KAAK,CAAC,YAAY,GAAG,QAAQ,CAAC,CAAC;CACnD;AAmLD;;;;;GAKG;AACH,eAAO,MAAM,qBAAqB;;CAA4C,CAAC"}

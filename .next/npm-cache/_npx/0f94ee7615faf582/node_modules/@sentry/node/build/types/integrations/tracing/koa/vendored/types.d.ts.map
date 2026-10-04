@@ -1,0 +1,1 @@
+{"version":3,"file":"types.d.ts","sourceRoot":"","sources":["../../../../../../src/integrations/tracing/koa/vendored/types.ts"],"names":[],"mappings":"AASA,OAAO,KAAK,EAAE,qBAAqB,EAAE,MAAM,gCAAgC,CAAC;AAE5E,oBAAY,YAAY;IACtB,MAAM,WAAW;IACjB,UAAU,eAAe;CAC1B;AAED;;GAEG;AACH,MAAM,WAAW,wBAAyB,SAAQ,qBAAqB;IACrE,iDAAiD;IACjD,gBAAgB,CAAC,EAAE,YAAY,EAAE,CAAC;CACnC"}

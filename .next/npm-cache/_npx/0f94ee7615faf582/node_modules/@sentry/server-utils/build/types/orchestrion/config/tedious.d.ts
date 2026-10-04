@@ -1,0 +1,13 @@
+import type { InstrumentationConfig } from '..';
+export declare const tediousConfig: InstrumentationConfig[];
+export declare const tediousChannels: {
+    readonly TEDIOUS_CONNECT: "orchestrion:tedious:connect";
+    readonly TEDIOUS_EXEC_SQL: "orchestrion:tedious:execSql";
+    readonly TEDIOUS_EXEC_SQL_BATCH: "orchestrion:tedious:execSqlBatch";
+    readonly TEDIOUS_CALL_PROCEDURE: "orchestrion:tedious:callProcedure";
+    readonly TEDIOUS_EXEC_BULK_LOAD: "orchestrion:tedious:execBulkLoad";
+    readonly TEDIOUS_PREPARE: "orchestrion:tedious:prepare";
+    readonly TEDIOUS_EXECUTE: "orchestrion:tedious:execute";
+};
+export declare const tediousSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=tedious.d.ts.map

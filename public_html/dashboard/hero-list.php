@@ -37,6 +37,15 @@ try {
     );
     $stmt->execute([$branchId]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($data as &$slide) {
+        $image = (string)($slide['image'] ?? '');
+        if (preg_match('~^/uploads/hero/[a-z0-9_-]+\.(?:png|jpe?g)$~i', $image) && is_file(__DIR__ . '/..' . $image . '.webp')) {
+            $slide['image_webp'] = $image . '.webp';
+            $mobile = preg_replace('/\.(?:png|jpe?g)$/i', '.mobile.webp', $image);
+            if (is_file(__DIR__ . '/..' . $mobile)) $slide['image_mobile'] = $mobile;
+        }
+    }
+    unset($slide);
 
     echo json_encode(["status" => "success", "data" => $data], JSON_UNESCAPED_UNICODE);
 

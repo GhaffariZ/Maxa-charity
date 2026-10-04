@@ -1,0 +1,1 @@
+{"version":3,"file":"webpack-loader.d.ts","sourceRoot":"","sources":["../../../../src/orchestrion/bundler/webpack-loader.ts"],"names":[],"mappings":"AASA,QAAA,MAAM,qBAAqB,EAAE,CAAC,IAAI,EAAE,OAAO,EAAE,IAAI,EAAE,MAAM,EAAE,cAAc,CAAC,EAAE,OAAO,KAAK,IAC7D,CAAC;AAE5B,eAAe,qBAAqB,CAAC"}

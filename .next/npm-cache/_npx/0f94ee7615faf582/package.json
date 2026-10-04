@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "lighthouse": "^13.5.0"
+  },
+  "_npx": {
+    "packages": [
+      "lighthouse"
+    ]
+  }
+}

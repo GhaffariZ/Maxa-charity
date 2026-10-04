@@ -1,0 +1,33 @@
+import type { InstrumentationConfig } from '..';
+export declare const genericPoolConfig: ({
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        className: string;
+        methodName: string;
+        kind: "Auto";
+        expressionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: string;
+    };
+    functionQuery: {
+        expressionName: string;
+        kind: "Callback";
+        className?: undefined;
+        methodName?: undefined;
+    };
+})[];
+export declare const genericPoolChannels: {
+    readonly GENERIC_POOL_ACQUIRE: "orchestrion:generic-pool:acquire";
+};
+export declare const genericPoolSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=generic-pool.d.ts.map

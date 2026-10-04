@@ -1,0 +1,43 @@
+import type { InstrumentationConfig } from '..';
+export declare const firebaseConfig: ({
+    channelName: "add-doc" | "get-docs" | "set-doc" | "delete-doc";
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: RegExp;
+    };
+    functionQuery: {
+        functionName: "addDoc" | "getDocs" | "setDoc" | "deleteDoc";
+        kind: "Auto";
+    };
+} | {
+    channelName: "http-request" | "http-call" | "firestore-created" | "firestore-updated" | "firestore-deleted" | "firestore-written" | "scheduler" | "storage-finalized" | "storage-archived" | "storage-deleted" | "storage-metadata-updated";
+    module: {
+        name: string;
+        versionRange: string;
+        filePath: "lib/v2/providers/https.js" | "lib/v2/providers/firestore.js" | "lib/v2/providers/scheduler.js" | "lib/v2/providers/storage.js";
+    };
+    functionQuery: {
+        functionName: "onRequest" | "onCall" | "onDocumentCreated" | "onDocumentCreatedWithAuthContext" | "onDocumentUpdated" | "onDocumentUpdatedWithAuthContext" | "onDocumentDeleted" | "onDocumentDeletedWithAuthContext" | "onDocumentWritten" | "onDocumentWrittenWithAuthContext" | "onSchedule" | "onObjectFinalized" | "onObjectArchived" | "onObjectDeleted" | "onObjectMetadataUpdated";
+        kind: "Sync";
+    };
+})[];
+export declare const firebaseChannels: {
+    readonly FIREBASE_FIRESTORE_ADD_DOC: "orchestrion:@firebase/firestore:add-doc";
+    readonly FIREBASE_FIRESTORE_GET_DOCS: "orchestrion:@firebase/firestore:get-docs";
+    readonly FIREBASE_FIRESTORE_SET_DOC: "orchestrion:@firebase/firestore:set-doc";
+    readonly FIREBASE_FIRESTORE_DELETE_DOC: "orchestrion:@firebase/firestore:delete-doc";
+    readonly FIREBASE_FUNCTIONS_HTTP_REQUEST: "orchestrion:firebase-functions:http-request";
+    readonly FIREBASE_FUNCTIONS_HTTP_CALL: "orchestrion:firebase-functions:http-call";
+    readonly FIREBASE_FUNCTIONS_FIRESTORE_CREATED: "orchestrion:firebase-functions:firestore-created";
+    readonly FIREBASE_FUNCTIONS_FIRESTORE_UPDATED: "orchestrion:firebase-functions:firestore-updated";
+    readonly FIREBASE_FUNCTIONS_FIRESTORE_DELETED: "orchestrion:firebase-functions:firestore-deleted";
+    readonly FIREBASE_FUNCTIONS_FIRESTORE_WRITTEN: "orchestrion:firebase-functions:firestore-written";
+    readonly FIREBASE_FUNCTIONS_SCHEDULER: "orchestrion:firebase-functions:scheduler";
+    readonly FIREBASE_FUNCTIONS_STORAGE_FINALIZED: "orchestrion:firebase-functions:storage-finalized";
+    readonly FIREBASE_FUNCTIONS_STORAGE_ARCHIVED: "orchestrion:firebase-functions:storage-archived";
+    readonly FIREBASE_FUNCTIONS_STORAGE_DELETED: "orchestrion:firebase-functions:storage-deleted";
+    readonly FIREBASE_FUNCTIONS_STORAGE_METADATA_UPDATED: "orchestrion:firebase-functions:storage-metadata-updated";
+};
+export declare const firebaseSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=firebase.d.ts.map

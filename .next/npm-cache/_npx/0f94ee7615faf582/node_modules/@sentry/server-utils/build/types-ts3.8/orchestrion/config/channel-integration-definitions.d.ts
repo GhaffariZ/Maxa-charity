@@ -1,0 +1,139 @@
+/**
+ * Build-time metadata mapping each instrumented package (orchestrion
+ * `module.name`) to the channel-subscriber integration that consumes the
+ * channels injected into it — by the `exportName` it is published under from
+ * `@sentry/server-utils/orchestrion`.
+ *
+ * Kept in a separate, factory-free module on purpose: the subscribe-injection
+ * transform (reachable from every orchestrion bundler plugin) reads this to
+ * generate the tiny snippet it injects into each instrumented file, and must
+ * not drag any subscriber code — or its `@sentry/core` span machinery — into
+ * the plugin's own build to do so.
+ *
+ * `exportName` must be a named export of `@sentry/server-utils/orchestrion`.
+ * `modules` must match `module.name` values in `SENTRY_INSTRUMENTATIONS` — e.g.
+ * `postgresChannelIntegration` covers both `pg` and `pg-pool`, and
+ * `redisChannelIntegration` both `redis` and `@redis/client`.
+ *
+ * `redis`, `ioredis` and `dataloader` are included even though they're not in
+ * the node SDK's `channelIntegrations` (they only partially replace an OTel
+ * integration there): in a bundler-only runtime like Cloudflare Workers there
+ * is no OTel integration to coordinate with, so subscribing whenever the
+ * package is bundled is unconditionally correct.
+ */
+export declare const CHANNEL_INTEGRATION_DEFINITIONS: readonly [
+    {
+        readonly exportName: "postgresChannelIntegration";
+        readonly modules: readonly [
+            "pg",
+            "pg-pool"
+        ];
+    },
+    {
+        readonly exportName: "postgresJsChannelIntegration";
+        readonly modules: readonly [
+            "postgres"
+        ];
+    },
+    {
+        readonly exportName: "mysqlChannelIntegration";
+        readonly modules: readonly [
+            "mysql"
+        ];
+    },
+    {
+        readonly exportName: "mysql2ChannelIntegration";
+        readonly modules: readonly [
+            "mysql2"
+        ];
+    },
+    {
+        readonly exportName: "genericPoolChannelIntegration";
+        readonly modules: readonly [
+            "generic-pool"
+        ];
+    },
+    {
+        readonly exportName: "lruMemoizerChannelIntegration";
+        readonly modules: readonly [
+            "lru-memoizer"
+        ];
+    },
+    {
+        readonly exportName: "openaiChannelIntegration";
+        readonly modules: readonly [
+            "openai"
+        ];
+    },
+    {
+        readonly exportName: "anthropicChannelIntegration";
+        readonly modules: readonly [
+            "@anthropic-ai/sdk"
+        ];
+    },
+    {
+        readonly exportName: "googleGenAIChannelIntegration";
+        readonly modules: readonly [
+            "@google/genai"
+        ];
+    },
+    {
+        readonly exportName: "vercelAiChannelIntegration";
+        readonly modules: readonly [
+            "ai"
+        ];
+    },
+    {
+        readonly exportName: "amqplibChannelIntegration";
+        readonly modules: readonly [
+            "amqplib"
+        ];
+    },
+    {
+        readonly exportName: "hapiChannelIntegration";
+        readonly modules: readonly [
+            "@hapi/hapi"
+        ];
+    },
+    {
+        readonly exportName: "expressChannelIntegration";
+        readonly modules: readonly [
+            "express",
+            "router"
+        ];
+    },
+    {
+        readonly exportName: "graphqlChannelIntegration";
+        readonly modules: readonly [
+            "graphql"
+        ];
+    },
+    {
+        readonly exportName: "kafkajsChannelIntegration";
+        readonly modules: readonly [
+            "kafkajs"
+        ];
+    },
+    {
+        readonly exportName: "redisChannelIntegration";
+        readonly modules: readonly [
+            "redis",
+            "@redis/client"
+        ];
+    },
+    {
+        readonly exportName: "ioredisChannelIntegration";
+        readonly modules: readonly [
+            "ioredis"
+        ];
+    },
+    {
+        readonly exportName: "dataloaderChannelIntegration";
+        readonly modules: readonly [
+            "dataloader"
+        ];
+    }
+];
+/** Look up the subscriber export name for an instrumented package, if any. */
+export declare function subscriberExportForModule(moduleName: string): string | undefined;
+//# sourceMappingURL=channel-integration-definitions.d.ts.map

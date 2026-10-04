@@ -1,0 +1,27 @@
+export { SEMANTIC_ATTRIBUTE_SENTRY_GRAPHQL_OPERATION } from './semanticAttributes';
+export { getRequestSpanData } from './utils/getRequestSpanData';
+export { OpenTelemetryClient } from './types';
+export { wrapClientClass } from './custom/client';
+export { getSpanKind } from './utils/getSpanKind';
+export { getScopesFromContext } from './utils/contextData';
+export { spanHasAttributes, spanHasEvents, spanHasKind, spanHasName, spanHasParentId, spanHasStatus, } from './utils/spanTypes';
+export { getDynamicSamplingContextFromSpan } from '@sentry/core';
+export { isSentryRequestSpan } from './utils/isSentryRequest';
+export { enhanceDscWithOpenTelemetryRootSpanName } from './utils/enhanceDscWithOpenTelemetryRootSpanName';
+export { getActiveSpan } from './utils/getActiveSpan';
+export { startSpan, startSpanManual, startInactiveSpan, withActiveSpan, continueTrace, getTraceContextForScope, } from './trace';
+export { suppressTracing } from './utils/suppressTracing';
+export { setupEventContextTrace } from './setupEventContextTrace';
+export { wrapContextManagerClass } from './contextManager';
+export { SentryPropagator, shouldPropagateTraceForUrl } from './propagator';
+export { SentrySpanProcessor } from './spanProcessor';
+export { SentrySampler, wrapSamplingDecision } from './sampler';
+export { applyOtelSpanData } from './applyOtelSpanData';
+export { backfillStreamedSpanDataFromOtel } from './utils/backfillStreamedSpanData';
+export { SentryTracerProvider } from './tracerProvider';
+export { OpenTelemetryTracerProvider } from './types';
+export { openTelemetrySetupCheck, setIsSetup } from './utils/setupCheck';
+export { getSentryResource } from './resource';
+export { withStreamedSpan } from '@sentry/core';
+export { getClient } from '@sentry/core';
+//# sourceMappingURL=exports.d.ts.map

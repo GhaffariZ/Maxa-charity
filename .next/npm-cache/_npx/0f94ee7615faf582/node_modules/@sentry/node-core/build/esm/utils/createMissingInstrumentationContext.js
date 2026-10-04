@@ -1,0 +1,11 @@
+const createMissingInstrumentationContext = (pkg) => {
+  let isCjs;
+  isCjs = false;
+  return {
+    package: pkg,
+    "javascript.is_cjs": isCjs
+  };
+};
+
+export { createMissingInstrumentationContext };
+//# sourceMappingURL=createMissingInstrumentationContext.js.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"semconv.d.ts","sourceRoot":"","sources":["../../../../../../src/integrations/tracing/knex/vendored/semconv.ts"],"names":[],"mappings":"AASA;;GAEG;AACH,eAAO,MAAM,iBAAiB,EAAG,cAAuB,CAAC;AAEzD,eAAO,MAAM,2BAA2B,EAAG,QAAiB,CAAC;AAE7D,eAAO,MAAM,+BAA+B,EAAG,YAAqB,CAAC"}

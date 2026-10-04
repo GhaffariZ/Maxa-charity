@@ -1,0 +1,72 @@
+[
+  {
+    "width": 1440,
+    "colorScheme": "light",
+    "scroll": 1440,
+    "hero": 646,
+    "cta": 538.4375
+  },
+  {
+    "width": 1440,
+    "colorScheme": "dark",
+    "scroll": 1440,
+    "hero": 646,
+    "cta": 538.4375
+  },
+  {
+    "width": 1024,
+    "colorScheme": "light",
+    "scroll": 1024,
+    "hero": 624,
+    "cta": 505.15625
+  },
+  {
+    "width": 1024,
+    "colorScheme": "dark",
+    "scroll": 1024,
+    "hero": 624,
+    "cta": 505.15625
+  },
+  {
+    "width": 768,
+    "colorScheme": "light",
+    "scroll": 768,
+    "hero": 589.828125,
+    "cta": 564.828125
+  },
+  {
+    "width": 768,
+    "colorScheme": "dark",
+    "scroll": 768,
+    "hero": 589.828125,
+    "cta": 564.828125
+  },
+  {
+    "width": 390,
+    "colorScheme": "light",
+    "scroll": 390,
+    "hero": 618.125,
+    "cta": 593.125
+  },
+  {
+    "width": 390,
+    "colorScheme": "dark",
+    "scroll": 390,
+    "hero": 618.125,
+    "cta": 593.125
+  },
+  {
+    "width": 320,
+    "colorScheme": "light",
+    "scroll": 320,
+    "hero": 597.71875,
+    "cta": 576.71875
+  },
+  {
+    "width": 320,
+    "colorScheme": "dark",
+    "scroll": 320,
+    "hero": 597.71875,
+    "cta": 576.71875
+  }
+]

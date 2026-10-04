@@ -1,0 +1,61 @@
+import { InstrumentationConfig } from '..';
+export declare const mongodbConfig: ({
+    channelName: string;
+    module: {
+        versionRange: string;
+        filePath: string;
+        name: "mongodb";
+    };
+    functionQuery: {
+        expressionName: "insert" | "update" | "remove";
+        kind: "Callback";
+    };
+} | {
+    channelName: string;
+    module: {
+        versionRange: string;
+        filePath: string;
+        name: "mongodb";
+    };
+    functionQuery: {
+        methodName: string;
+        kind: "Async";
+        functionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        versionRange: string;
+        filePath: string;
+        name: "mongodb";
+    };
+    functionQuery: {
+        methodName: string;
+        kind: "Callback";
+        functionName?: undefined;
+    };
+} | {
+    channelName: string;
+    module: {
+        versionRange: string;
+        filePath: string;
+        name: "mongodb";
+    };
+    functionQuery: {
+        functionName: string;
+        kind: "Callback";
+        methodName?: undefined;
+    };
+})[];
+export declare const mongodbChannels: {
+    readonly MONGODB_COMMAND: "orchestrion:mongodb:command";
+    readonly MONGODB_CHECKOUT: "orchestrion:mongodb:checkout";
+    readonly MONGODB_V3_INSERT: "orchestrion:mongodb:v3_insert";
+    readonly MONGODB_V3_UPDATE: "orchestrion:mongodb:v3_update";
+    readonly MONGODB_V3_REMOVE: "orchestrion:mongodb:v3_remove";
+    readonly MONGODB_V3_COMMAND: "orchestrion:mongodb:v3_command";
+    readonly MONGODB_V3_QUERY: "orchestrion:mongodb:v3_query";
+    readonly MONGODB_V3_GET_MORE: "orchestrion:mongodb:v3_get_more";
+};
+export declare const mongodbSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=mongodb.d.ts.map

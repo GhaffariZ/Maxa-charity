@@ -1,0 +1,259 @@
+/* Preserve: Vazirmatn, teal identity, orange accent, original logo assets.
+   Radius scale: controls 10px, content/images 16px, semantic dots circular.
+   Layers: header 30, banner 40, backdrop 50, drawer/account 60. */
+:root {
+  color-scheme: light dark;
+  --macsa-brand: #008f8a;
+  --macsa-accent: #faa61a;
+  --macsa-action: #006b67;
+  --macsa-bg: #f7f9f9;
+  --macsa-surface: #fdfefe;
+  --macsa-soft: #edf4f3;
+  --macsa-text: #172c2b;
+  --macsa-muted: #526564;
+  --macsa-line: #d7e3e1;
+  --macsa-container: 1320px;
+  --cta-container: var(--macsa-container);
+}
+body.macsa-public { margin: 0; background: var(--macsa-bg); color: var(--macsa-text); line-height: 1.85; overflow-x: clip; overflow-y: visible; }
+body.macsa-public *, body.macsa-public *::before, body.macsa-public *::after { box-sizing: border-box; }
+body.macsa-public :is(button,input,select,textarea) { font-family: inherit; }
+body.macsa-public :is(a,button,[role="link"],input,select,textarea):focus-visible { outline: 3px solid var(--macsa-action); outline-offset: 4px; }
+body.macsa-public [hidden] { display: none !important; }
+body.macsa-public :is(.cta-container,.macsa-hero-header,.macsa-gallery,.skill-hero-container,.maxsa-container,.rnhv2-container,.travel-box,.gf-container,.gf-contact,.gf-bottom) { max-width: var(--macsa-container); margin-inline: auto; }
+body.macsa-public :is(.macsa-hero-section,.skill-hero,.maxsa-glass,.rnhv2-section,.travel-stats-section) { padding: 80px 28px; background: transparent !important; }
+body.macsa-public :is(.skill-hero-title,.maxsa-title,.rnhv2-title,.travel-header h2,.macsa-hero-header h2) { font-size: clamp(26px,2.5vw,38px); font-weight: 800; line-height: 1.55; letter-spacing: 0; color: var(--macsa-text); margin: 0 0 24px; }
+body.macsa-public :is(.maxsa-title,.macsa-hero-header h2) span { display: block; font-size: 16px; font-weight: 400; line-height: 1.9; color: var(--macsa-muted); }
+body.macsa-public :is(.skill-hero-title,.macsa-hero-header h2) br { display: none; }
+body.macsa-public :is(.maxsa-title,.macsa-hero-header) { text-align: right; }
+body.macsa-public .macsa-hero-header p { color: var(--macsa-muted); margin-bottom: 36px; }
+body.macsa-public :is(.skill-divider,.maxsa-global-bg,.rnhv2-dot) { display: none; }
+body.macsa-public .skill-hero-right::before, body.macsa-public .skill-hero-right::after,
+body.macsa-public .maxsa-card::before, body.macsa-public .gf-footer::before,
+body.macsa-public .gf-footer::after { display: none; }
+
+/* Keep the orange bar and pale backing behind the original header wordmark. */
+body.macsa-public > div.cta { display: contents; }
+body.macsa-public .cta .cta-topbar { position: sticky; top: 0 !important; height: var(--cta-nav-h); z-index: 30; background: var(--macsa-accent); box-shadow: none; border-bottom: 1px solid rgba(23,44,43,.12); transition: none; }
+body.macsa-public .cta-navbar-spacer { display: none; }
+body.macsa-public .cta-header { gap: 8px; padding-inline: 20px; }
+body.macsa-public .cta-right { padding-left: 24px; }
+body.macsa-public .cta-glass-underlay { background: #fdfefe; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
+body.macsa-public .cta-glass-underlay::before, body.macsa-public .cta-glass-underlay::after { display: none; }
+body.macsa-public .cta-brand img { filter: none; }
+body.macsa-public .cta-navbox { padding: 0; }
+body.macsa-public .cta-menu { gap: 0; }
+body.macsa-public .cta-menu > li > a { color: #172c2b; padding: 10px 8px; font-size: 13px; }
+body.macsa-public :is(.cta-donate,.mobile-action-donate) { background: var(--macsa-action); color: #fdfefe !important; box-shadow: none; text-shadow: none; border-radius: 10px; }
+body.macsa-public :is(.cta-auth,.mobile-action-auth) { background: transparent; border: 1px solid currentColor; color: #172c2b !important; box-shadow: none; text-shadow: none; border-radius: 10px; }
+body.macsa-public :is(.cta-donate,.cta-auth) { padding-inline: 12px; font-size: 13px; }
+body.macsa-public :is(.cta-donate,.mobile-action-donate):hover { background: #005b58; box-shadow: none; transform: none; }
+body.macsa-public :is(.cta-auth,.mobile-action-auth):hover { background: rgba(23,44,43,.06); box-shadow: none; transform: none; }
+body.macsa-public .mega-menu .mega-menu-content { background: var(--macsa-surface); border: 1px solid var(--macsa-line); color: var(--macsa-text); border-radius: 16px; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 14px 36px rgba(23,44,43,.09); z-index: 60; }
+body.macsa-public .mega-menu-content :is(a,h6) { color: var(--macsa-text); }
+body.macsa-public .mega-menu-content a:hover { color: var(--macsa-action); padding-right: 0; text-decoration: underline; text-underline-offset: 5px; }
+body.macsa-public .mega-menu-content .mega-col { border-color: var(--macsa-line); }
+body.macsa-public .menu-icon { border: 1px solid rgba(23,44,43,.3); background: transparent; padding: 9px; width: 44px; height: 44px; }
+body.macsa-public .menu-icon span { display: block; width: 18px; height: 2px; background: #172c2b; }
+body.macsa-public .mobile-menu-sidebar { right: 0; transform: translateX(100%); transition: none; background: var(--macsa-surface); backdrop-filter: none; z-index: 60; }
+body.macsa-public .mobile-menu-sidebar.open { transform: translateX(0); }
+body.macsa-public :is(.mobile-menu-header,.mobile-menu-footer) { background: var(--macsa-surface); color: var(--macsa-text); backdrop-filter: none; border-color: var(--macsa-line); }
+body.macsa-public .mobile-menu-header { height: 64px; }
+body.macsa-public .mobile-menu a { color: var(--macsa-text) !important; }
+body.macsa-public .mobile-menu .mega-menu-content { color: var(--macsa-text); box-shadow: none; background: var(--macsa-soft); }
+body.macsa-public .mobile-menu .mega-menu-content :is(a,h6) { color: var(--macsa-text) !important; }
+body.macsa-public .mobile-menu-actions .mobile-action-auth { color: var(--macsa-text) !important; }
+body.macsa-public .mobile-backdrop { z-index: 50; }
+body.macsa-public .cta-account-btn { background: var(--macsa-action); color: #fdfefe; box-shadow: none; text-shadow: none; }
+body.macsa-public .cta-account-btn:hover { background: var(--macsa-action); box-shadow: none; transform: none; }
+body.macsa-public .cta-account-menu { background: var(--macsa-surface); color: var(--macsa-text); border-color: var(--macsa-line); border-radius: 16px; backdrop-filter: none; box-shadow: 0 14px 36px rgba(23,44,43,.09); z-index: 60; }
+body.macsa-public .cta-account-menu :is(a,button,strong,span) { color: var(--macsa-text); }
+body.macsa-public .cta-account-menu :is(a,button):hover { background: var(--macsa-soft); color: var(--macsa-text); }
+body.macsa-public .cta-account-avatar { color: inherit; }
+body.macsa-public .event-global-banner { z-index: 40; }
+body.macsa-public .event-global-banner .event-banner-cta { color: #172c2b !important; }
+body.macsa-public .event-banner-count { color: #fdfefe; }
+
+/* Photographic hero: original content and controls, a readable text column. */
+body.macsa-public .cta-hero-wrap { background: transparent; padding: 28px 28px 0; }
+body.macsa-public .cta-hero { min-height: 480px; background: var(--macsa-surface); border: 1px solid var(--macsa-line); border-radius: 16px; box-shadow: none; }
+body.macsa-public .cta-hero::before { display: none; }
+body.macsa-public .cta-slider { inset: 0 auto 0 0; width: 54%; overflow: hidden; }
+body.macsa-public .cta-slide { background-position: 30% center; }
+body.macsa-public .cta-slide img { width: 100%; height: 100%; object-fit: cover; object-position: 30% center; display: block; }
+body.macsa-public .cta-slide::after { display: none; }
+body.macsa-public .cta-content { width: 46%; min-height: 480px; padding: 36px; align-items: center; }
+body.macsa-public .cta-content .cta-container { padding: 0; }
+body.macsa-public .cta-title { color: var(--macsa-text); font-size: clamp(28px,2.45vw,38px); line-height: 1.55; text-shadow: none; }
+body.macsa-public .cta-desc { color: var(--macsa-muted); font-size: 16px; line-height: 1.85; max-width: 42ch; }
+body.macsa-public .cta-badge { padding: 0; border: 0; background: transparent; color: var(--macsa-action); font-size: 13px; border-radius: 0; margin-bottom: 20px; }
+body.macsa-public :is(.cta-btn,.skill-hero-btn,.macsa-btn,.cta-band-cta,.maxsa-btn) { background: var(--macsa-accent); color: #172c2b !important; border: none; border-radius: 10px; box-shadow: none; text-shadow: none; font-size: 14px; font-weight: 700; padding: 12px 18px; min-height: 44px; white-space: nowrap; }
+body.macsa-public :is(.cta-btn,.skill-hero-btn,.macsa-btn,.cta-band-cta,.maxsa-btn):hover { background: #e99508; color: #172c2b !important; box-shadow: none; transform: none; }
+body.macsa-public .cta-arrow { top: auto; bottom: 18px; background: #fdfefe; color: #172c2b; border: 1px solid var(--macsa-line); border-radius: 10px; }
+body.macsa-public .cta-arrow.prev { right: auto; left: 70px; }
+body.macsa-public .cta-arrow.next { left: 18px; }
+body.macsa-public .cta-dots { left: 32%; bottom: 32px; }
+body.macsa-public .cta-dot { width: 10px; height: 10px; background: #fdfefe; border-color: #172c2b; }
+body.macsa-public .cta-dot.active { width: 20px; background: var(--macsa-accent); }
+body.macsa-public .hero-status { max-width: var(--macsa-container); margin: 6px auto 0; padding-inline: 28px; font-size: 13px; color: var(--macsa-muted); min-height: 24px; }
+body.macsa-public .hero-status:empty { visibility: hidden; }
+body.macsa-public .cta-band { padding: 40px 28px; background: transparent; }
+body.macsa-public .cta-band .cta-container { grid-template-columns: 1fr auto; gap: 32px; color: var(--macsa-text); padding: 0; }
+body.macsa-public .cta-band-text { grid-column: 1; grid-row: 1; text-align: right; }
+body.macsa-public .cta-band :is(h2,p) { text-align: right; margin-inline: 0; }
+body.macsa-public .cta-band h2 { font-size: 22px; margin-block: 0; }
+body.macsa-public .cta-band-cta { grid-column: 2; grid-row: 1; width: auto; }
+body.macsa-public .cta-cards-wrap { margin: 0; padding: 0 28px 28px; }
+body.macsa-public .cta-cards-wrap .cta-container { padding: 0; }
+body.macsa-public .cta-cards { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 0; border-block: 1px solid var(--macsa-line); }
+body.macsa-public .cta-card { text-align: right; padding: 24px; border: 0; border-left: 1px solid var(--macsa-line); border-radius: 0; background: transparent; box-shadow: none; }
+body.macsa-public .cta-card:last-child { border-left: 0; }
+body.macsa-public .cta-card:hover { background: var(--macsa-soft); box-shadow: none; transform: none; }
+body.macsa-public .cta-card :is(h3,p) { color: var(--macsa-text); }
+body.macsa-public .cta-card h3 { font-size: 16px; margin: 6px 0; }
+body.macsa-public .cta-card p { color: var(--macsa-muted); margin: 0; }
+body.macsa-public .cta-icon { margin: 0 0 14px; background: transparent; color: var(--macsa-action); border: 0; }
+
+body.macsa-public .macsa-gallery { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); align-items: end; gap: 20px; padding: 0; }
+body.macsa-public .gallery-item { min-width: 0; width: 100%; }
+body.macsa-public .macsa-gallery .card { width: 100%; border-radius: 16px; transform: none; box-shadow: none; }
+body.macsa-public .macsa-gallery .card::after { border: 0; }
+body.macsa-public .macsa-gallery .macsa-btn { display: block; white-space: normal; text-align: right; background: transparent; color: var(--macsa-text) !important; padding-inline: 0; }
+body.macsa-public .macsa-dots { display: none; }
+body.macsa-public .skill-hero-container { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+body.macsa-public .skill-hero-left { min-width: 0; text-align: right; }
+body.macsa-public .skill-hero-title span { font-size: 24px; display: block; font-weight: 500; }
+body.macsa-public .skill-hero-features { gap: 0 24px; }
+body.macsa-public .skill-hero-features li { padding: 10px 0; border-bottom: 1px solid var(--macsa-line); color: var(--macsa-muted); }
+body.macsa-public .skill-hero-features li::before { display: none; }
+body.macsa-public .skill-hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+body.macsa-public :is(.skill-video-box,.skill-main-image,.skill-exp-box) { width: 100%; border-radius: 16px; }
+body.macsa-public .skill-exp-box { background: var(--macsa-soft); color: var(--macsa-text); }
+body.macsa-public .maxsa-title { margin-bottom: 40px; }
+body.macsa-public .maxsa-container { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+body.macsa-public .maxsa-left { display: contents; min-width: 0; text-align: right; }
+body.macsa-public .maxsa-right { grid-row: 1; max-width: none; margin: 0; }
+body.macsa-public .maxsa-testimonial-wrapper { grid-row: 2; height: auto; max-height: 590px; overflow: auto; padding: 0; }
+body.macsa-public .maxsa-testimonial-wrapper::before, body.macsa-public .maxsa-testimonial-wrapper::after { display: none; }
+body.macsa-public .maxsa-testimonial-track { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); animation: none; gap: 28px; }
+body.macsa-public .maxsa-card { background: transparent; padding: 24px 0; border: 0; border-bottom: 1px solid var(--macsa-line); border-radius: 0; backdrop-filter: none; box-shadow: none; transform: none; }
+body.macsa-public .maxsa-card p { margin-bottom: 0; }
+body.macsa-public .maxsa-card > div > span { color: var(--macsa-muted) !important; background: transparent !important; }
+body.macsa-public :is(.maxsa-author,.maxsa-role) { color: var(--macsa-text); opacity: 1; }
+body.macsa-public .maxsa-role { color: var(--macsa-muted); }
+body.macsa-public .maxsa-right img { width: 100%; height: 420px; object-fit: cover; object-position: center 40%; border-radius: 16px; box-shadow: none; }
+body.macsa-public .maxsa-btn { grid-row: 3; justify-self: start; white-space: normal; text-align: center; margin-top: 0; }
+body.macsa-public .rnhv2-head { margin-bottom: 32px; }
+body.macsa-public .rnhv2-kicker { color: var(--macsa-action); letter-spacing: 0; font-size: 13px; text-transform: none; }
+body.macsa-public .rnhv2-main { background: var(--macsa-surface); border: 1px solid var(--macsa-line); border-radius: 16px; aspect-ratio: auto; }
+body.macsa-public .rnhv2-main-img { position: static; display: block; height: auto; aspect-ratio: 16/9; opacity: 1; }
+body.macsa-public .rnhv2-overlay { display: none; }
+body.macsa-public .rnhv2-main-content { position: static; padding: 24px; color: var(--macsa-text); }
+body.macsa-public .rnhv2-badge { background: transparent; color: var(--macsa-action); border-radius: 0; padding: 0; }
+body.macsa-public .rnhv2-main-title { font-size: 26px; }
+body.macsa-public .rnhv2-meta { color: var(--macsa-muted); }
+body.macsa-public .rnhv2-side-card { background: transparent; border: 0; border-bottom: 1px solid var(--macsa-line); border-radius: 0; padding: 0 0 20px; box-shadow: none; }
+body.macsa-public .rnhv2-side-card:hover { box-shadow: none; }
+body.macsa-public .rnhv2-side-thumb-wrap { border-radius: 16px; }
+body.macsa-public :is(.rnhv2-side-title,.rnhv2-soon b) { color: var(--macsa-text); }
+body.macsa-public :is(.rnhv2-side-time,.rnhv2-side-cat,.rnhv2-more,.rnhv2-empty,.rnhv2-soon) { color: var(--macsa-muted); }
+body.macsa-public :is(.rnhv2-soon,.rnhv2-empty) { background: var(--macsa-soft); border: 1px solid var(--macsa-line); border-radius: 16px; }
+body.macsa-public .rnhv2-more { border: 1px solid var(--macsa-line); border-radius: 10px; color: var(--macsa-action); }
+body.macsa-public .travel-box { padding: 0; background: transparent; border: 0; border-radius: 0; box-shadow: none; color: var(--macsa-text); }
+body.macsa-public .travel-header h2 { color: var(--macsa-text); }
+body.macsa-public .travel-header p { color: var(--macsa-muted); }
+body.macsa-public .travel-content { flex-direction: column; align-items: stretch; }
+body.macsa-public :is(.travel-right,.travel-left) { flex: none; width: 100%; }
+body.macsa-public .travel-stats-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+body.macsa-public .travel-left { max-width: 700px; margin-inline: auto; content-visibility: auto; contain-intrinsic-size: auto 0; aspect-ratio: 1155.9022 / 1100; }
+body.macsa-public .travel-stat { text-align: right; background: transparent; border: 0; border-top: 1px solid var(--macsa-line); border-radius: 0; padding: 20px 0; }
+body.macsa-public .travel-stat:hover { transform: none; box-shadow: none; }
+body.macsa-public .travel-number { color: var(--macsa-action); font-variant-numeric: tabular-nums; }
+body.macsa-public .travel-label { color: var(--macsa-muted); }
+body.macsa-public .mql-link { color: var(--macsa-action); }
+
+/* Preserve the inverse footer logo on its teal backing, within the page theme. */
+body.macsa-public .gf-footer { background: var(--macsa-soft); color: var(--macsa-text); padding-top: 56px; border-top: 1px solid var(--macsa-line); box-shadow: none; }
+body.macsa-public .gf-container { grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 36px; padding: 0 28px; }
+body.macsa-public .gf-logo { width: fit-content; max-width: 100%; background: #00605d; padding: 20px; border-radius: 16px; margin-bottom: 24px; }
+body.macsa-public .gf-logo img { height: auto; margin: 0; filter: none; }
+body.macsa-public .gf-title { font-size: 24px; color: var(--macsa-text); }
+body.macsa-public .gf-col h3 { color: var(--macsa-text); font-size: 16px; line-height: 1.8; margin: 0 0 18px; }
+body.macsa-public .gf-col h3::after, body.macsa-public .gf-col a::before { display: none; }
+body.macsa-public .gf-col a, body.macsa-public .gf-col a:hover { color: var(--macsa-text); transform: none; }
+body.macsa-public .gf-contact { background: transparent; border-color: var(--macsa-line); padding-inline: 28px; }
+body.macsa-public .gf-contact :is(span,p), body.macsa-public :is(.gf-copy,.gf-privacy) { color: var(--macsa-muted); }
+body.macsa-public .gf-bottom { border-color: var(--macsa-line); padding-inline: 28px; }
+body.macsa-public .gf-social a { background: var(--macsa-action); color: #fdfefe; border-color: transparent; box-shadow: none; }
+body.macsa-public .gf-newsletter { border: 1px solid var(--macsa-muted); border-radius: 10px; background: var(--macsa-surface); box-shadow: none; }
+body.macsa-public .gf-newsletter input { background: transparent; color: var(--macsa-text); min-width: 0; }
+body.macsa-public .gf-newsletter input::placeholder { color: var(--macsa-muted); opacity: 1; }
+body.macsa-public .gf-newsletter button { background: var(--macsa-accent); color: #172c2b; border-radius: 8px; min-width: 44px; min-height: 44px; }
+body.macsa-public .newsletter-status { font-size: 13px; color: var(--macsa-text); }
+body.macsa-public :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),textarea,select) { background-color: var(--macsa-surface); color: var(--macsa-text); border-color: var(--macsa-muted); }
+body.macsa-public :is(input,textarea)::placeholder { color: var(--macsa-muted); opacity: 1; }
+body.macsa-public :is(.donation-card,.mi-card,.cu-card,.cu-form-card) { background: var(--macsa-surface); color: var(--macsa-text); border-color: var(--macsa-line); border-radius: 16px; box-shadow: none; }
+body.macsa-public :is(.submit-btn,.cu-submit,.mi-submit) { background: var(--macsa-action); color: #fdfefe; border-radius: 10px; }
+body.macsa-public :is(.cu-form,.cu-ibox,.cu-form-card,.cu-card) { background: var(--macsa-surface); box-shadow: none; border-color: var(--macsa-line); }
+body.macsa-public :is(.cu-title,.cu-head h1,.cu-card h2,.cu-form-title,.cu-ibox h3,.cu-field label) { color: var(--macsa-text); }
+body.macsa-public :is(.cu-subtitle,.cu-head p,.cu-sub,.cu-form-desc,.cu-ibox p,.cu-field label .req,.cu-field .cu-error) { color: var(--macsa-muted); }
+body.macsa-public :is(.cu-ibox a,.cu-map,.cu-icon) { color: var(--macsa-action); }
+
+@media (prefers-color-scheme: dark) {
+  :root { --macsa-bg: #122322; --macsa-surface: #1a302e; --macsa-soft: #203936; --macsa-text: #eef6f4; --macsa-muted: #b3c9c5; --macsa-line: #35524d; --macsa-action: #80d4cb; }
+  body.macsa-public :is(.cta-donate,.cta-account-btn,.mobile-action-donate,.gf-social a,.submit-btn,.cu-submit,.mi-submit) { color: #172c2b !important; }
+  body.macsa-public .cta-donate:hover { background: #99e4dc; }
+body.macsa-public .cta-auth { color: #172c2b !important; }
+  body.macsa-public .skill-exp-box { color: var(--macsa-text); }
+}
+@media (max-width: 1320px) {
+  body.macsa-public .cta-center { display: none !important; }
+  body.macsa-public .menu-icon { display: flex; }
+  body.macsa-public .mobile-menu-sidebar { display: flex !important; }
+  body.macsa-public .mobile-backdrop.show { display: block !important; }
+  body.macsa-public .mobile-menu .mega-menu-content { position: static; display: none; opacity: 1; visibility: visible; transform: none; padding: 16px; width: 100%; }
+  body.macsa-public .mobile-menu .mega-menu-content.active { display: block; }
+  body.macsa-public .mobile-menu .mega-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 1023px) {
+  body.macsa-public :is(.macsa-hero-section,.skill-hero,.maxsa-glass,.rnhv2-section,.travel-stats-section) { padding: 48px 20px; }
+  body.macsa-public .cta-hero-wrap { padding: 16px 16px 0; }
+  body.macsa-public .cta-hero { min-height: 0; display: flex; flex-direction: column; }
+  body.macsa-public .cta-slider { position: relative; width: 100%; height: 220px; }
+  body.macsa-public .cta-content { width: 100%; min-height: 0; padding: 24px; }
+  body.macsa-public .cta-title { font-size: 26px; }
+  body.macsa-public .cta-badge { margin-bottom: 12px; }
+  body.macsa-public .cta-arrow { top: 160px; bottom: auto; }
+  body.macsa-public .cta-dots { top: 185px; bottom: auto; left: 50%; }
+  body.macsa-public .cta-band { padding: 28px 20px; }
+  body.macsa-public .cta-band .cta-container { grid-template-columns: 1fr; gap: 16px; }
+  body.macsa-public .cta-band-cta { grid-column: 1; grid-row: 2; justify-self: start; }
+  body.macsa-public .cta-cards-wrap { padding-inline: 20px; }
+  body.macsa-public .cta-cards { grid-template-columns: 1fr; }
+  body.macsa-public .cta-card { border-left: 0; border-bottom: 1px solid var(--macsa-line); padding: 20px 0; }
+  body.macsa-public .cta-card:last-child { border-bottom: 0; }
+  body.macsa-public .macsa-gallery { grid-template-columns: 1fr; gap: 24px; overflow: visible; }
+  body.macsa-public .macsa-gallery .card { height: auto; aspect-ratio: 4/3; width: 100%; }
+  body.macsa-public :is(.skill-hero-container,.maxsa-container,.gf-container) { grid-template-columns: 1fr; gap: 32px; }
+  body.macsa-public .skill-hero-right { grid-template-columns: 1fr; }
+  body.macsa-public :is(.skill-video-box,.skill-main-image) { max-width: none; aspect-ratio: 4/3; height: auto; }
+  body.macsa-public .skill-exp-box { max-width: none; }
+  body.macsa-public .maxsa-right { max-width: none; margin: 0; }
+  body.macsa-public .maxsa-right img { height: auto; }
+  body.macsa-public .maxsa-testimonial-track { grid-template-columns: 1fr; gap: 0; }
+  body.macsa-public .travel-stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  body.macsa-public .travel-content { flex-direction: column; gap: 32px; }
+  body.macsa-public :is(.travel-right,.travel-left) { flex-basis: auto; width: 100%; }
+  body.macsa-public .gf-container { padding-inline: 20px; }
+  body.macsa-public .gf-contact { padding-inline: 20px; }
+  body.macsa-public .gf-logo img { width: 240px; }
+  body.macsa-public .skill-hero-features { grid-template-columns: 1fr; }
+  body.macsa-public .maxsa-btn { font-size: 13px; }
+}
+@media (max-width: 360px) {
+  body.macsa-public .cta-content { padding: 20px; }
+  body.macsa-public .cta-title { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.macsa-public *, body.macsa-public *::before, body.macsa-public *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

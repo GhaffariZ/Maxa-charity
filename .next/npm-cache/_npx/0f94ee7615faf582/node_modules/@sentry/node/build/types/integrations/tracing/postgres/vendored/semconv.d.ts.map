@@ -1,0 +1,1 @@
+{"version":3,"file":"semconv.d.ts","sourceRoot":"","sources":["../../../../../../src/integrations/tracing/postgres/vendored/semconv.ts"],"names":[],"mappings":"AAgBA;;;;;;GAMG;AACH,eAAO,MAAM,yBAAyB,EAAG,sBAA+B,CAAC;AAEzE;;GAEG;AACH,eAAO,MAAM,0BAA0B,EAAG,YAAqB,CAAC"}

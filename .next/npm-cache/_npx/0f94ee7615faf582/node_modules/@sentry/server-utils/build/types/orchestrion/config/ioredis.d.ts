@@ -1,0 +1,8 @@
+import type { InstrumentationConfig } from '..';
+export declare const ioredisConfig: InstrumentationConfig[];
+export declare const ioredisChannels: {
+    readonly IOREDIS_COMMAND: "orchestrion:ioredis:command";
+    readonly IOREDIS_CONNECT: "orchestrion:ioredis:connect";
+};
+export declare const ioredisSubscribeInjection: InstrumentationConfig[];
+//# sourceMappingURL=ioredis.d.ts.map

@@ -1,0 +1,14 @@
+export interface KoaChannelIntegrationOptions {
+    /** Ignore layers of the specified types (`'middleware'` and/or `'router'`). */
+    ignoreLayersType?: Array<'middleware' | 'router'>;
+}
+/**
+ * EXPERIMENTAL — orchestrion-driven koa integration. Subscribes to the
+ * `orchestrion:koa:use` channel injected into `Application.prototype.use` and
+ * wraps each registered middleware/router layer in a span-creating proxy.
+ * Requires the orchestrion runtime hook or bundler plugin.
+ */
+export declare const koaChannelIntegration: (options?: KoaChannelIntegrationOptions | undefined) => import("@sentry/core").Integration & {
+    name: "Koa";
+};
+//# sourceMappingURL=koa.d.ts.map

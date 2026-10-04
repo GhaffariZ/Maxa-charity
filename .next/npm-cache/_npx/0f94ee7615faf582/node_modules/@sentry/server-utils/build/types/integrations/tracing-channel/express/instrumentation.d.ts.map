@@ -1,0 +1,1 @@
+{"version":3,"file":"instrumentation.d.ts","sourceRoot":"","sources":["../../../../../src/integrations/tracing-channel/express/instrumentation.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,kBAAkB,MAAM,0BAA0B,CAAC;AA2BpE,OAAO,KAAK,EACV,yBAAyB,EAO1B,MAAM,SAAS,CAAC;AAcjB,wBAAgB,iBAAiB,CAC/B,OAAO,EAAE,yBAAyB,EAClC,cAAc,EAAE,OAAO,kBAAkB,CAAC,cAAc,GACvD,IAAI,CA2CN"}

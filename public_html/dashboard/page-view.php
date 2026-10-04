@@ -134,7 +134,7 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
 
     $hasHeader = false;
     foreach ($components as $c) {
-        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
+        if (in_array(trim((string)$c), ['header', 'heroindex', 'heroindex ikhc'], true)) {
             $hasHeader = true;
             break;
         }
@@ -149,9 +149,13 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     }
 
     // شعبه‌ی جاری برای کامپوننت‌ها
-    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+    $GLOBALS['macsaBranchContext'] = '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
+    if (!$hasHeader) {
+        echo $GLOBALS['macsaBranchContext'];
+        unset($GLOBALS['macsaBranchContext']);
+    }
     echo_components($components, $pageTitle);
 
     if (!$hasHeader) {
@@ -169,7 +173,7 @@ function render_branch_components(PDO $pdo, array $components, string $branchSlu
 
     $hasHeader = false;
     foreach ($components as $c) {
-        if (in_array(trim((string)$c), ['header', 'topbar'], true)) {
+        if (in_array(trim((string)$c), ['header', 'heroindex', 'heroindex ikhc'], true)) {
             $hasHeader = true;
             break;
         }
@@ -183,9 +187,13 @@ function render_branch_components(PDO $pdo, array $components, string $branchSlu
         echo "</head>\n<body>\n";
     }
 
-    echo '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
+    $GLOBALS['macsaBranchContext'] = '<script>window.__MAXA_BRANCH__=' . json_encode($branchSlug, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG)
        . ';window.__MAXA_BRANCH_NAME__=' . json_encode($branchName, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ";</script>\n";
 
+    if (!$hasHeader) {
+        echo $GLOBALS['macsaBranchContext'];
+        unset($GLOBALS['macsaBranchContext']);
+    }
     echo_components($components, $pageTitle);
 
     if (!$hasHeader) {
@@ -217,6 +225,14 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
             ob_start();
             include $componentPath;
             $code = ob_get_clean();
+            if (!empty($GLOBALS['macsaBranchContext']) && strpos($code, '<body') !== false) {
+                $code = preg_replace_callback('/(<body\b[^>]*>)/i', static fn($match) => $match[1] . $GLOBALS['macsaBranchContext'], $code, 1);
+                unset($GLOBALS['macsaBranchContext']);
+            }
+            // CMS content blocks are fragments inside the public document.
+            if (defined('MACSA_PUBLIC_HEADER') && !in_array($cleanComponent, ['header', 'heroindex', 'footer'], true)) {
+                $code = preg_replace('/<!doctype[^>]*>|<\/?(?:html|head|body)\b[^>]*>|<title\b[^>]*>.*?<\/title>|<meta\b[^>]*>/is', '', $code);
+            }
 
             $code = preg_replace_callback('/{{image(\d+)}}/', static function ($m) use ($cleanComponent) {
                 return '/dashboard/components/' . rawurlencode($cleanComponent) . '/images/' . $m[1] . '.png';

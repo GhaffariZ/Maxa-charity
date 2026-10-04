@@ -1,0 +1,66 @@
+import type { Span, SpanAttributes } from '@sentry/core';
+/**
+ * The db/collection namespace mongodb (v4+) passes to `Connection.command`
+ */
+export interface MongodbNamespace {
+    db: string;
+    collection?: string;
+}
+interface V4Command {
+    documents?: unknown[];
+    cursors?: unknown;
+    [key: string]: unknown;
+}
+/**
+ * Replaces every leaf value in the command object with '?', keeping keys
+ * and Mongo operators. hides PII and improves grouping. Reproduced from
+ * the OTel instrumentation.
+ */
+export declare function serializeDbStatement(commandObj: Record<string, unknown>): string;
+/**
+ * Build span attributes for a mongodb v4+ command from the connection
+ * context, namespace and command.
+ */
+export declare function getV4SpanAttributes(connectionCtx: {
+    address?: string;
+} | undefined, ns: MongodbNamespace, command: V4Command | undefined, operation: string | undefined, origin: string): SpanAttributes;
+/**
+ * Shared attribute builder used by both the v3 topology path and the v4+
+ * connection path.
+ */
+export declare function getSpanAttributes(dbName: string | undefined, dbCollection: string | undefined, host: string | undefined, port: string | undefined, commandObj: Record<string, unknown> | undefined, operation: string | undefined, origin: string): SpanAttributes;
+/** The v3 driver topology, from which host/port are read (mongodb 3.x). */
+export interface MongoV3Topology {
+    s?: {
+        options?: {
+            host?: string;
+            port?: number;
+        };
+        host?: string;
+        port?: number;
+    };
+    description?: {
+        address?: string;
+    };
+}
+/**
+ * Determine the operation name for a mongodb v3 `command` from the command
+ * document, mirroring the vendored instrumentation. Returns `undefined` for
+ * commands it doesn't classify (e.g. `endSessions`).
+ */
+export declare function getV3CommandOperation(command: Record<string, unknown>): string | undefined;
+/**
+ * Build span attributes for a mongodb v3 operation from the topology,
+ * namespace string and command.
+ */
+export declare function getV3SpanAttributes(ns: string, topology: MongoV3Topology | undefined, command: Record<string, unknown> | undefined, operation: string | undefined, origin: string): SpanAttributes;
+/**
+ * Start a mongodb client span with the legacy (pre-stable) db/net semantic
+ * conventions.
+ *
+ * `op: 'db'` is set explicitly rather than relying on `inferDbSpanData`,
+ * to support platforms that lack it (ie, Deno).
+ */
+export declare function startMongoSpan(attributes: SpanAttributes): Span;
+export {};
+//# sourceMappingURL=mongodb-span.d.ts.map

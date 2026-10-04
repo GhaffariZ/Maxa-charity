@@ -2,11 +2,11 @@
 
 <!-- عنوان -->
 <div class="macsa-hero-header">
-  <h1>
+  <h2>
     همراهی مکسا در مسیر درمان و امید
     <br>
     <span>راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور</span>
-  </h1>
+  </h2>
 
   <p>
     در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.
@@ -17,35 +17,35 @@
 
   <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/1.png" alt="شعب مکسا" loading="lazy">
+      <picture><source srcset="/dashboard/components/hamrah/images/1.png.webp" type="image/webp"><img width="1000" height="1000" src="/dashboard/components/hamrah/images/1.png" alt="شعب مکسا" loading="lazy"></picture>
     </div>
     <span class="macsa-btn">شعب مکسا</span>
   </a>
 
   <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/2.png" alt="مرکز تماس کشوری" loading="lazy">
+      <picture><source srcset="/dashboard/components/hamrah/images/2.png.webp" type="image/webp"><img width="1000" height="1000" src="/dashboard/components/hamrah/images/2.png" alt="مرکز تماس کشوری" loading="lazy"></picture>
     </div>
     <span class="macsa-btn">مرکز تماس کشوری</span>
   </a>
 
   <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
-      <img src="/dashboard/components/hamrah/images/3.png" alt="حامیان و داوطلبان" loading="lazy">
+      <picture><source srcset="/dashboard/components/hamrah/images/3.png.webp" type="image/webp"><img width="1000" height="1000" src="/dashboard/components/hamrah/images/3.png" alt="حامیان و داوطلبان" loading="lazy"></picture>
     </div>
     <span class="macsa-btn">حامیان و داوطلبان</span>
   </a>
 
   <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/4.png" alt="کادر درمان" loading="lazy">
+      <picture><source srcset="/dashboard/components/hamrah/images/4.png.webp" type="image/webp"><img width="1000" height="1000" src="/dashboard/components/hamrah/images/4.png" alt="کادر درمان" loading="lazy"></picture>
     </div>
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
   <a href="/patient-option" class="gallery-item" aria-disabled="true">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/5.png" alt="بیماران و مراقبین" loading="lazy">
+      <picture><source srcset="/dashboard/components/hamrah/images/5.png.webp" type="image/webp"><img width="1000" height="1000" src="/dashboard/components/hamrah/images/5.png" alt="بیماران و مراقبین" loading="lazy"></picture>
     </div>
     <span class="macsa-btn">بیماران و مراقبین</span>
   </a>
@@ -206,7 +206,7 @@
   box-shadow:0 12px 26px rgba(212,175,55,0.5);
 }
 
-/* نقاط راهنما — به‌صورت پیش‌فرض پنهان (فقط در موبایل دیده می‌شود) */
+/* نقاط راهنما - به‌صورت پیش‌فرض پنهان (فقط در موبایل دیده می‌شود) */
 .macsa-dots{ display:none; }
 
 /* نسخه دسکتاپ دست نخورده بماند... */
@@ -306,110 +306,11 @@
 
 </style>
 <script>
-(function(){
-  function initHamrah(){
-    const gallery = document.querySelector(".macsa-gallery");
-    const cards   = document.querySelectorAll(".gallery-item");
-    const dots    = document.querySelectorAll(".macsa-dot");
-    if(!gallery || !cards.length) return;
-
-    const isMobile = () => window.matchMedia("(max-width:700px)").matches;
-
-    /* ---------- نسخهٔ دسکتاپ: همان فید قبلی ---------- */
-    let current = 0;
-    let fadeTimer = null;
-
-    function showCard(index){
-      cards[current].classList.remove("active");
-      current = index;
-      cards[current].classList.add("active");
-    }
-
-    /* ---------- نسخهٔ موبایل: اسلایدر قابل کشیدن + پخش خودکار ملایم ---------- */
-    let autoTimer  = null;
-    let pauseUntil = 0;   // تا این لحظه پخش خودکار متوقف است (پس از تعامل کاربر)
-
-    function activeSlide(){
-      const center = gallery.scrollLeft + gallery.clientWidth / 2;
-      let best = 0, bestDist = Infinity;
-      cards.forEach((c, i)=>{
-        const cc = c.offsetLeft + c.offsetWidth / 2;
-        const d  = Math.abs(cc - center);
-        if(d < bestDist){ bestDist = d; best = i; }
-      });
-      return best;
-    }
-
-    function goTo(i){
-      const card = cards[(i + cards.length) % cards.length];
-      const left = card.offsetLeft - (gallery.clientWidth - card.offsetWidth) / 2;
-      gallery.scrollTo({ left: left, behavior: "smooth" });
-    }
-
-    function syncDots(){
-      if(!dots.length) return;
-      const active = activeSlide();
-      dots.forEach((d, i)=> d.classList.toggle("active", i === active));
-    }
-
-    // کلیک روی نقطه = رفتن به همان اسلاید
-    dots.forEach((dot, i)=>{
-      dot.addEventListener("click", ()=>{
-        pauseUntil = Date.now() + 6000;
-        goTo(i);
-      });
-    });
-
-    // به‌روزرسانی نقطهٔ فعال هنگام اسکرول/کشیدن
-    let scrollRaf = null;
-    gallery.addEventListener("scroll", ()=>{
-      if(scrollRaf) return;
-      scrollRaf = requestAnimationFrame(()=>{ scrollRaf = null; syncDots(); });
-    }, { passive:true });
-
-    function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
-    function startAuto(){
-      stopAuto();
-      autoTimer = setInterval(()=>{
-        if(Date.now() < pauseUntil) return;          // کاربر در حال تعامل است
-        goTo(activeSlide() + 1);
-      }, 3500);
-    }
-
-    // هر تعامل کاربر، پخش خودکار را برای چند ثانیه متوقف می‌کند
-    ["touchstart","pointerdown","wheel","scroll"].forEach(ev=>{
-      gallery.addEventListener(ev, ()=>{ pauseUntil = Date.now() + 6000; }, { passive:true });
-    });
-
-    function setup(){
-      stopAuto();
-      if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
-      cards.forEach(c=>c.classList.remove("active"));
-
-      if(isMobile()){
-        gallery.scrollLeft = 0;
-        syncDots();
-        startAuto();
-      } else {
-        current = 0;
-        showCard(0);
-        fadeTimer = setInterval(()=>{ showCard((current + 1) % cards.length); }, 2500);
-      }
-    }
-
-    setup();
-
-    let resizeTimer;
-    window.addEventListener("resize", ()=>{
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(setup, 200);
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initHamrah);
-  } else {
-    initHamrah();
-  }
-})();
+document.addEventListener('DOMContentLoaded', function () {
+  const gallery = document.querySelector('.macsa-gallery');
+  const cards = gallery ? Array.from(gallery.querySelectorAll('.gallery-item')) : [];
+  document.querySelectorAll('.macsa-dot').forEach((dot, i) => dot.addEventListener('click', () => {
+    if (cards[i]) cards[i].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
+  }));
+});
 </script>

@@ -264,7 +264,9 @@ function getNewsImageUrl($row, $basePath) {
 function getFooterHTML() {
     $footerFile = __DIR__ . '/dashboard/components/footer/component.php';
     if (file_exists($footerFile)) {
-        $code = file_get_contents($footerFile);
+        ob_start();
+        require $footerFile;
+        $code = ob_get_clean();
         $code = str_replace('{{image1}}', '/dashboard/components/footer/images/1.png', $code);
         return $code;
     }
@@ -272,7 +274,7 @@ function getFooterHTML() {
 }
 
 // بارگذاری هدر سراسری
-$pageTitle = 'آخرین اخبار و رویدادها — مکسا';
+$pageTitle = 'آخرین اخبار و رویدادها - مکسا';
 require_once __DIR__ . '/dashboard/components/header/component.php';
 ?>
 
@@ -1164,5 +1166,3 @@ window.addEventListener('load', () => {
 // بارگذاری فوتر سراسری اصلاح‌شده
 echo getFooterHTML();
 ?>
-</body>
-</html>

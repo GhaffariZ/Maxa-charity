@@ -54,7 +54,7 @@
 
 <!-- RIGHT -->
 <div class="maxsa-right">
-<img src="{{image1}}">
+<img width="768" height="768" src="{{image1}}" alt="روایت‌های امید و همراهی بیماران مکسا" loading="lazy">
 </div>
 
 </div>
@@ -104,7 +104,7 @@
 
         // Render once and duplicate for continuous seamless CSS scroll loop
         const cardsHtml = stories.map(renderCard).join('');
-        track.innerHTML = cardsHtml + cardsHtml;
+        track.innerHTML = cardsHtml;
       }
     })
     .catch(() => {
