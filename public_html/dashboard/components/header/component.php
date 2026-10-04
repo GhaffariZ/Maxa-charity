@@ -1546,3 +1546,4 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   })();
   </script>
 
+

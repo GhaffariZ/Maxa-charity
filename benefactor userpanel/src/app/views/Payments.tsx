@@ -58,13 +58,62 @@ export function Payments() {
       toast.error("لطفاً مبلغی معتبر (حداقل ۱,۰۰۰ تومان) وارد کنید.");
       return;
     }
+    const gatewayWindow = window.open("about:blank", "maksaCampaignPayment", "width=520,height=720");
+    if (!gatewayWindow) {
+      toast.error("برای اتصال به درگاه، نمایش پنجره جدید را در مرورگر مجاز کنید.");
+      return;
+    }
+    gatewayWindow.document.write("<!doctype html><html lang='fa' dir='rtl'><meta charset='utf-8'><body style='font-family:Tahoma;text-align:center;padding-top:12vh;color:#174b49'><h2>در حال اتصال به درگاه امن…</h2></body></html>");
+    gatewayWindow.document.close();
     setSubmitting(true);
     try {
-      const { redirect_url } = await api.startDonation(amount, selectedSlug || undefined);
+      const payment = await api.startDonation(amount, selectedSlug || undefined);
       toast.success("در حال انتقال به درگاه پرداخت ایمن...");
-      // Hand off to the bank gateway.
-      window.location.href = redirect_url;
+      if (payment.redirect_method === "POST") {
+        gatewayWindow.document.open();
+        gatewayWindow.document.write("<!doctype html><html><meta charset='utf-8'><body><form id='gateway' method='post'></form></body></html>");
+        gatewayWindow.document.close();
+        const form = gatewayWindow.document.getElementById("gateway") as HTMLFormElement;
+        form.action = payment.redirect_url;
+        Object.entries(payment.redirect_fields ?? {}).forEach(([name, value]) => {
+          const input = gatewayWindow.document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+        form.submit();
+      } else {
+        gatewayWindow.location.replace(payment.redirect_url);
+      }
+
+      let checks = 0;
+      const poll = window.setInterval(async () => {
+        checks += 1;
+        try {
+          const current = await api.donationStatus(payment.reference);
+          if (current.status === "success") {
+            window.clearInterval(poll);
+            if (!gatewayWindow.closed) gatewayWindow.close();
+            setSubmitting(false);
+            toast.success("پرداخت با موفقیت انجام شد و در تاریخچه ثبت شد.");
+          } else if (["failed", "canceled"].includes(current.status)) {
+            window.clearInterval(poll);
+            if (!gatewayWindow.closed) gatewayWindow.close();
+            setSubmitting(false);
+            toast.error("پرداخت ناموفق یا لغو شد.");
+          }
+        } catch {
+          // A transient status error should not interrupt an in-progress bank payment.
+        }
+        if (checks >= 120) {
+          window.clearInterval(poll);
+          setSubmitting(false);
+          toast.info("وضعیت نهایی پرداخت را می‌توانید در تاریخچه بررسی کنید.");
+        }
+      }, 5000);
     } catch (e) {
+      gatewayWindow.close();
       setSubmitting(false);
       toast.error(e instanceof ApiRequestError ? e.message : "اتصال به درگاه ناموفق بود.");
     }

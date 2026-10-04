@@ -415,7 +415,10 @@ document.addEventListener("drop", function(e) {
 function previewPage() {
   fetch("template-preview.php", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-TOKEN": <?= json_encode(csrf_token()) ?>
+    },
     body: JSON.stringify({ components: selectedComponents })
   })
   .then(res => res.text())
@@ -451,7 +454,10 @@ function saveTemplate() {
 
   fetch("template-save.php", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-TOKEN": <?= json_encode(csrf_token()) ?>
+    },
     body: JSON.stringify({
       name: name,
       components: selectedComponents

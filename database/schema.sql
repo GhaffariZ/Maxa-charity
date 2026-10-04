@@ -798,7 +798,7 @@ INSERT INTO `pages` (`id`, `title`, `slug`, `components`, `status`, `created_at`
 (39, 'mission-vision', 'mission-vision', '[\"topbar\",\"header\",\"mission-vision\",\"footer\"]', 'published', '2026-06-04 14:30:59', '2026-06-04 14:31:10'),
 (40, 'association', 'association', '[\"topbar\",\"header\",\"association\",\"footer\"]', 'published', '2026-06-04 14:46:13', '2026-06-04 14:46:15'),
 (41, 'organizationalchart', 'organizationalchart', '[\"topbar\",\"header\",\"organizationalchart\",\"footer\"]', 'published', '2026-06-04 17:14:37', '2026-06-04 17:15:19'),
-(57, 'home', 'home', '[\"heroindex\",\"hamrah\",\"aboutus\",\"macsa_stories\",\"recent-news-hero-v2\",\"ourexcellence\",\"footer\"]', 'published', '2026-06-05 00:00:02', '2026-06-05 00:00:04'),
+(57, 'home', 'home', '[\"heroindex\",\"home-campaigns\",\"hamrah\",\"aboutus\",\"macsa_stories\",\"recent-news-hero-v2\",\"ourexcellence\",\"footer\"]', 'published', '2026-06-05 00:00:02', '2026-06-05 00:00:04'),
 (58, 'supportive_and_palliative_care', 'supportiveandpalliativecare', '[\"topbar\",\"header\",\"supportive_and_palliative_care\",\"footer\"]', 'published', '2026-06-05 15:38:20', '2026-06-05 15:38:22'),
 (59, 'supportive_and_palliative_care_team', 'supportiveandpalliativecareteam', '[\"topbar\",\"header\",\"supportive_and_palliative_care_team\",\"footer\"]', 'published', '2026-06-05 17:08:30', '2026-06-05 17:08:32'),
 (60, 'end_of_life_care', 'endoflifecare', '[\"topbar\",\"header\",\"end_of_life_care\",\"footer\"]', 'published', '2026-06-05 22:56:52', '2026-06-05 22:56:57'),
@@ -995,6 +995,8 @@ CREATE TABLE `panel_donations` (
   `reference` varchar(20) NOT NULL,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `campaign_id` int(10) UNSIGNED DEFAULT NULL,
+  `remote_campaign_id` char(36) DEFAULT NULL,
+  `remote_campaign_title` varchar(255) DEFAULT NULL,
   `amount` bigint(20) UNSIGNED NOT NULL,
   `currency` char(3) NOT NULL DEFAULT 'IRT',
   `type` enum('online','card_to_card') NOT NULL DEFAULT 'online',
@@ -1570,8 +1572,10 @@ ALTER TABLE `panel_donations`
   ADD UNIQUE KEY `uq_panel_donations_reference` (`reference`),
   ADD KEY `idx_panel_donations_user_time` (`user_id`,`created_at`),
   ADD KEY `idx_panel_donations_campaign` (`campaign_id`),
+  ADD KEY `idx_panel_donations_remote_campaign` (`remote_campaign_id`),
   ADD KEY `idx_panel_donations_status` (`status`),
-  ADD KEY `idx_panel_donations_authority` (`gateway_authority`);
+  ADD UNIQUE KEY `uq_panel_donations_gateway_authority` (`gateway`,`gateway_authority`),
+  ADD UNIQUE KEY `uq_panel_donations_gateway_ref` (`gateway`,`gateway_ref_id`);
 
 --
 -- Indexes for table `panel_users`

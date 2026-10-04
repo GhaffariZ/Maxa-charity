@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/html-sanitizer.php';
 
 require_once __DIR__ . '/icons.php';
 
@@ -38,7 +39,7 @@ function component($name) {
             // Output the stored HTML content as-is — it was authored by trusted
             // admin users and stored as data, not executable PHP.
             // No PHP execution occurs here.
-            echo $data['content'];
+            echo HtmlSanitizer::sanitizeComponent($data['content']);
             return;
         }
     }

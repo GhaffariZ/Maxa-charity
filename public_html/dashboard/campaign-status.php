@@ -1,49 +1,95 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-dash_require('campaigns');
+dash_require('campaigns'); 
+require_once __DIR__ . '/../core/campaign-service.php';
 
-if (!isset($pdo) || !($pdo instanceof PDO)) {
-    $pdo = dash_pdo();
+/** Resolve and authorize a campaign center for the current dashboard user. */
+function campaign_status_allowed_branch(string $rawSlug): ?array
+{
+    $slug = campaign_service_normalize_slug($rawSlug);
+    $activeBranch = dash_load_branch(dash_active_branch_id());
+    if (!$activeBranch) {
+        return null;
+    }
+
+    if (dash_is_super() && dash_is_hq_view()) {
+        foreach (dash_all_branches() as $branch) {
+            if ((string)$branch['slug'] === $slug) {
+                return $branch;
+            }
+        }
+        return null;
+    }
+
+    return (string)$activeBranch['slug'] === $slug ? $activeBranch : null;
 }
 
-// عملیات تغییر وضعیت کمپین (فعال / غیرفعال سازی)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
-    $campaign_id = (int)$_POST['toggle_id'];
-    $current_status = (int)$_POST['current_status'];
-    $new_status = $current_status === 1 ? 0 : 1;
-    
-    $__branch = dash_active_branch_id();
-    if (dash_is_hq_view()) {
-        $stmt = $pdo->prepare("UPDATE campaigns SET is_active = ? WHERE id = ?");
-        $stmt->execute([$new_status, $campaign_id]);
-    } else {
-        $stmt = $pdo->prepare("UPDATE campaigns SET is_active = ? WHERE id = ? AND branch_id = ?");
-        $stmt->execute([$new_status, $campaign_id, $__branch]);
+// Campaign data is loaded asynchronously so the page shell and loader render
+// immediately. Each branch is requested independently and requests can run in
+// parallel after releasing PHP's session lock.
+if (isset($_GET['ajax'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    ini_set('display_errors', '0');
+
+    try {
+        $branch = campaign_status_allowed_branch((string)($_GET['branch'] ?? ''));
+        if (!$branch) {
+            http_response_code(403);
+            throw new RuntimeException('دسترسی به این مرکز مجاز نیست.');
+        }
+
+        $client = new CampaignServiceClient((string)$branch['slug']);
+        $client->prepareManagement();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
+        $campaigns = [];
+        foreach ($client->managementCampaigns() as $campaign) {
+            $campaigns[] = campaign_service_present($campaign, $branch);
+        }
+
+        echo json_encode(['status' => 'success', 'data' => $campaigns], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    } catch (Throwable $e) {
+        if (http_response_code() < 400) {
+            http_response_code(502);
+        }
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
+    exit;
+}
+
+// عملیات تغییر وضعیت کمپین (فعال / غیرفعال سازی) بدون نیاز به alert
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
+    csrf_check();
+    $campaign_id = trim((string)$_POST['toggle_id']);
+    $current_status = (int)$_POST['current_status'];
+    $allowedBranch = campaign_status_allowed_branch((string)($_POST['branch_slug'] ?? ''));
+    if (!$allowedBranch) {
+        http_response_code(403);
+        exit('دسترسی به این مرکز مجاز نیست.');
+    }
+    $allowedSlug = (string)$allowedBranch['slug'];
+
+    (new CampaignServiceClient($allowedSlug))->updateCampaign($campaign_id, [
+        'status' => $current_status === 1 ? 'INACTIVE' : 'ACTIVE',
+    ]);
+    dash_audit('campaign_status_changed', ['campaign_id' => $campaign_id, 'center' => $allowedSlug]);
 
     // رفرش صفحه برای اعمال تغییرات
     header("Location: campaign-status.php");
     exit;
 }
 
-// نمای مرکزی: همه‌ی کمپین‌های همه‌ی شعب با برچسبِ شعبه. سایر شعب: فقط کمپین‌های خودشان.
+// نمای مرکزی: منابع همه شعب؛ سایر کاربران فقط منبع شعبه خودشان را می‌بینند.
+// داده واقعی بعد از نمایش صفحه و به‌صورت AJAX دریافت می‌شود.
 $__branch = dash_active_branch_id();
 $__row = dash_load_branch($__branch);
-if ($__row && (int)$__row['is_hq'] === 1) {
-    $campaigns = $pdo->query(
-        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
-          ORDER BY c.id DESC"
-    )->fetchAll();
-} else {
-    $stmt = $pdo->prepare(
-        "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
-          WHERE c.branch_id = ? ORDER BY c.id DESC"
-    );
-    $stmt->execute([$__branch]);
-    $campaigns = $stmt->fetchAll();
-}
+$branchesToLoad = ($__row && (int)$__row['is_hq'] === 1 && dash_is_super()) ? dash_all_branches() : array_filter([$__row]);
+$campaignSources = array_values(array_map(static fn(array $branch): array => [
+    'name' => (string)$branch['name'],
+    'slug' => (string)$branch['slug'],
+], $branchesToLoad));
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -62,43 +108,33 @@ if ($__row && (int)$__row['is_hq'] === 1) {
   window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) applyMaxaTheme(); });
 })();
 </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
-    @font-face {
-        font-family: 'Vazirmatn';
-        src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');
-        font-weight: 100 900;
-        font-style: normal;
-        font-display: swap;
-    }
-
     :root { 
         --primary-color: #007D75; 
-        --primary-hover: #006159;
         --secondary-color: #F79F1F; 
         --bg-color: #f4f7f6; 
         --card-bg: #ffffff; 
-        --text-main: #333333; 
-        --text-muted: #6b7674; 
-        --border-light: rgba(0,0,0,0.07);
+        --text-main: #333; 
+        --text-muted: #777; 
+        --border-light: rgba(0,0,0,0.06);
         --success-color: #2ed573;
         --danger-color: #ff4757;
     }
     [data-theme="dark"] { 
         --bg-color: #121212; 
         --card-bg: #1e1e1e; 
-        --text-main: #eeeeee; 
-        --text-muted: #aaaaaa; 
+        --text-main: #eee; 
+        --text-muted: #aaa; 
         --border-light: rgba(255,255,255,0.08);
     }
 
-    * { box-sizing: border-box; }
     body { 
         background-color: var(--bg-color); 
         color: var(--text-main); 
-        font-family: 'Vazirmatn', Tahoma, sans-serif; 
-        padding: 30px 20px; 
+        font-family: Tahoma, sans-serif; 
+        padding: 40px 20px; 
         margin: 0;
-        line-height: 1.6;
     }
 
     .container { max-width: 1200px; margin: 0 auto; }
@@ -107,41 +143,14 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         margin-bottom: 30px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-    .page-header-title {
-        display: flex;
-        align-items: center;
         gap: 12px;
         color: var(--primary-color);
     }
-    .page-header h2 { margin: 0; font-size: 22px; font-weight: 800; }
-
-    .btn-create-campaign {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--primary-color);
-        color: #ffffff;
-        padding: 10px 18px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 700;
-        transition: all 0.2s;
-        box-shadow: 0 4px 14px rgba(0, 125, 117, 0.2);
-    }
-    .btn-create-campaign:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0, 125, 117, 0.3);
-    }
+    .page-header h2 { margin: 0; font-size: 22px; font-weight: bold; }
 
     .campaign-grid { 
         display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); 
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
         gap: 30px; 
     }
 
@@ -169,16 +178,14 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         width: 100%;
         height: 210px;
         overflow: hidden;
-        background: #eaeaea;
+        background: #eee;
     }
-    [data-theme="dark"] .card-img-wrapper { background: #252525; }
 
     .card-img { 
         width: 100%; 
         height: 100%; 
         object-fit: cover; 
         transition: transform 0.5s ease;
-        display: block;
     }
 
     /* بج وضعیت فعال / غیرفعال */
@@ -205,61 +212,61 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         z-index: 5;
     }
     .btn-toggle-status {
-        background: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 255, 255, 0.9);
         border: none;
         color: #333;
-        padding: 6px 12px;
+        padding: 6px 10px;
         border-radius: 8px;
         font-size: 11px;
-        font-family: inherit;
+        font-family: Tahoma;
         cursor: pointer;
         font-weight: bold;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         transition: 0.2s;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
     }
-    [data-theme="dark"] .btn-toggle-status { background: rgba(30, 30, 30, 0.92); color: #fff; }
+    [data-theme="dark"] .btn-toggle-status { background: rgba(30, 30, 30, 0.9); color: #fff; }
     .btn-toggle-status:hover { transform: scale(1.05); background: #fff; }
     [data-theme="dark"] .btn-toggle-status:hover { background: #2a2a2a; }
 
     .card-body { 
         padding: 24px; 
-        display: flex; 
-        flex-direction: column; 
-        flex-grow: 1; 
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
     }
 
     .card-title { 
-        margin: 0 0 10px 0; 
+        margin: 0 0 12px 0; 
         color: var(--primary-color); 
         font-size: 18px; 
-        font-weight: 800; 
+        font-weight: bold;
         line-height: 1.5;
     }
 
     .card-desc {
-        font-size: 13px; 
-        line-height: 1.8; 
-        color: var(--text-muted);
-        margin-bottom: 15px;
-        position: relative;
-        max-height: 48px; /* ارتفاع برای حدود ۲ خط */
-        overflow: hidden;
-        transition: max-height 0.4s ease;
-    }
-    .card-desc::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 25px;
-        background: linear-gradient(transparent, var(--card-bg));
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-    }
+    font-size: 13px; 
+    line-height: 1.8; 
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    position: relative;
+    max-height: 48px; /* ارتفاع دقیق برای نشان دادن حدود ۲ خط */
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* انیمیشن نرم روان */
+}
+.card-desc::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(transparent, var(--card-bg));
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* جلوگیری از اختلال در کلیک */
+}
 
     .progress-container {
         margin-top: auto; 
@@ -271,7 +278,7 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         background: rgba(0,0,0,0.05); 
         border-radius: 10px; 
         margin: 10px 0; 
-        overflow: hidden; 
+        overflow: hidden;
     }
     [data-theme="dark"] .progress-bar { background: rgba(255,255,255,0.1); }
 
@@ -279,7 +286,7 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         height: 100%; 
         background: linear-gradient(90deg, var(--secondary-color), #ffb94b); 
         border-radius: 10px; 
-        width: 0; 
+        width: 0;
         transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
@@ -290,58 +297,27 @@ if ($__row && (int)$__row['is_hq'] === 1) {
         font-weight: bold;
     }
 
-    /* نوار دکمه‌های عملیاتی زیر کارت */
-    .card-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-    }
-
-    .btn-edit {
-        flex: 1;
-        padding: 10px 14px;
-        background: var(--primary-color);
-        color: #ffffff;
-        font-weight: 700;
-        border-radius: 12px;
-        text-decoration: none;
-        font-size: 13px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
-    }
-    .btn-edit:hover {
-        background: var(--primary-hover);
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 125, 117, 0.25);
-    }
-
     .btn-support {
-        flex: 1;
-        padding: 10px 12px; 
-        border: 1.5px solid var(--secondary-color); 
+        width: 100%; 
+        padding: 12px; 
+        border: 2px solid var(--secondary-color);
         background: none; 
         color: var(--secondary-color); 
-        font-weight: 700;
+        font-weight: bold;
         border-radius: 12px; 
         cursor: pointer; 
-        transition: all 0.2s; 
-        font-size: 13px;
-        font-family: inherit;
-        display: inline-flex; 
-        align-items: center; 
-        justify-content: center; 
-        gap: 6px;
+        transition: 0.3s; 
+        margin-top: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
-    .btn-support:hover:not(:disabled) { 
+    .btn-support:hover { 
         background: var(--secondary-color); 
         color: white; 
-        box-shadow: 0 4px 12px rgba(247, 159, 31, 0.3);
+        box-shadow: 0 5px 15px rgba(247, 159, 31, 0.3);
     }
 
     /* کمپین غیرفعال دکمه حمایتش قفل می‌شود */
@@ -352,172 +328,269 @@ if ($__row && (int)$__row['is_hq'] === 1) {
     }
     .disabled-campaign .btn-support:hover { background: none; color: #aaa; box-shadow: none; }
 
-    @media (min-width: 1024px) {
-        .card:not(.disabled-campaign):hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 35px rgba(0,0,0,0.08);
-            border-color: var(--primary-color);
-        }
-        
-        .card:not(.disabled-campaign):hover .card-img {
-            transform: scale(1.06);
-        }
-
-        .card:hover .card-desc {
-            max-height: 320px;
-        }
-        .card:hover .card-desc::after {
-            opacity: 0;
-        }
-        
-        .mobile-indicator { display: none; }
+    .campaign-loading {
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
     }
+    .campaign-loading[hidden] { display: none; }
+    .loading-card {
+        width: min(100%, 390px);
+        padding: 34px 28px;
+        text-align: center;
+        background: var(--card-bg);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        box-shadow: 0 18px 45px rgba(0, 77, 76, 0.08);
+    }
+    .loading-mark {
+        position: relative;
+        width: 68px;
+        height: 68px;
+        margin: 0 auto 20px;
+    }
+    .loading-mark::before,
+    .loading-mark::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 4px solid transparent;
+    }
+    .loading-mark::before {
+        border-top-color: var(--primary-color);
+        border-right-color: var(--primary-color);
+        animation: campaign-spin 1s linear infinite;
+    }
+    .loading-mark::after {
+        inset: 10px;
+        border-bottom-color: var(--secondary-color);
+        border-left-color: var(--secondary-color);
+        animation: campaign-spin-reverse .8s linear infinite;
+    }
+    .loading-card h3 { margin: 0 0 8px; color: var(--primary-color); font-size: 18px; }
+    .loading-card p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.9; }
+    .loading-progress { margin-top: 14px; color: var(--secondary-color); font-size: 12px; font-weight: 700; }
+    .campaign-message {
+        display: none;
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        line-height: 1.9;
+        font-size: 13px;
+    }
+    .campaign-message.show { display: block; }
+    .campaign-message.warning { background: #fff3cd; color: #735c0f; border: 1px solid #f4df9a; }
+    .campaign-empty {
+        grid-column: 1 / -1;
+        padding: 48px 20px;
+        text-align: center;
+        background: var(--card-bg);
+        color: var(--text-muted);
+        border: 1px dashed var(--border-light);
+        border-radius: 20px;
+    }
+    @keyframes campaign-spin { to { transform: rotate(360deg); } }
+    @keyframes campaign-spin-reverse { to { transform: rotate(-360deg); } }
+
+ @media (min-width: 1024px) {
+    .card:not(.disabled-campaign):hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.08);
+        border-color: var(--primary-color);
+    }
+    
+    .card:not(.disabled-campaign):hover .card-img {
+        transform: scale(1.06);
+    }
+
+    /* انیمیشن باز شدن متن روی دسکتاپ */
+    .card:hover .card-desc {
+        max-height: 300px; /* مقداری بیشتر از ارتفاع متن برای جا شدن کامل */
+    }
+
+    /* حذف افکت محوشدگی هنگام باز شدن */
+    .card:hover .card-desc::after {
+        opacity: 0;
+    }
+    
+    .mobile-indicator { display: none; }
+}
 
     @media (max-width: 1023px) {
-        body { padding: 20px 10px; }
-        .campaign-grid { grid-template-columns: 1fr; gap: 20px; }
-        
-        .mobile-indicator { 
-            position: absolute; 
-            bottom: 12px; 
-            left: 12px; 
-            background: rgba(0,0,0,0.05); 
-            color: var(--text-muted); 
-            padding: 3px 6px; 
-            border-radius: 6px; 
-            font-size: 11px; 
-        }
-
-        .card.expanded .card-desc { 
-            max-height: 400px; 
-        }
-        .card.expanded .card-desc::after {
-            opacity: 0;
-        }
+    body { padding: 20px 10px; }
+    .campaign-grid { grid-template-columns: 1fr; gap: 20px; }
+    
+    .mobile-indicator { 
+        position: absolute; 
+        bottom: 15px; 
+        left: 15px; 
+        background: rgba(0,0,0,0.05); 
+        color: var(--text-muted); 
+        padding: 4px 8px; 
+        border-radius: 6px; 
+        font-size: 11px; 
     }
 
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        background: var(--card-bg);
-        border-radius: 20px;
-        border: 1px dashed var(--border-light);
-        grid-column: 1 / -1;
+    /* کلاس زنده باز شدن روی موبایل */
+    .card.expanded .card-desc { 
+        max-height: 400px; 
     }
-    .empty-state h3 {
-        color: var(--text-main);
-        font-size: 18px;
-        margin-bottom: 8px;
+
+    /* حذف افکت محوشدگی در موبایل */
+    .card.expanded .card-desc::after {
+        opacity: 0;
     }
-    .empty-state p {
-        color: var(--text-muted);
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
+}
 </style>
 </head>
 <body>
 
+<?php include "./components/back/back.php" ?>
+
 <div class="container">
     <div class="page-header">
-        <div class="page-header-title">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 12.5-8.58 3.91a2 2 0 0 1-1.66 0L2.6 12.5"/><path d="m22 17.5-8.58 3.91a2 2 0 0 1-1.66 0L2.6 17.5"/></svg>
-            <h2>کمپین‌های حمایتی</h2>
-        </div>
-        <a href="campaign-create.php" class="btn-create-campaign">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            ایجاد کمپین جدید
-        </a>
+        <i class="fas fa-layer-group fa-lg"></i>
+        <h2>کمپین‌های حمایتی </h2>
     </div>
 
-    <div class="campaign-grid">
-        <?php if (empty($campaigns)): ?>
-            <div class="empty-state">
-                <h3>هیچ کمپینی ثبت نشده است</h3>
-                <p>در حال حاضر کمپینی برای این شعبه وجود ندارد. با کلیک روی دکمه زیر اولین کمپین را بسازید.</p>
-                <a href="campaign-create.php" class="btn-create-campaign" style="display:inline-flex;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    ایجاد کمپین جدید
-                </a>
-            </div>
-        <?php else: ?>
-        <?php foreach($campaigns as $c): 
-            $is_active = isset($c['is_active']) ? (int)$c['is_active'] : 1;
-            
-            $target = (float)$c['target_amount'];
-            $collected = (float)$c['collected_amount'];
-            $progress = ($target > 0) ? ($collected / $target) * 100 : 0;
-            $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+';
-        ?>
-        <div class="card <?= $is_active === 0 ? 'disabled-campaign' : '' ?>" onclick="this.classList.toggle('expanded')">
-            
-            <?php if($is_active === 1): ?>
-                <div class="status-badge active">فعال</div>
-            <?php else: ?>
-                <div class="status-badge inactive">غیرفعال</div>
-            <?php endif; ?>
+    <div class="campaign-message warning" id="campaignMessage" role="status"></div>
 
-            <form method="POST" class="toggle-status-form" onclick="event.stopPropagation();">
-                <input type="hidden" name="toggle_id" value="<?= (int)$c['id'] ?>">
-                <input type="hidden" name="current_status" value="<?= $is_active ?>">
-                <button type="submit" class="btn-toggle-status" title="<?= $is_active === 1 ? 'غیرفعال‌سازی این کمپین' : 'فعال‌سازی مجدد این کمپین' ?>">
-                    <?php if($is_active === 1): ?>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--danger-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                        غیرفعال‌سازی
-                    <?php else: ?>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        فعال‌سازی
-                    <?php endif; ?>
-                </button>
-            </form>
-
-            <div class="card-img-wrapper">
-                <img src="<?= !empty($c['image_url']) ? htmlspecialchars($c['image_url']) : $ph ?>" class="card-img" loading="lazy" alt="<?= htmlspecialchars($c['title']) ?>" onerror="this.onerror=null;this.src='<?= $ph ?>'">
-            </div>
-            
-            <div class="card-body">
-                <h4 class="card-title"><?= htmlspecialchars($c['title']) ?></h4>
-                <?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?>
-                  <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:3px 10px;border-radius:99px;margin-bottom:8px;align-self:flex-start;"><?= iconoir('building', '', 13) ?> <?= htmlspecialchars($c['branch_name']) ?></span>
-                <?php endif; ?>
-
-                <div class="card-desc">
-                    <?= nl2br(htmlspecialchars($c['description'] ?? '')) ?>
-                </div>
-
-                <div class="progress-container">
-                    <div class="funding-stats">
-                        <span>هدف: <?= number_format($target) ?> تومان</span>
-                        <span style="color: var(--secondary-color); font-size: 14px;"><?= round($progress) ?>%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: <?= min($progress, 100) ?>%"></div>
-                    </div>
-                    <div class="funding-stats" style="color: var(--text-muted); font-size: 11px; font-weight: normal; margin-top: 4px;">
-                        <span>جمع‌آوری شده: <?= number_format($collected) ?> تومان</span>
-                    </div>
-                </div>
-
-                <div class="card-actions" onclick="event.stopPropagation();">
-                    <a href="campaign-edit.php?id=<?= (int)$c['id'] ?>" class="btn-edit" title="ویرایش اطلاعات این کمپین" onclick="event.stopPropagation();">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                        ویرایش کمپین
-                    </a>
-                    <button type="button" class="btn-support" <?= $is_active === 0 ? 'disabled' : '' ?> onclick="event.stopPropagation();">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        حمایت مالی
-                    </button>
-                </div>
-                
-                <div class="mobile-indicator">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/></svg>
-                </div>
-            </div>
+    <div class="campaign-loading" id="campaignLoading" role="status" aria-live="polite">
+        <div class="loading-card">
+            <div class="loading-mark" aria-hidden="true"></div>
+            <h3>در حال دریافت کمپین‌ها</h3>
+            <p>اطلاعات کمپین‌ها از مراکز مکسا دریافت می‌شود؛ لطفاً چند لحظه صبر کنید.</p>
+            <div class="loading-progress" id="loadingProgress">در حال برقراری ارتباط…</div>
         </div>
-        <?php endforeach; ?>
-        <?php endif; ?>
     </div>
+
+    <div class="campaign-grid" id="campaignGrid" aria-live="polite"></div>
 </div>
+
+<script>
+(function(){
+    'use strict';
+    const sources = <?= json_encode($campaignSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?>;
+    const csrfToken = <?= json_encode(csrf_token(), JSON_HEX_TAG) ?>;
+    const showBranchBadge = <?= dash_is_hq_view() ? 'true' : 'false' ?>;
+    const placeholder = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+';
+    const loading = document.getElementById('campaignLoading');
+    const loadingProgress = document.getElementById('loadingProgress');
+    const grid = document.getElementById('campaignGrid');
+    const message = document.getElementById('campaignMessage');
+
+    function escapeHtml(value) {
+        const node = document.createElement('div');
+        node.textContent = String(value == null ? '' : value);
+        return node.innerHTML;
+    }
+
+    function numberFa(value) {
+        return new Intl.NumberFormat('fa-IR').format(Number(value) || 0);
+    }
+
+    function safeImage(value) {
+        const url = String(value || '').trim();
+        return /^(?:https?:\/\/|\/)/i.test(url) ? url : placeholder;
+    }
+
+    function renderCard(campaign) {
+        const active = Number(campaign.is_active) === 1;
+        const target = Number(campaign.target_amount) || 0;
+        const collected = Number(campaign.collected_amount) || 0;
+        const progress = target > 0 ? Math.min(100, Math.round(collected / target * 100)) : 0;
+        const badge = showBranchBadge && campaign.branch_name
+            ? '<span style="display:inline-block;font-size:11px;font-weight:700;color:#007b7a;background:rgba(0,123,122,.10);padding:3px 10px;border-radius:99px;margin-bottom:8px;">' + escapeHtml(campaign.branch_name) + '</span>'
+            : '';
+        const progressMarkup = target > 0
+            ? '<div class="progress-container">' +
+                '<div class="funding-stats"><span>هدف: ' + numberFa(target) + ' تومان</span><span style="color:var(--secondary-color);font-size:14px">' + numberFa(progress) + '٪</span></div>' +
+                '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>' +
+                '<div class="funding-stats" style="color:var(--text-muted);font-size:11px;font-weight:normal;margin-top:4px"><span>جمع‌آوری شده: ' + numberFa(collected) + ' تومان</span></div>' +
+              '</div>'
+            : '';
+
+        const card = document.createElement('div');
+        card.className = 'card' + (active ? '' : ' disabled-campaign');
+        card.innerHTML =
+            '<div class="status-badge ' + (active ? 'active">فعال' : 'inactive">غیرفعال') + '</div>' +
+            '<form method="POST" class="toggle-status-form">' +
+                '<input type="hidden" name="csrf_token" value="' + escapeHtml(csrfToken) + '">' +
+                '<input type="hidden" name="toggle_id" value="' + escapeHtml(campaign.id) + '">' +
+                '<input type="hidden" name="branch_slug" value="' + escapeHtml(campaign.branch_slug) + '">' +
+                '<input type="hidden" name="current_status" value="' + (active ? '1' : '0') + '">' +
+                '<button type="submit" class="btn-toggle-status"><i class="fas ' + (active ? 'fa-ban' : 'fa-check') + '" style="color:var(--' + (active ? 'danger' : 'success') + '-color)"></i> ' + (active ? 'غیرفعال‌سازی' : 'فعال‌سازی') + '</button>' +
+            '</form>' +
+            '<div class="card-img-wrapper"><img class="card-img" alt=""></div>' +
+            '<div class="card-body">' +
+                '<h4 class="card-title">' + escapeHtml(campaign.title) + '</h4>' + badge +
+                '<div class="card-desc">' + escapeHtml(campaign.description).replace(/\n/g, '<br>') + '</div>' +
+                progressMarkup +
+                '<button class="btn-support" ' + (active ? '' : 'disabled') + '><i class="fas fa-heart"></i> حمایت مالی مستقیم</button>' +
+                '<div class="mobile-indicator"><i class="fas fa-ellipsis-h"></i></div>' +
+            '</div>';
+
+        const image = card.querySelector('.card-img');
+        image.src = safeImage(campaign.image_url);
+        image.addEventListener('error', function(){ image.src = placeholder; }, {once:true});
+        card.addEventListener('click', function(){ card.classList.toggle('expanded'); });
+        card.querySelector('.toggle-status-form').addEventListener('click', function(event){ event.stopPropagation(); });
+        return card;
+    }
+
+    async function fetchSource(source) {
+        const url = 'campaign-status.php?ajax=1&branch=' + encodeURIComponent(source.slug);
+        const response = await fetch(url, {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
+        const payload = await response.json().catch(function(){ return null; });
+        if (!response.ok || !payload || payload.status !== 'success') {
+            throw new Error(payload && payload.message ? payload.message : 'پاسخ نامعتبر از سرور');
+        }
+        return Array.isArray(payload.data) ? payload.data : [];
+    }
+
+    async function loadCampaigns() {
+        if (!sources.length) {
+            loading.hidden = true;
+            grid.innerHTML = '<div class="campaign-empty">مرکز فعالی برای دریافت کمپین‌ها پیدا نشد.</div>';
+            return;
+        }
+
+        let completed = 0;
+        const errors = [];
+        const requests = sources.map(async function(source){
+            try {
+                return await fetchSource(source);
+            } catch (error) {
+                errors.push(source.name + ': ' + error.message);
+                return [];
+            } finally {
+                completed++;
+                loadingProgress.textContent = 'دریافت اطلاعات ' + numberFa(completed) + ' از ' + numberFa(sources.length) + ' مرکز';
+            }
+        });
+
+        const groups = await Promise.all(requests);
+        const campaigns = groups.flat();
+        loading.hidden = true;
+
+        if (errors.length) {
+            message.textContent = errors.join(' | ');
+            message.classList.add('show');
+        }
+
+        if (!campaigns.length) {
+            grid.innerHTML = '<div class="campaign-empty">کمپینی برای نمایش پیدا نشد.</div>';
+            return;
+        }
+        campaigns.forEach(function(campaign){ grid.appendChild(renderCard(campaign)); });
+    }
+
+    loadCampaigns();
+})();
+</script>
 
 </body>
 </html>

@@ -719,41 +719,10 @@
       </section>
     </div>
 
-    <!-- Modal -->
-    <div id="donationModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 class="modal-title">عنوان مودال</h2>
-        <form>
-          <div class="form-group">
-            <label for="name">نام</label>
-            <input type="text" id="name" placeholder="نام">
-          </div>
-          <div style="display:flex; gap:15px;">
-            <div class="form-group" style="flex:1;">
-              <label for="email">ایمیل</label>
-              <input type="email" id="email" placeholder="ایمیل">
-            </div>
-            <div class="form-group" style="flex:1;">
-              <label for="phone">تلفن</label>
-              <input type="tel" id="phone" placeholder="تلفن">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="amount">مبلغ کمک (تومان)</label>
-            <input type="number" id="amount" placeholder="مبلغ">
-          </div>
-          <div class="checkbox-group">
-            <input type="checkbox" id="agreeTerms" name="agreeTerms">
-            <label for="agreeTerms">من شرایط و ضوابط را می‌پذیرم</label>
-          </div>
-          <button type="submit" class="btn-submit">ثبت کمک</button>
-        </form>
-      </div>
-    </div>
-
   </div>
 
+  <script src="/js/campaign-payment.js?v=20260927"></script>
+  <script src="/js/campaign-donation-ui.js?v=20260927"></script>
   <script>
     // تصویر جایگزین بهصورت SVG درونخطی (بدون درخواست شبکهای تا صفحه هرگز معلق نماند)
     var PLACEHOLDER_IMG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+";
@@ -835,7 +804,7 @@
                     ${camp.branch_name ? `<span class="branch-tag" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:3px 10px;border-radius:99px;margin-bottom:6px;"><svg class="iconoir-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H12V3.6C12 3.26863 12.2686 3 12.6 3H17.4C17.7314 3 18 3.26863 18 3.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z"/></svg> ${camp.branch_name}</span>` : ''}
                     <div class="card-desc">${descHtml}</div>
 
-                    <div class="progress-container">
+                    ${target > 0 ? `<div class="progress-container">
                         <div class="progress-badge">${Number(percent).toLocaleString('fa-IR')}٪</div>
                         <div class="progress-info">
                             <span>جمع‌آوری شده: ${Number(collected).toLocaleString('fa-IR')} تومان</span>
@@ -844,16 +813,20 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${percent}%;"></div>
                         </div>
-                    </div>
+                    </div>` : ''}
 
                     <div class="card-footer">
-                        <button class="btn-help" onclick="event.stopPropagation(); openModal('${camp.title.replace(/'/g, "\\'")}')">همین حالا کمک کنید</button>
+                        <button class="btn-help" type="button">همین حالا کمک کنید</button>
                     </div>
 
                     <div class="mobile-indicator"><i class="fas fa-ellipsis-h"></i></div>
                 </div>
             `;
 
+        cardDiv.querySelector('.btn-help').addEventListener('click', (event) => {
+          event.stopPropagation();
+          openModal(camp.id, camp.title, camp.branch_slug || 'hq');
+        });
         cardDiv.addEventListener('click', () => {
           cardDiv.classList.toggle('expanded');
         });
@@ -970,76 +943,15 @@
 
     window.addEventListener('resize', updateSlider);
 
-    function openModal(title) {
-      const modal = document.getElementById('donationModal');
-      modal.style.display = 'flex';
-      modal.offsetHeight; // force reflow
-      modal.classList.add('show');
-      document.querySelector('.modal-title').textContent = 'کمک برای: ' + title;
-      applyCampaignAutofill();
+    function openModal(campaignId, title, centerSlug) {
+      if (window.MacsaCampaignDonation) {
+        window.MacsaCampaignDonation.open({
+          id: campaignId,
+          title: title,
+          branch_slug: centerSlug || 'hq'
+        });
+      }
     }
-
-    function applyCampaignAutofill() {
-      try {
-        function fill(u) {
-          if (!u) return;
-          const nameInput = document.getElementById('name');
-          const phoneInput = document.getElementById('phone');
-          const emailInput = document.getElementById('email');
-          const fullName = u.full_name || [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
-          if (nameInput && fullName && !nameInput.value) nameInput.value = fullName;
-          if (phoneInput && u.phone && !phoneInput.value) phoneInput.value = u.phone;
-          if (emailInput && u.email && !emailInput.value) emailInput.value = u.email;
-        }
-
-        const raw = localStorage.getItem('maksa_benefactor_user');
-        if (raw) {
-          fill(JSON.parse(raw));
-        } else {
-          const token = localStorage.getItem('maksa_access_token');
-          const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
-          fetch('/api/user/me', { headers, credentials: 'include' })
-            .then(res => res.ok ? res.json() : null)
-            .then(json => {
-              const u = json?.data?.user;
-              if (u) {
-                const profile = {
-                  first_name: u.first_name || '',
-                  last_name: u.last_name || '',
-                  full_name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
-                  phone: u.phone || '',
-                  national_code: u.national_code || '',
-                  email: u.email || ''
-                };
-                localStorage.setItem('maksa_benefactor_user', JSON.stringify(profile));
-                fill(profile);
-              }
-            })
-            .catch(() => {});
-        }
-      } catch (e) {}
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('donationModal');
-      modal.classList.remove('show');
-      setTimeout(() => {
-        if (!modal.classList.contains('show')) {
-          modal.style.display = 'none';
-        }
-      }, 500);
-    }
-
-    window.onclick = function (event) {
-      const donationModal = document.getElementById('donationModal');
-      if (event.target == donationModal) { closeModal(); }
-    }
-
-    document.querySelector('form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('فرم ارسال شد.');
-      closeModal();
-    });
 
     // فیلترها بر اساس دادههای زنده
     const filterButtons = document.querySelectorAll('.course-categories li');

@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('pages');
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: component-create.php");
     exit;
 }
+csrf_check();
 
 if (!isset($_POST['component_name'], $_POST['component_tag'])) {
     header("Location: component-create.php?error=missing_data");
@@ -15,11 +17,16 @@ if (!isset($_POST['component_name'], $_POST['component_tag'])) {
 $component_name = trim($_POST['component_name']);
 
 // SECURITY: Validate component name — only alphanumeric, hyphens, underscores
-if ($component_name === '' || !preg_match('/^[a-zA-Z0-9_-]+$/', $component_name)) {
+if ($component_name === '' || !preg_match('/^[\p{L}\p{N}_-]+$/u', $component_name)) {
     die("Invalid component name. Only letters, numbers, hyphens and underscores are allowed.");
 }
 
 $tag = trim($_POST['component_tag']);
+$allowedTags = ['هیرو', 'اطلاعات عمومی ساختار', 'آموزشی', 'پژوهشی', 'درمانی',
+    'خدمات', 'افراد', 'آمار', 'پروژه‌های حمایتی', 'دوره‌ها', 'روایات', 'اخبار', 'سایر'];
+if (!in_array($tag, $allowedTags, true)) {
+    $tag = 'سایر';
+}
 
 $path = __DIR__ . "/components/" . $component_name . "/";
 
@@ -29,7 +36,7 @@ if (!is_dir($path)) {
 
 /* ── SECURITY: Store component content as JSON data, NOT as executable PHP ── */
 if (isset($_POST['component_code'])) {
-    $code = $_POST['component_code'];
+    $code = HtmlSanitizer::sanitizeComponent((string)$_POST['component_code']);
 
     $componentData = [
         'version' => 2,
@@ -39,13 +46,15 @@ if (isset($_POST['component_code'])) {
 
     file_put_contents(
         $path . "data.json",
-        json_encode($componentData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+        json_encode($componentData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR),
+        LOCK_EX
     );
 
     // SECURITY: Also update meta.json for backward compatibility
     file_put_contents(
         $path . "meta.json",
-        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+        LOCK_EX
     );
 }
 
@@ -53,7 +62,8 @@ if (isset($_POST['component_code'])) {
 if (!isset($_POST['component_code'])) {
     file_put_contents(
         $path . "meta.json",
-        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        json_encode(['tag' => $tag], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+        LOCK_EX
     );
 }
 

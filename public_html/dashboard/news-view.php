@@ -6,6 +6,7 @@ if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/../config/database.php")) {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/core/database.php";
 }
 require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/core/component-renderer.php';
 
 /* -----------------------------------------
    دریافت id و slug از آدرس /id/slug/
@@ -247,18 +248,12 @@ function buildLocalPlaceholderImageDetail($text = 'بدون تصویر') {
 }
 
 function getFooterHTML() {
-    $footerFile = __DIR__ . '/components/footer/component.php';
-    if (file_exists($footerFile)) {
-        $code = file_get_contents($footerFile);
-        $code = str_replace('{{image1}}', '/dashboard/components/footer/images/1.png', $code);
-        return $code;
-    }
-    return '';
+    return dashboard_component_html('footer', get_defined_vars());
 }
 
 // بارگذاری هدر سراسری
 $pageTitle = htmlspecialchars($news['title']) . ' — آخرین اخبار مکسا';
-require_once __DIR__ . '/components/header/component.php';
+render_dashboard_component('header', get_defined_vars());
 ?>
 
 <!-- لود Font Awesome با پالیسی بدون رهگیری جهت پیشگیری از هشدار مرورگر -->

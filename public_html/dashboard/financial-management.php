@@ -9,6 +9,76 @@ dash_require('financial');
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
+// Finance data is requested per center after the page shell has rendered.
+// A branch user can only read that branch; HQ super admins can read all MACSA centers.
+if (isset($_GET['campaign_finance'])) {
+  header('Content-Type: application/json; charset=utf-8');
+  ini_set('display_errors', '0');
+  try {
+    require_once __DIR__ . '/../core/campaign-service.php';
+    $slug = campaign_service_normalize_slug((string)($_GET['branch'] ?? ''));
+    $active = dash_load_branch(dash_active_branch_id());
+    $allowed = $active && (string)$active['slug'] === $slug;
+    if (!$allowed && dash_is_super() && dash_is_hq_view()) {
+      foreach (dash_all_branches() as $branch) {
+        if ((string)$branch['slug'] === $slug) { $allowed = true; break; }
+      }
+    }
+    if (!$allowed) { http_response_code(403); throw new RuntimeException('دسترسی به این مرکز مجاز نیست.'); }
+
+    $bounds = [];
+    foreach (['start_date', 'end_date'] as $key) {
+      $raw = (string)($_GET[$key] ?? '');
+      if ($raw === '') continue;
+      if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $raw, $m) || !checkdate((int)$m[2], (int)$m[3], (int)$m[1])) {
+        http_response_code(400); throw new RuntimeException('بازه تاریخ نامعتبر است.');
+      }
+      $bounds[$key] = $raw;
+    }
+    $zone = new DateTimeZone('Asia/Tehran');
+    $utc = new DateTimeZone('UTC');
+    $from = isset($bounds['start_date']) ? (new DateTimeImmutable($bounds['start_date'] . ' 00:00:00', $zone))->setTimezone($utc)->format('Y-m-d\TH:i:s.u\Z') : null;
+    $to = isset($bounds['end_date']) ? (new DateTimeImmutable($bounds['end_date'] . ' 23:59:59.999999', $zone))->setTimezone($utc)->format('Y-m-d\TH:i:s.u\Z') : null;
+    $client = new CampaignServiceClient($slug);
+    $client->prepareManagement();
+    if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+    $mode = (string)$_GET['campaign_finance'];
+    if ($mode === 'report') {
+      $data = $client->financialReport($from, $to);
+      if (!isset($data['campaigns']) || !is_array($data['campaigns'])) throw new RuntimeException('ساختار گزارش مالی کمپین‌ساز نامعتبر است.');
+      $rows = [];
+      foreach (($data['campaigns'] ?? []) as $row) {
+        if (!is_array($row)) continue;
+        $rows[] = ['id' => (string)($row['id'] ?? ''), 'title' => (string)($row['title'] ?? ''), 'system_amount' => (string)($row['system_amount'] ?? '0')];
+      }
+      $result = ['campaigns' => $rows];
+    } elseif ($mode === 'payments') {
+      $id = (string)($_GET['campaign_id'] ?? '');
+      $report = $client->campaignPaymentReport($id, $from, $to);
+      if (!isset($report['payments']) || !is_array($report['payments'])) throw new RuntimeException('ساختار گزارش پرداخت کمپین‌ساز نامعتبر است.');
+      $rows = [];
+      foreach (($report['payments'] ?? []) as $payment) {
+        if (!is_array($payment) || ($payment['status'] ?? '') !== 'SUCCEEDED') continue;
+        $rows[] = [
+          'id' => (string)($payment['id'] ?? ''),
+          'amount' => (string)($payment['amount'] ?? '0'),
+          'created_at' => (string)($payment['created_at'] ?? ''),
+          'name' => (string)($payment['full_name'] ?? ''),
+          'donor_key' => hash('sha256', (string)($payment['mobile'] ?? '') . '|' . (string)($payment['full_name'] ?? '')),
+        ];
+      }
+      $result = ['payments' => $rows];
+    } else {
+      http_response_code(400); throw new RuntimeException('نوع گزارش نامعتبر است.');
+    }
+    echo json_encode(['status' => 'success', 'data' => $result], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+  } catch (Throwable $e) {
+    if (http_response_code() < 400) http_response_code(502);
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  }
+  exit;
+}
+
 /* ---------- تنظیمات اتصال به دیتابیس (از فایل کانفیگ خارج از گیت) ---------- */
 $DB = require __DIR__ . '/../core/db-config.php';
 
@@ -129,8 +199,8 @@ if ($pdo) {
   try {
     // کمک آنلاین مستقیم (بدون کمپین)
     $onlineHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond, $params)->fetch()['s'];
-    // کمک‌های مربوط به کمپین‌ها
-    $campaignHelpTotal = (float)q($pdo, "SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NOT NULL" . $dateCond . $branchCond, $params)->fetch()['s'];
+    // Campaign receipts come exclusively from Campaign Service below. Legacy
+    // local campaign donations must not be counted a second time.
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
 $grandTotalCollected = $onlineHelpTotal + $campaignHelpTotal + $coursesTotal + $ordersTotal;
@@ -148,7 +218,7 @@ if ($pdo) {
          FROM panel_donations pd
          JOIN panel_users pu        ON pu.id = pd.user_id
          LEFT JOIN user_profiles up ON up.user_id = pd.user_id
-        WHERE pd.status='success'" . $dateCond . $branchCond . "
+        WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond . "
         GROUP BY pd.user_id, pu.email
         ORDER BY total DESC
         LIMIT 10", $params)->fetchAll();
@@ -161,17 +231,6 @@ if ($pdo) {
 
 /* ---------- تفکیک مبالغ هر کمپین ---------- */
 $campaignsBreakdown = [];
-if ($pdo) {
-  try {
-    $campaignsBreakdown = q($pdo,
-      "SELECT c.title, COALESCE(SUM(pd.amount), 0) AS total_collected
-         FROM campaigns c
-         LEFT JOIN panel_donations pd ON c.id = pd.campaign_id AND pd.status='success'" . $dateCond . "
-        WHERE c.branch_id = :branch_id
-        GROUP BY c.id, c.title
-        ORDER BY total_collected DESC", $params)->fetchAll();
-  } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
-}
 
 /* ---------- تفکیک درآمد دوره‌ها و سفارشات استند ---------- */
 $coursesBreakdown = [
@@ -240,7 +299,7 @@ if ($pdo) {
 $don = []; $users = [];
 if ($pdo) {
   try {
-    $don = q($pdo, "SELECT pd.amount, pd.campaign_id, COALESCE(pd.paid_at, pd.created_at) AS ts FROM panel_donations pd WHERE pd.status='success'" . $dateCond . $branchCond, $params)->fetchAll();
+    $don = q($pdo, "SELECT pd.amount, pd.campaign_id, COALESCE(pd.paid_at, pd.created_at) AS ts FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond, $params)->fetchAll();
     $users = q($pdo, "SELECT created_at, last_login_at FROM panel_users")->fetchAll();
   } catch (Throwable $e) {}
 }
@@ -253,8 +312,8 @@ function build_monthly_series(array $don): array {
     list(, $jm) = gregorian_to_jalali((int)$d->format('Y'), (int)$d->format('n'), 15);
     $buckets[] = ['s'=>$s, 'e'=>$e, 'label'=>jmonth_name($jm)];
   }
-  $labels = []; $free = []; $camp = []; $total = [];
-  foreach ($buckets as $b) { $labels[] = $b['label']; $free[] = 0; $camp[] = 0; $total[] = 0; }
+  $labels = []; $keys = []; $free = []; $camp = []; $total = [];
+  foreach ($buckets as $b) { $labels[] = $b['label']; $keys[] = date('Y-m', $b['s']); $free[] = 0; $camp[] = 0; $total[] = 0; }
   foreach ($don as $row) {
     $ts = strtotime((string)$row['ts']); if ($ts === false) continue;
     foreach ($buckets as $k => $b) {
@@ -270,9 +329,15 @@ function build_monthly_series(array $don): array {
       }
     }
   }
-  return ['labels'=>$labels, 'free'=>$free, 'campaigns'=>$camp, 'total'=>$total];
+  return ['labels'=>$labels, 'keys'=>$keys, 'free'=>$free, 'campaigns'=>$camp, 'total'=>$total];
 }
 $monthChartData = build_monthly_series($don);
+
+$activeFinanceBranch = dash_load_branch(dash_active_branch_id());
+$financeBranches = ($activeFinanceBranch && dash_is_super() && dash_is_hq_view()) ? dash_all_branches() : array_filter([$activeFinanceBranch]);
+$financeSources = array_values(array_map(static fn(array $branch): array => [
+  'name' => (string)$branch['name'], 'slug' => (string)$branch['slug'],
+], array_filter($financeBranches, static fn(array $branch): bool => ($branch['status'] ?? 'active') === 'active')));
 
 $SERVER = [
   'distribution' => [
@@ -280,6 +345,8 @@ $SERVER = [
     'data' => [$onlineHelpTotal, $campaignHelpTotal, $coursesTotal, $ordersTotal]
   ],
   'monthly' => $monthChartData,
+  'sources' => $financeSources,
+  'directDonors' => $donorsOut,
   'dbError' => $dbError
 ];
 ?>
@@ -1183,6 +1250,7 @@ const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | 
     });
   }
 
+  window.refreshFinancialCharts = render;
   render();
   /* رندرِ مجدد هنگام تغییرِ تم از داشبورد */
   window.addEventListener('storage', function(e){ if(!e || e.key==='maxa-theme' || e.key===null) setTimeout(render, 60); });
@@ -1249,22 +1317,24 @@ $(document).ready(function() {
   const format = urlParams.get('format');
   if (format === 'pdf') {
     showToast('در حال آماده‌سازی گزارش PDF...', 'success');
-    setTimeout(() => {
+    Promise.resolve(window.campaignFinanceReady).then((complete) => {
+      if (complete === false) { showToast('گزارش کمپین‌ساز کامل دریافت نشد؛ خروجی ناقص تولید نمی‌شود.', 'error'); return; }
       window.print();
       // Clear format query parameter
       const url = new URL(window.location.href);
       url.searchParams.delete('format');
       window.history.replaceState({}, '', url);
-    }, 1200);
+    });
   } else if (format === 'excel') {
     showToast('گزارش اکسل با موفقیت دانلود شد.', 'success');
-    setTimeout(() => {
+    Promise.resolve(window.campaignFinanceReady).then((complete) => {
+      if (complete === false) { showToast('گزارش کمپین‌ساز کامل دریافت نشد؛ خروجی ناقص تولید نمی‌شود.', 'error'); return; }
       triggerExcelDownload();
       // Clear format query parameter
       const url = new URL(window.location.href);
       url.searchParams.delete('format');
       window.history.replaceState({}, '', url);
-    }, 600);
+    });
   }
 });
 
@@ -1360,7 +1430,8 @@ window.showToast = function(message, type = 'success') {
     `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : 
     `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
 
-  toast.innerHTML = icon + `<span>${message}</span>`;
+  toast.innerHTML = icon + '<span></span>';
+  toast.querySelector('span').textContent = String(message);
   container.appendChild(toast);
   
   setTimeout(() => {
@@ -1374,6 +1445,175 @@ window.showToast = function(message, type = 'success') {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 };
+</script>
+<script>
+// Data-only hydration: the page's existing cards, tables, charts and styles stay intact.
+(function () {
+  const sources = SERVER.sources || [];
+  const reports = [];
+  const paymentsByCampaign = new Map();
+  const errors = [];
+  const money = n => Math.round(n).toLocaleString('fa-IR');
+  const rialToToman = n => Number(n || 0) / 10;
+  const make = (tag, value) => { const node = document.createElement(tag); node.textContent = String(value); return node; };
+
+  async function request(mode, source, campaignId) {
+    const params = new URLSearchParams({campaign_finance: mode, branch: source.slug});
+    const current = new URLSearchParams(window.location.search);
+    for (const key of ['start_date', 'end_date']) {
+      if (current.get(key)) params.set(key, current.get(key));
+    }
+    if (campaignId) params.set('campaign_id', campaignId);
+    const response = await fetch('financial-management.php?' + params, {
+      credentials: 'same-origin', headers: {Accept: 'application/json'}
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || !result || result.status !== 'success') {
+      throw new Error(result && result.message ? result.message : 'خطای HTTP ' + response.status);
+    }
+    return result.data;
+  }
+
+  function renderAmountsAndCampaigns() {
+    const all = reports.flatMap(group => group.campaigns.map(campaign => ({...campaign, center: group.source.name})));
+    const total = all.reduce((sum, row) => sum + rialToToman(row.system_amount), 0);
+    SERVER.distribution.data[1] = total;
+    const amounts = document.querySelectorAll('.stats-five-grid .sc-amount');
+    if (amounts[0]) amounts[0].innerHTML = money(SERVER.distribution.data.reduce((a, b) => a + b, 0)) + ' <small>تومان</small>';
+    if (amounts[2]) amounts[2].innerHTML = money(total) + ' <small>تومان</small>';
+
+    const table = document.querySelector('.grid-tables-3 .card .dtable tbody');
+    if (table) {
+      table.replaceChildren();
+      all.sort((a, b) => rialToToman(b.system_amount) - rialToToman(a.system_amount));
+      for (const campaign of all) {
+        const row = document.createElement('tr');
+        const title = document.createElement('td');
+        const strong = make('b', campaign.title + ' — ' + campaign.center);
+        title.appendChild(strong);
+        const amount = make('td', money(rialToToman(campaign.system_amount)));
+        amount.style.cssText = 'color:var(--color-secondary);font-weight:700;';
+        row.append(title, amount);
+        table.appendChild(row);
+      }
+      if (!all.length) {
+        const row = document.createElement('tr');
+        const cell = make('td', 'کمپینی یافت نشد.');
+        cell.colSpan = 2;
+        cell.style.cssText = 'text-align:center;color:var(--color-muted);';
+        row.appendChild(cell);
+        table.appendChild(row);
+      }
+    }
+    if (window.refreshFinancialCharts) window.refreshFinancialCharts();
+  }
+
+  function monthKey(raw) {
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return '';
+    const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Tehran', year:'numeric', month:'2-digit'}).formatToParts(date);
+    const year = parts.find(p => p.type === 'year');
+    const month = parts.find(p => p.type === 'month');
+    return year && month ? year.value + '-' + month.value : '';
+  }
+
+  function renderPayments() {
+    const monthly = SERVER.monthly;
+    monthly.campaigns.fill(0);
+    const donors = new Map();
+    SERVER.directDonors.forEach((row, index) => donors.set('direct:' + index, {name:row.name, count:Number(row.count), amt:Number(row.amt)}));
+    for (const payments of paymentsByCampaign.values()) {
+      for (const payment of payments) {
+        const amount = rialToToman(payment.amount);
+        const index = monthly.keys.indexOf(monthKey(payment.created_at));
+        if (index !== -1) monthly.campaigns[index] += amount;
+        const key = 'service:' + payment.donor_key;
+        const donor = donors.get(key) || {name:payment.name || 'خیر ناشناس', count:0, amt:0};
+        donor.count++;
+        donor.amt += amount;
+        donors.set(key, donor);
+      }
+    }
+    monthly.total = monthly.free.map((value, index) => value + monthly.campaigns[index]);
+    const monthTable = document.querySelectorAll('.grid-tables-2 .card .dtable tbody')[1];
+    if (monthTable) {
+      monthTable.replaceChildren();
+      monthly.labels.forEach((label, index) => {
+        if (!monthly.total[index]) return;
+        const row = document.createElement('tr');
+        const name = document.createElement('td');
+        name.appendChild(make('b', label));
+        row.append(name, make('td', money(monthly.free[index])), make('td', money(monthly.campaigns[index])));
+        const total = make('td', money(monthly.total[index]));
+        total.style.cssText = 'font-weight:700;color:var(--color-primary-dark);';
+        row.appendChild(total);
+        monthTable.appendChild(row);
+      });
+    }
+    const donorTable = document.querySelector('.grid-tables-2 .card .dtable tbody');
+    if (donorTable) {
+      donorTable.replaceChildren();
+      const top = [...donors.values()].sort((a, b) => b.amt - a.amt).slice(0, 10);
+      top.forEach((donor, index) => {
+        const row = document.createElement('tr');
+        const rank = document.createElement('td');
+        const badge = make('span', (index + 1).toLocaleString('fa-IR'));
+        badge.className = 'badge';
+        badge.style.cssText = 'background:var(--primary-08);color:var(--color-primary);';
+        rank.appendChild(badge);
+        const name = document.createElement('td');
+        name.appendChild(make('b', donor.name));
+        const amount = make('td', money(donor.amt));
+        amount.style.cssText = 'color:var(--success);font-weight:700;';
+        row.append(rank, name, make('td', donor.count.toLocaleString('fa-IR') + ' بار'), amount);
+        donorTable.appendChild(row);
+      });
+      if (!top.length) {
+        const row = document.createElement('tr');
+        const cell = make('td', 'داده‌ای موجود نیست');
+        cell.colSpan = 4;
+        cell.style.cssText = 'text-align:center;color:var(--color-muted);';
+        row.appendChild(cell);
+        donorTable.appendChild(row);
+      }
+    }
+    if (window.refreshFinancialCharts) window.refreshFinancialCharts();
+  }
+
+  async function load() {
+    if (!sources.length) errors.push('مرکز فعالی برای گزارش مالی پیدا نشد.');
+    const result = await Promise.all(sources.map(async source => {
+      try {
+        const data = await request('report', source);
+        return {source, campaigns: Array.isArray(data.campaigns) ? data.campaigns : []};
+      } catch (error) {
+        errors.push(source.name + ': ' + error.message);
+        return null;
+      }
+    }));
+    reports.push(...result.filter(Boolean));
+    renderAmountsAndCampaigns();
+    const tasks = reports.flatMap(group => group.campaigns
+      .filter(campaign => campaign.id && Number(campaign.system_amount) > 0)
+      .map(campaign => ({source:group.source, campaign})));
+    let next = 0;
+    await Promise.all(Array.from({length:Math.min(4, tasks.length)}, async () => {
+      while (next < tasks.length) {
+        const task = tasks[next++];
+        try {
+          const data = await request('payments', task.source, task.campaign.id);
+          paymentsByCampaign.set(task.source.slug + ':' + task.campaign.id, Array.isArray(data.payments) ? data.payments : []);
+        } catch (error) {
+          errors.push(task.source.name + ' / ' + task.campaign.title + ': ' + error.message);
+        }
+      }
+    }));
+    renderPayments();
+    if (errors.length && window.showToast) window.showToast('دریافت دادهٔ برخی مراکز ناموفق بود: ' + errors[0], 'error');
+    return errors.length === 0;
+  }
+  window.campaignFinanceReady = load();
+})();
 </script>
 </body>
 </html>

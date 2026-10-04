@@ -1,6 +1,8 @@
 # Sensitive — never commit these
+config.php
 /config.php
 !public_html/api/src/Core/Config.php
+!benefactor userpanel/api/src/Core/Config.php
 .env
 wp-config.php
 # Database credentials used by the deploy import script (keep on server only)
@@ -17,6 +19,15 @@ error_log
 **/error_log
 .vscode/
 .idea/
+/.codex/
+/AGENTS.md
+/.agents/
+
+# Local one-time maintenance/bootstrap scripts
+/create-admin-once.php
+
+# Local deployment archives (never serve or commit these)
+/public_html/public_html.zip
 # Dependencies (if you use them)
 /vendor/
 /node_modules/
@@ -26,4 +37,3 @@ error_log
 .agents/skills/
 # Local markdown documentation and prompt files
 Markdowns/
-./agents

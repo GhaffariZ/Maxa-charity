@@ -43,7 +43,7 @@
     <span class="macsa-btn">کادر درمان</span>
   </a>
 
-  <a href="/patient-option" class="gallery-item" aria-disabled="true">
+  <a href="/patient-option" class="gallery-item">
     <div class="card card-lg">
       <img src="/dashboard/components/hamrah/images/5.webp" alt="بیماران و مراقبین" width="600" height="600" loading="lazy" decoding="async">
     </div>

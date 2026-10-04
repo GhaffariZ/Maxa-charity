@@ -22,27 +22,26 @@ final class Config
             return;
         }
 
-        $candidates = array_filter([
-            $customPath,
-            // 1. One level above public_html (cPanel recommended)
-            dirname(__DIR__, 4) . '/maksa-private/.env',
-            dirname(__DIR__, 4) . '/.env',
-            // 2. Project root (dev environment)
-            dirname(__DIR__, 3) . '/.env',
-            // 3. public_html or api dir
-            dirname(__DIR__, 2) . '/.env',
-            dirname(__DIR__, 1) . '/.env',
-        ]);
+        $paths = [];
+        if ($customPath !== null) {
+            $paths[] = $customPath;
+        }
 
-        foreach ($candidates as $path) {
+        $roots = [];
+        for ($level = 2; $level <= 6; $level++) {
+            $roots[] = dirname(__DIR__, $level);
+        }
+        foreach ($roots as $root) {
+            $paths[] = $root . '/maksa-private/.env';
+            $paths[] = $root . '/.env';
+        }
+
+        foreach (array_unique($paths) as $path) {
             if (is_file($path) && is_readable($path)) {
                 self::parse($path);
-                self::$loaded = true;
-                return;
             }
         }
 
-        // Even if no .env file is found, mark as loaded and pull existing env vars
         self::$loaded = true;
     }
 
@@ -55,25 +54,22 @@ final class Config
 
         foreach ($lines as $line) {
             $line = trim($line);
-            if ($line === '' || str_starts_with($line, '#')) {
+            if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
                 continue;
             }
 
-            $pos = strpos($line, '=');
-            if ($pos === false) {
+            [$key, $val] = array_map('trim', explode('=', $line, 2));
+            if (!preg_match('/^[A-Z_][A-Z0-9_]*$/', $key)) {
                 continue;
             }
-
-            $key = trim(substr($line, 0, $pos));
-            $val = trim(substr($line, $pos + 1));
 
             // Strip surrounding quotes
-            if ((str_starts_with($val, '"') && str_ends_with($val, '"')) ||
-                (str_starts_with($val, "'") && str_ends_with($val, "'"))) {
-                $val = substr($val, 1, -1);
-            }
+            $val = trim($val, " \t\n\r\0\x0B\"'");
 
             self::$env[$key] = $val;
+            if (getenv($key) === false) {
+                putenv($key . '=' . $val);
+            }
             if (!isset($_ENV[$key])) {
                 $_ENV[$key] = $val;
             }
@@ -94,20 +90,28 @@ final class Config
         }
 
         $fromEnv = getenv($key);
-        if ($fromEnv !== false) {
+        if ($fromEnv !== false && $fromEnv !== '') {
             return $fromEnv;
         }
 
-        return $_ENV[$key] ?? $_SERVER[$key] ?? $default;
+        if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+            return $_ENV[$key];
+        }
+
+        if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+            return $_SERVER[$key];
+        }
+
+        return $default;
     }
 
-    public static function require(string $key): mixed
+    public static function require(string $key): string
     {
         $val = self::get($key);
         if ($val === null || $val === '') {
-            throw new RuntimeException("Missing required configuration variable: {$key}");
+            throw new RuntimeException("Missing required configuration: {$key}");
         }
-        return $val;
+        return (string) $val;
     }
 
     public static function bool(string $key, bool $default = false): bool
@@ -119,8 +123,7 @@ final class Config
         if (is_bool($val)) {
             return $val;
         }
-        $lower = strtolower(trim((string) $val));
-        return in_array($lower, ['1', 'true', 'on', 'yes'], true);
+        return filter_var($val, FILTER_VALIDATE_BOOL);
     }
 
     public static function int(string $key, int $default = 0): int
@@ -138,5 +141,6 @@ final class Config
         self::$env[$key] = $value;
         $_ENV[$key] = $value;
         $_SERVER[$key] = $value;
+        putenv($key . '=' . $value);
     }
 }

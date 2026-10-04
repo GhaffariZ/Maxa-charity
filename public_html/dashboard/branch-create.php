@@ -145,7 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (Throwable $ex) {
             if ($pdo->inTransaction()) { $pdo->rollBack(); }
-            $err = 'خطا در ساخت شعبه. لطفاً دوباره تلاش کنید.';
+            $errorRef = strtoupper(bin2hex(random_bytes(4)));
+            error_log('[branch-create:' . $errorRef . '] ' . get_class($ex) . ': ' . $ex->getMessage());
+            $err = 'خطا در ساخت شعبه. لطفاً دوباره تلاش کنید. کد پیگیری: ' . $errorRef;
         }
     }
 }

@@ -108,6 +108,13 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^contactus/?$ contactus.php [L,QSA]
 
+# Alternative spelling used by some external links.
+RewriteRule ^contact-us/?$ contactus.php [L,QSA]
+
+# The database/component slug is "patientoption", while the public link is
+# intentionally the more readable /patient-option.
+RewriteRule ^patient-option/?$ dashboard/page-view.php?slug=patientoption [L,QSA]
+
 # ---------------------------------------------------------
 # 0.8) شعب مکسا (Branches)
 #      توجه: مسیر بدون پسوندِ /branches توسط فایروال سرور (WAF/ModSecurity)

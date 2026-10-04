@@ -17,8 +17,18 @@
     </IfModule>
 </FilesMatch>
 
-# Also disable the PHP engine entirely for this directory
-php_flag engine off
+# Also disable the PHP engine entirely for this directory. On PHP-FPM and
+# LiteSpeed, a bare php_flag can itself cause HTTP 500, so only emit it when
+# the matching Apache PHP module is actually loaded.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
 
 # Prevent .htaccess overrides from being uploaded and taking effect
 # (defense-in-depth: combined with the FilesMatch above)

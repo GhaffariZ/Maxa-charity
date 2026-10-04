@@ -1,9 +1,7 @@
 <?php
 /* ============================================================================
- *  فید عمومیِ کمپین‌ها برای کامپوننت‌های سایت (بازدیدکنندگانِ عمومی).
- *  این endpoint عمومی است (بدونِ گاردِ پنل) و فقط داده‌ی فعالِ فقط-خواندنی می‌دهد.
- *  ایزولاسیون: با ?branch=<slug> کمپین‌های همان شعبه؛ بدون آن، «ستاد مرکزی» (HQ).
- *  هر کمپین نامِ شعبه‌اش را همراه دارد تا روی کارت، تگِ شعبه نمایش داده شود.
+ *  فید عمومیِ کمپین‌های مالی از Campaign Service.
+ *  ایزولاسیون: با ?branch=<slug> مرکز همان شعبه؛ بدون آن، ستاد مرکزی (hq).
  * ========================================================================== */
 header('Content-Type: application/json; charset=utf-8');
 ini_set('display_errors', '0');
@@ -16,25 +14,31 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
     );
 
-    // تعیین شعبه از روی slug (وگرنه HQ = 1)
-    $slug = isset($_GET['branch']) ? preg_replace('/[^a-z0-9-]/', '', strtolower((string)$_GET['branch'])) : '';
-    $branchId = 1;
+    require_once __DIR__ . '/../core/campaign-service.php';
+
+    // تعیین شعبه از روی slug (وگرنه HQ)
+    $slug = isset($_GET['branch']) ? trim(strtolower((string)$_GET['branch'])) : '';
     if ($slug !== '') {
-        $bs = $pdo->prepare("SELECT id FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
+        $slug = campaign_service_normalize_slug($slug);
+    }
+    $branch = null;
+    if ($slug !== '') {
+        $bs = $pdo->prepare("SELECT id, name, slug FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
         $bs->execute([$slug]);
-        $row = $bs->fetch();
-        if ($row) { $branchId = (int)$row['id']; }
+        $branch = $bs->fetch() ?: null;
+    } else {
+        $bs = $pdo->query("SELECT id, name, slug FROM branches WHERE is_hq = 1 AND status = 'active' LIMIT 1");
+        $branch = $bs->fetch() ?: null;
+    }
+    if (!$branch) {
+        throw new RuntimeException('مرکز انتخاب‌شده یافت نشد.');
     }
 
-    $stmt = $pdo->prepare(
-        "SELECT c.id, c.title, c.description, c.category, c.target_amount, c.collected_amount,
-                c.image_url, c.is_active, b.name AS branch_name, b.slug AS branch_slug
-           FROM campaigns c LEFT JOIN branches b ON b.id = c.branch_id
-          WHERE c.is_active = 1 AND c.collected_amount < c.target_amount AND c.branch_id = ?
-          ORDER BY c.id DESC"
-    );
-    $stmt->execute([$branchId]);
-    $campaigns = $stmt->fetchAll();
+    $remote = (new CampaignServiceClient((string)$branch['slug']))->publicCampaigns();
+    $campaigns = array_values(array_filter(array_map(
+        static fn(array $campaign): array => campaign_service_present($campaign, $branch),
+        $remote
+    ), static fn(array $campaign): bool => (int)$campaign['is_active'] === 1));
 
     if (count($campaigns) > 0) {
         echo json_encode(["status" => "success", "data" => $campaigns], JSON_UNESCAPED_UNICODE);
@@ -43,5 +47,6 @@ try {
     }
 
 } catch (Throwable $e) {
-    echo json_encode(["status" => "error", "message" => "خطای دیتابیس"], JSON_UNESCAPED_UNICODE);
+    http_response_code(502);
+    echo json_encode(["status" => "error", "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
 }

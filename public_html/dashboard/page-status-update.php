@@ -33,8 +33,15 @@ $stmt = $pdo->prepare("UPDATE pages SET status = ? WHERE id = ? AND branch_id = 
 $stmt->execute([$status, $id, $ACTIVE_BRANCH]);
 
 if ($stmt->rowCount() === 0) {
-    // Page not found or not in this branch — generic response
-    echo json_encode(["status" => "error", "message" => "Page not found."]);
+    // MySQL also returns zero when the requested status is already persisted.
+    $exists = $pdo->prepare("SELECT status FROM pages WHERE id = ? AND branch_id = ? LIMIT 1");
+    $exists->execute([$id, $ACTIVE_BRANCH]);
+    $currentStatus = $exists->fetchColumn();
+    if ($currentStatus === false) {
+        echo json_encode(["status" => "error", "message" => "Page not found."]);
+        exit;
+    }
+    echo json_encode(["status" => "success"]);
     exit;
 }
 

@@ -98,4 +98,10 @@ final class StandCatalog
     {
         return array_keys(self::DESIGNS);
     }
+
+    /** @return array<string, array{image:string,full_image:string,unit_price:int}> */
+    public static function all(): array
+    {
+        return self::DESIGNS;
+    }
 }
