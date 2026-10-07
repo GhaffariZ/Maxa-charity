@@ -193,6 +193,13 @@ function render_html_head(array $meta, string $branchSlug = '', string $branchNa
     if ($headRendered) return;
     $headRendered = true;
 
+    if (!defined('MAXA_PAGE_VIEW_ACTIVE')) {
+        define('MAXA_PAGE_VIEW_ACTIVE', true);
+    }
+    if (!defined('MAXA_HTML_SHELL_OPENED')) {
+        define('MAXA_HTML_SHELL_OPENED', true);
+    }
+
     if (!ini_get('zlib.output_compression')) {
         @ini_set('zlib.output_compression', '1');
     }
@@ -256,6 +263,9 @@ img{max-width:100%;height:auto}
 
 function render_html_foot(): void
 {
+    if (!defined('MAXA_HTML_SHELL_CLOSED')) {
+        define('MAXA_HTML_SHELL_CLOSED', true);
+    }
     echo "\n</body>\n</html>";
 }
 

@@ -906,8 +906,6 @@ require_once __DIR__ . '/dashboard/components/header/component.php';
     }
 </style>
 
-<div class="cta-navbar-spacer"></div>
-
 <main class="news-wrapper">
     <!-- بخش خوش‌آمدگویی -->
     <div class="news-intro-header">

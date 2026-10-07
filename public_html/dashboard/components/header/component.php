@@ -1,3 +1,23 @@
+<?php
+// اگر هدر در صفحه‌ای خارج از page-view (صفحات مستقل مثل branches.php, news.php, macsapedia.php و...)
+// فراخوانی شده باشد، تگ‌های استاندارد سند HTML5، جهت راست‌به‌چپ (dir="rtl") و متاتگ‌های ضروری را خروجی می‌دهیم.
+// در صفحات تحت مدیریت page-view، این تگ‌ها از قبل چاپ شده و با define('MAXA_PAGE_VIEW_ACTIVE', true) مشخص هستند.
+$__isStandaloneHeader = !defined('MAXA_PAGE_VIEW_ACTIVE') && !defined('MAXA_HTML_SHELL_OPENED');
+if ($__isStandaloneHeader) {
+    define('MAXA_HTML_SHELL_OPENED', true);
+}
+?>
+<?php if ($__isStandaloneHeader): ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= htmlspecialchars($pageTitle ?? 'مکسا — مؤسسه نیکوکاری کنترل سرطان') ?></title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="preload" href="/webfont/Vazirmatn[wght].woff2" as="font" type="font/woff2" crossorigin>
+<?php endif; ?>
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -8,9 +28,21 @@
     font-style: normal;
     font-display: swap;
   } 
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    direction: rtl;
+    text-align: right;
+  }
   body {
     font-family: 'Vazirmatn', sans-serif !important;
-    overflow-x: hidden;
+    color: #111;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
   }
     :root{
       --cta-orange:#faa61a;
@@ -29,6 +61,8 @@
     .cta {
       font-family: inherit;
       position: relative;
+      direction: rtl;
+      text-align: right;
     }
     .cta a{ color:inherit; text-decoration:none; }
     .cta button, .cta input{ font-family: inherit; }
@@ -53,6 +87,8 @@
       background: var(--cta-orange);
       box-shadow: 0 4px 24px -2px rgba(0,0,0,0.14);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
+      direction: rtl;
+      text-align: right;
     }
 
     /* Detached look when scrolled */
@@ -80,6 +116,7 @@
       padding: 0 16px;
       height: 100%;
       width: 100%;
+      direction: rtl;
     }
 
     /* راست: لوگو با صفحه شیشه‌ای مات که از زیر قسمت زرد هدر بیرون زده */
@@ -196,6 +233,7 @@
       gap: 6px;
       white-space: nowrap;
       flex-wrap: nowrap;
+      direction: rtl;
     }
 
     .cta-menu > li{
@@ -1035,6 +1073,11 @@
     .cta-account-logout:hover{background:rgba(229,57,53,.28) !important;color:#fff !important}
     [hidden]{display:none !important}
   </style>
+
+<?php if ($__isStandaloneHeader): ?>
+</head>
+<body class="maxa-standalone-page">
+<?php endif; ?>
 
 <?php 
 require_once __DIR__ . '/../../../event-lib.php'; 

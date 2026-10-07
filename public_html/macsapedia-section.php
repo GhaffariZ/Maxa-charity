@@ -50,6 +50,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
   }
   .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }
   .mp-breadcrumb { font-size: 14px; color: #8b8f96; margin-bottom: 20px; }
