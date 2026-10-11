@@ -924,8 +924,6 @@ render_dashboard_component('header', get_defined_vars());
     }
 </style>
 
-<div class="cta-navbar-spacer"></div>
-
 <div class="news-detail-wrapper">
     <!-- بردکرامب -->
     <nav class="news-detail-breadcrumbs" aria-label="مسیر راهنما">

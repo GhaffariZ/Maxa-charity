@@ -648,3 +648,8 @@ body {
 }
 
 </style>
+<?php if (defined('MAXA_HTML_SHELL_OPENED') && !defined('MAXA_PAGE_VIEW_ACTIVE') && !defined('MAXA_HTML_SHELL_CLOSED')): ?>
+<?php define('MAXA_HTML_SHELL_CLOSED', true); ?>
+</body>
+</html>
+<?php endif; ?>

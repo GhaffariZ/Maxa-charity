@@ -15,6 +15,7 @@ render_dashboard_component('header', get_defined_vars());
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
   }
   .mp-header {
     text-align: center;

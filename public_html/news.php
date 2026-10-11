@@ -902,8 +902,6 @@ render_dashboard_component('header', get_defined_vars());
     }
 </style>
 
-<div class="cta-navbar-spacer"></div>
-
 <main class="news-wrapper">
     <!-- بخش خوش‌آمدگویی -->
     <div class="news-intro-header">
