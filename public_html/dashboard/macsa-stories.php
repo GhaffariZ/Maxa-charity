@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 // Access guard: Only Central Headquarters (HQ) or Super Admin can access, and never financial manager
 $isFinance = dash_is_finance_only() || dash_is_finance_user();
@@ -121,18 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle Image Upload
         $imagePath = $existingImg;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $tmpName = $_FILES['image']['tmp_name'];
-            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg'], true)) {
-                $uploadDir = __DIR__ . '/../uploads/stories/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
-                $filename = 'story_' . time() . '_' . random_int(100, 999) . '.' . $ext;
-                if (move_uploaded_file($tmpName, $uploadDir . $filename)) {
-                    $imagePath = '/uploads/stories/' . $filename;
-                }
-            }
+            try {
+                $imagePath = maxa_upload_and_optimize($_FILES['image'], 'stories', 'story_', 82, 1920);
+            } catch (Throwable $e) {}
         } elseif (!empty($_POST['image_url'])) {
             $imagePath = trim($_POST['image_url']);
         }

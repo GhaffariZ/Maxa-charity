@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../core/icons.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 if (!defined('MAXA_PEDIA_BOOT')) {
   define('MAXA_PEDIA_BOOT', 1);
@@ -248,6 +249,18 @@ if ($pdo) {
       $pdo->exec("ALTER TABLE maxapedia_items ADD COLUMN category VARCHAR(120) DEFAULT NULL AFTER section, ADD INDEX(category)");
     }
 
+    /* جدول اختصاصی تصاویر گالری مکسا (چند عکس با کپشن و استایل چیدمان زیر هر آلبوم) */
+    $pdo->exec("CREATE TABLE IF NOT EXISTS maxapedia_gallery_photos (
+      id          INT AUTO_INCREMENT PRIMARY KEY,
+      item_id     INT NOT NULL,
+      image_url   VARCHAR(1024) NOT NULL,
+      caption     VARCHAR(500) DEFAULT NULL,
+      layout_span VARCHAR(20) DEFAULT 'normal',
+      sort_order  INT DEFAULT 0,
+      created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_gallery_item_sort (item_id, sort_order)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     $maxapediaSchemaReady = true;
   } catch (Throwable $e) {
     $dbError = $dbError ?? $e->getMessage();
@@ -341,5 +354,96 @@ function maxapedia_update(PDO $pdo, int $id, array $d): bool {
 }
 
 function maxapedia_delete(PDO $pdo, int $id): bool {
+  // پاک‌سازی تصاویر متصل در گالری در صورت وجود
+  $photoUrls = maxapedia_gallery_delete_all_photos($pdo, $id);
+  if (function_exists('maxapedia_delete_local_file')) {
+    foreach ($photoUrls as $url) {
+      maxapedia_delete_local_file($url);
+    }
+  }
   return q($pdo, "DELETE FROM maxapedia_items WHERE id = ?", [$id])->rowCount() > 0;
 }
+
+/* ============================================================================
+ *  متدهای گالری چندتصویری (Maxapedia Gallery Photos)
+ * ========================================================================== */
+
+/** دریافت تمام عکس‌های یک آلبوم */
+function maxapedia_gallery_photos(PDO $pdo, int $itemId): array {
+  return q($pdo, "SELECT * FROM maxapedia_gallery_photos WHERE item_id = ? ORDER BY sort_order ASC, id ASC", [$itemId])->fetchAll();
+}
+
+/** دریافت تعداد عکس‌های یک آلبوم */
+function maxapedia_gallery_photo_count(PDO $pdo, int $itemId): int {
+  $row = q($pdo, "SELECT COUNT(*) AS c FROM maxapedia_gallery_photos WHERE item_id = ?", [$itemId])->fetch();
+  return (int)($row['c'] ?? 0);
+}
+
+/** نقشه تعداد عکس‌ها برای تمام آلبوم‌ها [itemId => count] */
+function maxapedia_gallery_counts_map(PDO $pdo): array {
+  $rows = q($pdo, "SELECT item_id, COUNT(*) AS c FROM maxapedia_gallery_photos GROUP BY item_id")->fetchAll();
+  $map = [];
+  foreach ($rows as $r) {
+    $map[(int)$r['item_id']] = (int)$r['c'];
+  }
+  return $map;
+}
+
+/** افزودن یک عکس به آلبوم */
+function maxapedia_gallery_add_photo(PDO $pdo, int $itemId, string $imageUrl, string $caption = '', string $layoutSpan = 'normal', int $sortOrder = 0): int {
+  $allowedSpans = ['normal', 'wide', 'tall', 'featured'];
+  if (!in_array($layoutSpan, $allowedSpans, true)) { $layoutSpan = 'normal'; }
+  q($pdo,
+    "INSERT INTO maxapedia_gallery_photos (item_id, image_url, caption, layout_span, sort_order) VALUES (?, ?, ?, ?, ?)",
+    [$itemId, $imageUrl, $caption, $layoutSpan, $sortOrder]
+  );
+  return (int)$pdo->lastInsertId();
+}
+
+/** به‌روزرسانی مشخصات یک عکس (کپشن، اندازه در گرید، اولویت) */
+function maxapedia_gallery_update_photo(PDO $pdo, int $photoId, array $d): bool {
+  $allowedSpans = ['normal', 'wide', 'tall', 'featured'];
+  $span = in_array(($d['layout_span'] ?? ''), $allowedSpans, true) ? $d['layout_span'] : 'normal';
+  return q($pdo,
+    "UPDATE maxapedia_gallery_photos SET caption = ?, layout_span = ?, sort_order = ? WHERE id = ?",
+    [
+      (string)($d['caption'] ?? ''),
+      $span,
+      (int)($d['sort_order'] ?? 0),
+      $photoId
+    ]
+  )->rowCount() >= 0;
+}
+
+/** حذف یک عکس مشخص و بازگرداندن آدرس فایل آن */
+function maxapedia_gallery_delete_photo(PDO $pdo, int $photoId): ?string {
+  $row = q($pdo, "SELECT image_url FROM maxapedia_gallery_photos WHERE id = ?", [$photoId])->fetch();
+  if (!$row) return null;
+  q($pdo, "DELETE FROM maxapedia_gallery_photos WHERE id = ?", [$photoId]);
+  return (string)$row['image_url'];
+}
+
+/** حذف تمام عکس‌های یک آلبوم و بازگرداندن آدرس فایل‌های آن‌ها برای پاکسازی */
+function maxapedia_gallery_delete_all_photos(PDO $pdo, int $itemId): array {
+  $rows = q($pdo, "SELECT image_url FROM maxapedia_gallery_photos WHERE item_id = ?", [$itemId])->fetchAll();
+  $urls = array_map(static fn($r) => (string)$r['image_url'], $rows);
+  q($pdo, "DELETE FROM maxapedia_gallery_photos WHERE item_id = ?", [$itemId]);
+  return $urls;
+}
+
+/** حذف دسته‌ای چند عکس با شناسه‌های مشخص و بازگرداندن آدرس فایل‌ها */
+function maxapedia_gallery_delete_photos_batch(PDO $pdo, array $photoIds): array {
+  $cleanIds = array_values(array_filter(array_map('intval', $photoIds), static fn($id) => $id > 0));
+  if (empty($cleanIds)) return [];
+
+  $placeholders = implode(',', array_fill(0, count($cleanIds), '?'));
+  $st = $pdo->prepare("SELECT image_url FROM maxapedia_gallery_photos WHERE id IN ($placeholders)");
+  $st->execute($cleanIds);
+  $urls = $st->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+  $delSt = $pdo->prepare("DELETE FROM maxapedia_gallery_photos WHERE id IN ($placeholders)");
+  $delSt->execute($cleanIds);
+
+  return array_map('strval', $urls);
+}
+

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/html-sanitizer.php';
-
 require_once __DIR__ . '/icons.php';
+require_once __DIR__ . '/image-optimizer.php';
 
 /**
  * SECURITY: Safely render a component by name.

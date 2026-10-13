@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 dash_require('hero');
 
 header('Content-Type: application/json; charset=utf-8');
@@ -29,24 +30,7 @@ function hero_save_image(array $file, string $uploadDir): ?string {
     if (empty($file['name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return null;
     }
-    if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-        throw new Exception('خطا در آپلود تصویر.');
-    }
-    // محدودیت حجم (5MB)
-    if (($file['size'] ?? 0) > 5 * 1024 * 1024) {
-        throw new Exception('حجم تصویر نباید بیشتر از 5 مگابایت باشد.');
-    }
-    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    if (!in_array($ext, $allowed, true)) {
-        throw new Exception('فرمت تصویر مجاز نیست. فقط jpg, jpeg, png, webp, gif');
-    }
-    $newName = 'hero_' . time() . '_' . random_int(1000, 9999) . '.' . $ext;
-    $dest = $uploadDir . $newName;
-    if (!move_uploaded_file($file['tmp_name'], $dest)) {
-        throw new Exception('انتقال تصویر به پوشه انجام نشد.');
-    }
-    return '/uploads/hero/' . $newName;
+    return maxa_upload_and_optimize($file, 'hero', 'hero_', 82, 1920);
 }
 
 try {

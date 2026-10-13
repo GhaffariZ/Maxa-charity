@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 $isSuper = dash_is_super();
 $isHq = dash_is_hq_view();
@@ -75,18 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Handle file upload
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $fileTmp = $_FILES['image']['tmp_name'];
-                $fileName = $_FILES['image']['name'];
-                $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
-                if (in_array($ext, $allowed, true)) {
-                    $newFileName = 'stand_' . $targetBranchId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                    $destPath = $uploadDir . '/' . $newFileName;
-                    if (move_uploaded_file($fileTmp, $destPath)) {
-                        $imagePath = '/uploads/stands/' . $newFileName;
-                    }
-                }
+                try {
+                    $imagePath = maxa_upload_and_optimize($_FILES['image'], 'stands', 'stand_' . $targetBranchId . '_', 82, 1920);
+                } catch (Throwable $e) {}
             }
 
             // Fallback to preset or URL if no file uploaded
@@ -132,18 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // If new image uploaded
                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                    $fileTmp = $_FILES['image']['tmp_name'];
-                    $fileName = $_FILES['image']['name'];
-                    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                    $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
-                    if (in_array($ext, $allowed, true)) {
-                        $newFileName = 'stand_' . $targetBranchId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                        $destPath = $uploadDir . '/' . $newFileName;
-                        if (move_uploaded_file($fileTmp, $destPath)) {
-                            $imagePath = '/uploads/stands/' . $newFileName;
-                        }
-                    }
+                    try {
+                        $imagePath = maxa_upload_and_optimize($_FILES['image'], 'stands', 'stand_' . $targetBranchId . '_', 82, 1920);
+                    } catch (Throwable $e) {}
                 } elseif (!empty($_POST['preset_image'])) {
                     $imagePath = trim((string)$_POST['preset_image']);
                 }

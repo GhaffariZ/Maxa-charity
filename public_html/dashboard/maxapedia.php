@@ -44,40 +44,8 @@ if (!function_exists('maxapedia_delete_local_file')) {
 
 if (!function_exists('maxapedia_upload_file')) {
   function maxapedia_upload_file(array $file, string $section = 'general'): string {
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-      switch ($file['error']) {
-        case UPLOAD_ERR_INI_SIZE:
-        case UPLOAD_ERR_FORM_SIZE:
-          $max = ini_get('upload_max_filesize');
-          throw new Exception("حجم فایل بیشتر از سقف مجاز سرور است (حداکثر $max).");
-        case UPLOAD_ERR_PARTIAL:
-          throw new Exception("آپلود فایل ناقص ماند. لطفاً دوباره تلاش کنید.");
-        default:
-          throw new Exception("خطا در آپلود فایل (کد خطا: {$file['error']}).");
-      }
-    }
-
-    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['pdf', 'epub', 'mobi', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'zip', 'rar', '7z', 'mp4', 'mp3', 'ogg', 'wav', 'webm', 'jpg', 'jpeg', 'png', 'webp'];
-    if (!in_array($ext, $allowed, true)) {
-      throw new Exception("فرمت فایل نامعتبر است. فرمت‌های مجاز: " . implode(', ', $allowed));
-    }
-
-    $subDir = in_array($section, ['books', 'brochures'], true) ? $section : 'maxapedia';
-    $uploadDir = dirname(__DIR__) . '/uploads/' . $subDir;
-    if (!is_dir($uploadDir)) {
-      @mkdir($uploadDir, 0775, true);
-    }
-
-    $prefix = $section . '_';
-    $safeName = $prefix . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-    $destination = $uploadDir . '/' . $safeName;
-
-    if (!move_uploaded_file($file['tmp_name'], $destination)) {
-      throw new Exception("امکان ذخیره فایل در پوشه uploads وجود ندارد. لطفاً دسترسی پوشه را بررسی کنید.");
-    }
-
-    return '/uploads/' . $subDir . '/' . $safeName;
+    $subDir = in_array($section, ['books', 'brochures', 'gallery'], true) ? $section : 'maxapedia';
+    return maxa_upload_and_optimize($file, $subDir, $section . '_', 82, 1920);
   }
 }
 
@@ -95,30 +63,11 @@ if (!function_exists('maxapedia_upload_brochure_file')) {
 
 if (!function_exists('maxapedia_upload_cover_file')) {
   function maxapedia_upload_cover_file(array $file, string $section = 'general'): string {
-    if ($file['error'] !== UPLOAD_ERR_OK) {
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
       return '';
     }
-
-    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    if (!in_array($ext, $allowed, true)) {
-      throw new Exception("فرمت تصویر شاخص/جلد نامعتبر است. فرمت‌های مجاز: jpg, jpeg, png, webp");
-    }
-
-    $subDir = in_array($section, ['books', 'brochures'], true) ? ($section . '/covers') : 'maxapedia/covers';
-    $uploadDir = dirname(__DIR__) . '/uploads/' . $subDir;
-    if (!is_dir($uploadDir)) {
-      @mkdir($uploadDir, 0775, true);
-    }
-
-    $safeName = 'cover_' . $section . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-    $destination = $uploadDir . '/' . $safeName;
-
-    if (!move_uploaded_file($file['tmp_name'], $destination)) {
-      throw new Exception("امکان ذخیره تصویر شاخص در پوشه uploads وجود ندارد.");
-    }
-
-    return '/uploads/' . $subDir . '/' . $safeName;
+    $subDir = in_array($section, ['books', 'brochures', 'gallery'], true) ? ($section . '/covers') : 'maxapedia/covers';
+    return maxa_upload_and_optimize($file, $subDir, 'cover_' . $section . '_', 82, 1920);
   }
 }
 
@@ -155,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         throw new Exception("عنوان محتوا الزامی است.");
       }
 
-      maxapedia_create($pdo, [
+      $newId = maxapedia_create($pdo, [
         'section'     => $section,
         'category'    => trim((string)($_POST['category'] ?? '')),
         'title'       => $title,
@@ -165,6 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'status'      => $_POST['status'] ?? 'published',
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
       ]);
+
+      if ($section === 'gallery') {
+        header('Location: maxapedia.php?section=gallery&album_id=' . $newId . '&msg=album_created');
+        exit;
+      }
       $msg = 'created';
 
     } elseif ($action === 'update') {
@@ -224,6 +178,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       }
       maxapedia_delete($pdo, $delId);
       $msg = 'deleted';
+
+    } elseif ($action === 'gallery_upload_photos') {
+      $albumId = (int)($_POST['album_id'] ?? 0);
+      $album = maxapedia_find($pdo, $albumId);
+      if (!$album || $album['section'] !== 'gallery') {
+        throw new Exception("آلبوم مورد نظر یافت نشد.");
+      }
+
+      $files = $_FILES['gallery_photos'] ?? null;
+      if (!$files || empty($files['name']) || (is_array($files['name']) && empty($files['name'][0]))) {
+        throw new Exception("هیچ تصویری برای آپلود انتخاب نشده است.");
+      }
+
+      $uploadedCount = 0;
+      $firstPhotoUrl = null;
+
+      // بررسی و آپلود تک‌تک تصاویر ارسالی
+      $names    = (array)$files['name'];
+      $tmpNames = (array)$files['tmp_name'];
+      $errors   = (array)$files['error'];
+      $sizes    = (array)$files['size'];
+      $types    = (array)($files['type'] ?? []);
+
+      $currentPhotosCount = maxapedia_gallery_photo_count($pdo, $albumId);
+
+      foreach ($names as $idx => $origName) {
+        if ($errors[$idx] === UPLOAD_ERR_NO_FILE) continue;
+        $singleFile = [
+          'name'     => $origName,
+          'type'     => $types[$idx] ?? '',
+          'tmp_name' => $tmpNames[$idx],
+          'error'    => $errors[$idx],
+          'size'     => $sizes[$idx] ?? 0,
+        ];
+
+        try {
+          $photoUrl = maxapedia_upload_file($singleFile, 'gallery');
+          $currentPhotosCount++;
+          maxapedia_gallery_add_photo($pdo, $albumId, $photoUrl, '', 'normal', $currentPhotosCount);
+          $uploadedCount++;
+          if (!$firstPhotoUrl) {
+            $firstPhotoUrl = $photoUrl;
+          }
+        } catch (Throwable $e) {
+          // در صورت بروز خطا در یک تصویر، از بقیه عبور می‌کنیم
+        }
+      }
+
+      if ($uploadedCount === 0) {
+        throw new Exception("هیچ فایلی با موفقیت ذخیره نشد. لطفاً فرمت و حجم تصاویر را بررسی کنید.");
+      }
+
+      // اگر آلبوم هنوز تصویر کاور ندارد، اولین عکس آپلودشده به عنوان کاور آلبوم انتخاب می‌شود
+      if (empty($album['thumbnail']) && $firstPhotoUrl) {
+        maxapedia_update($pdo, $albumId, [
+          'category'    => $album['category'],
+          'title'       => $album['title'],
+          'description' => $album['description'],
+          'url'         => $album['url'],
+          'thumbnail'   => $firstPhotoUrl,
+          'status'      => $album['status'],
+          'sort_order'  => (int)$album['sort_order'],
+        ]);
+      }
+
+      header('Location: maxapedia.php?section=gallery&album_id=' . $albumId . '&msg=photos_uploaded');
+      exit;
+
+    } elseif ($action === 'gallery_save_photos') {
+      $albumId = (int)($_POST['album_id'] ?? 0);
+      $album = maxapedia_find($pdo, $albumId);
+      if (!$album || $album['section'] !== 'gallery') {
+        throw new Exception("آلبوم مورد نظر یافت نشد.");
+      }
+
+      $captions    = (array)($_POST['caption'] ?? []);
+      $layoutSpans = (array)($_POST['layout_span'] ?? []);
+      $sortOrders  = (array)($_POST['sort_order'] ?? []);
+
+      foreach ($captions as $photoId => $capText) {
+        $pId = (int)$photoId;
+        if ($pId <= 0) continue;
+        $span = (string)($layoutSpans[$photoId] ?? 'normal');
+        $sort = (int)($sortOrders[$photoId] ?? 0);
+        maxapedia_gallery_update_photo($pdo, $pId, [
+          'caption'     => trim((string)$capText),
+          'layout_span' => $span,
+          'sort_order'  => $sort,
+        ]);
+      }
+
+      header('Location: maxapedia.php?section=gallery&album_id=' . $albumId . '&msg=photos_updated');
+      exit;
+
+    } elseif ($action === 'gallery_delete_photo') {
+      $photoId = (int)($_POST['photo_id'] ?? 0);
+      $albumId = (int)($_POST['album_id'] ?? 0);
+      if ($photoId > 0) {
+        $photoUrl = maxapedia_gallery_delete_photo($pdo, $photoId);
+        if ($photoUrl) {
+          maxapedia_delete_local_file($photoUrl);
+        }
+      }
+      header('Location: maxapedia.php?section=gallery&album_id=' . $albumId . '&msg=photo_deleted');
+      exit;
+
+    } elseif ($action === 'gallery_batch_delete_photos') {
+      $albumId = (int)($_POST['album_id'] ?? 0);
+      $selectedIds = (array)($_POST['selected_photo_ids'] ?? []);
+      if (!empty($selectedIds)) {
+        $deletedUrls = maxapedia_gallery_delete_photos_batch($pdo, $selectedIds);
+        foreach ($deletedUrls as $u) {
+          maxapedia_delete_local_file($u);
+        }
+      }
+      header('Location: maxapedia.php?section=gallery&album_id=' . $albumId . '&msg=photos_batch_deleted');
+      exit;
     }
   } catch (Throwable $e) {
     $errorMsg = $e->getMessage();
@@ -231,7 +302,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
   }
 
   // PRG: جلوگیری از ارسال مجدد فرم
-  $redir = 'maxapedia.php?section=' . urlencode($section) . ($msg ? '&msg=' . $msg : '') . ($errorMsg ? '&err=' . urlencode($errorMsg) : '');
+  $extraParams = '';
+  if ($section === 'gallery' && !empty($_POST['album_id'])) {
+    $extraParams = '&album_id=' . (int)$_POST['album_id'];
+  }
+  $redir = 'maxapedia.php?section=' . urlencode($section) . $extraParams . ($msg ? '&msg=' . $msg : '') . ($errorMsg ? '&err=' . urlencode($errorMsg) : '');
   header('Location: ' . $redir);
   exit;
 }
@@ -257,6 +332,16 @@ $items  = ($pdo) ? maxapedia_items($pdo, $section, false, ['category' => $catFil
 $counts = ($pdo) ? maxapedia_counts($pdo) : [];
 $meta   = maxapedia_section_meta($section);
 $isFiltered = ($q !== '' || $catFilter !== '');
+
+/* ---------- گالری: وضعیت آلبوم فعال و تعداد عکس‌ها ---------- */
+$activeAlbumId = ($section === 'gallery') ? (int)($_GET['album_id'] ?? 0) : 0;
+$activeAlbum   = ($activeAlbumId > 0 && $pdo) ? maxapedia_find($pdo, $activeAlbumId) : null;
+if ($activeAlbum && $activeAlbum['section'] !== 'gallery') {
+  $activeAlbum   = null;
+  $activeAlbumId = 0;
+}
+$activeAlbumPhotos = ($activeAlbum && $pdo) ? maxapedia_gallery_photos($pdo, $activeAlbumId) : [];
+$galleryCounts     = ($section === 'gallery' && $pdo) ? maxapedia_gallery_counts_map($pdo) : [];
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -478,6 +563,394 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   border-radius: 6px;
   object-fit: cover;
 }
+
+/* ===== استایل‌های اختصاصی مدیریت گالری و عکس‌های آلبوم ===== */
+.mx-album-header-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.mx-album-header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.mx-album-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all .2s;
+}
+.mx-album-back-btn:hover {
+  background: var(--primary-08);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.mx-album-header-info h2 {
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--color-text);
+  margin: 0 0 6px;
+}
+.mx-album-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+.mx-album-actions-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mx-site-view-btn {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-08);
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-12);
+  transition: background .2s;
+}
+.mx-site-view-btn:hover { background: var(--primary-12); }
+
+/* باکس آپلود گروهی چند عکس */
+.mx-multi-uploader-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+}
+.mx-multi-dropzone {
+  border: 2px dashed var(--color-primary);
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  background: var(--primary-08);
+  cursor: pointer;
+  position: relative;
+  transition: background .2s, border-color .2s;
+}
+.mx-multi-dropzone:hover, .mx-multi-dropzone.dragover {
+  background: rgba(0, 143, 138, 0.14);
+}
+.mx-multi-dropzone input[type="file"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+}
+.mx-multi-dropzone-icon {
+  font-size: 38px;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+.mx-multi-dropzone-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.mx-multi-dropzone-hint {
+  font-size: 12.5px;
+  color: var(--color-muted);
+}
+.mx-selected-files-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 12px 18px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+.mx-selected-files-bar.active { display: flex; }
+.mx-selected-summary { font-size: 13.5px; font-weight: 700; color: var(--color-text); }
+.mx-btn-upload-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.mx-btn-upload-submit:hover { background: var(--color-primary-dark); transform: translateY(-1px); }
+
+/* گرید مدیریت تصاویر آلبوم */
+.mx-photos-container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.mx-photos-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.mx-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mx-photo-item {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .2s, box-shadow .2s;
+}
+.mx-photo-item:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+.mx-photo-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  overflow: hidden;
+}
+.mx-photo-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mx-photo-preview-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+}
+.mx-photo-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.mx-photo-field label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+  display: block;
+}
+.mx-photo-field input[type="text"],
+.mx-photo-field select,
+.mx-photo-field input[type="number"] {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+}
+.mx-photo-field input[type="text"]:focus,
+.mx-photo-field select:focus,
+.mx-photo-field input[type="number"]:focus {
+  border-color: var(--color-primary);
+}
+.mx-photo-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mx-photo-del-btn {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--danger);
+  background: transparent;
+  border: 1px solid var(--danger-12);
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.mx-photo-del-btn:hover {
+  background: var(--danger-12);
+  border-color: var(--danger);
+}
+.mx-manage-album-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--primary-12);
+  border: 1px solid var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all .2s;
+}
+.mx-manage-album-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+.mx-cover-badge {
+  position: absolute;
+  top: 8px;
+  right: 44px;
+  background: var(--cta-orange, #faa61a);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 4;
+}
+
+/* انتخاب چندگانه و جابجایی ترتیبی کارت‌های عکس */
+.mx-photo-checkbox-wrap {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  background: rgba(255,255,255,0.92);
+  border-radius: 8px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  transition: transform .15s;
+}
+.mx-photo-checkbox-wrap:hover { transform: scale(1.08); }
+.mx-photo-checkbox-wrap input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+.mx-drag-handle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 5;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 7px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background .2s;
+}
+.mx-drag-handle:active { cursor: grabbing; background: var(--color-primary); }
+.mx-photo-item.is-dragging {
+  opacity: 0.35;
+  border: 2px dashed var(--color-primary);
+}
+.mx-photo-item.drag-over {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--primary-12);
+  transform: scale(1.02);
+}
+.mx-btn-bulk-del {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--danger);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .2s, transform .15s;
+}
+.mx-btn-bulk-del:hover {
+  background: #cc4458;
+  transform: translateY(-1px);
+}
+.mx-comp-box {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: var(--primary-08);
+  border: 1px solid var(--color-primary-light);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mx-comp-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+.mx-comp-progress {
+  height: 6px;
+  background: rgba(0, 143, 138, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.mx-comp-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  border-radius: 99px;
+  transition: width .2s ease;
+}
 </style>
 </head>
 <body>
@@ -497,10 +970,20 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
   <?php if ($notice === 'created'): ?>
     <div class="mx-notice ok">محتوای جدید با موفقیت افزوده شد.</div>
+  <?php elseif ($notice === 'album_created'): ?>
+    <div class="mx-notice ok">آلبوم جدید با موفقیت ایجاد شد! اکنون می‌توانید تصاویر این رویداد را در زیر آپلود و کپشن‌گذاری نمایید.</div>
+  <?php elseif ($notice === 'photos_uploaded'): ?>
+    <div class="mx-notice ok">تصاویر انتخابی با موفقیت در این آلبوم بارگذاری شدند.</div>
+  <?php elseif ($notice === 'photos_updated'): ?>
+    <div class="mx-notice ok">کپشن‌ها، اندازه‌ها و ترتیب تصاویر با موفقیت ذخیره شد.</div>
+  <?php elseif ($notice === 'photo_deleted'): ?>
+    <div class="mx-notice ok">تصویر مورد نظر از آلبوم حذف شد.</div>
+  <?php elseif ($notice === 'photos_batch_deleted'): ?>
+    <div class="mx-notice ok">تصاویر انتخاب‌شده با موفقیت از آلبوم حذف شدند.</div>
   <?php elseif ($notice === 'updated'): ?>
     <div class="mx-notice ok">تغییرات با موفقیت ذخیره شد.</div>
   <?php elseif ($notice === 'deleted'): ?>
-    <div class="mx-notice ok">محتوا حذف شد.</div>
+    <div class="mx-notice ok">محتوا با موفقیت حذف شد.</div>
   <?php elseif ($notice === 'error'): ?>
     <div class="mx-notice err"><?= !empty($errorNotice) ? e($errorNotice) : 'خطا در انجام عملیات.' ?></div>
   <?php endif; ?>
@@ -516,11 +999,181 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <?php endforeach; ?>
   </div>
 
+  <?php if ($section === 'gallery' && $activeAlbum): ?>
+    <!-- ======================================================================
+         نمای اختصاصی مدیریت تصاویر آلبوم گالری مکسا
+         ====================================================================== -->
+    <div class="mx-album-header-card">
+      <div class="mx-album-header-title">
+        <a href="maxapedia.php?section=gallery" class="mx-album-back-btn">
+          <?= iconoir('arrow-right', '', 16) ?> بازگشت به آلبوم‌ها
+        </a>
+        <div class="mx-album-header-info">
+          <h2>آلبوم «<?= e($activeAlbum['title']) ?>»</h2>
+          <div class="mx-album-header-meta">
+            <span><?= iconoir('label', '', 14) ?> دسته‌بندی: <strong><?= e($activeAlbum['category'] ?: 'عمومی') ?></strong></span>
+            <span>•</span>
+            <span><?= iconoir('media-image-list', '', 14) ?> <strong><?= fa_digits(count($activeAlbumPhotos)) ?></strong> تصویر</span>
+          </div>
+        </div>
+      </div>
+      <div class="mx-album-actions-top">
+        <a href="/macsapedia/gallery?album=<?= (int)$activeAlbum['id'] ?>" target="_blank" rel="noopener" class="mx-site-view-btn">
+          <?= iconoir('open-new-window', '', 15) ?> مشاهده این آلبوم در سایت
+        </a>
+      </div>
+    </div>
+
+    <!-- باکس آپلود گروهی عکس‌ها (Drag & Drop Multi-upload) -->
+    <div class="mx-multi-uploader-card">
+      <form method="post" action="maxapedia.php?section=gallery" enctype="multipart/form-data" id="galleryMultiUploadForm">
+        <input type="hidden" name="action" value="gallery_upload_photos">
+        <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
+
+        <div class="mx-multi-dropzone" id="galleryMultiDropzone">
+          <input type="file" name="gallery_photos[]" id="galleryMultiInput" multiple accept="image/jpeg,image/png,image/webp,image/gif">
+          <div class="mx-multi-dropzone-icon"><?= iconoir('media-image-plus', '', 40) ?></div>
+          <div class="mx-multi-dropzone-title">عکس‌های مورد نظر را بکشید و اینجا رها کنید، یا برای انتخاب کلیک نمایید</div>
+          <div class="mx-multi-dropzone-hint">می‌توانید تا ۱۰۰ تصویر را همزمان انتخاب و آپلود کنید (فرمت‌های مجاز: JPG, PNG, WEBP)</div>
+        </div>
+
+        <div class="mx-selected-files-bar" id="gallerySelectedBar">
+          <span class="mx-selected-summary" id="gallerySelectedSummary">۰ تصویر انتخاب شده</span>
+          <button type="submit" class="mx-btn-upload-submit" id="galleryUploadSubmitBtn">
+            <?= iconoir('cloud-upload', '', 18) ?> شروع آپلود و افزودن به آلبوم
+          </button>
+        </div>
+
+        <!-- نوار وضعیت بهینه‌سازی و فشرده‌سازی خودکار تصاویر -->
+        <div class="mx-comp-box" id="galleryCompBox" style="display:none;">
+          <div class="mx-comp-info">
+            <span id="galleryCompStatus">در حال آماده‌سازی و بهینه‌سازی تصاویر...</span>
+            <span id="galleryCompPercent">۰٪</span>
+          </div>
+          <div class="mx-comp-progress">
+            <div class="mx-comp-bar" id="galleryCompBar"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- گرید مدیریت تصاویر و ویرایش کپشن‌ها -->
+    <div class="mx-photos-container">
+      <form method="post" action="maxapedia.php?section=gallery" id="gallerySavePhotosForm">
+        <input type="hidden" name="action" value="gallery_save_photos">
+        <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
+
+        <div class="mx-photos-toolbar">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <h3 style="margin:0;font-size:16px;font-weight:800;color:var(--color-text);">تصاویر ثبت‌شده در این آلبوم</h3>
+              <span class="mx-count-pill"><?= fa_digits(count($activeAlbumPhotos)) ?> عکس</span>
+            </div>
+            <?php if (!empty($activeAlbumPhotos)): ?>
+              <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--color-muted);margin-right:8px;">
+                <input type="checkbox" id="gallerySelectAll" onchange="toggleSelectAllPhotos(this)" style="cursor:pointer;width:16px;height:16px;accent-color:var(--color-primary);">
+                انتخاب همه
+              </label>
+              <button type="button" class="mx-btn-bulk-del" id="galleryBulkDelBtn" style="display:none;" onclick="submitBatchDelete()">
+                <?= iconoir('trash', '', 14) ?> حذف تصاویر انتخاب‌شده (<span id="gallerySelectedCount">۰</span>)
+              </button>
+            <?php endif; ?>
+          </div>
+          <?php if (!empty($activeAlbumPhotos)): ?>
+            <button type="submit" class="mx-btn-upload-submit">
+              <?= iconoir('check', '', 16) ?> ذخیره تغییرات کپشن‌ها و چیدمان
+            </button>
+          <?php endif; ?>
+        </div>
+
+        <?php if (empty($activeAlbumPhotos)): ?>
+          <div class="mx-empty" style="padding:48px 20px;">
+            هنوز هیچ عکسی برای این آلبوم آپلود نشده است. با استفاده از کادر بالا، عکس‌های این رویداد را انتخاب و آپلود نمایید.
+          </div>
+        <?php else: ?>
+          <div class="mx-photos-grid" id="galleryPhotosGrid">
+            <?php foreach ($activeAlbumPhotos as $idx => $p): ?>
+              <div class="mx-photo-item" draggable="true" data-photo-id="<?= (int)$p['id'] ?>">
+                <div class="mx-photo-img-wrap">
+                  <label class="mx-photo-checkbox-wrap" title="انتخاب برای حذف گروهی">
+                    <input type="checkbox" class="mx-photo-cb" value="<?= (int)$p['id'] ?>" onchange="onPhotoSelectionChange()">
+                  </label>
+                  <img src="<?= e($p['image_url']) ?>" alt="<?= e($p['caption'] ?? '') ?>" loading="lazy">
+                  <?php if (!empty($activeAlbum['thumbnail']) && $activeAlbum['thumbnail'] === $p['image_url']): ?>
+                    <span class="mx-cover-badge">کاور آلبوم</span>
+                  <?php endif; ?>
+                  <a href="<?= e($p['image_url']) ?>" target="_blank" rel="noopener" class="mx-photo-preview-link" title="مشاهده تصویر بزرگ">
+                    <?= iconoir('expand', '', 14) ?>
+                  </a>
+                  <div class="mx-drag-handle" title="بکشید تا ترتیب جابجا شود">
+                    <?= iconoir('drag-hand-gesture', '', 14) ?>
+                  </div>
+                </div>
+                <div class="mx-photo-body">
+                  <div class="mx-photo-field">
+                    <label>نیمچه کپشن (توضیح کوتاه زیر عکس):</label>
+                    <input type="text" name="caption[<?= (int)$p['id'] ?>]" value="<?= e($p['caption'] ?? '') ?>" placeholder="مثلاً: سخنرانی مراسم افتتاحیه...">
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 85px;gap:8px;">
+                    <div class="mx-photo-field">
+                      <label>اندازه در گرید:</label>
+                      <select name="layout_span[<?= (int)$p['id'] ?>]">
+                        <option value="normal" <?= ($p['layout_span'] ?? 'normal') === 'normal' ? 'selected' : '' ?>>عادی (۱×۱)</option>
+                        <option value="wide" <?= ($p['layout_span'] ?? '') === 'wide' ? 'selected' : '' ?>>عریض (۲ ستونه)</option>
+                        <option value="tall" <?= ($p['layout_span'] ?? '') === 'tall' ? 'selected' : '' ?>>عمودی (۲ سطره)</option>
+                        <option value="featured" <?= ($p['layout_span'] ?? '') === 'featured' ? 'selected' : '' ?>>شاخص بزرگ (۲×۲)</option>
+                      </select>
+                    </div>
+                    <div class="mx-photo-field">
+                      <label>ترتیب:</label>
+                      <input type="number" name="sort_order[<?= (int)$p['id'] ?>]" class="mx-sort-input" value="<?= (int)($p['sort_order'] ?? ($idx + 1)) ?>">
+                    </div>
+                  </div>
+                  <div class="mx-photo-footer">
+                    <span style="font-size:11px;color:var(--color-muted);">عکس <?= fa_digits($idx + 1) ?></span>
+                    <button type="button" class="mx-photo-del-btn" onclick="deletePhoto(<?= (int)$p['id'] ?>)">
+                      <?= iconoir('trash', '', 13) ?> حذف عکس
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <div style="margin-top:24px;text-align:left;">
+            <button type="submit" class="mx-btn-upload-submit">
+              <?= iconoir('check', '', 16) ?> ذخیره تغییرات کپشن‌ها و چیدمان
+            </button>
+          </div>
+        <?php endif; ?>
+      </form>
+
+      <!-- فرم مخفی حذف عکس تک‌تک -->
+      <form id="galleryDelPhotoForm" method="post" action="maxapedia.php?section=gallery" style="display:none;">
+        <input type="hidden" name="action" value="gallery_delete_photo">
+        <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
+        <input type="hidden" name="photo_id" id="galleryDelPhotoId" value="">
+      </form>
+
+      <!-- فرم مخفی حذف دسته‌ای تصاویر -->
+      <form id="galleryBatchDelForm" method="post" action="maxapedia.php?section=gallery" style="display:none;">
+        <input type="hidden" name="action" value="gallery_batch_delete_photos">
+        <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
+        <div id="galleryBatchDelInputs"></div>
+      </form>
+    </div>
+
+  <?php else: ?>
+
   <div class="mx-grid">
 
     <!-- فرم افزودن / ویرایش محتوا -->
     <form class="mx-card <?= $isEditing ? 'mx-card--editing' : '' ?>" method="post" action="maxapedia.php?section=<?= e($section) ?>" enctype="multipart/form-data">
-      <h2><?= $meta['icon'] ?> <?= $isEditing ? 'ویرایش «' . e($editItem['title']) . '»' : 'افزودن به «' . e($meta['title']) . '»' ?></h2>
+      <?php if ($section === 'gallery'): ?>
+        <h2><?= $meta['icon'] ?> <?= $isEditing ? 'ویرایش آلبوم «' . e($editItem['title']) . '»' : 'افزودن آلبوم جدید به گالری مکسا' ?></h2>
+      <?php else: ?>
+        <h2><?= $meta['icon'] ?> <?= $isEditing ? 'ویرایش «' . e($editItem['title']) . '»' : 'افزودن به «' . e($meta['title']) . '»' ?></h2>
+      <?php endif; ?>
+
       <input type="hidden" name="action" value="<?= $isEditing ? 'update' : 'create' ?>">
       <input type="hidden" name="section" value="<?= e($section) ?>">
       <?php if ($isEditing): ?>
@@ -531,21 +1184,25 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         $isDocSection = in_array($section, ['books', 'brochures'], true);
         $docLabel = ($section === 'books') ? 'کتاب' : (($section === 'brochures') ? 'بروشور' : 'فایل');
 
-        $titlePlaceholder = ($section === 'books')
-          ? 'مثلاً: راهنمای جامع مراقبت تسکینی'
-          : (($section === 'brochures')
-            ? 'مثلاً: بروشور راهنمای خودمراقبتی لنف‌ادم یا تغذیه'
-            : 'مثلاً: آشنایی با بیماری‌های نادر');
+        $titlePlaceholder = ($section === 'gallery')
+          ? 'مثلاً: عکس‌های همایش برج میلاد، خدمات در منزل و...'
+          : (($section === 'books')
+            ? 'مثلاً: راهنمای جامع مراقبت تسکینی'
+            : (($section === 'brochures')
+              ? 'مثلاً: بروشور راهنمای خودمراقبتی لنف‌ادم یا تغذیه'
+              : 'مثلاً: آشنایی با بیماری‌های نادر'));
 
-        $descPlaceholder = ($section === 'books')
-          ? 'توضیح مختصر درباره کتاب و پدیدآورندگان…'
-          : (($section === 'brochures')
-            ? 'توضیح مختصر درباره موضوع بروشور و جامعه هدف…'
-            : 'توضیح مختصر درباره این محتوا…');
+        $descPlaceholder = ($section === 'gallery')
+          ? 'توضیحات و گزارش کوتاه درباره این رویداد یا مجموعه عکس…'
+          : (($section === 'books')
+            ? 'توضیح مختصر درباره کتاب و پدیدآورندگان…'
+            : (($section === 'brochures')
+              ? 'توضیح مختصر درباره موضوع بروشور و جامعه هدف…'
+              : 'توضیح مختصر درباره این محتوا…'));
       ?>
 
       <div class="mx-field">
-        <label>عنوان <span style="color:var(--danger)">*</span></label>
+        <label><?= $section === 'gallery' ? 'نام آلبوم / رویداد' : 'عنوان' ?> <span style="color:var(--danger)">*</span></label>
         <input type="text" name="title" maxlength="255" required value="<?= e($isEditing ? ($editItem['title'] ?? '') : '') ?>" placeholder="<?= e($titlePlaceholder) ?>">
       </div>
 
@@ -562,11 +1219,23 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
 
       <div class="mx-field">
-        <label>توضیح کوتاه</label>
+        <label><?= $section === 'gallery' ? 'توضیحات آلبوم' : 'توضیح کوتاه' ?></label>
         <textarea name="description" maxlength="2000" placeholder="<?= e($descPlaceholder) ?>"><?= e($isEditing ? ($editItem['description'] ?? '') : '') ?></textarea>
       </div>
 
-      <?php if ($isDocSection): ?>
+      <?php if ($section === 'gallery'): ?>
+        <!-- بخش اختصاصی کاور آلبوم گالری -->
+        <div class="mx-field">
+          <label>تصویر کاور آلبوم</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input type="file" name="thumbnail_file" id="coverFileInput" accept="image/jpeg,image/png,image/webp,image/gif">
+            <input type="url" name="thumbnail" id="coverUrlInput" value="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" placeholder="یا آدرس اینترنتی تصویر کاور (https://…)">
+          </div>
+          <img id="coverPreview" class="mx-cover-preview <?= ($isEditing && !empty($editItem['thumbnail'])) ? 'active' : '' ?>" src="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" alt="پیش‌نمایش تصویر کاور">
+          <p class="mx-hint">در صورت خالی گذاشتن، اولین عکسی که در مرحله بعد برای این آلبوم آپلود کنید خودکار به عنوان کاور تنظیم می‌شود.</p>
+        </div>
+
+      <?php elseif ($isDocSection): ?>
         <!-- بخش اختصاصی آپلود کتاب و بروشور -->
         <div class="mx-field">
           <label>آپلود فایل <?= $docLabel ?> (PDF / <?= $section === 'books' ? 'EPUB / MOBI / ZIP' : 'سند آموزشی یا ZIP' ?> و...)</label>
@@ -672,7 +1341,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
           <a href="maxapedia.php?section=<?= e($section) ?>" class="mx-btn-cancel">انصراف</a>
         </div>
       <?php else: ?>
-        <button type="submit" class="mx-btn">افزودن محتوا</button>
+        <button type="submit" class="mx-btn"><?= $section === 'gallery' ? 'ایجاد آلبوم و رفتن به آپلود تصاویر ←' : 'افزودن محتوا' ?></button>
       <?php endif; ?>
     </form>
 
@@ -680,7 +1349,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     <div>
       <div class="mx-list-head" style="display:flex;justify-content:space-between;align-items:center;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <h2>محتوای «<?= e($meta['title']) ?>»</h2>
+          <h2><?= $section === 'gallery' ? 'آلبوم‌های «گالری مکسا»' : 'محتوای «' . e($meta['title']) . '»' ?></h2>
           <span class="mx-count-pill"><?= fa_digits(count($items)) ?> مورد</span>
         </div>
         <a href="/macsapedia/<?= e($section) ?>" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:var(--color-primary);text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:var(--primary-08);padding:5px 12px;border-radius:8px;border:1px solid var(--primary-12);transition:background .2s;">
@@ -733,11 +1402,18 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                   <?php if (!empty($it['category'])): ?>
                     <span class="mx-chip"><?= iconoir('label', '', 13) ?> <?= e($it['category']) ?></span>
                   <?php endif; ?>
+
+                  <?php if ($section === 'gallery'): ?>
+                    <span class="mx-badge pub" style="font-size:11px;">
+                      <?= iconoir('media-image', '', 12) ?> <?= fa_digits($galleryCounts[$it['id']] ?? 0) ?> تصویر
+                    </span>
+                  <?php endif; ?>
+
                   <?php if ($emInfo): ?>
                     <span class="mx-embed-badge">▶ <?= e($emInfo['provider']) ?></span>
                   <?php endif; ?>
                   <?php
-                  if (!empty($it['url'])) {
+                  if (!empty($it['url']) && $section !== 'gallery') {
                     $ext = strtolower(pathinfo(parse_url($it['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
                     if ($ext) {
                       $prefix = ($section === 'books') ? 'کتاب ' : (($section === 'brochures') ? 'بروشور ' : '');
@@ -755,8 +1431,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
               </div>
 
               <div class="mx-row-actions">
+                <?php if ($section === 'gallery'): ?>
+                  <a class="mx-manage-album-btn" href="maxapedia.php?section=gallery&album_id=<?= (int)$it['id'] ?>" title="مدیریت و آپلود تصاویر این آلبوم">
+                    <?= iconoir('media-image-list', '', 14) ?> مدیریت تصاویر (<?= fa_digits($galleryCounts[$it['id']] ?? 0) ?>)
+                  </a>
+                <?php endif; ?>
+
                 <a class="mx-action-edit" href="maxapedia.php?section=<?= e($section) ?>&edit=<?= (int)$it['id'] ?>" title="ویرایش"><?= iconoir('edit-pencil', '', 15) ?></a>
-                <?php if (!empty($it['url'])): ?>
+                <?php if (!empty($it['url']) && $section !== 'gallery'): ?>
                   <?php
                     $isDocLink = ($isDocItem || preg_match('/\.(pdf|epub|mobi|docx?|zip|rar)$/i', parse_url($it['url'], PHP_URL_PATH) ?? ''));
                   ?>
@@ -764,7 +1446,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
-                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('این محتوا حذف شود؟');">
+                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="section" value="<?= e($section) ?>">
                   <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
@@ -778,6 +1460,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
     </div>
 
   </div>
+  <?php endif; ?>
 </div>
 
 <script>
@@ -787,6 +1470,289 @@ window.addEventListener('storage',function(e){
     document.documentElement.setAttribute('data-theme', e.newValue==='dark'?'dark':'light');
   }
 });
+
+/* حذف تکی عکس در آلبوم گالری */
+window.deletePhoto = function(id) {
+  if (confirm('آیا از حذف این تصویر از آلبوم مطمئن هستید؟')) {
+    var f = document.getElementById('galleryDelPhotoForm');
+    var input = document.getElementById('galleryDelPhotoId');
+    if (f && input) {
+      input.value = id;
+      f.submit();
+    }
+  }
+};
+
+/* انتخاب همه و حذف گروهی عکس‌های گالری */
+window.toggleSelectAllPhotos = function(master) {
+  var cbs = document.querySelectorAll('.mx-photo-cb');
+  cbs.forEach(function(cb) { cb.checked = master.checked; });
+  window.onPhotoSelectionChange();
+};
+
+window.onPhotoSelectionChange = function() {
+  var selected = document.querySelectorAll('.mx-photo-cb:checked');
+  var bulkBtn = document.getElementById('galleryBulkDelBtn');
+  var countSpan = document.getElementById('gallerySelectedCount');
+  var masterCb = document.getElementById('gallerySelectAll');
+  var allCbs = document.querySelectorAll('.mx-photo-cb');
+
+  if (countSpan) countSpan.textContent = selected.length;
+  if (bulkBtn) bulkBtn.style.display = selected.length > 0 ? 'inline-flex' : 'none';
+  if (masterCb) masterCb.checked = (selected.length === allCbs.length && allCbs.length > 0);
+};
+
+window.submitBatchDelete = function() {
+  var selected = document.querySelectorAll('.mx-photo-cb:checked');
+  if (!selected.length) {
+    alert('لطفاً حداقل یک عکس را برای حذف انتخاب کنید.');
+    return;
+  }
+  if (!confirm('آیا از حذف ' + selected.length + ' تصویر انتخاب‌شده از این آلبوم مطمئن هستید؟ فایل‌های این تصاویر نیز از سرور پاک خواهند شد.')) {
+    return;
+  }
+
+  var container = document.getElementById('galleryBatchDelInputs');
+  var form = document.getElementById('galleryBatchDelForm');
+  if (container && form) {
+    container.innerHTML = '';
+    selected.forEach(function(cb) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'selected_photo_ids[]';
+      input.value = cb.value;
+      container.appendChild(input);
+    });
+    form.submit();
+  }
+};
+
+/* مرتب‌سازی ویژوال کارت‌های عکس با کشیدن و رها کردن (Drag & Drop Reordering) */
+(function() {
+  var grid = document.getElementById('galleryPhotosGrid');
+  if (!grid) return;
+
+  var draggedItem = null;
+
+  function renumberSortInputs() {
+    var items = grid.querySelectorAll('.mx-photo-item');
+    items.forEach(function(item, idx) {
+      var sortInput = item.querySelector('.mx-sort-input');
+      if (sortInput) {
+        sortInput.value = idx + 1;
+      }
+    });
+  }
+
+  grid.addEventListener('dragstart', function(e) {
+    var item = e.target.closest('.mx-photo-item');
+    if (!item) return;
+    draggedItem = item;
+    item.classList.add('is-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', ''); } catch(err) {}
+  });
+
+  grid.addEventListener('dragend', function(e) {
+    var item = e.target.closest('.mx-photo-item');
+    if (item) item.classList.remove('is-dragging');
+    grid.querySelectorAll('.mx-photo-item').forEach(function(el) {
+      el.classList.remove('drag-over');
+    });
+    draggedItem = null;
+    renumberSortInputs();
+  });
+
+  grid.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    var targetItem = e.target.closest('.mx-photo-item');
+    if (!targetItem || targetItem === draggedItem) return;
+
+    var rect = targetItem.getBoundingClientRect();
+    var isRtlNext = (e.clientX - rect.left) / (rect.right - rect.left) > 0.5;
+    grid.insertBefore(draggedItem, isRtlNext ? targetItem : targetItem.nextSibling);
+  });
+
+  grid.addEventListener('dragenter', function(e) {
+    var item = e.target.closest('.mx-photo-item');
+    if (item && item !== draggedItem) {
+      item.classList.add('drag-over');
+    }
+  });
+
+  grid.addEventListener('dragleave', function(e) {
+    var item = e.target.closest('.mx-photo-item');
+    if (item) item.classList.remove('drag-over');
+  });
+})();
+
+/* مدیریت دراگ و دراپ و فشرده‌سازی هوشمند تصاویر در کلاینت قبل از آپلود */
+(function() {
+  var multiDropzone = document.getElementById('galleryMultiDropzone');
+  var multiInput    = document.getElementById('galleryMultiInput');
+  var selectedBar   = document.getElementById('gallerySelectedBar');
+  var summarySpan   = document.getElementById('gallerySelectedSummary');
+  var uploadForm    = document.getElementById('galleryMultiUploadForm');
+
+  function compressImageFile(file, maxWidth, maxHeight, quality) {
+    maxWidth = maxWidth || 1920;
+    maxHeight = maxHeight || 1920;
+    quality = quality || 0.88;
+
+    if (!file.type || !file.type.startsWith('image/')) return Promise.resolve(file);
+
+    return new Promise(function(resolve) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var width = img.naturalWidth || img.width;
+        var height = img.naturalHeight || img.height;
+
+        if (width <= maxWidth && height <= maxHeight && file.size <= 600 * 1024) {
+          resolve(file);
+          return;
+        }
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width / height > maxWidth / maxHeight) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(function(blob) {
+          if (!blob || blob.size >= file.size) {
+            resolve(file);
+          } else {
+            var newName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            resolve(new File([blob], newName, { type: 'image/jpeg' }));
+          }
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = function() {
+        URL.revokeObjectURL(url);
+        resolve(file);
+      };
+      img.src = url;
+    });
+  }
+
+  if (multiDropzone && multiInput) {
+    ['dragenter', 'dragover'].forEach(function(evt) {
+      multiDropzone.addEventListener(evt, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        multiDropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(function(evt) {
+      multiDropzone.addEventListener(evt, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        multiDropzone.classList.remove('dragover');
+      });
+    });
+
+    multiDropzone.addEventListener('drop', function(e) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        multiInput.files = e.dataTransfer.files;
+        handleMultiFiles();
+      }
+    });
+
+    multiInput.addEventListener('change', handleMultiFiles);
+
+    function handleMultiFiles() {
+      if (multiInput.files && multiInput.files.length > 0) {
+        var count = multiInput.files.length;
+        var totalBytes = 0;
+        for (var i = 0; i < count; i++) {
+          totalBytes += multiInput.files[i].size;
+        }
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        var idx = Math.floor(Math.log(totalBytes) / Math.log(k));
+        var sizeStr = (totalBytes / Math.pow(k, idx)).toFixed(1) + ' ' + sizes[idx];
+
+        if (summarySpan) {
+          summarySpan.textContent = count + ' تصویر انتخاب شده (' + sizeStr + ') — آماده بهینه‌سازی و آپلود';
+        }
+        if (selectedBar) {
+          selectedBar.classList.add('active');
+        }
+      } else {
+        if (selectedBar) selectedBar.classList.remove('active');
+      }
+    }
+  }
+
+  // پایپ‌لاین فشرده‌سازی هوشمند تصاویر در هنگام سابمیت فرم
+  var isCompressing = false;
+  if (uploadForm && multiInput) {
+    uploadForm.addEventListener('submit', async function(e) {
+      if (isCompressing) return;
+      var files = multiInput.files;
+      if (!files || !files.length) return;
+
+      e.preventDefault();
+      isCompressing = true;
+
+      var compBox = document.getElementById('galleryCompBox');
+      var compBar = document.getElementById('galleryCompBar');
+      var compStatus = document.getElementById('galleryCompStatus');
+      var compPercent = document.getElementById('galleryCompPercent');
+      var submitBtn = document.getElementById('galleryUploadSubmitBtn');
+
+      if (compBox) compBox.style.display = 'flex';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+      }
+
+      try {
+        var dt = new DataTransfer();
+        var total = files.length;
+        var origTotalSize = 0;
+        var optTotalSize = 0;
+
+        for (var i = 0; i < total; i++) {
+          origTotalSize += files[i].size;
+          var pct = Math.round(((i) / total) * 100);
+          if (compBar) compBar.style.width = pct + '%';
+          if (compPercent) compPercent.textContent = pct + '٪';
+          if (compStatus) compStatus.textContent = 'در حال فشرده‌سازی هوشمند عکس ' + (i + 1) + ' از ' + total + '...';
+
+          var optFile = await compressImageFile(files[i]);
+          optTotalSize += optFile.size;
+          dt.items.add(optFile);
+        }
+
+        if (compBar) compBar.style.width = '100%';
+        if (compPercent) compPercent.textContent = '۱۰۰٪';
+        var savedPct = origTotalSize > 0 ? Math.round(((origTotalSize - optTotalSize) / origTotalSize) * 100) : 0;
+        if (compStatus) compStatus.textContent = 'بهینه‌سازی انجام شد (' + savedPct + '٪ کاهش حجم)! در حال ارسال به سرور...';
+
+        multiInput.files = dt.files;
+      } catch (err) {
+        console.warn('Canvas compression error fallback:', err);
+      }
+
+      uploadForm.submit();
+    });
+  }
+})();
 
 /* دراگ و دراپ و پیش‌نمایش فایل و جلد برای مکساپدیا */
 (function() {

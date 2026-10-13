@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 // Create table if it doesn't exist
 $pdo->exec("CREATE TABLE IF NOT EXISTS donation_impacts (
@@ -25,18 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     $imageName = '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $tmpName = $_FILES['image']['tmp_name'];
-        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-        if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg'])) {
-            $imageName = time() . '_' . random_int(100, 999) . '.' . $ext;
-            $uploadDir = __DIR__ . '/../uploads/impacts/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            if (!move_uploaded_file($tmpName, $uploadDir . $imageName)) {
-                $imageName = '';
-            }
-        }
+        try {
+            $webPath = maxa_upload_and_optimize($_FILES['image'], 'impacts', 'impact_', 82, 1920);
+            $imageName = basename($webPath);
+        } catch (Throwable $e) {}
     }
     
     if ($title && $description && $quantity > 0 && $quantity_unit && $imageName) {

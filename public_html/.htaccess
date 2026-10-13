@@ -20,6 +20,11 @@ RewriteRule ^$ /home [R=301,L]
 # ---- Leave the API alone (handled by api/.htaccess) -----------------------------
 RewriteRule ^api(/|$) - [L]
 
+# ---- Serve WebP automatically if supported and .webp exists ---------------------
+RewriteCond %{HTTP_ACCEPT} image/webp
+RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
+RewriteRule ^(uploads/.+)\.(jpe?g|png)$ /$1.webp [T=image/webp,L]
+
 # ---- Sitemap --------------------------------------------------------------------
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 

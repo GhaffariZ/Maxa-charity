@@ -5,6 +5,7 @@ dash_require('news');
 header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 try {
     // تنظیم حالت خطای PDO به استثنا (Exception)
@@ -265,13 +266,17 @@ try {
         }
 
         // حذف تصاویر شاخص قبلی (جلوگیری از انباشت فایل)
-        foreach ($allowed_ext as $old_ext) {
+        foreach (["jpg", "jpeg", "png", "webp"] as $old_ext) {
             $old_file = "$uploadDir/featured.$old_ext";
             if (file_exists($old_file)) unlink($old_file);
         }
         
-        $destination = "$uploadDir/featured.$ext";
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
+        $destWebp = "$uploadDir/featured.webp";
+        $converted = maxa_optimize_image_to_webp($file['tmp_name'], $destWebp, 82, 1920);
+        if ($converted && is_file($converted)) {
+            $stmt_img = $pdo->prepare("UPDATE news SET featured_image = ? WHERE id = ?");
+            $stmt_img->execute(["featured.webp", $record_id]);
+        } elseif (move_uploaded_file($file['tmp_name'], "$uploadDir/featured.$ext")) {
             $stmt_img = $pdo->prepare("UPDATE news SET featured_image = ? WHERE id = ?");
             $stmt_img->execute(["featured.$ext", $record_id]);
         } else {
