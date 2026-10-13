@@ -37,3 +37,7 @@ error_log
 .agents/skills/
 # Local markdown documentation and prompt files
 Markdowns/
+
+# Resume & source PDF files (never commit)
+*.pdf
+رزومه دکتر محمد جهانگیری2.pdf

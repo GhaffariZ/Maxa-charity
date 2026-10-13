@@ -525,6 +525,63 @@
   margin-top: 8px;
 }
 
+/* ===== SACRED DEFENSE & HONOR CALLOUT ===== */
+.ceo-honor-card {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.09), rgba(0, 125, 130, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: var(--ceo-radius);
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.08);
+}
+
+.ceo-honor-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, #d4af37, #b78f1e);
+}
+
+.ceo-honor-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.1));
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #b78f1e;
+}
+
+.ceo-honor-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.ceo-honor-content h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ceo-dark);
+}
+
+.ceo-honor-content p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.85;
+  color: #475569;
+}
+
 /* ===== VISION SECTION ===== */
 .ceo-vision {
   background: linear-gradient(160deg, #003d3f, #005f63 50%, #007d82);
@@ -840,6 +897,12 @@
     padding: 24px 20px;
   }
 
+  .ceo-honor-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+  }
+
   .ceo-hero-actions {
     flex-direction: column;
     align-items: center;
@@ -869,12 +932,12 @@
         مدیریت ارشد مکسا
       </div>
       <h1>
-        مدیرعامل
-        <span>مؤسسه مکسا</span>
+        دکتر محمد جهانگیری
+        <span>مدیرعامل مؤسسه مکسا</span>
       </h1>
-      <div class="ceo-hero-role">مدیرعامل و عضو هیئت مدیره — مؤسسه نیکوکاری کنترل سرطان ایرانیان</div>
+      <div class="ceo-hero-role">مدیرعامل مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) و رئیس انجمن خدمات بین‌المللی سلامت ایران</div>
       <p class="ceo-hero-desc">
-        رهبری و مدیریت راهبردی مؤسسه مکسا با هدف ارتقای مراقبت‌های حمایتی و تسکینی بیماران مبتلا به سرطان در سراسر کشور
+        بیش از دو دهه مدیریت راهبردی و تحول‌آفرین در نظام سلامت کشور؛ طراح الگوی جامع مدیریت بیماران مبتلا به سرطان (۲۶ گام)، ارزیاب بین‌المللی کیفیت و اعتباربخشی درمانی (ACI کانادا) و پرچمدار توسعه مراقبت‌های تسکینی رایگان و دانش‌بنیان در ایران
       </p>
       <div class="ceo-hero-actions">
         <a href="#ceo-message" class="ceo-btn ceo-btn-primary">
@@ -883,14 +946,14 @@
         </a>
         <a href="#ceo-bio" class="ceo-btn ceo-btn-outline">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          بیوگرافی
+          سوابق و بیوگرافی
         </a>
       </div>
     </div>
     <div class="ceo-portrait">
       <div class="ceo-portrait-ring"></div>
       <div class="ceo-portrait-frame">
-        <img src="{{image1}}" alt="مدیرعامل مؤسسه مکسا">
+        <img src="{{image1}}" alt="دکتر محمد جهانگیری - مدیرعامل مؤسسه مکسا">
       </div>
       <div class="ceo-portrait-accent"></div>
     </div>
@@ -904,29 +967,29 @@
       <div class="ceo-stat-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       </div>
-      <div class="ceo-stat-value">۱۵+</div>
-      <div class="ceo-stat-label">سال تجربه مدیریتی</div>
-    </div>
-    <div class="ceo-stat">
-      <div class="ceo-stat-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div class="ceo-stat-value">۷</div>
-      <div class="ceo-stat-label">شعبه فعال در سراسر کشور</div>
-    </div>
-    <div class="ceo-stat">
-      <div class="ceo-stat-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      </div>
-      <div class="ceo-stat-value">۲۰۰+</div>
-      <div class="ceo-stat-label">بیمار تحت پوشش مراقبتی</div>
+      <div class="ceo-stat-value">۲۵+</div>
+      <div class="ceo-stat-label">سال تجربه مدیریت در نظام سلامت</div>
     </div>
     <div class="ceo-stat">
       <div class="ceo-stat-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       </div>
-      <div class="ceo-stat-value">۵۰+</div>
-      <div class="ceo-stat-label">کارگاه و همایش آموزشی</div>
+      <div class="ceo-stat-value">۲۶</div>
+      <div class="ceo-stat-label">گام الگوی جامع مدیریت بیماران سرطان</div>
+    </div>
+    <div class="ceo-stat">
+      <div class="ceo-stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="ceo-stat-value">۸</div>
+      <div class="ceo-stat-label">شعبه و مرکز فعال در سراسر کشور</div>
+    </div>
+    <div class="ceo-stat">
+      <div class="ceo-stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="ceo-stat-value">۳۰+</div>
+      <div class="ceo-stat-label">تألیف، استاندارد، طرح ملی و مقاله</div>
     </div>
   </div>
 </div>
@@ -938,8 +1001,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       پیام مدیرعامل
     </div>
-    <h2 class="ceo-section-title">باور ما، زندگی با کرامت برای همه بیماران است</h2>
-    <p class="ceo-section-subtitle">دیدگاه و رویکرد مدیرعامل مؤسسه مکسا به مراقبت‌های حمایتی و تسکینی</p>
+    <h2 class="ceo-section-title">کرامت انسانی، عدالت در سلامت و التیام رنج بیماران مبتلا به سرطان</h2>
+    <p class="ceo-section-subtitle">دیدگاه راهبردی دکتر محمد جهانگیری پیرامون رسالت مکسا و الگوی جامع مدیریت مراقبت‌های حمایتی و تسکینی</p>
   </div>
 
   <div class="ceo-message-card">
@@ -947,22 +1010,22 @@
       <div class="ceo-quote-icon">"</div>
       <div class="ceo-message-text">
         <p>
-          مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) با هدف تأمین مراقبت‌های جامع حمایتی و تسکینی برای بیماران مبتلا به سرطان تأسیس شد. ما باور داریم که هر بیمار، صرف‌نظر از شرایط اقتصادی و اجتماعی خود، حق دارد به مراقبت‌های باکیفیت و انسانی دسترسی داشته باشد.
+          مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) بر پایه این باور ژرف بنا شده است که دسترسی به مراقبت‌های حمایتی و تسکینی (Palliative &amp; Supportive Care)، نه یک امتیاز، بلکه حق بنیادین و انکارناپذیر هر انسان در مسیر مواجهه با بیماری سرطان است. در این مسیر، رنج بیمار صرفاً یک نشانه بالینی قلمداد نمی‌شود؛ بلکه درد جسمی، تلاطم روحی، استیصال روانی و بارهای سنگین اقتصادی خانواده‌ها، نیازمند رویکردی چندبعدی، انسان‌محور و کرامت‌مدار است.
         </p>
         <p>
-          تیم چندرشته‌ای مکسا شامل پزشکان، پرستاران، روانشناسان، مددکاران اجتماعی و متخصصین تغذیه، با همکاری یکدیگر خدمات جامعی را از مشاوره ژنتیک تا مراقبت‌های پایان زندگی ارائه می‌دهند. هدف ما نه‌تنها درمان، بلکه بهبود کیفیت زندگی بیماران و خانواده‌هایشان در تمام مراحل بیماری است.
+          با تکیه بر تجارب بیش از دو دهه مدیریت و سیاست‌گذاری کلان در نظام سلامت، مدیریت بیمارستانی و ارزیابی استانداردهای بین‌المللی اعتباربخشی درمانی (ACI)، «الگوی جامع مدیریت بهینه بیماران مبتلا به سرطان در ۲۶ گام» را طراحی و در ارکان اجرایی مکسا مستقر ساخته‌ایم. در این مدل یکپارچه، تیمی چندرشته‌ای شامل پزشکان متخصص، پرستاران مراقبت تسکینی، روان‌شناسان بالینی، مددکاران اجتماعی، مراقبان معنوی، کارشناسان تغذیه و کادر مراقبت در منزل در کنار یکدیگر قرار گرفته‌اند تا بالاترین کیفیت مراقبت ممکن را به‌صورت ۱۰۰٪ رایگان به مددجویان ارائه دهند.
         </p>
         <p>
-          با حمایت شما خیرین عزیز، توانسته‌ایم شعب خود را در شهرهای مختلف کشور گسترش دهیم و خدمات آموزشی و پژوهشی گسترده‌ای را در حوزه مراقبت‌های تسکینی برگزار کنیم. از شما دعوت می‌کنیم تا در این مسیر خداپسندانه، ما را یاری کنید.
+          پیوند استوار میان فناوری‌های نوین سلامت، سامانه‌های پرونده الکترونیک و مدیریت داده‌محور با چشمه جوشان نیکوکاری و احسان ایرانیان، افقی امیدبخش از عدالت در سلامت را نوید می‌دهد. باور راسخ ما این است که با پشتیبانی خیرین گران‌قدر و همگرایی جامعه پزشکی و ارکان حاکمیتی، هیچ بیمار مبتلا به سرطانی در میهن عزیزمان، به دلیل بضاعت مالی اندک یا فاصله جغرافیایی، در طوفان بیماری تنها و بی‌پناه رها نخواهد شد.
         </p>
       </div>
       <div class="ceo-message-signature">
         <div class="ceo-sig-avatar">
-          <img src="{{image1}}" alt="مدیرعامل مکسا">
+          <img src="{{image1}}" alt="دکتر محمد جهانگیری - مدیرعامل مکسا">
         </div>
         <div class="ceo-sig-info">
-          <h4>مدیرعامل مؤسسه مکسا</h4>
-          <p>مؤسسه نیکوکاری کنترل سرطان ایرانیان</p>
+          <h4>دکتر محمد جهانگیری</h4>
+          <p>مدیرعامل مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</p>
         </div>
       </div>
     </div>
@@ -974,10 +1037,10 @@
   <div class="ceo-section-header">
     <div class="ceo-section-tag">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      بیوگرافی
+      بیوگرافی و سوابق
     </div>
-    <h2 class="ceo-section-title">سوابق و تجربیات</h2>
-    <p class="ceo-section-subtitle">نگاهی به مسیر حرفه‌ای و دستاوردهای مدیرعامل مکسا</p>
+    <h2 class="ceo-section-title">مسیر علمی، حرفه‌ای و دستاوردهای راهبردی</h2>
+    <p class="ceo-section-subtitle">مروری جامع بر مدارج دانشگاهی، سوابق ارشد حاکمیتی و اقدامات تحول‌آفرین دکتر محمد جهانگیری در نظام سلامت</p>
   </div>
 
   <div class="ceo-bio-grid">
@@ -986,55 +1049,76 @@
       <div class="ceo-bio-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       </div>
-      <h3>سوابق تحصیلی</h3>
+      <h3>تحصیلات آکادمیک و مدارج بین‌المللی</h3>
       <ul>
-        <li>فوق‌لیسا مدیریت بازرگانی — دانشگاه تهران</li>
-        <li>کارشناسی ارشد مدیریت بهداشت — دانشگاه علوم پزشکی</li>
-        <li>دوره‌های تخصصی مدیریت سازمان‌های مردم‌نهاد</li>
-        <li>گواینامه مدیریت پروژه‌های بین‌المللی</li>
+        <li>دکترای پزشکی از دانشگاه علوم پزشکی مشهد</li>
+        <li>کارشناسی ارشد مدیریت فناوری اطلاعات پزشکی از دانشگاه صنعتی امیرکبیر</li>
+        <li>دکترای حرفه‌ای کسب‌وکار (DBA) با گرایش برنامه‌ریزی استراتژیک از دانشگاه صنایع و معادن ایران</li>
+        <li>دوره‌های مهارتی ارزیاب اعتباربخشی بین‌المللی، مدیریت ریسک و ایمنی بیمار از سازمان اعتباربخشی کانادا (ACI)</li>
+        <li>دوره‌های پودمانی مدیریت دولتی، اقتصاد کلان و خرد، سیاست‌گذاری سلامت و سیستم‌های بهداشت و درمان</li>
+        <li>مدرس دانشکده مدیریت و اطلاع‌رسانی دانشگاه علوم پزشکی ایران</li>
       </ul>
     </div>
 
-    <!-- Card 2: Experience -->
+    <!-- Card 2: Governance & Executive Experience -->
     <div class="ceo-bio-card">
       <div class="ceo-bio-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       </div>
-      <h3>سوابق مدیریتی</h3>
+      <h3>سوابق ارشد حاکمیتی و مدیریت سلامت</h3>
       <ul>
-        <li>مدیرعامل مؤسسه نیکوکاری مکسا از سال ۱۳۹۵</li>
-        <li>مشاور ارشد سازمان‌های مردم‌نهاد حوزه سلامت</li>
-        <li>مدیر پروژه‌های بین‌المللی مراقبت تسکینی</li>
-        <>هماهنگ‌کننده شبکه ملی مراکز سرطان</li>
+        <li>۸ سال معاونت فنی و نظارت سازمان نظام پزشکی جمهوری اسلامی ایران</li>
+        <li>مشاور وزیر تعاون، کار و رفاه اجتماعی در امور سیاست‌گذاری سلامت</li>
+        <li>رئیس دبیرخانه شورای عالی بیمه خدمات درمانی کشور</li>
+        <li>قائم‌مقام مرکز نظارت و اعتباربخشی امور درمان وزارت بهداشت، درمان و آموزش پزشکی</li>
+        <li>مدیرکل اداره صدور پروانه‌های وزارت بهداشت و سازمان نظام پزشکی کل کشور</li>
+        <li>معاون آمار و پردازش داده‌ها در مرکز آمار و فناوری اطلاعات وزارت بهداشت</li>
+        <li>ریاست بیمارستان فوق‌تخصصی چشم‌پزشکی بینا، بیمارستان امام خمینی کرج و هتل‌بیمارستان گاندی</li>
       </ul>
     </div>
 
-    <!-- Card 3: Achievements -->
+    <!-- Card 3: National Projects & Scientific Achievements -->
     <div class="ceo-bio-card">
       <div class="ceo-bio-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
       </div>
-      <h3>دستاوردها</h3>
+      <h3>طرح‌های ملی، استانداردها و تألیفات</h3>
       <ul>
-        <li>تأسیس و راه‌اندازی ۷ شعبه مکسا در سراسر کشور</li>
-        <li>طراحی و اجرای بیش از ۵۰ کارگاه آموزشی تخصصی</li>
-        <li>کسب تندیس سازمان مردم‌نهاد برتر کشور</li>
-        <li>همکاری با سازمان بهداشت جهانی در حوزه مراقبت تسکینی</li>
+        <li>تدوین و استقرار «الگوی مدیریت بهینه و جامع بیماران مبتلا به سرطان (۲۶ گام)» در مکسا</li>
+        <li>مدیریت تیم پیاده‌سازی استانداردهای متعالی کیفیت در اولین بیمارستان ایران (Accreditation Canada)</li>
+        <li>مدیر پروژه ملی نسخه الکترونیک کشور و نماینده تام‌الاختیار رئیس سازمان غذا و دارو</li>
+        <li>طراحی سامانه‌های ملی: پرونده الکترونیک سلامت، امضای الکترونیک جامعه پزشکی و سامانه هوشمند نظارت (سهند)</li>
+        <li>مشارکت در بازنگری کتاب ارزش نسبی خدمات سلامت و مدلسازی محاسبات تعرفه بخش سلامت</li>
+        <li>تألیف کتب «راهنمای عملی نسخه الکترونیک» و «کدینگ تشخیصی و خدمات سرطان» با بیش از ۳۰ مقاله علمی</li>
       </ul>
     </div>
 
-    <!-- Card 4: Skills -->
+    <!-- Card 4: Current Responsibilities & Competencies -->
     <div class="ceo-bio-card">
       <div class="ceo-bio-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
-      <h3>حوزه‌های تخصصی</h3>
+      <h3>مسئولیت‌های کنونی و شایستگی‌ها</h3>
       <ul>
-        <li>مدیریت راهبردی سازمان‌های غیرانتفاعی</li>
-        <li>توسعه و مدیریت شبکه‌های ملی سلامت</li>
-        <li>جذب منابع مالی و مشارکت‌های مردمی</li>
-        <li>ایجاد ارتباط با نهادهای بین‌المللی</li>
+        <li>مدیرعامل مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</li>
+        <li>رئیس انجمن خدمات بین‌المللی سلامت ایران</li>
+        <li>عضو هیئت نمایندگان اتاق بازرگانی، صنایع، معادن و کشاورزی ایران</li>
+        <li>رئیس کمیته گردشگری سلامت کمیسیون گردشگری اتاق بازرگانی ایران</li>
+        <li>عضو هیئت مدیره شبکه ملی تشکل‌های مردمی و مؤسسات خیریه حوزه سرطان</li>
+        <li>مشاور اجرایی رئیس دانشگاه علوم پزشکی اصفهان و عضو هیئت امنای بنیاد خیریه توانا</li>
+        <li>حوزه‌های تخصصی: برنامه‌ریزی استراتژیک، اقتصاد سلامت، استانداردهای اعتباربخشی، سلامت دیجیتال و شبکه سمن‌ها</li>
       </ul>
+    </div>
+  </div>
+
+  <!-- Sacred Defense & Honor Callout -->
+  <div class="ceo-honor-card">
+    <div class="ceo-honor-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="ceo-honor-content">
+      <h4>افتخار ایثارگری، آزادگی و جانبازی سرافرازانه در دفاع مقدس</h4>
+      <p>حضور داوطلبانه در خطوط مقدم جبهه‌های حق علیه باطل در دوران هشت سال دفاع مقدس (سال ۱۳۶۲)، تحمل بیش از ۶ سال و نیم اسارت سرافرازانه در اردوگاه‌های رژیم بعثی (۱۳۶۲ تا ۱۳۶۹) و کسب مدال افتخار جانبازی ۴۰ درصد در راه استقلال و عزت میهن اسلامی.</p>
     </div>
   </div>
 </div>
@@ -1047,16 +1131,18 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </div>
       <div>
-        <h3>چشم‌انداز و ارزش‌های ما</h3>
+        <h3>چشم‌انداز و رسالت راهبردی مکسا</h3>
         <p>
-          ما در مکسا باور داریم که مراقبت‌های حمایتی و تسکینی حق همه بیماران است. چشم‌انداز ما ایجاد شبکه‌ای جامع از مراقبت‌های انسان‌محور در سراسر ایران است؛ جایی که هیچ بیماری به دلیل محدودیت‌های مالی یا جغرافیایی از دسترسی به مراقبت‌های باکیفیت محروم نماند.
+          باور بنیادین ما این است که آرامش، کاهش رنج و حفظ کرامت انسانی، حق مسلم و طبیعی تمام مبتلایان به سرطان در ایران است. چشم‌انداز راهبردی ما استقرار زنجیره سراسری و یکپارچه مراقبت‌های تسکینی بر مبنای الگوی ۲۶ گام، همگام با سامانه‌های سلامت دیجیتال، تعرفه‌گذاری عادلانه و استانداردهای بین‌المللی اعتباربخشی درمانی (ACI) است؛ تا هیچ بیمار و خانواده‌ای به سبب مضیقه مالی یا دوری مسافت، از مراقبت‌های تسکینی و حمایتی جامع محروم نماند.
         </p>
         <div class="ceo-vision-tags">
-          <span class="ceo-vision-tag">مراقبت انسان‌محور</span>
-          <span class="ceo-vision-tag">دسترسی عادلانه</span>
-          <span class="ceo-vision-tag">آموزش و پژوهش</span>
-          <span class="ceo-vision-tag">همکاری بین‌رشته‌ای</span>
-          <span class="ceo-vision-tag">ارتقای کیفیت زندگی</span>
+          <span class="ceo-vision-tag">الگوی جامع ۲۶ گام سرطان</span>
+          <span class="ceo-vision-tag">مراقبت‌های تسکینی ۱۰۰٪ رایگان</span>
+          <span class="ceo-vision-tag">حفظ کرامت و کیفیت زندگی بیمار</span>
+          <span class="ceo-vision-tag">پرونده الکترونیک و سلامت دیجیتال</span>
+          <span class="ceo-vision-tag">اعتباربخشی و تعالی بالینی (ACI)</span>
+          <span class="ceo-vision-tag">شبکه ملی تشکل‌های حوزه سرطان</span>
+          <span class="ceo-vision-tag">اقتصاد سلامت و کاهش بار مالی بیماران</span>
         </div>
       </div>
     </div>
@@ -1068,43 +1154,49 @@
   <div class="ceo-section-header">
     <div class="ceo-section-tag">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      مسیر پیشرفت
+      مسیر پیشرفت و مدیریت
     </div>
-    <h2 class="ceo-section-title">گاهشمار فعالیت‌ها</h2>
-    <p class="ceo-section-subtitle">نقاط عطف مهم در مسیر مدیریت و توسعه مکسا</p>
+    <h2 class="ceo-section-title">گاهشمار مسیر علمی، اجرایی و مدیریتی</h2>
+    <p class="ceo-section-subtitle">نقاط عطف کلیدی در بیش از سه دهه خدمت در حوزه سلامت، ایثارگری و توسعه نظام درمان کشور</p>
   </div>
 
   <div class="ceo-message-card">
     <div class="ceo-timeline">
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۳۹۵</div>
-        <h4>تأسیس مؤسسه مکسا</h4>
-        <p>تأسیس مؤسسه نیکوکاری کنترل سرطان ایرانیان با هدف ارائه مراقبت‌های جامع حمایتی و تسکینی</p>
+        <div class="ceo-timeline-year">۱۳۶۲ — ۱۳۶۹</div>
+        <h4>حضور در دفاع مقدس و اسارت سرافرازانه</h4>
+        <p>حضور داوطلبانه در جبهه‌های نبرد حق علیه باطل (سال ۱۳۶۲)، افتخار جانبازی ۴۰٪ و تحمل بیش از ۶ سال و نیم اسارت سرافرازانه در اردوگاه‌های دشمن بعثی در راه دفاع از میهن اسلامی</p>
       </div>
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۳۹۷</div>
-        <h4>افتتاح شعبه تهران</h4>
-        <p>راه‌اندازی اولین مرکز تخصصی مکسا در تهران با تیم چندرشته‌ای درمان</p>
+        <div class="ceo-timeline-year">۱۳۷۰ — ۱۳۷۷</div>
+        <h4>تحصیلات در رشته پزشکی و ورود به مدیریت سلامت</h4>
+        <p>اخذ دکترای حرفه‌ای پزشکی از دانشگاه علوم پزشکی مشهد و آغاز فعالیت‌های بالینی، برنامه‌ریزی بهداشتی و مدیریت درمان</p>
       </div>
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۳۹۹</div>
-        <h4>گسترش شعب</h4>
-        <p>افتتاح شعبه‌های اصفهان، مشهد و قم و آغاز خدمات‌رسانی در سطح ملی</p>
+        <div class="ceo-timeline-year">۱۳۷۸ — ۱۳۸۸</div>
+        <h4>سیاست‌گذاری و مدیریت ارشد در وزارت بهداشت و بیمه کشور</h4>
+        <p>ریاست دبیرخانه شورای عالی بیمه خدمات درمانی کشور، مدیرکل اداره صدور پروانه‌های وزارت بهداشت و قائم‌مقام مرکز نظارت و اعتباربخشی امور درمان کشور</p>
       </div>
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۴۰۱</div>
-        <h4>همکاری بین‌المللی</h4>
-        <p>برقراری همکاری با سازمان بهداشت جهانی و مراکز تخصصی مراقبت تسکینی بین‌المللی</p>
+        <div class="ceo-timeline-year">۱۳۸۸ — ۱۳۹۶</div>
+        <h4>۸ سال معاونت فنی و نظارت سازمان نظام پزشکی و اعتباربخشی بیمارستانی</h4>
+        <p>معاونت فنی و نظارت سازمان نظام پزشکی کشور، ریاست بیمارستان فوق‌تخصصی چشم‌پزشکی بینا و پیاده‌سازی نخستین استانداردهای اعتباربخشی بین‌المللی ACI کانادا در ایران</p>
       </div>
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۴۰۳</div>
-        <h4>توسعه و بلوغ سازمانی</h4>
-        <p>افتتاح ۷ شعبه فعال در سراسر کشور، راه‌اندازی مرکز آموزش مهارتی و مرکز رویش استعدادها</p>
+        <div class="ceo-timeline-year">۱۳۹۶ — ۱۴۰۱</div>
+        <h4>رهبری پروژه‌های ملی نسخه الکترونیک و دیپلماسی سلامت</h4>
+        <p>مدیریت پروژه ملی نسخه الکترونیک کشور، استقرار امضای الکترونیک جامعه پزشکی، ریاست انجمن خدمات بین‌المللی سلامت و عضویت در اتاق بازرگانی ایران</p>
+      </div>
+      <div class="ceo-timeline-item">
+        <div class="ceo-timeline-dot"></div>
+        <div class="ceo-timeline-year">۱۴۰۱ — اکنون</div>
+        <h4>مدیرعامل مؤسسه مکسا و استقرار الگوی ۲۶ گام جامع سرطان</h4>
+        <p>تدوین و پیاده‌سازی الگوی جامع مدیریت بیماران مبتلا به سرطان (۲۶ گام)، گسترش شعب ملی مکسا، شبکه سراسری مراقبت‌های تسکینی رایگان و عضویت در هیئت مدیره شبکه ملی سرطان کشور</p>
       </div>
     </div>
   </div>
@@ -1117,28 +1209,28 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       ارتباط با دفتر مدیرعامل
     </div>
-    <h2 class="ceo-section-title">دفتر مدیرعامل</h2>
-    <p class="ceo-section-subtitle">برای ارتباط با دفتر مدیرعامل مکسا از اطلاعات زیر استفاده کنید</p>
+    <h2 class="ceo-section-title">دفتر مدیرعامل و دبیرخانه مکسا</h2>
+    <p class="ceo-section-subtitle">پل ارتباطی خیرین، نخبگان، سازمان‌ها و پژوهشگران با دفتر مدیرعامل مؤسسه مکسا</p>
   </div>
 
   <div class="ceo-contact-grid">
     <div class="ceo-contact-card">
       <h3>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        اطلاعات تماس
+        اطلاعات تماس و نشانی
       </h3>
       <ul class="ceo-contact-list">
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span><strong>تلفن:</strong> ۰۲۱-۹۱۰۹۲۰۳۰</span>
+          <span><strong>تلفن ارتباطی:</strong> ۰۲۱-۹۱۰۹۲۰۳۰ (داخلی دفتر مدیرعامل)</span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <span><strong>ایمیل:</strong> info@macsa-charity.ir</span>
+          <span><strong>رایانامه رسمی:</strong> info@macsa.ir</span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span><strong>آدرس:</strong> تهران، خیابان ولیعصر، مؤسسه مکسا</span>
+          <span><strong>نشانی دفتر مرکزی:</strong> تهران، خیابان کارگر شمالی، بالاتر از بلوار کشاورز، کوچه شهید صدوقی، پلاک ۲۸، مؤسسه مکسا</span>
         </li>
       </ul>
     </div>
@@ -1146,20 +1238,20 @@
     <div class="ceo-contact-card">
       <h3>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        ساعات پاسخگویی
+        ساعات کاری و پاسخگویی
       </h3>
       <ul class="ceo-contact-list">
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span><strong>شنبه تا چهارشنبه:</strong> ۸ صبح الی ۱۷</span>
+          <span><strong>شنبه تا چهارشنبه:</strong> ۸:۰۰ صبح الی ۱۶:۳۰</span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span><strong>پنجشنبه:</strong> ۸ صبح الی ۱۳</span>
+          <span><strong>پنجشنبه‌ها:</strong> ۸:۰۰ صبح الی ۱۳:۰۰</span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span><strong>جمعه و ایام تعطیل:</strong> تعطیل</span>
+          <span><strong>جمعه و تعطیلات رسمی:</strong> تعطیل</span>
         </li>
       </ul>
     </div>
