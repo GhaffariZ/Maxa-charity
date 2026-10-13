@@ -15,8 +15,25 @@ if (isset($_GET['campaign_finance'])) {
   header('Content-Type: application/json; charset=utf-8');
   ini_set('display_errors', '0');
   try {
+    $mode = (string)($_GET['campaign_finance'] ?? '');
+    $slug = (string)($_GET['branch'] ?? '');
+    $campId = (string)($_GET['campaign_id'] ?? '');
+    $rawStart = (string)($_GET['start_date'] ?? '');
+    $rawEnd = (string)($_GET['end_date'] ?? '');
+
+    // کش محلی پرسرعت روی سرور جهت جلوگیری از فراخوانی‌های مکرر API خارجی (مدت اعتبار: ۱۸۰ ثانیه)
+    $cacheKey = 'macsa_cf_' . md5($mode . '|' . $slug . '|' . $campId . '|' . $rawStart . '|' . $rawEnd);
+    $cachePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $cacheKey . '.json';
+    if (!isset($_GET['fresh']) && is_file($cachePath) && (time() - filemtime($cachePath) < 180)) {
+      $cached = @file_get_contents($cachePath);
+      if ($cached !== false && $cached !== '') {
+        echo $cached;
+        exit;
+      }
+    }
+
     require_once __DIR__ . '/../core/campaign-service.php';
-    $slug = campaign_service_normalize_slug((string)($_GET['branch'] ?? ''));
+    $slug = campaign_service_normalize_slug($slug);
     $active = dash_load_branch(dash_active_branch_id());
     $allowed = $active && (string)$active['slug'] === $slug;
     if (!$allowed && dash_is_super() && dash_is_hq_view()) {
@@ -42,7 +59,6 @@ if (isset($_GET['campaign_finance'])) {
     $client = new CampaignServiceClient($slug);
     $client->prepareManagement();
     if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
-    $mode = (string)$_GET['campaign_finance'];
     if ($mode === 'report') {
       $data = $client->financialReport($from, $to);
       if (!isset($data['campaigns']) || !is_array($data['campaigns'])) throw new RuntimeException('ساختار گزارش مالی کمپین‌ساز نامعتبر است.');
@@ -53,8 +69,7 @@ if (isset($_GET['campaign_finance'])) {
       }
       $result = ['campaigns' => $rows];
     } elseif ($mode === 'payments') {
-      $id = (string)($_GET['campaign_id'] ?? '');
-      $report = $client->campaignPaymentReport($id, $from, $to);
+      $report = $client->campaignPaymentReport($campId, $from, $to);
       if (!isset($report['payments']) || !is_array($report['payments'])) throw new RuntimeException('ساختار گزارش پرداخت کمپین‌ساز نامعتبر است.');
       $rows = [];
       foreach (($report['payments'] ?? []) as $payment) {
@@ -71,7 +86,9 @@ if (isset($_GET['campaign_finance'])) {
     } else {
       http_response_code(400); throw new RuntimeException('نوع گزارش نامعتبر است.');
     }
-    echo json_encode(['status' => 'success', 'data' => $result], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+    $json = json_encode(['status' => 'success', 'data' => $result], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+    @file_put_contents($cachePath, $json);
+    echo $json;
   } catch (Throwable $e) {
     if (http_response_code() < 400) http_response_code(502);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -137,6 +154,21 @@ function format_gregorian_to_jalali_string(string $gDate): string {
   if (count($parts) < 3) return '';
   list($jy, $jm, $jd) = gregorian_to_jalali((int)$parts[0], (int)$parts[1], (int)$parts[2]);
   return sprintf('%04d/%02d/%02d', $jy, $jm, $jd);
+}
+function jalali_day_name(string $gDate): string {
+  $parts = explode('-', explode(' ', $gDate)[0]);
+  if (count($parts) < 3) return '';
+  $w = (int)date('w', strtotime($gDate));
+  $map = [
+    6 => 'شنبه',
+    0 => 'یکشنبه',
+    1 => 'دوشنبه',
+    2 => 'سه‌شنبه',
+    3 => 'چهارشنبه',
+    4 => 'پنج‌شنبه',
+    5 => 'جمعه',
+  ];
+  return $map[$w] ?? '';
 }
 
 /* ---------- دریافت و اعتبارسنجی فیلترهای تاریخ ---------- */
@@ -214,17 +246,25 @@ if ($pdo) {
               NULLIF(TRIM(CONCAT(COALESCE(up.first_name,''),' ',COALESCE(up.last_name,''))),'') AS name,
               pu.email AS email,
               COUNT(*) AS cnt,
-              COALESCE(SUM(pd.amount),0) AS total
+              COALESCE(SUM(pd.amount),0) AS total,
+              MAX(COALESCE(pd.paid_at, pd.created_at)) AS latest_ts
          FROM panel_donations pd
          JOIN panel_users pu        ON pu.id = pd.user_id
          LEFT JOIN user_profiles up ON up.user_id = pd.user_id
         WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond . "
         GROUP BY pd.user_id, pu.email
         ORDER BY total DESC
-        LIMIT 10", $params)->fetchAll();
+        LIMIT 250", $params)->fetchAll();
     foreach ($donorsRaw as $d) {
       $nm = $d['name'] ?: ($d['email'] ? explode('@', $d['email'])[0] : 'خیر ناشناس');
-      $donorsOut[] = ['name'=>$nm, 'count'=>(int)$d['cnt'], 'amt'=>(float)$d['total']];
+      $latestDate = !empty($d['latest_ts']) ? format_gregorian_to_jalali_string(substr($d['latest_ts'], 0, 10)) : null;
+      $donorsOut[] = [
+        'name' => $nm,
+        'count' => (int)$d['cnt'],
+        'amt' => (float)$d['total'],
+        'latest_raw' => $d['latest_ts'] ?? '',
+        'latest_date' => $latestDate ? fa_digits($latestDate) : '—'
+      ];
     }
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
@@ -295,43 +335,138 @@ if ($pdo) {
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
 
-/* ---------- آماده‌سازی داده‌های نمودار توسعه ماهیانه ---------- */
-$don = []; $users = [];
+/* ---------- آماده‌سازی داده‌های نمودار روند بر اساس بازه زمانی انتخابی ---------- */
+$diffDays = null;
+if ($startDate && $endDate) {
+  $diffDays = (int)round((strtotime($endDate) - strtotime($startDate)) / 86400) + 1;
+}
+
+$trendMode = 'monthly';
+$trendChartTitle = 'نمودار روند جمع‌آوری ماهیانه (۱۲ ماه اخیر)';
+$trendTableTitle = 'مجموع مبالغ جمع‌آوری شده به تفکیک ماه';
+$trendTableCol = 'ماه';
+
+if ($diffDays !== null) {
+  if ($diffDays <= 1) {
+    $trendMode = 'hourly';
+    $trendChartTitle = 'نمودار روند ساعتی جمع‌آوری (امروز)';
+    $trendTableTitle = 'مجموع مبالغ جمع‌آوری شده به تفکیک ساعت';
+    $trendTableCol = 'بازه زمانی';
+  } elseif ($diffDays <= 7) {
+    $trendMode = 'daily';
+    $trendChartTitle = 'نمودار روند جمع‌آوری به تفکیک روزهای هفته (' . fa_digits($diffDays) . ' روز اخیر)';
+    $trendTableTitle = 'مجموع مبالغ جمع‌آوری شده به تفکیک روز';
+    $trendTableCol = 'روز هفته';
+  } elseif ($diffDays <= 31) {
+    $trendMode = 'daily';
+    $trendChartTitle = 'نمودار روند جمع‌آوری روزانه (' . fa_digits($diffDays) . ' روزه)';
+    $trendTableTitle = 'مجموع مبالغ جمع‌آوری شده به تفکیک روز';
+    $trendTableCol = 'تاریخ روز';
+  }
+}
+
+$directTrendSums = [];
 if ($pdo) {
   try {
-    $don = q($pdo, "SELECT pd.amount, pd.campaign_id, COALESCE(pd.paid_at, pd.created_at) AS ts FROM panel_donations pd WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond, $params)->fetchAll();
-    $users = q($pdo, "SELECT created_at, last_login_at FROM panel_users")->fetchAll();
+    if ($trendMode === 'hourly') {
+      $trendSql = "SELECT FLOOR(HOUR(COALESCE(pd.paid_at, pd.created_at)) / 3) AS t_key,
+                          COALESCE(SUM(pd.amount), 0) AS total_amt
+                     FROM panel_donations pd
+                    WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond . "
+                    GROUP BY t_key";
+    } elseif ($trendMode === 'daily') {
+      $trendSql = "SELECT DATE_FORMAT(COALESCE(pd.paid_at, pd.created_at), '%Y-%m-%d') AS t_key,
+                          COALESCE(SUM(pd.amount), 0) AS total_amt
+                     FROM panel_donations pd
+                    WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond . "
+                    GROUP BY t_key";
+    } else {
+      $trendSql = "SELECT DATE_FORMAT(COALESCE(pd.paid_at, pd.created_at), '%Y-%m') AS t_key,
+                          COALESCE(SUM(pd.amount), 0) AS total_amt
+                     FROM panel_donations pd
+                    WHERE pd.status='success' AND pd.campaign_id IS NULL" . $dateCond . $branchCond . "
+                    GROUP BY t_key";
+    }
+    $trendRaw = q($pdo, $trendSql, $params)->fetchAll();
+    foreach ($trendRaw as $tr) {
+      if (isset($tr['t_key']) && $tr['t_key'] !== '') {
+        $directTrendSums[(string)$tr['t_key']] = (float)$tr['total_amt'];
+      }
+    }
   } catch (Throwable $e) {}
 }
 
-function build_monthly_series(array $don): array {
+function build_dynamic_trend_series(string $mode, ?string $startDate, ?string $endDate, ?int $diffDays, array $directTrendSums): array {
   $buckets = [];
-  for ($i = 11; $i >= 0; $i--) {
-    $d = new DateTime('first day of this month 00:00:00'); $d->modify("-$i month");
-    $s = $d->getTimestamp(); $d2 = clone $d; $d2->modify('+1 month'); $e = $d2->getTimestamp();
-    list(, $jm) = gregorian_to_jalali((int)$d->format('Y'), (int)$d->format('n'), 15);
-    $buckets[] = ['s'=>$s, 'e'=>$e, 'label'=>jmonth_name($jm)];
-  }
-  $labels = []; $keys = []; $free = []; $camp = []; $total = [];
-  foreach ($buckets as $b) { $labels[] = $b['label']; $keys[] = date('Y-m', $b['s']); $free[] = 0; $camp[] = 0; $total[] = 0; }
-  foreach ($don as $row) {
-    $ts = strtotime((string)$row['ts']); if ($ts === false) continue;
-    foreach ($buckets as $k => $b) {
-      if ($ts >= $b['s'] && $ts < $b['e']) {
-        $amt = (float)$row['amount'];
-        if ($row['campaign_id'] !== null && $row['campaign_id'] !== '') {
-          $camp[$k] += $amt;
-        } else {
-          $free[$k] += $amt;
-        }
-        $total[$k] += $amt;
-        break;
+  if ($mode === 'hourly') {
+    $hourLabels = [
+      '۰۰:۰۰ الی ۰۳:۰۰',
+      '۰۳:۰۰ الی ۰۶:۰۰',
+      '۰۶:۰۰ الی ۰۹:۰۰',
+      '۰۹:۰۰ الی ۱۲:۰۰',
+      '۱۲:۰۰ الی ۱۵:۰۰',
+      '۱۵:۰۰ الی ۱۸:۰۰',
+      '۱۸:۰۰ الی ۲۱:۰۰',
+      '۲۱:۰۰ الی ۲۴:۰۰',
+    ];
+    for ($i = 0; $i < 8; $i++) {
+      $buckets[] = ['key' => (string)$i, 'label' => $hourLabels[$i]];
+    }
+  } elseif ($mode === 'daily') {
+    $cur = new DateTime($startDate);
+    $endObj = new DateTime($endDate);
+    while ($cur <= $endObj) {
+      $ymd = $cur->format('Y-m-d');
+      list($jy, $jm, $jd) = gregorian_to_jalali((int)$cur->format('Y'), (int)$cur->format('n'), (int)$cur->format('j'));
+      if ($diffDays !== null && $diffDays <= 7) {
+        $wName = jalali_day_name($ymd);
+        $label = $wName . ' ' . fa_digits(sprintf('%02d/%02d', $jm, $jd));
+      } else {
+        $label = fa_digits(sprintf('%02d/%02d', $jm, $jd));
+      }
+      $buckets[] = ['key' => $ymd, 'label' => $label];
+      $cur->modify('+1 day');
+    }
+  } else {
+    // monthly
+    if ($startDate && $endDate && $diffDays !== null && $diffDays > 31) {
+      $cur = new DateTime($startDate);
+      $cur->modify('first day of this month 00:00:00');
+      $endObj = new DateTime($endDate);
+      while ($cur <= $endObj) {
+        $ym = $cur->format('Y-m');
+        list(, $jm) = gregorian_to_jalali((int)$cur->format('Y'), (int)$cur->format('n'), 15);
+        $buckets[] = ['key' => $ym, 'label' => jmonth_name($jm)];
+        $cur->modify('+1 month');
+      }
+    } else {
+      for ($i = 11; $i >= 0; $i--) {
+        $d = new DateTime('first day of this month 00:00:00'); $d->modify("-$i month");
+        list(, $jm) = gregorian_to_jalali((int)$d->format('Y'), (int)$d->format('n'), 15);
+        $buckets[] = ['key' => $d->format('Y-m'), 'label' => jmonth_name($jm)];
       }
     }
   }
-  return ['labels'=>$labels, 'keys'=>$keys, 'free'=>$free, 'campaigns'=>$camp, 'total'=>$total];
+
+  $labels = []; $keys = []; $free = []; $camp = []; $total = [];
+  foreach ($buckets as $b) {
+    $labels[] = $b['label'];
+    $keys[] = $b['key'];
+    $amt = $directTrendSums[$b['key']] ?? 0.0;
+    $free[] = $amt;
+    $camp[] = 0.0;
+    $total[] = $amt;
+  }
+  return [
+    'mode' => $mode,
+    'labels' => $labels,
+    'keys' => $keys,
+    'free' => $free,
+    'campaigns' => $camp,
+    'total' => $total
+  ];
 }
-$monthChartData = build_monthly_series($don);
+$monthChartData = build_dynamic_trend_series($trendMode, $startDate, $endDate, $diffDays, $directTrendSums);
 
 $activeFinanceBranch = dash_load_branch(dash_active_branch_id());
 $financeBranches = ($activeFinanceBranch && dash_is_super() && dash_is_hq_view()) ? dash_all_branches() : array_filter([$activeFinanceBranch]);
@@ -495,7 +630,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 .grid-charts{grid-template-columns:1.6fr 1fr}
 .card{padding:22px 24px;transition:box-shadow .28s var(--ease),border-color .28s}
 .card:hover{box-shadow:var(--shadow-md)}
-.card-head{margin-bottom:18px;display:flex;align-items:center;gap:0}
+.card-head{margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .card-head h3{position:relative;padding-inline-start:14px;font-size:15px;font-weight:800;letter-spacing:-.01em}
 .card-head h3::before{content:'';position:absolute;inset-inline-start:0;top:50%;transform:translateY(-50%);width:4px;height:17px;border-radius:99px;background:linear-gradient(180deg,var(--color-secondary),#e08e12)}
 
@@ -522,13 +657,14 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 .stats-five-grid .stat-card:nth-child(5){animation-delay:.24s}
 @media (prefers-reduced-motion:reduce){.stat-card{animation:none}}
 
-/* دکمه‌ی گزارش‌گیری در هدر */
-.fm-head{flex-wrap:wrap}
+/* دکمه‌های اقدام در هدر */
+.fm-head{flex-wrap:wrap;gap:16px}
 .fm-head-text{flex:1;min-width:200px}
-.fm-report-btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;
-  padding:12px 22px;border-radius:13px;color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));
-  box-shadow:0 12px 26px -10px rgba(250, 166, 26,.7);transition:transform .15s var(--ease),box-shadow .25s}
-.fm-report-btn:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(250, 166, 26,.85)}
+.fm-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fm-report-btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:800;font-size:13.5px;border:none;cursor:pointer;
+  height:44px;padding:0 20px;border-radius:13px;color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));
+  box-shadow:0 10px 22px -8px rgba(250, 166, 26,.75);transition:transform .15s var(--ease),box-shadow .25s;text-decoration:none}
+.fm-report-btn:hover{transform:translateY(-2px);box-shadow:0 14px 26px -8px rgba(250, 166, 26,.9);color:#5c3d00}
 .fm-report-btn:active{transform:scale(.97)}
 .fm-report-btn svg{width:18px;height:18px}
 
@@ -542,6 +678,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   .card{overflow-x:auto;-webkit-overflow-scrolling:touch}      /* جدول‌ها در موبایل اسکرول افقی می‌شوند */
   .dtable{min-width:460px}
   .chart-wrap{height:300px}
+  .fm-head-actions{width:100%}
   .btn-quick-excel, .fm-report-btn{width:100%;justify-content:center}
   .fm-head-text{min-width:0}
 }
@@ -829,6 +966,63 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     display: none !important;
   }
 }
+
+/* ============ STYLES FOR ALL DONORS MODAL & BUTTON ============ */
+.link-more-btn {
+  display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 12.5px; font-weight: 700;
+  color: var(--color-primary); background: var(--primary-08); border: 1px solid rgba(0, 143, 138, 0.22);
+  padding: 6px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s var(--ease); text-decoration: none;
+}
+.link-more-btn:hover {
+  background: var(--color-primary); color: #fff; transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(0, 143, 138, 0.45);
+}
+.link-more-btn svg { width: 13px; height: 13px; transition: transform 0.2s; }
+.link-more-btn:hover svg { transform: translateX(-2px); }
+
+.all-donors-card {
+  width: 820px !important;
+  max-width: 95% !important;
+}
+.donors-search-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+.donors-search-wrap .search-ic {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 14px;
+  transform: translateY(-50%);
+  width: 17px;
+  height: 17px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.donors-search-wrap .modal-input {
+  padding-inline-start: 40px;
+  width: 100%;
+}
+.all-donors-table-wrap {
+  max-height: 480px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.all-donors-table-wrap table {
+  margin: 0;
+  width: 100%;
+}
+.all-donors-table-wrap thead th {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 2;
+  box-shadow: 0 1px 0 var(--color-border);
+}
+.rank-badge-top1 { background: rgba(250, 166, 26, 0.18) !important; color: #b9760a !important; font-weight: 900 !important; }
+.rank-badge-top2 { background: rgba(139, 148, 158, 0.20) !important; color: #4b5563 !important; font-weight: 800 !important; }
+.rank-badge-top3 { background: rgba(186, 117, 72, 0.18) !important; color: #9c5221 !important; font-weight: 800 !important; }
 </style>
 </head>
 <body>
@@ -843,12 +1037,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
       <a href="financial-management.php?start_date=<?= date('Y-m-d', strtotime('-7 days')) ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-d', strtotime('-7 days')) && $endDate === date('Y-m-d'))?'active':'' ?>">۷ روز اخیر</a>
       <a href="financial-management.php?start_date=<?= date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-d', strtotime('-30 days')) && $endDate === date('Y-m-d'))?'active':'' ?>">۳۰ روز اخیر</a>
       <a href="financial-management.php?start_date=<?= date('Y-m-01') ?>&end_date=<?= date('Y-m-d') ?>" class="fm-chip <?= ($startDate === date('Y-m-01') && $endDate === date('Y-m-d'))?'active':'' ?>">ماه جاری</a>
-      <button type="button" class="fm-chip custom-btn" onclick="openReportModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        فیلتر پیشرفته و سایر فرمت‌ها...
-      </button>
     </div>
-
 
   <header class="fm-head">
     <div class="fm-head-ic">
@@ -866,11 +1055,17 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
         <p>گزارشِ جامعِ منابعِ مالی و تراکنش‌های موفقِ خیریهٔ مکسا.</p>
       <?php endif; ?>
     </div>
-    <!-- دکمه خروجی اکسل چند شیته -->
-    <a href="financial-export.php?format=excel<?= $startDate ? '&start_date=' . urlencode($startDate) : '' ?><?= $endDate ? '&end_date=' . urlencode($endDate) : '' ?>" class="btn-quick-excel" title="دانلود فایل اکسل چند کاربرگی شامل ریز تراکنش‌ها و خلاصه">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="20" x2="8" y2="13"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
-      <span>دانلود اکسل چند شیته</span>
-    </a>
+    <!-- دکمه‌های اقدام هدر (اکسل و گزارش‌گیری سفارشی) -->
+    <div class="fm-head-actions">
+      <a href="financial-export.php?format=excel<?= $startDate ? '&start_date=' . urlencode($startDate) : '' ?><?= $endDate ? '&end_date=' . urlencode($endDate) : '' ?>" class="btn-quick-excel" title="دانلود فایل اکسل چند کاربرگی شامل ریز تراکنش‌ها و خلاصه">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="20" x2="8" y2="13"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+        <span>دانلود اکسل چند شیته</span>
+      </a>
+      <button type="button" class="fm-report-btn" onclick="openReportModal()" title="تنظیم بازه سفارشی و تولید گزارش‌های چاپی، اکسل یا CSV">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span>گزارش‌گیری</span>
+      </button>
+    </div>
   </header>
 
   <section class="stats-five-grid">
@@ -903,7 +1098,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 
   <section class="grid-charts">
     <div class="card">
-      <div class="card-head"><h3>نمودار روند جمع‌آوری ماهیانه (۱۲ ماه اخیر)</h3></div>
+      <div class="card-head"><h3 id="trendChartTitle"><?= htmlspecialchars($trendChartTitle) ?></h3></div>
       <div class="chart-wrap"><canvas id="monthlyTrendChart"></canvas></div>
     </div>
     <div class="card">
@@ -914,24 +1109,32 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 
   <section class="grid-tables-2">
     <div class="card">
-      <div class="card-head"><h3>۱۰ کاربر برتر (بیشترین مبالغ حمایت مالی موفق)</h3></div>
+      <div class="card-head">
+        <h3>۱۰ کاربر برتر (بیشترین مبالغ حمایت مالی موفق)</h3>
+        <button type="button" class="link-more-btn" onclick="openAllDonorsModal()" title="مشاهده رتبه‌بندی کامل حامیان مالی">
+          <span>نمایش همه</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </div>
       <table class="dtable">
         <thead>
           <tr>
             <th>رتبه</th>
             <th>نام خیر / شناسگر</th>
             <th>تعداد دفعات مشارکت</th>
+            <th>تاریخ آخرین کمک</th>
             <th>مجموع حمایت (تومان)</th>
           </tr>
         </thead>
         <tbody>
           <?php if(empty($donorsOut)): ?>
-            <tr><td colspan="4" style="text-align:center; color:var(--color-muted);">داده‌ای موجود نیست</td></tr>
+            <tr><td colspan="5" style="text-align:center; color:var(--color-muted);">داده‌ای موجود نیست</td></tr>
           <?php else: foreach($donorsOut as $index => $donor): ?>
             <tr>
               <td><span class="badge" style="background:var(--primary-08); color:var(--color-primary);"><?= fa_digits($index + 1) ?></span></td>
               <td><b><?= htmlspecialchars($donor['name']) ?></b></td>
               <td><?= fa_digits($donor['count']) ?> بار</td>
+              <td style="color:var(--color-muted); font-size:12px;"><?= $donor['latest_date'] ?></td>
               <td style="color:var(--success); font-weight:700;"><?= fa_digits(number_format($donor['amt'])) ?></td>
             </tr>
           <?php endforeach; endif; ?>
@@ -940,20 +1143,20 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>مجموع مبالغ جمع‌آوری شده به تفکیک ماه</h3></div>
+      <div class="card-head"><h3 id="trendTableTitle"><?= htmlspecialchars($trendTableTitle) ?></h3></div>
       <table class="dtable">
         <thead>
           <tr>
-            <th>ماه</th>
+            <th id="trendTableCol"><?= htmlspecialchars($trendTableCol) ?></th>
             <th>کمک مستقیم (تومان)</th>
             <th>کمپین‌ها (تومان)</th>
-            <th>مجموع درآمد ماه (تومان)</th>
+            <th>مجموع درآمد (تومان)</th>
           </tr>
         </thead>
         <tbody>
           <?php 
           for($i = 0; $i < count($monthChartData['labels']); $i++): 
-            if($monthChartData['total'][$i] == 0) continue; // ماه‌های خالی را نشان نمی‌دهیم
+            if($monthChartData['total'][$i] == 0) continue; // سطرهای بدون درآمد را نشان نمی‌دهیم
           ?>
             <tr>
               <td><b><?= $monthChartData['labels'][$i] ?></b></td>
@@ -1101,6 +1304,46 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     </div>
   </div>
 
+  <!-- ============ ALL DONORS MODAL ============ -->
+  <div id="allDonorsModal" class="report-modal-overlay" onclick="handleDonorsOverlayClick(event)">
+    <div class="report-modal-card all-donors-card">
+      <div class="report-modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <h3>رتبه‌بندی کامل حامیان مالی</h3>
+          <span id="allDonorsCountBadge" class="badge" style="background:var(--primary-08);color:var(--color-primary);font-size:11.5px;padding:3px 10px;">۰ خیر</span>
+        </div>
+        <button type="button" class="report-modal-close" onclick="closeAllDonorsModal()" title="بستن">&times;</button>
+      </div>
+      <div class="report-modal-body" style="padding:18px 24px;">
+        <div class="donors-search-wrap">
+          <svg class="search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="allDonorsSearch" class="modal-input" placeholder="جستجو بر اساس نام یا شناسگر خیر..." oninput="filterAllDonors(this.value)">
+        </div>
+        <div class="all-donors-table-wrap">
+          <table class="dtable" id="allDonorsTable">
+            <thead>
+              <tr>
+                <th style="width:65px;text-align:center;">رتبه</th>
+                <th>نام خیر / شناسگر</th>
+                <th>تعداد دفعات مشارکت</th>
+                <th>تاریخ آخرین کمک</th>
+                <th>میانگین هر پرداخت</th>
+                <th>مجموع حمایت (تومان)</th>
+              </tr>
+            </thead>
+            <tbody id="allDonorsTbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--color-muted);padding:30px;">در حال بارگذاری داده‌ها...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-modal-footer" style="padding:14px 24px;border-top:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
+        <span id="allDonorsTotalSum" style="font-size:12.5px;color:var(--color-muted);font-weight:600;"></span>
+        <button type="button" class="modal-btn-cancel" onclick="closeAllDonorsModal()">بستن</button>
+      </div>
+    </div>
+  </div>
+
   <!-- کتابخانه‌های تقویم شمسی -->
   <script src="assets/vendor/libs/jquery/jquery.js"></script>
   <script src="assets/js/datepicker/persian-date.min.js"></script>
@@ -1184,6 +1427,113 @@ window.closeReportModal = function() {
 window.handleOverlayClick = function(e) {
   if (e.target.id === 'reportModal') closeReportModal();
 };
+
+// ============ ALL DONORS MODAL JS ============
+window.allDonorsList = (SERVER.directDonors || []).map(d => ({
+  name: d.name,
+  count: Number(d.count),
+  amt: Number(d.amt),
+  latest_raw: d.latest_raw || '',
+  latest_date: d.latest_date || '—'
+}));
+
+window.openAllDonorsModal = function() {
+  const modal = document.getElementById('allDonorsModal');
+  if (modal) {
+    modal.classList.add('show');
+    const search = document.getElementById('allDonorsSearch');
+    if (search) search.value = '';
+    renderAllDonorsTable(window.allDonorsList);
+    setTimeout(() => { if (search) search.focus(); }, 120);
+  }
+};
+window.closeAllDonorsModal = function() {
+  const modal = document.getElementById('allDonorsModal');
+  if (modal) modal.classList.remove('show');
+};
+window.handleDonorsOverlayClick = function(e) {
+  if (e.target.id === 'allDonorsModal') closeAllDonorsModal();
+};
+
+window.filterAllDonors = function(val) {
+  const q = (val || '').trim().toLowerCase();
+  if (!q) {
+    renderAllDonorsTable(window.allDonorsList);
+    return;
+  }
+  const filtered = (window.allDonorsList || []).filter(d => (d.name || '').toLowerCase().includes(q));
+  renderAllDonorsTable(filtered);
+};
+
+function renderAllDonorsTable(list) {
+  const tbody = document.getElementById('allDonorsTbody');
+  const countBadge = document.getElementById('allDonorsCountBadge');
+  const sumEl = document.getElementById('allDonorsTotalSum');
+  if (!tbody) return;
+  tbody.replaceChildren();
+
+  const count = list ? list.length : 0;
+  if (countBadge) countBadge.textContent = count.toLocaleString('fa-IR') + ' خیر';
+
+  if (!count) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="6" style="text-align:center;color:var(--color-muted);padding:28px;">خیری با این مشخصات یافت نشد</td>';
+    tbody.appendChild(tr);
+    if (sumEl) sumEl.textContent = '';
+    return;
+  }
+
+  let totalSum = 0;
+  list.forEach((donor, idx) => {
+    const amt = Number(donor.amt) || 0;
+    const cnt = Number(donor.count) || 1;
+    totalSum += amt;
+    const tr = document.createElement('tr');
+
+    let badgeClass = '';
+    if (idx === 0) badgeClass = 'rank-badge-top1';
+    else if (idx === 1) badgeClass = 'rank-badge-top2';
+    else if (idx === 2) badgeClass = 'rank-badge-top3';
+
+    const rankTd = document.createElement('td');
+    rankTd.style.textAlign = 'center';
+    rankTd.innerHTML = `<span class="badge ${badgeClass}" style="${badgeClass ? '' : 'background:var(--primary-08);color:var(--color-primary);'}">${(idx + 1).toLocaleString('fa-IR')}</span>`;
+
+    const nameTd = document.createElement('td');
+    nameTd.innerHTML = `<b>${donor.name || 'خیر ناشناس'}</b>`;
+
+    const countTd = document.createElement('td');
+    countTd.textContent = cnt.toLocaleString('fa-IR') + ' بار';
+
+    const latestTd = document.createElement('td');
+    latestTd.style.cssText = 'color:var(--color-muted);font-size:12px;text-align:center;';
+    latestTd.textContent = donor.latest_date || '—';
+
+    const avg = Math.round(amt / Math.max(1, cnt));
+    const avgTd = document.createElement('td');
+    avgTd.style.color = 'var(--color-muted)';
+    avgTd.textContent = avg.toLocaleString('fa-IR') + ' تومان';
+
+    const amtTd = document.createElement('td');
+    amtTd.style.cssText = 'color:var(--success);font-weight:700;';
+    amtTd.textContent = Math.round(amt).toLocaleString('fa-IR') + ' تومان';
+
+    tr.append(rankTd, nameTd, countTd, latestTd, avgTd, amtTd);
+    tbody.appendChild(tr);
+  });
+
+  if (sumEl) {
+    sumEl.textContent = 'مجموع کل حمایت این لیست: ' + Math.round(totalSum).toLocaleString('fa-IR') + ' تومان';
+  }
+}
+
+// بستن مودال‌ها با کلید Escape
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeReportModal();
+    closeAllDonorsModal();
+  }
+});
 
 // Date range variables in Gregorian
 window.selectedStartDateGregorian = '<?= $startDate ?? "" ?>';
@@ -1380,6 +1730,17 @@ window.showToast = function(message, type = 'success') {
       if (current.get(key)) params.set(key, current.get(key));
     }
     if (campaignId) params.set('campaign_id', campaignId);
+
+    // کش سمت کلاینت برای عدم ارسال درخواست‌های تکراری در همان سشن (۳ دقیقه)
+    const cKey = 'macsa_cf_' + params.toString();
+    try {
+      const saved = sessionStorage.getItem(cKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Date.now() - parsed.ts < 180000) return parsed.data;
+      }
+    } catch(e) {}
+
     const response = await fetch('financial-management.php?' + params, {
       credentials: 'same-origin', headers: {Accept: 'application/json'}
     });
@@ -1387,6 +1748,9 @@ window.showToast = function(message, type = 'success') {
     if (!response.ok || !result || result.status !== 'success') {
       throw new Error(result && result.message ? result.message : 'خطای HTTP ' + response.status);
     }
+    try {
+      sessionStorage.setItem(cKey, JSON.stringify({ts: Date.now(), data: result.data}));
+    } catch(e) {}
     return result.data;
   }
 
@@ -1424,9 +1788,23 @@ window.showToast = function(message, type = 'success') {
     if (window.refreshFinancialCharts) window.refreshFinancialCharts();
   }
 
-  function monthKey(raw) {
+  function getTimelineKey(raw, mode) {
     const date = new Date(raw);
     if (Number.isNaN(date.getTime())) return '';
+    if (mode === 'hourly') {
+      const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Tehran', hour:'numeric', hour12:false}).formatToParts(date);
+      const hVal = parts.find(p => p.type === 'hour');
+      const h = hVal ? parseInt(hVal.value, 10) : date.getHours();
+      return String(Math.floor(h / 3));
+    }
+    if (mode === 'daily') {
+      const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Tehran', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(date);
+      const y = parts.find(p => p.type === 'year')?.value;
+      const m = parts.find(p => p.type === 'month')?.value;
+      const d = parts.find(p => p.type === 'day')?.value;
+      return (y && m && d) ? `${y}-${m}-${d}` : '';
+    }
+    // monthly
     const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Tehran', year:'numeric', month:'2-digit'}).formatToParts(date);
     const year = parts.find(p => p.type === 'year');
     const month = parts.find(p => p.type === 'month');
@@ -1436,21 +1814,55 @@ window.showToast = function(message, type = 'success') {
   function renderPayments() {
     const monthly = SERVER.monthly;
     monthly.campaigns.fill(0);
+    const mode = monthly.mode || 'monthly';
     const donors = new Map();
-    SERVER.directDonors.forEach((row, index) => donors.set('direct:' + index, {name:row.name, count:Number(row.count), amt:Number(row.amt)}));
+    SERVER.directDonors.forEach((row, index) => donors.set('direct:' + index, {
+      name: row.name,
+      count: Number(row.count),
+      amt: Number(row.amt),
+      latest_raw: row.latest_raw || '',
+      latest_date: row.latest_date || '—'
+    }));
+
     for (const payments of paymentsByCampaign.values()) {
       for (const payment of payments) {
         const amount = rialToToman(payment.amount);
-        const index = monthly.keys.indexOf(monthKey(payment.created_at));
+        const index = monthly.keys.indexOf(getTimelineKey(payment.created_at, mode));
         if (index !== -1) monthly.campaigns[index] += amount;
+
         const key = 'service:' + payment.donor_key;
-        const donor = donors.get(key) || {name:payment.name || 'خیر ناشناس', count:0, amt:0};
+        const donor = donors.get(key) || {
+          name: payment.name || 'خیر ناشناس',
+          count: 0,
+          amt: 0,
+          latest_raw: '',
+          latest_date: '—'
+        };
         donor.count++;
         donor.amt += amount;
+
+        if (payment.created_at) {
+          if (!donor.latest_raw || new Date(payment.created_at) > new Date(donor.latest_raw)) {
+            donor.latest_raw = payment.created_at;
+            try {
+              const pDate = new Date(payment.created_at);
+              donor.latest_date = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+                timeZone: 'Asia/Tehran',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              }).format(pDate);
+            } catch (e) {
+              donor.latest_date = '—';
+            }
+          }
+        }
+
         donors.set(key, donor);
       }
     }
     monthly.total = monthly.free.map((value, index) => value + monthly.campaigns[index]);
+
     const monthTable = document.querySelectorAll('.grid-tables-2 .card .dtable tbody')[1];
     if (monthTable) {
       monthTable.replaceChildren();
@@ -1465,11 +1877,32 @@ window.showToast = function(message, type = 'success') {
         row.appendChild(total);
         monthTable.appendChild(row);
       });
+      if (!monthly.labels.some((_, i) => monthly.total[i] > 0)) {
+        const row = document.createElement('tr');
+        const cell = make('td', 'تراکنشی در این بازه زمانی ثبت نشده است.');
+        cell.colSpan = 4;
+        cell.style.cssText = 'text-align:center;color:var(--color-muted);';
+        row.appendChild(cell);
+        monthTable.appendChild(row);
+      }
     }
+
     const donorTable = document.querySelector('.grid-tables-2 .card .dtable tbody');
     if (donorTable) {
       donorTable.replaceChildren();
-      const top = [...donors.values()].sort((a, b) => b.amt - a.amt).slice(0, 10);
+      const allSorted = [...donors.values()].sort((a, b) => b.amt - a.amt);
+      window.allDonorsList = allSorted;
+      
+      // اگر مودال همه خیرین باز باشد، جدول آن نیز به‌روز می‌شود
+      const allDonorsModal = document.getElementById('allDonorsModal');
+      if (allDonorsModal && allDonorsModal.classList.contains('show')) {
+        const search = document.getElementById('allDonorsSearch');
+        if (typeof window.filterAllDonors === 'function') {
+          window.filterAllDonors(search ? search.value : '');
+        }
+      }
+
+      const top = allSorted.slice(0, 10);
       top.forEach((donor, index) => {
         const row = document.createElement('tr');
         const rank = document.createElement('td');
@@ -1479,15 +1912,18 @@ window.showToast = function(message, type = 'success') {
         rank.appendChild(badge);
         const name = document.createElement('td');
         name.appendChild(make('b', donor.name));
+        const count = make('td', donor.count.toLocaleString('fa-IR') + ' بار');
+        const latest = make('td', donor.latest_date || '—');
+        latest.style.cssText = 'color:var(--color-muted);font-size:12px;';
         const amount = make('td', money(donor.amt));
         amount.style.cssText = 'color:var(--success);font-weight:700;';
-        row.append(rank, name, make('td', donor.count.toLocaleString('fa-IR') + ' بار'), amount);
+        row.append(rank, name, count, latest, amount);
         donorTable.appendChild(row);
       });
       if (!top.length) {
         const row = document.createElement('tr');
         const cell = make('td', 'داده‌ای موجود نیست');
-        cell.colSpan = 4;
+        cell.colSpan = 5;
         cell.style.cssText = 'text-align:center;color:var(--color-muted);';
         row.appendChild(cell);
         donorTable.appendChild(row);
@@ -1513,7 +1949,8 @@ window.showToast = function(message, type = 'success') {
       .filter(campaign => campaign.id && Number(campaign.system_amount) > 0)
       .map(campaign => ({source:group.source, campaign})));
     let next = 0;
-    await Promise.all(Array.from({length:Math.min(4, tasks.length)}, async () => {
+    const concurrency = Math.min(8, tasks.length);
+    await Promise.all(Array.from({length: concurrency}, async () => {
       while (next < tasks.length) {
         const task = tasks[next++];
         try {
