@@ -542,7 +542,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   .card{overflow-x:auto;-webkit-overflow-scrolling:touch}      /* جدول‌ها در موبایل اسکرول افقی می‌شوند */
   .dtable{min-width:460px}
   .chart-wrap{height:300px}
-  .fm-report-btn{width:100%;justify-content:center}
+  .btn-quick-excel, .fm-report-btn{width:100%;justify-content:center}
   .fm-head-text{min-width:0}
 }
 @media (max-width:560px){
@@ -554,45 +554,14 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
   .fm-head h1{font-size:19px}
 }
 
-/* ============ نوار ابزار فوقانی مستقل مسئول مالی ============ */
-.fm-topbar {
-  height: 70px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-.fm-tb-brand { display: flex; align-items: center; gap: 12px; }
-.fm-tb-logo {
-  width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-  color: #fff; font-weight: 900; font-size: 16px; display: grid; place-items: center; box-shadow: 0 8px 16px -6px rgba(0,102,101,.6);
-}
-.fm-tb-meta strong { font-size: 14.5px; font-weight: 800; display: block; color: var(--color-text); }
-.fm-tb-meta span { font-size: 11.5px; color: var(--color-muted); display: block; margin-top: 1px; }
-
-.fm-tb-branch {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: #5b6469; background: var(--color-bg);
-  padding: 7px 16px; border-radius: 99px; border: 1px solid var(--color-border);
-}
-.fm-tb-branch .ic { width: 16px; height: 16px; color: var(--color-primary); }
-.fm-tb-branch b { color: var(--color-primary-dark); font-weight: 800; }
-
-.fm-tb-actions { display: flex; align-items: center; gap: 10px; }
-
 .btn-quick-excel {
-  display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: 11px;
-  background: linear-gradient(135deg,#107c41,#0b5a2f); color: #fff; font-weight: 700; font-size: 12.5px;
-  box-shadow: 0 6px 16px -6px rgba(16,124,65,.8); text-decoration: none; transition: transform .15s, box-shadow .2s;
+  display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 13px;
+  background: linear-gradient(135deg,#107c41,#0b5a2f); color: #fff; font-weight: 800; font-size: 13.5px;
+  box-shadow: 0 10px 22px -8px rgba(16,124,65,.75); text-decoration: none; transition: transform .15s var(--ease), box-shadow .25s;
 }
-.btn-quick-excel:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -6px rgba(16,124,65,.9); color:#fff; }
-.btn-quick-excel svg { width: 17px; height: 17px; }
+.btn-quick-excel:hover { transform: translateY(-2px); box-shadow: 0 14px 26px -8px rgba(16,124,65,.9); color:#fff; }
+.btn-quick-excel:active { transform: scale(.97); }
+.btn-quick-excel svg { width: 18px; height: 18px; }
 
 .fm-tb-icon-btn {
   width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--color-border); background: var(--color-bg);
@@ -643,15 +612,9 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 .fm-chip.custom-btn { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
 .fm-chip.custom-btn svg { width: 14px; height: 14px; color: var(--color-secondary); }
 
-@media (max-width: 900px) {
-  .fm-topbar { flex-direction: column; height: auto; padding: 14px 16px; gap: 12px; align-items: stretch; }
-  .fm-tb-brand { justify-content: space-between; }
-  .fm-tb-actions { flex-wrap: wrap; justify-content: flex-end; }
-}
-
 /* ============ چاپِ گزارش ============ */
 @media print{
-  .fm-report-btn{display:none}
+  .btn-quick-excel, .fm-report-btn{display:none !important}
   body{padding:0;background:#fff;color:#111}
   .content{max-width:none;padding:0}
   .card,.stat-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
@@ -870,54 +833,6 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 </head>
 <body>
 
-  <!-- سربرگ جامع پنل مالی -->
-  <header class="fm-topbar">
-    <div class="fm-tb-brand">
-      <div class="fm-tb-logo">مکسا</div>
-      <div class="fm-tb-meta">
-        <strong>خیریه مکسا</strong>
-        <span>سامانه نظارت، مدیریت و گزارش‌های مالی</span>
-      </div>
-    </div>
-
-    <div class="fm-tb-branch">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
-      <span>شعبه: <b><?= e($ACTIVE_BRANCH_ROW['name'] ?? 'دفتر مرکزی') ?></b></span>
-    </div>
-
-    <div class="fm-tb-actions">
-      <!-- دکمه خروجی اکسل چند شیته -->
-      <a href="financial-export.php?format=excel<?= $startDate ? '&start_date=' . urlencode($startDate) : '' ?><?= $endDate ? '&end_date=' . urlencode($endDate) : '' ?>" class="btn-quick-excel" title="دانلود فایل اکسل چند کاربرگی شامل ریز تراکنش‌ها و خلاصه">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="20" x2="8" y2="13"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
-        <span>دانلود اکسل چند شیته</span>
-      </a>
-
-      <!-- دکمه تغییر تم -->
-      <button type="button" class="fm-tb-icon-btn" onclick="toggleMaxaTheme()" title="تغییر تم تاریک / روشن">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-      </button>
-
-      <?php if (!dash_is_finance_only() && !dash_is_finance_user()): ?>
-      <a href="index.php" class="btn-back-dash" title="بازگشت به داشبورد عمومی">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>داشبورد اصلی</span>
-      </a>
-      <?php endif; ?>
-
-      <div class="fm-user-pill">
-        <div class="fm-user-av"><?= e(mb_substr($DASH_USER['full_name'] ?: $DASH_USER['username'], 0, 2, 'UTF-8')) ?></div>
-        <div class="fm-user-info">
-          <span class="fm-user-name"><?= e($DASH_USER['full_name'] ?: $DASH_USER['username']) ?></span>
-          <span class="fm-user-role"><?= e((dash_is_finance_only() || dash_is_finance_user()) ? 'مدیر مالی' : (dash_is_super() ? 'مدیر مرکزی' : 'مدیر شعبه')) ?></span>
-        </div>
-      </div>
-
-      <a href="logout.php" class="fm-logout-btn" title="خروج از حساب">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      </a>
-    </div>
-  </header>
-
   <main class="content">
 
     <!-- نوار چیپ‌های فیلتر سریع زمانی -->
@@ -951,10 +866,11 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
         <p>گزارشِ جامعِ منابعِ مالی و تراکنش‌های موفقِ خیریهٔ مکسا.</p>
       <?php endif; ?>
     </div>
-    <button type="button" class="fm-report-btn" onclick="openReportModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      گزارش‌گیری
-    </button>
+    <!-- دکمه خروجی اکسل چند شیته -->
+    <a href="financial-export.php?format=excel<?= $startDate ? '&start_date=' . urlencode($startDate) : '' ?><?= $endDate ? '&end_date=' . urlencode($endDate) : '' ?>" class="btn-quick-excel" title="دانلود فایل اکسل چند کاربرگی شامل ریز تراکنش‌ها و خلاصه">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="20" x2="8" y2="13"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+      <span>دانلود اکسل چند شیته</span>
+    </a>
   </header>
 
   <section class="stats-five-grid">
