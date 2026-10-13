@@ -222,6 +222,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 15%;
 }
 
 /* Decorative ring behind portrait */
@@ -427,6 +428,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
 }
 
 .ceo-sig-info h4 {
