@@ -106,6 +106,7 @@ A standalone API (`/api`) powering the authenticated donor experience:
 - Self-hosted **Vazirmatn** webfont (no external CDN) for reliability on the Iran network.
 - Sensitive files (`config.php`, `.env`, etc.) are **git-ignored**.
 - Configured for **cPanel** deployment via `.cpanel.yml`.
+- [cPanel deployment and troubleshooting guide (Persian)](docs/CPANEL-DEPLOY.md).
 
 ---
 

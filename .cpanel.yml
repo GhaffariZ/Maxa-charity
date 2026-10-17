@@ -1,6 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/erfantey/public_html/
-    - /bin/cp -R public_html/. $DEPLOYPATH
-    - /bin/bash database/import.sh
+    # For an addon domain, replace this with its Document Root from cPanel.
+    - export DEPLOYPATH="${HOME}/public_html"
+    - /bin/test -d "$DEPLOYPATH"
+    - /bin/cp -R public_html/. "$DEPLOYPATH/"
+    # Database imports are manual: database/import.sh replaces existing data.
