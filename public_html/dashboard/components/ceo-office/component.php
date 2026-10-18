@@ -527,63 +527,6 @@
   margin-top: 8px;
 }
 
-/* ===== SACRED DEFENSE & HONOR CALLOUT ===== */
-.ceo-honor-card {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.09), rgba(0, 125, 130, 0.05));
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: var(--ceo-radius);
-  padding: 24px 30px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 24px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.08);
-}
-
-.ceo-honor-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 5px;
-  height: 100%;
-  background: linear-gradient(180deg, #d4af37, #b78f1e);
-}
-
-.ceo-honor-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.1));
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #b78f1e;
-}
-
-.ceo-honor-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.ceo-honor-content h4 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--ceo-dark);
-}
-
-.ceo-honor-content p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.85;
-  color: #475569;
-}
-
 /* ===== VISION SECTION ===== */
 .ceo-vision {
   background: linear-gradient(160deg, #003d3f, #005f63 50%, #007d82);
@@ -899,12 +842,6 @@
     padding: 24px 20px;
   }
 
-  .ceo-honor-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 20px 16px;
-  }
-
   .ceo-hero-actions {
     flex-direction: column;
     align-items: center;
@@ -1112,17 +1049,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- Sacred Defense & Honor Callout -->
-  <div class="ceo-honor-card">
-    <div class="ceo-honor-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    </div>
-    <div class="ceo-honor-content">
-      <h4>افتخار ایثارگری، آزادگی و جانبازی سرافرازانه در دفاع مقدس</h4>
-      <p>حضور داوطلبانه در خطوط مقدم جبهه‌های حق علیه باطل در دوران هشت سال دفاع مقدس (سال ۱۳۶۲)، تحمل بیش از ۶ سال و نیم اسارت سرافرازانه در اردوگاه‌های رژیم بعثی (۱۳۶۲ تا ۱۳۶۹) و کسب مدال افتخار جانبازی ۴۰ درصد در راه استقلال و عزت میهن اسلامی.</p>
-    </div>
-  </div>
 </div>
 
 <!-- ===== VISION ===== -->
@@ -1159,17 +1085,11 @@
       مسیر پیشرفت و مدیریت
     </div>
     <h2 class="ceo-section-title">گاهشمار مسیر علمی، اجرایی و مدیریتی</h2>
-    <p class="ceo-section-subtitle">نقاط عطف کلیدی در بیش از سه دهه خدمت در حوزه سلامت، ایثارگری و توسعه نظام درمان کشور</p>
+    <p class="ceo-section-subtitle">نقاط عطف کلیدی در بیش از سه دهه خدمت در حوزه سلامت و توسعه نظام درمان کشور</p>
   </div>
 
   <div class="ceo-message-card">
     <div class="ceo-timeline">
-      <div class="ceo-timeline-item">
-        <div class="ceo-timeline-dot"></div>
-        <div class="ceo-timeline-year">۱۳۶۲ — ۱۳۶۹</div>
-        <h4>حضور در دفاع مقدس و اسارت سرافرازانه</h4>
-        <p>حضور داوطلبانه در جبهه‌های نبرد حق علیه باطل (سال ۱۳۶۲)، افتخار جانبازی ۴۰٪ و تحمل بیش از ۶ سال و نیم اسارت سرافرازانه در اردوگاه‌های دشمن بعثی در راه دفاع از میهن اسلامی</p>
-      </div>
       <div class="ceo-timeline-item">
         <div class="ceo-timeline-dot"></div>
         <div class="ceo-timeline-year">۱۳۷۰ — ۱۳۷۷</div>
