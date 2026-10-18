@@ -282,7 +282,7 @@ render_dashboard_component('header', get_defined_vars());
     }
 
     .news-detail-wrapper {
-        max-width: var(--cta-container, 1440px);
+        max-width: 1240px;
         margin: 0 auto;
         padding: 48px 20px 80px;
         direction: rtl;
@@ -304,15 +304,15 @@ render_dashboard_component('header', get_defined_vars());
         color: var(--news-accent);
     }
 
-    /* ساختار دو ستونه اصلی جزئیات خبر */
+    /* خبر تمام عرض، با ستون خواندنی محدود در داخل آن */
     .news-detail-layout {
         display: grid;
-        grid-template-columns: 2.8fr 1.2fr;
-        gap: 36px;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     /* ستون راست: بدنه و محتوای خبر */
     .article-container {
+        min-width: 0;
         background: var(--news-card-bg);
         border: 1px solid var(--news-border);
         border-radius: 24px;
@@ -326,8 +326,7 @@ render_dashboard_component('header', get_defined_vars());
     .article-hero-banner {
         position: relative;
         width: 100%;
-        min-height: 400px;
-        max-height: 520px;
+        min-height: clamp(340px, 32vw, 460px);
         background-color: #0c121c;
         overflow: hidden;
         display: flex;
@@ -415,6 +414,10 @@ render_dashboard_component('header', get_defined_vars());
 
     /* بدنه مقاله */
     .article-body-wrapper {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 940px;
+        margin-inline: auto;
         padding: 40px;
     }
     .article-header {
@@ -460,6 +463,7 @@ render_dashboard_component('header', get_defined_vars());
         line-height: 2.05;
         color: rgba(47, 52, 55, 0.9);
         text-align: justify;
+        overflow-wrap: anywhere;
     }
     .article-content::after {
         content: "";
@@ -611,72 +615,71 @@ render_dashboard_component('header', get_defined_vars());
         border-color: var(--news-primary);
     }
 
-    /* سایدبار سمت چپ */
-    .news-detail-sidebar {
+    /* اشتراک‌گذاری در انتهای خبر، هماهنگ با آیکن‌های فوتر */
+    .article-share {
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--news-border);
         display: flex;
-        flex-direction: column;
-        gap: 28px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
     }
-
-    /* استایل ویجت‌های سایدبار */
-    .sidebar-widget {
-        background: var(--news-card-bg);
-        border: 1px solid var(--news-border);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.01);
-    }
-    .widget-title {
+    .article-share-title {
+        margin: 0;
         font-size: 15px;
-        font-weight: 900;
+        font-weight: 800;
         color: var(--news-text);
-        margin: 0 0 20px 0;
-        padding-bottom: 12px;
-        border-bottom: 2px solid var(--news-border);
-        position: relative;
-        text-align: right;
     }
-    .widget-title::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        right: 0;
-        width: 45px;
-        height: 2px;
-        background: var(--news-primary);
-    }
-
-    /* ویجت به اشتراک گذاری */
     .share-buttons-row {
         display: flex;
+        flex-wrap: wrap;
         gap: 12px;
-        justify-content: flex-start;
     }
     .share-icon-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
+        box-sizing: border-box;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        flex: 0 0 auto;
         color: #ffffff;
-        font-size: 17px;
         text-decoration: none;
-        border: 0;
-        outline: none;
-        transition: transform 0.2s ease, opacity 0.2s ease;
+        border: 1px solid rgba(255,255,255,0.25);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 14px rgba(0,80,85,0.1);
+        cursor: pointer;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .share-icon-btn svg {
+        display: block;
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+        transition: transform 0.25s ease;
     }
     .share-icon-btn:hover {
         transform: translateY(-3px);
-        opacity: 0.9;
+        box-shadow: 0 10px 22px rgba(0,80,85,0.18);
         color: #ffffff;
     }
-    .share-telegram { background: #0088cc; }
-    .share-whatsapp { background: #25d366; }
-    .share-twitter { background: #000000; }
-    .share-copy-link { background: var(--news-primary); cursor: pointer; position: relative; }
-    
-    /* تولتیپ کپی لینک */
+    .share-icon-btn:hover svg { transform: scale(1.1); }
+    .share-icon-btn:active { transform: translateY(0); }
+    .share-icon-btn:focus-visible {
+        outline: 3px solid var(--news-primary);
+        outline-offset: 4px;
+    }
+    .share-telegram { background: linear-gradient(145deg, #32b5ec, #0088cc); }
+    .share-whatsapp { background: linear-gradient(145deg, #25d366, #128c4b); }
+    .share-twitter { background: #171c20; }
+    .share-copy-link { background: var(--news-primary); position: relative; }
+    .share-copy-link svg { fill: none; stroke: currentColor; stroke-width: 1.8; }
+    @media (prefers-reduced-motion: reduce) {
+        .share-icon-btn, .share-icon-btn svg { transition: none; }
+        .share-icon-btn:hover, .share-icon-btn:hover svg { transform: none; }
+    }
     .copy-tooltip-alert {
         position: absolute;
         bottom: 125%;
@@ -694,61 +697,20 @@ render_dashboard_component('header', get_defined_vars());
         font-family: 'Vazirmatn', sans-serif;
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
-    .copy-tooltip-alert.active {
-        opacity: 1;
+    .copy-tooltip-alert.active { opacity: 1; }
+    .article-toc {
+        margin-bottom: 32px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        background: var(--news-bg);
     }
-
-    /* ویجت جدیدترین اخبار */
-    .widget-pop-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-    .widget-pop-item {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        text-decoration: none;
-        min-width: 0;
-        text-align: right;
-    }
-    .widget-pop-thumb {
-        width: 60px;
-        height: 60px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #f1f3f5;
-        flex-shrink: 0;
-    }
-    .widget-pop-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .widget-pop-info {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-    .widget-pop-title {
-        font-size: 13px;
-        font-weight: 750;
-        line-height: 1.5;
-        color: var(--news-text);
-        margin: 0 0 4px 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        transition: color 0.25s ease;
-    }
-    .widget-pop-item:hover .widget-pop-title {
+    .article-toc summary {
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 800;
         color: var(--news-primary);
     }
-    .widget-pop-date {
-        font-size: 11px;
-        color: var(--news-text-muted);
-    }
+    .article-toc[open] summary { margin-bottom: 16px; }
 
     /* ویجت فهرست عناوین خبر (TOC) */
     .toc-list {
@@ -796,7 +758,7 @@ render_dashboard_component('header', get_defined_vars());
         margin-top: 48px;
     }
     .related-news-section-inner {
-        max-width: var(--cta-container, 1440px);
+        max-width: 1240px;
         margin: 0 auto;
         padding: 0 20px;
         text-align: right;
@@ -895,10 +857,6 @@ render_dashboard_component('header', get_defined_vars());
     }
 
     @media (max-width: 1024px) {
-        .news-detail-layout {
-            grid-template-columns: 1fr;
-            gap: 28px;
-        }
         .news-detail-wrapper {
             padding: 32px 16px 60px;
         }
@@ -909,8 +867,7 @@ render_dashboard_component('header', get_defined_vars());
 
     @media (max-width: 768px) {
         .article-hero-banner {
-            min-height: 300px;
-            max-height: 420px;
+            min-height: 320px;
         }
         .article-hero-content {
             padding: 24px 20px 20px;
@@ -932,10 +889,10 @@ render_dashboard_component('header', get_defined_vars());
         <span><?= htmlspecialchars($news['category_name'] ?? 'خبر') ?></span>
     </nav>
 
-    <!-- ساختار دو ستونه جزئیات -->
+    <!-- خبر عریض با عرض متن متناسب برای مطالعه -->
     <div class="news-detail-layout">
         
-        <!-- ستون راست: متن خبر -->
+        <!-- متن خبر -->
         <article class="article-container <?= $has_featured_image ? 'has-hero' : 'no-hero' ?>">
             <?php if ($has_featured_image): ?>
                 <header class="article-hero-banner">
@@ -973,6 +930,11 @@ render_dashboard_component('header', get_defined_vars());
                     </header>
                 <?php endif; ?>
 
+                <details class="article-toc" id="toc-widget" hidden>
+                    <summary>عناوین این مطلب</summary>
+                    <ul class="toc-list" id="toc-list"></ul>
+                </details>
+
                 <section class="article-content">
                     <?= HtmlSanitizer::sanitize($news['content']) ?>
                 </section>
@@ -991,37 +953,25 @@ render_dashboard_component('header', get_defined_vars());
                         <?php endforeach; ?>
                     </footer>
                 <?php endif; ?>
+
+                <section class="article-share" aria-labelledby="article-share-title">
+                    <h2 class="article-share-title" id="article-share-title">اشتراک‌گذاری خبر</h2>
+                    <div class="share-buttons-row">
+                        <?php
+                        $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                        $shareText = urlencode($news['title']);
+                        ?>
+                        <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-telegram" aria-label="اشتراک‌گذاری در تلگرام"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 15.65 9.4 21c.55 0 .79-.24 1.08-.53l2.6-2.48 5.39 3.94c.99.55 1.69.26 1.96-.91l3.55-16.63c.32-1.47-.53-2.05-1.5-1.69L1.64 10.64c-1.43.55-1.41 1.34-.25 1.7l5.36 1.67L19.2 6.22c.59-.39 1.12-.18.68.21Z"/></svg></a>
+                        <a href="https://api.whatsapp.com/send?text=<?= $shareText ?>%20<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-whatsapp" aria-label="اشتراک‌گذاری در واتساپ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.05 0C5.47 0 .11 5.35.1 11.94c0 2.1.55 4.15 1.6 5.96L0 24l6.25-1.64a11.94 11.94 0 0 0 5.79 1.47h.01c6.58 0 11.94-5.35 11.95-11.94a11.86 11.86 0 0 0-3.48-8.41Zm-8.47 18.34h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.51-5.27c0-5.48 4.46-9.93 9.95-9.93a9.86 9.86 0 0 1 7.03 2.92 9.87 9.87 0 0 1 2.91 7.03c0 5.48-4.46 9.94-9.94 9.94Zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.71.22 1.36.19 1.87.11.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg></a>
+                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-twitter" aria-label="اشتراک‌گذاری در ایکس (توییتر)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.835L0 1.153h7.594l5.243 6.932 6.064-6.932Zm-1.29 19.49h2.039L6.487 3.24H4.3l13.312 17.403Z"/></svg></a>
+                        <button type="button" class="share-icon-btn share-copy-link" id="copyLinkBtn" data-url="<?= htmlspecialchars($currentUrl) ?>" aria-label="کپی لینک خبر">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="12" height="14" rx="2"/><path d="M16 17v3a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V9a1 1 0 0 1 1-1h4"/></svg>
+                            <span class="copy-tooltip-alert" id="copyTooltip" role="status">لینک کپی شد!</span>
+                        </button>
+                    </div>
+                </section>
             </div>
         </article>
-
-        <!-- ستون چپ: سایدبار -->
-        <aside class="news-detail-sidebar">
-            
-            <!-- ویجت اشتراک گذاری -->
-            <div class="sidebar-widget">
-                <h4 class="widget-title">اشتراک‌گذاری خبر</h4>
-                <div class="share-buttons-row">
-                    <?php 
-                    $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                    $shareText = urlencode($news['title']);
-                    ?>
-                    <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener" class="share-icon-btn share-telegram" aria-label="اشتراک‌گذاری در تلگرام"><i class="fab fa-telegram-plane"></i></a>
-                    <a href="https://api.whatsapp.com/send?text=<?= $shareText ?>%20<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="share-icon-btn share-whatsapp" aria-label="اشتراک‌گذاری در واتساپ"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener" class="share-icon-btn share-twitter" aria-label="اشتراک‌گذاری در توییتر"><i class="fa-brands fa-x-twitter"></i></a>
-                    <button type="button" class="share-icon-btn share-copy-link" id="copyLinkBtn" data-url="<?= htmlspecialchars($currentUrl) ?>" aria-label="کپی لینک خبر">
-                        <i class="far fa-copy"></i>
-                        <span class="copy-tooltip-alert" id="copyTooltip">لینک کپی شد!</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- ویجت عناوین این مطلب (TOC) -->
-            <div class="sidebar-widget" id="toc-widget">
-                <h4 class="widget-title">عناوین این مطلب</h4>
-                <ul class="toc-list" id="toc-list"></ul>
-            </div>
-
-        </aside>
     </div>
 </div>
 
@@ -1091,10 +1041,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articleContent || !tocList) return;
 
     const headings = articleContent.querySelectorAll('h2, h3');
-    if (headings.length === 0) {
-        if (tocWidget) tocWidget.style.display = 'none';
-        return;
-    }
+    if (tocWidget) tocWidget.hidden = headings.length === 0;
 
     headings.forEach((heading, index) => {
         const id = 'heading-' + index;
