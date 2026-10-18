@@ -62,7 +62,6 @@
 </div>
 
 </section>
-<div class="skill-divider"></div>
 
 
 
@@ -181,10 +180,10 @@
   width:fit-content;   /* عرض آیتم = عرض کارت */
 }
 
-.gallery-item a{
+.macsa-gallery > .gallery-item,
+.macsa-gallery > .gallery-item:hover{
   text-decoration: none;
   color: inherit;
-  display: block;
 }
 
 
