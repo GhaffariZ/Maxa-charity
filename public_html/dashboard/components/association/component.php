@@ -27,7 +27,7 @@
           ۱:۱
         </button>
 
-        <button type="button" class="charity-doc-btn charity-doc-btn-primary js-fullscreen" title="نمایش تمام‌صفحه">
+        <button type="button" class="charity-doc-btn charity-doc-btn-primary js-fullscreen" title="نمایش تمام‌صفحه" aria-pressed="false">
           تمام‌صفحه
         </button>
       </div>
@@ -532,24 +532,59 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
-  .charity-doc-component:fullscreen {
-    max-width: none;
+  .charity-doc-component .charity-doc-card.is-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 200001;
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
     margin: 0;
-    padding: 18px;
-    background: #0f172a;
-  }
-
-  .charity-doc-component:fullscreen .charity-doc-card {
-    height: 100%;
+    border: 0;
+    border-radius: 0;
     display: flex;
     flex-direction: column;
   }
 
-  .charity-doc-component:fullscreen .charityDocSwiper {
-    height: auto;
+  .charity-doc-card.is-fullscreen .charity-doc-header,
+  .charity-doc-card.is-fullscreen .charity-doc-toolbar,
+  .charity-doc-card.is-fullscreen .charity-doc-footer {
+    flex-shrink: 0;
+    padding: 8px 12px;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-note {
+    display: none;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-viewer-shell {
     flex: 1;
+    min-height: 0;
+  }
+
+  .charity-doc-component .charity-doc-card.is-fullscreen .charityDocSwiper {
+    height: 100%;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-pan-area {
+    padding: 12px;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-pan-area:not(.is-zoomed) {
+    align-items: center;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-page {
+    height: 100%;
+    max-width: 100%;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .charity-doc-card.is-fullscreen .charity-doc-img {
+    height: 100%;
+    max-height: 100%;
   }
 
   @media (max-width: 768px) {
@@ -634,7 +669,10 @@
     const zoomOutBtn = component.querySelector(".js-zoom-out");
     const resetZoomBtn = component.querySelector(".js-reset-zoom");
     const fullscreenBtn = component.querySelector(".js-fullscreen");
+    const card = component.querySelector(".charity-doc-card");
     const protectionLayer = component.querySelector(".js-protection-layer");
+    let fallbackFullscreen = false;
+    let previousOverflow = null;
 
     const slidesCount = component.querySelectorAll(".swiper-slide").length;
     totalPageEl.textContent = slidesCount;
@@ -726,11 +764,90 @@
       resetPan();
     });
 
-    fullscreenBtn.addEventListener("click", function () {
-      if (!document.fullscreenElement) {
-        component.requestFullscreen && component.requestFullscreen();
+    function fullscreenElement() {
+      return document.fullscreenElement || document.webkitFullscreenElement;
+    }
+
+    function updateFullscreen() {
+      const expanded = fallbackFullscreen || fullscreenElement() === card;
+      card.classList.toggle("is-fullscreen", expanded);
+      fullscreenBtn.textContent = expanded ? "خروج از تمام‌صفحه" : "تمام‌صفحه";
+      fullscreenBtn.title = fullscreenBtn.textContent;
+      fullscreenBtn.setAttribute("aria-pressed", String(expanded));
+      if (expanded) {
+        if (previousOverflow === null) {
+          previousOverflow = [document.documentElement.style.overflow, document.body.style.overflow];
+        }
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+        card.setAttribute("role", "dialog");
+        card.setAttribute("aria-modal", "true");
+        card.setAttribute("aria-label", "نمایشگر اساسنامه");
       } else {
-        document.exitFullscreen && document.exitFullscreen();
+        if (previousOverflow !== null) {
+          document.documentElement.style.overflow = previousOverflow[0];
+          document.body.style.overflow = previousOverflow[1];
+          previousOverflow = null;
+          fullscreenBtn.focus({ preventScroll: true });
+        }
+        card.removeAttribute("role");
+        card.removeAttribute("aria-modal");
+        card.removeAttribute("aria-label");
+      }
+      // Size Swiper after the card has its final height, excluding the page title.
+      requestAnimationFrame(function () {
+        swiper.update();
+        resetPan();
+        if (!document.hidden) protectionLayer.classList.remove("is-active");
+      });
+    }
+
+    fullscreenBtn.addEventListener("click", async function () {
+      if (fallbackFullscreen) {
+        fallbackFullscreen = false;
+        updateFullscreen();
+        return;
+      }
+      if (fullscreenElement() === card) {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        try {
+          if (exit) await exit.call(document);
+        } catch (error) {
+          updateFullscreen();
+        }
+        return;
+      }
+      fullscreenBtn.disabled = true;
+      try {
+        const request = card.requestFullscreen || card.webkitRequestFullscreen;
+        if (!request) throw new Error("Fullscreen API unavailable");
+        await request.call(card);
+      } catch (error) {
+        // iPhone and restricted browsers can still expand the viewer to the viewport.
+        fallbackFullscreen = true;
+      } finally {
+        fullscreenBtn.disabled = false;
+        updateFullscreen();
+      }
+    });
+
+    document.addEventListener("fullscreenchange", updateFullscreen);
+    document.addEventListener("webkitfullscreenchange", updateFullscreen);
+    document.addEventListener("keydown", function (event) {
+      if (card.classList.contains("is-fullscreen") && event.key === "Escape") {
+        event.preventDefault();
+        fullscreenBtn.click();
+      } else if (card.classList.contains("is-fullscreen") && event.key === "Tab") {
+        const controls = card.querySelectorAll('button:not(:disabled), [tabindex="0"]');
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     });
 
