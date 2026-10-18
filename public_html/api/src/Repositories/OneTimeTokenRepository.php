@@ -36,6 +36,23 @@ final class OneTimeTokenRepository
         return $plain;
     }
 
+    /** Limit repeat sends without invalidating a previously delivered link. */
+    public function emailVerificationRecentlyRequested(int $userId): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT 1 FROM email_verification_tokens
+             WHERE user_id = :uid AND used_at IS NULL AND expires_at > :now
+               AND created_at > FROM_UNIXTIME(:cutoff) LIMIT 1'
+        );
+        $stmt->execute([
+            ':uid' => $userId,
+            ':now' => gmdate('Y-m-d H:i:s'),
+            // created_at is a TIMESTAMP in the DB session timezone, unlike expires_at (UTC DATETIME).
+            ':cutoff' => time() - 60,
+        ]);
+        return (bool) $stmt->fetchColumn();
+    }
+
     /** Consumes a verification token. Returns user id on success, null otherwise. */
     public function consumeEmailVerification(string $plain): ?int
     {

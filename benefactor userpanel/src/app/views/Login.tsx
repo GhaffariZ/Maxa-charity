@@ -26,6 +26,7 @@ import {
 } from "../components/authui";
 import { useAuth } from "../../contexts/AuthContext";
 import { api, ApiRequestError } from "../../api/client";
+import { VerificationResend } from "../components/VerificationResend";
 
 type Status = "idle" | "loading" | "success";
 
@@ -75,6 +76,7 @@ function SignInPanel() {
   const [showPw, setShowPw] = React.useState(false);
   const [errors, setErrors] = React.useState<{ email?: boolean; pw?: boolean; phone?: boolean; code?: boolean }>({});
   const [status, setStatus] = React.useState<Status>("idle");
+  const [verificationEmail, setVerificationEmail] = React.useState("");
 
   // Phone OTP state
   const [phone, setPhone] = React.useState("");
@@ -124,8 +126,9 @@ function SignInPanel() {
       setStatus("idle");
       if (e instanceof ApiRequestError) {
         if (e.code === "email_unverified") {
+          setVerificationEmail(email.trim());
           toast.error("ابتدا ایمیل خود را تأیید کنید.", {
-            description: "لینک تأیید به ایمیل شما ارسال شده است.",
+            description: "اگر لینک را دریافت نکردید، ارسال مجدد ایمیل تأیید را بزنید.",
           });
         } else if (e.code === "account_locked" || e.code === "rate_limited") {
           toast.error(e.message);
@@ -352,6 +355,9 @@ function SignInPanel() {
             successLabel="ورود موفق!"
             icon={<LogIn size={17} className="scale-x-[-1]" />}
           />
+          {verificationEmail === email.trim() && verificationEmail && (
+            <VerificationResend key={verificationEmail} email={verificationEmail} />
+          )}
         </div>
       )}
     </div>
@@ -369,6 +375,7 @@ function SignUpPanel({ onSwitch }: { onSwitch: () => void }) {
   const [termsErr, setTermsErr] = React.useState(false);
   const [status, setStatus] = React.useState<Status>("idle");
   const [errors, setErrors] = React.useState<{ email?: boolean; pw?: boolean }>({});
+  const [verificationEmail, setVerificationEmail] = React.useState("");
 
   async function submit() {
     if (!terms) {
@@ -392,9 +399,8 @@ function SignUpPanel({ onSwitch }: { onSwitch: () => void }) {
         last_name: lastName.trim() || undefined,
       });
       setStatus("success");
-      toast.success(res.message || "حساب ساخته شد!", {
-        description: "لینک تأیید به ایمیل شما ارسال شد.",
-      });
+      setVerificationEmail(email.trim());
+      toast.message(res.message || "درخواست ثبت‌نام ثبت شد. ایمیل تأیید را بررسی کنید.");
     } catch (e) {
       setStatus("idle");
       if (e instanceof ApiRequestError) {
@@ -458,7 +464,11 @@ function SignUpPanel({ onSwitch }: { onSwitch: () => void }) {
           placeholder: "you@example.com",
           autoComplete: "email",
           value: email,
-          onChange: (e) => setEmail(e.target.value),
+          onChange: (e) => {
+            setEmail(e.target.value);
+            setVerificationEmail("");
+            if (status === "success") setStatus("idle");
+          },
         }}
       />
 
@@ -498,9 +508,13 @@ function SignUpPanel({ onSwitch }: { onSwitch: () => void }) {
         onClick={submit}
         idleLabel="ایجاد حساب کاربری"
         loadingLabel="در حال ایجاد حساب…"
-        successLabel="حساب ساخته شد!"
+        successLabel="درخواست ثبت شد"
         icon={<UserPlus size={17} />}
       />
+
+      {verificationEmail && (
+        <VerificationResend key={verificationEmail} email={verificationEmail} initialCooldown={60} />
+      )}
 
       <p className="text-center text-[0.855rem] text-muted-foreground mt-6">
         حساب کاربری دارید؟{" "}

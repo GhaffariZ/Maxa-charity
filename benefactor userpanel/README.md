@@ -94,7 +94,8 @@ panel **reads campaigns from your existing `campaigns` table** (and bumps its
    - `JWT_SECRET` — generate one: in cPanel **Terminal** (or any PHP host) run
      `php -r "echo bin2hex(random_bytes(32));"` and paste the 64-char result.
    - `MAIL_*` — create an email account in cPanel (e.g. `no-reply@erfanteymuri.ir`)
-     and use its SMTP credentials. Port 465 (`tls`/SMTPS) is typical on cPanel.
+     and use its SMTP credentials. Use port 465 with `MAIL_ENCRYPTION=smtps`,
+     or port 587 with `MAIL_ENCRYPTION=starttls`, as specified by the host.
    - `LOG_PATH=/home/<cpanel_user>/maksa-private/logs/app.log`
    - `UPLOAD_DIR=/home/<cpanel_user>/maksa-private/uploads`
    - `APP_URL=https://erfanteymuri.ir/benefactor-dashboard`
@@ -115,9 +116,11 @@ panel **reads campaigns from your existing `campaigns` table** (and bumps its
    github.com/PHPMailer/PHPMailer and upload it so that these three files exist:
    `api/vendor/PHPMailer/src/PHPMailer.php`, `.../SMTP.php`, `.../Exception.php`.
    The front controller auto-detects this layout (and also a Composer
-   `api/vendor/autoload.php` if you have one). **Without PHPMailer the app falls
-   back to PHP `mail()`, which shared hosts routinely drop — so transactional
-   email won't arrive.** Use authenticated SMTP for reliable delivery.
+   `api/vendor/autoload.php` if you have one). **Without PHPMailer, sending fails
+   and is logged; the app does not silently fall back to PHP `mail()`.**
+   See [registration email troubleshooting](../docs/CPANEL-DEPLOY.md) for private
+   configuration, resend behavior and SMTP diagnostics. SMTP acceptance does
+   not guarantee delivery to the recipient's inbox.
 3. cPanel → **MultiPHP Manager**: confirm the domain runs **PHP 8.1+**.
 4. Smoke test: visit `https://erfanteymuri.ir/api/health` — you should get
    `{"success":true,"data":{"status":"ok",...}}`.
