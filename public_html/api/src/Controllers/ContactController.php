@@ -46,7 +46,7 @@ final class ContactController
             ->validated();
 
         $to     = (string) Config::get('MAIL_CONTACT_TO', (string) Config::get('MAIL_FROM_ADDRESS', 'info@macsa.ir'));
-        $toName = (string) Config::get('MAIL_CONTACT_NAME', 'مرکز ارتباطات مکسا');
+        $toName = (string) Config::get('MAIL_CONTACT_NAME', 'مرکز تخصصی ارتباطات و سلامت از راه دور');
 
         $body  = $this->buildEmail($data, $request->ip());
         $sent  = $this->mailer->send($to, $toName, $body['subject'], $body['html'], $body['text']);

@@ -29,7 +29,7 @@
 <h4>ارتباط با مکسا</h4>
 <ul>
 <li><a href="/branches.php">شعب</a></li>
-<li><a href="/contact-center">مرکز ارتباطات کشوری</a></li>
+<li><a href="/contact-center">مرکز تخصصی ارتباطات و سلامت از راه دور</a></li>
 <li><a href="/contactus">تماس با ما</a></li>
 
 </ul>

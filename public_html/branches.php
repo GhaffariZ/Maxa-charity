@@ -94,7 +94,7 @@ $defaultBranches = [
         'icon' => 'location'
     ],
     [
-        'name' => 'مرکز ارتباطات و دورپزشکی',
+        'name' => 'مرکز تخصصی ارتباطات و سلامت از راه دور',
         'href' => '/contact-center',
         'is_hq' => false,
         'tag' => 'مرکز تخصصی',

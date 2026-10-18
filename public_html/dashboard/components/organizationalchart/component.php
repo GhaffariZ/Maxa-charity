@@ -42,7 +42,7 @@
 <div class="mex-node">معاونت لجستیک و پشتیبانی</div>
 <div class="mex-node">معاونت آموزش و پژوهش</div>
 <div class="mex-node">مرکز رویش استعدادهای دانشجویی مکسا</div>
-<div class="mex-node">مرکز ارتباطات کشوری</div>
+<div class="mex-node">مرکز تخصصی ارتباطات و سلامت از راه دور</div>
 
 </div>
 

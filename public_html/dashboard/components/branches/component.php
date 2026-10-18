@@ -79,14 +79,14 @@
           <span class="bqc-label">دفتر ستاد مرکزی</span>
         </a>
 
-        <!-- ۲. مرکز ارتباطات و دورپزشکی -->
-        <a href="/contact-center" class="bqc-pill bqc-pill--telemed" title="مرکز ارتباطات و دورپزشکی (تله‌مدیسین ۲۴ ساعته)">
+        <!-- ۲. مرکز تخصصی ارتباطات و سلامت از راه دور -->
+        <a href="/contact-center" class="bqc-pill bqc-pill--telemed" title="مرکز تخصصی ارتباطات و سلامت از راه دور (تله‌مدیسین ۲۴ ساعته)">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
             </svg>
           </span>
-          <span class="bqc-label">مرکز ارتباطات و دورپزشکی</span>
+          <span class="bqc-label">مرکز تخصصی ارتباطات و سلامت از راه دور</span>
         </a>
 
         <!-- ۳. مرکز رویش استعدادهای دانشجویی -->
@@ -333,6 +333,8 @@
 }
 
 .bqc-pill {
+  max-width: 100%;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -401,7 +403,8 @@
 }
 
 .bqc-label {
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
 }
 
 /* واکنش‌گرایی */
