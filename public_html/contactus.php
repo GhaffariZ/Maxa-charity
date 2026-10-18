@@ -319,7 +319,7 @@ render_dashboard_component('header', get_defined_vars());
         </span>
         <div>
           <h3>تلفن تماس</h3>
-          <p class="cu-ltr">021-91092030<br>021-86015342</p>
+          <p class="cu-ltr">021-91092030</p>
         </div>
       </div>
 

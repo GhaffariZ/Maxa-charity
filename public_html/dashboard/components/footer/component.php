@@ -36,19 +36,7 @@
 </div>
 
 
-<!-- خبرنامه -->
-<div class="gf-col">
-<h4 class="gf-news-title">برای دریافت گزارش کمک‌ها و داستان بیماران عضو شوید</h4>
 
-<div class="gf-newsletter">
-<input type="email" placeholder="آدرس ایمیل خود را وارد کنید">
-<button type="button" aria-label="عضویت در خبرنامه"><?= function_exists('iconoir') ? iconoir('arrow-left', '', 18) : '<svg width="18" height="18" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>' ?></button>
-</div>
-
-<p class="gf-privacy">
-با عضویت سیاست حفظ حریم خصوصی را می‌پذیرید
-</p>
-</div>
 
 
 </div>
@@ -59,7 +47,7 @@
 
 <div>
 <span>تماس با ما</span>
-<p>021-91092030 / 021-86015342</p>
+<p>021-91092030</p>
 </div>
 
 <div>
@@ -187,7 +175,7 @@ body {
   max-width: 1200px;
   margin: auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.35fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 54px;
   padding: 0 20px;
 }
@@ -297,86 +285,6 @@ body {
 
 .gf-title span {
   color: #fff3c4;
-}
-
-/* =========================
-   Newsletter
-========================= */
-
-.gf-news-title {
-  font-size: 18px;
-  line-height: 1.9;
-  font-weight: 900;
-}
-
-.gf-newsletter {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  margin-top: 20px;
-  overflow: hidden;
-
-  border: 1px solid rgba(255,255,255,0.22);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.13);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    0 14px 30px rgba(0,0,0,0.08);
-  backdrop-filter: blur(8px);
-}
-
-.gf-newsletter input {
-  font-family: inherit;
-  width: 100%;
-  min-height: 48px;
-  border: 0;
-  outline: none;
-  padding: 0 16px;
-  background: rgba(255,255,255,0.92);
-  color: #0f172a;
-  font-size: 14px;
-  border-radius: 0;
-}
-
-.gf-newsletter input::placeholder {
-  color: #64748b;
-}
-
-.gf-newsletter input:focus {
-  background: #ffffff;
-}
-
-.gf-newsletter button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: inherit;
-  min-width: 54px;
-  border: 0;
-  cursor: pointer;
-
-  background: linear-gradient(180deg, #ffffff 0%, #f1ffff 100%);
-  color: #008f8a;
-  font-size: 20px;
-  font-weight: 950;
-
-  transition:
-    transform 0.22s ease,
-    background 0.22s ease,
-    color 0.22s ease;
-}
-
-.gf-newsletter button:hover {
-  background: #ffffff;
-  color: #00736f;
-  transform: translateX(-2px);
-}
-
-.gf-privacy {
-  margin-top: 12px;
-  font-size: 13px;
-  line-height: 1.9;
-  color: rgba(255,255,255,0.78);
 }
 
 /* =========================
@@ -545,7 +453,7 @@ body {
 
 @media (max-width: 1050px) {
   .gf-container {
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 40px;
   }
 
@@ -617,22 +525,8 @@ body {
     font-size: 25px;
   }
 
-  .gf-col h4,
-  .gf-news-title {
+  .gf-col h4 {
     font-size: 16.5px;
-  }
-
-  .gf-newsletter {
-    border-radius: 14px;
-  }
-
-  .gf-newsletter input {
-    font-size: 13px;
-    padding: 0 12px;
-  }
-
-  .gf-newsletter button {
-    min-width: 48px;
   }
 
   .gf-contact > div {
