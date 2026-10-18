@@ -17,10 +17,6 @@
         <li>پشتیبانی جامع بیمار و خانواده</li>
         <li>مرکز پاسخگویی ۲۴ ساعته</li>
       </ul>
-
-      <a href="/MACSAservices.html" class="skill-hero-btn">
-        اطلاعات بیشتر درباره خدمات مکسا
-      </a>
     </div>
 
     <div class="skill-hero-right">
@@ -128,34 +124,6 @@
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center/contain;
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center/contain;
 }
-
-.skill-hero-btn{
-  background:#faa61a;
-  color:#000;
-  padding:12px 28px;
-  border-radius:10px;
-  text-decoration:none;
-  display:inline-block;
-  font-weight:600;
-  transition:all .25s ease;
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-/* وقتی موس میره روش */
-
-.skill-hero-btn:hover{
-  background:#FFD700;
-  transform:translateY(-3px);
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
-  cursor:pointer;
-}
-
-/* وقتی کلیک میشه */
-
-.skill-hero-btn:active{
-  transform:translateY(-1px);
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
-}
-
 
 /* RIGHT IMAGES */
 
