@@ -46,6 +46,18 @@
 .rnhv2-soon span{font-size:13.5px}
 @media (min-width:1024px){.rnhv2-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.rnhv2-main{grid-column:span 7}.rnhv2-side{grid-column:span 5}}
 @media (max-width:768px){.rnhv2-section{padding:44px 0}.rnhv2-title{font-size:32px}.rnhv2-main-content{padding:20px}.rnhv2-main-title{font-size:26px}}
+/* Keep long headlines inside the image at every viewport width. */
+.rnhv2-grid > *, .rnhv2-side-body{min-width:0;overflow-wrap:anywhere}
+.rnhv2-main{display:flex;align-items:flex-end;min-width:0;width:100%}
+.rnhv2-main-content{position:relative;min-width:0;width:100%;right:auto;left:auto;bottom:auto}
+.rnhv2-main-title{font-size:clamp(22px,3vw,36px)}
+.rnhv2-meta{flex-wrap:wrap;gap:8px 12px}
+@media(max-width:540px){
+  .rnhv2-main{aspect-ratio:4/3;min-height:280px}
+  .rnhv2-head{margin-bottom:24px}
+  .rnhv2-side-card{padding:12px;gap:12px}
+  .rnhv2-side-thumb-wrap{width:76px;height:76px}
+}
 </style>
 <script>
 (function(){

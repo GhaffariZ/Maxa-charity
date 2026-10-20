@@ -149,8 +149,9 @@ position:relative;
 
 .maxsa-title{
 text-align:center;
-font-size:32px;
-line-height:1.9;
+padding-inline:16px;
+font-size:clamp(24px,3.5vw,32px);
+line-height:1.7;
 margin-bottom:32px;
 font-weight:700;
 letter-spacing:.3px;
@@ -165,6 +166,7 @@ font-weight:600;
 .maxsa-container{
 max-width:1200px;
 margin:auto;
+padding-inline:16px;
 display:flex;
 gap:48px;
 align-items:center;
@@ -173,6 +175,7 @@ align-items:center;
 
 .maxsa-left {
     flex: 1;
+    min-width:0;
     text-align: center;
 }
 
@@ -219,6 +222,7 @@ animation-play-state: paused;
 }
 
 .maxsa-card{
+overflow-wrap:anywhere;
 backdrop-filter:blur(22px);
 -webkit-backdrop-filter:blur(22px);
 
@@ -309,10 +313,12 @@ color:#555;
 
 .maxsa-right{
 flex:1;
+min-width:0;
 }
 
 .maxsa-right img{
 width:100%;
+display:block;
 border-radius:24px;
 box-shadow:0 20px 40px rgba(0,0,0,.08);
 }
@@ -332,6 +338,11 @@ transform:translateY(-50%);
 .maxsa-container{
 flex-direction:column;
 gap:40px;
+}
+.maxsa-left,
+.maxsa-right{
+width:100%;
+flex:auto;
 }
 .maxsa-right{
 order:-1;

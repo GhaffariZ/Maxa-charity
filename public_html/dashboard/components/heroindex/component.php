@@ -444,12 +444,12 @@
 }
 
 
-@media (max-width: 1024px){
+@media (max-width: 1279px){
   .mega-menu-content{
     width: calc(100vw - 32px); /* هم‌چنان با حاشیه‌ها هم‌خوانی داشته باشه */
   }
 }
-@media (max-width: 1200px){
+@media (max-width: 1279px){
   .mega-menu-content .mega-row{
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -509,7 +509,7 @@
 }
 
 /* فقط موبایل و تبلت */
-@media (max-width: 1024px){
+@media (max-width: 1279px){
   .menu-icon{ display:flex; }
 }
 
@@ -886,14 +886,14 @@
 }
 
 /* فقط وقتی که کلاس open دارد، در موبایل نمایش داده شود */
-@media (max-width: 1024px) {
+@media (max-width: 1279px) {
   .mobile-menu-sidebar.open {
     right: 0;
   }
 }
 
 /* جلوگیری از اسکرول خوردن دسکتاپ بخاطر سایدبار */
-@media (min-width: 1025px) {
+@media (min-width: 1280px) {
   .mobile-menu-sidebar { display: none !important; }
 }
 
@@ -971,6 +971,7 @@
       display:flex;
       align-items:center;
       justify-content:flex-start;
+      padding-inline:72px;
     }
 
     .cta-text{
@@ -986,7 +987,7 @@
     }
     .cta-title{
       font-size:52px;
-      line-height:1.15;
+      line-height:1.4;
       margin:0 0 14px 0;
       font-weight:800;
       text-shadow: 0 10px 18px rgba(0,0,0,.20);
@@ -1144,7 +1145,7 @@
 
     .cta-cards{
       display:grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap:24px;
     }
 
@@ -1227,14 +1228,14 @@
     }
 
     /* تنظیمات تبلت و دسکتاپ متوسط */
-    @media (max-width: 1200px) {
+    @media (max-width: 1440px) {
       .cta-menu { gap: 4px; }
       .cta-menu > li > a { padding: 8px 7px; font-size: 13px; }
       .cta-search input { width: 150px; }
     }
 
     /* نقطه شکست موبایل و تبلت برای سایدبار همبرگری */
-    @media (max-width: 1024px) {
+    @media (max-width: 1279px) {
       :root {
         --cta-nav-h: 56px;
       }
@@ -1251,6 +1252,9 @@
       }
 
       .cta-left {
+        min-width:0;
+        margin-left:0;
+        padding-left:0;
         max-width: 100%;
         flex: 1 1 auto;
         justify-content: flex-end;
@@ -1329,7 +1333,7 @@
     }
 
     /* غیرفعال‌سازی سایدبار و بک‌دراپ در دسکتاپ بزرگ */
-    @media (min-width: 1025px) {
+    @media (min-width: 1280px) {
       .mobile-menu-sidebar {
         display: none !important;
       }
@@ -1367,7 +1371,7 @@
       }
 
       .cta-cards {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -1379,19 +1383,20 @@
 
       .cta-content {
         min-height: 480px;
-        padding-top: calc(var(--cta-nav-h) + 24px);
-        padding-bottom: 30px;
+        padding-top: 48px;
+        padding-bottom: 88px;
       }
 
       .cta-content .cta-container {
         justify-content: center;
+        padding-inline:20px;
       }
 
       .cta-text {
-        width: min(560px, 92%);
+        width: min(560px, 100%);
         margin-inline: auto;
         text-align: center;
-        padding-inline: 44px; /* فضای خالی جانبی برای جلوگیری از هم‌پوشانی دکمه‌های کنترل */
+        padding-inline:0;
       }
 
       .cta-title {
@@ -1400,13 +1405,16 @@
       }
 
       .cta-desc {
-        font-size: 13.5px;
+        font-size: 14px;
         line-height: 1.8;
       }
 
       .cta-arrow {
         width: 36px;
         height: 36px;
+        top:auto;
+        bottom:18px;
+        transform:none;
       }
 
       .cta-arrow.prev {
@@ -1418,7 +1426,7 @@
       }
 
       .cta-dots {
-        bottom: 10px;
+        bottom:30px;
       }
     }
 
@@ -1429,7 +1437,7 @@
       }
 
       .cta-desc {
-        font-size: 12.8px;
+        font-size: 14px;
         line-height: 1.7;
       }
 
@@ -1442,8 +1450,13 @@
       }
 
       .cta-text {
-        padding-inline: 36px;
+        padding-inline:0;
       }
+    }
+
+    @media(max-width:540px){
+      .cta-cards{grid-template-columns:minmax(0,1fr);gap:16px}
+      .cta-card{padding:20px}
     }
 
     @media (max-width: 600px) {
@@ -1695,11 +1708,11 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
         </div>
 
         <div class="cta-left">
-<div class="menu-icon" id="menuToggle" aria-label="منوی موبایل">
+<button type="button" class="menu-icon" id="menuToggle" aria-label="منوی موبایل" aria-controls="mobileMenu" aria-expanded="false">
   <div></div>
   <div></div>
   <div></div>
-</div>
+</button>
 
 
           <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
@@ -2094,6 +2107,7 @@ function initSlider() {
     menu.classList.add("open");
     if(backdrop) backdrop.classList.add("show");
     toggleBtn.classList.add("active");
+    toggleBtn.setAttribute("aria-expanded", "true");
     document.body.classList.add("mobile-menu-open");
   }
 
@@ -2101,6 +2115,7 @@ function initSlider() {
     menu.classList.remove("open");
     if(backdrop) backdrop.classList.remove("show");
     toggleBtn.classList.remove("active");
+    toggleBtn.setAttribute("aria-expanded", "false");
     document.body.classList.remove("mobile-menu-open");
   }
 
@@ -2111,6 +2126,15 @@ function initSlider() {
 
   if(closeBtn) closeBtn.addEventListener("click", closeMenu);
   if(backdrop) backdrop.addEventListener("click", closeMenu);
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && menu.classList.contains("open")){
+      closeMenu();
+      toggleBtn.focus();
+    }
+  });
+  window.matchMedia("(min-width:1280px)").addEventListener("change", function(e){
+    if(e.matches) closeMenu();
+  });
 
   document.querySelectorAll(".toggle-sub").forEach(function(btn){
     btn.addEventListener("click", function(){

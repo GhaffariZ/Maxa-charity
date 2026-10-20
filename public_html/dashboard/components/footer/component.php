@@ -175,10 +175,12 @@ body {
   max-width: 1200px;
   margin: auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(0,2fr) repeat(2,minmax(0,1fr));
   gap: 54px;
   padding: 0 20px;
 }
+
+.gf-col{min-width:0;overflow-wrap:anywhere}
 
 /* =========================
    Columns
@@ -476,8 +478,8 @@ body {
   }
 
   .gf-container {
-    grid-template-columns: 1fr;
-    gap: 34px;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 34px 20px;
   }
 
   .gf-title {

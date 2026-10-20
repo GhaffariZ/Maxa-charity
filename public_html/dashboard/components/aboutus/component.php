@@ -58,18 +58,19 @@
 .skill-hero-container{
   max-width:1200px;
   margin:auto;
-  display:flex;
-  gap:48px;
+  padding-inline:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(24px,4vw,48px);
   align-items:center;
-  flex-wrap:wrap;
-  flex-direction:row-reverse;
+  direction:ltr;
 }
 
 /* LEFT TEXT */
 
 .skill-hero-left{
-  flex:1;
-  min-width:320px;
+  min-width:0;
+  direction:rtl;
   text-align:center; /* وسط‌چین دسکتاپ */
 }
 
@@ -83,9 +84,9 @@
 }
 
 .skill-hero-title{
-  font-size:40px;
+  font-size:clamp(26px,3vw,40px);
   line-height:1.7;
-  margin-bottom:20px;
+  margin:0 0 20px;
 }
 
 .skill-hero-title span{
@@ -103,7 +104,7 @@
   list-style:none;
   padding:0;
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
   margin-bottom:30px;
 }
@@ -128,30 +129,17 @@
 /* RIGHT IMAGES */
 
 .skill-hero-right{
-  flex:1;
+  min-width:0;
+  width:100%;
+  max-width:590px;
+  margin-inline:auto;
+  direction:rtl;
   display:flex;
-  gap:30px;
+  gap:clamp(12px,2.5vw,30px);
   align-items:flex-end; /* به جای flex-start */
   position:relative;
   flex-direction:row-reverse;
 }
-
-.skill-main-image{
-  width:300px;
-  height:390px;
-  border-radius:24px;
-  overflow:hidden;
-  position:relative;
-  z-index:1;
-}
-
-.skill-video-column{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  z-index:1;
-}
-
 
 /* yellow circle */
 
@@ -163,7 +151,7 @@
   background:#f4c400;
   border-radius:50%;
   top:-40px;
-  right:-30px;
+  right:0;
   z-index:0;
 }
 
@@ -189,11 +177,13 @@
   flex-direction:column;
   gap:20px;
   z-index:1;
+  flex:0 0 46%;
+  min-width:0;
 }
 
 .skill-video-box{
-  width:260px;
-  height:340px;
+  width:100%;
+  aspect-ratio:13/17;
   border-radius:20px;
   overflow:hidden;
   position:relative;
@@ -208,18 +198,20 @@
 /* EXPERIENCE */
 
 .skill-exp-box{
-  width:260px;
+  width:100%;
   background:#008B8B;
   color:#fff;
-  padding:22px;
+  padding:clamp(10px,2vw,22px);
   border-radius:16px;
   display:flex;
   align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
   gap:10px;
 }
 
 .skill-exp-box span{
-  font-size:34px;
+  font-size:clamp(24px,3vw,34px);
   font-weight:bold;
 }
 
@@ -231,8 +223,11 @@
 /* MAIN IMAGE */
 
 .skill-main-image{
-  width:300px;
-  height:390px;
+  flex:1;
+  min-width:0;
+  width:auto;
+  height:auto;
+  aspect-ratio:10/13;
   border-radius:24px;
   overflow:hidden;
   position:relative;
@@ -265,35 +260,17 @@
 @media(max-width:900px){
 
   .skill-hero-container{
-    flex-direction:column;
-  }
-
-.skill-hero-left{
-  flex:1;
-  min-width:320px;
-}
-
-  .skill-hero-right{
-    flex-direction:row-reverse !important; /* دقیقا مثل دسکتاپ */
-    justify-content:center;
-    gap:20px;
-  }
-
-  .skill-video-column{
-    flex-direction:column;
-    align-items:center;
+    grid-template-columns:minmax(0,1fr);
   }
 
 }
 
 @media(max-width:560px){
   .skill-hero{ padding:32px 0; }
-  .skill-hero-title{ font-size:28px; }
+}
+
+@media(max-width:480px){
   .skill-hero-features{ grid-template-columns:1fr; }
-  .skill-hero-right{ flex-direction:column !important; align-items:center; }
-  .skill-main-image,
-  .skill-video-box{ width:100%; max-width:300px; height:auto; aspect-ratio:3/4; }
-  .skill-exp-box{ width:100%; max-width:300px; }
 }
 
 </style>
