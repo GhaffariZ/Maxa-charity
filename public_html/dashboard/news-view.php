@@ -212,8 +212,8 @@ $readTimeValue = isset($news['read_time']) ? (int)$news['read_time'] : 1;
 if ($readTimeValue < 1) { $readTimeValue = 1; }
 $readTimeFa = faNumbers($readTimeValue);
 
-// واکشی ۴ خبر آخر (غیر از خبر فعلی)
-$latestNews = [];
+// سه خبر جدید از همان دسته، غیر از خبر فعلی
+$relatedNews = [];
 try {
     $latStmt = $pdo->prepare("
         SELECT n.*, c.name AS category_name
@@ -223,11 +223,12 @@ try {
           AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
           AND n.id <> ?
-        ORDER BY n.publish_date DESC
+          AND n.category_id = ?
+        ORDER BY n.publish_date DESC, n.id DESC
         LIMIT 3
     ");
-    $latStmt->execute([$id]);
-    $latestNews = $latStmt->fetchAll(PDO::FETCH_ASSOC);
+    $latStmt->execute([$id, $news['category_id'] ?? null]);
+    $relatedNews = $latStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     // ignore
 }
@@ -976,12 +977,12 @@ render_dashboard_component('header', get_defined_vars());
 </div>
 
 <!-- اخبار مرتبط در خارج از کانتینر اصلی، بالای فوتر با پس‌زمینه نرم -->
-<?php if (count($latestNews) > 0): ?>
+<?php if (count($relatedNews) > 0): ?>
     <section class="related-news-section-outer">
         <div class="related-news-section-inner">
             <h3 class="related-title">اخبار مرتبط</h3>
             <div class="related-grid">
-                <?php foreach ($latestNews as $lat): 
+                <?php foreach ($relatedNews as $lat):
                     $newsSlug = slugify($lat['title'] ?? '');
                     $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
                     $latImage = '';
