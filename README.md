@@ -216,15 +216,17 @@ Maxa-charity/
 
 ## 🚀 Getting Started (Local Development)
 
+**Windows: full local site, database, admin panel, React panel, and test email:** see [اجرای محلی پروژه](docs/LOCAL-DEVELOPMENT.md). After setup, double-click `Start-Local.cmd`; use `Stop-Local.cmd` to stop it without deleting local data.
+
 > [!IMPORTANT]
-> This is a work-in-progress project. There is no automated installer yet, and the database schema
-> is not versioned in the repo. The steps below describe the general setup; expect to adapt them.
+> Use the Windows setup guide above for the automated local environment. The database schema and
+> incremental updates live in `database/`; use a current SQL export when you need existing content.
 
 ### Prerequisites
-- PHP 7.4+ with PDO MySQL extension
+- PHP 8.4 with PDO MySQL and the extensions listed in the local setup guide
 - MySQL / MariaDB
 - Apache with `mod_rewrite` (or a compatible stack such as XAMPP / Laragon / Docker)
-- Composer (for the API's dependencies, e.g. PHPMailer)
+- PHPMailer (already included in `public_html/api/vendor`; Composer is optional)
 
 ### Setup
 1. **Clone the repository**
@@ -235,19 +237,16 @@ Maxa-charity/
 
 2. **Point your web server's document root** at `public_html/`.
 
-3. **Create the database** and configure credentials. The app expects a config file (git-ignored) —
-   create `public_html/config/database.php` (and/or `config.php`) returning a PDO connection
-   matching the references in `core/database.php` and the API's `Core/Config.php`.
+3. **Create the database** and configure credentials using `public_html/core/db.local.php.example`
+   or the `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` environment variables. Configure the API using
+   a private `.env` file. The Windows helper handles both settings automatically.
 
-4. **Install API dependencies** (if working on the API):
-   ```bash
-   cd public_html/api
-   composer install
-   ```
+4. **Verify API dependencies:** the bundled PHPMailer files must be present in
+   `public_html/api/vendor/PHPMailer/src/`. The API includes its own autoloader.
 
 5. **Set up the schema.** Tables include (at least) `pages`, `news`, `branches`, `campaigns`,
-   `donations`, `users`, and course-related tables. A schema export is **not yet committed** —
-   coordinate with the maintainer for the current SQL dump.
+   `donations`, `users`, and course-related tables. `database/schema.sql` is a baseline;
+   use a current SQL dump for existing content and review the applicable migrations.
 
 6. **Visit the site** at your local host. The home page renders from the `home` page record's
    components.

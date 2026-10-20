@@ -36,6 +36,9 @@ error_log
 # Dependencies (if you use them)
 /vendor/
 /node_modules/
+# Portable local servers, database files, credentials, and logs
+/.local/
+/config/database.php
 # Untracked app folder
 /public_html/eo/
 # Locally installed agent skills
