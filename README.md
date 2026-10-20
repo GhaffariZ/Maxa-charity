@@ -216,7 +216,7 @@ Maxa-charity/
 
 ## 🚀 Getting Started (Local Development)
 
-**Windows: full local site, database, admin panel, React panel, and test email:** see [اجرای محلی پروژه](docs/LOCAL-DEVELOPMENT.md). After setup, double-click `Start-Local.cmd`; use `Stop-Local.cmd` to stop it without deleting local data.
+**Windows: full local site, database, admin panel, React panel, and test email:** see [اجرای محلی پروژه](docs/LOCAL-DEVELOPMENT.md). On a fresh laptop, double-click `Install-Local.cmd` and select your SQL export; it installs only missing compatible prerequisites. After setup, use `Start-Local.cmd` and `Stop-Local.cmd`.
 
 > [!IMPORTANT]
 > Use the Windows setup guide above for the automated local environment. The database schema and

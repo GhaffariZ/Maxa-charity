@@ -8,6 +8,16 @@ $localRoot = Join-Path $projectRoot '.local'
 $apache = Join-Path $localRoot 'runtime/apache/Apache24'
 $php = Join-Path $localRoot 'runtime/php'
 $maria = Join-Path $localRoot 'runtime/mariadb-11.4.13-winx64'
+$mailpit = Join-Path $localRoot 'runtime/mailpit'
+. "$PSScriptRoot/local-prerequisites.ps1"
+$runtimeFile = "$localRoot/conf/runtimes.json"
+if (Test-Path -LiteralPath $runtimeFile) {
+    $runtimes = Get-Content -LiteralPath $runtimeFile -Raw | ConvertFrom-Json
+    $php = $runtimes.php
+    $apache = $runtimes.apache
+    $maria = $runtimes.maria
+    $mailpit = $runtimes.mailpit
+}
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 function Write-LocalFile([string]$Path, [string]$Content) {
     [IO.File]::WriteAllText($Path, $Content, $utf8)
@@ -20,8 +30,15 @@ function Wait-LocalPort([int]$Port) {
     throw "Port $Port did not start. Check .local/logs."
 }
 function Get-LocalProcess([string]$Name) {
+    $ownedConfig = switch ($Name) {
+        'httpd.exe' { "$localRoot/conf/httpd.conf" }
+        'mariadbd.exe' { "$localRoot/conf/my.ini" }
+        'mailpit.exe' { "$localRoot/mailpit.db" }
+    }
+    $ownedConfig = $ownedConfig.Replace('/', '\')
     Get-CimInstance Win32_Process -Filter "Name='$Name'" | Where-Object {
-        $_.ExecutablePath -and $_.ExecutablePath.StartsWith($localRoot + '\', [StringComparison]::OrdinalIgnoreCase)
+        # Reused system executables are ours only when launched with this project's config.
+        $_.ExecutablePath -and $_.CommandLine -and $_.CommandLine.Replace('/', '\').IndexOf($ownedConfig, [StringComparison]::OrdinalIgnoreCase) -ge 0
     }
 }
 function Assert-FreePort([int]$Port) {
@@ -54,26 +71,27 @@ foreach ($folder in 'downloads', 'runtime', 'conf', 'logs', 'sessions') {
     New-Item -ItemType Directory -Force -Path "$localRoot/$folder" | Out-Null
 }
 if ($Action -eq 'setup') {
-    if (!$Dump -or !(Test-Path -LiteralPath $Dump -PathType Leaf)) { throw 'Pass -Dump with the path to your SQL export.' }
-    $packages = @(
-        @{ File='php.zip'; Url='https://downloads.php.net/~windows/releases/php-8.4.26-Win32-vs17-x64.zip'; Hash='6e56f0e932e92bfdce208d3a7e6068f6e2f7a19fc2922a5f856fb085f61673f3'; Target=$php; Check="$php/php.exe" },
-        @{ File='apache.zip'; Url='https://www.apachelounge.com/download/VS18/binaries/httpd-2.4.69-261002-Win64-VS18.zip'; Hash='ca272e0b75abad78b1e4029a0753b20ff2232d2d857e8eebeea5d469c5776977'; Target="$localRoot/runtime/apache"; Check="$apache/bin/httpd.exe" },
-        @{ File='mariadb.zip'; Url='https://dlm.mariadb.com/4801422/MariaDB/mariadb-11.4.13/winx64-packages/mariadb-11.4.13-winx64.zip'; Hash='d62986d433eeebfde218560b276103831604a61e929e87f1a17f5aebd80257e2'; Target="$localRoot/runtime"; Check="$maria/bin/mariadbd.exe" },
-        @{ File='mailpit.zip'; Url='https://github.com/axllent/mailpit/releases/download/v1.31.6/mailpit-windows-amd64.zip'; Hash='5d5ad094bfb3bac9004f9d1105d2335fea9f8952c09951df73ae0a280e34d3b1'; Target="$localRoot/runtime/mailpit"; Check="$localRoot/runtime/mailpit/mailpit.exe" }
-    )
-    foreach ($package in $packages) {
-        if (Test-Path -LiteralPath $package.Check) { continue }
-        $zip = "$localRoot/downloads/$($package.File)"
-        if (!(Test-Path -LiteralPath $zip)) {
-            & curl.exe -fLsS --proto '=https' --proto-redir '=https' $package.Url -o $zip
-            if ($LASTEXITCODE -ne 0) { throw "Download failed: $($package.File)" }
+    if (!(Test-Path -LiteralPath "$localRoot/data/mysql")) {
+        if (!$Dump) {
+            Add-Type -AssemblyName System.Windows.Forms
+            $picker = New-Object Windows.Forms.OpenFileDialog
+            $picker.Title = 'Select your exported website database (.sql)'
+            $picker.Filter = 'SQL database export (*.sql)|*.sql'
+            try { if ($picker.ShowDialog() -eq [Windows.Forms.DialogResult]::OK) { $Dump = $picker.FileName } } finally { $picker.Dispose() }
         }
-        if ((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLower() -ne $package.Hash) { throw "Checksum mismatch: $zip" }
-        Expand-Archive -LiteralPath $zip -DestinationPath $package.Target -Force
+        if (!$Dump -or !(Test-Path -LiteralPath $Dump -PathType Leaf)) { throw 'Select a current SQL export, or pass its path to Install-Local.cmd.' }
     }
+    foreach ($required in 'public_html/core/database.php','public_html/dashboard/page-view.php','public_html/api/index.php','public_html/api/vendor/PHPMailer/src/PHPMailer.php','public_html/api/vendor/PHPMailer/src/SMTP.php','public_html/api/vendor/PHPMailer/src/Exception.php','benefactor userpanel/package-lock.json','tools/local-db.php','tools/local-preview.php') {
+        if (!(Test-Path -LiteralPath (Join-Path $projectRoot $required) -PathType Leaf)) { throw "Project file missing: $required. Copy or clone the entire repository first." }
+    }
+    $runtimes = Initialize-LocalPrerequisites $projectRoot $localRoot
+    $php = $runtimes.php
+    $apache = $runtimes.apache
+    $maria = $runtimes.maria
+    $mailpit = $runtimes.mailpit
 }
-if (!(Test-Path -LiteralPath "$php/php8apache2_4.dll") -or !(Test-Path -LiteralPath "$maria/bin/mariadbd.exe")) {
-    throw 'Run tools/local.ps1 -Action setup -Dump path/to/export.sql first.'
+if (!(Test-Path -LiteralPath "$php/php8apache2_4.dll") -or !(Test-Path -LiteralPath "$maria/bin/mariadbd.exe") -or !(Test-Path -LiteralPath "$apache/bin/httpd.exe") -or !(Test-Path -LiteralPath "$mailpit/mailpit.exe")) {
+    throw 'Run Install-Local.cmd first.'
 }
 $secretFile = "$localRoot/conf/secrets.json"
 if (!(Test-Path -LiteralPath $secretFile)) {
@@ -95,8 +113,7 @@ if (!(Test-Path -LiteralPath "$localRoot/conf/mail-cert.pem")) {
     if ($cert.ExitCode -ne 0) { throw 'Local mail certificate generation failed.' }
 }
 if (!(Test-Path -LiteralPath "$localRoot/conf/public-ca.pem")) {
-    & curl.exe -fLsS --proto '=https' --proto-redir '=https' 'https://curl.se/ca/cacert.pem' -o "$localRoot/conf/public-ca.pem"
-    if ($LASTEXITCODE -ne 0) { throw 'CA bundle download failed.' }
+    Receive-LocalDownload 'https://curl.se/ca/cacert.pem' "$localRoot/conf/public-ca.pem"
 }
 Write-LocalFile "$localRoot/conf/ca.pem" ((Get-Content "$localRoot/conf/public-ca.pem" -Raw) + "`n" + (Get-Content "$localRoot/conf/mail-cert.pem" -Raw))
 New-Item -ItemType Directory -Force -Path "$projectRoot/config" | Out-Null
@@ -132,15 +149,15 @@ auto_prepend_file="$r/conf/preview.php"
 "@
 Write-LocalFile "$localRoot/conf/my.ini" @"
 [mysqld]
-basedir=$($maria.Replace('\','/'))
-datadir=$r/data
+basedir="$($maria.Replace('\','/'))"
+datadir="$r/data"
 port=3306
 bind-address=127.0.0.1
 character-set-server=utf8mb4
 collation-server=utf8mb4_unicode_ci
 max_allowed_packet=64M
 innodb_buffer_pool_size=128M
-log_error=$r/logs/mariadb.log
+log_error="$r/logs/mariadb.log"
 "@
 Write-LocalFile "$localRoot/conf/client.ini" @"
 [client]
@@ -233,7 +250,7 @@ if (!(Get-LocalProcess 'mailpit.exe')) {
     Assert-FreePort 1025
     Assert-FreePort 8025
     $mailArgs = "--listen 127.0.0.1:8025 --smtp 127.0.0.1:1025 --database `"$localRoot/mailpit.db`" --smtp-tls-cert `"$localRoot/conf/mail-cert.pem`" --smtp-tls-key `"$localRoot/conf/mail-key.pem`" --smtp-auth-accept-any --smtp-require-starttls --disable-version-check"
-    Start-Process -FilePath "$localRoot/runtime/mailpit/mailpit.exe" -ArgumentList $mailArgs -WindowStyle Hidden -RedirectStandardError "$localRoot/logs/mailpit.log"
+    Start-Process -FilePath "$mailpit/mailpit.exe" -ArgumentList $mailArgs -WindowStyle Hidden -RedirectStandardError "$localRoot/logs/mailpit.log"
     Wait-LocalPort 1025
 }
 if ($Action -eq 'setup') {
@@ -246,6 +263,13 @@ if (!(Get-LocalProcess 'httpd.exe')) {
     Assert-FreePort 8080
     Start-Process -FilePath "$apache/bin/httpd.exe" -ArgumentList "-f `"$localRoot/conf/httpd.conf`"" -WorkingDirectory $apache -WindowStyle Hidden
     Wait-LocalPort 8080
+}
+if ($Action -eq 'setup') {
+    foreach ($route in '/home','/api/health','/api/campaigns','/benefactor-dashboard/') {
+        $check = Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8080$route" -TimeoutSec 30
+        if ($check.StatusCode -ne 200 -or $check.Content -match 'Fatal error:|DATABASE ERROR:') { throw "Local page check failed: $route" }
+    }
+    Write-Output 'Local website, database API, and React files verified.'
 }
 Write-Output 'Site: http://localhost:8080/home'
 Write-Output 'Admin: http://localhost:8080/dashboard/login.php'

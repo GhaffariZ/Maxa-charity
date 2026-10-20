@@ -10,7 +10,8 @@ const localEnv = fs.readFileSync(path.join(root, '.local/conf/api.env'), 'utf8')
 for (const setting of ['APP_ENV=local', 'MAIL_HOST=127.0.0.1', 'PAYMENT_GATEWAY=stub']) {
     assert.ok(localEnv.split(/\r?\n/).includes(setting), 'Integration tests require local database/email/payment settings');
 }
-const php = path.join(root, '.local/runtime/php/php.exe');
+const runtimeFile = path.join(root, '.local/conf/runtimes.json');
+const php = fs.existsSync(runtimeFile) ? path.join(JSON.parse(fs.readFileSync(runtimeFile)).php, 'php.exe') : path.join(root, '.local/runtime/php/php.exe');
 const metadata = spawnSync(php, ['-c', path.join(root, '.local/conf/php.ini'), '-r', `
 $cfg=json_decode(file_get_contents('.local/conf/secrets.json'),true);
 $db=new PDO('mysql:host=127.0.0.1;dbname=macsa_local;charset=utf8mb4','macsa_local',$cfg['dbPassword']);
