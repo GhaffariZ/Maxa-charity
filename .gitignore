@@ -10,6 +10,11 @@ database/db.conf
 # Database credentials read by the app (keep on server only, never commit)
 public_html/core/db.local.php
 maksa-private/
+# Local runtimes, databases, certificates, sessions, and private settings
+/.local/
+# Keep only the credential-free legacy database entry point in version control
+/config/*
+!/config/database.php
 # OS / editor junk
 .DS_Store
 Thumbs.db
