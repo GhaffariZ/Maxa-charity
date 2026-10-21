@@ -3,10 +3,13 @@ require_once __DIR__ . '/_guard.php';
 dash_require('news');
 // news-save.php
 header('Content-Type: application/json; charset=utf-8');
-require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+require_once __DIR__ . '/../core/html-sanitizer.php';
+
+$newImagePath = null;
+$oldImagePath = null;
 
 try {
+    $pdo = dash_pdo();
     // تنظیم حالت خطای PDO به استثنا (Exception)
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec("SET NAMES utf8mb4");
@@ -22,6 +25,8 @@ try {
         $post_max = ini_get('post_max_size');
         throw new Exception("حجم کل اطلاعات ارسالی (به‌خصوص تصویر) بیشتر از حد مجاز است (حداکثر $post_max). لطفاً تصویر کوچک‌تری انتخاب کنید.");
     }
+
+    csrf_check();
 
     if (empty($_POST['title']) || empty($_POST['content'])) {
         throw new Exception("عنوان یا متن خبر وارد نشده است.");
@@ -60,12 +65,10 @@ try {
         $publish_date = date('Y-m-d H:i:s');
     } else {
         $publish_time = strtotime($publish_date_raw);
-        $publish_date = date('Y-m-d H:i:s', $publish_time);
-        
-        // جلوگیری از ثبت تاریخ خیلی قدیمی برای خبر جدید (تولرانس 5 دقیقه)
-        if ($id === 0 && $publish_time < (time() - 300)) {
-            throw new Exception("برای خبر جدید، تاریخ و زمان انتشار نمی‌تواند در گذشته باشد.");
+        if ($publish_time === false) {
+            throw new Exception("تاریخ و زمان انتشار نامعتبر است.");
         }
+        $publish_date = date('Y-m-d H:i:s', $publish_time);
     }
 
     $record_id = 0; 
@@ -110,12 +113,14 @@ try {
     $has_branch_id = empty($existing_cols) || in_array('branch_id', $existing_cols);
     $has_read_time = empty($existing_cols) || in_array('read_time', $existing_cols);
 
+    $pdo->beginTransaction();
+
     if ($id > 0) {
         // ======================== حالت ویرایش (UPDATE) ========================
         $where_clause = "WHERE id = ?";
         $where_params = [$id];
 
-        if ($has_branch_id) {
+        if ($has_branch_id && !dash_is_hq_view()) {
             $stmt_check = $pdo->prepare("SELECT news_code FROM news WHERE id = ? AND branch_id = ?");
             $stmt_check->execute([$id, $__branch]);
             $where_clause = "WHERE id = ? AND branch_id = ?";
@@ -210,25 +215,30 @@ try {
 
     // ======================== مدیریت تصاویر ========================
 
-    // بررسی حذف تصویر شاخص
-    if (isset($_POST['remove_featured_flag']) && $_POST['remove_featured_flag'] === '1' && $record_id > 0) {
+    // Keep the previous image until both the database and the new upload succeed.
+    $hasNewImage = isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] !== UPLOAD_ERR_NO_FILE;
+    $removeImage = ($_POST['remove_featured_flag'] ?? '') === '1';
+    $uploadDir = __DIR__ . '/../uploads/news/' . $news_code;
+    if (!preg_match('/^[A-Za-z0-9_-]+$/D', (string)$news_code)) {
+        throw new Exception("کد خبر برای ذخیره تصویر نامعتبر است.");
+    }
+
+    if (($removeImage || $hasNewImage) && $record_id > 0) {
         $old_stmt = $pdo->prepare("SELECT featured_image FROM news WHERE id = ?");
         $old_stmt->execute([$record_id]);
         $old = $old_stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($old && !empty($old['featured_image'])) {
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/news/$news_code";
-            $old_file = "$uploadDir/" . $old['featured_image'];
-            if (file_exists($old_file)) {
-                unlink($old_file);
-            }
+            $oldImagePath = $uploadDir . '/' . basename($old['featured_image']);
+        }
+        if ($removeImage && !$hasNewImage) {
             $stmt_remove = $pdo->prepare("UPDATE news SET featured_image = NULL WHERE id = ?");
             $stmt_remove->execute([$record_id]);
         }
     }
 
     // آپلود تصویر شاخص جدید
-    if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+    if ($hasNewImage) {
         // مدیریت صریح خطاهای آپلود (به جای رد شدن بی‌صدا)
         $up_err = $_FILES['featured_image']['error'];
         if ($up_err !== UPLOAD_ERR_OK) {
@@ -251,9 +261,8 @@ try {
             throw new Exception("شناسه خبر نامعتبر است. رکورد ثبت نشد.");
         }
         
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/news/$news_code";
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true); 
+        if ((!is_dir($uploadDir) && !@mkdir($uploadDir, 0775, true)) || !is_writable($uploadDir)) {
+            throw new Exception("پوشه آپلود تصویر خبر قابل نوشتن نیست. دسترسی پوشه uploads/news را بررسی کنید.");
         }
 
         $file = $_FILES['featured_image'];
@@ -263,20 +272,26 @@ try {
         if (!in_array($ext, $allowed_ext)) {
             throw new Exception("فرمت تصویر نامعتبر است. فرمت‌های مجاز: jpg, png, webp");
         }
-
-        // حذف تصاویر شاخص قبلی (جلوگیری از انباشت فایل)
-        foreach ($allowed_ext as $old_ext) {
-            $old_file = "$uploadDir/featured.$old_ext";
-            if (file_exists($old_file)) unlink($old_file);
+        $imageInfo = @getimagesize($file['tmp_name']);
+        $expectedMimes = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp'];
+        if (!$imageInfo || ($imageInfo['mime'] ?? '') !== $expectedMimes[$ext]) {
+            throw new Exception("فایل انتخاب‌شده یک تصویر معتبر نیست.");
         }
-        
-        $destination = "$uploadDir/featured.$ext";
+
+        $filename = 'featured_' . bin2hex(random_bytes(12)) . '.' . $ext;
+        $destination = $uploadDir . '/' . $filename;
         if (move_uploaded_file($file['tmp_name'], $destination)) {
+            $newImagePath = $destination;
             $stmt_img = $pdo->prepare("UPDATE news SET featured_image = ? WHERE id = ?");
-            $stmt_img->execute(["featured.$ext", $record_id]);
+            $stmt_img->execute([$filename, $record_id]);
         } else {
             throw new Exception("آپلود تصویر انجام نشد، لطفاً دسترسی پوشه uploads را بررسی کنید.");
         }
+    }
+
+    $pdo->commit();
+    if ($oldImagePath !== null && is_file($oldImagePath)) {
+        @unlink($oldImagePath);
     }
 
     // خروجی نهایی موفقیت‌آمیز
@@ -288,6 +303,12 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    if ($pdo instanceof PDO && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    if ($newImagePath !== null && is_file($newImagePath)) {
+        @unlink($newImagePath);
+    }
     // خروجی در صورت بروز خطا
     http_response_code(400);
     echo json_encode([

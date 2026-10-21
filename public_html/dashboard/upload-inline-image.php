@@ -7,6 +7,13 @@ if (!dash_can('news') && !dash_can('pages') && !dash_can('events')) {
 }
 header('Content-Type: application/json; charset=utf-8');
 
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'متد درخواست نامعتبر است.'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+csrf_check();
+
 $dir = __DIR__ . '/../uploads/editor/';
 if ((!is_dir($dir) && !@mkdir($dir, 0755, true)) || !is_writable($dir)) {
     http_response_code(500);

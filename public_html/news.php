@@ -269,8 +269,17 @@ function getFooterHTML() {
 
 // بارگذاری هدر سراسری
 $pageTitle = 'آخرین اخبار و رویدادها — مکسا';
-render_dashboard_component('header', get_defined_vars());
 ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+<link rel="icon" href="/favicon.ico">
+</head>
+<body>
+<?php render_dashboard_component('header', get_defined_vars()); ?>
 
 <!-- استایل اختصاصی، واکنش‌گرا و پریمیوم صفحه اخبار -->
 <style>

@@ -1,3 +1,6 @@
+<!-- Standalone pages also use this fragment without a document head. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -28,6 +31,7 @@
 
     .cta {
       font-family: inherit;
+      direction: rtl;
       position: relative;
     }
     .cta a{ color:inherit; text-decoration:none; }
@@ -455,7 +459,7 @@
     }
 
     /* فقط موبایل و تبلت */
-    @media (max-width: 1024px){
+    @media (max-width: 1399px){
       .menu-icon{ display:flex; }
     }
 
@@ -766,7 +770,7 @@
     }
 
     /* فقط وقتی که کلاس open دارد، در موبایل نمایش داده شود */
-    @media (max-width: 1024px) {
+    @media (max-width: 1399px) {
       .mobile-menu-sidebar.open {
         right: 0;
       }
@@ -828,7 +832,7 @@
     }
 
     /* نقطه شکست موبایل و تبلت برای سایدبار همبرگری */
-    @media (max-width: 1024px) {
+    @media (max-width: 1399px) {
       :root {
         --cta-nav-h: 56px;
       }
@@ -1042,7 +1046,7 @@ require_once __DIR__ . '/../../../event-banner.php';
 echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null); 
 ?>
 
-  <div class="cta">
+  <div class="cta" dir="rtl">
 
     <div class="cta-topbar">
       <div class="cta-container cta-header">
@@ -1240,7 +1244,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
   <!-- فاصله‌گذار برای جبران ارتفاع نوار ثابت بالا -->
   <div class="cta-navbar-spacer" aria-hidden="true"></div>
 
-  <nav class="mobile-menu-sidebar" id="mobileMenu" aria-label="منوی موبایل">
+  <nav class="mobile-menu-sidebar" id="mobileMenu" dir="rtl" aria-label="منوی موبایل">
     <div class="mobile-menu-header">
       <div class="mobile-menu-brand">
         <img src="/dashboard/components/header/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="182" height="52" loading="lazy" decoding="async">

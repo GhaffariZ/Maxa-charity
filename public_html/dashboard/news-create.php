@@ -8,9 +8,9 @@ if ($event_mode) {
     $pdo = dash_pdo();
 } else {
     dash_require('news');
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
+    $pdo = dash_pdo();
 }
-require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
+require_once __DIR__ . '/../core/html-sanitizer.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $news_data = null;
@@ -2671,6 +2671,25 @@ function deleteSelectedImage() {
 }
 
 /* تعویض تصویر جاری */
+async function uploadInlineImage(file) {
+    const fd = new FormData();
+    fd.append("csrf_token", CSRF_TOKEN);
+    fd.append("image", file);
+    const response = await fetch("upload-inline-image.php", {
+        method: "POST", body: fd, credentials: "same-origin",
+        headers: { "Accept": "application/json", "X-CSRF-Token": CSRF_TOKEN }
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data || !data.url) {
+        const reason = data && data.error ? data.error :
+            response.status === 413 ? "حجم درخواست از حد مجاز هاست بیشتر است." :
+            response.redirected || response.status === 419 ? "نشست مدیریت منقضی شده است؛ دوباره وارد شوید." :
+            "پاسخ نامعتبر از سرور دریافت شد (HTTP " + response.status + ").";
+        throw new Error(reason);
+    }
+    return data.url;
+}
+
 function replaceSelectedImage() {
     if (!activeSelectedImg) return;
     const input = document.createElement("input");
@@ -2680,19 +2699,15 @@ function replaceSelectedImage() {
         const file = input.files[0];
         if (!file) return;
         showStatus("در حال بارگذاری تصویر جدید...", true);
-        const fd = new FormData();
-        fd.append("csrf_token", "<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>");
-        fd.append("image", file);
         try {
-            const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });
-            const data = await res.json();
-            if (data.url && activeSelectedImg) {
-                activeSelectedImg.src = data.url;
+            const url = await uploadInlineImage(file);
+            if (activeSelectedImg) {
+                activeSelectedImg.src = url;
                 showStatus("تصویر جایگزین شد.", true);
                 setTimeout(updateFloatingToolbarPosition, 100);
             }
         } catch(err) {
-            showStatus("خطا در آپلود تصویر جایگزین", false);
+            showStatus("خطا در آپلود تصویر جایگزین: " + err.message, false);
         }
     };
     input.click();
@@ -2941,17 +2956,12 @@ editor.addEventListener("drop", function(e) {
 
 async function uploadAndInsertInlineFile(file) {
     showStatus("در حال آپلود تصویر در متن...", true);
-    const fd = new FormData();
-    fd.append("image", file);
     try {
-        const res = await fetch("upload-inline-image.php", { method: "POST", body: fd });
-        const data = await res.json();
-        if (data.url) {
-            insertSingleImage(data.url);
-            showStatus("تصویر در متن درج شد.", true);
-        }
+        const url = await uploadInlineImage(file);
+        insertSingleImage(url);
+        showStatus("تصویر در متن درج شد.", true);
     } catch (err) {
-        showStatus("خطا در آپلود تصویر", false);
+        showStatus("خطا در آپلود تصویر: " + err.message, false);
     }
 }
 
@@ -2960,23 +2970,17 @@ function uploadSingleImage(){
     input.type = "file";
     input.accept = "image/*";
 
-    input.onchange = ()=>{
+    input.onchange = async ()=>{
         const file = input.files[0];
         if (!file) return;
 
         showStatus("در حال آپلود تصویر...", true);
-        const fd = new FormData();
-        fd.append("image", file);
-
-        fetch("upload-inline-image.php", {method:"POST", body:fd})
-        .then(r=>r.json())
-        .then(d=>{
-            if (d.url) {
-                insertSingleImage(d.url);
-                showStatus("تصویر درج شد.", true);
-            }
-        })
-        .catch(() => showStatus("خطا در ارسال تصویر", false));
+        try {
+            insertSingleImage(await uploadInlineImage(file));
+            showStatus("تصویر درج شد.", true);
+        } catch (err) {
+            showStatus("خطا در ارسال تصویر: " + err.message, false);
+        }
     };
     input.click();
 }
@@ -3037,18 +3041,11 @@ function uploadGalleryInline(){
         showStatus("در حال آپلود گالری تصاویر...", "info");
         const results = await Promise.allSettled(files.map(async (file) => {
             if (file.size > 8 * 1024 * 1024) throw new Error("حجم «" + file.name + "» بیشتر از ۸ مگابایت است.");
-            const fd = new FormData();
-            fd.append("image", file);
-            const response = await fetch("upload-inline-image.php", {method:"POST", body:fd, credentials:"same-origin"});
-            const data = await response.json().catch(() => null);
-            if (!response.ok || !data || !data.url) {
-                const reason = data && data.error ? data.error :
-                    response.status === 413 ? "حجم درخواست از حد مجاز هاست بیشتر است." :
-                    response.redirected ? "نشست مدیریت منقضی شده است؛ دوباره وارد شوید." :
-                    "پاسخ نامعتبر از سرور دریافت شد (HTTP " + response.status + ").";
-                throw new Error("«" + file.name + "»: " + reason);
+            try {
+                return await uploadInlineImage(file);
+            } catch (err) {
+                throw new Error("«" + file.name + "»: " + err.message);
             }
-            return data.url;
         }));
         const urls = results.filter(result => result.status === "fulfilled").map(result => result.value);
         if (urls.length) insertGalleryRow(urls);
@@ -3729,7 +3726,13 @@ async function saveNews() {
             xhr.onload = () => {
                 let parsed;
                 try { parsed = JSON.parse(xhr.responseText); }
-                catch (_) { return reject(new Error("پاسخ نامعتبر از سرور دریافت شد.")); }
+                catch (_) {
+                    const message = xhr.status === 413 ? "حجم درخواست از حد مجاز هاست بیشتر است." :
+                        xhr.status === 419 || (xhr.responseURL && xhr.responseURL.includes("login.php")) ?
+                        "نشست مدیریت منقضی شده است؛ دوباره وارد شوید." :
+                        "پاسخ نامعتبر از سرور دریافت شد (HTTP " + xhr.status + ").";
+                    return reject(new Error(message));
+                }
                 if (xhr.status >= 200 && xhr.status < 300 && parsed.status === "success") {
                     resolve(parsed);
                 } else {

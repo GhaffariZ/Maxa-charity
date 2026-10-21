@@ -1,12 +1,7 @@
 <?php
-// اصلاح نحوه اتصال به دیتابیس برای سازگاری در توسعه محلی و پروداکشن
-if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/../config/database.php")) {
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
-} else {
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/core/database.php";
-}
-require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/core/component-renderer.php';
+require_once __DIR__ . '/../core/database.php';
+require_once __DIR__ . '/../core/html-sanitizer.php';
+require_once __DIR__ . '/../core/component-renderer.php';
 
 /* -----------------------------------------
    دریافت id و slug از آدرس /id/slug/
@@ -251,10 +246,18 @@ function getFooterHTML() {
     return dashboard_component_html('footer', get_defined_vars());
 }
 
-// بارگذاری هدر سراسری
-$pageTitle = htmlspecialchars($news['title']) . ' — آخرین اخبار مکسا';
-render_dashboard_component('header', get_defined_vars());
+$pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
 ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+<link rel="icon" href="/favicon.ico">
+</head>
+<body>
+<?php render_dashboard_component('header', get_defined_vars()); ?>
 
 <!-- لود Font Awesome با پالیسی بدون رهگیری جهت پیشگیری از هشدار مرورگر -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -304,10 +307,10 @@ render_dashboard_component('header', get_defined_vars());
         color: var(--news-accent);
     }
 
-    /* ساختار دو ستونه اصلی جزئیات خبر */
+    /* جزئیات خبر در یک ستون تمام‌عرض */
     .news-detail-layout {
         display: grid;
-        grid-template-columns: 2.8fr 1.2fr;
+        grid-template-columns: 1fr;
         gap: 36px;
     }
 
@@ -326,8 +329,7 @@ render_dashboard_component('header', get_defined_vars());
     .article-hero-banner {
         position: relative;
         width: 100%;
-        min-height: 400px;
-        max-height: 520px;
+        aspect-ratio: 16 / 9;
         background-color: #0c121c;
         overflow: hidden;
         display: flex;
@@ -362,7 +364,9 @@ render_dashboard_component('header', get_defined_vars());
         z-index: 1;
     }
     .article-hero-content {
-        position: relative;
+        position: absolute;
+        inset-inline: 0;
+        bottom: 0;
         z-index: 2;
         padding: 40px 40px 32px;
         display: flex;
@@ -611,180 +615,6 @@ render_dashboard_component('header', get_defined_vars());
         border-color: var(--news-primary);
     }
 
-    /* سایدبار سمت چپ */
-    .news-detail-sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 28px;
-    }
-
-    /* استایل ویجت‌های سایدبار */
-    .sidebar-widget {
-        background: var(--news-card-bg);
-        border: 1px solid var(--news-border);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.01);
-    }
-    .widget-title {
-        font-size: 15px;
-        font-weight: 900;
-        color: var(--news-text);
-        margin: 0 0 20px 0;
-        padding-bottom: 12px;
-        border-bottom: 2px solid var(--news-border);
-        position: relative;
-        text-align: right;
-    }
-    .widget-title::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        right: 0;
-        width: 45px;
-        height: 2px;
-        background: var(--news-primary);
-    }
-
-    /* ویجت به اشتراک گذاری */
-    .share-buttons-row {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-start;
-    }
-    .share-icon-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #ffffff;
-        font-size: 17px;
-        text-decoration: none;
-        border: 0;
-        outline: none;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .share-icon-btn:hover {
-        transform: translateY(-3px);
-        opacity: 0.9;
-        color: #ffffff;
-    }
-    .share-telegram { background: #0088cc; }
-    .share-whatsapp { background: #25d366; }
-    .share-twitter { background: #000000; }
-    .share-copy-link { background: var(--news-primary); cursor: pointer; position: relative; }
-    
-    /* تولتیپ کپی لینک */
-    .copy-tooltip-alert {
-        position: absolute;
-        bottom: 125%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #222222;
-        color: #ffffff;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 11.5px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-        font-family: 'Vazirmatn', sans-serif;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-    .copy-tooltip-alert.active {
-        opacity: 1;
-    }
-
-    /* ویجت جدیدترین اخبار */
-    .widget-pop-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-    .widget-pop-item {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        text-decoration: none;
-        min-width: 0;
-        text-align: right;
-    }
-    .widget-pop-thumb {
-        width: 60px;
-        height: 60px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #f1f3f5;
-        flex-shrink: 0;
-    }
-    .widget-pop-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .widget-pop-info {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-    .widget-pop-title {
-        font-size: 13px;
-        font-weight: 750;
-        line-height: 1.5;
-        color: var(--news-text);
-        margin: 0 0 4px 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        transition: color 0.25s ease;
-    }
-    .widget-pop-item:hover .widget-pop-title {
-        color: var(--news-primary);
-    }
-    .widget-pop-date {
-        font-size: 11px;
-        color: var(--news-text-muted);
-    }
-
-    /* ویجت فهرست عناوین خبر (TOC) */
-    .toc-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .toc-item {
-        position: relative;
-    }
-    .toc-h2 {
-        padding-right: 0;
-    }
-    .toc-h3 {
-        padding-right: 14px;
-    }
-    .toc-link {
-        color: var(--news-text);
-        text-decoration: none;
-        font-size: 13.5px;
-        font-weight: 600;
-        display: block;
-        line-height: 1.6;
-        padding-right: 10px;
-        border-right: 2px solid var(--news-border);
-        transition: all 0.2s ease;
-    }
-    .toc-link:hover {
-        color: var(--news-primary);
-        border-right-color: var(--news-primary);
-        padding-right: 14px;
-    }
-
     /* بخش اخبار مرتبط جدید - خارج از کانتینر اصلی بالای فوتر */
     .related-news-section-outer {
         background-color: #f3f7f8; /* رنگ پس‌زمینه نرم و ملایم */
@@ -908,10 +738,6 @@ render_dashboard_component('header', get_defined_vars());
     }
 
     @media (max-width: 768px) {
-        .article-hero-banner {
-            min-height: 300px;
-            max-height: 420px;
-        }
         .article-hero-content {
             padding: 24px 20px 20px;
             gap: 10px;
@@ -934,7 +760,7 @@ render_dashboard_component('header', get_defined_vars());
         <span><?= htmlspecialchars($news['category_name'] ?? 'خبر') ?></span>
     </nav>
 
-    <!-- ساختار دو ستونه جزئیات -->
+    <!-- جزئیات خبر در یک ستون -->
     <div class="news-detail-layout">
         
         <!-- ستون راست: متن خبر -->
@@ -996,35 +822,7 @@ render_dashboard_component('header', get_defined_vars());
             </div>
         </article>
 
-        <!-- ستون چپ: سایدبار -->
-        <aside class="news-detail-sidebar">
-            
-            <!-- ویجت اشتراک گذاری -->
-            <div class="sidebar-widget">
-                <h4 class="widget-title">اشتراک‌گذاری خبر</h4>
-                <div class="share-buttons-row">
-                    <?php 
-                    $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                    $shareText = urlencode($news['title']);
-                    ?>
-                    <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener" class="share-icon-btn share-telegram" aria-label="اشتراک‌گذاری در تلگرام"><i class="fab fa-telegram-plane"></i></a>
-                    <a href="https://api.whatsapp.com/send?text=<?= $shareText ?>%20<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener" class="share-icon-btn share-whatsapp" aria-label="اشتراک‌گذاری در واتساپ"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener" class="share-icon-btn share-twitter" aria-label="اشتراک‌گذاری در توییتر"><i class="fa-brands fa-x-twitter"></i></a>
-                    <button type="button" class="share-icon-btn share-copy-link" id="copyLinkBtn" data-url="<?= htmlspecialchars($currentUrl) ?>" aria-label="کپی لینک خبر">
-                        <i class="far fa-copy"></i>
-                        <span class="copy-tooltip-alert" id="copyTooltip">لینک کپی شد!</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- ویجت عناوین این مطلب (TOC) -->
-            <div class="sidebar-widget" id="toc-widget">
-                <h4 class="widget-title">عناوین این مطلب</h4>
-                <ul class="toc-list" id="toc-list"></ul>
-            </div>
-
-        </aside>
-    </div>
+</div>
 </div>
 
 <!-- اخبار مرتبط در خارج از کانتینر اصلی، بالای فوتر با پس‌زمینه نرم -->
@@ -1065,61 +863,10 @@ render_dashboard_component('header', get_defined_vars());
 <?php endif; ?>
 
 <script>
-// اسکریپت کپی لینک با فیدبک تولتیپ
-const copyBtn = document.getElementById('copyLinkBtn');
-const tooltip = document.getElementById('copyTooltip');
-
-if (copyBtn && tooltip) {
-    copyBtn.addEventListener('click', () => {
-        const urlToCopy = copyBtn.getAttribute('data-url');
-        
-        navigator.clipboard.writeText(urlToCopy).then(() => {
-            tooltip.classList.add('active');
-            
-            setTimeout(() => {
-                tooltip.classList.remove('active');
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-        });
-    });
-}
-
-// اسکریپت استخراج عناوین خبر و ساخت فهرست مطالب (TOC)
+// Keep article images independent of the removed sidebar widgets.
 document.addEventListener('DOMContentLoaded', () => {
     const articleContent = document.querySelector('.article-content');
-    const tocList = document.getElementById('toc-list');
-    const tocWidget = document.getElementById('toc-widget');
-    if (!articleContent || !tocList) return;
-
-    const headings = articleContent.querySelectorAll('h2, h3');
-    if (headings.length === 0) {
-        if (tocWidget) tocWidget.style.display = 'none';
-        return;
-    }
-
-    headings.forEach((heading, index) => {
-        const id = 'heading-' + index;
-        heading.id = id;
-        
-        const li = document.createElement('li');
-        li.className = 'toc-item toc-' + heading.tagName.toLowerCase();
-        
-        const a = document.createElement('a');
-        a.href = '#' + id;
-        a.className = 'toc-link';
-        a.textContent = heading.textContent;
-        
-        a.addEventListener('click', (e) => {
-            e.preventDefault();
-            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            history.pushState(null, null, '#' + id);
-        });
-
-        li.appendChild(a);
-        tocList.appendChild(li);
-    });
-
+    if (!articleContent) return;
     // مدیریت نرم خطای لود تصاویر مقاله (جلوگیری از نمایش کادر شکسته در صورت نبود عکس فیزیکی روی سرور)
     articleContent.querySelectorAll('img').forEach((img) => {
         img.addEventListener('error', function() {
