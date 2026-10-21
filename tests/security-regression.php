@@ -24,7 +24,7 @@ check(!str_contains(strtolower($article), '<script'), 'Script survived article s
 check(str_contains($article, 'https://example.org'), 'Safe HTTPS link was removed.');
 
 $component = HtmlSanitizer::sanitizeComponent(
-    '<style>.card{color:red}</style><section class="card"><details open><summary>title</summary>ok</details></section><?php system($_GET["x"]); ?>'
+    '<style>.card{color:red}</style><section class="card"><details open><summary>title</summary>ok</details></section><?php echo "untrusted"; ?>'
     . '<script>alert(1)</script>'
 );
 check(str_contains($component, '.card{color:red}'), 'Safe component CSS was removed.');
