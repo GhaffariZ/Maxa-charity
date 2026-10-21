@@ -171,7 +171,8 @@ function course_site_head(string $title, string $pageCss = ''): void {
 .course-shell h1,.course-shell h2,.course-shell h3,.course-shell h4,.course-shell h5,.course-shell p,.course-shell ul,.course-shell ol,.course-shell figure,.course-shell blockquote,.course-shell del{margin:0}
 .course-shell ul,.course-shell ol{list-style:none;padding:0}
 .course-shell a{text-decoration:none;color:inherit}
-.course-shell button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.course-shell button:not([class]){font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.course-shell button{font-family:inherit;cursor:pointer}
 .course-shell input,.course-shell textarea,.course-shell select{font-family:inherit}
 .course-shell svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 <?= course_base_css() ?>
@@ -306,37 +307,105 @@ function course_card(array $c): void {
   $isFree = !empty($c['is_free']) || (int)($c['price'] ?? 0) === 0;
   $price = (float)($c['price'] ?? 0);
   $disc = ($c['discount_price'] ?? null) ? (float)$c['discount_price'] : 0;
-  $hasDisc = $disc > 0 && $disc < $price;
+  $hasDisc = !$isFree && $disc > 0 && $disc < $price;
   $thumb = (string)($c['thumbnail'] ?? '');
   $lessons = (int)($c['lessons'] ?? 0);
-  $dur = (int)($c['duration'] ?? 0);
+  $rating = (float)($c['rating'] ?? 0);
+  $students = (int)($c['students'] ?? 0);
+  $level = (string)($c['level'] ?? 'all');
   ?>
-  <a class="ccard" href="/courses/<?= $id ?>" target="_top">
-    <div class="ccard-thumb" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>cc)">
-      <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><span class="ph"><?= cic('grad') ?></span><?php endif; ?>
-      <?php if ($hasDisc): $off = round((1-$disc/$price)*100); ?><span class="ccard-off"><?= fa_digits($off) ?>٪ تخفیف</span><?php endif; ?>
-      <span class="ccard-play"><?= cic('play') ?></span>
+  <article class="ccard">
+    <a class="ccard-link-overlay" href="/courses/<?= $id ?>" target="_top" aria-label="<?= e($c['title'] ?? 'مشاهده دوره') ?>"></a>
+    
+    <div class="ccard-thumb" style="background: linear-gradient(135deg, <?= $accent ?> 0%, <?= $accent ?>dd 100%);">
+      <?php if ($thumb): ?>
+        <img src="<?= e($thumb) ?>" alt="<?= e($c['title'] ?? '') ?>" loading="lazy">
+      <?php else: ?>
+        <div class="ccard-thumb-ph"><?= cic('grad') ?></div>
+      <?php endif; ?>
+
+      <div class="ccard-thumb-gradient"></div>
+
+      <div class="ccard-tags-top">
+        <span class="ccard-cat"><?= e($c['category'] ?? 'عمومی') ?></span>
+        <?php if (!empty($c['branch_name'])): ?>
+          <span class="ccard-branch"><?= function_exists('iconoir') ? iconoir('building', '', 12) : '' ?> <?= e($c['branch_name']) ?></span>
+        <?php endif; ?>
+      </div>
+
+      <?php if ($hasDisc): 
+        $off = round((1 - $disc / $price) * 100); ?>
+        <span class="ccard-off"><?= fa_digits($off) ?>٪ تخفیف</span>
+      <?php elseif ($isFree): ?>
+        <span class="ccard-badge-free">رایگان</span>
+      <?php endif; ?>
+
+      <div class="ccard-play-hint" aria-hidden="true">
+        <?= cic('play') ?>
+      </div>
     </div>
+
     <div class="ccard-body">
-      <span class="ccard-cat"><?= e($c['category'] ?? 'عمومی') ?></span>
-      <?php if (!empty($c['branch_name'])): ?><span class="ccard-branch" style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:2px 9px;border-radius:99px;margin-inline-start:6px;"><?= function_exists('iconoir') ? iconoir('building', '', 13) : '' ?> <?= e($c['branch_name']) ?></span><?php endif; ?>
-      <h3 class="ccard-title"><?= e($c['title'] ?? 'بدون عنوان') ?></h3>
-      <div class="ccard-inst"><?= e($c['instructor'] ?? 'مدرس مکسا') ?></div>
-      <div class="ccard-meta">
-        <span><?= cic('star','star-y') ?><b><?= fa_digits(number_format((float)($c['rating'] ?? 0),1)) ?></b></span>
-        <span><?= cic('users') ?><?= fa_digits(number_format((int)($c['students'] ?? 0))) ?></span>
-        <?php if ($lessons): ?><span><?= cic('video') ?><?= fa_digits($lessons) ?> درس</span><?php endif; ?>
+      <div class="ccard-level-row">
+        <span class="ccard-level"><span class="ccard-level-dot"></span><?= level_label($level) ?></span>
+        <?php if ($rating > 0): ?>
+          <span class="ccard-rating">
+            <?= cic('star', 'star-y') ?>
+            <b><?= fa_digits(number_format($rating, 1)) ?></b>
+          </span>
+        <?php endif; ?>
       </div>
+
+      <h3 class="ccard-title">
+        <a href="/courses/<?= $id ?>" target="_top"><?= e($c['title'] ?? 'بدون عنوان') ?></a>
+      </h3>
+
+      <div class="ccard-inst">
+        <span class="ccard-inst-avatar"><?= mb_substr(trim((string)($c['instructor'] ?? 'م')), 0, 1) ?></span>
+        <span class="ccard-inst-name"><?= e($c['instructor'] ?? 'مدرس مکسا') ?></span>
+      </div>
+
+      <div class="ccard-meta">
+        <span class="ccard-meta-item" title="تعداد فراگیران">
+          <?= cic('users') ?>
+          <?= fa_digits(number_format($students)) ?> فراگیر
+        </span>
+        <?php if ($lessons > 0): ?>
+          <span class="ccard-meta-dot">•</span>
+          <span class="ccard-meta-item" title="تعداد جلسات">
+            <?= cic('video') ?>
+            <?= fa_digits($lessons) ?> جلسه
+          </span>
+        <?php endif; ?>
+      </div>
+
       <div class="ccard-foot">
-        <span class="badge b-primary"><span class="bd"></span><?= level_label((string)($c['level'] ?? 'all')) ?></span>
         <div class="ccard-price">
-          <?php if ($isFree): ?><b style="color:var(--violet)">رایگان</b>
-          <?php elseif ($hasDisc): ?><del><?= fa_digits(number_format($price)) ?></del><b><?= fa_digits(number_format($disc)) ?><small> ت</small></b>
-          <?php else: ?><b><?= fa_digits(number_format($price)) ?><small> ت</small></b><?php endif; ?>
+          <?php if ($isFree): ?>
+            <span class="ccard-price-free">رایگان</span>
+          <?php elseif ($hasDisc): ?>
+            <div class="ccard-price-group">
+              <del><?= fa_digits(number_format($price)) ?></del>
+              <div class="ccard-price-now">
+                <b><?= fa_digits(number_format($disc)) ?></b>
+                <small>تومان</small>
+              </div>
+            </div>
+          <?php else: ?>
+            <div class="ccard-price-now">
+              <b><?= fa_digits(number_format($price)) ?></b>
+              <small>تومان</small>
+            </div>
+          <?php endif; ?>
         </div>
+
+        <span class="ccard-action-btn" aria-hidden="true">
+          مشاهده دوره
+          <?= cic('chevron') ?>
+        </span>
       </div>
     </div>
-  </a>
+  </article>
   <?php
 }
 endif;
@@ -345,26 +414,338 @@ endif;
 if (!function_exists('course_card_styles')):
 function course_card_styles(): string {
   return <<<CSS
-.ccard{display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s}
-.ccard:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
-.ccard-thumb{height:160px;position:relative;display:grid;place-items:center;color:#fff;overflow:hidden}
-.ccard-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ccard-thumb .ph{opacity:.55}.ccard-thumb .ph .ic{width:46px;height:46px}
-.ccard-off{position:absolute;top:11px;right:11px;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;box-shadow:0 6px 14px -6px rgba(250, 166, 26,.7)}
-.ccard-play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff;opacity:0;transform:scale(.7);transition:opacity .3s,transform .3s var(--ease)}
-.ccard-play .ic{width:22px;height:22px;margin-right:-2px}
-.ccard:hover .ccard-play{opacity:1;transform:scale(1)}
-.ccard-body{padding:15px;display:flex;flex-direction:column;flex:1}
-.ccard-cat{font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:4px 10px;border-radius:99px;align-self:flex-start}
-.ccard-title{font-size:15px;font-weight:800;line-height:1.55;margin:9px 0 4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ccard-inst{font-size:12px;color:var(--color-muted);font-weight:500}
-.ccard-meta{display:flex;align-items:center;gap:13px;margin-top:11px;font-size:11.5px;color:var(--color-muted);font-weight:600}
-.ccard-meta span{display:inline-flex;align-items:center;gap:4px}.ccard-meta .ic{width:14px;height:14px}
-.ccard-meta .star-y{fill:var(--warning);stroke:var(--warning)}
-.ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:13px;padding-top:13px;border-top:1px solid var(--color-border)}
-.ccard-price{display:flex;align-items:baseline;gap:7px}
-.ccard-price b{font-size:16px;font-weight:800}.ccard-price b small{font-size:11px;font-weight:600;color:var(--color-muted)}
-.ccard-price del{font-size:12px;color:var(--color-muted)}
+.ccard{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  background:var(--color-surface);
+  border:1px solid rgba(0, 143, 138, 0.12);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 4px 20px -6px rgba(16,40,40,.07), 0 2px 6px -2px rgba(16,40,40,.04);
+  transition:all .32s cubic-bezier(.2,.8,.2,1);
+  height:100%;
+}
+.ccard:hover{
+  transform:translateY(-6px);
+  border-color:rgba(0, 143, 138, 0.35);
+  box-shadow:0 18px 36px -12px rgba(0, 102, 101, 0.22), 0 6px 16px -6px rgba(16,40,40,.08);
+}
+.ccard-link-overlay{
+  position:absolute;
+  inset:0;
+  z-index:2;
+}
+
+/* تصویر شاخص با نسبت 16:9 حرفه‌ای */
+.ccard-thumb{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 9.5;
+  overflow:hidden;
+  background:#0a2c2c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ccard-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1);
+  display:block;
+}
+.ccard:hover .ccard-thumb img{
+  transform:scale(1.05);
+}
+.ccard-thumb-ph{
+  opacity:.6;
+  color:#fff;
+  display:grid;
+  place-items:center;
+}
+.ccard-thumb-ph .ic{
+  width:52px;
+  height:52px;
+}
+.ccard-thumb-gradient{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.18) 0%, transparent 45%, rgba(0,0,0,0.48) 100%);
+  pointer-events:none;
+}
+
+/* برچسب‌های روی تصویر */
+.ccard-tags-top{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.ccard-cat{
+  font-size:11px;
+  font-weight:700;
+  color:#ffffff;
+  background:rgba(0, 74, 73, 0.82);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  padding:4px 10px;
+  border-radius:99px;
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+.ccard-branch{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:10.5px;
+  font-weight:700;
+  color:#ffffff;
+  background:rgba(8, 153, 169, 0.85);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  padding:3px 9px;
+  border-radius:99px;
+  border:1px solid rgba(255,255,255,0.25);
+}
+.ccard-off{
+  position:absolute;
+  bottom:12px;
+  right:12px;
+  z-index:1;
+  background:linear-gradient(135deg, #faa61a, #f39c12);
+  color:#3a2000;
+  font-size:11px;
+  font-weight:900;
+  padding:4px 10px;
+  border-radius:99px;
+  box-shadow:0 6px 14px -4px rgba(250, 166, 26, 0.7);
+  letter-spacing:-.01em;
+}
+.ccard-badge-free{
+  position:absolute;
+  bottom:12px;
+  right:12px;
+  z-index:1;
+  background:linear-gradient(135deg, #10b981, #059669);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  padding:4px 11px;
+  border-radius:99px;
+  box-shadow:0 4px 12px rgba(16, 185, 129, 0.4);
+}
+.ccard-play-hint{
+  position:absolute;
+  inset:0;
+  margin:auto;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 8px 24px rgba(0,0,0,.22);
+  display:grid;
+  place-items:center;
+  color:var(--color-primary);
+  opacity:0;
+  transform:scale(.75);
+  transition:all .28s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+.ccard-play-hint .ic{
+  width:20px;
+  height:20px;
+  margin-right:-2px;
+}
+.ccard:hover .ccard-play-hint{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* بدنه کارت */
+.ccard-body{
+  padding:16px 18px 18px;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.ccard-level-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:11.5px;
+}
+.ccard-level{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--color-muted);
+  font-weight:600;
+}
+.ccard-level-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--color-primary);
+}
+.ccard-rating{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  color:#d97706;
+  font-weight:700;
+  font-size:12px;
+}
+.ccard-rating .ic{
+  width:14px;
+  height:14px;
+}
+.ccard-rating .star-y{
+  fill:#f59e0b;
+  stroke:#f59e0b;
+}
+
+.ccard-title{
+  font-size:15px;
+  font-weight:800;
+  line-height:1.6;
+  margin:0 0 10px;
+  min-height:48px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.ccard-title a{
+  color:var(--color-text);
+  transition:color .2s;
+}
+.ccard:hover .ccard-title a{
+  color:var(--color-primary);
+}
+
+.ccard-inst{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:var(--color-muted);
+  font-weight:600;
+  margin-bottom:12px;
+}
+.ccard-inst-avatar{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--primary-12);
+  color:var(--color-primary);
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:800;
+  flex-shrink:0;
+}
+.ccard-inst-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.ccard-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11.5px;
+  color:var(--color-muted);
+  font-weight:600;
+  padding-bottom:14px;
+}
+.ccard-meta-item{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.ccard-meta-item .ic{
+  width:14px;
+  height:14px;
+  opacity:.75;
+}
+.ccard-meta-dot{
+  opacity:.4;
+  font-weight:400;
+}
+
+/* فوتر کارت و قیمت */
+.ccard-foot{
+  margin-top:auto;
+  padding-top:14px;
+  border-top:1px dashed var(--color-border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.ccard-price-free{
+  font-size:15px;
+  font-weight:900;
+  color:#10b981;
+}
+.ccard-price-group{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+}
+.ccard-price-group del{
+  font-size:11.5px;
+  color:var(--color-muted);
+  line-height:1;
+}
+.ccard-price-now{
+  display:inline-flex;
+  align-items:baseline;
+  gap:4px;
+}
+.ccard-price-now b{
+  font-size:16px;
+  font-weight:900;
+  color:var(--color-text);
+  letter-spacing:-.01em;
+}
+.ccard-price-now small{
+  font-size:11px;
+  font-weight:700;
+  color:var(--color-muted);
+}
+.ccard-action-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:12px;
+  font-weight:800;
+  color:var(--color-primary);
+  background:var(--primary-08);
+  padding:7px 12px;
+  border-radius:10px;
+  transition:all .2s ease;
+}
+.ccard-action-btn .ic{
+  width:14px;
+  height:14px;
+  transform:rotate(90deg);
+  transition:transform .2s ease;
+}
+.ccard:hover .ccard-action-btn{
+  background:var(--color-primary);
+  color:#fff;
+}
+.ccard:hover .ccard-action-btn .ic{
+  transform:rotate(90deg) translateY(-2px);
+}
 CSS;
 }
 endif;

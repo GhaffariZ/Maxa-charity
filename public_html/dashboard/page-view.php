@@ -116,6 +116,8 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
                 'mission-vision'      => 'ماموریت و چشم انداز',
                 'association'         => 'اساسنامه',
                 'organizationalchart' => 'چارت سازمانی',
+                'annual-reports'      => 'گزارش‌های سالانه | مکسا',
+                'financial-reports'   => 'صورت‌های مالی و گزارش‌های حسابرسی | مکسا',
             ];
             $autoTitle = $titles[$slug] ?? 'مکسا';
             render_branch_components($pdo, ['topbar', 'header', $slug, 'footer'], '', '', $autoTitle);

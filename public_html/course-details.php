@@ -65,22 +65,25 @@ $pageCss = course_card_styles() . <<<CSS
 .learn-item .ck{width:23px;height:23px;border-radius:8px;background:rgba(22,163,122,.12);color:var(--success);display:grid;place-items:center;flex-shrink:0;margin-top:1px}
 .learn-item .ck .ic{width:14px;height:14px;stroke-width:3}
 
-.acc-sec{border:1px solid var(--color-border);border-radius:14px;margin-bottom:10px;overflow:hidden;background:var(--color-surface)}
-.acc-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;transition:background .18s;background:var(--color-bg)}
+.acc-sec{border:1px solid var(--color-border);border-radius:14px;margin-bottom:12px;overflow:hidden;background:var(--color-surface);transition:border-color .2s}
+.acc-sec.open{border-color:rgba(0, 143, 138, 0.35)}
+.acc-head{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;transition:background .18s;background:var(--color-bg);user-select:none}
 .acc-head:hover{background:var(--primary-08)}
-.acc-head .chev{margin-inline-start:auto;transition:transform .3s var(--ease);color:var(--color-muted)}
-.acc-sec.open .acc-head .chev{transform:rotate(180deg)}
+.acc-head .chev{margin-inline-start:auto;transition:transform .3s var(--ease);color:var(--color-muted);display:flex;align-items:center}
+.acc-sec.open .acc-head .chev{transform:rotate(180deg);color:var(--color-primary)}
 .acc-head .a-title{font-weight:800;font-size:14.5px}
 .acc-head .a-meta{font-size:11.5px;color:var(--color-muted);font-weight:600}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease)}
-.acc-lesson{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--color-border);font-size:13.5px}
+.acc-body{display:none;background:var(--color-surface)}
+.acc-sec.open .acc-body{display:block}
+.acc-lesson{display:flex;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid var(--color-border);font-size:13.5px}
 .acc-lesson .lt{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;color:#fff}
 .acc-lesson .lt .ic{width:16px;height:16px}
 .lt-video{background:linear-gradient(135deg,#007b7a,#006665)}.lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
 .lt-image{background:linear-gradient(135deg,#f4a61e,#db8d0c)}.lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}.lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
-.acc-lesson .l-name{flex:1}
+.acc-lesson .l-name{flex:1;font-weight:600}
 .acc-lesson .l-dur{font-size:11.5px;color:var(--color-muted);font-variant-numeric:tabular-nums}
-.acc-lesson .l-prev{font-size:10.5px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:3px 9px;border-radius:99px}
+.acc-lesson .l-prev{font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:4px 10px;border-radius:99px;transition:all .2s}
+.acc-lesson .l-prev:hover{background:var(--color-primary);color:#fff}
 .acc-lesson .l-lock{color:var(--color-muted)}.acc-lesson .l-lock .ic{width:15px;height:15px}
 
 .req-list li{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;line-height:1.8;margin-bottom:9px}
@@ -275,62 +278,124 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
     id: <?= $id ?>,
     title: <?= json_encode($course['title'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
     price: <?= (int)$eff ?>,
-    instructor: <?= json_encode($course['instructor'] ?? '', JSON_UNESCAPED_UNICODE) ?>
+    instructor: <?= json_encode($course['instructor'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
+    thumbnail: <?= json_encode((string)($course['thumbnail'] ?? ''), JSON_UNESCAPED_UNICODE) ?>,
+    category: <?= json_encode((string)($course['category'] ?? ''), JSON_UNESCAPED_UNICODE) ?>
   };
   var promoUrl = <?= json_encode((string)($course['promo_video'] ?? ''), JSON_UNESCAPED_UNICODE) ?>;
-  var $=function(id){return document.getElementById(id);};
+  var $ = function(id){ return document.getElementById(id); };
 
-  function toast(msg){ var t=$('toast'); $('toastMsg').textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2800); }
+  function toast(msg){
+    var t = $('toast');
+    if(!t) return;
+    var msgEl = $('toastMsg');
+    if(msgEl) msgEl.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  }
 
-  // آکاردئون سرفصل‌ها
-  document.querySelectorAll('.acc-head').forEach(function(h){
-    h.addEventListener('click', function(){
-      var sec=h.closest('.acc-sec'), body=h.nextElementSibling;
-      var open=sec.classList.toggle('open');
-      body.style.maxHeight = open ? (body.scrollHeight+'px') : '0px';
+  // آکاردئون سرفصل‌ها (با قابلیت باز و بسته شدن آنی و روان)
+  var accHeads = document.querySelectorAll('.acc-head');
+  accHeads.forEach(function(h){
+    h.addEventListener('click', function(e){
+      e.preventDefault();
+      var sec = h.closest('.acc-sec');
+      if(sec){
+        sec.classList.toggle('open');
+      }
     });
   });
-  document.querySelectorAll('.acc-sec.open .acc-body').forEach(function(b){ b.style.maxHeight=b.scrollHeight+'px'; });
 
   // سبد خرید
-  function getCart(){ try{ return JSON.parse(localStorage.getItem('maxa-cart')||'[]'); }catch(e){ return []; } }
-  function setCart(c){ try{ localStorage.setItem('maxa-cart', JSON.stringify(c)); }catch(e){} }
-  function inCart(){ return getCart().some(function(x){ return x.id===COURSE.id; }); }
+  function getCart(){
+    try {
+      return JSON.parse(localStorage.getItem('maxa-cart') || '[]') || [];
+    } catch(e) {
+      return [];
+    }
+  }
+  function setCart(c){
+    try {
+      localStorage.setItem('maxa-cart', JSON.stringify(c));
+    } catch(e){}
+    if(window.maxaCartSync) window.maxaCartSync();
+  }
+  function inCart(){
+    return getCart().some(function(x){ return Number(x.id) === Number(COURSE.id); });
+  }
 
-  var addBtn=$('addCart');
+  var inCartHtml = '<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید';
+  var addCartHtml = '<?= cic('plus') ?> افزودن به سبد خرید';
+
+  var addBtn = $('addCart');
   if(addBtn){
-    var inCartHtml = '<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید';
-    if(inCart()) addBtn.innerHTML=inCartHtml;
-    addBtn.addEventListener('click', function(){
-      var c=getCart();
-      if(!inCart()){ c.push(COURSE); setCart(c); toast('دوره به سبد خرید اضافه شد.'); addBtn.innerHTML=inCartHtml; }
-      else toast('این دوره از قبل در سبد شماست.');
-      if(window.maxaCartSync) window.maxaCartSync();
+    if(inCart()) {
+      addBtn.innerHTML = inCartHtml;
+      addBtn.classList.add('btn-soft');
+    }
+    addBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var c = getCart();
+      if(!inCart()){
+        c.push(COURSE);
+        setCart(c);
+        toast('دوره با موفقیت به سبد خرید اضافه شد.');
+        addBtn.innerHTML = inCartHtml;
+        addBtn.classList.add('btn-soft');
+      } else {
+        toast('این دوره از قبل در سبد خرید شما موجود است.');
+      }
     });
   }
-  var buyBtn=$('buyNow');
+
+  var buyBtn = $('buyNow');
   if(buyBtn){
-    buyBtn.addEventListener('click', function(){
-      var c=getCart(); if(!inCart()){ c.push(COURSE); setCart(c); }
-      if(window.maxaCartSync) window.maxaCartSync();
-      window.top.location.href='/courses/checkout?id='+COURSE.id;
+    buyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var c = getCart();
+      if(!inCart()){
+        c.push(COURSE);
+        setCart(c);
+      }
+      try {
+        if(window.top && window.top.location) {
+          window.top.location.href = '/courses/checkout?id=' + COURSE.id;
+        } else {
+          window.location.href = '/courses/checkout?id=' + COURSE.id;
+        }
+      } catch(err) {
+        window.location.href = '/courses/checkout?id=' + COURSE.id;
+      }
     });
   }
 
   // ویدئوی معرفی
-  var modal=$('promoModal');
-  $('promoBtn').addEventListener('click', function(){
-    if(promoUrl){
-      var slot=$('promoSlot');
-      if(/<iframe/i.test(promoUrl)) slot.innerHTML=promoUrl;
-      else if(/youtube|youtu\.be|aparat/i.test(promoUrl)) slot.innerHTML='<iframe src="'+promoUrl+'" style="width:100%;height:100%;border:0" allowfullscreen></iframe>';
-      else slot.innerHTML='<video src="'+promoUrl+'" controls autoplay style="width:100%;height:100%"></video>';
-    }
-    modal.style.display='grid';
-  });
-  function closeP(){ modal.style.display='none'; }
-  $('promoClose').addEventListener('click', closeP);
-  modal.addEventListener('click', function(e){ if(e.target===modal) closeP(); });
+  var modal = $('promoModal');
+  var promoBtn = $('promoBtn');
+  if(promoBtn && modal){
+    promoBtn.addEventListener('click', function(){
+      if(promoUrl){
+        var slot = $('promoSlot');
+        if(slot){
+          if(/<iframe/i.test(promoUrl)) {
+            slot.innerHTML = promoUrl;
+          } else if(/youtube|youtu\.be|aparat/i.test(promoUrl)) {
+            slot.innerHTML = '<iframe src="' + promoUrl + '" style="width:100%;height:100%;border:0" allowfullscreen></iframe>';
+          } else {
+            slot.innerHTML = '<video src="' + promoUrl + '" controls autoplay style="width:100%;height:100%"></video>';
+          }
+        }
+      }
+      modal.style.display = 'grid';
+    });
+  }
+  function closeP(){ if(modal) modal.style.display = 'none'; }
+  var promoClose = $('promoClose');
+  if(promoClose) promoClose.addEventListener('click', closeP);
+  if(modal){
+    modal.addEventListener('click', function(e){ if(e.target === modal) closeP(); });
+  }
 })();
 </script>
 <?php course_site_footer(); ?>

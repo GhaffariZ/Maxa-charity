@@ -109,13 +109,8 @@
 
     .article-sidebar {
       grid-area: sidebar;
-      position: sticky;
-      top: 24px;
-      align-self: start;
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-      height: fit-content;
+      align-self: stretch;
+      min-width: 0;
     }
 
     /* ---------------- hero image ---------------- */
@@ -144,20 +139,15 @@
 
 .article-sidebar {
   grid-area: sidebar;
-  align-self: start;
+  align-self: stretch;
   min-width: 0;
 }
 
-/*
-  نکته مهم:
-  sticky را روی sidebar-stack گذاشتیم نه خود aside.
-  این باعث می‌شود کنترل بهتری روی ارتفاع، فاصله بالا و خروج از پایین صفحه داشته باشیم.
-*/
-
-/* اصلاح sticky برای جلوگیری از تداخل با هدر */
+/* اصلاح sticky برای شناور ماندن سایدبار در تمام طول مقاله */
 .sidebar-stack {
+  position: -webkit-sticky;
   position: sticky;
-  top: 150px; /* مقدار بیشتر برای جلوگیری از برخورد با هدر */
+  top: 96px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1141,9 +1131,9 @@
     <div class="related-card">
       <h3 class="related-card-title">مطالب مرتبط</h3>
       <ul class="related-list">
-        <li><a href="#">مراقبت حمایتی چیست؟</a></li>
-        <li><a href="#">خدمات تسکینی مکسا</a></li>
-        <li><a href="#">راهنمای دریافت مشاوره</a></li>
+        <li><a href="/supportiveandpalliativecare">مراقبت حمایتی چیست؟</a></li>
+        <li><a href="/patientoption">خدمات تسکینی مکسا</a></li>
+        <li><a href="/patientintake">راهنمای دریافت مشاوره</a></li>
       </ul>
     </div>
   </div>

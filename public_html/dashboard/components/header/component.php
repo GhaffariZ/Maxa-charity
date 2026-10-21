@@ -1128,8 +1128,8 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
                     </div>
                     <div class="mega-col">
                       <div class="mega-col-title">گزارش‌ها</div>
-                      <a href="/image-gallery.html">گزارش‌های سالانه</a>
-                      <a href="/video-gallery.html">صورت‌های مالی</a>
+                      <a href="/annual-reports">گزارش‌های سالانه</a>
+                      <a href="/financial-reports">صورت‌های مالی</a>
                     </div>
                   </div>
                 </div>

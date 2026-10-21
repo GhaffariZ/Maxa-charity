@@ -17,6 +17,10 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # ---- Redirect root to /home -----------------------------------------------------
 RewriteRule ^$ /home [R=301,L]
 
+# ---- Return 404 for non-existing .html files ------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule \.html$ /404.html [L,NC]
+
 # ---- Leave the API alone (handled by api/.htaccess) -----------------------------
 RewriteRule ^api(/|$) - [L]
 
@@ -99,48 +103,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^courses/([0-9]+)/?$ course-details.php?id=$1 [L,QSA]
 
-# ---------------------------------------------------------
-# 0.7) تماس با ما (Contact us) clean URL
-#      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
-#      /contactus به‌جای page-view.php به صفحه‌ی تماس برود.
-#      /contactus            -> contactus.php
-#      /contactus.html       -> 301 به /contactus (سازگاری با لینک‌های قدیمی)
-# ---------------------------------------------------------
-RewriteCond %{THE_REQUEST} \s/+contactus\.html[\s?] [NC]
-RewriteRule ^contactus\.html$ /contactus [R=301,L]
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^contactus/?$ contactus.php [L,QSA]
-
-# Alternative spelling used by some external links.
-RewriteRule ^contact-us/?$ contactus.php [L,QSA]
-
-# The database/component slug is "patientoption", while the public link is
-# intentionally the more readable /patient-option.
-RewriteRule ^patient-option/?$ dashboard/page-view.php?slug=patientoption [L,QSA]
-
-# ---------------------------------------------------------
-# 0.8) شعب مکسا (Branches)
-#      توجه: مسیر بدون پسوندِ /branches توسط فایروال سرور (WAF/ModSecurity)
-#      با خطای 403 مسدود می‌شود؛ بنابراین مستقیماً به branches.php لینک می‌دهیم.
-#      اینجا فقط لینک‌های قدیمیِ /branches.html را به branches.php هدایت می‌کنیم.
-# ---------------------------------------------------------
-RewriteCond %{THE_REQUEST} \s/+branches\.html[\s?] [NC]
-RewriteRule ^branches\.html$ /branches.php [R=301,L]
-
-# ---------------------------------------------------------
-# 0.85) شورای عالی و هیئت مدیره (Supreme Council & Board of Directors)
-#       هدایت لینک‌های قدیمی .html به مسیرهای تمیز
-# ---------------------------------------------------------
-RewriteCond %{THE_REQUEST} \s/+headdirectors\.html[\s?] [NC]
-RewriteRule ^headdirectors\.html$ /headdirectors [R=301,L]
-
-RewriteCond %{THE_REQUEST} \s/+directors\.html[\s?] [NC]
-RewriteRule ^directors\.html$ /directors [R=301,L]
-
-RewriteCond %{THE_REQUEST} \s/+doctorspage\.html[\s?] [NC]
-RewriteRule ^doctorspage\.html$ /doctorspage [R=301,L]
 
 # ---------------------------------------------------------
 # 0.9) سفارش استند (Stand Order) clean URLs
