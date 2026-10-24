@@ -24,6 +24,48 @@ function signature(string $value): string {
 function tokenValid(string $token): bool {
     return preg_match('/^[A-Za-z0-9._~-]{8,500}$/D', $token) === 1;
 }
+/** Bounded error text only; exclude response data and redact credentials before signing. */
+function providerMessages(array $result): array {
+    $messages = [];
+    $walk = function (mixed $value, int $depth = 0) use (&$walk, &$messages): void {
+        if ($depth > 4 || count($messages) >= 6) return;
+        if (is_array($value)) {
+            foreach ($value as $item) $walk($item, $depth + 1);
+        } elseif (is_string($value) && $value !== '') {
+            foreach (['MAHRAMANE_VANDAR_API_KEY', 'MAHRAMANE_BRIDGE_SECRET'] as $key) {
+                $secret = campaign_service_env($key);
+                if ($secret !== '') $value = str_replace($secret, '[redacted]', $value);
+            }
+            $value = strip_tags($value);
+            $value = preg_replace('~https?://[^\s<>]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|[A-Za-z0-9_=-]{24,}|[0-9]{7,}~u', '[redacted]', $value) ?? '';
+            $value = trim(preg_replace('/[\p{Cc}\p{Cf}\s]+/u', ' ', $value) ?? '');
+            // No mbstring dependency: truncate at a valid UTF-8 boundary.
+            $value = substr($value, 0, 400);
+            while ($value !== '' && preg_match('//u', $value) !== 1) $value = substr($value, 0, -1);
+            if ($value !== '') $messages[] = $value;
+        }
+    };
+    foreach (['errors', 'error', 'message'] as $field) $walk($result[$field] ?? null);
+    return array_values(array_unique($messages));
+}
+/** Only fixed categories are shown to public users. */
+function rejectionReason(array $messages): string {
+    $known = [
+        'وارد کردن api key الزامی است' => 'API_KEY_INVALID',
+        'api_key معتبر نیست' => 'API_KEY_INVALID',
+        'IP پذیرنده معتبر نیست' => 'MERCHANT_IP_INVALID',
+        'وارد کردن callback_url الزامی است' => 'CALLBACK_INVALID',
+        'callback_url معتبر نیست' => 'CALLBACK_INVALID',
+        'وارد کردن amount الزامی است' => 'AMOUNT_INVALID',
+        'amount نباید کوچکتر از 1000 باشد' => 'AMOUNT_INVALID',
+        'amount باید عدد یا رشته‌ای از اعداد باشد' => 'AMOUNT_INVALID',
+    ];
+    foreach ($messages as $error) {
+        $normalized = trim(strtr($error, ['ي' => 'ی', 'ك' => 'ک']), " .\t\n\r\0\x0B");
+        if (isset($known[$normalized])) return $known[$normalized];
+    }
+    return 'UNKNOWN';
+}
 /** @return array<string,mixed> */
 function gateway(string $method, array $payload): array {
     if (!function_exists('curl_init')) throw new RuntimeException('MACSA_CURL_MISSING');
@@ -46,6 +88,8 @@ function gateway(string $method, array $payload): array {
     if (!is_string($raw) || $status >= 500 || $status === 0) throw new RuntimeException('VANDAR_UNAVAILABLE');
     $result = json_decode($raw, true, 32, JSON_THROW_ON_ERROR);
     if (!is_array($result)) throw new RuntimeException('VANDAR_UNAVAILABLE');
+    // Local metadata, never obtained from a provider-controlled field.
+    $result['_bridgeHttpStatus'] = $status;
     return $result;
 }
 function respond(string $nonce, array $result): never {
@@ -102,7 +146,10 @@ try {
         if (($data['action'] ?? '') === 'request') {
             $result = gateway('send', ['amount' => $amount, 'callback_url' => 'https://macsa.ir/mahramane/?callback=1', 'factorNumber' => $attempt, 'description' => 'حمایت از بیماران سرطانی؛ نمایش محرمانه']);
             $token = (string)($result['token'] ?? '');
-            respond($nonce, ($result['status'] ?? 0) == 1 && tokenValid($token) ? ['code' => 100, 'authority' => $token] : ['code' => -1]);
+            if (($result['status'] ?? 0) == 1 && tokenValid($token)) respond($nonce, ['code' => 100, 'authority' => $token]);
+            if (($result['status'] ?? null) != 0 || !array_key_exists('status', $result)) throw new RuntimeException('VANDAR_UNAVAILABLE');
+            $messages = providerMessages($result);
+            respond($nonce, ['code' => -1, 'rejectionReason' => rejectionReason($messages), 'rejectionDiagnostics' => ['version' => 1, 'httpStatus' => $result['_bridgeHttpStatus'], 'messages' => $messages]]);
         }
         if (($data['action'] ?? '') !== 'verify' || !tokenValid((string)($data['authority'] ?? ''))) {
             http_response_code(400); exit;
