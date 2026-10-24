@@ -13,12 +13,12 @@ campaign_service_load_env();
 
 function setting(string $key): string {
     $value = campaign_service_env($key);
-    if ($value === '') throw new RuntimeException('Configuration missing');
+    if ($value === '') throw new RuntimeException('MACSA_CONFIG_MISSING');
     return $value;
 }
 function signature(string $value): string {
     $secret = setting('MAHRAMANE_BRIDGE_SECRET');
-    if (strlen($secret) < 32) throw new RuntimeException('Configuration invalid');
+    if (strlen($secret) < 32) throw new RuntimeException('MACSA_CONFIG_MISSING');
     return hash_hmac('sha256', $value, $secret);
 }
 function tokenValid(string $token): bool {
@@ -26,6 +26,7 @@ function tokenValid(string $token): bool {
 }
 /** @return array<string,mixed> */
 function gateway(string $method, array $payload): array {
+    if (!function_exists('curl_init')) throw new RuntimeException('MACSA_CURL_MISSING');
     $handle = curl_init('https://ipg.vandar.io/api/v3/' . $method);
     curl_setopt_array($handle, [
         CURLOPT_POST => true,
@@ -42,15 +43,24 @@ function gateway(string $method, array $payload): array {
     $raw = curl_exec($handle);
     $status = (int)curl_getinfo($handle, CURLINFO_HTTP_CODE);
     curl_close($handle);
-    if (!is_string($raw) || $status >= 500 || $status === 0) throw new RuntimeException('Gateway unavailable');
+    if (!is_string($raw) || $status >= 500 || $status === 0) throw new RuntimeException('VANDAR_UNAVAILABLE');
     $result = json_decode($raw, true, 32, JSON_THROW_ON_ERROR);
-    if (!is_array($result)) throw new RuntimeException('Gateway response invalid');
+    if (!is_array($result)) throw new RuntimeException('VANDAR_UNAVAILABLE');
     return $result;
 }
 function respond(string $nonce, array $result): never {
     $raw = json_encode(['nonce' => $nonce, 'result' => $result], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
     header('Content-Type: application/json');
     header('X-Mahramane-Signature: ' . signature($raw));
+    echo $raw;
+    exit;
+}
+function rejectRequest(int $status, string $code, ?string $nonce = null): never {
+    http_response_code($status);
+    header('Content-Type: application/json');
+    $raw = json_encode(['nonce' => $nonce, 'error' => $code], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+    $secret = campaign_service_env('MAHRAMANE_BRIDGE_SECRET');
+    if (strlen($secret) >= 32) header('X-Mahramane-Signature: ' . hash_hmac('sha256', $raw, $secret));
     echo $raw;
     exit;
 }
@@ -65,19 +75,25 @@ function details(array $transaction): array {
     if (is_numeric($transaction['realAmount'] ?? null)) $result['netRial'] = (float)$transaction['realAmount'];
     return $result;
 }
+$nonce = null;
 try {
     $returnUrl = setting('MAHRAMANE_CALLBACK_URL');
     if (!str_starts_with($returnUrl, 'https://') || !str_ends_with($returnUrl, '/api/v1/payments/callback')) throw new RuntimeException('Invalid callback configuration');
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $raw = file_get_contents('php://input', false, null, 0, 8193);
         if (!is_string($raw) || strlen($raw) > 8192 || !hash_equals(signature($raw), (string)($_SERVER['HTTP_X_MAHRAMANE_SIGNATURE'] ?? ''))) {
-            http_response_code(403); exit;
+            rejectRequest(403, 'MACSA_AUTH_FAILED');
         }
         $data = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
-        if (!is_array($data) || !is_int($data['at'] ?? null) || abs(time() - $data['at']) > 60 || !preg_match('/^[a-f0-9]{48}$/D', (string)($data['nonce'] ?? '')) || ($data['callback'] ?? '') !== $returnUrl) {
-            http_response_code(400); exit;
-        }
+        if (!is_array($data) || !preg_match('/^[a-f0-9]{48}$/D', (string)($data['nonce'] ?? ''))) rejectRequest(400, 'MACSA_INVALID_REQUEST');
         $nonce = $data['nonce'];
+        if (!is_int($data['at'] ?? null) || abs(time() - $data['at']) > 60) rejectRequest(400, 'MACSA_CLOCK_MISMATCH', $nonce);
+        if (($data['callback'] ?? '') !== $returnUrl) rejectRequest(400, 'MACSA_CALLBACK_MISMATCH', $nonce);
+        if (($data['action'] ?? '') === 'health') {
+            setting('MAHRAMANE_VANDAR_API_KEY');
+            if (!function_exists('curl_init')) throw new RuntimeException('MACSA_CURL_MISSING');
+            respond($nonce, ['code' => 100]);
+        }
         $amount = $data['amountRial'] ?? null;
         $attempt = (string)($data['attemptId'] ?? '');
         if (!is_int($amount) || $amount < 1100000 || $amount > 2000000000 || !preg_match('/^[a-f0-9-]{36}$/D', $attempt)) {
@@ -95,13 +111,13 @@ try {
         $transaction = gateway('transaction', $payload);
         // The merchant must bear the gateway fee: exact IRR amount is checked before verification.
         if (($transaction['status'] ?? 0) != 1 || (string)($transaction['factorNumber'] ?? '') !== $attempt || !is_numeric($transaction['amount'] ?? null) || (float)$transaction['amount'] !== (float)$amount) {
-            throw new RuntimeException('Transaction binding or amount mismatch');
+            throw new RuntimeException('TRANSACTION_MISMATCH');
         }
         $code = (int)($transaction['code'] ?? 0);
         if ($code === 1) {
             $verified = gateway('verify', $payload);
             if (($verified['status'] ?? 0) == 1) {
-                if ((float)($verified['amount'] ?? 0) !== (float)$amount || (string)($verified['factorNumber'] ?? '') !== $attempt || empty($verified['transId'])) throw new RuntimeException('Verification mismatch');
+                if ((float)($verified['amount'] ?? 0) !== (float)$amount || (string)($verified['factorNumber'] ?? '') !== $attempt || empty($verified['transId'])) throw new RuntimeException('TRANSACTION_MISMATCH');
                 respond($nonce, ['code' => 100, 'ref_id' => (string)$verified['transId'], 'amountRial' => $amount, 'details' => (object)details($verified + $transaction)]);
             }
             // A concurrent verifier or a lost response may have completed verification.
@@ -131,10 +147,8 @@ try {
     exit;
 } catch (Throwable $error) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        http_response_code(503);
-        header('Content-Type: application/json');
-        echo '{"error":"PAYMENT_UNCONFIRMED"}';
-        exit;
+        $known = ['MACSA_CONFIG_MISSING', 'MACSA_CURL_MISSING', 'VANDAR_UNAVAILABLE', 'TRANSACTION_MISMATCH'];
+        rejectRequest(503, in_array($error->getMessage(), $known, true) ? $error->getMessage() : 'PAYMENT_UNCONFIRMED', $nonce);
     }
     if (http_response_code() < 400) http_response_code(503);
 }
