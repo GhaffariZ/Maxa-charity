@@ -69,14 +69,19 @@ function rejectionReason(array $messages): string {
 /** @return array<string,mixed> */
 function gateway(string $method, array $payload): array {
     if (!function_exists('curl_init')) throw new RuntimeException('MACSA_CURL_MISSING');
+    static $startedAt = null;
+    $startedAt ??= microtime(true);
+    // All provider calls must finish inside the caller's 25-second deadline.
+    $remainingSeconds = (int)floor(20 - (microtime(true) - $startedAt));
+    if ($remainingSeconds < 1) throw new RuntimeException('VANDAR_UNAVAILABLE');
     $handle = curl_init('https://ipg.vandar.io/api/v3/' . $method);
     curl_setopt_array($handle, [
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode(['api_key' => setting('MAHRAMANE_VANDAR_API_KEY')] + $payload, JSON_THROW_ON_ERROR),
         CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Accept: application/json'],
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => min(5, $remainingSeconds),
+        CURLOPT_TIMEOUT => min(15, $remainingSeconds),
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_SSL_VERIFYHOST => 2,
@@ -119,6 +124,29 @@ function details(array $transaction): array {
     if (is_numeric($transaction['realAmount'] ?? null)) $result['netRial'] = (float)$transaction['realAmount'];
     return $result;
 }
+/** Failure responses can omit payment metadata; supplied metadata must still match. */
+function checkBinding(array $transaction, int $amount, string $attempt, bool $required = true): void {
+    if (($required || isset($transaction['factorNumber'])) && (string)($transaction['factorNumber'] ?? '') !== $attempt) throw new RuntimeException('TRANSACTION_MISMATCH');
+    if (($required || isset($transaction['amount'])) && (!is_numeric($transaction['amount'] ?? null) || (float)$transaction['amount'] !== (float)$amount)) throw new RuntimeException('TRANSACTION_MISMATCH');
+}
+/** Only authenticated provider evidence, never a browser NOK, makes failure terminal. */
+function transactionFailure(array $result, int $amount, string $attempt): ?int {
+    $status = $result['status'] ?? null;
+    $code = (int)($result['code'] ?? 0);
+    if (in_array($status, [0, 1, '0', '1'], true) && in_array($code, [3, 4], true)) {
+        checkBinding($result, $amount, $attempt, false);
+        return -$code;
+    }
+    $messages = providerMessages($result);
+    if (($status === 0 || $status === '0') && count($messages) === 1 && trim(strtr($messages[0], ['ي' => 'ی', 'ك' => 'ک']), " .\t\n\r") === 'تراکنش با خطا مواجه شده است') {
+        checkBinding($result, $amount, $attempt, false);
+        return -4;
+    }
+    return null;
+}
+function pendingResult(string $nonce, array $result): never {
+    respond($nonce, ['code' => 0, 'rejectionDiagnostics' => ['version' => 1, 'httpStatus' => $result['_bridgeHttpStatus'] ?? 200, 'messages' => providerMessages($result)]]);
+}
 $nonce = null;
 try {
     $returnUrl = setting('MAHRAMANE_CALLBACK_URL');
@@ -140,10 +168,11 @@ try {
         }
         $amount = $data['amountRial'] ?? null;
         $attempt = (string)($data['attemptId'] ?? '');
-        if (!is_int($amount) || $amount < 1100000 || $amount > 2000000000 || !preg_match('/^[a-f0-9-]{36}$/D', $attempt)) {
-            http_response_code(400); exit;
+        if (!is_int($amount) || $amount < 1 || $amount > 2000000000 || !preg_match('/^[a-f0-9-]{36}$/D', $attempt)) {
+            rejectRequest(400, 'MACSA_INVALID_REQUEST', $nonce);
         }
         if (($data['action'] ?? '') === 'request') {
+            if ($amount < 10000) respond($nonce, ['code' => -1, 'rejectionReason' => 'AMOUNT_BELOW_MINIMUM', 'rejectionDiagnostics' => ['version' => 1, 'httpStatus' => 400, 'messages' => ['حداقل مبلغ حمایت ۱۰٬۰۰۰ ریال است.']]]);
             $result = gateway('send', ['amount' => $amount, 'callback_url' => 'https://macsa.ir/mahramane/?callback=1', 'factorNumber' => $attempt, 'description' => 'حمایت از بیماران سرطانی؛ نمایش محرمانه']);
             $token = (string)($result['token'] ?? '');
             if (($result['status'] ?? 0) == 1 && tokenValid($token)) respond($nonce, ['code' => 100, 'authority' => $token]);
@@ -156,26 +185,38 @@ try {
         }
         $payload = ['token' => $data['authority']];
         $transaction = gateway('transaction', $payload);
-        // The merchant must bear the gateway fee: exact IRR amount is checked before verification.
-        if (($transaction['status'] ?? 0) != 1 || (string)($transaction['factorNumber'] ?? '') !== $attempt || !is_numeric($transaction['amount'] ?? null) || (float)$transaction['amount'] !== (float)$amount) {
-            throw new RuntimeException('TRANSACTION_MISMATCH');
-        }
+        $failure = transactionFailure($transaction, $amount, $attempt);
+        if ($failure !== null) respond($nonce, ['code' => $failure]);
+        if (($transaction['status'] ?? 0) != 1) pendingResult($nonce, $transaction);
         $code = (int)($transaction['code'] ?? 0);
+        if (!in_array($code, [1, 2], true)) {
+            checkBinding($transaction, $amount, $attempt, false);
+            pendingResult($nonce, $transaction);
+        }
+        // The merchant must bear the gateway fee: exact IRR amount is checked before verification.
+        checkBinding($transaction, $amount, $attempt);
         if ($code === 1) {
             $verified = gateway('verify', $payload);
             if (($verified['status'] ?? 0) == 1) {
                 if ((float)($verified['amount'] ?? 0) !== (float)$amount || (string)($verified['factorNumber'] ?? '') !== $attempt || empty($verified['transId'])) throw new RuntimeException('TRANSACTION_MISMATCH');
                 respond($nonce, ['code' => 100, 'ref_id' => (string)$verified['transId'], 'amountRial' => $amount, 'details' => (object)details($verified + $transaction)]);
             }
+            if (($verified['status'] ?? 0) == 3) {
+                checkBinding($verified, $amount, $attempt, false);
+                respond($nonce, ['code' => -3]);
+            }
+            $failure = transactionFailure($verified, $amount, $attempt);
+            if ($failure !== null) respond($nonce, ['code' => $failure]);
             // A concurrent verifier or a lost response may have completed verification.
             $transaction = gateway('transaction', $payload);
+            $failure = transactionFailure($transaction, $amount, $attempt);
+            if ($failure !== null) respond($nonce, ['code' => $failure]);
             $code = (int)($transaction['code'] ?? 0);
         }
         if ($code === 2 && ($transaction['status'] ?? 0) == 1 && (string)($transaction['factorNumber'] ?? '') === $attempt && (float)($transaction['amount'] ?? 0) === (float)$amount && !empty($transaction['transId'])) {
             respond($nonce, ['code' => 101, 'ref_id' => (string)$transaction['transId'], 'amountRial' => $amount, 'details' => (object)details($transaction)]);
         }
-        if (in_array($code, [3, 4], true)) respond($nonce, ['code' => -$code]);
-        throw new RuntimeException('Verification pending');
+        pendingResult($nonce, $transaction);
     }
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') { http_response_code(405); exit; }
     $token = (string)($_GET['token'] ?? '');
