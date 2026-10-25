@@ -190,7 +190,29 @@ try {
     if (!$expires || $expires < time() || $expires > time() + 1200 || !hash_equals(signature('launch:' . $token . ':' . $expires), (string)($_GET['signature'] ?? ''))) {
         http_response_code(403); throw new RuntimeException('Expired launch');
     }
-    header('Location: https://ipg.vandar.io/v3/' . rawurlencode($token), true, 303);
+    // Commit a real merchant document before navigating: a redirect chain does not
+    // make Macsa the referring document. Never include the signed query in Referer.
+    $gatewayUrl = 'https://ipg.vandar.io/v3/' . rawurlencode($token);
+    $scriptNonce = base64_encode(random_bytes(24));
+    $escapedUrl = htmlspecialchars($gatewayUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    header('Content-Type: text/html; charset=utf-8');
+    header('Referrer-Policy: origin');
+    header("Content-Security-Policy: default-src 'none'; script-src 'nonce-{$scriptNonce}'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'");
+    ?>
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="origin">
+<title>انتقال به درگاه حمایت | مکسا</title>
+<style>body{font-family:Tahoma,sans-serif;min-height:90vh;display:grid;place-items:center;background:#f5faf9;color:#063a3c;margin:0;padding:20px}main{box-sizing:border-box;width:100%;max-width:440px;background:white;border:1px solid #dcebea;border-radius:20px;padding:28px;line-height:2}h1{font-size:1.25rem}a{display:inline-block;background:#007b7a;color:white;border-radius:10px;padding:10px 20px;text-decoration:none}a:focus-visible{outline:3px solid #063a3c;outline-offset:4px}</style>
+</head>
+<body>
+<main aria-labelledby="transfer-title"><h1 id="transfer-title">در حال انتقال به درگاه حمایت</h1><p role="status">لطفاً چند لحظه منتظر بمانید. اگر انتقال انجام نشد، دکمهٔ زیر را بزنید.</p><a href="<?= $escapedUrl ?>" referrerpolicy="origin">ادامه به درگاه پرداخت</a></main>
+<script nonce="<?= $scriptNonce ?>">window.location.replace(<?= json_encode($gatewayUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) ?>);</script>
+</body></html>
+    <?php
     exit;
 } catch (Throwable $error) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
