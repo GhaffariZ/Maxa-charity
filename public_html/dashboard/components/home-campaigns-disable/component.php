@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/site-locale.php';
 $homeCampaignSources = [];
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
@@ -14,15 +15,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
   <div class="hc-wrap">
     <div class="hc-head">
       <div>
-        <span class="hc-kicker">با هم، برای امید</span>
-        <h2 id="hc-title">آخرین کمپین‌های مراکز مکسا</h2>
-        <p>تازه‌ترین فرصت‌های همراهی با بیماران در مراکز مختلف مکسا</p>
+        <span class="hc-kicker"><?= site_e('با هم، برای امید') ?></span>
+        <h2 id="hc-title"><?= site_e('آخرین کمپین‌های مراکز مکسا') ?></h2>
+        <p><?= site_e('تازه‌ترین فرصت‌های همراهی با بیماران در مراکز مختلف مکسا') ?></p>
       </div>
-      <div class="hc-actions" aria-label="کنترل کروسل">
-        <button type="button" class="hc-arrow" id="hc-prev" aria-label="کمپین‌های قبلی">
+      <div class="hc-actions" aria-label="<?= site_e('کنترل کروسل') ?>">
+        <button type="button" class="hc-arrow" id="hc-prev" aria-label="<?= site_e('کمپین‌های قبلی') ?>">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <button type="button" class="hc-arrow" id="hc-next" aria-label="کمپین‌های بعدی">
+        <button type="button" class="hc-arrow" id="hc-next" aria-label="<?= site_e('کمپین‌های بعدی') ?>">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </div>
@@ -46,8 +47,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
     </div>
 
-    <div class="hc-dots" id="hc-dots" aria-label="صفحات کروسل"></div>
-    <p class="hc-empty" id="hc-empty" hidden>در حال حاضر کمپین فعالی برای نمایش وجود ندارد.</p>
+    <div class="hc-dots" id="hc-dots" aria-label="<?= site_e('صفحات کروسل') ?>"></div>
+    <p class="hc-empty" id="hc-empty" hidden><?= site_e('در حال حاضر کمپین فعالی برای نمایش وجود ندارد.') ?></p>
   </div>
 </section>
 
@@ -58,7 +59,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     --radius:18px;--shadow-sm:0 1px 2px rgba(16,40,40,.04),0 2px 6px rgba(16,40,40,.05);
     --shadow-md:0 10px 24px rgba(16,40,40,.07),0 4px 10px rgba(16,40,40,.05);
     --ease:cubic-bezier(.2,.8,.2,1);
-    direction:rtl;color:var(--text);font-family:'Vazirmatn',Tahoma,sans-serif;
+    direction:var(--site-direction, rtl);color:var(--text);font-family:'Vazirmatn',Tahoma,sans-serif;
     padding:78px 0 72px;background:linear-gradient(180deg,#fff 0%,#f8fbfb 100%);overflow:hidden;
   }
   .hc *{box-sizing:border-box}
@@ -162,7 +163,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     card.className='bh-card';
     card.innerHTML='<div class="bh-thumb"><img alt=""></div>'+
       '<div class="bh-body">'+
-        '<span class="bh-tag">مرکز '+esc(campaign.branch_name||'مکسا')+'</span>'+
+        '<span class="bh-tag">مرکز '+esc(campaign.branch_name||<?= site_js_text('مکسا') ?>)+'</span>'+
         '<h3>'+esc(campaign.title||'')+'</h3>'+
         '<p>'+esc(cut(campaign.description||campaign.short_description||'',90))+'</p>'+
         progress+

@@ -1,8 +1,9 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="maxsa-glass" data-component="macsa-stories">
 
 <h2 class="maxsa-title">
-بانک روایت‌های امید مکسا<br>
-<span>قصه های ایستادگی نجات یافتگان و همراهان آن ها</span>
+<?= site_e('بانک روایت‌های امید مکسا') ?><br>
+<span><?= site_e('قصه های ایستادگی نجات یافتگان و همراهان آن ها') ?></span>
 </h2>
 <div class="maxsa-global-bg"></div>
 
@@ -17,8 +18,8 @@
   <!-- Default initial cards, replaced/augmented dynamically via API -->
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
-      <span style="font-size:11px;color:#888">۴ دقیقه مطالعه</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
+      <span style="font-size:11px;color:#888"><?= site_e('۴ دقیقه مطالعه') ?></span>
     </div>
     <div class="maxsa-author">دکتر زهرا جعفری</div>
     <div class="maxsa-role">روانشناس مراقبت درمنزل شعبه تهران</div>
@@ -27,8 +28,8 @@
 
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
-      <span style="font-size:11px;color:#888">۴ دقیقه مطالعه</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
+      <span style="font-size:11px;color:#888"><?= site_e('۴ دقیقه مطالعه') ?></span>
     </div>
     <div class="maxsa-author">آقای جواد چنگی</div>
     <div class="maxsa-role">روانشناس مراقبت در منزل شعبه تهران</div>
@@ -37,8 +38,8 @@
 
   <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">روایت کادر درمان</span>
-      <span style="font-size:11px;color:#888">۵ دقیقه مطالعه</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
+      <span style="font-size:11px;color:#888"><?= site_e('۵ دقیقه مطالعه') ?></span>
     </div>
     <div class="maxsa-author">آقای علی یزدانی</div>
     <div class="maxsa-role">مددکار اجتماعی مراقبت در منزل شعبه تهران</div>
@@ -48,13 +49,13 @@
 </div>
 
 <a href="/macsa-stories-details" class="maxsa-btn">
-به قصه های زندگی نجات یافتگان مکسا گوش بسپارید</a>
+<?= site_e('به قصه های زندگی نجات یافتگان مکسا گوش بسپارید') ?></a>
 
 </div>
 
 <!-- RIGHT -->
 <div class="maxsa-right">
-<img src="{{image1}}" alt="داستان‌های امید و ایستادگی نجات‌یافتگان مکسا" width="600" height="600" loading="lazy" decoding="async">
+<img src="{{image1}}" alt="<?= site_e('داستان‌های امید و ایستادگی نجات‌یافتگان مکسا') ?>" width="600" height="600" loading="lazy" decoding="async">
 </div>
 
 </div>
@@ -85,9 +86,9 @@
         const renderCard = (st) => {
           const excerpt = (st.excerpt || st.content || '').trim();
           const shortExcerpt = excerpt.length > 150 ? excerpt.slice(0, 150) + '...' : excerpt;
-          const readTime = st.read_time || '۴ دقیقه مطالعه';
-          const role = st.narrator_role || 'همراه مکسا';
-          const tag = st.tag || 'روایت امید';
+          const readTime = st.read_time || <?= site_js_text('۴ دقیقه مطالعه') ?>;
+          const role = st.narrator_role || <?= site_js_text('همراه مکسا') ?>;
+          const tag = st.tag || <?= site_js_text('روایت امید') ?>;
 
           return `
             <a href="/macsa-story.php?id=${st.id}" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
@@ -241,7 +242,7 @@ box-shadow:
 
 transition:.35s;
 position:relative;
-text-align:right;
+text-align:start;
 }
 
 /* subtle highlight */

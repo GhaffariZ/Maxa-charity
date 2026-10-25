@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 require_once __DIR__ . '/core/icons.php';
 // ۱. اتصال به دیتابیس (اطلاعات از فایل کانفیگ خارج از گیت)
 $DB   = require __DIR__ . '/core/db-config.php';
@@ -268,7 +269,7 @@ function getFooterHTML() {
 }
 
 // بارگذاری هدر سراسری
-$pageTitle = 'آخرین اخبار و رویدادها — مکسا';
+$pageTitle = site_text('آخرین اخبار و رویدادها — مکسا');
 render_dashboard_component('header', get_defined_vars());
 ?>
 
@@ -300,12 +301,12 @@ render_dashboard_component('header', get_defined_vars());
         max-width: var(--cta-container, 1440px);
         margin: 0 auto;
         padding: 32px 20px 48px;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
     }
 
     /* بخش خوش‌آمدگویی هدر صفحه */
     .news-intro-header {
-        text-align: right;
+        text-align: start;
         margin-bottom: 40px;
         position: relative;
     }
@@ -370,7 +371,7 @@ render_dashboard_component('header', get_defined_vars());
         display: flex;
         flex-direction: column;
         justify-content: center;
-        text-align: right;
+        text-align: start;
     }
     .hero-post-meta {
         display: flex;
@@ -678,7 +679,7 @@ render_dashboard_component('header', get_defined_vars());
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        text-align: right;
+        text-align: start;
     }
     .card-post-meta {
         display: flex;
@@ -785,7 +786,7 @@ render_dashboard_component('header', get_defined_vars());
         animation: skelPulse 1.4s ease-in-out infinite;
     }
     .skeleton-loader-image { aspect-ratio: 16 / 9; }
-    .skeleton-loader-body { padding: 24px; text-align: right; }
+    .skeleton-loader-body { padding: 24px; text-align: start; }
     .skeleton-loader-line { height: 12px; border-radius: 8px; margin-bottom: 12px; }
     .skeleton-loader-line.w-80 { width: 80%; }
     .skeleton-loader-line.w-60 { width: 60%; }
@@ -842,7 +843,7 @@ render_dashboard_component('header', get_defined_vars());
         align-items: center;
         gap: 12px;
         margin-top: 48px;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
     }
     .pagination-numbers {
         display: flex;
@@ -905,16 +906,16 @@ render_dashboard_component('header', get_defined_vars());
 <main class="news-wrapper">
     <!-- بخش خوش‌آمدگویی -->
     <div class="news-intro-header">
-        <h1>آخرین اخبار و رویدادهای مکسا</h1>
-        <p>با آخرین گزارش‌ها، دستاوردها و داستان‌های امیدبخش مرکز مکسا همراه باشید.</p>
+        <h1><?= site_e('آخرین اخبار و رویدادهای مکسا') ?></h1>
+        <p><?= site_e('با آخرین گزارش‌ها، دستاوردها و داستان‌های امیدبخش مرکز مکسا همراه باشید.') ?></p>
     </div>
 
     <!-- بخش فیلترهای فعال (در صورت اعمال) -->
     <?php if ($searchQuery !== '' || $activeCategory): ?>
         <div style="margin-bottom: 24px; font-size: 14.5px; color: var(--news-text-muted); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #fff; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--news-border);">
             <div>
-                نتایج جستجو 
-                <?php if ($searchQuery !== ''): ?> برای «<strong><?= htmlspecialchars($searchQuery) ?></strong>»<?php endif; ?>
+                <?= site_e('نتایج جستجو') ?>
+                <?php if ($searchQuery !== ''): ?> <?= site_e('برای «') ?><strong><?= htmlspecialchars($searchQuery) ?></strong>»<?php endif; ?>
                 <?php if ($activeCategory): ?>
                     <?php 
                     $activeCatName = '';
@@ -925,11 +926,11 @@ render_dashboard_component('header', get_defined_vars());
                         }
                     }
                     ?>
-                    در دسته «<strong><?= htmlspecialchars($activeCatName) ?></strong>»
+                    <?= site_e('در دسته «') ?><strong><?= htmlspecialchars($activeCatName) ?></strong>»
                 <?php endif; ?>
-                — <?= faNumbers(count($allNews)) ?> مورد یافت شد.
+                — <?= faNumbers(count($allNews)) ?> <?= site_e('مورد یافت شد.') ?>
             </div>
-            <a href="news.php" style="color: var(--news-primary); font-weight: 700; text-decoration: none; font-size: 13.5px;"><i class="fa-solid fa-rotate-left"></i> حذف فیلترها</a>
+            <a href="news.php" style="color: var(--news-primary); font-weight: 700; text-decoration: none; font-size: 13.5px;"><i class="fa-solid fa-rotate-left"></i> <?= site_e('حذف فیلترها') ?></a>
         </div>
     <?php endif; ?>
 
@@ -958,9 +959,9 @@ render_dashboard_component('header', get_defined_vars());
                 <p class="hero-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
                 
                 <div class="hero-post-footer">
-                    <span class="hero-read-time"><?= iconoir('clock', '', 15) ?> <?= $readTimeFa ?> دقیقه مطالعه</span>
+                    <span class="hero-read-time"><?= iconoir('clock', '', 15) ?> <?= $readTimeFa ?> <?= site_e('دقیقه مطالعه') ?></span>
                     <a href="<?= htmlspecialchars($newsUrl) ?>" class="hero-more-btn">
-                        ادامه مطلب
+                        <?= site_e('ادامه مطلب') ?>
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </div>
@@ -1018,9 +1019,9 @@ render_dashboard_component('header', get_defined_vars());
                                     <p class="card-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
                                     
                                     <div class="card-post-footer">
-                                        <span class="card-read-time" style="display:inline-flex;align-items:center;gap:5px;"><?= iconoir('clock', '', 14) ?> <?= $readTimeFa ?> دقیقه مطالعه</span>
+                                        <span class="card-read-time" style="display:inline-flex;align-items:center;gap:5px;"><?= iconoir('clock', '', 14) ?> <?= $readTimeFa ?> <?= site_e('دقیقه مطالعه') ?></span>
                                         <a href="<?= htmlspecialchars($newsUrl) ?>" class="card-more-btn">
-                                            مشاهده خبر
+                                            <?= site_e('مشاهده خبر') ?>
                                             <i class="fas fa-chevron-left"></i>
                                         </a>
                                     </div>
@@ -1031,7 +1032,7 @@ render_dashboard_component('header', get_defined_vars());
                 <?php else: ?>
                     <div class="news-empty-state">
                         <div style="font-size: 32px; margin-bottom: 12px; color: var(--news-text-muted);"><?= iconoir('search', '', 36) ?></div>
-                        موردی در این دسته‌بندی یا جستجو پیدا نشد.
+                        <?= site_e('موردی در این دسته‌بندی یا جستجو پیدا نشد.') ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -1042,7 +1043,7 @@ render_dashboard_component('header', get_defined_vars());
                     <!-- دکمه قبلی -->
                     <?php if ($currentPage > 1): ?>
                         <a href="?page=<?= $currentPage - 1 ?><?= ($activeCategory) ? '&category=' . $activeCategory : '' ?><?= ($searchQuery !== '') ? '&q=' . urlencode($searchQuery) : '' ?>" class="pagination-arrow pagination-prev">
-                            <i class="fa-solid fa-chevron-right"></i> قبلی
+                            <i class="fa-solid fa-chevron-right"></i> <?= site_e('قبلی') ?>
                         </a>
                     <?php endif; ?>
 
@@ -1059,7 +1060,7 @@ render_dashboard_component('header', get_defined_vars());
                     <!-- دکمه بعدی -->
                     <?php if ($currentPage < $totalPages): ?>
                         <a href="?page=<?= $currentPage + 1 ?><?= ($activeCategory) ? '&category=' . $activeCategory : '' ?><?= ($searchQuery !== '') ? '&q=' . urlencode($searchQuery) : '' ?>" class="pagination-arrow pagination-next">
-                            بعدی <i class="fa-solid fa-chevron-left"></i>
+                            <?= site_e('بعدی') ?> <i class="fa-solid fa-chevron-left"></i>
                         </a>
                     <?php endif; ?>
                 </div>
@@ -1072,24 +1073,24 @@ render_dashboard_component('header', get_defined_vars());
             
             <!-- ویجت جستجو -->
             <div class="sidebar-widget">
-                <h4 class="widget-title">جستجو در اخبار</h4>
+                <h4 class="widget-title"><?= site_e('جستجو در اخبار') ?></h4>
                 <form class="widget-search-form" method="get" action="news.php">
                     <?php if ($activeCategory): ?>
                         <input type="hidden" name="category" value="<?= $activeCategory ?>">
                     <?php endif; ?>
-                    <input type="text" name="q" class="widget-search-input" value="<?= htmlspecialchars($searchQuery) ?>" placeholder="کلمه کلیدی مورد نظر..." required>
-                    <button type="submit" class="widget-search-btn" aria-label="جستجو"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <input type="text" name="q" class="widget-search-input" value="<?= htmlspecialchars($searchQuery) ?>" placeholder="<?= site_e('کلمه کلیدی مورد نظر...') ?>" required>
+                    <button type="submit" class="widget-search-btn" aria-label="<?= site_e('جستجو') ?>"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
             </div>
 
             <!-- ویجت دسته‌بندی‌ها -->
             <?php if (count($categories) > 0): ?>
                 <div class="sidebar-widget">
-                    <h4 class="widget-title">دسته‌بندی‌های خبری</h4>
+                    <h4 class="widget-title"><?= site_e('دسته‌بندی‌های خبری') ?></h4>
                     <ul class="widget-cat-list">
                         <li>
                             <a href="news.php<?= ($searchQuery !== '') ? '?q=' . urlencode($searchQuery) : '' ?>" class="widget-cat-link <?= !$activeCategory ? 'active' : '' ?>">
-                                <span>همه اخبار</span>
+                                <span><?= site_e('همه اخبار') ?></span>
                                 <span class="widget-cat-count"><?= faNumbers(array_sum(array_column($categories, 'post_count'))) ?></span>
                             </a>
                         </li>
@@ -1108,7 +1109,7 @@ render_dashboard_component('header', get_defined_vars());
             <!-- ویجت پربازدیدترین‌ها -->
             <?php if (count($popularNews) > 0): ?>
                 <div class="sidebar-widget">
-                    <h4 class="widget-title">محبوب‌ترین اخبار</h4>
+                    <h4 class="widget-title"><?= site_e('محبوب‌ترین اخبار') ?></h4>
                     <div class="widget-pop-list">
                         <?php foreach ($popularNews as $pop): 
                             $popUrl = 'news.php?category=' . (int)$pop['category_id'];

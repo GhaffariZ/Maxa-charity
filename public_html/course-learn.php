@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  محیط یادگیری / پخش‌کننده‌ی دوره — آکادمی مکسا
  *  نمایش درس‌ها (ویدئو/متن/تصویر/PDF/آزمون) + پیشرفت فراگیر
@@ -85,16 +86,16 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
 <div class="learn">
   <!-- نوار بالا -->
   <div class="lbar">
-    <a href="/courses/<?= $id ?>" class="back" target="_top" title="بازگشت"><?= cic('arrow') ?></a>
+    <a href="/courses/<?= $id ?>" class="back" target="_top" title="<?= site_e('بازگشت') ?>"><?= cic('arrow') ?></a>
     <div class="ttl"><?= e($course['title'] ?? '') ?><small><?= e($course['instructor'] ?? 'آکادمی مکسا') ?></small></div>
     <div class="sp"></div>
     <div class="lprog">
       <div class="ring">
         <svg width="38" height="38"><circle cx="19" cy="19" r="15" fill="none" stroke="var(--color-border)" stroke-width="4"/>
           <circle id="ringFg" cx="19" cy="19" r="15" fill="none" stroke="var(--color-primary)" stroke-width="4" stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="94.2"/></svg>
-        <b id="ringPct">۰٪</b>
+        <b id="ringPct"><?= site_e('۰٪') ?></b>
       </div>
-      <div class="txt"><span id="doneCount">۰</span> از <?= fa_digits($lessons) ?><small> درس</small></div>
+      <div class="txt"><span id="doneCount"><?= site_e('۰') ?></span> <?= site_e('از') ?> <?= fa_digits($lessons) ?><small> <?= site_e('درس') ?></small></div>
     </div>
     <button class="menu-tog" id="menuTog"><?= cic('menu') ?></button>
   </div>
@@ -102,24 +103,24 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
   <div class="lbody">
     <!-- صحنه -->
     <div class="lstage" id="stage">
-      <div class="stage-media" id="media"><div class="ph"><?= cic('play') ?><p style="margin-top:8px">یک درس را از فهرست انتخاب کنید</p></div></div>
+      <div class="stage-media" id="media"><div class="ph"><?= cic('play') ?><p style="margin-top:8px"><?= site_e('یک درس را از فهرست انتخاب کنید') ?></p></div></div>
       <div class="stage-head">
-        <div><h1 id="lessonTitle">به دوره خوش آمدید</h1><div class="meta" id="lessonMeta"></div></div>
-        <button class="btn btn-primary" id="completeBtn" style="display:none"><?= cic('check') ?> تکمیل و درس بعد</button>
+        <div><h1 id="lessonTitle"><?= site_e('به دوره خوش آمدید') ?></h1><div class="meta" id="lessonMeta"></div></div>
+        <button class="btn btn-primary" id="completeBtn" style="display:none"><?= cic('check') ?> <?= site_e('تکمیل و درس بعد') ?></button>
       </div>
       <div id="textContent"></div>
       <div class="stage-nav">
-        <button class="btn btn-ghost" id="prevBtn"><?= cic('chevron','') ?> درس قبلی</button>
-        <button class="btn btn-ghost" id="nextBtn">درس بعدی <?= cic('chevron','') ?></button>
+        <button class="btn btn-ghost" id="prevBtn"><?= cic('chevron','') ?> <?= site_e('درس قبلی') ?></button>
+        <button class="btn btn-ghost" id="nextBtn"><?= site_e('درس بعدی') ?> <?= cic('chevron','') ?></button>
       </div>
     </div>
 
     <!-- سایدبار -->
     <aside class="lside" id="lside">
       <div class="lside-head">
-        <h3>محتوای دوره</h3>
+        <h3><?= site_e('محتوای دوره') ?></h3>
         <div class="pbar"><i id="sideBar"></i></div>
-        <div class="pmeta"><span id="sideMeta">۰٪ تکمیل شده</span></div>
+        <div class="pmeta"><span id="sideMeta"><?= site_e('۰٪ تکمیل شده') ?></span></div>
       </div>
       <div id="sideList"></div>
     </aside>
@@ -165,12 +166,12 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
         html+='<div class="litem'+(d?' done':'')+'" data-si="'+si+'" data-li="'+li+'">'+
           '<span class="chk">'+I_CHECK+'</span>'+
           svg(l.type,'li-ic')+
-          '<span class="li-name">'+(l.title||'درس')+'</span>'+
+          '<span class="li-name">'+(l.title||<?= site_js_text('درس') ?>)+'</span>'+
           '<span class="li-dur">'+dur+'</span></div>';
       });
       html+='</div></div>';
     });
-    $('sideList').innerHTML=html||'<div style="padding:30px;text-align:center;color:var(--color-muted)">محتوایی برای این دوره ثبت نشده است.</div>';
+    $('sideList').innerHTML=html||<?= site_js_text('<div style="padding:30px;text-align:center;color:var(--color-muted)">محتوایی برای این دوره ثبت نشده است.</div>') ?>;
     $('sideList').querySelectorAll('.lsec-h').forEach(function(h){ h.addEventListener('click',function(){ h.closest('.lsec').classList.toggle('collapsed'); }); });
     $('sideList').querySelectorAll('.litem').forEach(function(it){ it.addEventListener('click',function(){ openLesson(+it.getAttribute('data-si'),+it.getAttribute('data-li')); closeSide(); }); });
   }
@@ -181,7 +182,7 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
   function openLesson(si,li){
     var l=(CURR[si]&&CURR[si].lessons[li])?CURR[si].lessons[li]:null; if(!l) return;
     cur={si:si,li:li};
-    $('lessonTitle').textContent=l.title||'درس';
+    $('lessonTitle').textContent=l.title||<?= site_js_text('درس') ?>;
     $('lessonMeta').innerHTML='<span>'+TYPE_LABEL[l.type]+'</span>'+(l.duration?'<span>'+toFa(l.duration)+' دقیقه</span>':'');
     var media=$('media'), text=$('textContent');
     media.style.display='none'; text.innerHTML='';
@@ -193,12 +194,12 @@ course_html_head('یادگیری: ' . ($course['title'] ?? ''), $pageCss);
       else if(/youtube|youtu\.be|aparat/i.test(c)) media.innerHTML='<iframe src="'+c+'" allowfullscreen></iframe>';
       else media.innerHTML='<video src="'+c+'" controls></video>';
     } else if(l.type==='image'){
-      text.innerHTML='<div class="stage-img">'+(c?'<img src="'+c+'" alt="">':'<p style="color:var(--color-muted);padding:40px">تصویری ثبت نشده است</p>')+'</div>';
+      text.innerHTML='<div class="stage-img">'+(c?'<img src="'+c+'" alt="">':<?= site_js_text('<p style="color:var(--color-muted);padding:40px">تصویری ثبت نشده است</p>') ?>)+'</div>';
     } else if(l.type==='pdf'){
       media.style.display='grid';
       media.innerHTML = c? '<iframe src="'+c+'"></iframe>' : '<div class="ph">'+svg('pdf')+'<p style="margin-top:8px">فایل PDF ثبت نشده است</p></div>';
     } else {
-      text.innerHTML='<div class="stage-text">'+(c?c.replace(/</g,'&lt;'):'<span style="color:var(--color-muted)">محتوای متنی این درس هنوز اضافه نشده است.</span>')+'</div>';
+      text.innerHTML='<div class="stage-text">'+(c?c.replace(/</g,'&lt;'):<?= site_js_text('<span style="color:var(--color-muted)">محتوای متنی این درس هنوز اضافه نشده است.</span>') ?>)+'</div>';
     }
     // فعال‌سازی آیتم
     $('sideList').querySelectorAll('.litem').forEach(function(x){ x.classList.remove('active'); });

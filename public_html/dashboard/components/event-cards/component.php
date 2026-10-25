@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/site-locale.php';
 // دریافت فهرست شعب فعال ارائه‌دهنده استند از دیتابیس برای دراپ‌داون اولیه
 $homeBranches = [];
 try {
@@ -42,7 +43,7 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
     margin: 48px auto;
     padding: 40px 28px;
     font-family: 'Vazirmatn', Tahoma, sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
     background: var(--color-surface);
     border-radius: 28px;
     box-shadow: var(--shadow-soft);
@@ -358,9 +359,9 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
 <div class="creative-section" id="homeStandSection">
 
     <div class="creative-title-wrapper">
-        <h2 class="creative-title">سفارش استند و کارت</h2>
+        <h2 class="creative-title"><?= site_e('سفارش استند و کارت') ?></h2>
         <p class="creative-subtitle">
-            در لحظات شادباش و سوگواری، با سفارش استندهای خیریه مکسا، پیام همدلی خود را ماندگار نموده و هزینه آن را به درمان رایگان بیماران مبتلا به سرطان اختصاص دهید.
+            <?= site_e('در لحظات شادباش و سوگواری، با سفارش استندهای خیریه مکسا، پیام همدلی خود را ماندگار نموده و هزینه آن را به درمان رایگان بیماران مبتلا به سرطان اختصاص دهید.') ?>
         </p>
     </div>
 
@@ -371,12 +372,12 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
             <div class="branch-select-label-text">
-                <strong>انتخاب شعبه یا شهر ارائه‌دهنده استند</strong>
-                <span>طرح‌ها و مبالغ استند متناسب با هر شعبه بارگذاری می‌شوند</span>
+                <strong><?= site_e('انتخاب شعبه یا شهر ارائه‌دهنده استند') ?></strong>
+                <span><?= site_e('طرح‌ها و مبالغ استند متناسب با هر شعبه بارگذاری می‌شوند') ?></span>
             </div>
         </div>
 
-        <select id="homeBranchSelect" class="home-branch-select" aria-label="انتخاب شعبه ارائه‌دهنده استند">
+        <select id="homeBranchSelect" class="home-branch-select" aria-label="<?= site_e('انتخاب شعبه ارائه‌دهنده استند') ?>">
             <?php if (!empty($homeBranches)): ?>
                 <?php foreach ($homeBranches as $b): ?>
                     <?php 
@@ -389,8 +390,8 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
                     </option>
                 <?php endforeach; ?>
             <?php else: ?>
-                <option value="تهران">شعبه تهران</option>
-                <option value="اصفهان">شعبه اصفهان</option>
+                <option value="تهران"><?= site_e('شعبه تهران') ?></option>
+                <option value="اصفهان"><?= site_e('شعبه اصفهان') ?></option>
             <?php endif; ?>
         </select>
     </div>
@@ -401,7 +402,7 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
         <div>
-            <strong>نکته مهم:</strong> ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده تحت پوشش وجود ندارد.
+            <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده تحت پوشش وجود ندارد.') ?>
         </div>
     </div>
 
@@ -412,26 +413,26 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
         <div class="column-block column-congrats">
             <div class="block-header congrats-header">
                 <span class="badge"></span>
-                <h3>خدمات تبریک و شادباش</h3>
+                <h3><?= site_e('خدمات تبریک و شادباش') ?></h3>
             </div>
             
             <div class="cards-subgrid" id="homeCongratsGrid">
                 <!-- فال‌بک اولیه قبل از بارگذاری API -->
                 <div class="creative-card-item">
                     <div class="creative-card">
-                        <img src="/uploads/stand/happy/1.jpg" alt="استند تبریک" onerror="this.src='/dashboard/components/event-cards/images/1.png'">
+                        <img src="/uploads/stand/happy/1.jpg" alt="<?= site_e('استند تبریک') ?>" onerror="this.src='/dashboard/components/event-cards/images/1.png'">
                     </div>
-                    <div class="stand-card-title">طرح ترنم بهار</div>
-                    <div class="stand-card-price">۱٬۵۰۰٬۰۰۰ تومان</div>
-                    <a href="/stand-order.php?type=congrats" class="creative-action-btn">سفارش استند</a>
+                    <div class="stand-card-title"><?= site_e('طرح ترنم بهار') ?></div>
+                    <div class="stand-card-price"><?= site_e('۱٬۵۰۰٬۰۰۰ تومان') ?></div>
+                    <a href="/stand-order.php?type=congrats" class="creative-action-btn"><?= site_e('سفارش استند') ?></a>
                 </div>
                 <div class="creative-card-item">
                     <div class="creative-card">
-                        <img src="/uploads/stand/happy/2.jpg" alt="استند تبریک" onerror="this.src='/dashboard/components/event-cards/images/2.png'">
+                        <img src="/uploads/stand/happy/2.jpg" alt="<?= site_e('استند تبریک') ?>" onerror="this.src='/dashboard/components/event-cards/images/2.png'">
                     </div>
-                    <div class="stand-card-title">طرح گل و پروانه</div>
-                    <div class="stand-card-price">۱٬۸۰۰٬۰۰۰ تومان</div>
-                    <a href="/stand-order.php?type=congrats" class="creative-action-btn">سفارش استند</a>
+                    <div class="stand-card-title"><?= site_e('طرح گل و پروانه') ?></div>
+                    <div class="stand-card-price"><?= site_e('۱٬۸۰۰٬۰۰۰ تومان') ?></div>
+                    <a href="/stand-order.php?type=congrats" class="creative-action-btn"><?= site_e('سفارش استند') ?></a>
                 </div>
             </div>
         </div>
@@ -442,26 +443,26 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
         <div class="column-block column-condolence">
             <div class="block-header condolence-header">
                 <span class="badge"></span>
-                <h3>ابراز همدردی و تسلیت</h3>
+                <h3><?= site_e('ابراز همدردی و تسلیت') ?></h3>
             </div>
             
             <div class="cards-subgrid" id="homeCondolenceGrid">
                 <!-- فال‌بک اولیه قبل از بارگذاری API -->
                 <div class="creative-card-item">
                     <div class="creative-card">
-                        <img src="/uploads/stand/sad/1.jpg" alt="استند تسلیت" onerror="this.src='/dashboard/components/event-cards/images/3.png'">
+                        <img src="/uploads/stand/sad/1.jpg" alt="<?= site_e('استند تسلیت') ?>" onerror="this.src='/dashboard/components/event-cards/images/3.png'">
                     </div>
-                    <div class="stand-card-title">طرح یادمان مهر</div>
-                    <div class="stand-card-price">۱٬۵۰۰٬۰۰۰ تومان</div>
-                    <a href="/stand-order.php?type=condolence" class="creative-action-btn">سفارش استند</a>
+                    <div class="stand-card-title"><?= site_e('طرح یادمان مهر') ?></div>
+                    <div class="stand-card-price"><?= site_e('۱٬۵۰۰٬۰۰۰ تومان') ?></div>
+                    <a href="/stand-order.php?type=condolence" class="creative-action-btn"><?= site_e('سفارش استند') ?></a>
                 </div>
                 <div class="creative-card-item">
                     <div class="creative-card">
-                        <img src="/uploads/stand/sad/2.jpg" alt="استند تسلیت" onerror="this.src='/dashboard/components/event-cards/images/4.png'">
+                        <img src="/uploads/stand/sad/2.jpg" alt="<?= site_e('استند تسلیت') ?>" onerror="this.src='/dashboard/components/event-cards/images/4.png'">
                     </div>
-                    <div class="stand-card-title">طرح شمع و نیلوفر</div>
-                    <div class="stand-card-price">۱٬۸۰۰٬۰۰۰ تومان</div>
-                    <a href="/stand-order.php?type=condolence" class="creative-action-btn">سفارش استند</a>
+                    <div class="stand-card-title"><?= site_e('طرح شمع و نیلوفر') ?></div>
+                    <div class="stand-card-price"><?= site_e('۱٬۸۰۰٬۰۰۰ تومان') ?></div>
+                    <a href="/stand-order.php?type=condolence" class="creative-action-btn"><?= site_e('سفارش استند') ?></a>
                 </div>
             </div>
         </div>
@@ -542,14 +543,14 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
                         <img src="${s.image}" alt="${s.title}" onerror="this.src='/uploads/stand/happy/1.jpg'">
                     </div>
                     <div class="stand-card-title">${s.title}</div>
-                    <div class="stand-card-price">${faNumber(s.unit_price)} تومان</div>
-                    <a href="/stand-order.php?province=${encodeURIComponent(province)}&stand_id=${s.id}" class="creative-action-btn">
+                    <div class="stand-card-price">${faNumber(s.unit_price)}<?= site_js_fragment(' تومان</div>
+                    <a href="/stand-order.php?province=') ?>${encodeURIComponent(province)}&stand_id=${s.id}<?= site_js_fragment('" class="creative-action-btn">
                         سفارش استند
                     </a>
                 </div>
-            `).join('');
+            ') ?>`).join('');
         } else {
-            congratsGrid.innerHTML = '<div class="empty-stands-msg">در حال حاضر طرح تبریک فعالی برای این شعبه ثبت نشده است.</div>';
+            congratsGrid.innerHTML = <?= site_js_text('<div class="empty-stands-msg">در حال حاضر طرح تبریک فعالی برای این شعبه ثبت نشده است.</div>') ?>;
         }
 
         // رندر تسلیت
@@ -560,20 +561,20 @@ $defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $hom
                         <img src="${s.image}" alt="${s.title}" onerror="this.src='/uploads/stand/sad/1.jpg'">
                     </div>
                     <div class="stand-card-title">${s.title}</div>
-                    <div class="stand-card-price">${faNumber(s.unit_price)} تومان</div>
-                    <a href="/stand-order.php?province=${encodeURIComponent(province)}&stand_id=${s.id}" class="creative-action-btn">
+                    <div class="stand-card-price">${faNumber(s.unit_price)}<?= site_js_fragment(' تومان</div>
+                    <a href="/stand-order.php?province=') ?>${encodeURIComponent(province)}&stand_id=${s.id}<?= site_js_fragment('" class="creative-action-btn">
                         سفارش استند
                     </a>
                 </div>
-            `).join('');
+            ') ?>`).join('');
         } else {
-            condolenceGrid.innerHTML = '<div class="empty-stands-msg">در حال حاضر طرح تسلیت فعالی برای این شعبه ثبت نشده است.</div>';
+            condolenceGrid.innerHTML = <?= site_js_text('<div class="empty-stands-msg">در حال حاضر طرح تسلیت فعالی برای این شعبه ثبت نشده است.</div>') ?>;
         }
     }
 
     function renderEmpty() {
-        congratsGrid.innerHTML = '<div class="empty-stands-msg">هیچ استندی برای این شعبه در دسترس نیست.</div>';
-        condolenceGrid.innerHTML = '<div class="empty-stands-msg">هیچ استندی برای این شعبه در دسترس نیست.</div>';
+        congratsGrid.innerHTML = <?= site_js_text('<div class="empty-stands-msg">هیچ استندی برای این شعبه در دسترس نیست.</div>') ?>;
+        condolenceGrid.innerHTML = <?= site_js_text('<div class="empty-stands-msg">هیچ استندی برای این شعبه در دسترس نیست.</div>') ?>;
     }
 
     // لیسنر تغییر شعبه

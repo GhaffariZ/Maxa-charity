@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/core/site-locale.php';
 
 require_once __DIR__ . '/core/database.php';
 require_once __DIR__ . '/event-lib.php';
@@ -32,7 +33,7 @@ $st = $pdo->prepare("SELECT * FROM events WHERE {$where} ORDER BY {$orderBy}");
 $st->execute($params);
 $events = $st->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = 'رویدادها و همایش‌ها · مؤسسه خیریه مکسا';
+$pageTitle = site_text('رویدادها و همایش‌ها · مؤسسه خیریه مکسا');
 require __DIR__ . '/dashboard/components/header/component.php';
 ?>
 <style>
@@ -56,7 +57,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
 }
 
 .events-root {
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--ev-bg-soft);
   min-height: 80vh;
@@ -708,11 +709,11 @@ require __DIR__ . '/dashboard/components/header/component.php';
     <div class="events-hero-inner">
       <div class="events-hero-kicker">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span>تقویم و همایش‌های تخصصی مکسا</span>
+        <span><?= site_e('تقویم و همایش‌های تخصصی مکسا') ?></span>
       </div>
-      <h1>رویدادها، همایش‌ها و کارگاه‌های مکسا</h1>
+      <h1><?= site_e('رویدادها، همایش‌ها و کارگاه‌های مکسا') ?></h1>
       <p class="events-hero-lead">
-        آموزش، توانمندسازی و توسعه دانش مراقبت‌های حمایتی و تسکینی برای پزشکان، پرستاران، داوطلبان و عموم جامعه در سراسر کشور.
+        <?= site_e('آموزش، توانمندسازی و توسعه دانش مراقبت‌های حمایتی و تسکینی برای پزشکان، پرستاران، داوطلبان و عموم جامعه در سراسر کشور.') ?>
       </p>
 
       <!-- Live Search Box -->
@@ -726,12 +727,12 @@ require __DIR__ . '/dashboard/components/header/component.php';
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input type="text" name="q" class="events-search-input" id="eventsFilterInput"
-                 placeholder="جستجو در عنوان همایش، محل برگزاری یا محورهای علمی..."
+                 placeholder="<?= site_e('جستجو در عنوان همایش، محل برگزاری یا محورهای علمی...') ?>"
                  value="<?= event_h($q) ?>" autocomplete="off">
           <?php if ($q !== ''): ?>
-            <a href="/events.php<?= $filter !== 'all' ? '?filter=' . urlencode($filter) : '' ?>" class="events-search-clear" title="حذف جستجو">✕</a>
+            <a href="/events.php<?= $filter !== 'all' ? '?filter=' . urlencode($filter) : '' ?>" class="events-search-clear" title="<?= site_e('حذف جستجو') ?>">✕</a>
           <?php endif; ?>
-          <button type="submit" class="events-search-btn">جستجو</button>
+          <button type="submit" class="events-search-btn"><?= site_e('جستجو') ?></button>
         </form>
       </div>
     </div>
@@ -741,22 +742,22 @@ require __DIR__ . '/dashboard/components/header/component.php';
   <main class="events-main">
     <!-- Filter Bar -->
     <div class="events-nav-bar">
-      <div class="events-filter-pills" role="tablist" aria-label="فیلتر رویدادها">
+      <div class="events-filter-pills" role="tablist" aria-label="<?= site_e('فیلتر رویدادها') ?>">
         <a class="events-pill <?= $filter === 'all' ? 'active' : '' ?>" href="/events.php?filter=all<?= $q ? '&q=' . urlencode($q) : '' ?>">
-          <span>همه رویدادها</span>
+          <span><?= site_e('همه رویدادها') ?></span>
           <span class="events-pill-count"><?= $countAll ?></span>
         </a>
         <a class="events-pill <?= $filter === 'upcoming' ? 'active' : '' ?>" href="/events.php?filter=upcoming<?= $q ? '&q=' . urlencode($q) : '' ?>">
-          <span>پیش‌رو و جاری</span>
+          <span><?= site_e('پیش‌رو و جاری') ?></span>
           <span class="events-pill-count"><?= $countUpcoming ?></span>
         </a>
         <a class="events-pill <?= $filter === 'past' ? 'active' : '' ?>" href="/events.php?filter=past<?= $q ? '&q=' . urlencode($q) : '' ?>">
-          <span>برگزارشده</span>
+          <span><?= site_e('برگزارشده') ?></span>
           <span class="events-pill-count"><?= $countPast ?></span>
         </a>
       </div>
       <div class="events-stat-count">
-        نمایش <?= count($events) ?> رویداد<?= $q ? ' منطبق با «' . event_h($q) . '»' : '' ?>
+        <?= site_e('نمایش') ?> <?= count($events) ?> <?= site_e('رویداد') ?><?= $q ? ' منطبق با «' . event_h($q) . '»' : '' ?>
       </div>
     </div>
 
@@ -771,12 +772,12 @@ require __DIR__ . '/dashboard/components/header/component.php';
           <line x1="10" y1="14" x2="14" y2="18"></line>
           <line x1="14" y1="14" x2="10" y2="18"></line>
         </svg>
-        <h3>رویدادی در این دسته‌بندی یافت نشد</h3>
+        <h3><?= site_e('رویدادی در این دسته‌بندی یافت نشد') ?></h3>
         <p>
           <?= $q !== '' ? 'هیچ رویدادی منطبق با عبارت جستجوی «' . event_h($q) . '» پیدا نشد.' : 'در حال حاضر برنامه‌ای در این بخش تعریف نشده است.' ?>
-          می‌توانید فیلترها را تغییر داده یا از تمامی رویدادها دیدن فرمایید.
+          <?= site_e('می‌توانید فیلترها را تغییر داده یا از تمامی رویدادها دیدن فرمایید.') ?>
         </p>
-        <a href="/events.php" class="btn-ev-primary">مشاهده تمامی رویدادها</a>
+        <a href="/events.php" class="btn-ev-primary"><?= site_e('مشاهده تمامی رویدادها') ?></a>
       </div>
     <?php elseif (count($events) === 1): ?>
       <?php
@@ -791,7 +792,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
           <?php else: ?>
             <div class="featured-poster-fallback">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              <div style="font-weight:700;margin-top:10px;">همایش تخصصی مکسا</div>
+              <div style="font-weight:700;margin-top:10px;"><?= site_e('همایش تخصصی مکسا') ?></div>
             </div>
           <?php endif; ?>
           <span class="featured-badge <?= $isUpcoming ? 'active' : 'past' ?>">
@@ -802,7 +803,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
         <div class="featured-content">
           <div>
             <div class="featured-kicker">
-              <span>همایش ملی و تخصصی</span>
+              <span><?= site_e('همایش ملی و تخصصی') ?></span>
             </div>
             <h2 class="featured-title">
               <a href="/event.php?slug=<?= rawurlencode($ev['slug']) ?>"><?= event_h($ev['title']) ?></a>
@@ -812,13 +813,13 @@ require __DIR__ . '/dashboard/components/header/component.php';
               <div class="featured-meta-item">
                 <!-- Iconly Calendar SVG -->
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span>تاریخ: <?= event_h(event_date_label($ev['event_date'])) ?></span>
+                <span><?= site_e('تاریخ:') ?> <?= event_h(event_date_label($ev['event_date'])) ?></span>
               </div>
               <?php if (!empty($ev['start_time'])): ?>
                 <div class="featured-meta-item">
                   <!-- Iconly Clock SVG -->
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                  <span>شروع: <?= event_h(substr((string)$ev['start_time'], 0, 5)) ?></span>
+                  <span><?= site_e('شروع:') ?> <?= event_h(substr((string)$ev['start_time'], 0, 5)) ?></span>
                 </div>
               <?php endif; ?>
               <?php if (!empty($ev['location'])): ?>
@@ -837,13 +838,13 @@ require __DIR__ . '/dashboard/components/header/component.php';
 
           <div class="featured-actions">
             <a href="/event.php?slug=<?= rawurlencode($ev['slug']) ?>" class="btn-ev-primary">
-              <span>مشاهده جزئیات و صفحه همایش</span>
+              <span><?= site_e('مشاهده جزئیات و صفحه همایش') ?></span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </a>
             <?php if (!empty($ev['schedule_file'])): ?>
               <a href="<?= event_h($ev['schedule_file']) ?>" download class="btn-ev-outline">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>دانلود سین برنامه</span>
+                <span><?= site_e('دانلود سین برنامه') ?></span>
               </a>
             <?php endif; ?>
           </div>
@@ -893,7 +894,7 @@ require __DIR__ . '/dashboard/components/header/component.php';
 
               <div class="grid-card-footer">
                 <a href="/event.php?slug=<?= rawurlencode($ev['slug']) ?>" class="grid-card-link">
-                  <span>مشاهده جزئیات</span>
+                  <span><?= site_e('مشاهده جزئیات') ?></span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 </a>
               </div>

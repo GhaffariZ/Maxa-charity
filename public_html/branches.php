@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی «شعب مکسا».
    فهرست شعبه‌های فعال + کامپوننت نقشه‌ی ایران (همان نقشه‌ی رنگی شعب).
    ساختار صفحه از الگوی contactus.php پیروی می‌کند: هدر مشترک، محتوا، فوتر مشترک. */
@@ -111,7 +112,7 @@ $defaultBranches = [
 
 $branches = $defaultBranches;
 
-$pageTitle = 'شعب مکسا';
+$pageTitle = site_text('شعب مکسا');
 require_once __DIR__ . '/core/component-renderer.php';
 render_dashboard_component('header', get_defined_vars());
 ?>
@@ -122,7 +123,7 @@ render_dashboard_component('header', get_defined_vars());
     margin: 0 auto;
     padding: 40px 20px 50px;
     font-family: 'Vazirmatn', sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
   }
 
   /* چیدمان دوستونه: ستون راست = عنوان + فهرست شعب، ستون چپ = نقشه */
@@ -144,7 +145,7 @@ render_dashboard_component('header', get_defined_vars());
   .br-map #Iran { width: 100%; max-width: none; }
 
   .br-head {
-    text-align: right;
+    text-align: start;
     margin-bottom: 24px;
   }
   .br-head h1 {
@@ -272,8 +273,8 @@ render_dashboard_component('header', get_defined_vars());
     <!-- ستون راست: عنوان + فهرست شعب -->
     <div class="br-side">
       <div class="br-head">
-        <h1>شعب و مراکز مکسا</h1>
-        <p>شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. با انتخاب هر شعبه، به صفحه اختصاصی آن هدایت می‌شوید.</p>
+        <h1><?= site_e('شعب و مراکز مکسا') ?></h1>
+        <p><?= site_e('شبکه‌ای از شعب و مراکز مراقبت تسکینی مکسا در سراسر کشور در کنار شماست. با انتخاب هر شعبه، به صفحه اختصاصی آن هدایت می‌شوید.') ?></p>
       </div>
 
       <?php if (!empty($branches)): ?>
@@ -303,7 +304,7 @@ render_dashboard_component('header', get_defined_vars());
           <?php endforeach; ?>
         </div>
       <?php else: ?>
-        <div class="br-empty">در حال حاضر فهرست شعب در دسترس نیست. لطفاً بعداً دوباره مراجعه کنید.</div>
+        <div class="br-empty"><?= site_e('در حال حاضر فهرست شعب در دسترس نیست. لطفاً بعداً دوباره مراجعه کنید.') ?></div>
       <?php endif; ?>
     </div>
 

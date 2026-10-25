@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  جزئیات دوره (بخش کاربری) — آکادمی مکسا
  *  صفحه‌ی فروش/معرفی یک دوره؛ سرفصل‌ها، مدرس و خرید
@@ -121,14 +122,14 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 <!-- قهرمان -->
 <section class="cd-hero">
   <div class="cd-hero-in">
-    <div class="crumb"><a href="/courses" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
+    <div class="crumb"><a href="/courses" target="_top"><?= site_e('دوره‌ها') ?></a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
     <span class="cd-cat"><?= e($course['category'] ?? 'عمومی') ?> · <?= level_label((string)($course['level'] ?? 'all')) ?></span>
     <h1><?= e($course['title'] ?? '') ?></h1>
     <?php if (!empty($course['subtitle'])): ?><p class="cd-sub"><?= e($course['subtitle']) ?></p><?php endif; ?>
     <div class="cd-facts">
       <span><?= cic('star','star-y') ?><b class="cd-rate-b"><?= fa_digits(number_format((float)($course['rating'] ?? 0),1)) ?></b></span>
-      <span><?= cic('users') ?><?= fa_digits(number_format((int)($course['students'] ?? 0))) ?> فراگیر</span>
-      <span><?= cic('video') ?><?= fa_digits($lessons) ?> درس</span>
+      <span><?= cic('users') ?><?= fa_digits(number_format((int)($course['students'] ?? 0))) ?> <?= site_e('فراگیر') ?></span>
+      <span><?= cic('video') ?><?= fa_digits($lessons) ?> <?= site_e('درس') ?></span>
       <span><?= cic('clock') ?><?= fmt_duration($dur) ?></span>
       <span><?= cic('grad') ?><?= e($course['instructor'] ?? 'مدرس مکسا') ?></span>
     </div>
@@ -140,7 +141,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   <div class="cd-main">
     <?php if ($learn): ?>
     <div class="cd-block card card-pad">
-      <h2><?= cic('target') ?> در این دوره چه می‌آموزید</h2>
+      <h2><?= cic('target') ?> <?= site_e('در این دوره چه می‌آموزید') ?></h2>
       <div class="learn-grid">
         <?php foreach ($learn as $l): ?>
           <div class="learn-item"><span class="ck"><?= cic('check') ?></span><span><?= e($l) ?></span></div>
@@ -151,19 +152,19 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
     <?php if (!empty($course['description'])): ?>
     <div class="cd-block">
-      <h2><?= cic('book') ?> درباره‌ی این دوره</h2>
+      <h2><?= cic('book') ?> <?= site_e('درباره‌ی این دوره') ?></h2>
       <div style="font-size:14px;line-height:2;white-space:pre-line;color:var(--color-text)"><?= e($course['description']) ?></div>
     </div>
     <?php endif; ?>
 
     <!-- سرفصل‌ها -->
     <div class="cd-block">
-      <h2><?= cic('list') ?> سرفصل‌های دوره</h2>
+      <h2><?= cic('list') ?> <?= site_e('سرفصل‌های دوره') ?></h2>
       <div style="font-size:12.5px;color:var(--color-muted);margin:-8px 0 14px;font-weight:600">
-        <?= fa_digits(count($curr)) ?> فصل · <?= fa_digits($lessons) ?> درس · <?= fmt_duration($dur) ?>
+        <?= fa_digits(count($curr)) ?> <?= site_e('فصل ·') ?> <?= fa_digits($lessons) ?> <?= site_e('درس ·') ?> <?= fmt_duration($dur) ?>
       </div>
       <?php if (!$curr): ?>
-        <div style="padding:24px;text-align:center;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:14px">سرفصل‌های این دوره به‌زودی اضافه می‌شود.</div>
+        <div style="padding:24px;text-align:center;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:14px"><?= site_e('سرفصل‌های این دوره به‌زودی اضافه می‌شود.') ?></div>
       <?php else: foreach ($curr as $si => $sec):
         $secLessons = $sec['lessons'] ?? [];
         $secDur = 0; foreach ($secLessons as $l) $secDur += (int)($l['duration'] ?? 0);
@@ -171,7 +172,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
         <div class="acc-sec<?= $si===0?' open':'' ?>">
           <div class="acc-head">
             <span class="a-title"><?= e($sec['title'] ?? 'فصل') ?></span>
-            <span class="a-meta"><?= fa_digits(count($secLessons)) ?> درس · <?= fmt_duration($secDur) ?></span>
+            <span class="a-meta"><?= fa_digits(count($secLessons)) ?> <?= site_e('درس ·') ?> <?= fmt_duration($secDur) ?></span>
             <span class="chev"><?= cic('chevron') ?></span>
           </div>
           <div class="acc-body">
@@ -182,9 +183,9 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
               <div class="acc-lesson">
                 <span class="lt lt-<?= e($type) ?>"><?= cic($type==='video'?'play':$type) ?></span>
                 <span class="l-name"><?= e($l['title'] ?? 'درس') ?></span>
-                <?php if ($isPrev): ?><a class="l-prev" href="/courses/learn/<?= $id ?>?preview=1" target="_top">پیش‌نمایش</a>
+                <?php if ($isPrev): ?><a class="l-prev" href="/courses/learn/<?= $id ?>?preview=1" target="_top"><?= site_e('پیش‌نمایش') ?></a>
                 <?php else: ?><span class="l-lock"><?= cic('lock') ?></span><?php endif; ?>
-                <?php if ((int)($l['duration'] ?? 0)>0): ?><span class="l-dur"><?= fa_digits((int)$l['duration']) ?>:۰۰</span><?php endif; ?>
+                <?php if ((int)($l['duration'] ?? 0)>0): ?><span class="l-dur"><?= fa_digits((int)$l['duration']) ?><?= site_e(':۰۰') ?></span><?php endif; ?>
               </div>
             <?php endforeach; ?>
           </div>
@@ -194,20 +195,20 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
     <?php if ($reqs): ?>
     <div class="cd-block">
-      <h2><?= cic('check') ?> پیش‌نیازها</h2>
+      <h2><?= cic('check') ?> <?= site_e('پیش‌نیازها') ?></h2>
       <ul class="req-list"><?php foreach ($reqs as $r): ?><li><span class="dot"></span><span><?= e($r) ?></span></li><?php endforeach; ?></ul>
     </div>
     <?php endif; ?>
 
     <!-- مدرس -->
     <div class="cd-block">
-      <h2><?= cic('grad') ?> مدرس دوره</h2>
+      <h2><?= cic('grad') ?> <?= site_e('مدرس دوره') ?></h2>
       <div class="inst-card">
         <div class="inst-av" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>aa)"><?= e(mb_substr(trim((string)($course['instructor'] ?? 'م')),0,1)) ?></div>
         <div>
           <div class="nm"><?= e($course['instructor'] ?? 'مدرس مکسا') ?></div>
           <?php if (!empty($course['instructor_bio'])): ?><div class="ti"><?= e($course['instructor_bio']) ?></div><?php endif; ?>
-          <div class="bio">مدرس باتجربه‌ی آکادمی مکسا با تمرکز بر آموزش کاربردی و پروژه‌محور.</div>
+          <div class="bio"><?= site_e('مدرس باتجربه‌ی آکادمی مکسا با تمرکز بر آموزش کاربردی و پروژه‌محور.') ?></div>
         </div>
       </div>
     </div>
@@ -222,31 +223,31 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
       </div>
       <div class="buy-pad">
         <div class="buy-price">
-          <?php if ($isFree): ?><b style="color:var(--violet)">رایگان</b>
-          <?php elseif ($hasDisc): ?><b><?= fa_digits(number_format($disc)) ?> تومان</b><del><?= fa_digits(number_format($price)) ?></del>
-          <?php else: ?><b><?= fa_digits(number_format($price)) ?> تومان</b><?php endif; ?>
+          <?php if ($isFree): ?><b style="color:var(--violet)"><?= site_e('رایگان') ?></b>
+          <?php elseif ($hasDisc): ?><b><?= fa_digits(number_format($disc)) ?> <?= site_e('تومان') ?></b><del><?= fa_digits(number_format($price)) ?></del>
+          <?php else: ?><b><?= fa_digits(number_format($price)) ?> <?= site_e('تومان') ?></b><?php endif; ?>
         </div>
-        <?php if ($hasDisc): $off=round((1-$disc/$price)*100); ?><span class="buy-off"><?= fa_digits($off) ?>٪ تخفیف ویژه</span><?php endif; ?>
+        <?php if ($hasDisc): $off=round((1-$disc/$price)*100); ?><span class="buy-off"><?= fa_digits($off) ?><?= site_e('٪ تخفیف ویژه') ?></span><?php endif; ?>
 
         <div class="buy-actions">
           <?php if ($isFree): ?>
-            <a href="/courses/learn/<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> شروع رایگان دوره</a>
+            <a href="/courses/learn/<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> <?= site_e('شروع رایگان دوره') ?></a>
           <?php else: ?>
-            <button class="btn btn-primary btn-block btn-lg" id="buyNow"><?= cic('cart') ?> خرید و ثبت‌نام</button>
-            <button class="btn btn-ghost btn-block" id="addCart"><?= cic('plus') ?> افزودن به سبد خرید</button>
+            <button class="btn btn-primary btn-block btn-lg" id="buyNow"><?= cic('cart') ?> <?= site_e('خرید و ثبت‌نام') ?></button>
+            <button class="btn btn-ghost btn-block" id="addCart"><?= cic('plus') ?> <?= site_e('افزودن به سبد خرید') ?></button>
           <?php endif; ?>
         </div>
 
         <div class="includes">
-          <div style="font-weight:800;font-size:13.5px;padding-bottom:6px">این دوره شامل:</div>
-          <li><?= cic('video') ?><?= fmt_duration($dur) ?> ویدئوی آموزشی</li>
-          <li><?= cic('list') ?><?= fa_digits($lessons) ?> درس در <?= fa_digits(count($curr)) ?> فصل</li>
-          <li><?= cic('infinity') ?>دسترسی مادام‌العمر</li>
-          <li><?= cic('pdf') ?>جزوه و منابع قابل دانلود</li>
-          <li><?= cic('award') ?>گواهی پایان دوره</li>
-          <li><?= cic('globe') ?>دسترسی روی موبایل و دسکتاپ</li>
+          <div style="font-weight:800;font-size:13.5px;padding-bottom:6px"><?= site_e('این دوره شامل:') ?></div>
+          <li><?= cic('video') ?><?= fmt_duration($dur) ?> <?= site_e('ویدئوی آموزشی') ?></li>
+          <li><?= cic('list') ?><?= fa_digits($lessons) ?> <?= site_e('درس در') ?> <?= fa_digits(count($curr)) ?> <?= site_e('فصل') ?></li>
+          <li><?= cic('infinity') ?><?= site_e('دسترسی مادام‌العمر') ?></li>
+          <li><?= cic('pdf') ?><?= site_e('جزوه و منابع قابل دانلود') ?></li>
+          <li><?= cic('award') ?><?= site_e('گواهی پایان دوره') ?></li>
+          <li><?= cic('globe') ?><?= site_e('دسترسی روی موبایل و دسکتاپ') ?></li>
         </div>
-        <div class="guarantee"><?= cic('check') ?> ضمانت بازگشت وجه تا ۷ روز</div>
+        <div class="guarantee"><?= cic('check') ?> <?= site_e('ضمانت بازگشت وجه تا ۷ روز') ?></div>
       </div>
     </div>
   </aside>
@@ -254,7 +255,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
 <?php if ($related): ?>
 <div class="page" style="padding-top:0">
-  <h2 style="font-size:20px;font-weight:800;margin-bottom:18px">دوره‌های مرتبط</h2>
+  <h2 style="font-size:20px;font-weight:800;margin-bottom:18px"><?= site_e('دوره‌های مرتبط') ?></h2>
   <div class="rel-grid"><?php foreach ($related as $rc) course_card($rc); ?></div>
 </div>
 <?php endif; ?>
@@ -264,7 +265,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   <div style="max-width:840px;width:100%;background:#000;border-radius:18px;overflow:hidden;position:relative;aspect-ratio:16/9">
     <button id="promoClose" style="position:absolute;top:12px;left:12px;z-index:2;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);color:#fff;display:grid;place-items:center"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <div id="promoSlot" style="width:100%;height:100%;display:grid;place-items:center;color:#fff;text-align:center;padding:20px">
-      <div><?= cic('play','') ?><p style="margin-top:10px;opacity:.8">ویدئوی معرفی این دوره</p></div>
+      <div><?= cic('play','') ?><p style="margin-top:10px;opacity:.8"><?= site_e('ویدئوی معرفی این دوره') ?></p></div>
     </div>
   </div>
 </div>
@@ -325,7 +326,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
     return getCart().some(function(x){ return Number(x.id) === Number(COURSE.id); });
   }
 
-  var inCartHtml = '<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید';
+  var inCartHtml = <?= site_js_text('<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید') ?>;
   var addCartHtml = '<?= cic('plus') ?> افزودن به سبد خرید';
 
   var addBtn = $('addCart');
@@ -340,11 +341,11 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
       if(!inCart()){
         c.push(COURSE);
         setCart(c);
-        toast('دوره با موفقیت به سبد خرید اضافه شد.');
+        toast(<?= site_js_text('دوره با موفقیت به سبد خرید اضافه شد.') ?>);
         addBtn.innerHTML = inCartHtml;
         addBtn.classList.add('btn-soft');
       } else {
-        toast('این دوره از قبل در سبد خرید شما موجود است.');
+        toast(<?= site_js_text('این دوره از قبل در سبد خرید شما موجود است.') ?>);
       }
     });
   }

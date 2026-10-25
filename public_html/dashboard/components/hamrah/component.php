@@ -1,15 +1,16 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="macsa-hero-section">
 
 <!-- عنوان -->
 <div class="macsa-hero-header">
   <h2>
-    همراهی مکسا در مسیر درمان و امید
+    <?= site_e('همراهی مکسا در مسیر درمان و امید') ?>
     <br>
-    <span>راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور</span>
+    <span><?= site_e('راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور') ?></span>
   </h2>
 
   <p>
-    در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.
+    <?= site_e('در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.') ?>
   </p>
 </div>
 
@@ -17,48 +18,48 @@
 
   <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/1.webp" alt="شعب مکسا" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/1.webp" alt="<?= site_e('شعب مکسا') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">شعب مکسا</span>
+    <span class="macsa-btn"><?= site_e('شعب مکسا') ?></span>
   </a>
 
   <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/2.webp" alt="مرکز تماس کشوری" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/2.webp" alt="<?= site_e('مرکز تماس کشوری') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">مرکز تماس کشوری</span>
+    <span class="macsa-btn"><?= site_e('مرکز تماس کشوری') ?></span>
   </a>
 
   <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
-      <img src="/dashboard/components/hamrah/images/3.webp" alt="حامیان و داوطلبان" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/3.webp" alt="<?= site_e('حامیان و داوطلبان') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">حامیان و داوطلبان</span>
+    <span class="macsa-btn"><?= site_e('حامیان و داوطلبان') ?></span>
   </a>
 
   <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/4.webp" alt="کادر درمان" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/4.webp" alt="<?= site_e('کادر درمان') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">کادر درمان</span>
+    <span class="macsa-btn"><?= site_e('کادر درمان') ?></span>
   </a>
 
   <a href="/patient-option" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/5.webp" alt="بیماران و مراقبین" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/5.webp" alt="<?= site_e('بیماران و مراقبین') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">بیماران و مراقبین</span>
+    <span class="macsa-btn"><?= site_e('بیماران و مراقبین') ?></span>
   </a>
 
 </div>
 
 <!-- نقاط راهنما (فقط موبایل) -->
 <div class="macsa-dots">
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۱"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۲"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۳"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۴"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۵"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۱') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۲') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۳') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۴') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۵') ?>"></button>
 </div>
 
 </section>

@@ -1,54 +1,55 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <div class="medical-intake">
 
 <div class="mi-container">
 
 <div class="mi-card">
 
-<h2 class="mi-title">تشکیل پرونده پزشکی اولیه</h2>
+<h2 class="mi-title"><?= site_e('تشکیل پرونده پزشکی اولیه') ?></h2>
 
 <p class="mi-subtitle">
-برای بررسی پرونده و دریافت مشاوره تخصصی فرم زیر را تکمیل کنید.
+<?= site_e('برای بررسی پرونده و دریافت مشاوره تخصصی فرم زیر را تکمیل کنید.') ?>
 </p>
 
 <form id="medicalIntakeForm">
 
 <div class="mi-section">
 
-<h3>اطلاعات فردی</h3>
+<h3><?= site_e('اطلاعات فردی') ?></h3>
 
 <div class="mi-grid">
 
 <div class="mi-group">
-<label>نام و نام خانوادگی <span class="mi-required">*</span></label>
+<label><?= site_e('نام و نام خانوادگی') ?> <span class="mi-required">*</span></label>
 <input type="text" name="full_name" autocomplete="name" required>
 </div>
 
 <div class="mi-group">
-<label>شماره موبایل <span class="mi-required">*</span></label>
+<label><?= site_e('شماره موبایل') ?> <span class="mi-required">*</span></label>
 <input type="tel" name="phone" inputmode="tel" autocomplete="tel" required>
 </div>
 
 <div class="mi-group">
-<label>سن</label>
+<label><?= site_e('سن') ?></label>
 <input type="number" name="age" min="1" max="120">
 </div>
 
 <div class="mi-group">
-<label>جنسیت</label>
+<label><?= site_e('جنسیت') ?></label>
 <select name="gender">
-<option value="unspecified">انتخاب کنید</option>
-<option value="male">مرد</option>
-<option value="female">زن</option>
+<option value="unspecified"><?= site_e('انتخاب کنید') ?></option>
+<option value="male"><?= site_e('مرد') ?></option>
+<option value="female"><?= site_e('زن') ?></option>
 </select>
 </div>
 
 <div class="mi-group">
-<label>استان <span class="mi-required">*</span></label>
+<label><?= site_e('استان') ?> <span class="mi-required">*</span></label>
 <input type="text" name="province" autocomplete="address-level1" required>
 </div>
 
 <div class="mi-group">
-<label>شهر محل سکونت <span class="mi-required">*</span></label>
+<label><?= site_e('شهر محل سکونت') ?> <span class="mi-required">*</span></label>
 <input type="text" name="city" autocomplete="address-level2" required>
 </div>
 
@@ -58,37 +59,37 @@
 
 <div class="mi-section">
 
-<h3>اطلاعات پزشکی</h3>
+<h3><?= site_e('اطلاعات پزشکی') ?></h3>
 
 <div class="mi-grid">
 
 <div class="mi-group">
-<label>نوع سرطان</label>
+<label><?= site_e('نوع سرطان') ?></label>
 <select name="cancer_type">
-<option value="">انتخاب کنید</option>
-<option value="سرطان پستان">سرطان پستان</option>
-<option value="سرطان ریه">سرطان ریه</option>
-<option value="سرطان معده">سرطان معده</option>
-<option value="سرطان روده">سرطان روده</option>
-<option value="سرطان خون">سرطان خون</option>
-<option value="سایر">سایر</option>
+<option value=""><?= site_e('انتخاب کنید') ?></option>
+<option value="سرطان پستان"><?= site_e('سرطان پستان') ?></option>
+<option value="سرطان ریه"><?= site_e('سرطان ریه') ?></option>
+<option value="سرطان معده"><?= site_e('سرطان معده') ?></option>
+<option value="سرطان روده"><?= site_e('سرطان روده') ?></option>
+<option value="سرطان خون"><?= site_e('سرطان خون') ?></option>
+<option value="سایر"><?= site_e('سایر') ?></option>
 </select>
 </div>
 
 <div class="mi-group">
-<label>وضعیت تشخیص</label>
+<label><?= site_e('وضعیت تشخیص') ?></label>
 <select name="diagnosis_status">
-<option value="">انتخاب کنید</option>
-<option value="تشخیص قطعی">تشخیص قطعی</option>
-<option value="در حال بررسی">در حال بررسی</option>
-<option value="مشکوک">مشکوک</option>
+<option value=""><?= site_e('انتخاب کنید') ?></option>
+<option value="تشخیص قطعی"><?= site_e('تشخیص قطعی') ?></option>
+<option value="در حال بررسی"><?= site_e('در حال بررسی') ?></option>
+<option value="مشکوک"><?= site_e('مشکوک') ?></option>
 </select>
 </div>
 
 </div>
 
 <div class="mi-group">
-<label>توضیحات</label>
+<label><?= site_e('توضیحات') ?></label>
 <textarea name="description" rows="3" maxlength="5000"></textarea>
 </div>
 
@@ -97,10 +98,10 @@
 
 <div class="mi-section">
 
-<h3>آپلود مدارک پزشکی</h3>
+<h3><?= site_e('آپلود مدارک پزشکی') ?></h3>
 
 <label class="mi-upload">
-انتخاب فایل
+<?= site_e('انتخاب فایل') ?>
 <input type="file" name="documents[]" multiple accept="image/jpeg,image/png,image/webp,application/pdf" id="miFileInput">
 </label>
 
@@ -112,12 +113,12 @@
 <div class="mi-group mi-checkbox">
 <input type="checkbox" name="consent" id="consent" value="1" required>
 <label for="consent">
-با ذخیره اطلاعات پزشکی خود موافق هستم
+<?= site_e('با ذخیره اطلاعات پزشکی خود موافق هستم') ?>
 <span class="mi-required">*</span>
 </label>
 </div>
 
-<button type="submit" class="mi-submit">ثبت پرونده</button>
+<button type="submit" class="mi-submit"><?= site_e('ثبت پرونده') ?></button>
 
 </form>
 
@@ -392,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function() {
             remove.type = "button";
             remove.className = "mi-remove";
             remove.setAttribute("data-index", index);
-            remove.setAttribute("aria-label", "حذف فایل");
+            remove.setAttribute("aria-label", <?= site_js_text('حذف فایل') ?>);
             remove.textContent = "×";
             box.appendChild(remove);
             preview.appendChild(box);
@@ -431,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (isInvalid){
                 var msg = document.createElement("div");
                 msg.className = "mi-error-message";
-                msg.innerText = "این فیلد را حتما پر کنید";
+                msg.innerText = <?= site_js_text('این فیلد را حتما پر کنید') ?>;
                 field.parentNode.appendChild(msg);
                 if (!firstError) firstError = field;
             }
@@ -449,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     async function saveRecord(token) {
-        setBusy(true, "در حال ثبت پرونده...");
+        setBusy(true, <?= site_js_text('در حال ثبت پرونده...') ?>);
         try {
             var data = new FormData(form);
             data.delete("documents[]");
@@ -464,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             var result = await response.json();
 
-            if (!response.ok) throw new Error(result.error && result.error.message || "ثبت پرونده ناموفق بود.");
+            if (!response.ok) throw new Error(result.error && result.error.message || <?= site_js_text('ثبت پرونده ناموفق بود.') ?>);
 
             if (result.data.access_token) {
                 localStorage.setItem("maksa_access_token", result.data.access_token);
@@ -500,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function showError(message) {
         var error = document.createElement("div");
         error.className = "mi-form-message";
-        error.textContent = message || "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
+        error.textContent = message || <?= site_js_text('خطایی رخ داد. لطفاً دوباره تلاش کنید.') ?>;
         submitButton.before(error);
         error.scrollIntoView({behavior:"smooth", block:"center"});
     }

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  پوسته‌ی مشترک رابط کاربری دوره‌ها — آکادمی مکسا
  *  - course_base_css() : توکن‌های طراحی و کامپوننت‌های مشترک (بدون تگ <style>)
@@ -123,11 +124,11 @@ endif;
 if (!function_exists('course_html_head')):
 function course_html_head(string $title, string $pageStyles = ''): void { ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($title) ?> | آکادمی مکسا</title>
+<title><?= htmlspecialchars($title) ?> <?= site_e('| آکادمی مکسا') ?></title>
 <script>(function(){try{var t=localStorage.getItem('maxa-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -203,9 +204,9 @@ function course_cart_marker(): void { ?>
   #maxaCartFab .mx-cart-count{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;
     background:#faa61a;color:#3a2a00;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;font-family:'Vazirmatn',sans-serif}
 </style>
-<a id="maxaCartFab" href="/courses/checkout" target="_top" aria-label="سبد خرید" title="سبد خرید">
+<a id="maxaCartFab" href="/courses/checkout" target="_top" aria-label="<?= site_e('سبد خرید') ?>" title="<?= site_e('سبد خرید') ?>">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.6"/><circle cx="19" cy="21" r="1.6"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L23 7H5.6"/></svg>
-  <span class="mx-cart-count">۰</span>
+  <span class="mx-cart-count"><?= site_e('۰') ?></span>
 </a>
 <script>
 (function(){
@@ -231,7 +232,7 @@ endif;
 /* دکمه‌ی شناور تغییر تم — برای صفحه‌های مستقل (پخش/ادمینِ دوره‌ها) که از course_html_head استفاده می‌کنند */
 if (!function_exists('course_theme_fab')):
 function course_theme_fab(): void { ?>
-<button id="maxaThemeFab" type="button" aria-label="تغییر تم" title="روشن / تاریک"
+<button id="maxaThemeFab" type="button" aria-label="<?= site_e('تغییر تم') ?>" title="<?= site_e('روشن / تاریک') ?>"
   style="position:fixed;bottom:20px;right:20px;z-index:150;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
   background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-md);color:var(--color-text)">
   <span class="fab-sun"><?= cic('sun') ?></span><span class="fab-moon" style="display:none"><?= cic('moon') ?></span>
@@ -335,9 +336,9 @@ function course_card(array $c): void {
 
       <?php if ($hasDisc): 
         $off = round((1 - $disc / $price) * 100); ?>
-        <span class="ccard-off"><?= fa_digits($off) ?>٪ تخفیف</span>
+        <span class="ccard-off"><?= fa_digits($off) ?><?= site_e('٪ تخفیف') ?></span>
       <?php elseif ($isFree): ?>
-        <span class="ccard-badge-free">رایگان</span>
+        <span class="ccard-badge-free"><?= site_e('رایگان') ?></span>
       <?php endif; ?>
 
       <div class="ccard-play-hint" aria-hidden="true">
@@ -366,15 +367,15 @@ function course_card(array $c): void {
       </div>
 
       <div class="ccard-meta">
-        <span class="ccard-meta-item" title="تعداد فراگیران">
+        <span class="ccard-meta-item" title="<?= site_e('تعداد فراگیران') ?>">
           <?= cic('users') ?>
-          <?= fa_digits(number_format($students)) ?> فراگیر
+          <?= fa_digits(number_format($students)) ?> <?= site_e('فراگیر') ?>
         </span>
         <?php if ($lessons > 0): ?>
           <span class="ccard-meta-dot">•</span>
-          <span class="ccard-meta-item" title="تعداد جلسات">
+          <span class="ccard-meta-item" title="<?= site_e('تعداد جلسات') ?>">
             <?= cic('video') ?>
-            <?= fa_digits($lessons) ?> جلسه
+            <?= fa_digits($lessons) ?> <?= site_e('جلسه') ?>
           </span>
         <?php endif; ?>
       </div>
@@ -382,25 +383,25 @@ function course_card(array $c): void {
       <div class="ccard-foot">
         <div class="ccard-price">
           <?php if ($isFree): ?>
-            <span class="ccard-price-free">رایگان</span>
+            <span class="ccard-price-free"><?= site_e('رایگان') ?></span>
           <?php elseif ($hasDisc): ?>
             <div class="ccard-price-group">
               <del><?= fa_digits(number_format($price)) ?></del>
               <div class="ccard-price-now">
                 <b><?= fa_digits(number_format($disc)) ?></b>
-                <small>تومان</small>
+                <small><?= site_e('تومان') ?></small>
               </div>
             </div>
           <?php else: ?>
             <div class="ccard-price-now">
               <b><?= fa_digits(number_format($price)) ?></b>
-              <small>تومان</small>
+              <small><?= site_e('تومان') ?></small>
             </div>
           <?php endif; ?>
         </div>
 
         <span class="ccard-action-btn" aria-hidden="true">
-          مشاهده دوره
+          <?= site_e('مشاهده دوره') ?>
           <?= cic('chevron') ?>
         </span>
       </div>

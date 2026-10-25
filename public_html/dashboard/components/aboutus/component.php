@@ -1,21 +1,22 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="skill-hero">
   <div class="skill-hero-container">
 
     <div class="skill-hero-left">
       <h2 class="skill-hero-title">
-        خدمات مکسا <br>
-        <span>در حیطه مراقبت های حمایتی و تسکینی سرطان</span>
+        <?= site_e('خدمات مکسا') ?> <br>
+        <span><?= site_e('در حیطه مراقبت های حمایتی و تسکینی سرطان') ?></span>
       </h2>
 
       <ul class="skill-hero-features">
-        <li>خدمات پزشکی و مراقبتی</li>
-        <li>مراقبت های روانشناختی و معنوی</li>
-        <li>مراقبت های توانبخشی  </li>
-        <li>خدمات مددکاری اجتماعی</li>
-        <li>ارائه نجهیزات پزشکی</li>
-        <li>مشاوره ژنتیک و غربالگری</li>
-        <li>پشتیبانی جامع بیمار و خانواده</li>
-        <li>مرکز پاسخگویی ۲۴ ساعته</li>
+        <li><?= site_e('خدمات پزشکی و مراقبتی') ?></li>
+        <li><?= site_e('مراقبت های روانشناختی و معنوی') ?></li>
+        <li><?= site_e('مراقبت های توانبخشی') ?>  </li>
+        <li><?= site_e('خدمات مددکاری اجتماعی') ?></li>
+        <li><?= site_e('ارائه نجهیزات پزشکی') ?></li>
+        <li><?= site_e('مشاوره ژنتیک و غربالگری') ?></li>
+        <li><?= site_e('پشتیبانی جامع بیمار و خانواده') ?></li>
+        <li><?= site_e('مرکز پاسخگویی ۲۴ ساعته') ?></li>
       </ul>
     </div>
 
@@ -24,18 +25,18 @@
       <!-- ستون ویدئو -->
       <div class="skill-video-column">
         <div class="skill-video-box">
-          <img src="{{image1}}" alt="تیم درمان و مراقبت در منزل مکسا" width="800" height="800" loading="lazy" decoding="async">
+          <img src="{{image1}}" alt="<?= site_e('تیم درمان و مراقبت در منزل مکسا') ?>" width="800" height="800" loading="lazy" decoding="async">
         </div>
 
         <div class="skill-exp-box">
           <span>+16</span>
-          <p>سال تجربه</p>
+          <p><?= site_e('سال تجربه') ?></p>
         </div>
       </div>
 
       <!-- تصویر بلند سمت راست -->
       <div class="skill-main-image">
-        <img src="{{image2}}" alt="خدمات تخصصی مراقبت‌های حمایتی و تسکینی مکسا" width="600" height="800" loading="lazy" decoding="async">
+        <img src="{{image2}}" alt="<?= site_e('خدمات تخصصی مراقبت‌های حمایتی و تسکینی مکسا') ?>" width="600" height="800" loading="lazy" decoding="async">
       </div>
 
     </div>
@@ -50,7 +51,7 @@
 <style>
 .skill-hero{
   padding:40px 0;
-  direction:rtl;
+  direction:var(--site-direction, rtl);
   position:relative;
   font-family:'Vazirmatn', Tahoma, sans-serif;
 }
@@ -70,7 +71,7 @@
 
 .skill-hero-left{
   min-width:0;
-  direction:rtl;
+  direction:var(--site-direction, rtl);
   text-align:center; /* وسط‌چین دسکتاپ */
 }
 
@@ -133,7 +134,7 @@
   width:100%;
   max-width:590px;
   margin-inline:auto;
-  direction:rtl;
+  direction:var(--site-direction, rtl);
   display:flex;
   gap:clamp(12px,2.5vw,30px);
   align-items:flex-end; /* به جای flex-start */

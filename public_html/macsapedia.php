@@ -1,10 +1,11 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی اصلیِ مکساپدیا — شش کارت که به بخش‌های محتوایی لینک می‌دهند.
    تعریف بخش‌ها و شمارش محتوا از لایه‌ی داده‌ی مشترک می‌آید. */
 require __DIR__ . '/dashboard/maxapedia-db.php';
 $mpCounts = ($pdo) ? maxapedia_counts($pdo) : [];
 
-$pageTitle = 'مکساپدیا';
+$pageTitle = site_text('مکساپدیا');
 require_once __DIR__ . '/core/component-renderer.php';
 render_dashboard_component('header', get_defined_vars());
 ?>
@@ -15,7 +16,7 @@ render_dashboard_component('header', get_defined_vars());
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
   }
   .mp-header {
     text-align: center;
@@ -96,8 +97,8 @@ render_dashboard_component('header', get_defined_vars());
 
 <div class="mp-wrap">
   <div class="mp-header">
-    <h1>مکساپدیا</h1>
-    <p>مرکز محتوای آموزشی مکسا؛ ویدیوها، کتاب‌ها، پادکست‌ها و کلیپ‌هایی برای آشنایی بیشتر با بیماری‌های نادر و فعالیت‌های انجمن.</p>
+    <h1><?= site_e('مکساپدیا') ?></h1>
+    <p><?= site_e('مرکز محتوای آموزشی مکسا؛ ویدیوها، کتاب‌ها، پادکست‌ها و کلیپ‌هایی برای آشنایی بیشتر با بیماری‌های نادر و فعالیت‌های انجمن.') ?></p>
   </div>
 
   <div class="mp-grid">
@@ -106,8 +107,8 @@ render_dashboard_component('header', get_defined_vars());
         <div class="mp-icon"><?= $s['icon'] ?></div>
         <h3><?= htmlspecialchars($s['title'], ENT_QUOTES, 'UTF-8') ?></h3>
         <p><?= htmlspecialchars($s['desc'], ENT_QUOTES, 'UTF-8') ?></p>
-        <div class="mp-count"><?= fa_digits($mpCounts[$slug] ?? 0) ?> مورد</div>
-        <span class="mp-cta">مشاهده ←</span>
+        <div class="mp-count"><?= fa_digits($mpCounts[$slug] ?? 0) ?> <?= site_e('مورد') ?></div>
+        <span class="mp-cta"><?= site_e('مشاهده ←') ?></span>
       </a>
     <?php endforeach; ?>
   </div>

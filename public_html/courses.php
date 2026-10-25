@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  فروشگاه دوره‌ها (بخش کاربری) — آکادمی مکسا
  *  مرور، جست‌وجو، فیلتر دسته‌بندی/سطح و مرتب‌سازی دوره‌ها
@@ -185,27 +186,27 @@ course_site_head('دوره‌های آموزشی', $pageCss);
   <!-- قهرمان -->
   <section class="hero reveal">
     <div class="hero-in">
-      <h1>هر مهارتی که می‌خواهی، همین‌جا یاد بگیر</h1>
-      <p>به جمع هزاران فراگیر آکادمی مکسا بپیوند؛ دوره‌های باکیفیت در برنامه‌نویسی، طراحی، کسب‌وکار و توسعه‌ی فردی.</p>
+      <h1><?= site_e('هر مهارتی که می‌خواهی، همین‌جا یاد بگیر') ?></h1>
+      <p><?= site_e('به جمع هزاران فراگیر آکادمی مکسا بپیوند؛ دوره‌های باکیفیت در برنامه‌نویسی، طراحی، کسب‌وکار و توسعه‌ی فردی.') ?></p>
       <form class="hero-search" onsubmit="event.preventDefault(); document.getElementById('heroSearchBtn').click();">
         <span class="hero-search-ic" aria-hidden="true"><?= cic('search') ?></span>
-        <input id="heroSearch" type="search" placeholder="دنبال چه چیزی می‌گردی؟ مثلاً «طراحی وب»" autocomplete="off">
+        <input id="heroSearch" type="search" placeholder="<?= site_e('دنبال چه چیزی می‌گردی؟ مثلاً «طراحی وب»') ?>" autocomplete="off">
         <button type="button" class="btn-hero-search" id="heroSearchBtn">
           <?= cic('search') ?>
-          <span>جست‌وجو</span>
+          <span><?= site_e('جست‌وجو') ?></span>
         </button>
       </form>
       <div class="hero-stats">
-        <div><b><?= fa_digits(number_format(count($courses))) ?>+</b> دوره</div>
-        <div><b><?= fa_digits(number_format($totalStudents)) ?>+</b> فراگیر</div>
-        <div><b><?= fa_digits(count($cats)) ?></b> دسته‌بندی</div>
+        <div><b><?= fa_digits(number_format(count($courses))) ?>+</b> <?= site_e('دوره') ?></div>
+        <div><b><?= fa_digits(number_format($totalStudents)) ?>+</b> <?= site_e('فراگیر') ?></div>
+        <div><b><?= fa_digits(count($cats)) ?></b> <?= site_e('دسته‌بندی') ?></div>
       </div>
     </div>
   </section>
 
   <!-- دسته‌بندی‌ها -->
   <div class="cat-bar" id="cats">
-    <button type="button" class="cat-chip on" data-cat="all">همه دوره‌ها</button>
+    <button type="button" class="cat-chip on" data-cat="all"><?= site_e('همه دوره‌ها') ?></button>
     <?php foreach ($cats as $cat => $n): ?>
       <button type="button" class="cat-chip" data-cat="<?= e(trim((string)$cat)) ?>"><?= e($cat) ?><span class="n">(<?= fa_digits($n) ?>)</span></button>
     <?php endforeach; ?>
@@ -214,17 +215,17 @@ course_site_head('دوره‌های آموزشی', $pageCss);
   <!-- نتایج -->
   <div class="results-head">
     <div>
-      <h2 id="resTitle">همه‌ی دوره‌ها</h2>
-      <div class="cnt"><span id="resCount"><?= fa_digits(count($courses)) ?></span> دوره یافت شد</div>
+      <h2 id="resTitle"><?= site_e('همه‌ی دوره‌ها') ?></h2>
+      <div class="cnt"><span id="resCount"><?= fa_digits(count($courses)) ?></span> <?= site_e('دوره یافت شد') ?></div>
     </div>
     <div class="sortbox">
-      <label class="lbl" style="margin:0">مرتب‌سازی:</label>
+      <label class="lbl" style="margin:0"><?= site_e('مرتب‌سازی:') ?></label>
       <select class="sel" id="sortSel">
-        <option value="pop">محبوب‌ترین</option>
-        <option value="new">جدیدترین</option>
-        <option value="rate">بیشترین امتیاز</option>
-        <option value="cheap">ارزان‌ترین</option>
-        <option value="exp">گران‌ترین</option>
+        <option value="pop"><?= site_e('محبوب‌ترین') ?></option>
+        <option value="new"><?= site_e('جدیدترین') ?></option>
+        <option value="rate"><?= site_e('بیشترین امتیاز') ?></option>
+        <option value="cheap"><?= site_e('ارزان‌ترین') ?></option>
+        <option value="exp"><?= site_e('گران‌ترین') ?></option>
       </select>
     </div>
   </div>
@@ -247,8 +248,8 @@ course_site_head('دوره‌های آموزشی', $pageCss);
     <?php endforeach; ?>
     <div class="empty hide" id="emptyState">
       <div class="ei"><?= cic('search') ?></div>
-      <b style="font-size:16px">دوره‌ای پیدا نشد</b>
-      <p style="margin-top:6px">جست‌وجو یا دسته‌بندی دیگری را امتحان کنید.</p>
+      <b style="font-size:16px"><?= site_e('دوره‌ای پیدا نشد') ?></b>
+      <p style="margin-top:6px"><?= site_e('جست‌وجو یا دسته‌بندی دیگری را امتحان کنید.') ?></p>
     </div>
   </div>
 </div>
@@ -333,7 +334,7 @@ course_site_head('دوره‌های آموزشی', $pageCss);
       curCat = (btn.getAttribute('data-cat') || 'all').trim();
       var titleEl = $('resTitle');
       if(titleEl){
-        titleEl.textContent = curCat === 'all' ? 'همه‌ی دوره‌ها' : ('دوره‌های ' + curCat);
+        titleEl.textContent = curCat === 'all' ? <?= site_js_text('همه‌ی دوره‌ها') ?> : ('دوره‌های ' + curCat);
       }
       apply();
     });

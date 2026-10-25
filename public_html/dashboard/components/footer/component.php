@@ -1,36 +1,37 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <footer class="gf-footer">
 <div class="gf-container">
 
 <!-- ستون بزرگ -->
 <div class="gf-col gf-cta">
 <div class="gf-logo">
-<img src="/dashboard/components/footer/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="300" height="99" loading="lazy" decoding="async">
+<img src="/dashboard/components/footer/images/1.png" alt="<?= site_e('مکسا - مؤسسه نیکوکاری کنترل سرطان') ?>" width="300" height="99" loading="lazy" decoding="async">
 </div>
 
 <h2 class="gf-title">
-همراه با هم به زندگی بیماران نور هدیه کنیم</h2>
+<?= site_e('همراه با هم به زندگی بیماران نور هدیه کنیم') ?></h2>
 </div>
 
 
 <!-- صفحات اصلی -->
 <div class="gf-col">
-<h4>آشنایی با مکسا</h4>
+<h4><?= site_e('آشنایی با مکسا') ?></h4>
 <ul>
-<li><a href="/home">صفحه اصلی</a></li>
-<li><a href="/history">درباره ما</a></li>
-<li><a href="/MACSAservices.html">صفحات خدمات</a></li>
-<li><a href="/single-fundraising-option">روش های حمایت</a></li>
+<li><a href="/home"><?= site_e('صفحه اصلی') ?></a></li>
+<li><a href="/history"><?= site_e('درباره ما') ?></a></li>
+<li><a href="/MACSAservices.html"><?= site_e('صفحات خدمات') ?></a></li>
+<li><a href="/single-fundraising-option"><?= site_e('روش های حمایت') ?></a></li>
 </ul>
 </div>
 
 
 <!-- شرکت ما -->
 <div class="gf-col">
-<h4>ارتباط با مکسا</h4>
+<h4><?= site_e('ارتباط با مکسا') ?></h4>
 <ul>
-<li><a href="/branches.php">شعب</a></li>
-<li><a href="/contact-center">مرکز تخصصی ارتباطات و سلامت از راه دور</a></li>
-<li><a href="/contactus">تماس با ما</a></li>
+<li><a href="/branches.php"><?= site_e('شعب') ?></a></li>
+<li><a href="/contact-center"><?= site_e('مرکز تخصصی ارتباطات و سلامت از راه دور') ?></a></li>
+<li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
 
 </ul>
 </div>
@@ -46,18 +47,18 @@
 <div class="gf-contact">
 
 <div>
-<span>تماس با ما</span>
+<span><?= site_e('تماس با ما') ?></span>
 <p>021-91092030</p>
 </div>
 
 <div>
-<span>آدرس</span>
-<p>تهران، بزرگراه جلال‌آل‌احمد(شرق به غرب)، بعد از کوی نصر(گیشا)، پلاک ۱۳۹، ساختمان مکسا
+<span><?= site_e('آدرس') ?></span>
+<p><?= site_e('تهران، بزرگراه جلال‌آل‌احمد(شرق به غرب)، بعد از کوی نصر(گیشا)، پلاک ۱۳۹، ساختمان مکسا') ?>
 </p>
 </div>
 
 <div>
-<span>آدرس ایمیل ما</span>
+<span><?= site_e('آدرس ایمیل ما') ?></span>
 <p>info@macsa.ir</p>
 </div>
 
@@ -67,29 +68,29 @@
 <!-- پایین فوتر -->
 <div class="gf-bottom">
   <div class="gf-social">
-    <a href="https://www.instagram.com/macsacharity?igsi=OWlla2VxbWZqdDJl" target="_blank" rel="noopener noreferrer" class="gf-social-instagram" aria-label="اینستاگرام">
+    <a href="https://www.instagram.com/macsacharity?igsi=OWlla2VxbWZqdDJl" target="_blank" rel="noopener noreferrer" class="gf-social-instagram" aria-label="<?= site_e('اینستاگرام') ?>">
       <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
       </svg>
     </a>
-    <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="gf-social-bale" aria-label="کانال بله مکسا">
-      <img src="/dashboard/components/footer/images/bale.webp" alt="بله" width="20" height="20" loading="lazy" decoding="async">
+    <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="gf-social-bale" aria-label="<?= site_e('کانال بله مکسا') ?>">
+      <img src="/dashboard/components/footer/images/bale.webp" alt="<?= site_e('بله') ?>" width="20" height="20" loading="lazy" decoding="async">
     </a>
-    <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="gf-social-aparat" aria-label="کانال آپارات مکسا">
-      <img src="/dashboard/components/footer/images/aparat.webp" alt="آپارات" width="20" height="20" loading="lazy" decoding="async">
+    <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="gf-social-aparat" aria-label="<?= site_e('کانال آپارات مکسا') ?>">
+      <img src="/dashboard/components/footer/images/aparat.webp" alt="<?= site_e('آپارات') ?>" width="20" height="20" loading="lazy" decoding="async">
     </a>
-    <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="gf-social-linkedin" aria-label="صفحه لینکدین مکسا">
+    <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="gf-social-linkedin" aria-label="<?= site_e('صفحه لینکدین مکسا') ?>">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
         <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.25c-.9 0-1.63.73-1.63 1.63 0 .9.73 1.63 1.63 1.63.9 0 1.63-.73 1.63-1.63 0-.9-.73-1.63-1.63-1.63z"/>
       </svg>
     </a>
-    <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="gf-social-eitaa" aria-label="کانال ایتا مکسا">
-      <img src="/dashboard/components/footer/images/eitaa.webp" alt="ایتا" width="20" height="20" loading="lazy" decoding="async">
+    <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="gf-social-eitaa" aria-label="<?= site_e('کانال ایتا مکسا') ?>">
+      <img src="/dashboard/components/footer/images/eitaa.webp" alt="<?= site_e('ایتا') ?>" width="20" height="20" loading="lazy" decoding="async">
     </a>
   </div>
 
 <div class="gf-copy">
- تمامی حقوق مادی و معنوی متعلق به موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) است.
+ <?= site_e('تمامی حقوق مادی و معنوی متعلق به موسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) است.') ?>
 </div>
 </div>
 
@@ -121,7 +122,7 @@ body {
 .gf-footer {
   position: relative;
   overflow: hidden;
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   font-family: inherit;
   color: #ffffff;
   padding-top: 56px;
@@ -257,7 +258,7 @@ body {
 ========================= */
 
 .gf-cta {
-  text-align: right;
+  text-align: start;
 }
 
 .gf-logo img {
@@ -336,7 +337,7 @@ body {
 .gf-contact div:first-child p,
 .gf-contact div:last-child p {
   direction: ltr;
-  text-align: right;
+  text-align: start;
 }
 
 /* =========================
@@ -493,7 +494,7 @@ body {
 
   .gf-contact {
     margin-top: 46px;
-    text-align: right;
+    text-align: start;
   }
 
   .gf-bottom {

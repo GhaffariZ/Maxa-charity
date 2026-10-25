@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/site-locale.php';
 /* ============================================================================
  *  کامپوننت عمومی «معرفی شعبه» — خیریه مکسا
  * ----------------------------------------------------------------------------
@@ -96,7 +97,7 @@ function bi_esc($s) {
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
     
     font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
     background: var(--bg-page);
     color: var(--text);
     padding-bottom: 40px;
@@ -648,14 +649,14 @@ function bi_esc($s) {
   <div class="bi-container">
 
     <!-- نوار مسیر نما -->
-    <nav class="bi-breadcrumbs" aria-label="راهنمای مسیر">
-      <a href="/home">صفحه اصلی</a>
+    <nav class="bi-breadcrumbs" aria-label="<?= site_e('راهنمای مسیر') ?>">
+      <a href="/home"><?= site_e('صفحه اصلی') ?></a>
       <span class="sep">‹</span>
-      <a href="/branches.php">شعب مکسا</a>
+      <a href="/branches.php"><?= site_e('شعب مکسا') ?></a>
       <span class="sep">‹</span>
-      <a href="/<?= bi_esc($branchActualSlug) ?>">شعبه <?= bi_esc($branchDisplayName) ?></a>
+      <a href="/<?= bi_esc($branchActualSlug) ?>"><?= site_e('شعبه') ?> <?= bi_esc($branchDisplayName) ?></a>
       <span class="sep">‹</span>
-      <span class="current">معرفی شعبه</span>
+      <span class="current"><?= site_e('معرفی شعبه') ?></span>
     </nav>
 
     <!-- هیرو شاخص بالای صفحه -->
@@ -668,17 +669,17 @@ function bi_esc($s) {
           <div>
             <span class="bi-hero-kicker">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
-              معرفی رسمی شعبه
+              <?= site_e('معرفی رسمی شعبه') ?>
             </span>
             <h1 class="bi-hero-title"><?= bi_esc($introTitle) ?></h1>
-            <p class="bi-hero-sub">شناخت امکانات، رسالت، موقعیت و خدمات مراقبت‌های تسکینی شعبه <?= bi_esc($branchDisplayName) ?> خیریه مکسا</p>
+            <p class="bi-hero-sub"><?= site_e('شناخت امکانات، رسالت، موقعیت و خدمات مراقبت‌های تسکینی شعبه') ?> <?= bi_esc($branchDisplayName) ?> <?= site_e('خیریه مکسا') ?></p>
           </div>
         </div>
 
         <div class="bi-hero-actions">
           <a href="/<?= bi_esc($branchActualSlug) ?>" class="bi-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 19 12 12 5"/></svg>
-            <span>بازگشت به خانه شعبه</span>
+            <span><?= site_e('بازگشت به خانه شعبه') ?></span>
           </a>
         </div>
       </div>
@@ -697,7 +698,7 @@ function bi_esc($s) {
               <div class="bi-card-title-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               </div>
-              <span>درباره شعبه <?= bi_esc($branchDisplayName) ?></span>
+              <span><?= site_e('درباره شعبه') ?> <?= bi_esc($branchDisplayName) ?></span>
             </h2>
           </div>
 
@@ -706,8 +707,8 @@ function bi_esc($s) {
               <?= nl2br(bi_esc($introText)) ?>
             <?php else: ?>
               <div class="bi-intro-empty">
-                <p>محتوای تفصیلی و تاریخچه شعبه <?= bi_esc($branchDisplayName) ?> به‌زودی توسط مدیریت این شعبه تکمیل خواهد شد.</p>
-                <p style="font-size: 13.5px; margin-top: 6px;">این شعبه کلیه خدمات حمایتی، تسکینی، پزشکی و مشاوره‌ای مکسا را به بیماران مبتلا به سرطان و خانواده‌های گرامی آنان ارائه می‌نماید.</p>
+                <p><?= site_e('محتوای تفصیلی و تاریخچه شعبه') ?> <?= bi_esc($branchDisplayName) ?> <?= site_e('به‌زودی توسط مدیریت این شعبه تکمیل خواهد شد.') ?></p>
+                <p style="font-size: 13.5px; margin-top: 6px;"><?= site_e('این شعبه کلیه خدمات حمایتی، تسکینی، پزشکی و مشاوره‌ای مکسا را به بیماران مبتلا به سرطان و خانواده‌های گرامی آنان ارائه می‌نماید.') ?></p>
               </div>
             <?php endif; ?>
           </div>
@@ -720,10 +721,10 @@ function bi_esc($s) {
               <div class="bi-card-title-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
               </div>
-              <span>گالری تصاویر شعبه</span>
+              <span><?= site_e('گالری تصاویر شعبه') ?></span>
             </h2>
             <?php if (!empty($introImages)): ?>
-              <span class="bi-gallery-counter"><?= count($introImages) ?> تصویر اختصاصی</span>
+              <span class="bi-gallery-counter"><?= count($introImages) ?> <?= site_e('تصویر اختصاصی') ?></span>
             <?php endif; ?>
           </div>
 
@@ -735,7 +736,7 @@ function bi_esc($s) {
                   <div class="bi-gallery-overlay">
                     <span class="bi-gallery-zoom-badge">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                      مشاهده اندازه بزرگ
+                      <?= site_e('مشاهده اندازه بزرگ') ?>
                     </span>
                   </div>
                 </div>
@@ -744,7 +745,7 @@ function bi_esc($s) {
           <?php else: ?>
             <div class="bi-intro-empty">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px; color: var(--teal); opacity: .7;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <p>تصاویر اختصاصی این شعبه به‌زودی بارگذاری خواهد شد.</p>
+              <p><?= site_e('تصاویر اختصاصی این شعبه به‌زودی بارگذاری خواهد شد.') ?></p>
             </div>
           <?php endif; ?>
         </section>
@@ -758,7 +759,7 @@ function bi_esc($s) {
         <div class="bi-sidecard">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            اطلاعات نشانی و موقعیت
+            <?= site_e('اطلاعات نشانی و موقعیت') ?>
           </h3>
 
           <div class="bi-info-item">
@@ -766,11 +767,11 @@ function bi_esc($s) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
             <div>
-              <div class="bi-info-title">آدرس فیزیکی شعبه</div>
+              <div class="bi-info-title"><?= site_e('آدرس فیزیکی شعبه') ?></div>
               <div class="bi-info-val" id="branchAddressText"><?= bi_esc($introAddress) ?></div>
               <button type="button" class="bi-copy-btn" onclick="copyAddress()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <span>کپی آدرس</span>
+                <span><?= site_e('کپی آدرس') ?></span>
               </button>
             </div>
           </div>
@@ -780,7 +781,7 @@ function bi_esc($s) {
         <div class="bi-sidecard">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            راه‌های ارتباطی و ساعات پذیرش
+            <?= site_e('راه‌های ارتباطی و ساعات پذیرش') ?>
           </h3>
 
           <div class="bi-info-item">
@@ -788,7 +789,7 @@ function bi_esc($s) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </div>
             <div>
-              <div class="bi-info-title">تلفن تماس مستقیم</div>
+              <div class="bi-info-title"><?= site_e('تلفن تماس مستقیم') ?></div>
               <div class="bi-info-val" dir="ltr">
                 <a href="tel:<?= preg_replace('/[^0-9+]/', '', $introPhone) ?>"><?= bi_esc($introPhone) ?></a>
               </div>
@@ -800,7 +801,7 @@ function bi_esc($s) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
             <div>
-              <div class="bi-info-title">ساعات کاری و پذیرش</div>
+              <div class="bi-info-title"><?= site_e('ساعات کاری و پذیرش') ?></div>
               <div class="bi-info-val"><?= bi_esc($introHours) ?></div>
             </div>
           </div>
@@ -808,11 +809,11 @@ function bi_esc($s) {
 
         <!-- دعوت به همراهی و کمک -->
         <div class="bi-side-cta">
-          <h4>همراهی با بیماران این شعبه</h4>
-          <p>با نیت‌های خیر و حمایت‌های خود می‌توانید در تامین دارو و خدمات تسکینی بیماران شعبه <?= bi_esc($branchDisplayName) ?> سهیم باشید.</p>
+          <h4><?= site_e('همراهی با بیماران این شعبه') ?></h4>
+          <p><?= site_e('با نیت‌های خیر و حمایت‌های خود می‌توانید در تامین دارو و خدمات تسکینی بیماران شعبه') ?> <?= bi_esc($branchDisplayName) ?> <?= site_e('سهیم باشید.') ?></p>
           <a href="/onlinedonation" class="bi-side-cta-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
-            <span>حمایت و کمک آنلاین</span>
+            <span><?= site_e('حمایت و کمک آنلاین') ?></span>
           </a>
         </div>
 
@@ -826,15 +827,15 @@ function bi_esc($s) {
 <!-- مودال لایت‌باکس بزرگ‌نمایی تصاویر -->
 <div class="bi-lightbox" id="biLightbox" role="dialog" aria-modal="true">
   <div class="bi-lightbox-c">
-    <button type="button" class="bi-lb-close" onclick="closeLightbox()" aria-label="بستن">&times;</button>
-    <button type="button" class="bi-lb-btn prev" onclick="changeLightbox(-1)" aria-label="تصویر قبلی">
+    <button type="button" class="bi-lb-close" onclick="closeLightbox()" aria-label="<?= site_e('بستن') ?>">&times;</button>
+    <button type="button" class="bi-lb-btn prev" onclick="changeLightbox(-1)" aria-label="<?= site_e('تصویر قبلی') ?>">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-    <img id="biLightboxImg" class="bi-lightbox-img" src="" alt="نمای بزرگ تصویر شعبه">
-    <button type="button" class="bi-lb-btn next" onclick="changeLightbox(1)" aria-label="تصویر بعدی">
+    <img id="biLightboxImg" class="bi-lightbox-img" src="" alt="<?= site_e('نمای بزرگ تصویر شعبه') ?>">
+    <button type="button" class="bi-lb-btn next" onclick="changeLightbox(1)" aria-label="<?= site_e('تصویر بعدی') ?>">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <div class="bi-lb-info" id="biLightboxInfo">تصویر ۱ از ۴</div>
+    <div class="bi-lb-info" id="biLightboxInfo"><?= site_e('تصویر ۱ از ۴') ?></div>
   </div>
 </div>
 
@@ -902,7 +903,7 @@ function bi_esc($s) {
     const text = document.getElementById('branchAddressText').innerText;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
-        alert('آدرس شعبه در کلیپ‌بورد کپی شد.');
+        alert(<?= site_js_text('آدرس شعبه در کلیپ‌بورد کپی شد.') ?>);
       }).catch(() => {});
     }
   };

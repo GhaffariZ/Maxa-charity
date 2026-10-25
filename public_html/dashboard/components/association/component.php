@@ -1,17 +1,18 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
-<section class="charity-doc-component" dir="rtl">
+<section class="charity-doc-component" dir="<?= site_direction() ?>">
 <div class="page-header-wrapper">
-    <header class="page-header-capsule" dir="rtl">
-        <h1>اساسنامه </h1>
-        <div class="page-header-breadcrumb">صفحه اصلی / خدمات</div>
+    <header class="page-header-capsule" dir="<?= site_direction() ?>">
+        <h1><?= site_e('اساسنامه') ?> </h1>
+        <div class="page-header-breadcrumb"><?= site_e('صفحه اصلی / خدمات') ?></div>
     </header>
 </div>
   <div class="charity-doc-card">
 
     <header class="charity-doc-header">
       <div class="charity-doc-actions">
-        <button type="button" class="charity-doc-btn js-zoom-out" title="کوچک‌نمایی">
+        <button type="button" class="charity-doc-btn js-zoom-out" title="<?= site_e('کوچک‌نمایی') ?>">
           −
         </button>
 
@@ -19,16 +20,16 @@
           100%
         </span>
 
-        <button type="button" class="charity-doc-btn js-zoom-in" title="بزرگ‌نمایی">
+        <button type="button" class="charity-doc-btn js-zoom-in" title="<?= site_e('بزرگ‌نمایی') ?>">
           +
         </button>
 
-        <button type="button" class="charity-doc-btn js-reset-zoom" title="بازگشت به حالت عادی">
-          ۱:۱
+        <button type="button" class="charity-doc-btn js-reset-zoom" title="<?= site_e('بازگشت به حالت عادی') ?>">
+          <?= site_e('۱:۱') ?>
         </button>
 
-        <button type="button" class="charity-doc-btn charity-doc-btn-primary js-fullscreen" title="نمایش تمام‌صفحه" aria-pressed="false">
-          تمام‌صفحه
+        <button type="button" class="charity-doc-btn charity-doc-btn-primary js-fullscreen" title="<?= site_e('نمایش تمام‌صفحه') ?>" aria-pressed="false">
+          <?= site_e('تمام‌صفحه') ?>
         </button>
       </div>
     </header>
@@ -36,12 +37,12 @@
     <div class="charity-doc-toolbar">
       <div class="charity-doc-page-status">
         <span class="js-page-current">1</span>
-        <span>از</span>
+        <span><?= site_e('از') ?></span>
         <span class="js-page-total">6</span>
       </div>
 
       <div class="charity-doc-note">
-        برای جابه‌جایی بین صفحات از فلش‌ها استفاده کنید. در حالت زوم، تصویر را با موس بگیرید و حرکت دهید.
+        <?= site_e('برای جابه‌جایی بین صفحات از فلش‌ها استفاده کنید. در حالت زوم، تصویر را با موس بگیرید و حرکت دهید.') ?>
       </div>
     </div>
 
@@ -54,8 +55,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image1}}" class="charity-doc-img" alt="صفحه ۱ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image1}}" class="charity-doc-img" alt="<?= site_e('صفحه ۱ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -63,8 +64,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image2}}" class="charity-doc-img" alt="صفحه ۲ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image2}}" class="charity-doc-img" alt="<?= site_e('صفحه ۲ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -72,8 +73,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image3}}" class="charity-doc-img" alt="صفحه ۳ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image3}}" class="charity-doc-img" alt="<?= site_e('صفحه ۳ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -81,8 +82,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image4}}" class="charity-doc-img" alt="صفحه ۴ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image4}}" class="charity-doc-img" alt="<?= site_e('صفحه ۴ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -90,8 +91,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image5}}" class="charity-doc-img" alt="صفحه ۵ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image5}}" class="charity-doc-img" alt="<?= site_e('صفحه ۵ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -99,8 +100,8 @@
           <div class="swiper-slide">
             <div class="charity-doc-pan-area">
               <div class="charity-doc-page">
-                <img src="{{image6}}" class="charity-doc-img" alt="صفحه ۶ اساسنامه" draggable="false">
-                <div class="charity-doc-watermark">مکسا - نسخه نمایشی عمومی</div>
+                <img src="{{image6}}" class="charity-doc-img" alt="<?= site_e('صفحه ۶ اساسنامه') ?>" draggable="false">
+                <div class="charity-doc-watermark"><?= site_e('مکسا - نسخه نمایشی عمومی') ?></div>
               </div>
             </div>
           </div>
@@ -115,15 +116,15 @@
 
       <div class="charity-doc-protection-layer js-protection-layer">
         <div class="charity-doc-protection-message">
-          نمایش سند موقتاً مخفی شد.
+          <?= site_e('نمایش سند موقتاً مخفی شد.') ?>
         </div>
       </div>
 
     </div>
 
     <footer class="charity-doc-footer">
-      <span>© تمامی حقوق این سند متعلق به مکسا است.</span>
-      <span>کپی‌برداری، ذخیره‌سازی یا انتشار بدون مجوز مجاز نیست.</span>
+      <span><?= site_e('© تمامی حقوق این سند متعلق به مکسا است.') ?></span>
+      <span><?= site_e('کپی‌برداری، ذخیره‌سازی یا انتشار بدون مجوز مجاز نیست.') ?></span>
     </footer>
 
   </div>
@@ -419,7 +420,7 @@
   overflow: hidden;
 
   /* محتوای داخل سند همچنان راست‌به‌چپ بماند */
-  direction: rtl;
+  direction: var(--site-direction, rtl);
 }
 
   .charity-doc-img {
@@ -610,7 +611,7 @@
     }
 
     .charity-doc-note {
-      text-align: right;
+      text-align: start;
     }
 
     .charity-doc-component .charityDocSwiper {
@@ -771,7 +772,7 @@
     function updateFullscreen() {
       const expanded = fallbackFullscreen || fullscreenElement() === card;
       card.classList.toggle("is-fullscreen", expanded);
-      fullscreenBtn.textContent = expanded ? "خروج از تمام‌صفحه" : "تمام‌صفحه";
+      fullscreenBtn.textContent = expanded ? <?= site_js_text('خروج از تمام‌صفحه') ?> : <?= site_js_text('تمام‌صفحه') ?>;
       fullscreenBtn.title = fullscreenBtn.textContent;
       fullscreenBtn.setAttribute("aria-pressed", String(expanded));
       if (expanded) {
@@ -782,7 +783,7 @@
         document.body.style.overflow = "hidden";
         card.setAttribute("role", "dialog");
         card.setAttribute("aria-modal", "true");
-        card.setAttribute("aria-label", "نمایشگر اساسنامه");
+        card.setAttribute("aria-label", <?= site_js_text('نمایشگر اساسنامه') ?>);
       } else {
         if (previousOverflow !== null) {
           document.documentElement.style.overflow = previousOverflow[0];

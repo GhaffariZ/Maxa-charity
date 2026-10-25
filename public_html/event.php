@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/core/site-locale.php';
 
 require_once __DIR__ . '/event-lib.php';
 
@@ -169,7 +170,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   }
 
   .event-public-page {
-    direction: rtl;
+    direction: var(--site-direction, rtl);
     color: var(--event-text-main);
     background-color: #F4F7F6;
     background-image: 
@@ -1744,20 +1745,20 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           <!-- Countdown Timer -->
           <div class="event-countdown-grid" data-countdown="<?= event_h($iso) ?>">
             <div class="countdown-box">
-              <span class="countdown-val" data-unit="days">۰</span>
-              <span class="countdown-lbl">روز</span>
+              <span class="countdown-val" data-unit="days"><?= site_e('۰') ?></span>
+              <span class="countdown-lbl"><?= site_e('روز') ?></span>
             </div>
             <div class="countdown-box">
-              <span class="countdown-val" data-unit="hours">۰</span>
-              <span class="countdown-lbl">ساعت</span>
+              <span class="countdown-val" data-unit="hours"><?= site_e('۰') ?></span>
+              <span class="countdown-lbl"><?= site_e('ساعت') ?></span>
             </div>
             <div class="countdown-box">
-              <span class="countdown-val" data-unit="minutes">۰</span>
-              <span class="countdown-lbl">دقیقه</span>
+              <span class="countdown-val" data-unit="minutes"><?= site_e('۰') ?></span>
+              <span class="countdown-lbl"><?= site_e('دقیقه') ?></span>
             </div>
             <div class="countdown-box">
-              <span class="countdown-val" data-unit="seconds">۰</span>
-              <span class="countdown-lbl">ثانیه</span>
+              <span class="countdown-val" data-unit="seconds"><?= site_e('۰') ?></span>
+              <span class="countdown-lbl"><?= site_e('ثانیه') ?></span>
             </div>
           </div>
 
@@ -1765,12 +1766,12 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           <div class="event-hero-actions">
             <?php if (!empty($event['registration_url'])): ?>
               <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-register-hero">
-                <span>ثبت‌نام سریع در همایش</span>
+                <span><?= site_e('ثبت‌نام سریع در همایش') ?></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
             <?php else: ?>
               <a href="#sec-about" class="btn-register-hero">
-                <span>مشاهده جزئیات همایش</span>
+                <span><?= site_e('مشاهده جزئیات همایش') ?></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
               </a>
             <?php endif; ?>
@@ -1778,7 +1779,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
             <?php if (!empty($event['schedule_pdf'])): ?>
               <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-pdf-hero">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>برنامه زمان‌بندی (PDF)</span>
+                <span><?= site_e('برنامه زمان‌بندی (PDF)') ?></span>
               </a>
             <?php endif; ?>
           </div>
@@ -1800,7 +1801,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                   <div class="hero-slide <?= $idx === 0 ? 'is-active' : '' ?>" data-slide-index="<?= $idx ?>" style="<?= $hBgStyle ?>">
                     <div class="hero-slide-overlay"></div>
                     <div class="hero-slide-body">
-                      <span class="hero-slide-badge">بخش ویژه رویداد <?= count($heroes) > 1 ? '(' . ($idx + 1) . ' از ' . count($heroes) . ')' : '' ?></span>
+                      <span class="hero-slide-badge"><?= site_e('بخش ویژه رویداد') ?> <?= count($heroes) > 1 ? '(' . ($idx + 1) . ' از ' . count($heroes) . ')' : '' ?></span>
                       <h3 class="hero-slide-title"><?= event_h($h['title']) ?></h3>
                       <?php if (!empty($h['description'])): ?>
                         <p class="hero-slide-desc"><?= event_h($h['description']) ?></p>
@@ -1818,7 +1819,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                 <div class="hero-slide is-active" style="background-image: url('<?= event_h($event['poster']) ?>'); background-size: cover; background-position: center;">
                   <div class="hero-slide-overlay"></div>
                   <div class="hero-slide-body">
-                    <span class="hero-slide-badge">پوستر رسمی همایش</span>
+                    <span class="hero-slide-badge"><?= site_e('پوستر رسمی همایش') ?></span>
                     <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
                     <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
                   </div>
@@ -1827,7 +1828,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                 <div class="hero-slide is-active" style="background: linear-gradient(135deg, #0d7a87 0%, #064047 100%);">
                   <div class="hero-slide-overlay"></div>
                   <div class="hero-slide-body">
-                    <span class="hero-slide-badge">رویداد ملی</span>
+                    <span class="hero-slide-badge"><?= site_e('رویداد ملی') ?></span>
                     <h3 class="hero-slide-title"><?= event_h($event['title']) ?></h3>
                     <p class="hero-slide-desc"><?= event_h($event['short_description']) ?></p>
                   </div>
@@ -1837,8 +1838,8 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
 
             <?php if (count($heroes) > 1): ?>
               <div class="hero-slider-nav">
-                <button type="button" class="hero-slider-btn" id="heroPrevBtn" aria-label="اسلاید قبلی">❮</button>
-                <button type="button" class="hero-slider-btn" id="heroNextBtn" aria-label="اسلاید بعدی">❯</button>
+                <button type="button" class="hero-slider-btn" id="heroPrevBtn" aria-label="<?= site_e('اسلاید قبلی') ?>">❮</button>
+                <button type="button" class="hero-slider-btn" id="heroNextBtn" aria-label="<?= site_e('اسلاید بعدی') ?>">❯</button>
               </div>
               <div class="hero-slider-dots" id="heroDots">
                 <?php foreach ($heroes as $idx => $h): ?>
@@ -1867,20 +1868,20 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           <div class="event-poster-card">
             <div class="poster-card-top-badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>پوستر رسمی رویداد</span>
+              <span><?= site_e('پوستر رسمی رویداد') ?></span>
             </div>
             <?php if (!empty($event['poster'])): ?>
-              <div class="event-poster-media" id="posterMediaTrigger" title="کلیک برای بزرگ‌نمایی تصویر پوستر">
+              <div class="event-poster-media" id="posterMediaTrigger" title="<?= site_e('کلیک برای بزرگ‌نمایی تصویر پوستر') ?>">
                 <img src="<?= event_h($event['poster']) ?>" alt="پوستر <?= event_h($event['title']) ?>" class="event-poster-img">
               </div>
               <button type="button" class="poster-zoom-btn" onclick="document.getElementById('posterMediaTrigger').click()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                <span>مشاهده پوستر با اندازه کامل</span>
+                <span><?= site_e('مشاهده پوستر با اندازه کامل') ?></span>
               </button>
             <?php else: ?>
               <div class="poster-empty-state">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span>پوستر رسمی ثبت نشده است</span>
+                <span><?= site_e('پوستر رسمی ثبت نشده است') ?></span>
               </div>
             <?php endif; ?>
           </div>
@@ -1889,9 +1890,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
         <!-- 2. CENTER: Title, Kicker & Full Description (تیتر و توضیحات همایش کنار پوستر) -->
         <div class="about-content-col">
           <div class="about-content-header">
-            <span class="section-kicker">معرفی و محورهای همایش</span>
+            <span class="section-kicker"><?= site_e('معرفی و محورهای همایش') ?></span>
             <h2 class="about-content-title"><?= event_h($event['title']) ?></h2>
-            <p class="about-content-subtitle">اطلاعات تفصیلی، اهداف برگزاری و محورهای علمی همایش</p>
+            <p class="about-content-subtitle"><?= site_e('اطلاعات تفصیلی، اهداف برگزاری و محورهای علمی همایش') ?></p>
           </div>
           <div class="about-copy-box">
             <?= event_h($event['about'] ?: $event['short_description']) ?>
@@ -1909,17 +1910,17 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
                 </div>
                 <div>
-                  <h3 class="action-card-title">ثبت‌نام در همایش</h3>
+                  <h3 class="action-card-title"><?= site_e('ثبت‌نام در همایش') ?></h3>
                 </div>
               </div>
               <?php if (!empty($event['registration_url'])): ?>
                 <span class="badge-status-pill">
                   <span class="chip-pulse-dot"></span>
-                  <span>فعال</span>
+                  <span><?= site_e('فعال') ?></span>
                 </span>
               <?php else: ?>
                 <span class="badge-status-pill is-pending">
-                  <span>به‌زودی</span>
+                  <span><?= site_e('به‌زودی') ?></span>
                 </span>
               <?php endif; ?>
             </div>
@@ -1928,22 +1929,22 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
             <div class="action-meta-box">
               <div class="action-meta-line">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span>تاریخ: <?= event_h(event_date_label($event['event_date'])) ?></span>
+                <span><?= site_e('تاریخ:') ?> <?= event_h(event_date_label($event['event_date'])) ?></span>
               </div>
               <div class="action-meta-line">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span>زمان: <?= event_h($timeText) ?></span>
+                <span><?= site_e('زمان:') ?> <?= event_h($timeText) ?></span>
               </div>
             </div>
 
             <?php if (!empty($event['registration_url'])): ?>
               <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="btn-action-primary">
-                <span>ورود به سامانه ثبت‌نام</span>
+                <span><?= site_e('ورود به سامانه ثبت‌نام') ?></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
             <?php else: ?>
               <button type="button" class="btn-action-primary is-disabled" disabled>
-                <span>ثبت‌نام به‌زودی فعال می‌شود</span>
+                <span><?= site_e('ثبت‌نام به‌زودی فعال می‌شود') ?></span>
               </button>
             <?php endif; ?>
           </div>
@@ -1956,30 +1957,30 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 </div>
                 <div>
-                  <h3 class="action-card-title">سین همایش و زمان‌بندی</h3>
+                  <h3 class="action-card-title"><?= site_e('سین همایش و زمان‌بندی') ?></h3>
                 </div>
               </div>
               <?php if (!empty($event['schedule_pdf'])): ?>
                 <span class="badge-pdf-pill">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  <span>فایل PDF</span>
+                  <span><?= site_e('فایل PDF') ?></span>
                 </span>
               <?php else: ?>
                 <span class="badge-status-pill is-pending">
-                  <span>به‌زودی</span>
+                  <span><?= site_e('به‌زودی') ?></span>
                 </span>
               <?php endif; ?>
             </div>
 
             <?php if (!empty($event['schedule_pdf'])): ?>
               <a href="<?= event_h($event['schedule_pdf']) ?>" target="_blank" download class="btn-action-secondary">
-                <span>دریافت فایل برنامه (PDF)</span>
+                <span><?= site_e('دریافت فایل برنامه (PDF)') ?></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               </a>
             <?php else: ?>
               <div class="pdf-not-available">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.</span>
+                <span><?= site_e('فایل زمان‌بندی برنامه به‌زودی بارگذاری می‌شود.') ?></span>
               </div>
             <?php endif; ?>
           </div>
@@ -1999,9 +2000,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       <div class="event-container">
         
         <div class="section-header">
-          <span class="section-kicker">ارکان علمی و اجرایی</span>
-          <h2 class="section-title">دبیران همایش</h2>
-          <p class="section-subtitle">اطلاعات دبیران علمی و اجرایی مسئول برگزاری همایش</p>
+          <span class="section-kicker"><?= site_e('ارکان علمی و اجرایی') ?></span>
+          <h2 class="section-title"><?= site_e('دبیران همایش') ?></h2>
+          <p class="section-subtitle"><?= site_e('اطلاعات دبیران علمی و اجرایی مسئول برگزاری همایش') ?></p>
         </div>
 
         <div class="people-grid">
@@ -2037,9 +2038,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       <div class="event-container">
         
         <div class="section-header">
-          <span class="section-kicker">سخنرانان و اساتید</span>
-          <h2 class="section-title">سخنرانان برجسته همایش</h2>
-          <p class="section-subtitle">اساتید و چهره‌های برجسته علمی و تخصصی حاضر در این رویداد</p>
+          <span class="section-kicker"><?= site_e('سخنرانان و اساتید') ?></span>
+          <h2 class="section-title"><?= site_e('سخنرانان برجسته همایش') ?></h2>
+          <p class="section-subtitle"><?= site_e('اساتید و چهره‌های برجسته علمی و تخصصی حاضر در این رویداد') ?></p>
         </div>
 
         <div class="speaker-grid">
@@ -2070,9 +2071,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
       <div class="event-container">
         
         <div class="section-header">
-          <span class="section-kicker">همراهان و حامیان</span>
-          <h2 class="section-title">همراهان همایش</h2>
-          <p class="section-subtitle">شبکه‌ای از سازمان‌ها، مراکز علمی و حامیانی که در برگزاری این همایش مشارکت دارند.</p>
+          <span class="section-kicker"><?= site_e('همراهان و حامیان') ?></span>
+          <h2 class="section-title"><?= site_e('همراهان همایش') ?></h2>
+          <p class="section-subtitle"><?= site_e('شبکه‌ای از سازمان‌ها، مراکز علمی و حامیانی که در برگزاری این همایش مشارکت دارند.') ?></p>
         </div>
 
         <div class="partners-grid">
@@ -2082,7 +2083,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                 <?php if (!empty($partner['logo'])): ?>
                   <img src="<?= event_h($partner['logo']) ?>" alt="<?= event_h($partner['name']) ?>">
                 <?php else: ?>
-                  <span style="font-weight:800; font-size:15px; color:var(--event-teal-dark);">مکسا</span>
+                  <span style="font-weight:800; font-size:15px; color:var(--event-teal-dark);"><?= site_e('مکسا') ?></span>
                 <?php endif; ?>
               </div>
               <h3 class="partner-name"><?= event_h($partner['name']) ?></h3>
@@ -2101,9 +2102,9 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     <div class="event-container">
       
       <div class="section-header">
-        <span class="section-kicker">رویدادنامه</span>
-        <h2 class="section-title">اخبار همایش</h2>
-        <p class="section-subtitle">آخرین اخبار، اطلاعیه‌ها و جزئیات برنامه‌های همایش</p>
+        <span class="section-kicker"><?= site_e('رویدادنامه') ?></span>
+        <h2 class="section-title"><?= site_e('اخبار همایش') ?></h2>
+        <p class="section-subtitle"><?= site_e('آخرین اخبار، اطلاعیه‌ها و جزئیات برنامه‌های همایش') ?></p>
       </div>
 
       <?php if (!empty($news)): ?>
@@ -2119,7 +2120,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                 <?php if (!empty($n['image'])): ?>
                   <img src="<?= event_h($n['image']) ?>" alt="<?= event_h($n['title']) ?>">
                 <?php else: ?>
-                  <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--event-primary-light); color:var(--event-primary); font-size:13px; font-weight:700;">خبر اختصاصی همایش</div>
+                  <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--event-primary-light); color:var(--event-primary); font-size:13px; font-weight:700;"><?= site_e('خبر اختصاصی همایش') ?></div>
                 <?php endif; ?>
                 <span class="news-date-badge"><?= event_h($pubDate) ?></span>
               </div>
@@ -2127,7 +2128,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
                 <h3 class="news-card-title"><?= event_h($n['title']) ?></h3>
                 <p class="news-card-desc"><?= event_h($n['excerpt'] ?: mb_substr(strip_tags((string)($n['content'] ?? '')), 0, 110) . '...') ?></p>
                 <a href="/event-news.php?slug=<?= rawurlencode((string)$n['slug']) ?>" class="news-card-btn">
-                  <span>مشاهده خبر</span>
+                  <span><?= site_e('مشاهده خبر') ?></span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
               </div>
@@ -2136,7 +2137,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
         </div>
       <?php else: ?>
         <div style="padding: 40px 24px; text-align: center; background: var(--event-bg-light); border: 1px dashed var(--event-border); border-radius: var(--event-radius); color: var(--event-text-muted); font-size: 14px;">
-          <p style="margin: 0; font-weight: 600;">در حال حاضر خبر جدیدی برای این رویداد منتشر نشده است. به زودی اطلاعیه‌های مربوط به این همایش در این بخش قرار می‌گیرد.</p>
+          <p style="margin: 0; font-weight: 600;"><?= site_e('در حال حاضر خبر جدیدی برای این رویداد منتشر نشده است. به زودی اطلاعیه‌های مربوط به این همایش در این بخش قرار می‌گیرد.') ?></p>
         </div>
       <?php endif; ?>
 
@@ -2144,19 +2145,19 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
   </section>
 
   <!-- Mobile Floating Sticky CTA Bar -->
-  <aside class="mobile-sticky-bar" id="mobileStickyBar" aria-label="دسترسی سریع به ثبت‌نام">
+  <aside class="mobile-sticky-bar" id="mobileStickyBar" aria-label="<?= site_e('دسترسی سریع به ثبت‌نام') ?>">
     <div class="mobile-sticky-meta">
       <span class="mobile-sticky-title"><?= event_h($event['title']) ?></span>
       <span class="mobile-sticky-date">🗓 <?= event_h(event_date_label($event['event_date'])) ?></span>
     </div>
     <?php if (!empty($event['registration_url'])): ?>
       <a href="<?= event_h($event['registration_url']) ?>" target="_blank" rel="noopener" class="mobile-sticky-btn">
-        <span>ثبت‌نام سریع</span>
+        <span><?= site_e('ثبت‌نام سریع') ?></span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     <?php else: ?>
       <a href="#sec-about" class="mobile-sticky-btn">
-        <span>جزئیات همایش</span>
+        <span><?= site_e('جزئیات همایش') ?></span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
       </a>
     <?php endif; ?>
@@ -2167,7 +2168,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
     <div class="event-poster-lightbox" id="posterLightbox" aria-hidden="true" role="dialog">
       <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
       <div class="lightbox-dialog">
-        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="بستن پوستر">✕</button>
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="<?= site_e('بستن پوستر') ?>">✕</button>
         <img src="<?= event_h($event['poster']) ?>" alt="پوستر کامل <?= event_h($event['title']) ?>" class="lightbox-img">
       </div>
     </div>

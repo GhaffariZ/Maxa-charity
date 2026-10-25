@@ -14,6 +14,10 @@ RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+# Public language variants. Panels, APIs and assets retain their existing URLs.
+RewriteRule ^(?:en|ar)(?:/.*)?$ localized.php [END,QSA]
+RewriteRule ^contact(?:us|-us)/?$ contactus.php [L,QSA]
+
 # ---- Redirect root to /home -----------------------------------------------------
 RewriteRule ^$ /home [R=301,L]
 

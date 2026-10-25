@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -12,10 +13,10 @@
     font-family: 'Vazirmatn', sans-serif !important;
   }
 </style>
-<section class="rncv3-sec" dir="rtl" data-recent-news="cards-v3">
+<section class="rncv3-sec" dir="<?= site_direction() ?>" data-recent-news="cards-v3">
   <div class="rncv3-wrap">
-    <div class="rncv3-head"><span></span><h2>داغ‌ترین‌ها</h2></div>
-    <div class="rncv3-grid" id="rncv3-grid"><div class="rncv3-empty">در حال بارگذاری اخبار...</div></div>
+    <div class="rncv3-head"><span></span><h2><?= site_e('داغ‌ترین‌ها') ?></h2></div>
+    <div class="rncv3-grid" id="rncv3-grid"><div class="rncv3-empty"><?= site_e('در حال بارگذاری اخبار...') ?></div></div>
   </div>
 </section>
 <style>
@@ -40,8 +41,8 @@
   const ex=(t,m=100)=>{t=(t||'').trim();return t.length>m?t.slice(0,m)+'…':t;};
   const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
   fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
-    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rncv3-empty">خبری برای نمایش وجود ندارد.</div>';return;}
+    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML=<?= site_js_text('<div class="rncv3-empty">خبری برای نمایش وجود ندارد.</div>') ?>;return;}
     grid.innerHTML=items.map(n=>'<article class="rncv3-card"><div class="rncv3-img"><img src="'+(n.image||ph)+'" alt=""></div><div class="rncv3-body"><div class="rncv3-meta"><span class="rncv3-cat">'+n.category+'</span><span>'+fa(n.date)+'</span></div><h3>'+n.title+'</h3><p>'+ex(n.excerpt||'')+'</p><div class="rncv3-foot"><span class="rncv3-read">'+fa(n.read_time)+' دقیقه</span><a href="'+n.url+'">بیشتر بخوانید ‹</a></div></div></article>').join('');
-  }).catch(()=>{grid.innerHTML='<div class="rncv3-empty">خطا در بارگذاری اخبار.</div>';});
+  }).catch(()=>{grid.innerHTML=<?= site_js_text('<div class="rncv3-empty">خطا در بارگذاری اخبار.</div>') ?>;});
 })();
 </script>

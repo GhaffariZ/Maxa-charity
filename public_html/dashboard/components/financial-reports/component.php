@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صورت‌های مالی و گزارش‌های حسابرسی | مکسا</title>
+    <title><?= site_e('صورت‌های مالی و گزارش‌های حسابرسی | مکسا') ?></title>
     <style>
         /* Self-hosted Vazirmatn variable font */
         @font-face {
@@ -515,7 +516,7 @@
         .financial-table td {
             padding: 11px 14px;
             border-bottom: 1px solid var(--border-light);
-            text-align: right;
+            text-align: start;
         }
 
         .financial-table th {
@@ -583,18 +584,18 @@
 <main class="page-container">
 
     <header class="header-capsule">
-        <h1>صورت‌های مالی و گزارش‌های حسابرسی</h1>
+        <h1><?= site_e('صورت‌های مالی و گزارش‌های حسابرسی') ?></h1>
         <a href="/home" class="breadcrumb-pill">
-            صفحه اصلی / آشنایی با مکسا / صورت‌های مالی
+            <?= site_e('صفحه اصلی / آشنایی با مکسا / صورت‌های مالی') ?>
         </a>
     </header>
 
     <!-- بخش معرفی و ارکان انضباط مالی -->
     <section class="intro-banner">
         <div class="intro-banner-text">
-            <h2>انضباط مالی و حسابرسی مستقل: سنگ‌بنای اعتماد نیکوکاران</h2>
+            <h2><?= site_e('انضباط مالی و حسابرسی مستقل: سنگ‌بنای اعتماد نیکوکاران') ?></h2>
             <p>
-                مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) با باور به این که وجوه خیریه امانت مردم و مایه حیات بیماران مبتلا به سرطان است، تمامی فعالیت‌های مالی خود را تحت دقیق‌ترین موازین انضباطی، نظارت مستمر هیئت مدیره و هیئت امنا و حسابرسی سالانه توسط مؤسسات حسابرسی رسمی معتمد عضو جامعه حسابداران رسمی ایران (IACPA) اداره می‌کند.
+                <?= site_e('مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) با باور به این که وجوه خیریه امانت مردم و مایه حیات بیماران مبتلا به سرطان است، تمامی فعالیت‌های مالی خود را تحت دقیق‌ترین موازین انضباطی، نظارت مستمر هیئت مدیره و هیئت امنا و حسابرسی سالانه توسط مؤسسات حسابرسی رسمی معتمد عضو جامعه حسابداران رسمی ایران (IACPA) اداره می‌کند.') ?>
             </p>
         </div>
 
@@ -603,46 +604,46 @@
                 <div class="pillar-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <strong>حسابرسی مستقل سالانه</strong>
-                <span>توسط مؤسسات معتمد عضو جامعه حسابداران رسمی ایران</span>
+                <strong><?= site_e('حسابرسی مستقل سالانه') ?></strong>
+                <span><?= site_e('توسط مؤسسات معتمد عضو جامعه حسابداران رسمی ایران') ?></span>
             </div>
 
             <div class="pillar-card">
                 <div class="pillar-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 4 12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <strong>گزارش حسابرسی مقبول</strong>
-                <span>صورت‌های مالی بدون بند مشروط و شفافیت کامل دفاتر</span>
+                <strong><?= site_e('گزارش حسابرسی مقبول') ?></strong>
+                <span><?= site_e('صورت‌های مالی بدون بند مشروط و شفافیت کامل دفاتر') ?></span>
             </div>
 
             <div class="pillar-card">
                 <div class="pillar-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </div>
-                <strong>تفکیک دقیق عواید</strong>
-                <span>شفافیت کامل در ثبت نذورات، کمک‌های هدفمند و مصارف درمانی</span>
+                <strong><?= site_e('تفکیک دقیق عواید') ?></strong>
+                <span><?= site_e('شفافیت کامل در ثبت نذورات، کمک‌های هدفمند و مصارف درمانی') ?></span>
             </div>
 
             <div class="pillar-card">
                 <div class="pillar-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M20 8v6M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </div>
-                <strong>نظارت بازرس قانونی</strong>
-                <span>بررسی موشکافانه گزارش‌ها توسط بازرسین قانونی منتخب مجمع</span>
+                <strong><?= site_e('نظارت بازرس قانونی') ?></strong>
+                <span><?= site_e('بررسی موشکافانه گزارش‌ها توسط بازرسین قانونی منتخب مجمع') ?></span>
             </div>
         </div>
     </section>
 
     <!-- نوار فیلتر و عنوان -->
     <section class="reports-toolbar">
-        <h2 class="toolbar-title">آرشیو صورت‌های مالی و ترازنامه‌های حسابرسی‌شده</h2>
+        <h2 class="toolbar-title"><?= site_e('آرشیو صورت‌های مالی و ترازنامه‌های حسابرسی‌شده') ?></h2>
 
         <div class="year-filter-tabs">
-            <button type="button" class="filter-btn active" data-filter="all">همه سال‌ها</button>
-            <button type="button" class="filter-btn" data-filter="1402">سال ۱۴۰۲</button>
-            <button type="button" class="filter-btn" data-filter="1401">سال ۱۴۰۱</button>
-            <button type="button" class="filter-btn" data-filter="1400">سال ۱۴۰۰</button>
-            <button type="button" class="filter-btn" data-filter="1399">سال ۱۳۹۹</button>
+            <button type="button" class="filter-btn active" data-filter="all"><?= site_e('همه سال‌ها') ?></button>
+            <button type="button" class="filter-btn" data-filter="1402"><?= site_e('سال ۱۴۰۲') ?></button>
+            <button type="button" class="filter-btn" data-filter="1401"><?= site_e('سال ۱۴۰۱') ?></button>
+            <button type="button" class="filter-btn" data-filter="1400"><?= site_e('سال ۱۴۰۰') ?></button>
+            <button type="button" class="filter-btn" data-filter="1399"><?= site_e('سال ۱۳۹۹') ?></button>
         </div>
     </section>
 
@@ -654,40 +655,40 @@
             <div>
                 <div class="financial-card-top">
                     <span class="financial-year-badge">
-                        سال مالی منتهی به ۲۹ اسفند ۱۴۰۲
+                        <?= site_e('سال مالی منتهی به ۲۹ اسفند ۱۴۰۲') ?>
                     </span>
-                    <span class="audit-status-badge">گزارش مقبول</span>
+                    <span class="audit-status-badge"><?= site_e('گزارش مقبول') ?></span>
                 </div>
 
-                <h3 class="financial-title">صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۲</h3>
+                <h3 class="financial-title"><?= site_e('صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۲') ?></h3>
 
                 <div class="auditor-label">
-                    <span>حسابرس و بازرس قانونی:</span>
-                    <strong>مؤسسه حسابرسی معتمد عضو IACPA</strong>
+                    <span><?= site_e('حسابرس و بازرس قانونی:') ?></span>
+                    <strong><?= site_e('مؤسسه حسابرسی معتمد عضو IACPA') ?></strong>
                 </div>
 
                 <div class="financial-specs">
                     <div class="spec-row">
-                        <span>اقلام صورت‌های مالی:</span>
-                        <strong>ترازنامه، صورت درآمد و هزینه، گردش وجوه نقد</strong>
+                        <span><?= site_e('اقلام صورت‌های مالی:') ?></span>
+                        <strong><?= site_e('ترازنامه، صورت درآمد و هزینه، گردش وجوه نقد') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>نسبت تخصیص به خدمات درمانی:</span>
-                        <strong>۹۲.۴٪ از کل هزینه‌ها</strong>
+                        <span><?= site_e('نسبت تخصیص به خدمات درمانی:') ?></span>
+                        <strong><?= site_e('۹۲.۴٪ از کل هزینه‌ها') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>وضعیت اظهارنظر:</span>
-                        <strong style="color: #065f46;">تأیید بدون بند مشروط</strong>
+                        <span><?= site_e('وضعیت اظهارنظر:') ?></span>
+                        <strong style="color: #065f46;"><?= site_e('تأیید بدون بند مشروط') ?></strong>
                     </div>
                 </div>
             </div>
 
             <div class="financial-card-actions">
                 <button type="button" class="btn-view-financial" data-modal="modal-fin-1402">
-                    مشاهده اقلام کلیدی
+                    <?= site_e('مشاهده اقلام کلیدی') ?>
                 </button>
-                <a href="#download-fin-1402" class="btn-download-audit js-download-btn" data-title="صورت مالی ۱۴۰۲">
-                    دانلود PDF حسابرسی
+                <a href="#download-fin-1402" class="btn-download-audit js-download-btn" data-title="<?= site_e('صورت مالی ۱۴۰۲') ?>">
+                    <?= site_e('دانلود PDF حسابرسی') ?>
                 </a>
             </div>
         </article>
@@ -697,40 +698,40 @@
             <div>
                 <div class="financial-card-top">
                     <span class="financial-year-badge">
-                        سال مالی منتهی به ۲۹ اسفند ۱۴۰۱
+                        <?= site_e('سال مالی منتهی به ۲۹ اسفند ۱۴۰۱') ?>
                     </span>
-                    <span class="audit-status-badge">گزارش مقبول</span>
+                    <span class="audit-status-badge"><?= site_e('گزارش مقبول') ?></span>
                 </div>
 
-                <h3 class="financial-title">صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۱</h3>
+                <h3 class="financial-title"><?= site_e('صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۱') ?></h3>
 
                 <div class="auditor-label">
-                    <span>حسابرس و بازرس قانونی:</span>
-                    <strong>مؤسسه حسابرسی معتمد عضو IACPA</strong>
+                    <span><?= site_e('حسابرس و بازرس قانونی:') ?></span>
+                    <strong><?= site_e('مؤسسه حسابرسی معتمد عضو IACPA') ?></strong>
                 </div>
 
                 <div class="financial-specs">
                     <div class="spec-row">
-                        <span>اقلام صورت‌های مالی:</span>
-                        <strong>ترازنامه، سود و زیان (درآمد و هزینه)، یادداشت‌های پیوست</strong>
+                        <span><?= site_e('اقلام صورت‌های مالی:') ?></span>
+                        <strong><?= site_e('ترازنامه، سود و زیان (درآمد و هزینه)، یادداشت‌های پیوست') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>نسبت تخصیص به خدمات درمانی:</span>
-                        <strong>۹۱.۸٪ از کل هزینه‌ها</strong>
+                        <span><?= site_e('نسبت تخصیص به خدمات درمانی:') ?></span>
+                        <strong><?= site_e('۹۱.۸٪ از کل هزینه‌ها') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>وضعیت اظهارنظر:</span>
-                        <strong style="color: #065f46;">تأیید بدون بند مشروط</strong>
+                        <span><?= site_e('وضعیت اظهارنظر:') ?></span>
+                        <strong style="color: #065f46;"><?= site_e('تأیید بدون بند مشروط') ?></strong>
                     </div>
                 </div>
             </div>
 
             <div class="financial-card-actions">
                 <button type="button" class="btn-view-financial" data-modal="modal-fin-1401">
-                    مشاهده اقلام کلیدی
+                    <?= site_e('مشاهده اقلام کلیدی') ?>
                 </button>
-                <a href="#download-fin-1401" class="btn-download-audit js-download-btn" data-title="صورت مالی ۱۴۰۱">
-                    دانلود PDF حسابرسی
+                <a href="#download-fin-1401" class="btn-download-audit js-download-btn" data-title="<?= site_e('صورت مالی ۱۴۰۱') ?>">
+                    <?= site_e('دانلود PDF حسابرسی') ?>
                 </a>
             </div>
         </article>
@@ -740,40 +741,40 @@
             <div>
                 <div class="financial-card-top">
                     <span class="financial-year-badge">
-                        سال مالی منتهی به ۲۹ اسفند ۱۴۰۰
+                        <?= site_e('سال مالی منتهی به ۲۹ اسفند ۱۴۰۰') ?>
                     </span>
-                    <span class="audit-status-badge">گزارش مقبول</span>
+                    <span class="audit-status-badge"><?= site_e('گزارش مقبول') ?></span>
                 </div>
 
-                <h3 class="financial-title">صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۰</h3>
+                <h3 class="financial-title"><?= site_e('صورت‌های مالی و گزارش حسابرس مستقل سال ۱۴۰۰') ?></h3>
 
                 <div class="auditor-label">
-                    <span>حسابرس و بازرس قانونی:</span>
-                    <strong>مؤسسه حسابرسی معتمد عضو IACPA</strong>
+                    <span><?= site_e('حسابرس و بازرس قانونی:') ?></span>
+                    <strong><?= site_e('مؤسسه حسابرسی معتمد عضو IACPA') ?></strong>
                 </div>
 
                 <div class="financial-specs">
                     <div class="spec-row">
-                        <span>اقلام صورت‌های مالی:</span>
-                        <strong>ترازنامه، صورت جریان وجوه نقد، یادداشت‌ها</strong>
+                        <span><?= site_e('اقلام صورت‌های مالی:') ?></span>
+                        <strong><?= site_e('ترازنامه، صورت جریان وجوه نقد، یادداشت‌ها') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>نسبت تخصیص به خدمات درمانی:</span>
-                        <strong>۹۰.۵٪ از کل هزینه‌ها</strong>
+                        <span><?= site_e('نسبت تخصیص به خدمات درمانی:') ?></span>
+                        <strong><?= site_e('۹۰.۵٪ از کل هزینه‌ها') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>وضعیت اظهارنظر:</span>
-                        <strong style="color: #065f46;">تأیید بدون بند مشروط</strong>
+                        <span><?= site_e('وضعیت اظهارنظر:') ?></span>
+                        <strong style="color: #065f46;"><?= site_e('تأیید بدون بند مشروط') ?></strong>
                     </div>
                 </div>
             </div>
 
             <div class="financial-card-actions">
                 <button type="button" class="btn-view-financial" data-modal="modal-fin-1400">
-                    مشاهده اقلام کلیدی
+                    <?= site_e('مشاهده اقلام کلیدی') ?>
                 </button>
-                <a href="#download-fin-1400" class="btn-download-audit js-download-btn" data-title="صورت مالی ۱۴۰۰">
-                    دانلود PDF حسابرسی
+                <a href="#download-fin-1400" class="btn-download-audit js-download-btn" data-title="<?= site_e('صورت مالی ۱۴۰۰') ?>">
+                    <?= site_e('دانلود PDF حسابرسی') ?>
                 </a>
             </div>
         </article>
@@ -783,40 +784,40 @@
             <div>
                 <div class="financial-card-top">
                     <span class="financial-year-badge">
-                        سال مالی منتهی به ۳۰ اسفند ۱۳۹۹
+                        <?= site_e('سال مالی منتهی به ۳۰ اسفند ۱۳۹۹') ?>
                     </span>
-                    <span class="audit-status-badge">گزارش مقبول</span>
+                    <span class="audit-status-badge"><?= site_e('گزارش مقبول') ?></span>
                 </div>
 
-                <h3 class="financial-title">صورت‌های مالی و گزارش حسابرس مستقل سال ۱۳۹۹</h3>
+                <h3 class="financial-title"><?= site_e('صورت‌های مالی و گزارش حسابرس مستقل سال ۱۳۹۹') ?></h3>
 
                 <div class="auditor-label">
-                    <span>حسابرس و بازرس قانونی:</span>
-                    <strong>مؤسسه حسابرسی معتمد عضو IACPA</strong>
+                    <span><?= site_e('حسابرس و بازرس قانونی:') ?></span>
+                    <strong><?= site_e('مؤسسه حسابرسی معتمد عضو IACPA') ?></strong>
                 </div>
 
                 <div class="financial-specs">
                     <div class="spec-row">
-                        <span>اقلام صورت‌های مالی:</span>
-                        <strong>ترازنامه، صورت عملکرد درآمد و هزینه</strong>
+                        <span><?= site_e('اقلام صورت‌های مالی:') ?></span>
+                        <strong><?= site_e('ترازنامه، صورت عملکرد درآمد و هزینه') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>نسبت تخصیص به خدمات درمانی:</span>
-                        <strong>۸۹.۹٪ از کل هزینه‌ها</strong>
+                        <span><?= site_e('نسبت تخصیص به خدمات درمانی:') ?></span>
+                        <strong><?= site_e('۸۹.۹٪ از کل هزینه‌ها') ?></strong>
                     </div>
                     <div class="spec-row">
-                        <span>وضعیت اظهارنظر:</span>
-                        <strong style="color: #065f46;">تأیید بدون بند مشروط</strong>
+                        <span><?= site_e('وضعیت اظهارنظر:') ?></span>
+                        <strong style="color: #065f46;"><?= site_e('تأیید بدون بند مشروط') ?></strong>
                     </div>
                 </div>
             </div>
 
             <div class="financial-card-actions">
                 <button type="button" class="btn-view-financial" data-modal="modal-fin-1399">
-                    مشاهده اقلام کلیدی
+                    <?= site_e('مشاهده اقلام کلیدی') ?>
                 </button>
-                <a href="#download-fin-1399" class="btn-download-audit js-download-btn" data-title="صورت مالی ۱۳۹۹">
-                    دانلود PDF حسابرسی
+                <a href="#download-fin-1399" class="btn-download-audit js-download-btn" data-title="<?= site_e('صورت مالی ۱۳۹۹') ?>">
+                    <?= site_e('دانلود PDF حسابرسی') ?>
                 </a>
             </div>
         </article>
@@ -826,13 +827,13 @@
     <!-- کارت اطلاعات بازرسان و مراجع ناظر -->
     <div class="audit-info-card">
         <div class="audit-info-text">
-            <h3>نظارت قانونی و حسابرسی مستقل</h3>
+            <h3><?= site_e('نظارت قانونی و حسابرسی مستقل') ?></h3>
             <p>
-                صورت‌های مالی مؤسسه مکسا سالانه در مجمع عمومی عادی به تصویب هیئت امنا رسیده و به مراجع ذی‌صلاح نظارتی از جمله وزارت کشور و سازمان امور مالیاتی کشور ارائه می‌شود. نیکوکاران و حامیان گرامی جهت دریافت هرگونه اطلاعات تکمیلی مالی می‌توانند با واحد مالی و اداری مکسا در ارتباط باشند.
+                <?= site_e('صورت‌های مالی مؤسسه مکسا سالانه در مجمع عمومی عادی به تصویب هیئت امنا رسیده و به مراجع ذی‌صلاح نظارتی از جمله وزارت کشور و سازمان امور مالیاتی کشور ارائه می‌شود. نیکوکاران و حامیان گرامی جهت دریافت هرگونه اطلاعات تکمیلی مالی می‌توانند با واحد مالی و اداری مکسا در ارتباط باشند.') ?>
             </p>
         </div>
         <a href="/contactus" class="audit-info-btn">
-            ارتباط با واحد مالی مکسا
+            <?= site_e('ارتباط با واحد مالی مکسا') ?>
         </a>
     </div>
 
@@ -843,10 +844,10 @@
     <div class="financial-modal-box">
         <div class="modal-header">
             <div>
-                <h3 id="modalTitle">خلاصه اقلام ترازنامه و درآمد-هزینه</h3>
-                <span id="modalYear" class="financial-year-badge">سال مالی ۱۴۰۲</span>
+                <h3 id="modalTitle"><?= site_e('خلاصه اقلام ترازنامه و درآمد-هزینه') ?></h3>
+                <span id="modalYear" class="financial-year-badge"><?= site_e('سال مالی ۱۴۰۲') ?></span>
             </div>
-            <button type="button" class="modal-close-btn js-modal-close" aria-label="بستن">✕</button>
+            <button type="button" class="modal-close-btn js-modal-close" aria-label="<?= site_e('بستن') ?>">✕</button>
         </div>
 
         <div class="modal-body" id="modalBody">

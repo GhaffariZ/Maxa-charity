@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../core/site-locale.php';
 /* ============================================================================
  *  نمایش صفحه‌ی عمومی (مرکزی یا شعبه) — با ایزولاسیون branch_id
  * ----------------------------------------------------------------------------
@@ -29,7 +30,7 @@ $slug = $slugAliases[$slug] ?? $slug;
 
 if ($slug === '') {
     http_response_code(404);
-    include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
+    site_error_page();
     exit;
 }
 
@@ -127,9 +128,9 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
         http_response_code(404);
         $notFoundFile = dirname(__DIR__) . '/404.html';
         if (file_exists($notFoundFile)) {
-            include $notFoundFile;
+            site_error_page();
         } elseif (isset($_SERVER['DOCUMENT_ROOT']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/404.html')) {
-            include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
+            site_error_page();
         } else {
             echo '<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>صفحه پیدا نشد</title></head><body><h1>۴۰۴ | صفحه مورد نظر یافت نشد</h1></body></html>';
         }
@@ -209,10 +210,8 @@ function render_html_head(array $meta, string $branchSlug = '', string $branchNa
         define('MAXA_HTML_SHELL_OPENED', true);
     }
 
-    if (!ini_get('zlib.output_compression')) {
-        @ini_set('zlib.output_compression', '1');
-    }
-
+    $meta['title'] = site_page_title((string)($_GET['slug'] ?? ''), $meta['title']);
+    $meta['description'] = site_text($meta['description']);
     $title = htmlspecialchars($meta['title'], ENT_QUOTES, 'UTF-8');
     $desc  = htmlspecialchars($meta['description'], ENT_QUOTES, 'UTF-8');
     $canon = htmlspecialchars($meta['canonical'], ENT_QUOTES, 'UTF-8');
@@ -298,7 +297,7 @@ function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
 
     if (!$news) {
         http_response_code(404);
-        include $_SERVER['DOCUMENT_ROOT'] . '/404.html';
+        site_error_page();
         exit;
     }
 

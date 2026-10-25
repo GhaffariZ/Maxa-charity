@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحه مقاله استاندارد</title>
+  <title><?= site_e('صفحه مقاله استاندارد') ?></title>
 
   <style>
     /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -99,7 +100,7 @@
       grid-template-areas: "sidebar content";
       gap: 32px;
       align-items: start;
-      direction: rtl;
+      direction: var(--site-direction, rtl);
     }
 
     .content-column {
@@ -312,7 +313,7 @@
 }
 
 .popup-phone-label {
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   margin-bottom: 4px;
   color: #64748b;
   font-size: 0.8rem;
@@ -561,7 +562,7 @@
   color: rgba(255,255,255,0.92);
   font-size: 0.98rem;
   line-height: 2;
-  text-align: right;
+  text-align: start;
 }
 
 .contact-info-list {
@@ -1099,10 +1100,10 @@
   <main class="page-container">
 
     <header class="header-capsule">
-      <h1>مراقبت‌های معنوی</h1>
+      <h1><?= site_e('مراقبت‌های معنوی') ?></h1>
 
       <a href="/home" class="breadcrumb-pill">
-        صفحه اصلی / خدمات
+        <?= site_e('صفحه اصلی / خدمات') ?>
       </a>
     </header>
 
@@ -1120,20 +1121,20 @@
 </svg>
 
       </div>
-      <h3 class="contact-card-title">برای مشاوره نیاز به کمک دارید؟</h3>
+      <h3 class="contact-card-title"><?= site_e('برای مشاوره نیاز به کمک دارید؟') ?></h3>
       <p class="contact-card-text">
-با مرکز تخصصی ارتباطات و سلامت از راه دور به صورت 24 ساعت روز و 7 روز هفته در تماس باشید
+<?= site_e('با مرکز تخصصی ارتباطات و سلامت از راه دور به صورت 24 ساعت روز و 7 روز هفته در تماس باشید') ?>
       </p>
-      <button class="contact-card-btn js-call-btn">تماس با ما</button>
+      <button class="contact-card-btn js-call-btn"><?= site_e('تماس با ما') ?></button>
     </div>
 
     <!-- باکس مطالب مرتبط -->
     <div class="related-card">
-      <h3 class="related-card-title">مطالب مرتبط</h3>
+      <h3 class="related-card-title"><?= site_e('مطالب مرتبط') ?></h3>
       <ul class="related-list">
-        <li><a href="/supportiveandpalliativecare">مراقبت حمایتی چیست؟</a></li>
-        <li><a href="/patientoption">خدمات تسکینی مکسا</a></li>
-        <li><a href="/patientintake">راهنمای دریافت مشاوره</a></li>
+        <li><a href="/supportiveandpalliativecare"><?= site_e('مراقبت حمایتی چیست؟') ?></a></li>
+        <li><a href="/patientoption"><?= site_e('خدمات تسکینی مکسا') ?></a></li>
+        <li><a href="/patientintake"><?= site_e('راهنمای دریافت مشاوره') ?></a></li>
       </ul>
     </div>
   </div>
@@ -1150,24 +1151,24 @@
       </svg>
     </div>
 
-    <h3 id="callPopupTitle">تماس با مرکز تخصصی ارتباطات و سلامت از راه دور</h3>
+    <h3 id="callPopupTitle"><?= site_e('تماس با مرکز تخصصی ارتباطات و سلامت از راه دور') ?></h3>
 
     <p class="popup-desc">
-      برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.
+      <?= site_e('برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.') ?>
     </p>
 
     <a href="tel:03191092030" class="popup-phone-link">
-      <span class="popup-phone-label">شماره تماس</span>
-      <strong>۰۳۱-۹۱۰۹۲۰۳۰</strong>
+      <span class="popup-phone-label"><?= site_e('شماره تماس') ?></span>
+      <strong><?= site_e('۰۳۱-۹۱۰۹۲۰۳۰') ?></strong>
     </a>
 
     <div class="popup-actions">
       <button class="popup-copy-btn" type="button" data-phone="03191092030">
-        کپی شماره
+        <?= site_e('کپی شماره') ?>
       </button>
 
       <button class="popup-secondary-btn" type="button">
-        بستن
+        <?= site_e('بستن') ?>
       </button>
     </div>
 
@@ -1184,35 +1185,35 @@
 
         <article class="article-content main-article">
 
-                                <h2 class="">مراقبت معنوی</h2>
+                                <h2 class=""><?= site_e('مراقبت معنوی') ?></h2>
                                 <p class="wow fadeInUp">
-خیلی از کسانی که به سرطان مبتلا می‌شوند، درگیر سوالاتی می‌شوند؛ مثل اینکه «چرا من سرطان گرفته‌ام؟» یا «عدالت خدا کجا رفته؟». «مراقب معنوی» بیمار و اطرافیان او را در چالش های گوناگون فلسفی، معنوی، دینی و اخلاقی همراهی می‌کند. چالش‌هایی مانند درست و غلط، ثواب و گناه، عدالت، دعا و اجابت، توکل، صبر، رضایت، حکمت، امیدواری، آرامش معنوی، عزت نفس، خودآگاهی، خداشناسی، یکپارچگی با طبیعت و طبیعت خدامحور، ترس از مرگ، سوگ، توجه به خود، روابط بین‌فردی و حتی احکام شرعی.
+<?= site_e('خیلی از کسانی که به سرطان مبتلا می‌شوند، درگیر سوالاتی می‌شوند؛ مثل اینکه «چرا من سرطان گرفته‌ام؟» یا «عدالت خدا کجا رفته؟». «مراقب معنوی» بیمار و اطرافیان او را در چالش های گوناگون فلسفی، معنوی، دینی و اخلاقی همراهی می‌کند. چالش‌هایی مانند درست و غلط، ثواب و گناه، عدالت، دعا و اجابت، توکل، صبر، رضایت، حکمت، امیدواری، آرامش معنوی، عزت نفس، خودآگاهی، خداشناسی، یکپارچگی با طبیعت و طبیعت خدامحور، ترس از مرگ، سوگ، توجه به خود، روابط بین‌فردی و حتی احکام شرعی.') ?>
 </p>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-تیم مراقبت معنوی به شما کمک می‌کنند تا باور‌های خود را بازنگری کنید و بتوانید معنای زندگی را دوباره پیدا کنید و تفسیری معنا‌دار از تجارب سختی که پشت سر می‌گذارید بدست آورید.
+<?= site_e('تیم مراقبت معنوی به شما کمک می‌کنند تا باور‌های خود را بازنگری کنید و بتوانید معنای زندگی را دوباره پیدا کنید و تفسیری معنا‌دار از تجارب سختی که پشت سر می‌گذارید بدست آورید.') ?>
 </p>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-این خدمات به صورت مشاورۀ فردی و جلسات گروه درمانی معنوی، ارائه می‌شود. این خدمات بنا به نیاز بیمار، ممکن است در کلینیک، در منزل بیمار و یا از طریق تلفن ارائه شود.
+<?= site_e('این خدمات به صورت مشاورۀ فردی و جلسات گروه درمانی معنوی، ارائه می‌شود. این خدمات بنا به نیاز بیمار، ممکن است در کلینیک، در منزل بیمار و یا از طریق تلفن ارائه شود.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">مشاوره در کلینیک</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('مشاوره در کلینیک') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-بیماران و خانواده ها می‌توانند با حضور در کلینیک و ملاقات با تیم تخصصی مراقبت معنوی، در مورد سوالات و چالش‌های معنوی خود به گفتگو بنشینند. مراقبین معنوی طی مشاورۀ فردی به حل تعارضات معنوی مراجعین می‌پردازند.
+<?= site_e('بیماران و خانواده ها می‌توانند با حضور در کلینیک و ملاقات با تیم تخصصی مراقبت معنوی، در مورد سوالات و چالش‌های معنوی خود به گفتگو بنشینند. مراقبین معنوی طی مشاورۀ فردی به حل تعارضات معنوی مراجعین می‌پردازند.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">مشاوره در منزل</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('مشاوره در منزل') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-بیمارانی که توانایی فیزیکی برای حضور در کلینیک را ندارند و یا بر اساس تشخیصِ مراقب معنوی، ارائۀ مراقبت در منزل می‌تواند تاثیر بهتری داشته باشد، در منزل مشاوره می‌گیرند.
+<?= site_e('بیمارانی که توانایی فیزیکی برای حضور در کلینیک را ندارند و یا بر اساس تشخیصِ مراقب معنوی، ارائۀ مراقبت در منزل می‌تواند تاثیر بهتری داشته باشد، در منزل مشاوره می‌گیرند.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">جلسات گروه‌ درمانی</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('جلسات گروه‌ درمانی') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-گروه درمانی معنوی، با جلسات و موضوعات مختلف به وسیلۀ ایجاد حس مشترک می‌تواند نقش بسزایی در حرکت بیماران و خانواده‌ها در مسیر سلامت معنوی داشته باشد.
+<?= site_e('گروه درمانی معنوی، با جلسات و موضوعات مختلف به وسیلۀ ایجاد حس مشترک می‌تواند نقش بسزایی در حرکت بیماران و خانواده‌ها در مسیر سلامت معنوی داشته باشد.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">ویزیت تلفنی</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('ویزیت تلفنی') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-مراقبین معنوی مکسا بر اساس نیاز بیماران و یا خانواده‌های ایشان در شرایط متفاوت از طریق پاسخگویی تلفنی به ارائۀ مراقبت معنوی می‌پردازند. ایشان با پیگیری‌های مستمر تلفنی وضعیت معنوی بیماران را دنبال می‌کنند و تا رسیدن به نتیجۀ مطلوب، وضعیت بیمار و خانواده را از طریق تماس های تلفنی پیگیری می‌کنند.
+<?= site_e('مراقبین معنوی مکسا بر اساس نیاز بیماران و یا خانواده‌های ایشان در شرایط متفاوت از طریق پاسخگویی تلفنی به ارائۀ مراقبت معنوی می‌پردازند. ایشان با پیگیری‌های مستمر تلفنی وضعیت معنوی بیماران را دنبال می‌کنند و تا رسیدن به نتیجۀ مطلوب، وضعیت بیمار و خانواده را از طریق تماس های تلفنی پیگیری می‌کنند.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">پاسخگویی به سوالات شرعی بیماران</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('پاسخگویی به سوالات شرعی بیماران') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-متخصصان فقه در مکسا، سوالات و مسائل شرعیِ مربوط به بیماری را بر اساس جدید‌ترین نظرات مراجع تقلید پاسخ می‌دهند، تا بیمار بدون وسواس و با اطمینان خاطر به انجام مناسک مذهبی خود بپردازد.
+<?= site_e('متخصصان فقه در مکسا، سوالات و مسائل شرعیِ مربوط به بیماری را بر اساس جدید‌ترین نظرات مراجع تقلید پاسخ می‌دهند، تا بیمار بدون وسواس و با اطمینان خاطر به انجام مناسک مذهبی خود بپردازد.') ?>
 </p>
 
 
@@ -1283,14 +1284,14 @@
     copyBtn.addEventListener('click', async function() {
       try {
         await navigator.clipboard.writeText(phoneNumber);
-        copyBtn.textContent = 'کپی شد';
+        copyBtn.textContent = <?= site_js_text('کپی شد') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       } catch (err) {
-        copyBtn.textContent = 'امکان کپی نبود';
+        copyBtn.textContent = <?= site_js_text('امکان کپی نبود') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       }
     });

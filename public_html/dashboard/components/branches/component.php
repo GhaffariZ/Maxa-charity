@@ -1,10 +1,11 @@
-<section class="branches" dir="rtl">
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<section class="branches" dir="<?= site_direction() ?>">
   <div class="branches__card">
     <header class="branches__head">
-      <span class="branches__eyebrow">گستره خدمت‌رسانی مکسا در سراسر کشور</span>
-      <h2 class="branches__title">شبکه شعب و مراکز تخصصی مکسا</h2>
+      <span class="branches__eyebrow"><?= site_e('گستره خدمت‌رسانی مکسا در سراسر کشور') ?></span>
+      <h2 class="branches__title"><?= site_e('شبکه شعب و مراکز تخصصی مکسا') ?></h2>
       <p class="branches__subtitle">
-        برای مشاهده اطلاعات هر شعبه، روی استان‌های فعال (آبی‌رنگ) کلیک کنید.
+        <?= site_e('برای مشاهده اطلاعات هر شعبه، روی استان‌های فعال (آبی‌رنگ) کلیک کنید.') ?>
       </p>
     </header>
 
@@ -16,31 +17,31 @@
     <div id="esfahanBranchModal" class="branch-popover" aria-hidden="true" role="dialog" aria-labelledby="ebm-title">
       <div class="branch-popover__backdrop" data-close-popover></div>
       <div class="branch-popover__box">
-        <button type="button" class="branch-popover__close" data-close-popover aria-label="بستن پنجره">&times;</button>
+        <button type="button" class="branch-popover__close" data-close-popover aria-label="<?= site_e('بستن پنجره') ?>">&times;</button>
         <div class="branch-popover__head">
-          <span class="branch-popover__eyebrow">استان اصفهان</span>
-          <h3 id="ebm-title" class="branch-popover__title">شعب فعال مکسا در استان اصفهان</h3>
-          <p class="branch-popover__desc">در گستره استان اصفهان، ۲ شعبه فعال مکسا آماده خدمت‌رسانی به بیماران و خانواده‌های آنان هستند. لطفاً شعبه مورد نظر را انتخاب فرمایید:</p>
+          <span class="branch-popover__eyebrow"><?= site_e('استان اصفهان') ?></span>
+          <h3 id="ebm-title" class="branch-popover__title"><?= site_e('شعب فعال مکسا در استان اصفهان') ?></h3>
+          <p class="branch-popover__desc"><?= site_e('در گستره استان اصفهان، ۲ شعبه فعال مکسا آماده خدمت‌رسانی به بیماران و خانواده‌های آنان هستند. لطفاً شعبه مورد نظر را انتخاب فرمایید:') ?></p>
         </div>
         <div class="branch-popover__cards">
-          <a href="/esfahan-branch" class="branch-popover__card" title="ورود به صفحه اختصاصی شعبه اصفهان">
+          <a href="/esfahan-branch" class="branch-popover__card" title="<?= site_e('ورود به صفحه اختصاصی شعبه اصفهان') ?>">
             <div class="branch-popover__icon">
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.418 0-8-3.582-8-8 0-4.418 8-11 8-11s8 6.582 8 11c0 4.418-3.582 8-8 8z"/><circle cx="12" cy="13" r="3"/></svg>
             </div>
             <div class="branch-popover__card-info">
-              <h4>شعبه اصفهان</h4>
-              <span>مرکز استان اصفهان · درمانگاه طب تسکینی و شبکه مراقبت در منزل</span>
+              <h4><?= site_e('شعبه اصفهان') ?></h4>
+              <span><?= site_e('مرکز استان اصفهان · درمانگاه طب تسکینی و شبکه مراقبت در منزل') ?></span>
             </div>
             <span class="branch-popover__arrow">&larr;</span>
           </a>
 
-          <a href="/kashan-branch" class="branch-popover__card" title="ورود به صفحه اختصاصی شعبه کاشان">
+          <a href="/kashan-branch" class="branch-popover__card" title="<?= site_e('ورود به صفحه اختصاصی شعبه کاشان') ?>">
             <div class="branch-popover__icon branch-popover__icon--kashan">
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.418 0-8-3.582-8-8 0-4.418 8-11 8-11s8 6.582 8 11c0 4.418-3.582 8-8 8z"/><circle cx="12" cy="13" r="3"/></svg>
             </div>
             <div class="branch-popover__card-info">
-              <h4>شعبه کاشان</h4>
-              <span>شمال استان اصفهان · خدمات تخصصی مراقبت تسکینی و مشاوره</span>
+              <h4><?= site_e('شعبه کاشان') ?></h4>
+              <span><?= site_e('شمال استان اصفهان · خدمات تخصصی مراقبت تسکینی و مشاوره') ?></span>
             </div>
             <span class="branch-popover__arrow">&larr;</span>
           </a>
@@ -55,19 +56,19 @@
         <div class="branches__legend-item branches__legend-item--active">
           <span class="branches__swatch branches__swatch--active"></span>
           <span class="branches__legend-text">
-            <strong>استان‌های فعال (دارای شعبه)</strong>
+            <strong><?= site_e('استان‌های فعال (دارای شعبه)') ?></strong>
           </span>
         </div>
         <div class="branches__legend-item">
           <span class="branches__swatch branches__swatch--inactive"></span>
-          <span class="branches__legend-text">سایر استان‌ها</span>
+          <span class="branches__legend-text"><?= site_e('سایر استان‌ها') ?></span>
         </div>
       </div>
 
       <!-- ۳ آیکون-دکمه جمع‌وجور برای مراکز ویژه -->
       <div class="branches__quick-centers">
         <!-- ۱. دفتر ستاد مرکزی -->
-        <a href="/home" class="bqc-pill bqc-pill--hq" title="دفتر ستاد مرکزی مکسا (تهران)">
+        <a href="/home" class="bqc-pill bqc-pill--hq" title="<?= site_e('دفتر ستاد مرکزی مکسا (تهران)') ?>">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 21h18"/>
@@ -76,28 +77,28 @@
               <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
             </svg>
           </span>
-          <span class="bqc-label">دفتر ستاد مرکزی</span>
+          <span class="bqc-label"><?= site_e('دفتر ستاد مرکزی') ?></span>
         </a>
 
         <!-- ۲. مرکز تخصصی ارتباطات و سلامت از راه دور -->
-        <a href="/contact-center" class="bqc-pill bqc-pill--telemed" title="مرکز تخصصی ارتباطات و سلامت از راه دور (تله‌مدیسین ۲۴ ساعته)">
+        <a href="/contact-center" class="bqc-pill bqc-pill--telemed" title="<?= site_e('مرکز تخصصی ارتباطات و سلامت از راه دور (تله‌مدیسین ۲۴ ساعته)') ?>">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
             </svg>
           </span>
-          <span class="bqc-label">مرکز تخصصی ارتباطات و سلامت از راه دور</span>
+          <span class="bqc-label"><?= site_e('مرکز تخصصی ارتباطات و سلامت از راه دور') ?></span>
         </a>
 
         <!-- ۳. مرکز رویش استعدادهای دانشجویی -->
-        <a href="/cdst" class="bqc-pill bqc-pill--student" title="مرکز رویش استعدادهای دانشجویی مکسا (CDST)">
+        <a href="/cdst" class="bqc-pill bqc-pill--student" title="<?= site_e('مرکز رویش استعدادهای دانشجویی مکسا (CDST)') ?>">
           <span class="bqc-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
               <path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>
           </span>
-          <span class="bqc-label">مرکز رویش استعدادهای دانشجویی</span>
+          <span class="bqc-label"><?= site_e('مرکز رویش استعدادهای دانشجویی') ?></span>
         </a>
       </div>
     </div>
@@ -124,7 +125,7 @@
   background: transparent;
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--color-text);
-  direction: rtl;
+  direction: var(--site-direction, rtl);
 }
 
 .branches *,
@@ -446,7 +447,7 @@
   pointer-events: none;
   transition: opacity 0.24s ease, visibility 0.24s;
   visibility: hidden;
-  direction: rtl;
+  direction: var(--site-direction, rtl);
 }
 .branch-popover.is-open {
   opacity: 1;
@@ -500,7 +501,7 @@
   transform: scale(1.05);
 }
 .branch-popover__head {
-  text-align: right;
+  text-align: start;
   margin-bottom: 20px;
   padding-left: 30px;
 }

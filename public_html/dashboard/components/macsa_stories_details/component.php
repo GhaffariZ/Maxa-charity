@@ -1,4 +1,5 @@
-<section class="pro-stories" dir="rtl" data-component="macsa-stories-details">
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<section class="pro-stories" dir="<?= site_direction() ?>" data-component="macsa-stories-details">
 
   <div class="ps-global-bg"></div>
 
@@ -6,23 +7,23 @@
 
     <!-- HEADER -->
     <h2 class="ps-title">
-      بانک روایت‌های امید مکسا<br>
-      <span>قصه‌های ایستادگی نجات‌یافتگان و همراهان آن‌ها</span>
+      <?= site_e('بانک روایت‌های امید مکسا') ?><br>
+      <span><?= site_e('قصه‌های ایستادگی نجات‌یافتگان و همراهان آن‌ها') ?></span>
     </h2>
 
     <!-- FILTERS -->
     <div class="ps-filters" id="psFilters">
-      <button class="active" data-filter="all">همه</button>
-      <button data-filter="کادر درمان">روایت کادر درمان</button>
-      <button data-filter="بهبودی">زندگی پس از بهبودی</button>
-      <button data-filter="تشخیص">زندگی پس از تشخیص بیماری</button>
-      <button data-filter="درمان">مسیر درمان</button>
-      <button data-filter="همراهان">تجربه همراهان</button>
+      <button class="active" data-filter="all"><?= site_e('همه') ?></button>
+      <button data-filter="کادر درمان"><?= site_e('روایت کادر درمان') ?></button>
+      <button data-filter="بهبودی"><?= site_e('زندگی پس از بهبودی') ?></button>
+      <button data-filter="تشخیص"><?= site_e('زندگی پس از تشخیص بیماری') ?></button>
+      <button data-filter="درمان"><?= site_e('مسیر درمان') ?></button>
+      <button data-filter="همراهان"><?= site_e('تجربه همراهان') ?></button>
     </div>
 
     <!-- STORIES GRID -->
     <div class="ps-grid" id="psStoriesGrid">
-      <div class="ps-loading">در حال بارگذاری روایت‌های امید مکسا...</div>
+      <div class="ps-loading"><?= site_e('در حال بارگذاری روایت‌های امید مکسا...') ?></div>
     </div>
 
   </div>
@@ -39,7 +40,7 @@
 
   function renderStories(stories) {
     if (!stories || stories.length === 0) {
-      grid.innerHTML = '<div class="ps-empty">روایتی در این دسته‌بندی یافت نشد.</div>';
+      grid.innerHTML = <?= site_js_text('<div class="ps-empty">روایتی در این دسته‌بندی یافت نشد.</div>') ?>;
       return;
     }
 
@@ -47,8 +48,8 @@
       const excerpt = (story.excerpt || story.content || '').trim();
       const shortExcerpt = excerpt.length > 150 ? excerpt.slice(0, 150) + '...' : excerpt;
       const roleText = story.narrator_role ? `<span class="ps-narrator-role"> - ${escapeHtml(story.narrator_role)}</span>` : '';
-      const readTime = story.read_time || '۴ دقیقه مطالعه';
-      const tagText = story.tag || 'روایت امید';
+      const readTime = story.read_time || <?= site_js_text('۴ دقیقه مطالعه') ?>;
+      const tagText = story.tag || <?= site_js_text('روایت امید') ?>;
 
       return `
         <div class="ps-card" data-category="${escapeHtml(tagText)}">
@@ -61,7 +62,7 @@
           <p>${escapeHtml(shortExcerpt)}</p>
           <div class="ps-footer">
             <span class="ps-time">${escapeHtml(readTime)}</span>
-            <a href="/macsa-story.php?id=${story.id}" class="ps-read">
+            <a href="/macsa-story.php?id=${story.id}<?= site_js_fragment('" class="ps-read">
               خواندن روایت
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -69,7 +70,7 @@
             </a>
           </div>
         </div>
-      `;
+      ') ?>`;
     }).join('');
   }
 
@@ -135,7 +136,7 @@
       applyFilter();
     })
     .catch(() => {
-      grid.innerHTML = '<div class="ps-empty">خطا در برقراری ارتباط با پایگاه داده روایات.</div>';
+      grid.innerHTML = <?= site_js_text('<div class="ps-empty">خطا در برقراری ارتباط با پایگاه داده روایات.</div>') ?>;
     });
 
   // Filter Buttons

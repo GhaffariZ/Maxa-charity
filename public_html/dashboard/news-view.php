@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../core/site-locale.php';
 // اصلاح نحوه اتصال به دیتابیس برای سازگاری در توسعه محلی و پروداکشن
 if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/../config/database.php")) {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
@@ -286,7 +287,7 @@ render_dashboard_component('header', get_defined_vars());
         max-width: 1240px;
         margin: 0 auto;
         padding: 48px 20px 80px;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
     }
 
     /* بردکرامب */
@@ -294,7 +295,7 @@ render_dashboard_component('header', get_defined_vars());
         font-size: 13.5px;
         color: var(--news-text-muted);
         margin-bottom: 24px;
-        text-align: right;
+        text-align: start;
     }
     .news-detail-breadcrumbs a {
         color: var(--news-primary);
@@ -368,7 +369,7 @@ render_dashboard_component('header', get_defined_vars());
         display: flex;
         flex-direction: column;
         gap: 14px;
-        text-align: right;
+        text-align: start;
     }
     .article-hero-category {
         align-self: flex-start;
@@ -422,7 +423,7 @@ render_dashboard_component('header', get_defined_vars());
         padding: 40px;
     }
     .article-header {
-        text-align: right;
+        text-align: start;
         margin-bottom: 32px;
     }
     .article-category {
@@ -506,7 +507,7 @@ render_dashboard_component('header', get_defined_vars());
         margin: 8px 0 20px 24px !important;
         display: block !important;
         clear: right !important;
-        text-align: right;
+        text-align: start;
         width: 50%;
         max-width: 100%;
     }
@@ -592,7 +593,7 @@ render_dashboard_component('header', get_defined_vars());
         flex-wrap: wrap;
         align-items: center;
         gap: 10px;
-        text-align: right;
+        text-align: start;
     }
     .article-tags strong {
         font-size: 13.5px;
@@ -755,14 +756,14 @@ render_dashboard_component('header', get_defined_vars());
         border-bottom: 1px solid var(--news-border);
         padding: 56px 0;
         width: 100%;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
         margin-top: 48px;
     }
     .related-news-section-inner {
         max-width: 1240px;
         margin: 0 auto;
         padding: 0 20px;
-        text-align: right;
+        text-align: start;
     }
     .related-title {
         font-size: 18px;
@@ -884,9 +885,9 @@ render_dashboard_component('header', get_defined_vars());
 
 <div class="news-detail-wrapper">
     <!-- بردکرامب -->
-    <nav class="news-detail-breadcrumbs" aria-label="مسیر راهنما">
-        <a href="/home">خانه</a> / 
-        <a href="/news.php">اخبار</a> / 
+    <nav class="news-detail-breadcrumbs" aria-label="<?= site_e('مسیر راهنما') ?>">
+        <a href="/home"><?= site_e('خانه') ?></a> /
+        <a href="/news.php"><?= site_e('اخبار') ?></a> /
         <span><?= htmlspecialchars($news['category_name'] ?? 'خبر') ?></span>
     </nav>
 
@@ -904,13 +905,13 @@ render_dashboard_component('header', get_defined_vars());
                             <span class="article-hero-category"><?= htmlspecialchars($news['category_name']) ?></span>
                         <?php endif; ?>
 
-                        <h1 class="article-hero-title"><?= htmlspecialchars($news['title']) ?></h1>
+                        <h1 class="article-hero-title" lang="fa" dir="rtl" data-site-dynamic><?= htmlspecialchars($news['title']) ?></h1>
 
                         <div class="article-hero-meta">
-                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
-                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
-                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
-                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                            <span><i class="far fa-user"></i> <?= site_e('نویسنده:') ?> <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> <?= site_e('تاریخ:') ?> <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> <?= site_e('بازدید:') ?> <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> <?= site_e('زمان مطالعه:') ?> <?= htmlspecialchars($readTimeFa) ?> <?= site_e('دقیقه') ?></span>
                         </div>
                     </div>
                 </header>
@@ -920,23 +921,23 @@ render_dashboard_component('header', get_defined_vars());
                 <?php if (!$has_featured_image): ?>
                     <header class="article-header">
                         <span class="article-category"><?= htmlspecialchars($news['category_name'] ?? 'اخبار') ?></span>
-                        <h1 class="article-title"><?= htmlspecialchars($news['title']) ?></h1>
+                        <h1 class="article-title" lang="fa" dir="rtl" data-site-dynamic><?= htmlspecialchars($news['title']) ?></h1>
 
                         <div class="article-meta">
-                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
-                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
-                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
-                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                            <span><i class="far fa-user"></i> <?= site_e('نویسنده:') ?> <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> <?= site_e('تاریخ:') ?> <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> <?= site_e('بازدید:') ?> <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> <?= site_e('زمان مطالعه:') ?> <?= htmlspecialchars($readTimeFa) ?> <?= site_e('دقیقه') ?></span>
                         </div>
                     </header>
                 <?php endif; ?>
 
                 <details class="article-toc" id="toc-widget" hidden>
-                    <summary>عناوین این مطلب</summary>
+                    <summary><?= site_e('عناوین این مطلب') ?></summary>
                     <ul class="toc-list" id="toc-list"></ul>
                 </details>
 
-                <section class="article-content">
+                <section class="article-content" lang="fa" dir="rtl" data-site-dynamic>
                     <?= HtmlSanitizer::sanitize($news['content']) ?>
                 </section>
 
@@ -948,7 +949,7 @@ render_dashboard_component('header', get_defined_vars());
                 if (!empty($all_news_tags)): 
                 ?>
                     <footer class="article-tags">
-                        <strong>برچسب‌ها:</strong>
+                        <strong><?= site_e('برچسب‌ها:') ?></strong>
                         <?php foreach ($all_news_tags as $tag): ?>
                             <a href="/news.php?q=<?= urlencode($tag) ?>" class="tag-chip"><?= htmlspecialchars($tag) ?></a>
                         <?php endforeach; ?>
@@ -956,18 +957,18 @@ render_dashboard_component('header', get_defined_vars());
                 <?php endif; ?>
 
                 <section class="article-share" aria-labelledby="article-share-title">
-                    <h2 class="article-share-title" id="article-share-title">اشتراک‌گذاری خبر</h2>
+                    <h2 class="article-share-title" id="article-share-title"><?= site_e('اشتراک‌گذاری خبر') ?></h2>
                     <div class="share-buttons-row">
                         <?php
                         $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                         $shareText = urlencode($news['title']);
                         ?>
-                        <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-telegram" aria-label="اشتراک‌گذاری در تلگرام"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 15.65 9.4 21c.55 0 .79-.24 1.08-.53l2.6-2.48 5.39 3.94c.99.55 1.69.26 1.96-.91l3.55-16.63c.32-1.47-.53-2.05-1.5-1.69L1.64 10.64c-1.43.55-1.41 1.34-.25 1.7l5.36 1.67L19.2 6.22c.59-.39 1.12-.18.68.21Z"/></svg></a>
-                        <a href="https://api.whatsapp.com/send?text=<?= $shareText ?>%20<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-whatsapp" aria-label="اشتراک‌گذاری در واتساپ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.05 0C5.47 0 .11 5.35.1 11.94c0 2.1.55 4.15 1.6 5.96L0 24l6.25-1.64a11.94 11.94 0 0 0 5.79 1.47h.01c6.58 0 11.94-5.35 11.95-11.94a11.86 11.86 0 0 0-3.48-8.41Zm-8.47 18.34h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.51-5.27c0-5.48 4.46-9.93 9.95-9.93a9.86 9.86 0 0 1 7.03 2.92 9.87 9.87 0 0 1 2.91 7.03c0 5.48-4.46 9.94-9.94 9.94Zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.71.22 1.36.19 1.87.11.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg></a>
-                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-twitter" aria-label="اشتراک‌گذاری در ایکس (توییتر)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.835L0 1.153h7.594l5.243 6.932 6.064-6.932Zm-1.29 19.49h2.039L6.487 3.24H4.3l13.312 17.403Z"/></svg></a>
-                        <button type="button" class="share-icon-btn share-copy-link" id="copyLinkBtn" data-url="<?= htmlspecialchars($currentUrl) ?>" aria-label="کپی لینک خبر">
+                        <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-telegram" aria-label="<?= site_e('اشتراک‌گذاری در تلگرام') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.78 15.65 9.4 21c.55 0 .79-.24 1.08-.53l2.6-2.48 5.39 3.94c.99.55 1.69.26 1.96-.91l3.55-16.63c.32-1.47-.53-2.05-1.5-1.69L1.64 10.64c-1.43.55-1.41 1.34-.25 1.7l5.36 1.67L19.2 6.22c.59-.39 1.12-.18.68.21Z"/></svg></a>
+                        <a href="https://api.whatsapp.com/send?text=<?= $shareText ?>%20<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-whatsapp" aria-label="<?= site_e('اشتراک‌گذاری در واتساپ') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.05 0C5.47 0 .11 5.35.1 11.94c0 2.1.55 4.15 1.6 5.96L0 24l6.25-1.64a11.94 11.94 0 0 0 5.79 1.47h.01c6.58 0 11.94-5.35 11.95-11.94a11.86 11.86 0 0 0-3.48-8.41Zm-8.47 18.34h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.51-5.27c0-5.48 4.46-9.93 9.95-9.93a9.86 9.86 0 0 1 7.03 2.92 9.87 9.87 0 0 1 2.91 7.03c0 5.48-4.46 9.94-9.94 9.94Zm5.45-7.44c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.71.22 1.36.19 1.87.11.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg></a>
+                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= $shareText ?>" target="_blank" rel="noopener noreferrer" class="share-icon-btn share-twitter" aria-label="<?= site_e('اشتراک‌گذاری در ایکس (توییتر)') ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.835L0 1.153h7.594l5.243 6.932 6.064-6.932Zm-1.29 19.49h2.039L6.487 3.24H4.3l13.312 17.403Z"/></svg></a>
+                        <button type="button" class="share-icon-btn share-copy-link" id="copyLinkBtn" data-url="<?= htmlspecialchars($currentUrl) ?>" aria-label="<?= site_e('کپی لینک خبر') ?>">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="12" height="14" rx="2"/><path d="M16 17v3a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V9a1 1 0 0 1 1-1h4"/></svg>
-                            <span class="copy-tooltip-alert" id="copyTooltip" role="status">لینک کپی شد!</span>
+                            <span class="copy-tooltip-alert" id="copyTooltip" role="status"><?= site_e('لینک کپی شد!') ?></span>
                         </button>
                     </div>
                 </section>
@@ -980,7 +981,7 @@ render_dashboard_component('header', get_defined_vars());
 <?php if (count($relatedNews) > 0): ?>
     <section class="related-news-section-outer">
         <div class="related-news-section-inner">
-            <h3 class="related-title">اخبار مرتبط</h3>
+            <h3 class="related-title"><?= site_e('اخبار مرتبط') ?></h3>
             <div class="related-grid">
                 <?php foreach ($relatedNews as $lat):
                     $newsSlug = slugify($lat['title'] ?? '');

@@ -1,8 +1,9 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!-- Books Archive Section Start -->
-<section class="books-archive-section" dir="rtl">
+<section class="books-archive-section" dir="<?= site_direction() ?>">
   <div class="container">
-    <h2 class="archive-title">کتاب‌های آموزشی</h2>
-    <p class="archive-subtitle">در این بخش می‌توانید کتاب‌های آموزشی، علمی و تخصصی را مشاهده و دانلود کنید.</p>
+    <h2 class="archive-title"><?= site_e('کتاب‌های آموزشی') ?></h2>
+    <p class="archive-subtitle"><?= site_e('در این بخش می‌توانید کتاب‌های آموزشی، علمی و تخصصی را مشاهده و دانلود کنید.') ?></p>
 
     <div class="books-grid">
 
@@ -11,7 +12,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[0].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -22,7 +23,7 @@
         <a href="files/book2.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[1].image | raw }}" alt="">
           <div class="book-info">
-            <h3>اصول درمان شناختی - رفتاری</h3>
+            <h3><?= site_e('اصول درمان شناختی - رفتاری') ?></h3>
             <span>PDF | 5.2 MB</span>
           </div>
         </a>
@@ -33,7 +34,7 @@
         <a href="files/book3.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[2].image | raw }}" alt="">
           <div class="book-info">
-            <h3>مبانی مشاوره و روان‌درمانی</h3>
+            <h3><?= site_e('مبانی مشاوره و روان‌درمانی') ?></h3>
             <span>PDF | 4.1 MB</span>
           </div>
         </a>
@@ -44,7 +45,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[3].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -55,7 +56,7 @@
         <a href="files/book2.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[4].image | raw }}" alt="">
           <div class="book-info">
-            <h3>اصول درمان شناختی - رفتاری</h3>
+            <h3><?= site_e('اصول درمان شناختی - رفتاری') ?></h3>
             <span>PDF | 5.2 MB</span>
           </div>
         </a>
@@ -66,7 +67,7 @@
         <a href="files/book3.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[5].image | raw }}" alt="">
           <div class="book-info">
-            <h3>مبانی مشاوره و روان‌درمانی</h3>
+            <h3><?= site_e('مبانی مشاوره و روان‌درمانی') ?></h3>
             <span>PDF | 4.1 MB</span>
           </div>
         </a>
@@ -77,7 +78,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[6].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -88,7 +89,7 @@
         <a href="files/book2.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[7].image | raw }}" alt="">
           <div class="book-info">
-            <h3>اصول درمان شناختی - رفتاری</h3>
+            <h3><?= site_e('اصول درمان شناختی - رفتاری') ?></h3>
             <span>PDF | 5.2 MB</span>
           </div>
         </a>
@@ -99,7 +100,7 @@
         <a href="files/book3.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[8].image | raw }}" alt="">
           <div class="book-info">
-            <h3>مبانی مشاوره و روان‌درمانی</h3>
+            <h3><?= site_e('مبانی مشاوره و روان‌درمانی') ?></h3>
             <span>PDF | 4.1 MB</span>
           </div>
         </a>
@@ -110,7 +111,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[9].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -121,7 +122,7 @@
         <a href="files/book2.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[10].image | raw }}" alt="">
           <div class="book-info">
-            <h3>اصول درمان شناختی - رفتاری</h3>
+            <h3><?= site_e('اصول درمان شناختی - رفتاری') ?></h3>
             <span>PDF | 5.2 MB</span>
           </div>
         </a>
@@ -132,7 +133,7 @@
         <a href="files/book3.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[11].image | raw }}" alt="">
           <div class="book-info">
-            <h3>مبانی مشاوره و روان‌درمانی</h3>
+            <h3><?= site_e('مبانی مشاوره و روان‌درمانی') ?></h3>
             <span>PDF | 4.1 MB</span>
           </div>
         </a>
@@ -143,7 +144,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[12].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -154,7 +155,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[13].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>
@@ -165,7 +166,7 @@
         <a href="files/book2.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[14].image | raw }}" alt="">
           <div class="book-info">
-            <h3>اصول درمان شناختی - رفتاری</h3>
+            <h3><?= site_e('اصول درمان شناختی - رفتاری') ?></h3>
             <span>PDF | 5.2 MB</span>
           </div>
         </a>
@@ -176,7 +177,7 @@
         <a href="files/book3.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[15].image | raw }}" alt="">
           <div class="book-info">
-            <h3>مبانی مشاوره و روان‌درمانی</h3>
+            <h3><?= site_e('مبانی مشاوره و روان‌درمانی') ?></h3>
             <span>PDF | 4.1 MB</span>
           </div>
         </a>
@@ -187,7 +188,7 @@
         <a href="files/book1.pdf" target="_blank">
           <img src="{{ API_GET("/pigi","booksarchive","A1").data[16].image | raw }}" alt="">
           <div class="book-info">
-            <h3>کتاب راهنمای روانشناسی بالینی</h3>
+            <h3><?= site_e('کتاب راهنمای روانشناسی بالینی') ?></h3>
             <span>PDF | 3.5 MB</span>
           </div>
         </a>

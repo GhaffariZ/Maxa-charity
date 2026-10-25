@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/site-locale.php';
 // دریافت اولیه لیست استان‌ها و شعب فعال غیرستادی
 $initialProvinces = [];
 
@@ -48,7 +49,7 @@ $initialProvincesList = array_values($initialProvinces);
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', Tahoma, sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
 }
 
 .so-head {
@@ -925,7 +926,7 @@ $initialProvincesList = array_values($initialProvinces);
     border: 1px solid #e2e8f0;
     padding: 14px 16px;
     margin-bottom: 24px;
-    text-align: right;
+    text-align: start;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1085,8 +1086,8 @@ $initialProvincesList = array_values($initialProvinces);
 
 <div class="so-wrap">
     <div class="so-head">
-        <h1>ثبت سفارش استند و کارت خیریه</h1>
-        <p>با سفارش استند و کارت‌های مکسا، پیام پرمحبت خود را ماندگار سازید و تمام عواید آن را نذر دارو و درمان رایگان بیماران مبتلا به سرطان نمایید.</p>
+        <h1><?= site_e('ثبت سفارش استند و کارت خیریه') ?></h1>
+        <p><?= site_e('با سفارش استند و کارت‌های مکسا، پیام پرمحبت خود را ماندگار سازید و تمام عواید آن را نذر دارو و درمان رایگان بیماران مبتلا به سرطان نمایید.') ?></p>
     </div>
 
     <div class="so-grid">
@@ -1094,7 +1095,7 @@ $initialProvincesList = array_values($initialProvinces);
         <div class="so-form-col">
             <h2>
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                اطلاعات سفارش و محل برگزاری مراسم
+                <?= site_e('اطلاعات سفارش و محل برگزاری مراسم') ?>
             </h2>
 
             <form id="standOrderForm">
@@ -1104,34 +1105,34 @@ $initialProvincesList = array_values($initialProvinces);
                 <!-- مشخصات سفارش‌دهنده -->
                 <div class="so-field-row">
                     <div class="so-field">
-                        <label>نام و نام خانوادگی شما <span class="req">*</span></label>
-                        <input type="text" name="sender_name" required placeholder="مثال: علی احمدی">
+                        <label><?= site_e('نام و نام خانوادگی شما') ?> <span class="req">*</span></label>
+                        <input type="text" name="sender_name" required placeholder="<?= site_e('مثال: علی احمدی') ?>">
                     </div>
                     <div class="so-field">
-                        <label>شماره موبایل جهت هماهنگی <span class="req">*</span></label>
+                        <label><?= site_e('شماره موبایل جهت هماهنگی') ?> <span class="req">*</span></label>
                         <input type="tel" name="sender_phone" required placeholder="09123456789" dir="ltr" pattern="09[0-9]{9}">
                     </div>
                 </div>
 
                 <div class="so-field">
-                    <label>نام دریافت‌کننده / صاحب مجلس / مرحوم یا مرحومه <span class="req">*</span></label>
-                    <input type="text" name="receiver_name" required placeholder="نام شخص یا خانواده‌ای که استند برای ایشان ارسال می‌شود">
+                    <label><?= site_e('نام دریافت‌کننده / صاحب مجلس / مرحوم یا مرحومه') ?> <span class="req">*</span></label>
+                    <input type="text" name="receiver_name" required placeholder="<?= site_e('نام شخص یا خانواده‌ای که استند برای ایشان ارسال می‌شود') ?>">
                 </div>
 
                 <div class="so-field-row">
                     <div class="so-field">
-                        <label>تاریخ برگزاری مراسم <span class="req">*</span></label>
+                        <label><?= site_e('تاریخ برگزاری مراسم') ?> <span class="req">*</span></label>
                         <div class="so-input-icon-wrap">
-                            <input type="text" name="event_date" id="eventDateInput" class="pdate" required placeholder="انتخاب تاریخ شمسی" readonly style="background:#fff; cursor:pointer">
+                            <input type="text" name="event_date" id="eventDateInput" class="pdate" required placeholder="<?= site_e('انتخاب تاریخ شمسی') ?>" readonly style="background:#fff; cursor:pointer">
                             <svg class="so-field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
                     </div>
                     <div class="so-field">
-                        <label>ساعت برگزاری مراسم (دقیقه : ساعت) <span class="req">*</span></label>
+                        <label><?= site_e('ساعت برگزاری مراسم (دقیقه : ساعت)') ?> <span class="req">*</span></label>
                         <div class="so-input-icon-wrap">
-                            <input type="text" name="event_time" id="eventTimeInput" class="ptime" required placeholder="انتخاب ساعت مراسم" readonly style="background:#fff; cursor:pointer">
+                            <input type="text" name="event_time" id="eventTimeInput" class="ptime" required placeholder="<?= site_e('انتخاب ساعت مراسم') ?>" readonly style="background:#fff; cursor:pointer">
                             <svg class="so-field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -1140,24 +1141,24 @@ $initialProvincesList = array_values($initialProvinces);
                 </div>
 
                 <!-- تفکیک فیلدهای آدرس: استان و شهر و آدرس دقیق -->
-                <div class="so-section-title">انتخاب شعبه و محل استقرار استند</div>
+                <div class="so-section-title"><?= site_e('انتخاب شعبه و محل استقرار استند') ?></div>
                 <div class="so-field-row">
                     <div class="so-field">
-                        <label>استان / شعبه ارائه‌دهنده استند <span class="req">*</span></label>
+                        <label><?= site_e('استان / شعبه ارائه‌دهنده استند') ?> <span class="req">*</span></label>
                         <select name="province" id="provinceSelect" required>
-                            <option value="">-- لطفاً ابتدا استان و شعبه را انتخاب کنید --</option>
+                            <option value=""><?= site_e('-- لطفاً ابتدا استان و شعبه را انتخاب کنید --') ?></option>
                             <?php foreach ($initialProvincesList as $p): ?>
                                 <option value="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>">
-                                    شعبه <?= htmlspecialchars($p['branch_name']) ?> (<?= htmlspecialchars($p['province']) ?>)
+                                    <?= site_e('شعبه') ?> <?= htmlspecialchars($p['branch_name']) ?> (<?= htmlspecialchars($p['province']) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="so-field">
-                        <label>شهر محل برگزاری مراسم <span class="req">*</span></label>
+                        <label><?= site_e('شهر محل برگزاری مراسم') ?> <span class="req">*</span></label>
                         <select name="city" id="citySelect" required>
-                            <option value="">-- ابتدا استان را انتخاب کنید --</option>
+                            <option value=""><?= site_e('-- ابتدا استان را انتخاب کنید --') ?></option>
                         </select>
                     </div>
                 </div>
@@ -1168,28 +1169,28 @@ $initialProvincesList = array_values($initialProvinces);
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
                     <div>
-                        <strong>نکته مهم:</strong> ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده وجود ندارد.
+                        <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده وجود ندارد.') ?>
                     </div>
                 </div>
 
                 <div class="so-field">
-                    <label>نشانی دقیق محل برگزاری (مسجد، تالار یا منزل) <span class="req">*</span></label>
-                    <textarea name="event_address" required placeholder="خیابان، کوچه، پلاک، نام مسجد، حسینیه یا تالار پذیرایی..."></textarea>
+                    <label><?= site_e('نشانی دقیق محل برگزاری (مسجد، تالار یا منزل)') ?> <span class="req">*</span></label>
+                    <textarea name="event_address" required placeholder="<?= site_e('خیابان، کوچه، پلاک، نام مسجد، حسینیه یا تالار پذیرایی...') ?>"></textarea>
                 </div>
 
                 <div class="so-field">
-                    <label>متن پیام اختصاصی روی استند (اختیاری)</label>
-                    <textarea name="message" placeholder="در صورت تمایل، متن دلخواه خود را جهت درج روی استند وارد نمایید..."></textarea>
+                    <label><?= site_e('متن پیام اختصاصی روی استند (اختیاری)') ?></label>
+                    <textarea name="message" placeholder="<?= site_e('در صورت تمایل، متن دلخواه خود را جهت درج روی استند وارد نمایید...') ?>"></textarea>
                 </div>
 
                 <button type="submit" class="so-submit" id="submitOrderBtn">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    ثبت نهایی سفارش استند
+                    <?= site_e('ثبت نهایی سفارش استند') ?>
                 </button>
 
                 <div class="so-note">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    پس از ثبت سفارش، کارشناسان مکسا جهت هماهنگی ارسال با شما تماس خواهند گرفت.
+                    <?= site_e('پس از ثبت سفارش، کارشناسان مکسا جهت هماهنگی ارسال با شما تماس خواهند گرفت.') ?>
                 </div>
             </form>
         </div>
@@ -1204,9 +1205,9 @@ $initialProvincesList = array_values($initialProvinces);
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
                 </div>
-                <h3>طرح‌های اختصاصی هر شعبه</h3>
+                <h3><?= site_e('طرح‌های اختصاصی هر شعبه') ?></h3>
                 <p>
-                    با انتخاب استان و شهر مورد نظر از فرم سمت راست، تمامی طرح‌ها، بنرهای سه‌بعدی و مبالغ استندهای اختصاصی آن شعبه به صورت لیست در این بخش نمایش داده خواهند شد.
+                    <?= site_e('با انتخاب استان و شهر مورد نظر از فرم سمت راست، تمامی طرح‌ها، بنرهای سه‌بعدی و مبالغ استندهای اختصاصی آن شعبه به صورت لیست در این بخش نمایش داده خواهند شد.') ?>
                 </p>
             </div>
 
@@ -1214,43 +1215,43 @@ $initialProvincesList = array_values($initialProvinces);
             <div class="so-stands-content" id="soStandsContent" style="display:none">
                 <div class="so-branch-badge" id="branchBadge">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-                    استندهای اختصاصی شعبه <span id="currentBranchName">...</span>
+                    <?= site_e('استندهای اختصاصی شعبه') ?> <span id="currentBranchName">...</span>
                 </div>
 
                 <!-- پیش‌نمایش بنر و ۳ بعدی استند انتخابی -->
                 <div class="so-preview-banner">
-                    <div class="so-scene" id="standScene" title="برای چرخاندن استند، ماوس را بکشید">
+                    <div class="so-scene" id="standScene" title="<?= site_e('برای چرخاندن استند، ماوس را بکشید') ?>">
                         <div class="so-stand-3d" id="stand3D">
                             <div class="so-stand-face front">
                                 <div class="so-stand-img-wrap">
-                                    <img src="" alt="طرح استند" id="standImageFront" onerror="this.src='/uploads/stand/happy/1.jpg'">
+                                    <img src="" alt="<?= site_e('طرح استند') ?>" id="standImageFront" onerror="this.src='/uploads/stand/happy/1.jpg'">
                                 </div>
                             </div>
                             <div class="so-stand-face back">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                <h4 style="font-size:13px; font-weight:800; color:#1f2937; margin-bottom:4px">مؤسسه خیریه مکسا</h4>
-                                <p style="font-size:11px; color:#6b7280; line-height:1.5">مراقبت‌های جامع حمایتی و تسکینی برای بیماران مبتلا به سرطان</p>
+                                <h4 style="font-size:13px; font-weight:800; color:#1f2937; margin-bottom:4px"><?= site_e('مؤسسه خیریه مکسا') ?></h4>
+                                <p style="font-size:11px; color:#6b7280; line-height:1.5"><?= site_e('مراقبت‌های جامع حمایتی و تسکینی برای بیماران مبتلا به سرطان') ?></p>
                             </div>
                         </div>
                     </div>
 
                     <div class="so-360-hint">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        پیش‌نمایش سه‌بعدی بنر (برای چرخش ماوس را بکشید)
+                        <?= site_e('پیش‌نمایش سه‌بعدی بنر (برای چرخش ماوس را بکشید)') ?>
                     </div>
 
                     <!-- قیمت و عنوان هماهنگ با استند انتخابی -->
                     <div class="so-selected-meta">
-                        <div class="so-meta-title" id="selectedStandTitle">عنوان استند</div>
-                        <div class="so-meta-price" id="selectedStandPrice">۰ <span>تومان</span></div>
+                        <div class="so-meta-title" id="selectedStandTitle"><?= site_e('عنوان استند') ?></div>
+                        <div class="so-meta-price" id="selectedStandPrice"><?= site_e('۰') ?> <span><?= site_e('تومان') ?></span></div>
                     </div>
                 </div>
 
                 <!-- تب‌های فیلتر دسته‌بندی استندها -->
                 <div class="so-tabs">
-                    <button type="button" class="so-tab-btn active" data-type="all">همه طرح‌ها</button>
-                    <button type="button" class="so-tab-btn" data-type="congrats">تبریک و شادباش</button>
-                    <button type="button" class="so-tab-btn" data-type="condolence">ابراز همدردی و تسلیت</button>
+                    <button type="button" class="so-tab-btn active" data-type="all"><?= site_e('همه طرح‌ها') ?></button>
+                    <button type="button" class="so-tab-btn" data-type="congrats"><?= site_e('تبریک و شادباش') ?></button>
+                    <button type="button" class="so-tab-btn" data-type="condolence"><?= site_e('ابراز همدردی و تسلیت') ?></button>
                 </div>
 
                 <!-- لیست‌گونه استندهای شعبه (Stands List View) -->
@@ -1266,7 +1267,7 @@ $initialProvincesList = array_values($initialProvinces);
 <!-- مدال اختصاصی ورود نیکوکاران -->
 <div class="so-modal-overlay" id="soAuthModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="soAuthTitle">
     <div class="so-modal-card">
-        <button type="button" class="so-modal-close" id="soAuthClose" aria-label="بستن">
+        <button type="button" class="so-modal-close" id="soAuthClose" aria-label="<?= site_e('بستن') ?>">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
         <div class="so-modal-icon-wrap">
@@ -1276,31 +1277,31 @@ $initialProvincesList = array_values($initialProvinces);
                 </svg>
             </div>
         </div>
-        <h3 class="so-modal-title" id="soAuthTitle">ورود به حساب کاربری نیکوکاران</h3>
+        <h3 class="so-modal-title" id="soAuthTitle"><?= site_e('ورود به حساب کاربری نیکوکاران') ?></h3>
         <p class="so-modal-desc">
-            برای ثبت نهایی سفارش استند و صدور کد پیگیری رسمی، لطفاً ابتدا وارد حساب کاربری خود شوید یا ثبت‌نام فرمایید. اطلاعات فرم شما محفوظ بوده و پس از ورود باقی خواهد ماند.
+            <?= site_e('برای ثبت نهایی سفارش استند و صدور کد پیگیری رسمی، لطفاً ابتدا وارد حساب کاربری خود شوید یا ثبت‌نام فرمایید. اطلاعات فرم شما محفوظ بوده و پس از ورود باقی خواهد ماند.') ?>
         </p>
         <div class="so-modal-features">
             <div class="so-m-feat">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span>صدور رسید و کد پیگیری آنلاین سفارش</span>
+                <span><?= site_e('صدور رسید و کد پیگیری آنلاین سفارش') ?></span>
             </div>
             <div class="so-m-feat">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span>پیگیری لحظه‌ای وضعیت ارسال و استقرار استند توسط شعبه</span>
+                <span><?= site_e('پیگیری لحظه‌ای وضعیت ارسال و استقرار استند توسط شعبه') ?></span>
             </div>
             <div class="so-m-feat">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span>ثبت در پرونده نیکوکاری و مشاهده سوابق نذورات در مکسا</span>
+                <span><?= site_e('ثبت در پرونده نیکوکاری و مشاهده سوابق نذورات در مکسا') ?></span>
             </div>
         </div>
         <div class="so-modal-actions">
             <a href="/benefactor-dashboard/login" class="so-btn-primary" id="soLoginBtn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                ورود به حساب کاربری
+                <?= site_e('ورود به حساب کاربری') ?>
             </a>
             <a href="/benefactor-dashboard/register" class="so-btn-ghost" id="soRegisterBtn">
-                ثبت‌نام نیکوکار جدید
+                <?= site_e('ثبت‌نام نیکوکار جدید') ?>
             </a>
         </div>
     </div>
@@ -1309,7 +1310,7 @@ $initialProvincesList = array_values($initialProvinces);
 <!-- مدال ثبت موفق سفارش استند -->
 <div class="so-modal-overlay" id="soSuccessModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="soSuccessTitle">
     <div class="so-modal-card">
-        <button type="button" class="so-modal-close" id="soSuccessClose" aria-label="بستن">
+        <button type="button" class="so-modal-close" id="soSuccessClose" aria-label="<?= site_e('بستن') ?>">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
         <div class="so-modal-icon-wrap">
@@ -1319,27 +1320,27 @@ $initialProvincesList = array_values($initialProvinces);
                 </svg>
             </div>
         </div>
-        <h3 class="so-modal-title" id="soSuccessTitle">سفارش استند با موفقیت ثبت شد</h3>
+        <h3 class="so-modal-title" id="soSuccessTitle"><?= site_e('سفارش استند با موفقیت ثبت شد') ?></h3>
         <p class="so-modal-desc">
-            از حسن اعتماد و همدلی شما با بیماران مبتلا به سرطان صمیمانه سپاسگزاریم. سفارش شما با مشخصات زیر جهت هماهنگی و ارسال به شعبه مربوطه تحویل گردید.
+            <?= site_e('از حسن اعتماد و همدلی شما با بیماران مبتلا به سرطان صمیمانه سپاسگزاریم. سفارش شما با مشخصات زیر جهت هماهنگی و ارسال به شعبه مربوطه تحویل گردید.') ?>
         </p>
         <div class="so-tracking-card">
-            <span class="so-tr-lbl">شماره و کد پیگیری سفارش شما:</span>
+            <span class="so-tr-lbl"><?= site_e('شماره و کد پیگیری سفارش شما:') ?></span>
             <div class="so-tr-val-row">
                 <strong id="soTrackingCodeVal">---</strong>
-                <button type="button" class="so-btn-copy" id="soCopyTrackingBtn" title="کپی کد پیگیری">
+                <button type="button" class="so-btn-copy" id="soCopyTrackingBtn" title="<?= site_e('کپی کد پیگیری') ?>">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                    <span>کپی کد</span>
+                    <span><?= site_e('کپی کد') ?></span>
                 </button>
             </div>
-            <div class="so-tr-hint">کارشناسان شعبه به زودی جهت هماهنگی نهایی با شماره تماس ثبت‌شده ارتباط برقرار خواهند کرد.</div>
+            <div class="so-tr-hint"><?= site_e('کارشناسان شعبه به زودی جهت هماهنگی نهایی با شماره تماس ثبت‌شده ارتباط برقرار خواهند کرد.') ?></div>
         </div>
         <div class="so-modal-actions">
             <a href="/benefactor-dashboard/stands" class="so-btn-primary">
-                پیگیری سفارش در پنل کاربری
+                <?= site_e('پیگیری سفارش در پنل کاربری') ?>
             </a>
             <button type="button" class="so-btn-ghost" id="soNewOrderBtn">
-                ثبت سفارش جدید
+                <?= site_e('ثبت سفارش جدید') ?>
             </button>
         </div>
     </div>
@@ -1480,7 +1481,7 @@ function populateProvinces() {
     const targetProvince = urlParams.get('province');
 
     // حفظ اولین گزینه خالی به عنوان راهنما
-    provinceSelect.innerHTML = '<option value="">-- لطفاً ابتدا استان و شعبه را انتخاب کنید --</option>';
+    provinceSelect.innerHTML = <?= site_js_text('<option value="">-- لطفاً ابتدا استان و شعبه را انتخاب کنید --</option>') ?>;
     state.provinces.forEach(p => {
         const opt = document.createElement('option');
         opt.value = p.province;
@@ -1502,7 +1503,7 @@ function populateProvinces() {
 function showEmptyGuide() {
     soEmptyGuide.style.display = 'block';
     soStandsContent.style.display = 'none';
-    citySelect.innerHTML = '<option value="">-- ابتدا استان را انتخاب کنید --</option>';
+    citySelect.innerHTML = <?= site_js_text('<option value="">-- ابتدا استان را انتخاب کنید --</option>') ?>;
     state.selectedStand = null;
     inputStandId.value = '';
     inputBranchId.value = '';
@@ -1551,7 +1552,7 @@ provinceSelect.addEventListener('change', onProvinceSelected);
 
 // بارگذاری استندهای اختصاصی شعبه
 async function loadStands(province, branchId) {
-    standsCatalog.innerHTML = '<div style="text-align:center;padding:30px;color:#9ca3af">در حال بارگذاری طرح‌های اختصاصی شعبه...</div>';
+    standsCatalog.innerHTML = <?= site_js_text('<div style="text-align:center;padding:30px;color:#9ca3af">در حال بارگذاری طرح‌های اختصاصی شعبه...</div>') ?>;
     try {
         const query = new URLSearchParams({ province });
         if (branchId) query.set('branch_id', String(branchId));
@@ -1562,10 +1563,10 @@ async function loadStands(province, branchId) {
             state.stands = standsList;
             renderStandsCatalog();
         } else {
-            standsCatalog.innerHTML = '<div class="empty-stands-msg">هیچ طرح استندی برای این شعبه ثبت نشده است.</div>';
+            standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">هیچ طرح استندی برای این شعبه ثبت نشده است.</div>') ?>;
         }
     } catch (e) {
-        standsCatalog.innerHTML = '<div class="empty-stands-msg" style="color:#ef4444">خطا در بارگذاری استندها. لطفاً دوباره تلاش کنید.</div>';
+        standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg" style="color:#ef4444">خطا در بارگذاری استندها. لطفاً دوباره تلاش کنید.</div>') ?>;
     }
 }
 
@@ -1576,14 +1577,14 @@ function renderStandsCatalog() {
         : state.stands.filter(s => s.stand_type === state.filterType);
 
     if (filtered.length === 0) {
-        standsCatalog.innerHTML = '<div class="empty-stands-msg">طرحی در این دسته‌بندی برای این شعبه یافت نشد.</div>';
+        standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">طرحی در این دسته‌بندی برای این شعبه یافت نشد.</div>') ?>;
         return;
     }
 
     // تولید لیست با ساختار مرتب و شیک
     standsCatalog.innerHTML = filtered.map(s => {
         const isSelected = state.selectedStand && state.selectedStand.id === s.id;
-        const tagLabel = s.stand_type === 'congrats' ? 'تبریک' : 'تسلیت';
+        const tagLabel = s.stand_type === 'congrats' ? <?= site_js_text('تبریک') ?> : <?= site_js_text('تسلیت') ?>;
         return `
             <div class="so-stand-list-item ${isSelected ? 'active' : ''}" data-id="${s.id}">
                 <div class="so-list-thumb">
@@ -1594,11 +1595,11 @@ function renderStandsCatalog() {
                         <h4 class="so-list-title">${s.title}</h4>
                         <span class="so-list-tag ${s.stand_type}">${tagLabel}</span>
                     </div>
-                    <div class="so-list-price">${toFa(s.unit_price)} تومان</div>
+                    <div class="so-list-price">${toFa(s.unit_price)}<?= site_js_fragment(' تومان</div>
                 </div>
                 <div class="so-list-check"></div>
             </div>
-        `;
+        ') ?>`;
     }).join('');
 
     // بررسی استند انتخابی بر اساس URL یا اولین آیتم لیست
@@ -1641,7 +1642,7 @@ function selectStand(standId) {
     selectedStandTitle.textContent = stand.title;
 
     // تغییر قیمت متناسب با استند انتخابی
-    selectedStandPrice.innerHTML = `${toFa(stand.unit_price)} <span>تومان</span>`;
+    selectedStandPrice.innerHTML = `${toFa(stand.unit_price)}<?= site_js_fragment(' <span>تومان</span>') ?>`;
 
     // ریست چرخش بنر
     currentRotationY = 0;
@@ -1792,7 +1793,7 @@ document.getElementById('soCopyTrackingBtn')?.addEventListener('click', function
     const code = document.getElementById('soTrackingCodeVal')?.textContent;
     if (code && code !== '---') {
         navigator.clipboard.writeText(code).then(() => {
-            showToast('کد پیگیری با موفقیت کپی شد', 'success');
+            showToast(<?= site_js_text('کد پیگیری با موفقیت کپی شد') ?>, 'success');
         }).catch(() => {
             showToast('کد پیگیری: ' + code, 'info');
         });
@@ -1804,26 +1805,26 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     e.preventDefault();
 
     if (!provinceSelect.value) {
-        showToast('لطفاً ابتدا استان و شعبه مورد نظر را انتخاب فرمایید.', 'warning');
+        showToast(<?= site_js_text('لطفاً ابتدا استان و شعبه مورد نظر را انتخاب فرمایید.') ?>, 'warning');
         provinceSelect.focus();
         return;
     }
 
     if (!state.selectedStand) {
-        showToast('لطفاً یک طرح استند را از لیست سمت چپ انتخاب فرمایید.', 'warning');
+        showToast(<?= site_js_text('لطفاً یک طرح استند را از لیست سمت چپ انتخاب فرمایید.') ?>, 'warning');
         return;
     }
 
     const eventDate = (document.getElementById('eventDateInput')?.value || '').trim();
     if (!eventDate) {
-        showToast('لطفاً تاریخ برگزاری مراسم را مشخص فرمایید.', 'warning');
+        showToast(<?= site_js_text('لطفاً تاریخ برگزاری مراسم را مشخص فرمایید.') ?>, 'warning');
         document.getElementById('eventDateInput')?.focus();
         return;
     }
 
     const eventTime = (document.getElementById('eventTimeInput')?.value || '').trim();
     if (!eventTime) {
-        showToast('لطفاً ساعت برگزاری مراسم را مشخص فرمایید.', 'warning');
+        showToast(<?= site_js_text('لطفاً ساعت برگزاری مراسم را مشخص فرمایید.') ?>, 'warning');
         document.getElementById('eventTimeInput')?.focus();
         return;
     }
@@ -1846,10 +1847,10 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     // ارسال سفارش با توکن معتبر
     const btn = document.getElementById('submitOrderBtn');
     const originalContent = btn.innerHTML;
-    btn.innerHTML = `
+    btn.innerHTML = `<?= site_js_fragment('
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:20px;height:20px;animation:soSpin 1s linear infinite"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
         در حال ثبت سفارش...
-    `;
+    ') ?>`;
     btn.disabled = true;
 
     try {
@@ -1885,10 +1886,10 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
             this.reset();
             showEmptyGuide();
         } else {
-            showToast(result.error?.message || 'خطا در ثبت سفارش. لطفاً اطلاعات را بررسی نمایید.', 'error');
+            showToast(result.error?.message || <?= site_js_text('خطا در ثبت سفارش. لطفاً اطلاعات را بررسی نمایید.') ?>, 'error');
         }
     } catch (err) {
-        showToast('خطای اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.', 'error');
+        showToast(<?= site_js_text('خطای اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.') ?>, 'error');
     } finally {
         btn.innerHTML = originalContent;
         btn.disabled = false;

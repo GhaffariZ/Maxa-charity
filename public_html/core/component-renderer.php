@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/html-sanitizer.php';
+require_once __DIR__ . '/site-locale.php';
 
 /** Resolve legacy aliases while preventing path traversal. */
 function dashboard_component_name(string $raw): ?string

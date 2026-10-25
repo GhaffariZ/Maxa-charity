@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گزارش‌های سالانه | مکسا</title>
+    <title><?= site_e('گزارش‌های سالانه | مکسا') ?></title>
     <style>
         /* Self-hosted Vazirmatn variable font */
         @font-face {
@@ -502,7 +503,7 @@
         .modal-stat-table td {
             padding: 10px 14px;
             border-bottom: 1px solid var(--border-light);
-            text-align: right;
+            text-align: start;
         }
 
         .modal-stat-table th {
@@ -560,51 +561,51 @@
 <main class="page-container">
 
     <header class="header-capsule">
-        <h1>گزارش‌های سالانه</h1>
+        <h1><?= site_e('گزارش‌های سالانه') ?></h1>
         <a href="/home" class="breadcrumb-pill">
-            صفحه اصلی / آشنایی با مکسا / گزارش‌های سالانه
+            <?= site_e('صفحه اصلی / آشنایی با مکسا / گزارش‌های سالانه') ?>
         </a>
     </header>
 
     <!-- بخش معرفی و تعهد به شفافیت -->
     <section class="intro-banner">
         <div class="intro-banner-text">
-            <h2>پایبندی به اصل شفافیت و پاسخگویی</h2>
+            <h2><?= site_e('پایبندی به اصل شفافیت و پاسخگویی') ?></h2>
             <p>
-                مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) با باور عمیق به اصل شفافیت و امانت‌داری، همه‌ساله کارنامه فعالیت‌ها و گزارش تفصیلی عملکرد خود را در ابعاد درمانی، حمایتی، آموزشی، پژوهشی و توسعه شبکه مراقبت‌های تسکینی به محضر جامعه علمی، خیرین ارجمند و عموم هم‌میهنان ارائه می‌نماید. کلیه خدمات مکسا کاملاً رایگان است و منابع آن توسط نیکوکاران و واقفین نیک‌اندیش تأمین می‌شود.
+                <?= site_e('مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) با باور عمیق به اصل شفافیت و امانت‌داری، همه‌ساله کارنامه فعالیت‌ها و گزارش تفصیلی عملکرد خود را در ابعاد درمانی، حمایتی، آموزشی، پژوهشی و توسعه شبکه مراقبت‌های تسکینی به محضر جامعه علمی، خیرین ارجمند و عموم هم‌میهنان ارائه می‌نماید. کلیه خدمات مکسا کاملاً رایگان است و منابع آن توسط نیکوکاران و واقفین نیک‌اندیش تأمین می‌شود.') ?>
             </p>
         </div>
 
         <div class="stats-strip">
             <div class="stat-item">
-                <strong>+۳۵۰,۰۰۰</strong>
-                <span>خدمت رایگان ارائه‌شده</span>
+                <strong><?= site_e('+۳۵۰,۰۰۰') ?></strong>
+                <span><?= site_e('خدمت رایگان ارائه‌شده') ?></span>
             </div>
             <div class="stat-item">
-                <strong>+۳۲,۰۰۰</strong>
-                <span>بیمار مبتلا به سرطان تحت پوشش</span>
+                <strong><?= site_e('+۳۲,۰۰۰') ?></strong>
+                <span><?= site_e('بیمار مبتلا به سرطان تحت پوشش') ?></span>
             </div>
             <div class="stat-item">
-                <strong>۸ مرکز</strong>
-                <span>شعب فعال در سطح کشور</span>
+                <strong><?= site_e('۸ مرکز') ?></strong>
+                <span><?= site_e('شعب فعال در سطح کشور') ?></span>
             </div>
             <div class="stat-item">
-                <strong>۱۰۰٪</strong>
-                <span>خدمات کاملاً رایگان</span>
+                <strong><?= site_e('۱۰۰٪') ?></strong>
+                <span><?= site_e('خدمات کاملاً رایگان') ?></span>
             </div>
         </div>
     </section>
 
     <!-- نوار فیلتر و عنوان بخش -->
     <section class="reports-toolbar">
-        <h2 class="toolbar-title">آرشیو گزارش‌های عملکرد سالانه</h2>
+        <h2 class="toolbar-title"><?= site_e('آرشیو گزارش‌های عملکرد سالانه') ?></h2>
 
         <div class="year-filter-tabs">
-            <button type="button" class="filter-btn active" data-filter="all">همه سال‌ها</button>
-            <button type="button" class="filter-btn" data-filter="1403">سال ۱۴۰۳</button>
-            <button type="button" class="filter-btn" data-filter="1402">سال ۱۴۰۲</button>
-            <button type="button" class="filter-btn" data-filter="1401">سال ۱۴۰۱</button>
-            <button type="button" class="filter-btn" data-filter="older">سال‌های قبل</button>
+            <button type="button" class="filter-btn active" data-filter="all"><?= site_e('همه سال‌ها') ?></button>
+            <button type="button" class="filter-btn" data-filter="1403"><?= site_e('سال ۱۴۰۳') ?></button>
+            <button type="button" class="filter-btn" data-filter="1402"><?= site_e('سال ۱۴۰۲') ?></button>
+            <button type="button" class="filter-btn" data-filter="1401"><?= site_e('سال ۱۴۰۱') ?></button>
+            <button type="button" class="filter-btn" data-filter="older"><?= site_e('سال‌های قبل') ?></button>
         </div>
     </section>
 
@@ -617,33 +618,33 @@
                 <div class="report-card-top">
                     <span class="report-year-badge">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        سال ۱۴۰۳
+                        <?= site_e('سال ۱۴۰۳') ?>
                     </span>
-                    <span class="report-type-badge">نسخه نهایی عملکرد</span>
+                    <span class="report-type-badge"><?= site_e('نسخه نهایی عملکرد') ?></span>
                 </div>
 
                 <div class="report-icon-box">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
 
-                <h3 class="report-title">گزارش جامع عملکرد سال ۱۴۰۳ مکسا</h3>
+                <h3 class="report-title"><?= site_e('گزارش جامع عملکرد سال ۱۴۰۳ مکسا') ?></h3>
                 <p class="report-summary">
-                    توسعه خط ملی ارتباطات کشوری، ارائه خدمات سلامت از راه دور (Telemedicine)، پوشش بیش از ۶۵,۰۰۰ خدمت مراقبت در منزل و ارتقای شبکه خدمات تسکینی در قطب‌های دانشگاهی کشور.
+                    <?= site_e('توسعه خط ملی ارتباطات کشوری، ارائه خدمات سلامت از راه دور (Telemedicine)، پوشش بیش از ۶۵,۰۰۰ خدمت مراقبت در منزل و ارتقای شبکه خدمات تسکینی در قطب‌های دانشگاهی کشور.') ?>
                 </p>
 
                 <ul class="report-highlights">
-                    <li>۶۸,۴۰۰ ویزیت تخصصی در منزل و کلینیک</li>
-                    <li>راه‌اندازی سامانه‌های هوشمند پایش مستمر بیماران</li>
-                    <li>تأمین بیش از ۱۲,۰۰۰ قلم تجهیزات پزشکی امانی</li>
+                    <li><?= site_e('۶۸,۴۰۰ ویزیت تخصصی در منزل و کلینیک') ?></li>
+                    <li><?= site_e('راه‌اندازی سامانه‌های هوشمند پایش مستمر بیماران') ?></li>
+                    <li><?= site_e('تأمین بیش از ۱۲,۰۰۰ قلم تجهیزات پزشکی امانی') ?></li>
                 </ul>
             </div>
 
             <div class="report-card-actions">
                 <button type="button" class="btn-view-summary" data-modal="modal-1403">
-                    مشاهده خلاصه
+                    <?= site_e('مشاهده خلاصه') ?>
                 </button>
-                <a href="#download-1403" class="btn-download-pdf js-download-btn" data-title="گزارش سالانه ۱۴۰۳">
-                    دانلود PDF
+                <a href="#download-1403" class="btn-download-pdf js-download-btn" data-title="<?= site_e('گزارش سالانه ۱۴۰۳') ?>">
+                    <?= site_e('دانلود PDF') ?>
                 </a>
             </div>
         </article>
@@ -654,33 +655,33 @@
                 <div class="report-card-top">
                     <span class="report-year-badge">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        سال ۱۴۰۲
+                        <?= site_e('سال ۱۴۰۲') ?>
                     </span>
-                    <span class="report-type-badge">نسخه مصوب</span>
+                    <span class="report-type-badge"><?= site_e('نسخه مصوب') ?></span>
                 </div>
 
                 <div class="report-icon-box">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M9 17v-6M13 17V7M17 17v-3M3 13.5l4-4 4 4 6-6 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
 
-                <h3 class="report-title">گزارش جامع عملکرد سال ۱۴۰۲ مکسا</h3>
+                <h3 class="report-title"><?= site_e('گزارش جامع عملکرد سال ۱۴۰۲ مکسا') ?></h3>
                 <p class="report-summary">
-                    گسترش فعالیت در بیمارستان‌های بزرگ دانشگاهی، تقویت تیم‌های چندتخصصی (پزشکی، پرستاری، روان‌شناختی، مددکاری و معنوی) و پوشش ۵۸,۰۰۰ خدمت تخصصی رایگان.
+                    <?= site_e('گسترش فعالیت در بیمارستان‌های بزرگ دانشگاهی، تقویت تیم‌های چندتخصصی (پزشکی، پرستاری، روان‌شناختی، مددکاری و معنوی) و پوشش ۵۸,۰۰۰ خدمت تخصصی رایگان.') ?>
                 </p>
 
                 <ul class="report-highlights">
-                    <li>افزایش ۴۰ درصدی پوشش مراقبت در منزل</li>
-                    <li>برگزاری دوره‌های توانمندسازی تخصصی برای ۱,۲۰۰ پرستار</li>
-                    <li>تأسیس مرکز نوآوری و رویش استعدادهای دانشجویی (CDST)</li>
+                    <li><?= site_e('افزایش ۴۰ درصدی پوشش مراقبت در منزل') ?></li>
+                    <li><?= site_e('برگزاری دوره‌های توانمندسازی تخصصی برای ۱,۲۰۰ پرستار') ?></li>
+                    <li><?= site_e('تأسیس مرکز نوآوری و رویش استعدادهای دانشجویی (CDST)') ?></li>
                 </ul>
             </div>
 
             <div class="report-card-actions">
                 <button type="button" class="btn-view-summary" data-modal="modal-1402">
-                    مشاهده خلاصه
+                    <?= site_e('مشاهده خلاصه') ?>
                 </button>
-                <a href="#download-1402" class="btn-download-pdf js-download-btn" data-title="گزارش سالانه ۱۴۰۲">
-                    دانلود PDF
+                <a href="#download-1402" class="btn-download-pdf js-download-btn" data-title="<?= site_e('گزارش سالانه ۱۴۰۲') ?>">
+                    <?= site_e('دانلود PDF') ?>
                 </a>
             </div>
         </article>
@@ -691,33 +692,33 @@
                 <div class="report-card-top">
                     <span class="report-year-badge">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        سال ۱۴۰۱
+                        <?= site_e('سال ۱۴۰۱') ?>
                     </span>
-                    <span class="report-type-badge">نسخه مصوب</span>
+                    <span class="report-type-badge"><?= site_e('نسخه مصوب') ?></span>
                 </div>
 
                 <div class="report-icon-box">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
 
-                <h3 class="report-title">گزارش جامع عملکرد سال ۱۴۰۱ مکسا</h3>
+                <h3 class="report-title"><?= site_e('گزارش جامع عملکرد سال ۱۴۰۱ مکسا') ?></h3>
                 <p class="report-summary">
-                    انعقاد تفاهم‌نامه‌های همکاری ملی با دانشگاه‌های علوم پزشکی شهید بهشتی، بقیه‌الله، تبریز، اصفهان، مشهد و اهواز؛ توسعه ناوگان مراقبت در منزل و مددکاری اجتماعی فعال.
+                    <?= site_e('انعقاد تفاهم‌نامه‌های همکاری ملی با دانشگاه‌های علوم پزشکی شهید بهشتی، بقیه‌الله، تبریز، اصفهان، مشهد و اهواز؛ توسعه ناوگان مراقبت در منزل و مددکاری اجتماعی فعال.') ?>
                 </p>
 
                 <ul class="report-highlights">
-                    <li>۴۷,۵۰۰ خدمت کاملاً رایگان به خانواده بیماران</li>
-                    <li>تأمین وام‌های حمایتی و بسته‌های معیشتی بیماران نیازمند</li>
-                    <li>انتشار ۸ جلد کتاب و راهنمای تخصصی مراقبت تسکینی</li>
+                    <li><?= site_e('۴۷,۵۰۰ خدمت کاملاً رایگان به خانواده بیماران') ?></li>
+                    <li><?= site_e('تأمین وام‌های حمایتی و بسته‌های معیشتی بیماران نیازمند') ?></li>
+                    <li><?= site_e('انتشار ۸ جلد کتاب و راهنمای تخصصی مراقبت تسکینی') ?></li>
                 </ul>
             </div>
 
             <div class="report-card-actions">
                 <button type="button" class="btn-view-summary" data-modal="modal-1401">
-                    مشاهده خلاصه
+                    <?= site_e('مشاهده خلاصه') ?>
                 </button>
-                <a href="#download-1401" class="btn-download-pdf js-download-btn" data-title="گزارش سالانه ۱۴۰۱">
-                    دانلود PDF
+                <a href="#download-1401" class="btn-download-pdf js-download-btn" data-title="<?= site_e('گزارش سالانه ۱۴۰۱') ?>">
+                    <?= site_e('دانلود PDF') ?>
                 </a>
             </div>
         </article>
@@ -728,33 +729,33 @@
                 <div class="report-card-top">
                     <span class="report-year-badge">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        سال ۱۴۰۰
+                        <?= site_e('سال ۱۴۰۰') ?>
                     </span>
-                    <span class="report-type-badge">آرشیو رسمی</span>
+                    <span class="report-type-badge"><?= site_e('آرشیو رسمی') ?></span>
                 </div>
 
                 <div class="report-icon-box">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </div>
 
-                <h3 class="report-title">گزارش عملکرد سال ۱۴۰۰ مکسا</h3>
+                <h3 class="report-title"><?= site_e('گزارش عملکرد سال ۱۴۰۰ مکسا') ?></h3>
                 <p class="report-summary">
-                    مدیریت مراقبت تسکینی بیماران مبتلا به سرطان در دوران کرونا، ارتقای سلامت روان خانواده‌ها، و ارائه ۳۹,۰۰۰ خدمت پیوسته پزشکی و پرستاری در منزل.
+                    <?= site_e('مدیریت مراقبت تسکینی بیماران مبتلا به سرطان در دوران کرونا، ارتقای سلامت روان خانواده‌ها، و ارائه ۳۹,۰۰۰ خدمت پیوسته پزشکی و پرستاری در منزل.') ?>
                 </p>
 
                 <ul class="report-highlights">
-                    <li>تداوم ۱۰۰٪ خدمات بالینی در قرنطینه‌های همه‌گیری</li>
-                    <li>پشتیبانی دارویی و تجهیزات تنفسی شبانه‌روزی</li>
-                    <li>مشاوره‌های فردی و گروهی تسکین سوگ و اضطراب</li>
+                    <li><?= site_e('تداوم ۱۰۰٪ خدمات بالینی در قرنطینه‌های همه‌گیری') ?></li>
+                    <li><?= site_e('پشتیبانی دارویی و تجهیزات تنفسی شبانه‌روزی') ?></li>
+                    <li><?= site_e('مشاوره‌های فردی و گروهی تسکین سوگ و اضطراب') ?></li>
                 </ul>
             </div>
 
             <div class="report-card-actions">
                 <button type="button" class="btn-view-summary" data-modal="modal-1400">
-                    مشاهده خلاصه
+                    <?= site_e('مشاهده خلاصه') ?>
                 </button>
-                <a href="#download-1400" class="btn-download-pdf js-download-btn" data-title="گزارش سالانه ۱۴۰۰">
-                    دانلود PDF
+                <a href="#download-1400" class="btn-download-pdf js-download-btn" data-title="<?= site_e('گزارش سالانه ۱۴۰۰') ?>">
+                    <?= site_e('دانلود PDF') ?>
                 </a>
             </div>
         </article>
@@ -765,33 +766,33 @@
                 <div class="report-card-top">
                     <span class="report-year-badge">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        سال ۱۳۹۹
+                        <?= site_e('سال ۱۳۹۹') ?>
                     </span>
-                    <span class="report-type-badge">آرشیو رسمی</span>
+                    <span class="report-type-badge"><?= site_e('آرشیو رسمی') ?></span>
                 </div>
 
                 <div class="report-icon-box">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
 
-                <h3 class="report-title">گزارش عملکرد سال ۱۳۹۹ مکسا</h3>
+                <h3 class="report-title"><?= site_e('گزارش عملکرد سال ۱۳۹۹ مکسا') ?></h3>
                 <p class="report-summary">
-                    گسترش شعب مکسا در اصفهان و تهران، افتتاح بخش مراقبت حمایتی بیمارستان کودکان مفید، و راه‌اندازی کلینیک‌های لنف‌ادم و مراقبت‌های تسکینی سرپایی.
+                    <?= site_e('گسترش شعب مکسا در اصفهان و تهران، افتتاح بخش مراقبت حمایتی بیمارستان کودکان مفید، و راه‌اندازی کلینیک‌های لنف‌ادم و مراقبت‌های تسکینی سرپایی.') ?>
                 </p>
 
                 <ul class="report-highlights">
-                    <li>تأسیس بخش مراقبت تسکینی اطفال در تهران</li>
-                    <li>پذیرش و همراهی ۳,۱۰۰ بیمار جدید در شبکه مکسا</li>
-                    <li>امضای پیمان‌های استانداردهای جهانی با انستیتو کوری فرانسه</li>
+                    <li><?= site_e('تأسیس بخش مراقبت تسکینی اطفال در تهران') ?></li>
+                    <li><?= site_e('پذیرش و همراهی ۳,۱۰۰ بیمار جدید در شبکه مکسا') ?></li>
+                    <li><?= site_e('امضای پیمان‌های استانداردهای جهانی با انستیتو کوری فرانسه') ?></li>
                 </ul>
             </div>
 
             <div class="report-card-actions">
                 <button type="button" class="btn-view-summary" data-modal="modal-1399">
-                    مشاهده خلاصه
+                    <?= site_e('مشاهده خلاصه') ?>
                 </button>
-                <a href="#download-1399" class="btn-download-pdf js-download-btn" data-title="گزارش سالانه ۱۳۹۹">
-                    دانلود PDF
+                <a href="#download-1399" class="btn-download-pdf js-download-btn" data-title="<?= site_e('گزارش سالانه ۱۳۹۹') ?>">
+                    <?= site_e('دانلود PDF') ?>
                 </a>
             </div>
         </article>
@@ -801,13 +802,13 @@
     <!-- باکس شفافیت و پاسخگویی -->
     <div class="transparency-box">
         <div class="transparency-content">
-            <h3>نیاز به اطلاعات بیشتر یا نسخه‌های چاپی دارید؟</h3>
+            <h3><?= site_e('نیاز به اطلاعات بیشتر یا نسخه‌های چاپی دارید؟') ?></h3>
             <p>
-                گزارش‌های تفصیلی سالانه علاوه بر نسخه دیجیتال، به صورت مکتوب نیز به مراجع نظارتی، دانشگاه‌ها و حامیان گرامی ارسال می‌شود. برای درخواست نسخه‌های تکمیلی با دبیرخانه مکسا در ارتباط باشید.
+                <?= site_e('گزارش‌های تفصیلی سالانه علاوه بر نسخه دیجیتال، به صورت مکتوب نیز به مراجع نظارتی، دانشگاه‌ها و حامیان گرامی ارسال می‌شود. برای درخواست نسخه‌های تکمیلی با دبیرخانه مکسا در ارتباط باشید.') ?>
             </p>
         </div>
         <a href="/contactus" class="transparency-btn">
-            تماس با دبیرخانه مکسا
+            <?= site_e('تماس با دبیرخانه مکسا') ?>
         </a>
     </div>
 
@@ -818,10 +819,10 @@
     <div class="report-modal-box">
         <div class="modal-header">
             <div>
-                <h3 id="modalTitle">خلاصه گزارش عملکرد</h3>
-                <span id="modalYear" class="report-year-badge">سال ۱۴۰۳</span>
+                <h3 id="modalTitle"><?= site_e('خلاصه گزارش عملکرد') ?></h3>
+                <span id="modalYear" class="report-year-badge"><?= site_e('سال ۱۴۰۳') ?></span>
             </div>
-            <button type="button" class="modal-close-btn js-modal-close" aria-label="بستن">✕</button>
+            <button type="button" class="modal-close-btn js-modal-close" aria-label="<?= site_e('بستن') ?>">✕</button>
         </div>
 
         <div class="modal-body" id="modalBody">

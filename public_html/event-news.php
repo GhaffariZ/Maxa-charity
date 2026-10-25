@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/core/site-locale.php';
 
 require_once __DIR__ . '/core/database.php';
 require_once __DIR__ . '/event-lib.php';
@@ -80,9 +81,9 @@ if ($slugParam !== '' || $idParam > 0) {
 
 if (!$news) {
     http_response_code(404);
-    $pageTitle = 'خبر یافت نشد';
+    $pageTitle = site_text('خبر یافت نشد');
     require __DIR__ . '/dashboard/components/header/component.php';
-    echo '<div style="direction:rtl;text-align:center;padding:100px 20px;font-family:Vazirmatn,sans-serif;"><h2>خبر مورد نظر یافت نشد.</h2><p><a href="/events.php" style="color:#008f8a;">مشاهده رویدادها</a></p></div>';
+    echo '<div style="direction:var(--site-direction, rtl);text-align:center;padding:100px 20px;font-family:Vazirmatn,sans-serif;"><h2>خبر مورد نظر یافت نشد.</h2><p><a href="/events.php" style="color:#008f8a;">مشاهده رویدادها</a></p></div>';
     require __DIR__ . '/dashboard/components/footer/component.php';
     exit;
 }
@@ -104,7 +105,7 @@ if (!empty($news['event_id'])) {
 ?>
 <style>
 .event-news-page {
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   background: #f4f8f7;
   padding: 32px 20px 48px;
   min-height: 75vh;
@@ -324,20 +325,20 @@ if (!empty($news['event_id'])) {
   <div class="event-news-layout">
     <article class="event-news-wrap">
       <!-- Breadcrumbs -->
-      <nav class="event-news-breadcrumbs" aria-label="موقعیت در سایت">
-        <a href="/events.php">رویدادهای مکسا</a>
+      <nav class="event-news-breadcrumbs" aria-label="<?= site_e('موقعیت در سایت') ?>">
+        <a href="/events.php"><?= site_e('رویدادهای مکسا') ?></a>
         <?php if (!empty($news['event_slug']) || !empty($news['event_title'])): ?>
           <span>/</span>
           <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>"><?= event_h($news['event_title'] ?: 'همایش') ?></a>
         <?php endif; ?>
         <span>/</span>
-        <span>خبر اختصاصی</span>
+        <span><?= site_e('خبر اختصاصی') ?></span>
       </nav>
 
       <div class="event-news-card">
         <div class="event-news-tag">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-          <span>خبر رویداد<?= !empty($news['event_title']) ? ' · ' . event_h($news['event_title']) : '' ?></span>
+          <span><?= site_e('خبر رویداد') ?><?= !empty($news['event_title']) ? ' · ' . event_h($news['event_title']) : '' ?></span>
         </div>
 
         <h1><?= event_h($news['title']) ?></h1>
@@ -366,13 +367,13 @@ if (!empty($news['event_id'])) {
         <div class="event-news-sidebox">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-            <span>همایش مرتبط</span>
+            <span><?= site_e('همایش مرتبط') ?></span>
           </h3>
           <p style="font-size:13px;color:#475569;line-height:1.7;margin:0 0 14px;">
             <?= event_h($news['event_title']) ?>
           </p>
           <a href="/event.php?slug=<?= rawurlencode((string)($news['event_slug'] ?? '')) ?>" style="display:inline-flex;align-items:center;gap:6px;color:#008f8a;font-size:13px;font-weight:800;text-decoration:none;">
-            <span>مشاهده صفحه همایش</span>
+            <span><?= site_e('مشاهده صفحه همایش') ?></span>
             <span>→</span>
           </a>
         </div>
@@ -382,7 +383,7 @@ if (!empty($news['event_id'])) {
         <div class="event-news-sidebox">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
-            <span>سایر اخبار این همایش</span>
+            <span><?= site_e('سایر اخبار این همایش') ?></span>
           </h3>
           <?php foreach ($related as $rel): ?>
             <a class="event-related-link" href="/event-news.php?slug=<?= rawurlencode((string)$rel['slug']) ?>">

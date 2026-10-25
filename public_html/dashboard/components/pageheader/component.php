@@ -1,7 +1,8 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <div class="page-header-wrapper">
-    <header class="page-header-capsule" dir="rtl">
-        <h1>تاریخچه و نحوه تاسیس</h1>
-        <div class="page-header-breadcrumb">صفحه اصلی / خدمات</div>
+    <header class="page-header-capsule" dir="<?= site_direction() ?>">
+        <h1><?= site_e('تاریخچه و نحوه تاسیس') ?></h1>
+        <div class="page-header-breadcrumb"><?= site_e('صفحه اصلی / خدمات') ?></div>
     </header>
 </div>
 

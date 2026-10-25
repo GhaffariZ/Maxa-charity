@@ -1,110 +1,111 @@
-<section class="mex-org-chart" dir="rtl">
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<section class="mex-org-chart" dir="<?= site_direction() ?>">
 
 <div class="mex-chart-shell">
 
 <div class="page-header-wrapper">
-    <header class="page-header-capsule" dir="rtl">
-        <h1>چارت سازمانی</h1>
-        <div class="page-header-breadcrumb">صفحه اصلی / خدمات</div>
+    <header class="page-header-capsule" dir="<?= site_direction() ?>">
+        <h1><?= site_e('چارت سازمانی') ?></h1>
+        <div class="page-header-breadcrumb"><?= site_e('صفحه اصلی / خدمات') ?></div>
     </header>
 </div>
 
 <div class="mex-chart-container" id="chart-container">
 
 <div class="mex-level mex-level-single" id="level-0">
-<div class="mex-node mex-node-trustees" data-href="/headdirectors">هیئت امناء و شورای عالی</div>
+<div class="mex-node mex-node-trustees" data-href="/headdirectors"><?= site_e('هیئت امناء و شورای عالی') ?></div>
 </div>
 
 <div class="mex-level mex-level-single" id="level-0-1">
-<div class="mex-node mex-node-board" data-href="/directors">هیئت مدیره</div>
+<div class="mex-node mex-node-board" data-href="/directors"><?= site_e('هیئت مدیره') ?></div>
 </div>
 
 <div class="mex-level mex-level-single" id="level-1">
-<div class="mex-node mex-node-manager">مدیر عامل</div>
+<div class="mex-node mex-node-manager"><?= site_e('مدیر عامل') ?></div>
 </div>
 
 <div class="mex-node mex-node-side" id="hoze-node">
-حوزه مدیر عامل
+<?= site_e('حوزه مدیر عامل') ?>
 </div>
 
 <div class="mex-section-title mex-section-title-departments" id="departments-title">
-معاونت‌ها و مراکز
+<?= site_e('معاونت‌ها و مراکز') ?>
 </div>
 
 <div class="mex-level mex-level-departments" id="level-2">
 
-<div class="mex-node">معاونت ارتباطات</div>
-<div class="mex-node">معاونت سرمایه‌های انسانی</div>
-<div class="mex-node">معاونت طرح، برنامه‌ریزی و توسعه</div>
+<div class="mex-node"><?= site_e('معاونت ارتباطات') ?></div>
+<div class="mex-node"><?= site_e('معاونت سرمایه‌های انسانی') ?></div>
+<div class="mex-node"><?= site_e('معاونت طرح، برنامه‌ریزی و توسعه') ?></div>
 
-<div class="mex-node mex-branches-anchor">شعب</div>
+<div class="mex-node mex-branches-anchor"><?= site_e('شعب') ?></div>
 
-<div class="mex-node">معاونت لجستیک و پشتیبانی</div>
-<div class="mex-node">معاونت آموزش و پژوهش</div>
-<div class="mex-node">مرکز رویش استعدادهای دانشجویی مکسا</div>
-<div class="mex-node">مرکز تخصصی ارتباطات و سلامت از راه دور</div>
+<div class="mex-node"><?= site_e('معاونت لجستیک و پشتیبانی') ?></div>
+<div class="mex-node"><?= site_e('معاونت آموزش و پژوهش') ?></div>
+<div class="mex-node"><?= site_e('مرکز رویش استعدادهای دانشجویی مکسا') ?></div>
+<div class="mex-node"><?= site_e('مرکز تخصصی ارتباطات و سلامت از راه دور') ?></div>
 
 </div>
 
 <div class="mex-branches-wrapper">
 
 <div class="mex-section-title" id="branches-title">
-شعب مکسا
+<?= site_e('شعب مکسا') ?>
 </div>
 
 <div class="mex-level mex-level-branches" id="level-3">
 
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">اصفهان</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۸۸</span>
+  <span class="mex-branch-name"><?= site_e('اصفهان') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۸۸') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">تهران</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۹۲</span>
+  <span class="mex-branch-name"><?= site_e('تهران') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۹۲') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">مشهد</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+  <span class="mex-branch-name"><?= site_e('مشهد') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۹۹') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">قم</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+  <span class="mex-branch-name"><?= site_e('قم') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۹۹') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">کرمان</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+  <span class="mex-branch-name"><?= site_e('کرمان') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۹۹') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">کاشان</span>
-  <span class="mex-branch-badge mex-badge-established">۱۳۹۹</span>
+  <span class="mex-branch-name"><?= site_e('کاشان') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۳۹۹') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">اهواز</span>
-  <span class="mex-branch-badge mex-badge-established">۱۴۰۲</span>
+  <span class="mex-branch-name"><?= site_e('اهواز') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۴۰۲') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">تبریز</span>
-  <span class="mex-branch-badge mex-badge-established">۱۴۰۳</span>
+  <span class="mex-branch-name"><?= site_e('تبریز') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۴۰۳') ?></span>
 </div>
 <div class="mex-node mex-branch-node">
-  <span class="mex-branch-name">زاهدان</span>
-  <span class="mex-branch-badge mex-badge-established">۱۴۰۵</span>
+  <span class="mex-branch-name"><?= site_e('زاهدان') ?></span>
+  <span class="mex-branch-badge mex-badge-established"><?= site_e('۱۴۰۵') ?></span>
 </div>
 <div class="mex-node mex-branch-node mex-branch-pending">
-  <span class="mex-branch-name">سنندج</span>
-  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+  <span class="mex-branch-name"><?= site_e('سنندج') ?></span>
+  <span class="mex-branch-badge mex-badge-pending"><?= site_e('در شرف تأسیس') ?></span>
 </div>
 <div class="mex-node mex-branch-node mex-branch-pending">
-  <span class="mex-branch-name">بجنورد</span>
-  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+  <span class="mex-branch-name"><?= site_e('بجنورد') ?></span>
+  <span class="mex-branch-badge mex-badge-pending"><?= site_e('در شرف تأسیس') ?></span>
 </div>
 <div class="mex-node mex-branch-node mex-branch-pending">
-  <span class="mex-branch-name">خرم‌آباد</span>
-  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+  <span class="mex-branch-name"><?= site_e('خرم‌آباد') ?></span>
+  <span class="mex-branch-badge mex-badge-pending"><?= site_e('در شرف تأسیس') ?></span>
 </div>
 <div class="mex-node mex-branch-node mex-branch-pending">
-  <span class="mex-branch-name">یزد</span>
-  <span class="mex-branch-badge mex-badge-pending">در شرف تأسیس</span>
+  <span class="mex-branch-name"><?= site_e('یزد') ?></span>
+  <span class="mex-branch-badge mex-badge-pending"><?= site_e('در شرف تأسیس') ?></span>
 </div>
 
 </div>
@@ -301,7 +302,7 @@ padding:6px 18px;
   gap:5px;
   text-align:center;
   cursor:default;
-  direction:rtl;
+  direction:var(--site-direction, rtl);
   transition:all .22s ease;
 }
 

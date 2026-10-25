@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی عمومیِ یک بخش از مکساپدیا — محتوای منتشرشده‌ی همان بخش را نمایش می‌دهد. */
 require_once __DIR__ . '/core/icons.php';
 require __DIR__ . '/dashboard/maxapedia-db.php';
@@ -65,7 +66,7 @@ render_dashboard_component('header', get_defined_vars());
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
   }
   .iconoir-icon { display: inline-flex; vertical-align: middle; width: 1.2em; height: 1.2em; stroke-width: 1.6; flex-shrink: 0; }
   .mp-breadcrumb { font-size: 14px; color: #8b8f96; margin-bottom: 20px; }
@@ -163,7 +164,7 @@ render_dashboard_component('header', get_defined_vars());
   .mp-watch-list h3 { font-size: 15px; font-weight: 800; color: #2f3437; margin: 0 0 14px; }
   .mp-watch-scroller { display: flex; flex-direction: column; gap: 10px; }
   .mp-pl-item {
-    display: flex; gap: 12px; align-items: stretch; text-align: right;
+    display: flex; gap: 12px; align-items: stretch; text-align: start;
     background: #fff; border: 1px solid #ecedf0; border-radius: 12px; padding: 8px;
     cursor: pointer; font-family: inherit;
     transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
@@ -518,7 +519,7 @@ render_dashboard_component('header', get_defined_vars());
     background: #fff;
     border-top: 1px solid #f3f4f6;
     white-space: normal;
-    text-align: right;
+    text-align: start;
   }
 
   /* دکمه و نوار پیشرفت بارگذاری مرحله‌ای تصاویر (Load More) */
@@ -658,19 +659,19 @@ render_dashboard_component('header', get_defined_vars());
 <?php if ($galleryAlbum): ?>
   <!-- نمای اختصاصی آلبوم گالری مکسا -->
   <div class="mp-breadcrumb">
-    <a href="/macsapedia">مکساپدیا</a> / <a href="<?= e($mpBase) ?>"><?= e($mpSection['title']) ?></a> / <?= e($galleryAlbum['title']) ?>
+    <a href="/macsapedia"><?= site_e('مکساپدیا') ?></a> / <a href="<?= e($mpBase) ?>"><?= e($mpSection['title']) ?></a> / <?= e($galleryAlbum['title']) ?>
   </div>
 
   <div class="mp-album-view-header">
     <a href="<?= e($mpBase) ?>" class="mp-album-back-link">
-      <?= iconoir('arrow-right', '', 16) ?> بازگشت به همه آلبوم‌های گالری
+      <?= iconoir('arrow-right', '', 16) ?> <?= site_e('بازگشت به همه آلبوم‌های گالری') ?>
     </a>
     <div class="mp-album-view-meta">
       <?php if (!empty($galleryAlbum['category'])): ?>
         <span class="mp-album-badge-cat"><?= e($galleryAlbum['category']) ?></span>
       <?php endif; ?>
       <span class="mp-album-badge-count">
-        <?= iconoir('media-image', '', 14) ?> <?= fa_digits(count($galleryPhotos)) ?> تصویر
+        <?= iconoir('media-image', '', 14) ?> <?= fa_digits(count($galleryPhotos)) ?> <?= site_e('تصویر') ?>
       </span>
       <?php if (!empty($galleryAlbum['created_at'])): ?>
         <span class="mp-album-date"><?= fa_digits(date('Y/m/d', strtotime($galleryAlbum['created_at']))) ?></span>
@@ -684,7 +685,7 @@ render_dashboard_component('header', get_defined_vars());
 
   <?php if (empty($galleryPhotos)): ?>
     <div class="mp-empty">
-      هنوز تصویری برای این آلبوم آپلود نشده است.
+      <?= site_e('هنوز تصویری برای این آلبوم آپلود نشده است.') ?>
     </div>
   <?php else: ?>
     <?php
@@ -723,36 +724,36 @@ render_dashboard_component('header', get_defined_vars());
     <?php if (count($galleryPhotos) > 24): ?>
       <div class="mp-load-more-wrap" id="mpLoadMoreWrap">
         <div class="mp-load-more-info">
-          نمایش <span id="mpLoadedCount">۲۴</span> از <span id="mpTotalCount"><?= fa_digits(count($galleryPhotos)) ?></span> تصویر
+          <?= site_e('نمایش') ?> <span id="mpLoadedCount"><?= site_e('۲۴') ?></span> <?= site_e('از') ?> <span id="mpTotalCount"><?= fa_digits(count($galleryPhotos)) ?></span> <?= site_e('تصویر') ?>
         </div>
         <div class="mp-load-progress">
           <div class="mp-load-bar" id="mpLoadBar" style="width: <?= round((24 / count($galleryPhotos)) * 100) ?>%;"></div>
         </div>
         <button type="button" class="mp-load-more-btn" id="mpLoadMoreBtn" onclick="loadMorePhotos()">
-          <?= iconoir('refresh-double', '', 18) ?> مشاهده تصاویر بیشتر
+          <?= iconoir('refresh-double', '', 18) ?> <?= site_e('مشاهده تصاویر بیشتر') ?>
         </button>
       </div>
     <?php endif; ?>
   <?php endif; ?>
 
   <!-- لایت‌باکس تعاملی تمام‌صفحه -->
-  <div class="mp-lightbox" id="mpLightbox" role="dialog" aria-modal="true" aria-label="نمایش تصویر بزرگ">
+  <div class="mp-lightbox" id="mpLightbox" role="dialog" aria-modal="true" aria-label="<?= site_e('نمایش تصویر بزرگ') ?>">
     <div class="mp-lb-backdrop" onclick="closePhotoLightbox()"></div>
     <div class="mp-lb-dialog">
-      <button type="button" class="mp-lb-close" onclick="closePhotoLightbox()" aria-label="بستن">✕</button>
+      <button type="button" class="mp-lb-close" onclick="closePhotoLightbox()" aria-label="<?= site_e('بستن') ?>">✕</button>
       <div class="mp-lb-stage">
-        <button type="button" class="mp-lb-nav mp-lb-prev" onclick="prevPhotoLightbox()" aria-label="تصویر قبلی">❮</button>
+        <button type="button" class="mp-lb-nav mp-lb-prev" onclick="prevPhotoLightbox()" aria-label="<?= site_e('تصویر قبلی') ?>">❮</button>
         <div class="mp-lb-img-wrap">
           <img id="mpLbImg" src="" alt="">
         </div>
-        <button type="button" class="mp-lb-nav mp-lb-next" onclick="nextPhotoLightbox()" aria-label="تصویر بعدی">❯</button>
+        <button type="button" class="mp-lb-nav mp-lb-next" onclick="nextPhotoLightbox()" aria-label="<?= site_e('تصویر بعدی') ?>">❯</button>
       </div>
       <div class="mp-lb-footer">
         <div class="mp-lb-caption" id="mpLbCaption"></div>
         <div class="mp-lb-meta">
           <span class="mp-lb-counter" id="mpLbCounter"></span>
           <a id="mpLbDownload" class="mp-lb-download" href="" download target="_blank" rel="noopener">
-            <?= iconoir('download', '', 14) ?> دانلود کیفیت اصلی
+            <?= iconoir('download', '', 14) ?> <?= site_e('دانلود کیفیت اصلی') ?>
           </a>
         </div>
       </div>
@@ -762,7 +763,7 @@ render_dashboard_component('header', get_defined_vars());
 <?php else: ?>
   <!-- نمای عمومی بخش‌های مکساپدیا (شامل هاب گالری مکسا و سایر بخش‌ها) -->
   <div class="mp-breadcrumb">
-    <a href="/macsapedia">مکساپدیا</a> / <?= e($mpSection['title']) ?>
+    <a href="/macsapedia"><?= site_e('مکساپدیا') ?></a> / <?= e($mpSection['title']) ?>
   </div>
 
   <div class="mp-header">
@@ -777,13 +778,13 @@ render_dashboard_component('header', get_defined_vars());
       <?php if ($mpCat !== ''): ?>
         <input type="hidden" name="cat" value="<?= e($mpCat) ?>">
       <?php endif; ?>
-      <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="<?= $mpSlug === 'gallery' ? 'جستجو در آلبوم‌های تصاویر…' : 'جستجو در این بخش…' ?>" aria-label="جستجو">
-      <button type="submit" aria-label="جستجو"><?= iconoir('search', '', 18) ?></button>
+      <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="<?= $mpSlug === 'gallery' ? 'جستجو در آلبوم‌های تصاویر…' : 'جستجو در این بخش…' ?>" aria-label="<?= site_e('جستجو') ?>">
+      <button type="submit" aria-label="<?= site_e('جستجو') ?>"><?= iconoir('search', '', 18) ?></button>
     </form>
 
     <?php if (!empty($mpCats)): ?>
       <div class="mp-chips">
-        <a class="mp-chip<?= $mpCat === '' ? ' active' : '' ?>" href="<?= e($mpChipUrl('')) ?>">همه</a>
+        <a class="mp-chip<?= $mpCat === '' ? ' active' : '' ?>" href="<?= e($mpChipUrl('')) ?>"><?= site_e('همه') ?></a>
         <?php foreach ($mpCats as $c): ?>
           <a class="mp-chip<?= $c === $mpCat ? ' active' : '' ?>" href="<?= e($mpChipUrl($c)) ?>"><?= e($c) ?></a>
         <?php endforeach; ?>
@@ -793,11 +794,11 @@ render_dashboard_component('header', get_defined_vars());
 
   <?php if ($mpFiltered): ?>
     <div class="mp-result-note">
-      نتایج
-      <?php if ($mpQ !== ''): ?> برای «<?= e($mpQ) ?>»<?php endif; ?>
-      <?php if ($mpCat !== ''): ?> در دسته‌ی «<?= e($mpCat) ?>»<?php endif; ?>
+      <?= site_e('نتایج') ?>
+      <?php if ($mpQ !== ''): ?> <?= site_e('برای «') ?><?= e($mpQ) ?>»<?php endif; ?>
+      <?php if ($mpCat !== ''): ?> <?= site_e('در دسته‌ی «') ?><?= e($mpCat) ?>»<?php endif; ?>
       — <?= fa_digits(count($mpItems)) ?> <?= $mpSlug === 'gallery' ? 'آلبوم' : 'مورد' ?>
-      <a class="mp-result-clear" href="<?= e($mpBase) ?>">پاک کردن فیلتر</a>
+      <a class="mp-result-clear" href="<?= e($mpBase) ?>"><?= site_e('پاک کردن فیلتر') ?></a>
     </div>
   <?php endif; ?>
 
@@ -827,14 +828,14 @@ render_dashboard_component('header', get_defined_vars());
             <?php endif; ?>
             <div class="mp-album-cover-overlay">
               <span class="mp-album-enter-btn">
-                مشاهده آلبوم <?= iconoir('arrow-left', '', 14) ?>
+                <?= site_e('مشاهده آلبوم') ?> <?= iconoir('arrow-left', '', 14) ?>
               </span>
             </div>
             <?php if (!empty($alb['category'])): ?>
               <span class="mp-album-cat-badge"><?= e($alb['category']) ?></span>
             <?php endif; ?>
             <span class="mp-album-count-badge">
-              <?= iconoir('media-image', '', 13) ?> <?= fa_digits($pCount) ?> عکس
+              <?= iconoir('media-image', '', 13) ?> <?= fa_digits($pCount) ?> <?= site_e('عکس') ?>
             </span>
           </a>
           <div class="mp-album-body">
@@ -849,7 +850,7 @@ render_dashboard_component('header', get_defined_vars());
                 <?= !empty($alb['created_at']) ? fa_digits(date('Y/m/d', strtotime($alb['created_at']))) : '' ?>
               </span>
               <a class="mp-album-cta" href="<?= $albumLink ?>">
-                ورود به آلبوم <?= iconoir('arrow-left', '', 14) ?>
+                <?= site_e('ورود به آلبوم') ?> <?= iconoir('arrow-left', '', 14) ?>
               </a>
             </div>
           </div>
@@ -886,13 +887,13 @@ render_dashboard_component('header', get_defined_vars());
             <h2 id="mpPlayerTitle"><?= e($first['title']) ?></h2>
             <p id="mpPlayerDesc"<?= empty($first['description']) ? ' style="display:none"' : '' ?>><?= e($first['description'] ?? '') ?></p>
             <a id="mpPlayerSource" class="mp-item-source" target="_blank" rel="noopener"
-               href="<?= e($first['url'] ?? '') ?>"<?= empty($first['url']) ? ' style="display:none"' : '' ?>>باز کردن در منبع <?= iconoir('arrow-up-right', '', 14) ?></a>
+               href="<?= e($first['url'] ?? '') ?>"<?= empty($first['url']) ? ' style="display:none"' : '' ?>><?= site_e('باز کردن در منبع') ?> <?= iconoir('arrow-up-right', '', 14) ?></a>
           </div>
         </div>
 
         <!-- فهرست ویدیوها -->
         <aside class="mp-watch-list">
-          <h3><?= fa_digits(count($mpVideos)) ?> ویدیو</h3>
+          <h3><?= fa_digits(count($mpVideos)) ?> <?= site_e('ویدیو') ?></h3>
           <div class="mp-watch-scroller">
             <?php foreach ($mpVideos as $i => $v): $vem = $v['_em']; ?>
               <button type="button" class="mp-pl-item<?= $i === 0 ? ' active' : '' ?>"
@@ -924,7 +925,7 @@ render_dashboard_component('header', get_defined_vars());
 
     <?php if (!empty($mpOthers)): ?>
       <?php if (!empty($mpVideos)): ?>
-        <h2 class="mp-others-title">سایر محتوا</h2>
+        <h2 class="mp-others-title"><?= site_e('سایر محتوا') ?></h2>
       <?php endif; ?>
 
       <?php if ($mpSlug === 'podcasts'): ?>
@@ -957,7 +958,7 @@ render_dashboard_component('header', get_defined_vars());
                 <div class="mp-pod-player"><?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?></div>
               <?php elseif (!empty($it['url'])): ?>
                 <div class="mp-pod-foot">
-                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">شنیدن <?= iconoir('arrow-up-right', '', 14) ?></a>
+                  <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= site_e('شنیدن') ?> <?= iconoir('arrow-up-right', '', 14) ?></a>
                 </div>
               <?php endif; ?>
             </article>
@@ -983,11 +984,11 @@ render_dashboard_component('header', get_defined_vars());
                 ?>
                 <?php if ($bookExt): ?>
                   <?php if ($mpSlug === 'books'): ?>
-                    <span class="mp-book-badge">کتاب <?= strtoupper(e($bookExt)) ?></span>
+                    <span class="mp-book-badge"><?= site_e('کتاب') ?> <?= strtoupper(e($bookExt)) ?></span>
                   <?php elseif ($mpSlug === 'brochures'): ?>
-                    <span class="mp-book-badge">بروشور <?= strtoupper(e($bookExt)) ?></span>
+                    <span class="mp-book-badge"><?= site_e('بروشور') ?> <?= strtoupper(e($bookExt)) ?></span>
                   <?php elseif ($isDownloadable): ?>
-                    <span class="mp-book-badge">فایل <?= strtoupper(e($bookExt)) ?></span>
+                    <span class="mp-book-badge"><?= site_e('فایل') ?> <?= strtoupper(e($bookExt)) ?></span>
                   <?php endif; ?>
                 <?php endif; ?>
                 <h3><?= e($it['title']) ?></h3>
@@ -996,15 +997,15 @@ render_dashboard_component('header', get_defined_vars());
                 <?php endif; ?>
                 <?php if (!empty($it['url'])): ?>
                   <?php if ($em): ?>
-                    <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">باز کردن در منبع <?= iconoir('arrow-up-right', '', 14) ?></a>
+                    <a class="mp-item-source" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= site_e('باز کردن در منبع') ?> <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php elseif ($mpSlug === 'books'): ?>
-                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود و مطالعه کتاب</a>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> <?= site_e('دانلود و مطالعه کتاب') ?></a>
                   <?php elseif ($mpSlug === 'brochures'): ?>
-                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود و مطالعه بروشور</a>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> <?= site_e('دانلود و مطالعه بروشور') ?></a>
                   <?php elseif ($isDownloadable): ?>
-                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> دانلود فایل (<?= strtoupper(e($bookExt ?: 'PDF')) ?>)</a>
+                    <a class="mp-item-link mp-item-link--book" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= iconoir('download', '', 15) ?> <?= site_e('دانلود فایل (') ?><?= strtoupper(e($bookExt ?: 'PDF')) ?>)</a>
                   <?php else: ?>
-                    <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener">مشاهده <?= iconoir('arrow-up-right', '', 14) ?></a>
+                    <a class="mp-item-link" href="<?= e($it['url']) ?>" target="_blank" rel="noopener"><?= site_e('مشاهده') ?> <?= iconoir('arrow-up-right', '', 14) ?></a>
                   <?php endif; ?>
                 <?php endif; ?>
               </div>

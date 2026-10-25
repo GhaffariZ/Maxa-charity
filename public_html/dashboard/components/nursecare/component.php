@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحه مقاله استاندارد</title>
+  <title><?= site_e('صفحه مقاله استاندارد') ?></title>
 
   <style>
     /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -99,7 +100,7 @@
       grid-template-areas: "sidebar content";
       gap: 32px;
       align-items: start;
-      direction: rtl;
+      direction: var(--site-direction, rtl);
     }
 
     .content-column {
@@ -312,7 +313,7 @@
 }
 
 .popup-phone-label {
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   margin-bottom: 4px;
   color: #64748b;
   font-size: 0.8rem;
@@ -561,7 +562,7 @@
   color: rgba(255,255,255,0.92);
   font-size: 0.98rem;
   line-height: 2;
-  text-align: right;
+  text-align: start;
 }
 
 .contact-info-list {
@@ -1099,10 +1100,10 @@
   <main class="page-container">
 
     <header class="header-capsule">
-      <h1>مراقبت های پرستاری تسکینی</h1>
+      <h1><?= site_e('مراقبت های پرستاری تسکینی') ?></h1>
 
       <a href="/home" class="breadcrumb-pill">
-        صفحه اصلی / خدمات
+        <?= site_e('صفحه اصلی / خدمات') ?>
       </a>
     </header>
 
@@ -1120,20 +1121,20 @@
 </svg>
 
       </div>
-      <h3 class="contact-card-title">برای مشاوره نیاز به کمک دارید؟</h3>
+      <h3 class="contact-card-title"><?= site_e('برای مشاوره نیاز به کمک دارید؟') ?></h3>
       <p class="contact-card-text">
-با مرکز تخصصی ارتباطات و سلامت از راه دور به صورت 24 ساعت روز و 7 روز هفته در تماس باشید
+<?= site_e('با مرکز تخصصی ارتباطات و سلامت از راه دور به صورت 24 ساعت روز و 7 روز هفته در تماس باشید') ?>
       </p>
-      <button class="contact-card-btn js-call-btn">تماس با ما</button>
+      <button class="contact-card-btn js-call-btn"><?= site_e('تماس با ما') ?></button>
     </div>
 
     <!-- باکس مطالب مرتبط -->
     <div class="related-card">
-      <h3 class="related-card-title">مطالب مرتبط</h3>
+      <h3 class="related-card-title"><?= site_e('مطالب مرتبط') ?></h3>
       <ul class="related-list">
-        <li><a href="/supportiveandpalliativecare">مراقبت حمایتی چیست؟</a></li>
-        <li><a href="/patientoption">خدمات تسکینی مکسا</a></li>
-        <li><a href="/patientintake">راهنمای دریافت مشاوره</a></li>
+        <li><a href="/supportiveandpalliativecare"><?= site_e('مراقبت حمایتی چیست؟') ?></a></li>
+        <li><a href="/patientoption"><?= site_e('خدمات تسکینی مکسا') ?></a></li>
+        <li><a href="/patientintake"><?= site_e('راهنمای دریافت مشاوره') ?></a></li>
       </ul>
     </div>
   </div>
@@ -1150,24 +1151,24 @@
       </svg>
     </div>
 
-    <h3 id="callPopupTitle">تماس با مرکز تخصصی ارتباطات و سلامت از راه دور</h3>
+    <h3 id="callPopupTitle"><?= site_e('تماس با مرکز تخصصی ارتباطات و سلامت از راه دور') ?></h3>
 
     <p class="popup-desc">
-      برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.
+      <?= site_e('برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.') ?>
     </p>
 
     <a href="tel:03191092030" class="popup-phone-link">
-      <span class="popup-phone-label">شماره تماس</span>
-      <strong>۰۳۱-۹۱۰۹۲۰۳۰</strong>
+      <span class="popup-phone-label"><?= site_e('شماره تماس') ?></span>
+      <strong><?= site_e('۰۳۱-۹۱۰۹۲۰۳۰') ?></strong>
     </a>
 
     <div class="popup-actions">
       <button class="popup-copy-btn" type="button" data-phone="03191092030">
-        کپی شماره
+        <?= site_e('کپی شماره') ?>
       </button>
 
       <button class="popup-secondary-btn" type="button">
-        بستن
+        <?= site_e('بستن') ?>
       </button>
     </div>
 
@@ -1184,28 +1185,28 @@
 
         <article class="article-content main-article">
 
-                                <h2 class="">مراقبت های پرستاری تسکینی</h2>
+                                <h2 class=""><?= site_e('مراقبت های پرستاری تسکینی') ?></h2>
                                 <p class="wow fadeInUp">
-از میان اعضای تیم، معمولاً پرستاران بیشترین ارتباط نزدیک را با بیمار دارند و بنابراین یکی از رابط‌های اصلی بیمار و خانواده با بقیۀ تیم مراقبتی هستند و نقش مهمی در حمایت عاطفی بیمار و اطرافیان او ایفا می‌کنند. پرستاران طب تسکینی دو وظیفۀ ‌مهم، یعنی انجام اقدامات پرستاری و آموزش به بیمار و خانواده را بر عهده دارند. پرستاران بطور منظم بیمار را برای کنترل علائم ویزیت کرده و مطمئن می‌شوند که نیاز‌های او برآورده شود. بعضی از پرستاران دارای تخصص‌هایی خاص، مانند درمان زخم بستر یا مراقبت از استومی هستند.
+<?= site_e('از میان اعضای تیم، معمولاً پرستاران بیشترین ارتباط نزدیک را با بیمار دارند و بنابراین یکی از رابط‌های اصلی بیمار و خانواده با بقیۀ تیم مراقبتی هستند و نقش مهمی در حمایت عاطفی بیمار و اطرافیان او ایفا می‌کنند. پرستاران طب تسکینی دو وظیفۀ ‌مهم، یعنی انجام اقدامات پرستاری و آموزش به بیمار و خانواده را بر عهده دارند. پرستاران بطور منظم بیمار را برای کنترل علائم ویزیت کرده و مطمئن می‌شوند که نیاز‌های او برآورده شود. بعضی از پرستاران دارای تخصص‌هایی خاص، مانند درمان زخم بستر یا مراقبت از استومی هستند.') ?>
 </p>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-مراقبت‌ها و آموزش هایی که در طب تسکینی توسط پرستار انجام می‌شوند شامل موارد زیر هستند:
+<?= site_e('مراقبت‌ها و آموزش هایی که در طب تسکینی توسط پرستار انجام می‌شوند شامل موارد زیر هستند:') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">آموزش مراقب بیمار</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('آموزش مراقب بیمار') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-مراقبت از بیمار، نیازمند آموزش‌های مختلفی است. پرستار روش انجام اقدامات مراقبتی عمومی،گزارش درست اطلاعات به پزشک، استفاده از وسایل پزشکی و بررسی علائم حیاتی بیمار را به مراقبین او یاد می‌دهد.
+<?= site_e('مراقبت از بیمار، نیازمند آموزش‌های مختلفی است. پرستار روش انجام اقدامات مراقبتی عمومی،گزارش درست اطلاعات به پزشک، استفاده از وسایل پزشکی و بررسی علائم حیاتی بیمار را به مراقبین او یاد می‌دهد.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">اقدامات مراقبتی</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('اقدامات مراقبتی') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-بیمارانی که در خانه یا بیمارستان بستری می‌شوند به برخی مراقبت‌ها نیاز دارند که انجام آن از عهدۀ مراقب بیمار خارج است. در این موارد پرستار بیمار را در خانه ویزیت می‌کند و اقدام‌های مراقبتی لازم را برای او انجام می‌دهد.
+<?= site_e('بیمارانی که در خانه یا بیمارستان بستری می‌شوند به برخی مراقبت‌ها نیاز دارند که انجام آن از عهدۀ مراقب بیمار خارج است. در این موارد پرستار بیمار را در خانه ویزیت می‌کند و اقدام‌های مراقبتی لازم را برای او انجام می‌دهد.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">مراقبت از زخم بستر</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('مراقبت از زخم بستر') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-مکسا خدمات و آموزش‌های مربوط به پیشگیری، مراقبت و درمان زخم را به صورت تخصصی توسط پرستاران دوره دیده ارائه می‌دهد. پرستار زخم، شیوۀ پیشگیری از بروز زخم بستر را به بیمار و خانواده آموزش می‌دهد و در صورت بروز زخم بستر، با همکاری خانواده، اقدامات مراقبتی و درمانی را انجام می‌دهد.
+<?= site_e('مکسا خدمات و آموزش‌های مربوط به پیشگیری، مراقبت و درمان زخم را به صورت تخصصی توسط پرستاران دوره دیده ارائه می‌دهد. پرستار زخم، شیوۀ پیشگیری از بروز زخم بستر را به بیمار و خانواده آموزش می‌دهد و در صورت بروز زخم بستر، با همکاری خانواده، اقدامات مراقبتی و درمانی را انجام می‌دهد.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">آموزش نگهداری استومی</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('آموزش نگهداری استومی') ?></h2>
                                 <p class="wow fadeInUp" data-wow-delay="0.2s">
-آموزش مراقبت از استومی یکی از خدمات تخصصی پرستاری مکسا است. پرستاران تسکینی مکسا، به بیمار شیوۀ ‌درست استفاده کردن از کیسۀ استومی و مراقبت از آن‌را آموزش می‌دهند. این آموزش‌ها خصوصاً برای بیمارانی که به تازگی از کیسه استفاده می‌کنند خیلی مفید است؛ زیرا به آنها کمک می‌کند که با آن زودتر کنار بیایند.
+<?= site_e('آموزش مراقبت از استومی یکی از خدمات تخصصی پرستاری مکسا است. پرستاران تسکینی مکسا، به بیمار شیوۀ ‌درست استفاده کردن از کیسۀ استومی و مراقبت از آن‌را آموزش می‌دهند. این آموزش‌ها خصوصاً برای بیمارانی که به تازگی از کیسه استفاده می‌کنند خیلی مفید است؛ زیرا به آنها کمک می‌کند که با آن زودتر کنار بیایند.') ?>
 </p>
 
         </article>
@@ -1275,14 +1276,14 @@
     copyBtn.addEventListener('click', async function() {
       try {
         await navigator.clipboard.writeText(phoneNumber);
-        copyBtn.textContent = 'کپی شد';
+        copyBtn.textContent = <?= site_js_text('کپی شد') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       } catch (err) {
-        copyBtn.textContent = 'امکان کپی نبود';
+        copyBtn.textContent = <?= site_js_text('امکان کپی نبود') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       }
     });

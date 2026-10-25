@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی «تماس با ما».
    اطلاعات تماس مؤسسه + فرم تماس که به اندپوینت عمومی POST /api/contact ارسال می‌شود.
    ساختار صفحه از الگوی macsapedia.php پیروی می‌کند: هدر مشترک، محتوا، فوتر مشترک. */
 
-$pageTitle = 'تماس با ما';
+$pageTitle = site_text('تماس با ما');
 require_once __DIR__ . '/core/component-renderer.php';
 render_dashboard_component('header', get_defined_vars());
 ?>
@@ -14,7 +15,7 @@ render_dashboard_component('header', get_defined_vars());
     margin: 0 auto;
     padding: 32px 20px 48px;
     font-family: 'Vazirmatn', sans-serif;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
   }
   .cu-head {
     text-align: center;
@@ -175,7 +176,7 @@ render_dashboard_component('header', get_defined_vars());
   .cu-ibox p  { margin: 0; font-size: 14px; line-height: 2; color: #6b7280; }
   .cu-ibox a  { color: #07828e; text-decoration: none; }
   .cu-ibox a:hover { text-decoration: underline; }
-  .cu-ltr { direction: ltr; text-align: right; unicode-bidi: plaintext; }
+  .cu-ltr { direction: ltr; text-align: start; unicode-bidi: plaintext; }
 
   .cu-map {
     display: inline-flex; align-items: center; gap: 6px;
@@ -252,28 +253,28 @@ render_dashboard_component('header', get_defined_vars());
 
 <div class="cu-wrap">
   <div class="cu-head">
-    <h1>تماس با ما</h1>
-    <p>برای ارتباط با مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) می‌توانید از راه‌های زیر با ما در ارتباط باشید یا فرم تماس را تکمیل کنید. کارشناسان ما در اسرع وقت پاسخگوی شما خواهند بود.</p>
+    <h1><?= site_e('تماس با ما') ?></h1>
+    <p><?= site_e('برای ارتباط با مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) می‌توانید از راه‌های زیر با ما در ارتباط باشید یا فرم تماس را تکمیل کنید. کارشناسان ما در اسرع وقت پاسخگوی شما خواهند بود.') ?></p>
   </div>
 
   <div class="cu-grid">
 
     <!-- فرم تماس -->
     <div class="cu-card">
-      <h2>ارسال پیام</h2>
-      <p class="cu-sub">فیلدهای ستاره‌دار الزامی هستند.</p>
+      <h2><?= site_e('ارسال پیام') ?></h2>
+      <p class="cu-sub"><?= site_e('فیلدهای ستاره‌دار الزامی هستند.') ?></p>
 
       <div id="cuAlert" class="cu-alert" role="status" aria-live="polite"></div>
 
       <form id="cuForm" novalidate>
         <div class="cu-row">
           <div class="cu-field">
-            <label for="cu-name">نام و نام خانوادگی <span class="req">*</span></label>
+            <label for="cu-name"><?= site_e('نام و نام خانوادگی') ?> <span class="req">*</span></label>
             <input type="text" id="cu-name" name="name" autocomplete="name" required>
             <span class="cu-err" data-for="name"></span>
           </div>
           <div class="cu-field">
-            <label for="cu-email">ایمیل <span class="req">*</span></label>
+            <label for="cu-email"><?= site_e('ایمیل') ?> <span class="req">*</span></label>
             <input type="email" id="cu-email" name="email" autocomplete="email" dir="ltr" required>
             <span class="cu-err" data-for="email"></span>
           </div>
@@ -281,31 +282,31 @@ render_dashboard_component('header', get_defined_vars());
 
         <div class="cu-row">
           <div class="cu-field">
-            <label for="cu-phone">شماره همراه</label>
+            <label for="cu-phone"><?= site_e('شماره همراه') ?></label>
             <input type="tel" id="cu-phone" name="phone" inputmode="numeric" dir="ltr" placeholder="09xxxxxxxxx">
             <span class="cu-err" data-for="phone"></span>
           </div>
           <div class="cu-field">
-            <label for="cu-subject">موضوع <span class="req">*</span></label>
+            <label for="cu-subject"><?= site_e('موضوع') ?> <span class="req">*</span></label>
             <input type="text" id="cu-subject" name="subject" required>
             <span class="cu-err" data-for="subject"></span>
           </div>
         </div>
 
         <div class="cu-field">
-          <label for="cu-message">متن پیام <span class="req">*</span></label>
+          <label for="cu-message"><?= site_e('متن پیام') ?> <span class="req">*</span></label>
           <textarea id="cu-message" name="message" required></textarea>
           <span class="cu-err" data-for="message"></span>
         </div>
 
         <!-- honeypot ضدّ ربات -->
         <div class="cu-hp" aria-hidden="true">
-          <label>اگر انسان هستید این فیلد را خالی بگذارید
+          <label><?= site_e('اگر انسان هستید این فیلد را خالی بگذارید') ?>
             <input type="text" name="website" tabindex="-1" autocomplete="off">
           </label>
         </div>
 
-        <button type="submit" class="cu-submit" id="cuSubmit">ارسال پیام</button>
+        <button type="submit" class="cu-submit" id="cuSubmit"><?= site_e('ارسال پیام') ?></button>
       </form>
     </div>
 
@@ -318,7 +319,7 @@ render_dashboard_component('header', get_defined_vars());
           </svg>
         </span>
         <div>
-          <h3>تلفن تماس</h3>
+          <h3><?= site_e('تلفن تماس') ?></h3>
           <p class="cu-ltr">021-91092030</p>
         </div>
       </div>
@@ -331,7 +332,7 @@ render_dashboard_component('header', get_defined_vars());
           </svg>
         </span>
         <div>
-          <h3>ایمیل</h3>
+          <h3><?= site_e('ایمیل') ?></h3>
           <p><a href="mailto:info@macsa.ir" class="cu-ltr">info@macsa.ir</a></p>
         </div>
       </div>
@@ -344,10 +345,10 @@ render_dashboard_component('header', get_defined_vars());
           </svg>
         </span>
         <div>
-          <h3>نشانی</h3>
-          <p>تهران، بزرگراه جلال‌آل‌احمد (شرق به غرب)، بعد از کوی نصر (گیشا)، پلاک ۱۳۹، ساختمان مکسا</p>
+          <h3><?= site_e('نشانی') ?></h3>
+          <p><?= site_e('تهران، بزرگراه جلال‌آل‌احمد (شرق به غرب)، بعد از کوی نصر (گیشا)، پلاک ۱۳۹، ساختمان مکسا') ?></p>
           <a class="cu-map" href="https://neshan.org/maps/search/مؤسسه%20مکسا" target="_blank" rel="noopener">
-            <span>مشاهده روی نقشه</span>
+            <span><?= site_e('مشاهده روی نقشه') ?></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
@@ -363,8 +364,8 @@ render_dashboard_component('header', get_defined_vars());
           </svg>
         </span>
         <div>
-          <h3>ساعات پاسخگویی</h3>
-          <p>شنبه تا چهارشنبه، ۹ تا ۱۷<br>پنج‌شنبه، ۹ تا ۱۳</p>
+          <h3><?= site_e('ساعات پاسخگویی') ?></h3>
+          <p><?= site_e('شنبه تا چهارشنبه، ۹ تا ۱۷') ?><br><?= site_e('پنج‌شنبه، ۹ تا ۱۳') ?></p>
         </div>
       </div>
 
@@ -378,23 +379,23 @@ render_dashboard_component('header', get_defined_vars());
           </svg>
         </span>
         <div>
-          <h3>شبکه‌های اجتماعی</h3>
+          <h3><?= site_e('شبکه‌های اجتماعی') ?></h3>
           <div class="cu-social">
-            <a href="https://www.instagram.com/macsacharity?igsi=OWlla2VxbWZqdDJl" target="_blank" rel="noopener noreferrer" class="cu-soc-instagram" aria-label="اینستاگرام" title="اینستاگرام">
+            <a href="https://www.instagram.com/macsacharity?igsi=OWlla2VxbWZqdDJl" target="_blank" rel="noopener noreferrer" class="cu-soc-instagram" aria-label="<?= site_e('اینستاگرام') ?>" title="<?= site_e('اینستاگرام') ?>">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
             </a>
-            <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="cu-soc-bale" aria-label="بله" title="بله">
-              <img src="/dashboard/components/footer/images/bale.png" alt="بله">
+            <a href="https://ble.ir/join/DUmacfMgrR" target="_blank" rel="noopener noreferrer" class="cu-soc-bale" aria-label="<?= site_e('بله') ?>" title="<?= site_e('بله') ?>">
+              <img src="/dashboard/components/footer/images/bale.png" alt="<?= site_e('بله') ?>">
             </a>
-            <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="cu-soc-eitaa" aria-label="ایتا" title="ایتا">
-              <img src="/dashboard/components/footer/images/eitaa.png" alt="ایتا">
+            <a href="https://eitaa.com/macsacharity" target="_blank" rel="noopener noreferrer" class="cu-soc-eitaa" aria-label="<?= site_e('ایتا') ?>" title="<?= site_e('ایتا') ?>">
+              <img src="/dashboard/components/footer/images/eitaa.png" alt="<?= site_e('ایتا') ?>">
             </a>
-            <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="cu-soc-aparat" aria-label="آپارات" title="آپارات">
-              <img src="/dashboard/components/footer/images/aparat.png" alt="آپارات">
+            <a href="https://www.aparat.com/macsa_charity" target="_blank" rel="noopener noreferrer" class="cu-soc-aparat" aria-label="<?= site_e('آپارات') ?>" title="<?= site_e('آپارات') ?>">
+              <img src="/dashboard/components/footer/images/aparat.png" alt="<?= site_e('آپارات') ?>">
             </a>
-            <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="cu-soc-linkedin" aria-label="لینکدین" title="لینکدین">
+            <a href="https://www.linkedin.com/company/iranian-cancer-control-center-macsa/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="cu-soc-linkedin" aria-label="<?= site_e('لینکدین') ?>" title="<?= site_e('لینکدین') ?>">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.25c-.9 0-1.63.73-1.63 1.63 0 .9.73 1.63 1.63 1.63.9 0 1.63-.73 1.63-1.63 0-.9-.73-1.63-1.63-1.63z"/>
               </svg>
@@ -446,15 +447,15 @@ render_dashboard_component('header', get_defined_vars());
 
     // اعتبارسنجی سریع سمت کلاینت (سرور هم دوباره بررسی می‌کند)
     var clientErr = false;
-    if (payload.name.length < 2)    { showFieldError('name', 'نام را وارد کنید.'); clientErr = true; }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(payload.email)) { showFieldError('email', 'ایمیل معتبر وارد کنید.'); clientErr = true; }
-    if (payload.subject.length < 2) { showFieldError('subject', 'موضوع را وارد کنید.'); clientErr = true; }
-    if (payload.message.length < 10){ showFieldError('message', 'پیام باید حداقل ۱۰ کاراکتر باشد.'); clientErr = true; }
+    if (payload.name.length < 2)    { showFieldError('name', <?= site_js_text('نام را وارد کنید.') ?>); clientErr = true; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(payload.email)) { showFieldError('email', <?= site_js_text('ایمیل معتبر وارد کنید.') ?>); clientErr = true; }
+    if (payload.subject.length < 2) { showFieldError('subject', <?= site_js_text('موضوع را وارد کنید.') ?>); clientErr = true; }
+    if (payload.message.length < 10){ showFieldError('message', <?= site_js_text('پیام باید حداقل ۱۰ کاراکتر باشد.') ?>); clientErr = true; }
     if (clientErr) return;
 
     btn.disabled = true;
     var originalText = btn.textContent;
-    btn.textContent = 'در حال ارسال…';
+    btn.textContent = <?= site_js_text('در حال ارسال…') ?>;
 
     fetch('/api/contact', {
       method: 'POST',
@@ -465,19 +466,19 @@ render_dashboard_component('header', get_defined_vars());
       .then(function (r) {
         if (r.ok && r.body && r.body.success) {
           form.reset();
-          showAlert('ok', (r.body.data && r.body.data.message) || 'پیام شما با موفقیت ارسال شد.');
+          showAlert('ok', (r.body.data && r.body.data.message) || <?= site_js_text('پیام شما با موفقیت ارسال شد.') ?>);
           return;
         }
         var err = r.body && r.body.error;
         if (err && err.code === 'validation_failed' && err.fields) {
           Object.keys(err.fields).forEach(function (f) { showFieldError(f, err.fields[f]); });
-          showAlert('bad', 'لطفاً خطاهای فرم را برطرف کنید.');
+          showAlert('bad', <?= site_js_text('لطفاً خطاهای فرم را برطرف کنید.') ?>);
         } else {
-          showAlert('bad', (err && err.message) || 'ارسال پیام ناموفق بود. لطفاً دوباره تلاش کنید.');
+          showAlert('bad', (err && err.message) || <?= site_js_text('ارسال پیام ناموفق بود. لطفاً دوباره تلاش کنید.') ?>);
         }
       })
       .catch(function () {
-        showAlert('bad', 'ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید.');
+        showAlert('bad', <?= site_js_text('ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید.') ?>);
       })
       .then(function () {
         btn.disabled = false;

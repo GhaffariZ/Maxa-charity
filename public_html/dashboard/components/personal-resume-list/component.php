@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>شبکه همکاران مکسا</title>
+<title><?= site_e('شبکه همکاران مکسا') ?></title>
 <style>
 /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
 @font-face {
@@ -159,7 +160,7 @@ body { font-family: 'Vazirmatn',sans-serif; background-color: var(--bg-global); 
     <div class="controls-row">
         <button id="filter-toggle-btn" class="filter-trigger-btn">
             <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
-            فیلتر همکاران
+            <?= site_e('فیلتر همکاران') ?>
         </button>
     </div>
     <div class="premium-grid" id="cards-grid">
@@ -168,46 +169,46 @@ body { font-family: 'Vazirmatn',sans-serif; background-color: var(--bg-global); 
 
 <div id="filter-sidebar" class="filter-sidebar">
     <div class="drawer-header">
-        <h3>فیلتر پیشرفته</h3>
+        <h3><?= site_e('فیلتر پیشرفته') ?></h3>
         <button id="close-drawer-btn" class="close-drawer-btn">&times;</button>
     </div>
     <div class="drawer-body">
         <div class="filter-group">
-            <label for="filter-branch">محل خدمت</label>
+            <label for="filter-branch"><?= site_e('محل خدمت') ?></label>
             <select id="filter-branch" class="filter-select">
-                <option value="all">همه شعبه‌ها</option>
-                <option value="tehran">شعبه تهران</option>
-                <option value="isfahan">شعبه اصفهان</option>
-                <option value="mashhad">شعبه مشهد</option>
-                <option value="qom">شعبه قم</option>
-                <option value="tabriz">شعبه تبریز</option>
-                <option value="ahvaz">شعبه اهواز</option>
-                <option value="kerman">شعبه کرمان</option>
-                <option value="kashan">شعبه کاشان</option>
-                <option value="telemedicine">پزشکی از راه دور مکسا</option>
-                <option value="setad_markazi">ستاد مرکزی</option>
+                <option value="all"><?= site_e('همه شعبه‌ها') ?></option>
+                <option value="tehran"><?= site_e('شعبه تهران') ?></option>
+                <option value="isfahan"><?= site_e('شعبه اصفهان') ?></option>
+                <option value="mashhad"><?= site_e('شعبه مشهد') ?></option>
+                <option value="qom"><?= site_e('شعبه قم') ?></option>
+                <option value="tabriz"><?= site_e('شعبه تبریز') ?></option>
+                <option value="ahvaz"><?= site_e('شعبه اهواز') ?></option>
+                <option value="kerman"><?= site_e('شعبه کرمان') ?></option>
+                <option value="kashan"><?= site_e('شعبه کاشان') ?></option>
+                <option value="telemedicine"><?= site_e('پزشکی از راه دور مکسا') ?></option>
+                <option value="setad_markazi"><?= site_e('ستاد مرکزی') ?></option>
             </select>
         </div>
         <div class="filter-group" id="filter-role-group">
-            <label for="filter-role">سمت شغلی</label>
+            <label for="filter-role"><?= site_e('سمت شغلی') ?></label>
             <select id="filter-role" class="filter-select">
-                <option value="all">همه سمت‌ها</option>
-                <option value="treatment">کادر درمان</option>
-                <option value="doctors">پزشک متخصص</option>
-                <option value="nurses">کادر پرستاری</option>
-                <option value="psychologists">روانشناس سلامت</option>
-                <option value="social_workers">مددکار اجتماعی</option>
-                <option value="spiritual_care">مراقب معنوی</option>
-                <option value="nutritionists">متخصص تغذیه</option>
-                <option value="rehabilitation">متخصص توانبخشی</option>
-                <option value="genetic_counselors">مشاور ژنتیک و غربالگری</option>
-                <option value="administrative">سمت‌های اداری</option>
+                <option value="all"><?= site_e('همه سمت‌ها') ?></option>
+                <option value="treatment"><?= site_e('کادر درمان') ?></option>
+                <option value="doctors"><?= site_e('پزشک متخصص') ?></option>
+                <option value="nurses"><?= site_e('کادر پرستاری') ?></option>
+                <option value="psychologists"><?= site_e('روانشناس سلامت') ?></option>
+                <option value="social_workers"><?= site_e('مددکار اجتماعی') ?></option>
+                <option value="spiritual_care"><?= site_e('مراقب معنوی') ?></option>
+                <option value="nutritionists"><?= site_e('متخصص تغذیه') ?></option>
+                <option value="rehabilitation"><?= site_e('متخصص توانبخشی') ?></option>
+                <option value="genetic_counselors"><?= site_e('مشاور ژنتیک و غربالگری') ?></option>
+                <option value="administrative"><?= site_e('سمت‌های اداری') ?></option>
             </select>
         </div>
     </div>
     <div class="drawer-footer">
-        <button id="apply-filter-btn" class="btn-apply-filter">اعمال فیلتر</button>
-        <button id="reset-filter-btn" class="btn-reset-filter">حذف</button>
+        <button id="apply-filter-btn" class="btn-apply-filter"><?= site_e('اعمال فیلتر') ?></button>
+        <button id="reset-filter-btn" class="btn-reset-filter"><?= site_e('حذف') ?></button>
     </div>
 </div>
 <div id="drawer-overlay" class="drawer-overlay"></div>
@@ -262,11 +263,11 @@ function renderSkeletons(count = 6) {
 
 // ─── ساخت یک کارت ───
 function buildCard(emp, index) {
-    const fullname    = emp.fullname || 'همکار مکسا';
-    const branchText  = BRANCHES[emp.branch] || 'نامشخص';
+    const fullname    = emp.fullname || <?= site_js_text('همکار مکسا') ?>;
+    const branchText  = BRANCHES[emp.branch] || <?= site_js_text('نامشخص') ?>;
     const rawRole     = emp.role || '';
     const rawCat      = emp.job_category || '';
-    const roleText    = ROLES[rawRole] || (rawRole ? rawRole : (ROLES[rawCat] || 'ثبت نشده'));
+    const roleText    = ROLES[rawRole] || (rawRole ? rawRole : (ROLES[rawCat] || <?= site_js_text('ثبت نشده') ?>));
     const filterRole  = ROLES[rawRole] ? rawRole : (ROLES[rawCat] ? rawCat : rawRole);
     const slug        = encodeURIComponent(fullname.trim().replace(/\s+/g, '-'));
     const delay       = ((index % 20) * 0.055).toFixed(3);
@@ -297,19 +298,19 @@ function buildCard(emp, index) {
         </div>
         <div class="action-drawer">
             <button class="btn-more-info"
-                onclick="event.stopPropagation(); window.location.href='/personal-resume-detail.php?name=${slug}';">
+                onclick="event.stopPropagation(); window.location.href='/personal-resume-detail.php?name=${slug}<?= site_js_fragment('\';">
                 <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 اطلاعات بیشتر
             </button>
         </div>
-    </div>`;
+    </div>') ?>`;
 }
 
 // ─── رندر همه کارت‌ها ───
 function renderCards(employees) {
     const grid = document.getElementById('cards-grid');
     if (!employees.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-weight:700;">دیتایی یافت نشد.</div>';
+        grid.innerHTML = <?= site_js_text('<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-weight:700;">دیتایی یافت نشد.</div>') ?>;
         return;
     }
     grid.innerHTML = employees.map((emp, i) => buildCard(emp, i)).join('');
@@ -420,7 +421,7 @@ async function loadEmployees() {
         }
     } catch (err) {
         document.getElementById('cards-grid').innerHTML =
-            `<div class="error-msg">خطا در بارگذاری داده‌ها.<br><small>${err.message}</small></div>`;
+            `<?= site_js_fragment('<div class="error-msg">خطا در بارگذاری داده‌ها.<br><small>') ?>${err.message}</small></div>`;
     }
 }
 

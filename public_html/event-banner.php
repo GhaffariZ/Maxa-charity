@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 if (!function_exists('event_h')) {
     function event_h($str): string {
         return htmlspecialchars((string)($str ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -110,7 +111,7 @@ function event_global_banner(?PDO $pdo = null): string {
         <div class="event-banner-copy">
             <span class="event-banner-label"><?= event_h($e['banner_label'] ?? 'رویداد جاری') ?></span>
             <b class="event-banner-title"><?= event_h($e['title'] ?? '') ?></b>
-            <span class="event-banner-count">در حال آماده‌سازی...</span>
+            <span class="event-banner-count"><?= site_e('در حال آماده‌سازی...') ?></span>
         </div>
         <a href="<?= event_h($link) ?>" class="event-banner-cta"><?= event_h(!empty($e['banner_cta']) ? $e['banner_cta'] : 'ثبت‌نام مستقیم') ?></a>
     </div>
