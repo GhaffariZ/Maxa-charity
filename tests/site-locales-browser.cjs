@@ -45,10 +45,11 @@ const origin='http://localhost:8080';
    assert.equal(await picker.getAttribute('open'),null);
    for(const width of [360,390,768,1024,1280,1366,1440]) {
     await page.setViewportSize({width,height:900});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     const metrics=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,button:(()=>{const r=document.querySelector('.site-language summary').getBoundingClientRect();return{x:r.x,right:r.right,width:r.width}})()}));
     assert.ok(metrics.scroll<=width+1,`${locale} overflow at ${width}: ${metrics.scroll}`);
     assert.ok(metrics.button.x>=0&&metrics.button.right<=width&&metrics.button.width>=40,`${locale} language button outside viewport at ${width}`);
-    const nav=await page.evaluate(()=>{const center=document.querySelector('.cta-center'),menu=document.querySelector('.cta-menu');if(getComputedStyle(center).display==='none')return null;const c=center.getBoundingClientRect(),m=menu.getBoundingClientRect();return{left:c.left,right:c.right,menuLeft:m.left,menuRight:m.right}});
+    const nav=await page.evaluate(()=>{const center=document.querySelector('.cta-center'),menu=document.querySelector('.cta-menu');if(document.querySelector('[data-site-nav]').dataset.navMode==='compact')return null;const c=center.getBoundingClientRect(),m=menu.getBoundingClientRect();return{left:c.left,right:c.right,menuLeft:m.left,menuRight:m.right}});
     if(nav) assert.ok(nav.menuLeft>=nav.left-1&&nav.menuRight<=nav.right+1,`${locale} desktop menu overlap at ${width}`);
    }
    await page.setViewportSize({width:1440,height:1000});

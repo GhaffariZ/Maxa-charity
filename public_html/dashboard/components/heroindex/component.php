@@ -1582,9 +1582,8 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 ?>
   <section class="cta">
 
-    <div class="cta-topbar">
+    <div class="cta-topbar" data-site-nav data-nav-mode="compact" data-submenu-label="<?= site_e('زیرمنو') ?>">
       <div class="cta-container cta-header">
-        <?= site_language_picker() ?>
 
         <div class="cta-right">
           <div class="cta-glass-underlay" aria-hidden="true"></div>
@@ -1632,7 +1631,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/supportiveandpalliativecare"><?= site_e('خدمات مکسا') ?></a>
+                <a class="mega-toggle" href="/supportiveandpalliativecare"><?= site_e(site_locale() === 'en' ? 'خدمات' : 'خدمات مکسا') ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1672,7 +1671,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/single-fundraising-option"><?= site_e('روش های حمایت') ?></a>
+                <a class="mega-toggle" href="/single-fundraising-option"><?= site_e(site_locale() === 'en' ? 'حمایت' : 'روش های حمایت') ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
@@ -1701,7 +1700,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 
               <li><a href="/branches.php"><?= site_e('شعب') ?></a></li>
               <li><a href="/news.php"><?= site_e('اخبار') ?></a></li>
-              <li><a href="/events.php"><?= site_e('رویدادها و همایش‌ها') ?></a></li>
+              <li><a href="/events.php"><?= site_e(site_locale() === 'en' ? 'رویدادها' : 'رویدادها و همایش‌ها') ?></a></li>
               <li><a href="/macsapedia.php"><?= site_e('مکساپدیا') ?></a></li>
               <li><a href="/courses"><?= site_e('دوره‌ها') ?></a></li>
               <li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
@@ -1710,6 +1709,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
         </div>
 
         <div class="cta-left">
+          <?= site_language_picker() ?>
 <button type="button" class="menu-icon" id="menuToggle" aria-label="<?= site_e('منوی موبایل') ?>" aria-controls="mobileMenu" aria-expanded="false">
   <div></div>
   <div></div>
@@ -1723,7 +1723,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 
           <div class="cta-auth-slot">
             <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="<?= site_e('ورود یا ثبت نام') ?>">
-              <?= site_e('ورود / ثبت‌نام') ?>
+              <span class="site-nav-auth-full"><?= site_e('ورود / ثبت‌نام') ?></span><span class="site-nav-auth-short"><?= site_e('ورود') ?></span>
             </a>
 
             <div class="cta-account js-cta-account" hidden>
@@ -1774,7 +1774,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 
       </div>
     </div>
-    <div class="cta-navbar-spacer" aria-hidden="true"></div>
+    <div class="cta-navbar-spacer" data-site-nav-spacer aria-hidden="true"></div>
 
     <section class="cta-hero" aria-label="CTA Hero Slider">
 
@@ -1887,7 +1887,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     </section>
 
   </section>
-<nav class="mobile-menu-sidebar" id="mobileMenu" aria-label="<?= site_e('منوی موبایل') ?>">
+<nav class="mobile-menu-sidebar" id="mobileMenu" data-site-drawer role="dialog" aria-hidden="true" inert aria-label="<?= site_e('منوی موبایل') ?>">
   <div class="mobile-menu-header">
     <div class="mobile-menu-brand">
       <img src="/dashboard/components/header/images/1.png" alt="<?= site_e('مکسا - مؤسسه نیکوکاری کنترل سرطان') ?>" width="182" height="52" decoding="async">
@@ -1920,7 +1920,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     <div class="mobile-footer-tagline"><?= site_e('مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)') ?></div>
   </div>
 </nav>
-<div class="mobile-backdrop" id="mobileBackdrop"></div>
+<div class="mobile-backdrop" id="mobileBackdrop" data-site-backdrop hidden></div>
 
   <script>
 (async function loadHeroSlides() {
@@ -2100,148 +2100,7 @@ function initSlider() {
     startAutoplay();
 }
 
-(function(){
-  const toggleBtn = document.getElementById("menuToggle");
-  const closeBtn = document.getElementById("mobileMenuClose");
-  const menu = document.getElementById("mobileMenu");
-  const backdrop = document.getElementById("mobileBackdrop");
 
-  if(!toggleBtn || !menu) return;
-
-  function openMenu(){
-    menu.classList.add("open");
-    if(backdrop) backdrop.classList.add("show");
-    toggleBtn.classList.add("active");
-    toggleBtn.setAttribute("aria-expanded", "true");
-    document.body.classList.add("mobile-menu-open");
-  }
-
-  function closeMenu(){
-    menu.classList.remove("open");
-    if(backdrop) backdrop.classList.remove("show");
-    toggleBtn.classList.remove("active");
-    toggleBtn.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("mobile-menu-open");
-  }
-
-  toggleBtn.addEventListener("click", function(e){
-    e.stopPropagation();
-    menu.classList.contains("open") ? closeMenu() : openMenu();
-  });
-
-  if(closeBtn) closeBtn.addEventListener("click", closeMenu);
-  if(backdrop) backdrop.addEventListener("click", closeMenu);
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape" && menu.classList.contains("open")){
-      closeMenu();
-      toggleBtn.focus();
-    }
-  });
-  window.matchMedia("(min-width:1280px)").addEventListener("change", function(e){
-    if(e.matches) closeMenu();
-  });
-
-  document.querySelectorAll(".toggle-sub").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      const sub = btn.nextElementSibling;
-      if(sub) sub.classList.toggle("active");
-    });
-  });
-
-  (function () {
-    const DELAY = 200; // مدت ماندگاری (ms)
-    const menus = document.querySelectorAll(".mega-menu");
-
-    menus.forEach(function (menu) {
-      let closeTimer = null;
-
-      function openMenu() {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
-        }
-
-        // بستن فوری بقیه مگا منوها بدون تاخیر
-        menus.forEach(function (other) {
-          if (other !== menu) {
-            if (other.__closeTimer__) {
-              clearTimeout(other.__closeTimer__);
-              other.__closeTimer__ = null;
-            }
-            other.classList.remove("open");
-          }
-        });
-
-        menu.classList.add("open");
-      }
-
-      function closeMenu() {
-        if (closeTimer) clearTimeout(closeTimer);
-        
-        closeTimer = setTimeout(function () {
-          menu.classList.remove("open");
-          closeTimer = null;
-          menu.__closeTimer__ = null;
-        }, DELAY);
-
-        menu.__closeTimer__ = closeTimer;
-      }
-
-      const toggle = menu.querySelector(".mega-toggle");
-      const content = menu.querySelector(".mega-menu-content");
-
-      if (toggle) {
-        toggle.addEventListener("mouseenter", openMenu);
-        toggle.addEventListener("mouseleave", closeMenu);
-      }
-
-      if (content) {
-        content.addEventListener("mouseenter", openMenu);
-        content.addEventListener("mouseleave", closeMenu);
-      }
-    });
-  })();
-
-  document.addEventListener("DOMContentLoaded", function(){
-    const desktopMenu = document.querySelector(".cta-menu");
-    const container = document.getElementById("mobileMenuContainer");
-
-    if(!desktopMenu || !container) return;
-
-    // کپی کامل منو در کانتینر مخصوص اسکرول سایدبار
-    const clonedMenu = desktopMenu.cloneNode(true);
-    clonedMenu.classList.remove("cta-menu");
-    clonedMenu.classList.add("mobile-menu");
-    container.appendChild(clonedMenu);
-
-    // تبدیل مگا منو به آکاردئون
-    container.querySelectorAll(".mega-menu").forEach(function(item){
-      const toggle = item.querySelector(".mega-toggle");
-      const content = item.querySelector(".mega-menu-content");
-
-      if(toggle && content){
-        toggle.addEventListener("click", function(e){
-          e.preventDefault();
-          content.classList.toggle("active");
-          toggle.classList.toggle("open");
-        });
-      }
-    });
-    (function() {
-      const topbar = document.querySelector(".cta-topbar");
-      if (!topbar) return;
-
-      window.addEventListener("scroll", function() {
-        // اگر اسکرول بیشتر از 50 پیکسل بود هدر جدا شود (بدون مخفی شدن)
-        if (window.scrollY > 50) {
-          topbar.classList.add("scrolled");
-        } else {
-          topbar.classList.remove("scrolled");
-        }
-      });
-    })();
-  });
-})();
 
   </script>
 <script>

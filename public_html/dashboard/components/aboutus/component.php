@@ -112,13 +112,13 @@
 
 .skill-hero-features li{
   position:relative;
-  padding-right:22px;
+  padding-inline-start:22px;
 }
 
 .skill-hero-features li::before{
   content:"";
   position:absolute;
-  right:0;
+  inset-inline-start:0;
   top:4px;
   width:15px;
   height:15px;

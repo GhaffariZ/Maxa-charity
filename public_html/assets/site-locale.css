@@ -1,36 +1,23 @@
-/* Shared language control, preserving the existing MACSA navigation. */
-.site-language{position:relative;flex:0 0 auto;font-family:inherit;font-size:13px;line-height:1.5;z-index:100002}
-.site-language summary{display:flex;align-items:center;justify-content:center;gap:7px;min-width:48px;min-height:44px;padding:8px 10px;border:1px solid currentColor;border-radius:12px;background:#fff;color:#005d60;cursor:pointer;list-style:none;font-weight:700}
+/* Language picker and public document direction. Navigation layout lives in site-navigation.css. */
+.site-language{position:relative;flex:none;font-family:inherit;font-size:13px;line-height:1.5}
+.site-language summary{display:flex;align-items:center;justify-content:center;gap:5px;min-width:44px;min-height:44px;padding:8px;border:1px solid #7caaa7;border-radius:10px;background:#fff;color:#005d60;cursor:pointer;list-style:none;font-weight:700;box-sizing:border-box}
 .site-language summary::-webkit-details-marker{display:none}
+.site-language summary:hover{background:#edf7f4}
 .site-language summary:focus-visible,.site-language a:focus-visible{outline:3px solid #005d60;outline-offset:3px}
-.site-language-caret{font-size:16px}
-.site-language-options{position:absolute;inset-inline-end:0;top:calc(100% + 8px);min-width:140px;padding:6px;background:#fff;color:#16464a;border:1px solid #d5e5e4;border-radius:12px;box-shadow:0 8px 24px #003d3f26}
-.site-language-options a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;white-space:nowrap}
+.site-language-icon{display:flex;align-items:center}
+.site-language-icon svg{width:17px;height:17px}
+.site-language-caret{font-size:15px;line-height:1}
+.site-language-options{position:absolute;inset-inline-end:0;top:calc(100% + 8px);width:172px;max-width:calc(100vw - 24px);padding:6px;background:#fff;color:#16464a;border:1px solid #d5e5e4;border-radius:12px;box-shadow:0 8px 24px #003d3f26;box-sizing:border-box;z-index:8}
+.site-language-options a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:10px 12px;border-radius:8px;text-decoration:none;white-space:nowrap;box-sizing:border-box}
 .site-language-options a:hover,.site-language-options a[aria-current]{background:#e6f4f2;color:#005d60}
+.site-language-options a[aria-current]::after{content:'✓';font-size:15px}
 html[lang=en]{--site-direction:ltr}
 html[lang=en] body{font-family:Arial,'Vazirmatn',sans-serif!important;direction:ltr!important;text-align:left}
 html[lang=en] [data-site-static]{direction:ltr!important;text-align:inherit}
-html[lang=en] .cta-topbar,html[lang=en] .cta-header,html[lang=en] .cta-menu,html[lang=en] .gf-footer,html[lang=en] .cu-wrap,html[lang=en] .mobile-menu-sidebar{direction:ltr!important}
-html[lang=en] .cta-menu>li,html[lang=en] .cta-mega,html[lang=en] .mobile-menu-sidebar,html[lang=en] .gf-footer{text-align:left}
-html[lang=en] .cta-right{padding-inline:14px;margin-right:0;margin-left:calc(-1 * var(--cta-edge-gap,10px))}
-html[lang=en] .cta-brand img{max-width:150px;object-fit:contain}
-html[lang=en] .cta-glass-underlay{left:-100vw;right:0;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 100%,0 100%)}
-html[lang=en] .cta-glass-underlay::before,html[lang=en] .cta-glass-underlay::after{left:auto;right:0;transform:scaleX(-1)}
-html[lang=en] .cta-left{gap:6px;padding-inline:0;min-width:0}
-html[lang=en] .cta-auth,html[lang=en] .cta-donate{font-size:12px;padding-inline:10px;white-space:nowrap}
-html[lang=en] .cta-navbox{padding-inline:2px}
-html[lang=en] .cta-menu{gap:0}
-html[lang=en] .cta-menu>li>a{font-size:12px;padding-inline:5px;white-space:nowrap}
-html[lang=en] .cta-mega{inset-inline-start:0;inset-inline-end:auto}
+html[lang=en] .gf-footer,html[lang=en] .cu-wrap{direction:ltr!important}
+html[lang=en] .gf-footer{text-align:left}
+html[lang=en] .gf-col a::before{content:'→'}
 html[lang=en] .gf-title{font-size:clamp(24px,3vw,38px);line-height:1.4}
 html[lang=en] [data-site-dynamic]{direction:rtl!important}
 html[lang=ar] body{direction:rtl}
-@media(max-width:1199px){.site-language summary{min-width:44px;padding:6px 8px}.site-language-caret{display:none}}
-/* The language control and longer labels need more room on small laptops. */
-@media(min-width:1280px) and (max-width:1359px){
-  .cta-center{display:none!important}
-  .menu-icon{display:flex!important;position:relative;z-index:1000}
-  .cta-left{flex:1 1 auto;justify-content:flex-end}
-  .mobile-menu-sidebar,#mobileMenu,#mobileBackdrop{display:block!important}
-}
-@media(max-width:400px){.cta-header{gap:6px!important;padding-inline:8px!important}.site-language summary{min-width:40px;padding:6px}}
+@media(max-width:600px){.site-language summary{width:44px;padding:6px}.site-language-icon,.site-language-caret{display:none}}

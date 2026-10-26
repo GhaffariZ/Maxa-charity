@@ -6918,5 +6918,25 @@
   "مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا) بر پایه این باور ژرف بنا شده است که دسترسی به مراقبت‌های حمایتی و تسکینی (Palliative & Supportive Care)، نه یک امتیاز، بلکه حق بنیادین و انکارناپذیر هر انسان در مسیر مواجهه با بیماری سرطان است. در این مسیر، رنج بیمار صرفاً یک نشانه بالینی قلمداد نمی‌شود؛ بلکه درد جسمی، تلاطم روحی، استیصال روانی و بارهای سنگین اقتصادی خانواده‌ها، نیازمند رویکردی چندبعدی، انسان‌محور و کرامت‌مدار است.": {
     "en": "MACSA was founded on the conviction that access to supportive and palliative care is a fundamental, inalienable right for everyone facing cancer, rather than a privilege. Patients' suffering is more than a clinical symptom: physical pain, spiritual distress, psychological strain and families' heavy financial burdens call for a multidimensional, person-centred approach that protects dignity.",
     "ar": "تأسست المؤسسة الإيرانية الخيرية لمكافحة السرطان (مكسا) على إيمان راسخ بأن الحصول على الرعاية الداعمة والتلطيفية حق أساسي أصيل لكل إنسان يواجه السرطان، وليس امتيازاً. فمعاناة المريض ليست مجرد عرض سريري؛ إذ يستدعي الألم الجسدي والاضطراب الروحي والضيق النفسي والأعباء الاقتصادية الثقيلة للأسرة نهجاً متعدد الأبعاد يتمحور حول الإنسان ويصون كرامته."
+  },
+  "زیرمنو": {
+    "en": "Submenu",
+    "ar": "قائمة فرعية"
+  },
+  "ورود": {
+    "en": "Sign in",
+    "ar": "دخول"
+  },
+  "خدمات": {
+    "en": "Services",
+    "ar": "الخدمات"
+  },
+  "حمایت": {
+    "en": "Support",
+    "ar": "الدعم"
+  },
+  "رویدادها": {
+    "en": "Events",
+    "ar": "الفعاليات"
   }
 }
