@@ -60,6 +60,7 @@ async function settle(page) {
                 page.on('pageerror', error => errors.push(error.message));
                 await page.goto(`${origin}/${component}/active`);
                 await settle(page);
+                assert.equal(await page.locator('.event-global-banner').count(), 0, 'Event banner removed from public header');
                 let g = await geometry(page, component);
                 closeTo(g.top, g.bannerBottom, 'Initial header follows banner');
                 closeTo(g.contentTop, g.bottom, 'No initial content gap');
@@ -87,11 +88,6 @@ async function settle(page) {
                 g = await geometry(page, component);
                 closeTo(g.top, g.bannerBottom, 'Resize uses actual banner height');
                 closeTo(g.contentTop, g.bottom, 'Resize has no content gap');
-                await page.click('.event-banner-dismiss');
-                await settle(page);
-                g = await geometry(page, component);
-                closeTo(g.top, 0, 'Dismiss resets offset');
-                closeTo(g.contentTop, g.bottom, 'Dismiss leaves no gap');
                 await page.reload();
                 await settle(page);
                 assert.equal(await page.locator('.event-global-banner').count(), 0, 'Dismiss persists within session');
@@ -105,7 +101,7 @@ async function settle(page) {
                 closeTo(g.contentTop, g.bottom, 'No event has no gap');
                 assert.deepEqual(errors, [], 'No browser script exceptions');
                 await context.close();
-                console.log(`PASS ${component}, ${width}px: initial, partial/full scroll, return, resize, dismiss, reload, no event`);
+                console.log(`PASS ${component}, ${width}px: banner absent, initial, partial/full scroll, return, resize, reload, no event`);
             }
         }
         const context = await browser.newContext();
@@ -117,7 +113,7 @@ async function settle(page) {
         await settle(page);
         closeTo((await geometry(page, 'home')).top, 0, 'Blocked storage does not break positioning');
         await page.evaluate(() => scrollTo(0, 0));
-        await page.click('.event-banner-dismiss');
+        assert.equal(await page.locator('.event-global-banner').count(), 0, 'No banner when storage is blocked');
         await settle(page);
         closeTo((await geometry(page, 'home')).top, 0, 'Blocked storage still allows dismissal');
         await context.close();

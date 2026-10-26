@@ -1561,11 +1561,6 @@
 
   </style>
 
-<?php
-require_once __DIR__ . '/../../../event-lib.php';
-require_once __DIR__ . '/../../../event-banner.php';
-echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
-?>
   <section class="cta">
 
     <div class="cta-topbar">
