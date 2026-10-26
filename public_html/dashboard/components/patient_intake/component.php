@@ -28,9 +28,25 @@
 <input type="tel" name="phone" inputmode="tel" autocomplete="tel" required>
 </div>
 
-<div class="mi-group">
-<label>سن</label>
-<input type="number" name="age" min="1" max="120">
+<div class="mi-identity-date-row">
+<div class="mi-group mi-identity-fields">
+<label for="miIdentity"><span id="miIdentityLabel">کد ملی</span> <span class="mi-required">*</span></label>
+<input type="text" id="miIdentity" name="identity_code" inputmode="numeric" dir="ltr" maxlength="10" required aria-describedby="miIdentityHint">
+<div class="mi-checkbox mi-nationality">
+<input type="checkbox" name="is_foreign" id="miForeign" value="1">
+<label for="miForeign">اتباع هستم</label>
+</div>
+<small id="miIdentityHint">کد ملی ۱۰ رقمی خود را وارد کنید.</small>
+</div>
+
+<fieldset class="mi-birthdate">
+<legend>تاریخ تولد</legend>
+<div class="mi-date-grid">
+<div><select id="miBirthDay" name="birth_day"><option value="">روز</option></select></div>
+<div><select id="miBirthMonth" name="birth_month"><option value="">ماه</option></select></div>
+<div><select id="miBirthYear" name="birth_year"><option value="">سال</option></select></div>
+</div>
+</fieldset>
 </div>
 
 <div class="mi-group">
@@ -200,6 +216,8 @@ font-size:14px;
 .medical-intake input,
 .medical-intake select,
 .medical-intake textarea{
+background-color:#fff;
+color:#222;
 width:100%;
 padding:10px;
 border-radius:8px;
@@ -355,6 +373,17 @@ background:#fff1f1;
 color:#b42318;
 font-size:13px;
 }
+.medical-intake .mi-nationality{justify-content:flex-start;}
+.medical-intake .mi-identity-date-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;align-items:start;}
+.medical-intake .mi-identity-fields{min-width:0;}
+.medical-intake .mi-birthdate{border:0;padding:0;margin:0;min-width:0;}
+.medical-intake .mi-birthdate legend{font-size:14px;margin-bottom:6px;}
+.medical-intake .mi-date-grid{display:grid;grid-template-columns:0.8fr 1.4fr 1fr;gap:8px;}
+.medical-intake .mi-date-grid > div{min-width:0;}
+.medical-intake .mi-date-grid select{padding:10px 5px;}
+.medical-intake small{display:block;color:#555;line-height:1.8;}
+.medical-intake input:focus-visible,
+.medical-intake select:focus-visible{outline:2px solid #258481;outline-offset:2px;}
 </style>
 
 
@@ -366,6 +395,74 @@ document.addEventListener("DOMContentLoaded", function() {
     var preview = document.getElementById("miPreview");
     var submitButton = form.querySelector(".mi-submit");
     var filesArray = [];
+    var identity = document.getElementById("miIdentity");
+    var foreign = document.getElementById("miForeign");
+    var birthDay = document.getElementById("miBirthDay");
+    var birthMonth = document.getElementById("miBirthMonth");
+    var birthYear = document.getElementById("miBirthYear");
+    var today = new Intl.DateTimeFormat("en-US-u-ca-persian", {
+        timeZone: "Asia/Tehran", year: "numeric", month: "numeric", day: "numeric"
+    }).formatToParts(new Date()).reduce(function(parts, part) {
+        parts[part.type] = Number(part.value);
+        return parts;
+    }, {});
+    var months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+    months.forEach(function(month, index) { birthMonth.add(new Option(month, index + 1)); });
+    for (var year = today.year; year >= 1280; year--) {
+        birthYear.add(new Option(year.toLocaleString("fa-IR", {useGrouping: false}), year));
+    }
+
+    function normalizeDigits(value) {
+        return value.replace(/[۰-۹]/g, function(d) { return "۰۱۲۳۴۵۶۷۸۹".indexOf(d); })
+            .replace(/[٠-٩]/g, function(d) { return "٠١٢٣٤٥٦٧٨٩".indexOf(d); }).trim();
+    }
+
+    function validateIdentity() {
+        identity.value = normalizeDigits(identity.value);
+        var code = identity.value;
+        var valid;
+        if (foreign.checked) {
+            valid = /^[0-9]{12}$/.test(code) && !/^([0-9])\1+$/.test(code);
+        } else {
+            var sum = 0;
+            for (var i = 0; i < 9; i++) sum += Number(code[i]) * (10 - i);
+            var remainder = sum % 11;
+            valid = /^[0-9]{10}$/.test(code) && !/^([0-9])\1+$/.test(code) &&
+                Number(code[9]) === (remainder < 2 ? remainder : 11 - remainder);
+        }
+        identity.setCustomValidity(valid || code === "" ? "" : (foreign.checked ?
+            "کد فراگیر باید ۱۲ رقم و غیرتکراری باشد." : "کد ملی معتبر نیست؛ کد ۱۰ رقمی را بررسی کنید."));
+    }
+    identity.addEventListener("input", validateIdentity);
+    foreign.addEventListener("change", function() {
+        document.getElementById("miIdentityLabel").textContent = foreign.checked ? "کد فراگیر" : "کد ملی";
+        document.getElementById("miIdentityHint").textContent = foreign.checked ?
+            "کد فراگیر ۱۲ رقمی خود را وارد کنید." : "کد ملی ۱۰ رقمی خود را وارد کنید.";
+        identity.maxLength = foreign.checked ? 12 : 10;
+        validateIdentity();
+    });
+
+    // Borkowski's 1210–1634 interval; birth years are restricted to 1280–1500.
+    function isLeapYear(year) { return (((year - 1210 + 1) % 33) - 1) % 4 === 0; }
+    function updateBirthDate() {
+        var year = Number(birthYear.value);
+        var month = Number(birthMonth.value);
+        var selectedDay = birthDay.value;
+        var days = !month || month <= 6 ? 31 : (month < 12 || !year || isLeapYear(year) ? 30 : 29);
+        birthDay.length = 1;
+        for (var day = 1; day <= days; day++) {
+            birthDay.add(new Option(day.toLocaleString("fa-IR"), day));
+        }
+        birthDay.value = Number(selectedDay) <= days ? selectedDay : "";
+        var any = birthDay.value || birthMonth.value || birthYear.value;
+        [birthDay, birthMonth, birthYear].forEach(function(field) { field.required = Boolean(any); });
+        var future = year && month && birthDay.value &&
+            (year > today.year || (year === today.year && (month > today.month ||
+                (month === today.month && Number(birthDay.value) > today.day))));
+        birthDay.setCustomValidity(future ? "تاریخ تولد نمی‌تواند در آینده باشد." : "");
+    }
+    [birthDay, birthMonth, birthYear].forEach(function(field) { field.addEventListener("change", updateBirthDate); });
+    updateBirthDate();
 
     fileInput.addEventListener("change", function() {
         filesArray = Array.prototype.slice.call(this.files, 0, 5);
@@ -409,6 +506,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     form.addEventListener("submit", async function(e){
         e.preventDefault();
+        validateIdentity();
+        updateBirthDate();
+        if (!form.reportValidity()) return;
         var firstError = null;
         form.querySelectorAll(".mi-error-message, .mi-form-message").forEach(function(el){
             el.remove();
@@ -464,7 +564,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             var result = await response.json();
 
-            if (!response.ok) throw new Error(result.error && result.error.message || "ثبت پرونده ناموفق بود.");
+            if (!response.ok) {
+                var fields = result.error && result.error.fields;
+                throw new Error(fields ? Object.values(fields).join(" — ") :
+                    result.error && result.error.message || "ثبت پرونده ناموفق بود.");
+            }
 
             if (result.data.access_token) {
                 localStorage.setItem("maksa_access_token", result.data.access_token);

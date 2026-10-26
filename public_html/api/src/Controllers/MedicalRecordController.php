@@ -15,6 +15,8 @@ use Maksa\Repositories\UserRepository;
 use Maksa\Services\OtpService;
 use Maksa\Support\Audit;
 use Maksa\Support\Cookie;
+use Maksa\Support\PatientIdentity;
+use Maksa\Core\Exceptions\ValidationException;
 use PDO;
 
 final class MedicalRecordController
@@ -25,6 +27,11 @@ final class MedicalRecordController
             ->string('full_name', min: 2, max: 200)
             ->string('phone', min: 10, max: 20)
             ->int('age', min: 1, max: 120, required: false)
+            ->string('identity_code', min: 10, max: 12)
+            ->bool('is_foreign')
+            ->int('birth_year', min: 1280, max: 1500, required: false)
+            ->int('birth_month', min: 1, max: 12, required: false)
+            ->int('birth_day', min: 1, max: 31, required: false)
             ->in('gender', ['male', 'female', 'unspecified'], required: false)
             ->string('province', min: 2, max: 100)
             ->string('city', min: 2, max: 100)
@@ -33,6 +40,18 @@ final class MedicalRecordController
             ->string('description', max: 5000, required: false)
             ->bool('consent', required: true)
             ->validated();
+
+        $data['identity_code'] = PatientIdentity::normalizeDigits($data['identity_code']);
+        $data['is_foreign'] = $data['is_foreign'] ?? false;
+        if (!PatientIdentity::validCode($data['identity_code'], $data['is_foreign'])) {
+            throw new ValidationException(['identity_code' => $data['is_foreign'] ?
+                'کد فراگیر باید ۱۲ رقم و غیرتکراری باشد.' : 'کد ملی واردشده معتبر نیست.']);
+        }
+        $birth = PatientIdentity::birthDate($data['birth_year'] ?? null, $data['birth_month'] ?? null, $data['birth_day'] ?? null);
+        $data['birth_date'] = $birth['birth_date'];
+        if ($birth['birth_date'] !== null) {
+            $data['age'] = $birth['age'];
+        }
 
         if (empty($data['consent'])) {
             throw ApiException::badRequest('ثبت پرونده نیازمند موافقت با ذخیره اطلاعات پزشکی است.', 'consent_required');
@@ -121,14 +140,17 @@ final class MedicalRecordController
             return (int) Database::transaction(function (PDO $db) use ($userId, $branchId, $data, &$savedFiles): int {
                 $stmt = $db->prepare(
                     'INSERT INTO medical_records
-                    (user_id, branch_id, full_name, phone, age, gender, province, city, cancer_type, diagnosis_status, description)
-                    VALUES (:user_id, :branch_id, :full_name, :phone, :age, :gender, :province, :city, :cancer_type, :diagnosis_status, :description)'
+                    (user_id, branch_id, full_name, phone, identity_code, is_foreign, birth_date, age, gender, province, city, cancer_type, diagnosis_status, description)
+                    VALUES (:user_id, :branch_id, :full_name, :phone, :identity_code, :is_foreign, :birth_date, :age, :gender, :province, :city, :cancer_type, :diagnosis_status, :description)'
                 );
                 $stmt->execute([
                     ':user_id' => $userId,
                     ':branch_id' => $branchId,
                     ':full_name' => $data['full_name'],
                     ':phone' => $data['phone'],
+                    ':identity_code' => $data['identity_code'],
+                    ':is_foreign' => (int) $data['is_foreign'],
+                    ':birth_date' => $data['birth_date'],
                     ':age' => $data['age'] ?? null,
                     ':gender' => $data['gender'] ?? 'unspecified',
                     ':province' => $data['province'],
