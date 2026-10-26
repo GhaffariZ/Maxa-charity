@@ -58,3 +58,4 @@ try {
 }
 $DASH_USER      = dash_user();
 $ACTIVE_BRANCH  = dash_active_branch_id();
+require_once __DIR__.'/../core/content-locales.php';

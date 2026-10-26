@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__.'/../../../core/content-locales.php';
 // دریافت اولیه لیست استان‌ها و شعب فعال غیرستادی
 $initialProvinces = [];
 
@@ -9,16 +10,17 @@ try {
         require_once $dbPath;
     }
     if (isset($pdo)) {
+        $standScope=content_where($pdo,'stands','s.id');
         $st = $pdo->query("
             SELECT DISTINCT b.id AS branch_id, b.name AS branch_name, 
                    COALESCE(b.province, b.name) AS province, 
                    COALESCE(b.city, b.name) AS city
             FROM branches b
             LEFT JOIN branch_features bf ON bf.branch_id = b.id AND bf.feature = 'stands'
-            WHERE b.is_hq = 0 AND b.status = 'active' AND (bf.enabled = 1 OR bf.enabled IS NULL)
+            WHERE EXISTS(SELECT 1 FROM stands s WHERE s.branch_id=b.id AND s.is_active=1 AND $standScope) AND b.is_hq = 0 AND b.status = 'active' AND (bf.enabled = 1 OR bf.enabled IS NULL)
             ORDER BY province ASC
         ");
-        $rows = $st->fetchAll(PDO::FETCH_ASSOC);
+        $rows = content_branch_labels($pdo,$st->fetchAll(PDO::FETCH_ASSOC));
         foreach ($rows as $r) {
             $p = trim((string)$r['province']);
             if ($p === '' || str_contains($p, 'ستاد')) continue;

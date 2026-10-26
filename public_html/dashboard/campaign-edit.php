@@ -2,34 +2,14 @@
 require_once __DIR__ . '/_guard.php';
 dash_require('campaigns');
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$__branch = dash_active_branch_id();
-$is_hq = dash_is_hq_view();
-
-$campaign = null;
-if ($id > 0) {
-    if ($is_hq) {
-        $stmt = $pdo->prepare(
-            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-               FROM campaigns c
-          LEFT JOIN branches b ON b.id = c.branch_id
-              WHERE c.id = ?
-              LIMIT 1"
-        );
-        $stmt->execute([$id]);
-    } else {
-        $stmt = $pdo->prepare(
-            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-               FROM campaigns c
-          LEFT JOIN branches b ON b.id = c.branch_id
-              WHERE c.id = ? AND c.branch_id = ?
-              LIMIT 1"
-        );
-        $stmt->execute([$id, $__branch]);
+require_once __DIR__.'/../core/campaign-service.php';
+$id=trim((string)($_GET['id']??''));$campaign=null;
+$branch=content_campaign_branch($pdo,(string)($_GET['branch']??''));
+if($id!==''){
+    foreach((new CampaignServiceClient((string)$branch['slug']))->managementCampaigns() as $item){
+        if((string)($item['id']??'')===$id){$campaign=campaign_service_present($item,$branch);break;}
     }
-    $campaign = $stmt->fetch();
 }
-
 $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+';
 ?>
 <!DOCTYPE html>
@@ -499,7 +479,9 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
             <!-- ستون فرم ویرایش -->
             <div class="form-side">
                 <form id="campEditForm" enctype="multipart/form-data">
-                    <input type="hidden" name="id" value="<?= (int)$campaign['id'] ?>">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="id" value="<?= htmlspecialchars((string)$campaign['id'],ENT_QUOTES) ?>">
+                    <input type="hidden" name="branch_slug" value="<?= htmlspecialchars((string)$branch['slug'],ENT_QUOTES) ?>">
 
                     <div class="form-group">
                         <label>تصویر شاخص کمپین</label>
@@ -673,5 +655,6 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 })();
 </script>
 
+<?php if($campaign)content_editor('campaigns',(string)$campaign['id'],'#campEditForm',['source'=>$campaign]); ?>
 </body>
 </html>

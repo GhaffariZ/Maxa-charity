@@ -23,6 +23,7 @@ if (!$editing) $editId = 0;
 /* ---------- ذخیره‌سازی فرم ---------- */
 $saved = false; $savedMsg = ''; $savedErr = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  csrf_check();
   $title = trim((string)($_POST['title'] ?? ''));
   if ($title === '') {
     $savedErr = 'عنوان دوره الزامی است.';
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = ($_POST['action'] ?? 'draft') === 'publish' ? 'published' : 'draft';
     if ($pdo && $coursesSchemaReady) {
       try {
+        content_prepare($pdo,'courses');
         $pdo->beginTransaction();
         if ($editId) {
           // قید branch_id برای غیرستادی‌ها (دفاعِ مضاعف در برابر IDOR)
@@ -103,10 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
           }
         }
+        content_save($pdo,'courses',(string)$cid);
         $pdo->commit();
         $saved = true;
         if ($editId) { $savedMsg = 'تغییرات دوره ذخیره شد.'; $editing = load_course_full($pdo, $coursesSchemaReady, $editId); }
-        else $savedMsg = $status === 'published' ? 'دوره با موفقیت منتشر شد!' : 'پیش‌نویس دوره ذخیره شد.';
+        else { $savedMsg = $status === 'published' ? 'دوره با موفقیت منتشر شد!' : 'پیش‌نویس دوره ذخیره شد.'; $editId=$cid; $editing=load_course_full($pdo,$coursesSchemaReady,$cid); }
       } catch (Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         $savedErr = 'خطا در ذخیره‌سازی: ' . $e->getMessage();
@@ -120,8 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageCss = <<<CSS
-.builder{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
-@media(max-width:1080px){.builder{grid-template-columns:1fr}}
+.builder{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+@media(max-width:1080px){.builder{grid-template-columns:minmax(0,1fr)}}
+.builder>.main-col,.builder>.rail{min-width:0}
 .fsection{margin-bottom:18px;scroll-margin-top:20px}
 .fsection-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .fsection-num{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0;
@@ -227,6 +231,7 @@ course_html_head('ساخت دوره جدید', $pageCss);
 ?>
 <body>
 <form class="page" id="courseForm" method="post" autocomplete="off">
+  <?= csrf_field() ?>
   <?php if ($editId): ?><input type="hidden" name="edit_id" value="<?= $editId ?>"><?php endif; ?>
   <!-- سرصفحه -->
   <div class="page-head">
@@ -840,5 +845,6 @@ course_html_head('ساخت دوره جدید', $pageCss);
   <?php if ($savedErr): ?> showToast(<?= json_encode($savedErr, JSON_UNESCAPED_UNICODE) ?>, true); <?php endif; ?>
 })();
 </script>
+<?php content_editor('courses',$editId?(string)$editId:'','#courseForm'); ?>
 </body>
 </html>

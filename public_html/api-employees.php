@@ -1,60 +1,17 @@
 <?php
-// ─────────────────────────────────────────────
-// api-employees.php
-// JSON API برای کامپوننت شبکه همکاران
-// این فایل باید کنار personal-resume-list.php قرار بگیرد
-// ─────────────────────────────────────────────
-
+declare(strict_types=1);
+require_once __DIR__.'/core/content-locales.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-
-// --- تنظیمات دیتابیس (از فایل کانفیگ خارج از گیت) ---
-$DB         = require __DIR__ . '/core/db-config.php';
-$servername = $DB['host'];
-$username   = $DB['user'];
-$password   = $DB['pass'];
-$dbname     = $DB['name'];
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
+try {
+    $db=content_pdo();
+    $active=$db->query("SHOW COLUMNS FROM employee_profiles LIKE 'is_active'")->fetch()?'e.is_active=1 AND ':'';
+    $scope=content_where($db,'employee_profiles','e.id');
+    $employees=$db->query("SELECT e.id,e.fullname,e.profile_pic,e.branch,e.branch_id,e.role,e.job_category,b.slug AS branch_slug
+        FROM employee_profiles e LEFT JOIN branches b ON b.id=e.branch_id WHERE $active $scope ORDER BY e.id DESC")->fetchAll();
+    echo json_encode(content_rows($db,'employee_profiles',$employees),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+} catch(Throwable $error) {
+    error_log('Public partners: '.$error->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'اتصال به دیتابیس برقرار نشد.']);
-    exit;
+    echo json_encode(['error'=>'Unable to load partners.']);
 }
-
-$conn->set_charset("utf8mb4");
-
-// بررسی وجود ستون is_active
-$col_check     = $conn->query("SHOW COLUMNS FROM `employee_profiles` LIKE 'is_active'");
-$has_is_active = ($col_check && $col_check->num_rows > 0);
-
-if ($has_is_active) {
-    $sql = "SELECT id, fullname, profile_pic, branch, role, job_category
-            FROM employee_profiles
-            WHERE is_active = 1
-            ORDER BY id DESC";
-} else {
-    $sql = "SELECT id, fullname, profile_pic, branch, role, job_category
-            FROM employee_profiles
-            ORDER BY id DESC";
-}
-
-$result    = $conn->query($sql);
-$employees = [];
-
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $employees[] = [
-            'id'           => (int)$row['id'],
-            'fullname'     => $row['fullname']     ?? '',
-            'profile_pic'  => $row['profile_pic']  ?? '',
-            'branch'       => $row['branch']        ?? '',
-            'role'         => $row['role']          ?? '',
-            'job_category' => $row['job_category'] ?? '',
-        ];
-    }
-}
-
-$conn->close();
-echo json_encode($employees, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

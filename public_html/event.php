@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/core/site-locale.php';
+require_once __DIR__.'/core/content-locales.php';
 
 require_once __DIR__ . '/event-lib.php';
 
@@ -18,13 +19,13 @@ $heroes = $people = $speakers = $partners = $news = [];
 if ($pdo && ($slug !== '' || isset($_GET['id']))) {
     $eventIdParam = (int)($_GET['id'] ?? 0);
     if ($slug !== '') {
-        $st = $pdo->prepare("SELECT * FROM events WHERE (slug = ? OR id = ?) AND status != 'archived' LIMIT 1");
+        $st = $pdo->prepare("SELECT * FROM events WHERE (slug = ? OR id = ?) AND status = 'published' LIMIT 1");
         $st->execute([$slug, is_numeric($slug) ? (int)$slug : 0]);
     } else {
-        $st = $pdo->prepare("SELECT * FROM events WHERE id = ? AND status != 'archived' LIMIT 1");
+        $st = $pdo->prepare("SELECT * FROM events WHERE id = ? AND status = 'published' LIMIT 1");
         $st->execute([$eventIdParam]);
     }
-    $event = $st->fetch();
+    $event = content_row($pdo,'events',$st->fetch()?:null);
 
     if ($event) {
         $q = function(string $sql) use ($pdo, $event) {
@@ -56,7 +57,7 @@ if ($pdo && ($slug !== '' || isset($_GET['id']))) {
 
         // 3. News: fetch all non-archived news (published or freshly created)
         try {
-            $news = $q("SELECT * FROM event_news WHERE event_id = ? AND status != 'archived' ORDER BY COALESCE(published_at, created_at) DESC, id DESC");
+            $news = $q("SELECT * FROM event_news WHERE event_id = ? AND status = 'published' ORDER BY COALESCE(published_at, created_at) DESC, id DESC");
         } catch (Throwable $e) {
             try {
                 $news = $q("SELECT * FROM event_news WHERE event_id = ? ORDER BY id DESC");
@@ -67,8 +68,10 @@ if ($pdo && ($slug !== '' || isset($_GET['id']))) {
     }
 }
 
+if($event && content_language()!=='fa'){foreach(['heroes','people','speakers','partners'] as $key)$$key=$event[$key]??[];}
+if($event)$news=content_rows($pdo,'event_news',array_values(array_filter($news,static fn($row)=>($row['status']??'')==='published')));
 // Fallback for snapshot / preview / direct demonstration
-if (!$event && (defined('IN_SNAPSHOT') || $slug === '' || !$pdo)) {
+if (!$event && defined('IN_SNAPSHOT')) {
     $event = [
         'id' => 1,
         'title' => 'ششمین همایش ملی مراقبت‌های حمایتی و تسکینی',
@@ -1715,7 +1718,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
           <h1 class="event-hero-title"><?= event_h($event['title']) ?></h1>
 
           <p class="event-hero-desc">
-            <?= event_h($event['short_description'] ?: 'همایشی ملی برای همگرایی دانش نوین و ارتقای کیفیت زندگی بیماران مبتلا به سرطان.') ?>
+            <?= event_h($event['short_description']) ?>
           </p>
 
           <?php
@@ -2017,7 +2020,7 @@ if (!defined('IN_SNAPSHOT') && file_exists(__DIR__ . '/dashboard/components/head
               </div>
               <div class="person-card-body">
                 <span class="person-role-badge <?= ($p['role'] ?? '') === 'executive_secretary' ? 'is-executive' : '' ?>">
-                  <?= ($p['role'] ?? '') === 'scientific_secretary' ? 'دبیر علمی' : 'دبیر اجرایی' ?>
+                  <?= ($p['role'] ?? '') === 'scientific_secretary' ? site_text('دبیر علمی') : site_text('دبیر اجرایی') ?>
                 </span>
                 <h3 class="person-name"><?= event_h($p['name']) ?></h3>
                 <div class="person-title"><?= event_h($p['title']) ?></div>

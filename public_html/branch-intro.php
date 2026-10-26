@@ -4,6 +4,7 @@
  * ========================================================================== */
 
 require_once __DIR__ . '/core/database.php';
+require_once __DIR__.'/core/content-locales.php';
 
 $slug = trim((string)($_GET['branch'] ?? ($_GET['slug'] ?? '')));
 
@@ -15,7 +16,7 @@ if ($slug === '') {
 
 $stmt = $pdo->prepare("SELECT * FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
 $stmt->execute([$slug]);
-$branch = $stmt->fetch();
+$branch = content_branch_context($pdo,$stmt->fetch()?:null);
 
 if (!$branch) {
     http_response_code(404);

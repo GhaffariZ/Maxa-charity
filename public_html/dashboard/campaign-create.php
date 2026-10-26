@@ -486,5 +486,6 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     }
 })();
 </script>
+<?php content_editor('campaigns','','#campForm'); ?>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__.'/../../../core/content-locales.php';
 // دریافت فهرست شعب فعال ارائه‌دهنده استند از دیتابیس برای دراپ‌داون اولیه
 $homeBranches = [];
 try {
@@ -8,19 +9,20 @@ try {
         require_once $dbPath;
     }
     if (isset($pdo)) {
+        $standScope=content_where($pdo,'stands','s.id');
         $st = $pdo->query("
             SELECT DISTINCT COALESCE(b.province, b.name) AS province, b.id, b.name, b.city
             FROM branches b
             LEFT JOIN branch_features bf ON bf.branch_id = b.id AND bf.feature = 'stands'
-            WHERE b.is_hq = 0 AND b.status = 'active' AND (bf.enabled = 1 OR bf.enabled IS NULL)
+            WHERE EXISTS(SELECT 1 FROM stands s WHERE s.branch_id=b.id AND s.is_active=1 AND $standScope) AND b.is_hq = 0 AND b.status = 'active' AND (bf.enabled = 1 OR bf.enabled IS NULL)
             ORDER BY b.name ASC
         ");
-        $homeBranches = $st->fetchAll(PDO::FETCH_ASSOC);
+        $homeBranches = array_map(static fn($row)=>content_branch_context($pdo,$row),$st->fetchAll(PDO::FETCH_ASSOC));
     }
 } catch (Throwable $e) {}
 
 // استان پیش‌فرض
-$defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $homeBranches[0]['name']) : 'تهران';
+$defaultProvince = !empty($homeBranches) ? ($homeBranches[0]['province'] ?: $homeBranches[0]['name']) : '';
 ?>
 <style>
 /* تعریف پالت رنگی هماهنگ با دیزاین سیستم مکسا */

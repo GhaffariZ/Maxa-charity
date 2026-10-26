@@ -125,6 +125,7 @@ function site_document(string $html): string
     }, $html);
     $assetRoot=dirname(__DIR__).'/assets/';
     $assets = '<link rel="stylesheet" href="/assets/site-locale.css?v='.filemtime($assetRoot.'site-locale.css').'">'
+        . '<script src="/assets/public-content.js?v='.filemtime($assetRoot.'public-content.js').'"></script>'
         . '<link rel="stylesheet" href="/assets/site-navigation.css?v='.filemtime($assetRoot.'site-navigation.css').'">'
         . '<script src="/assets/site-locale.js?v='.filemtime($assetRoot.'site-locale.js').'" defer></script>'
         . '<script src="/assets/site-navigation.js?v='.filemtime($assetRoot.'site-navigation.js').'" defer></script>';

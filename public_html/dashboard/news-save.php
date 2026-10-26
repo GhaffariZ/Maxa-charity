@@ -8,6 +8,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/core/html-sanitizer.php';
 require_once __DIR__ . '/../core/image-optimizer.php';
 
 try {
+    csrf_check();
+    content_prepare($pdo,'news');
     // تنظیم حالت خطای PDO به استثنا (Exception)
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec("SET NAMES utf8mb4");
@@ -111,6 +113,7 @@ try {
     $has_branch_id = empty($existing_cols) || in_array('branch_id', $existing_cols);
     $has_read_time = empty($existing_cols) || in_array('read_time', $existing_cols);
 
+    $pdo->beginTransaction();
     if ($id > 0) {
         // ======================== حالت ویرایش (UPDATE) ========================
         $where_clause = "WHERE id = ?";
@@ -285,6 +288,8 @@ try {
     }
 
     // خروجی نهایی موفقیت‌آمیز
+    content_save($pdo,'news',(string)$record_id);
+    $pdo->commit();
     http_response_code(200);
     echo json_encode([
         "status" => "success",
@@ -293,6 +298,7 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    if(isset($pdo)&&$pdo instanceof PDO&&$pdo->inTransaction())$pdo->rollBack();
     // خروجی در صورت بروز خطا
     http_response_code(400);
     echo json_encode([

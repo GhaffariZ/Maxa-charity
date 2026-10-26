@@ -10,6 +10,7 @@
  *  آیتمِ محتوا (ویدیو، فایل، صوت، تصویر و …) داشته باشد.
  * ========================================================================== */
 declare(strict_types=1);
+require_once __DIR__.'/../core/content-locales.php';
 
 require_once __DIR__ . '/../core/icons.php';
 require_once __DIR__ . '/../core/image-optimizer.php';
@@ -273,25 +274,30 @@ if ($pdo) {
  * $filters: ['category' => string, 'q' => string] — فیلتر دسته‌بندی و جستجو */
 function maxapedia_items(PDO $pdo, string $section, bool $onlyPublished = false, array $filters = []): array {
   $sql = "SELECT * FROM maxapedia_items WHERE section = ?";
+  if($onlyPublished)$sql.=' AND '.content_where($pdo,'maxapedia_items');
   $p = [$section];
   if ($onlyPublished) { $sql .= " AND status = 'published'"; }
 
   $category = trim((string)($filters['category'] ?? ''));
-  if ($category !== '') { $sql .= " AND category = ?"; $p[] = $category; }
+  $categoryExpr=$onlyPublished?content_expression($pdo,'maxapedia_items','id','category','category'):'category';
+  if ($category !== '') { $sql .= " AND $categoryExpr = ?"; $p[] = $category; }
 
   $qstr = trim((string)($filters['q'] ?? ''));
   if ($qstr !== '') {
-    $sql .= " AND (title LIKE ? OR description LIKE ? OR category LIKE ?)";
+    $titleExpr=$onlyPublished?content_expression($pdo,'maxapedia_items','id','title','title'):'title';
+    $descriptionExpr=$onlyPublished?content_expression($pdo,'maxapedia_items','id','description','description'):'description';
+    $sql .= " AND ($titleExpr LIKE ? OR $descriptionExpr LIKE ? OR $categoryExpr LIKE ?)";
     $like = '%' . $qstr . '%';
     array_push($p, $like, $like, $like);
   }
 
   $sql .= " ORDER BY sort_order ASC, created_at DESC, id DESC";
-  return q($pdo, $sql, $p)->fetchAll();
+  $rows=q($pdo,$sql,$p)->fetchAll();return $onlyPublished?content_rows($pdo,'maxapedia_items',$rows):$rows;
 }
 
 /* فهرست دسته‌بندی‌های موجود در یک بخش (برای انتخاب/فیلتر) */
 function maxapedia_categories(PDO $pdo, string $section, bool $onlyPublished = false): array {
+  if($onlyPublished){$rows=maxapedia_items($pdo,$section,true);$labels=array_values(array_unique(array_filter(array_column($rows,'category'))));sort($labels);return $labels;}
   $sql = "SELECT DISTINCT category FROM maxapedia_items
            WHERE section = ? AND category IS NOT NULL AND category <> ''";
   $p = [$section];
@@ -302,7 +308,8 @@ function maxapedia_categories(PDO $pdo, string $section, bool $onlyPublished = f
 
 /* شمارش آیتم‌های هر بخش — برای نمایش در داشبورد (map: section => count) */
 function maxapedia_counts(PDO $pdo): array {
-  $rows = q($pdo, "SELECT section, COUNT(*) AS c FROM maxapedia_items GROUP BY section")->fetchAll();
+  $scope=content_public()?" WHERE status='published' AND ".content_where($pdo,'maxapedia_items'):'';
+  $rows = q($pdo, "SELECT section, COUNT(*) AS c FROM maxapedia_items $scope GROUP BY section")->fetchAll();
   $map = [];
   foreach ($rows as $r) { $map[$r['section']] = (int)$r['c']; }
   return $map;
@@ -310,6 +317,7 @@ function maxapedia_counts(PDO $pdo): array {
 
 function maxapedia_find(PDO $pdo, int $id): ?array {
   $row = q($pdo, "SELECT * FROM maxapedia_items WHERE id = ?", [$id])->fetch();
+  if(content_public())return $row&&$row['status']==='published'?content_row($pdo,'maxapedia_items',$row):null;
   return $row ?: null;
 }
 
@@ -361,7 +369,8 @@ function maxapedia_delete(PDO $pdo, int $id): bool {
       maxapedia_delete_local_file($url);
     }
   }
-  return q($pdo, "DELETE FROM maxapedia_items WHERE id = ?", [$id])->rowCount() > 0;
+  $deleted=q($pdo, "DELETE FROM maxapedia_items WHERE id = ?", [$id])->rowCount()>0;
+  if($deleted)content_delete($pdo,'maxapedia_items',(string)$id);return $deleted;
 }
 
 /* ============================================================================
@@ -370,17 +379,22 @@ function maxapedia_delete(PDO $pdo, int $id): bool {
 
 /** دریافت تمام عکس‌های یک آلبوم */
 function maxapedia_gallery_photos(PDO $pdo, int $itemId): array {
+  if(content_public()&&content_language()!=='fa'){return maxapedia_find($pdo,$itemId)['photos']??[];}
   return q($pdo, "SELECT * FROM maxapedia_gallery_photos WHERE item_id = ? ORDER BY sort_order ASC, id ASC", [$itemId])->fetchAll();
 }
 
 /** دریافت تعداد عکس‌های یک آلبوم */
 function maxapedia_gallery_photo_count(PDO $pdo, int $itemId): int {
+  if(content_public()&&content_language()!=='fa')return count(maxapedia_gallery_photos($pdo,$itemId));
   $row = q($pdo, "SELECT COUNT(*) AS c FROM maxapedia_gallery_photos WHERE item_id = ?", [$itemId])->fetch();
   return (int)($row['c'] ?? 0);
 }
 
 /** نقشه تعداد عکس‌ها برای تمام آلبوم‌ها [itemId => count] */
 function maxapedia_gallery_counts_map(PDO $pdo): array {
+  if(content_public()&&content_language()!=='fa'){
+    $map=[];foreach(maxapedia_items($pdo,'gallery',true) as $item)$map[(int)$item['id']]=count($item['photos']);return $map;
+  }
   $rows = q($pdo, "SELECT item_id, COUNT(*) AS c FROM maxapedia_gallery_photos GROUP BY item_id")->fetchAll();
   $map = [];
   foreach ($rows as $r) {

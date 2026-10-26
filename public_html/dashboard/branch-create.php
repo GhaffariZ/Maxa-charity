@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($err === '') {
         try {
-            $pdo->beginTransaction();
+            content_prepare($pdo,'branches');
 
             // 1) ردیف شعبه (با ذخیره مختصات نشانگر روی نقشه ایران)
             // بررسی و ایجاد ستون‌های مختصات نقشه در صورت عدم وجود (سازگار با کلیه نسخه‌های MySQL)
@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
                 }
             } catch (Throwable $eCols) {}
+            $pdo->beginTransaction();
 
             try {
                 $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
@@ -123,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("INSERT INTO pages (title, slug, components, status, branch_id) VALUES (?, 'home', ?, 'published', ?)")
                 ->execute([$name, $defaultComponents, $branchId]);
 
+            content_save($pdo,'branches',(string)$branchId);
             $pdo->commit();
 
             // 6) پوشه‌ی فایل‌های شعبه — نام فقط از slug تأییدشده ساخته می‌شود
@@ -169,7 +171,7 @@ require __DIR__ . '/_panel_head.php';
   <?php if ($err): ?><div class="msg err"><?= e($err) ?></div><?php endif; ?>
   <?php if ($ok):  ?><div class="msg ok"><?= e($ok) ?></div><?php endif; ?>
 
-  <form method="POST" autocomplete="off">
+  <form id="branchContentForm" method="POST" autocomplete="off">
     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
     <div class="card">
@@ -352,4 +354,5 @@ require __DIR__ . '/_panel_head.php';
     });
   })();
 </script>
-</div></body></html>
+</div><?php content_editor('branches','','#branchContentForm'); ?>
+</body></html>

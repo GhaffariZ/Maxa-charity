@@ -1776,7 +1776,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     </div>
     <div class="cta-navbar-spacer" data-site-nav-spacer aria-hidden="true"></div>
 
-    <section class="cta-hero" aria-label="CTA Hero Slider">
+    <section class="cta-hero" aria-label="CTA Hero Slider" hidden>
 
       <div class="cta-slider" id="ctaSlider">
          <div class="cta-track" id="ctaTrack">
@@ -1936,9 +1936,10 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
 
         if (json.status === "success" && json.data.length > 0) {
             const slides = json.data;
-            // Feed records remain Persian; the initial literal fallback follows the page language.
+            document.querySelector('.cta-hero').hidden=false;
+            // The feed contains only records explicitly published for this page's language.
             [heroTitle, heroDesc].forEach(node => {
-                if (node) { node.lang = 'fa'; node.dir = 'rtl'; node.dataset.siteDynamic = ''; }
+                if (node) { node.lang = document.documentElement.lang; node.dir = document.documentElement.dir; node.dataset.siteDynamic = ''; }
             });
 
             // ۲. پر کردن هیرو (اولین آیتم به عنوان پیش‌فرض)

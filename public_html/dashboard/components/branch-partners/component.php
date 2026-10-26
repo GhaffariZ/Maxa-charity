@@ -101,16 +101,17 @@
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 
   // نگاشتِ کلید→نامِ شعبه و نقش (همان نگاشتِ صفحه‌ی شبکه‌ی همکاران)
-  var BRANCHES={tehran:'شعبه تهران',isfahan:'شعبه اصفهان',mashhad:'شعبه مشهد',qom:'شعبه قم',tabriz:'شعبه تبریز',ahvaz:'شعبه اهواز',kerman:'شعبه کرمان',kashan:'شعبه کاشان',telemedicine:'پزشکی از راه دور مکسا',setad_markazi:'ستاد مرکزی'};
-  var ROLES={administrative:'سمت‌های اداری',doctors:'پزشک متخصص',nurses:'کادر پرستاری',psychologists:'روانشناس سلامت',social_workers:'مددکار اجتماعی',spiritual_care:'مراقب معنوی',nutritionists:'متخصص تغذیه',rehabilitation:'متخصص توانبخشی',genetic_counselors:'مشاور ژنتیک و غربالگری',deputies:'معاونت',admin:'کادر اداری',ceo_office:'حوزه مدیر عامل'};
+  var BRANCHES={tehran:<?= site_js_text('شعبه تهران') ?>,isfahan:<?= site_js_text('شعبه اصفهان') ?>,mashhad:<?= site_js_text('شعبه مشهد') ?>,qom:<?= site_js_text('شعبه قم') ?>,tabriz:<?= site_js_text('شعبه تبریز') ?>,ahvaz:<?= site_js_text('شعبه اهواز') ?>,kerman:<?= site_js_text('شعبه کرمان') ?>,kashan:<?= site_js_text('شعبه کاشان') ?>,telemedicine:<?= site_js_text('پزشکی از راه دور مکسا') ?>,setad_markazi:<?= site_js_text('ستاد مرکزی') ?>};
+  var ROLES={administrative:<?= site_js_text('سمت‌های اداری') ?>,doctors:<?= site_js_text('پزشک متخصص') ?>,nurses:<?= site_js_text('کادر پرستاری') ?>,psychologists:<?= site_js_text('روانشناس سلامت') ?>,social_workers:<?= site_js_text('مددکار اجتماعی') ?>,spiritual_care:<?= site_js_text('مراقب معنوی') ?>,nutritionists:<?= site_js_text('متخصص تغذیه') ?>,rehabilitation:<?= site_js_text('متخصص توانبخشی') ?>,genetic_counselors:<?= site_js_text('مشاور ژنتیک و غربالگری') ?>,deputies:<?= site_js_text('معاونت') ?>,admin:<?= site_js_text('کادر اداری') ?>,ceo_office:<?= site_js_text('حوزه مدیر عامل') ?>};
 
   // دکمه‌ی «همه‌ی همکاران» → صفحه‌ی شبکه‌ی همکارانِ همین شعبه
   var allBtn=document.getElementById('bp-all');
-  if(allBtn){ allBtn.setAttribute('href', SLUG?('/'+encodeURIComponent(SLUG)+'/network'):'#'); }
-  if(NAME){ var sub=document.getElementById('bp-sub'); if(sub) sub.textContent='تیمی که در شعبه‌ی '+NAME+' در کنار شما هستند.'; }
+  if(allBtn){ allBtn.setAttribute('href', SLUG?(<?= json_encode(site_locale()==='fa'?'':'/'.site_locale()) ?>+'/'+encodeURIComponent(SLUG)+'/network'):'#'); }
+  if(NAME){ var sub=document.getElementById('bp-sub'); if(sub) sub.textContent=<?= site_js_text('همکاران مکسا') ?>+' · '+NAME; }
 
   function inBranch(emp){
     if(!SLUG && !NAME) return true;
+    if(emp.branch_slug && SLUG) return emp.branch_slug===SLUG;
     var b=(emp.branch||'').trim();
     if(NAME && b===NAME) return true;
     if(SLUG && b===SLUG) return true;
@@ -133,7 +134,7 @@
       +'<div class="bp-pill bp-pill-branch" title="'+esc(branchText)+'"><span class="dot"></span><span class="vt">'+esc(branchText)+'</span></div>'
       +'<div class="bp-pill bp-pill-role" title="'+esc(roleText)+'"><span class="dot"></span><span class="vt">'+esc(roleText)+'</span></div>'
       +'</div>'
-      +'<div class="bp-more"><a class="bp-detail" href="/dashboard/personal-resume-detail.php?name='+slug+'" target="_top">اطلاعات بیشتر ‹</a></div>'
+      +'<div class="bp-more"><a class="bp-detail" href="<?= site_url('/personal-resume-detail.php') ?>?id='+emp.id+'&name='+slug+'" target="_top">اطلاعات بیشتر ‹</a></div>'
       +'</div></article>';
   }
 

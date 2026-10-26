@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__.'/../../../core/content-locales.php';
 /* ============================================================================
  *  کامپوننت عمومی «معرفی شعبه» — خیریه مکسا
  * ----------------------------------------------------------------------------
@@ -36,16 +37,17 @@ if ($biPdo && $biSlug !== '') {
     try {
         $st = $biPdo->prepare("SELECT * FROM branches WHERE slug = ? LIMIT 1");
         $st->execute([$biSlug]);
-        $biBranch = $st->fetch();
+        $biBranch = content_branch_context($biPdo,$st->fetch()?:null);
 
         if ($biBranch) {
             $stIntro = $biPdo->prepare("SELECT * FROM branch_intros WHERE branch_id = ? LIMIT 1");
             $stIntro->execute([$biBranch['id']]);
-            $biIntro = $stIntro->fetch();
+            $biIntro = content_row($biPdo,'branch_intros',$stIntro->fetch()?:null,null,'branch_id');
         }
     } catch (Throwable $e) {}
 }
 
+if(content_language()!=='fa'&&(!$biBranch||!$biIntro))return;
 $branchDisplayName = $biBranch['name'] ?? ($branchName ?? 'مکسا');
 $branchActualSlug  = $biBranch['slug'] ?? ($biSlug ?: 'home');
 $introTitle        = !empty($biIntro['title']) ? $biIntro['title'] : ('آشنایی با شعبه ' . $branchDisplayName . ' مکسا');
@@ -53,6 +55,10 @@ $introText         = !empty($biIntro['intro_text']) ? $biIntro['intro_text'] : '
 $introAddress      = !empty($biIntro['address']) ? $biIntro['address'] : (!empty($biBranch['address']) ? $biBranch['address'] : 'آدرس این شعبه به‌زودی در سامانه درج خواهد شد.');
 $introPhone        = !empty($biIntro['phone']) ? $biIntro['phone'] : (!empty($biBranch['phone']) ? $biBranch['phone'] : '۰۲۱-۸۸۸۸۰۰۰۰');
 $introHours        = !empty($biIntro['working_hours']) ? $biIntro['working_hours'] : 'شنبه تا چهارشنبه: ۸:۰۰ الی ۱۶:۰۰';
+if(content_language()!=='fa'){
+    $introTitle=(string)$biIntro['title'];$introAddress=(string)$biIntro['address'];
+    $introPhone=(string)$biIntro['phone'];$introHours=(string)$biIntro['working_hours'];
+}
 
 $introImages = [];
 if (!empty($biIntro['images'])) {

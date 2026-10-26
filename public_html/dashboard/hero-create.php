@@ -1,5 +1,8 @@
 <?php require_once __DIR__ . '/_guard.php';
-dash_require('hero'); ?>
+dash_require('hero');
+$heroEditId=(int)($_GET['id']??0);$heroEdit=null;
+if($heroEditId>0){$s=$pdo->prepare('SELECT * FROM hero_slides WHERE id=? AND branch_id=?');$s->execute([$heroEditId,dash_active_branch_id()]);$heroEdit=$s->fetch();if(!$heroEdit){http_response_code(404);exit('هیرو یافت نشد.');}}
+?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -774,6 +777,7 @@ function validateHeroForm(){
 }
 
 function saveHero() {
+    if(window.ContentLanguages&&!ContentLanguages.validate())return;
     if (!validateHeroForm()) {
         showStatus("لطفاً عنوان هیرو را وارد کنید.", false);
         return;
@@ -786,6 +790,8 @@ function saveHero() {
     showStatus("در حال ذخیره...", "info");
 
     const formData = new FormData();
+    formData.append('id',<?= json_encode($heroEditId) ?>);
+    window.ContentLanguages?.append(formData);
     formData.append("title", document.getElementById("title").value);
     formData.append("description", document.getElementById("editor").innerHTML);
     formData.append("link", document.getElementById("hero_link").value);
@@ -802,13 +808,7 @@ function saveHero() {
     .then(data => {
         if (data.status === "success") {
             showStatus(data.message, true);
-            // پاک کردن فرم
-            document.getElementById("title").value = '';
-            document.getElementById("editor").innerHTML = '';
-            document.getElementById("hero_link").value = '';
-            document.getElementById("has_link").checked = false;
-            toggleLinkBox();
-            removeImage();
+            location.href='hero-create.php?id='+encodeURIComponent(data.id);return;
         } else {
             showStatus(data.message, false);
         }
@@ -1053,5 +1053,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<?php if($heroEdit): ?>
+<script>
+document.getElementById('title').value=<?= json_encode($heroEdit['title'],JSON_HEX_TAG|JSON_HEX_AMP) ?>;
+document.getElementById('editor').innerHTML=<?= json_encode(HtmlSanitizer::sanitize((string)$heroEdit['description']),JSON_HEX_TAG|JSON_HEX_AMP) ?>;
+document.getElementById('hero_link').value=<?= json_encode($heroEdit['button_link'],JSON_HEX_TAG|JSON_HEX_AMP) ?>;
+document.getElementById('publish_date').value=<?= json_encode($heroEdit['publish_date']) ?>;
+document.getElementById('has_link').checked=!!document.getElementById('hero_link').value;toggleLinkBox();
+<?php if(!empty($heroEdit['image'])): ?>dzImg.src=<?= json_encode($heroEdit['image'],JSON_HEX_TAG|JSON_HEX_AMP) ?>;dzPreview.classList.add('show');<?php endif; ?>
+</script>
+<?php endif; ?>
+<?php content_editor('hero_slides',$heroEditId?(string)$heroEditId:'','.layout',['sourceFields'=>['image'=>'#featured_image','button_link'=>'#hero_link']]); ?>
 </body>
 </html>

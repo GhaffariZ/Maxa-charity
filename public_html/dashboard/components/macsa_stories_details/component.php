@@ -14,11 +14,11 @@
     <!-- FILTERS -->
     <div class="ps-filters" id="psFilters">
       <button class="active" data-filter="all"><?= site_e('همه') ?></button>
-      <button data-filter="کادر درمان"><?= site_e('روایت کادر درمان') ?></button>
-      <button data-filter="بهبودی"><?= site_e('زندگی پس از بهبودی') ?></button>
-      <button data-filter="تشخیص"><?= site_e('زندگی پس از تشخیص بیماری') ?></button>
-      <button data-filter="درمان"><?= site_e('مسیر درمان') ?></button>
-      <button data-filter="همراهان"><?= site_e('تجربه همراهان') ?></button>
+      <button data-filter="staff"><?= site_e('روایت کادر درمان') ?></button>
+      <button data-filter="survivor"><?= site_e('زندگی پس از بهبودی') ?></button>
+      <button data-filter="diagnosis"><?= site_e('زندگی پس از تشخیص بیماری') ?></button>
+      <button data-filter="treatment"><?= site_e('مسیر درمان') ?></button>
+      <button data-filter="caregiver"><?= site_e('تجربه همراهان') ?></button>
     </div>
 
     <!-- STORIES GRID -->
@@ -62,7 +62,7 @@
           <p>${escapeHtml(shortExcerpt)}</p>
           <div class="ps-footer">
             <span class="ps-time">${escapeHtml(readTime)}</span>
-            <a href="/macsa-story.php?id=${story.id}<?= site_js_fragment('" class="ps-read">
+            <a href="<?= site_url('/macsa-story.php') ?>?id=${story.id}<?= site_js_fragment('" class="ps-read">
               خواندن روایت
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -79,8 +79,7 @@
       renderStories(allStoriesData);
     } else {
       const filtered = allStoriesData.filter(s => {
-        const tag = (s.tag || '');
-        return tag.includes(activeFilter);
+        return s.tag_key === activeFilter;
       });
       renderStories(filtered);
     }
@@ -103,35 +102,7 @@
       if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
         allStoriesData = json.data;
       } else {
-        allStoriesData = [
-          {
-            id: 1,
-            title: "زندگی تا آخرین لحظه",
-            narrator_name: "دکتر زهرا جعفری",
-            narrator_role: "روانشناس مراقبت درمنزل شعبه تهران",
-            tag: "روایت کادر درمان",
-            excerpt: "یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...",
-            read_time: "۴ دقیقه مطالعه"
-          },
-          {
-            id: 2,
-            title: "وقتی نوشتن، درمان است",
-            narrator_name: "آقای جواد چنگی",
-            narrator_role: "روانشناس مراقبت در منزل شعبه تهران",
-            tag: "روایت کادر درمان",
-            excerpt: "در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد...",
-            read_time: "۴ دقیقه مطالعه"
-          },
-          {
-            id: 3,
-            title: "از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی",
-            narrator_name: "آقای علی یزدانی",
-            narrator_role: "مددکار اجتماعی مراقبت در منزل شعبه تهران",
-            tag: "روایت کادر درمان",
-            excerpt: "سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود...",
-            read_time: "۵ دقیقه مطالعه"
-          }
-        ];
+        allStoriesData = [];
       }
       applyFilter();
     })

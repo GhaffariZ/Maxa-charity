@@ -220,31 +220,31 @@ const API_URL = '/api-employees.php';
 // ─────────────────────────────────────────────
 
 const BRANCHES = {
-    tehran:        'شعبه تهران',
-    isfahan:       'شعبه اصفهان',
-    mashhad:       'شعبه مشهد',
-    qom:           'شعبه قم',
-    tabriz:        'شعبه تبریز',
-    ahvaz:         'شعبه اهواز',
-    kerman:        'شعبه کرمان',
-    kashan:        'شعبه کاشان',
-    telemedicine:  'پزشکی از راه دور مکسا',
-    setad_markazi: 'ستاد مرکزی',
+    tehran:        <?= site_js_text('شعبه تهران') ?>,
+    isfahan:       <?= site_js_text('شعبه اصفهان') ?>,
+    mashhad:       <?= site_js_text('شعبه مشهد') ?>,
+    qom:           <?= site_js_text('شعبه قم') ?>,
+    tabriz:        <?= site_js_text('شعبه تبریز') ?>,
+    ahvaz:         <?= site_js_text('شعبه اهواز') ?>,
+    kerman:        <?= site_js_text('شعبه کرمان') ?>,
+    kashan:        <?= site_js_text('شعبه کاشان') ?>,
+    telemedicine:  <?= site_js_text('پزشکی از راه دور مکسا') ?>,
+    setad_markazi: <?= site_js_text('ستاد مرکزی') ?>,
 };
 
 const ROLES = {
-    administrative:    'سمت‌های اداری',
-    doctors:           'پزشک متخصص',
-    nurses:            'کادر پرستاری',
-    psychologists:     'روانشناس سلامت',
-    social_workers:    'مددکار اجتماعی',
-    spiritual_care:    'مراقب معنوی',
-    nutritionists:     'متخصص تغذیه',
-    rehabilitation:    'متخصص توانبخشی',
-    genetic_counselors:'مشاور ژنتیک و غربالگری',
-    deputies:          'معاونت',
-    admin:             'کادر اداری',
-    ceo_office:        'حوزه مدیر عامل',
+    administrative:    <?= site_js_text('سمت‌های اداری') ?>,
+    doctors:           <?= site_js_text('پزشک متخصص') ?>,
+    nurses:            <?= site_js_text('کادر پرستاری') ?>,
+    psychologists:     <?= site_js_text('روانشناس سلامت') ?>,
+    social_workers:    <?= site_js_text('مددکار اجتماعی') ?>,
+    spiritual_care:    <?= site_js_text('مراقب معنوی') ?>,
+    nutritionists:     <?= site_js_text('متخصص تغذیه') ?>,
+    rehabilitation:    <?= site_js_text('متخصص توانبخشی') ?>,
+    genetic_counselors:<?= site_js_text('مشاور ژنتیک و غربالگری') ?>,
+    deputies:          <?= site_js_text('معاونت') ?>,
+    admin:             <?= site_js_text('کادر اداری') ?>,
+    ceo_office:        <?= site_js_text('حوزه مدیر عامل') ?>,
 };
 
 // ─── لودینگ اسکلتون ───
@@ -262,25 +262,26 @@ function renderSkeletons(count = 6) {
 }
 
 // ─── ساخت یک کارت ───
+const escapePartner=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function buildCard(emp, index) {
-    const fullname    = emp.fullname || <?= site_js_text('همکار مکسا') ?>;
-    const branchText  = BRANCHES[emp.branch] || <?= site_js_text('نامشخص') ?>;
+    const fullname    = escapePartner(emp.fullname || <?= site_js_text('همکار مکسا') ?>);
+    const branchText  = escapePartner(BRANCHES[emp.branch] || emp.branch || <?= site_js_text('نامشخص') ?>);
     const rawRole     = emp.role || '';
     const rawCat      = emp.job_category || '';
-    const roleText    = ROLES[rawRole] || (rawRole ? rawRole : (ROLES[rawCat] || <?= site_js_text('ثبت نشده') ?>));
-    const filterRole  = ROLES[rawRole] ? rawRole : (ROLES[rawCat] ? rawCat : rawRole);
-    const slug        = encodeURIComponent(fullname.trim().replace(/\s+/g, '-'));
+    const roleText    = escapePartner(ROLES[rawRole] || (rawRole ? rawRole : (ROLES[rawCat] || <?= site_js_text('ثبت نشده') ?>)));
+    const filterRole  = emp.role_key || emp.job_category_key || rawRole;
+    const slug        = encodeURIComponent(String(emp.fullname||'').trim().replace(/\s+/g, '-'));
     const delay       = ((index % 20) * 0.055).toFixed(3);
 
     const imgHtml = emp.profile_pic
-        ? `<img src="${emp.profile_pic}" class="card-img" alt="${fullname}">`
+        ? `<img src="${escapePartner(emp.profile_pic)}" class="card-img" alt="${fullname}">`
         : `<div class="avatar-placeholder"><svg class="iconoir-icon" width="40" height="40" stroke-width="1.4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
 
     return `
     <div class="modern-card"
          style="animation-delay:${delay}s"
-         data-branch="${emp.branch || ''}"
-         data-role="${filterRole}"
+         data-branch="${escapePartner(emp.branch || '')}"
+         data-role="${escapePartner(filterRole)}"
          data-search="${fullname.toLowerCase()}">
         <div class="image-wrapper">${imgHtml}</div>
         <div class="card-info-box">
@@ -298,12 +299,12 @@ function buildCard(emp, index) {
         </div>
         <div class="action-drawer">
             <button class="btn-more-info"
-                onclick="event.stopPropagation(); window.location.href='/personal-resume-detail.php?name=${slug}<?= site_js_fragment('\';">
+                data-href="<?= site_url('/personal-resume-detail.php') ?>?id=${Number(emp.id)}&amp;name=${slug}" onclick="event.stopPropagation();window.location.href=this.dataset.href;">
                 <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                اطلاعات بیشتر
+                <?= site_e('اطلاعات بیشتر') ?>
             </button>
         </div>
-    </div>') ?>`;
+    </div>`;
 }
 
 // ─── رندر همه کارت‌ها ───
@@ -360,6 +361,7 @@ const BRANCH_SLUG = (typeof window.__MAXA_BRANCH__ === 'string') ? window.__MAXA
 const BRANCH_NAME = (typeof window.__MAXA_BRANCH_NAME__ === 'string') ? window.__MAXA_BRANCH_NAME__ : '';
 function empInBranch(emp) {
     if (!BRANCH_SLUG && !BRANCH_NAME) return true;
+    if (emp.branch_slug && BRANCH_SLUG) return emp.branch_slug === BRANCH_SLUG;
     const b = (emp.branch || '').trim();
     if (BRANCH_NAME && b === BRANCH_NAME) return true;
     if (BRANCH_SLUG && b === BRANCH_SLUG) return true;
@@ -385,10 +387,10 @@ function applyCurrentFilters() {
     const b = branchSelect.value;
     const r = roleSelect.value;
     const filtered = allEmployees.filter(emp => {
-        const okB = b === 'all' || emp.branch === b;
+        const okB = b === 'all' || String(emp.branch_id) === b || emp.branch_slug === b || emp.branch === b;
         const rawRole = emp.role || '';
         const rawCat  = emp.job_category || '';
-        const filterRole = ROLES[rawRole] ? rawRole : (ROLES[rawCat] ? rawCat : rawRole);
+        const filterRole = emp.role_key || emp.job_category_key || rawRole;
         const okR = r === 'all' 
             ? true 
             : (r === 'treatment' 
@@ -409,9 +411,16 @@ async function loadEmployees() {
             allEmployees = allEmployees.filter(empInBranch);
             // عنوانِ صفحه را به نامِ شعبه به‌روزرسانی کن (در صورت وجود)
             const ht = document.querySelector('.header-title');
-            if (ht && BRANCH_NAME) ht.textContent = 'همکاران ' + BRANCH_NAME;
+            if (ht && BRANCH_NAME) ht.textContent = <?= site_js_text('همکاران مکسا') ?> + ' · ' + BRANCH_NAME;
         }
 
+        const branchFilter = document.getElementById('filter-branch');
+        if (branchFilter) {
+            const selected = branchFilter.value;
+            const branches = new Map(allEmployees.map(emp=>[String(emp.branch_id || emp.branch_slug || emp.branch), BRANCHES[emp.branch] || emp.branch || <?= site_js_text('نامشخص') ?>]));
+            branchFilter.replaceChildren(new Option(<?= site_js_text('همه شعب') ?>, 'all'), ...Array.from(branches, ([id,label])=>new Option(label,id)));
+            if (Array.from(branchFilter.options).some(option=>option.value===selected)) branchFilter.value=selected;
+        }
         const roleSelect = document.getElementById('filter-role');
         const branchSelect = document.getElementById('filter-branch');
         if ((roleSelect && roleSelect.value !== 'all') || (branchSelect && branchSelect.value !== 'all')) {

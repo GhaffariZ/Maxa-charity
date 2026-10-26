@@ -46,6 +46,7 @@ try {
 
     // محافظت در برابر CSRF (هم‌سان با endpointهای خبر)
     csrf_check();
+    content_prepare($pdo,'hero_slides');
 
     // پوشه‌ی آپلود
     $uploadDir = __DIR__ . '/../uploads/hero/';
@@ -163,6 +164,17 @@ try {
         ? hero_save_image($_FILES['image'], $uploadDir)
         : null;
 
+    $editId=(int)($_POST['id']??0);
+    $pdo->beginTransaction();
+    if($editId>0){
+        $own=$pdo->prepare('SELECT id FROM hero_slides WHERE id=? AND branch_id=?');$own->execute([$editId,$__branch]);
+        if(!$own->fetch())throw new RuntimeException('هیرو در این شعبه یافت نشد.');
+        $sql='UPDATE hero_slides SET title=?,description=?,button_link=?,category=?,publish_date=?';
+        $parameters=[$title,$description,$button_link,$category,$publish_date];
+        if($dbImagePath!==null){$sql.=',image=?';$parameters[]=$dbImagePath;}
+        $parameters[]=$editId;$parameters[]=$__branch;
+        $pdo->prepare($sql.' WHERE id=? AND branch_id=?')->execute($parameters);
+    }else{
     $stmt = $pdo->prepare("
         INSERT INTO hero_slides
             (title, description, image, button_link, category, publish_date, status, sort_order, branch_id)
@@ -178,13 +190,20 @@ try {
         ':publish_date' => $publish_date,
         ':branch_id'    => $__branch,
     ]);
+    $editId=(int)$pdo->lastInsertId();
+    }
+    content_save($pdo,'hero_slides',(string)$editId);
+    $pdo->commit();
 
     echo json_encode([
         'status'  => 'success',
-        'message' => 'هیرو با موفقیت ذخیره شد'
+        'message' => 'هیرو با موفقیت ذخیره شد',
+        'id'=>$editId,
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    if(isset($pdo)&&$pdo instanceof PDO&&$pdo->inTransaction())$pdo->rollBack();
+    http_response_code(422);
     echo json_encode([
         'status'  => 'error',
         'message' => $e->getMessage()

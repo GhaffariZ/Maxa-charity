@@ -37,7 +37,7 @@ if ($slug === '') {
 /* ---------- 1) آیا slug یک شعبه است؟ ---------- */
 $st = $pdo->prepare("SELECT * FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
 $st->execute([$slug]);
-$branch = $st->fetch();
+$branch=content_branch_context($pdo,$st->fetch()?:null);
 
 if ($branch) {
     $branchId = (int)$branch['id'];
@@ -140,6 +140,18 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
 
+    $configuredContent=false;
+    if(content_ready($pdo)){
+        $configured=$pdo->prepare("SELECT 1 FROM public_content_locales WHERE content_type='pages' AND content_id=? LIMIT 1");$configured->execute([(string)$page['id']]);
+        $configuredContent=(bool)$configured->fetchColumn();
+        if($configuredContent){$page=content_row($pdo,'pages',$page);if(!$page){site_error_page();return;}}
+    }
+    if(!$configuredContent&&content_language()!=='fa'){
+        // Legacy pages are structural containers for the static site. Saved editorial
+        // components still require their own version; a Persian page title is not a fallback.
+        foreach($components as $component){$name=dashboard_component_name((string)$component);if($name&&is_file(__DIR__.'/components/'.$name.'/data.json')){site_error_page();return;}}
+        $page['title']=site_page_title($slug,site_text('مکسا'));
+    }
     $meta = get_page_meta($slug, (string)$page['title'], $branchName);
     render_html_head($meta, $branchSlug, $branchName);
 
@@ -293,7 +305,8 @@ function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
     // خبرِ متعلق به همین شعبه (ایزولاسیون). فیلدِ slug در news نیست؛ از news_code/id استفاده می‌کنیم.
     $st = $pdo->prepare("SELECT * FROM news WHERE branch_id = ? AND (news_code = ? OR id = ?) AND status = 'published' LIMIT 1");
     $st->execute([$branchId, $newsSlug, (int)$newsSlug]);
-    $news = $st->fetch();
+    $news = content_row($pdo,'news',$st->fetch()?:null);
+    if($news&&strtotime($news['publish_date'])>time())$news=null;
 
     if (!$news) {
         http_response_code(404);
@@ -308,8 +321,10 @@ function render_branch_news(PDO $pdo, int $branchId, string $newsSlug): void
     $pubDate = (string)($news['publish_date'] ?? '');
     $code    = (string)($news['news_code'] ?? '');
     $featured = (string)($news['featured_image'] ?? '');
-    $images  = json_decode((string)($news['images'] ?? ''), true) ?: [];
-    $video   = (string)($news['video'] ?? '');
+    // Legacy galleries are absent from the current news editor; never carry them
+    // from the Persian record into another language's article.
+    $images  = content_language()==='fa' ? (json_decode((string)($news['images'] ?? ''), true) ?: []) : [];
+    $video   = content_language()==='fa' ? (string)($news['video'] ?? '') : '';
     $folder  = '/uploads/news/' . rawurlencode($code) . '/';
     $excerpt = mb_substr(trim(preg_replace('/\s+/u', ' ', strip_tags($content))), 0, 150);
 
@@ -348,7 +363,7 @@ CSS;
     echo '<a class="na-back" href="javascript:history.length>1?history.back():location.assign(\'/\')">'
        . '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
        . 'بازگشت</a>';
-    if (!empty($news['tag_id'])) {
+    if (content_language()==='fa' && !empty($news['tag_id'])) {
         // برچسبِ خبر (در صورت وجود)
         $tg = $pdo->prepare('SELECT name_fa FROM news_tags WHERE id = ? LIMIT 1');
         $tg->execute([(int)$news['tag_id']]);
@@ -363,7 +378,7 @@ CSS;
 
     echo '<article class="na-card">';
     if ($featured !== '') {
-        echo '<img class="na-cover" src="' . $e($folder . rawurlencode($featured)) . '" alt="' . $e($title) . '">';
+        echo '<img class="na-cover" src="' . $e(preg_match('~^(?:/|https?://)~',$featured)?$featured:$folder . rawurlencode($featured)) . '" alt="' . $e($title) . '">';
     }
     echo '<div class="na-body">' . HtmlSanitizer::sanitize($content);
 

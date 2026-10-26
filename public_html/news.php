@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/core/content-locales.php';
 require_once __DIR__ . '/core/site-locale.php';
 require_once __DIR__ . '/core/icons.php';
 // ۱. اتصال به دیتابیس (اطلاعات از فایل کانفیگ خارج از گیت)
@@ -110,18 +111,22 @@ if ($basePath === '.' || $basePath === '/') {
     $basePath = '';
 }
 
+$languageScope=content_where($pdo,'news','n.id');
+$searchTitle=content_expression($pdo,'news','n.id','title','n.title');
+$searchContent=content_expression($pdo,'news','n.id','content','n.content');
+$categoryLabel=content_expression($pdo,'news','n.id','category_name','c.name');
 // واکشی دسته‌بندی‌ها به همراه تعداد مقالات منتشر شده هر کدام
 $categories = [];
 try {
     $catStmt = $pdo->query("
-        SELECT c.id, c.name, COUNT(n.id) AS post_count
+        SELECT c.id, MIN($categoryLabel) AS name, COUNT(n.id) AS post_count
         FROM news_categories c
-        LEFT JOIN news n ON n.category_id = c.id 
-            AND n.status = 'published' 
+        LEFT JOIN news n ON n.category_id = c.id
+            AND $languageScope AND n.status = 'published'
             AND n.publish_date <= NOW()
             AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
-        GROUP BY c.id, c.name
-        ORDER BY c.name ASC
+        GROUP BY c.id, c.name HAVING post_count>0
+        ORDER BY name ASC
     ");
     $categories = $catStmt->fetchAll();
 } catch (PDOException $e) {
@@ -135,13 +140,13 @@ try {
         SELECT n.*, c.name AS category_name
         FROM news n
         LEFT JOIN news_categories c ON c.id = n.category_id
-        WHERE n.status = 'published'
+        WHERE $languageScope AND n.status = 'published'
           AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
         ORDER BY n.viewed DESC, n.publish_date DESC
         LIMIT 4
     ");
-    $popularNews = $popStmt->fetchAll();
+    $popularNews = content_rows($pdo,'news',$popStmt->fetchAll());
 } catch (PDOException $e) {
     // در صورت وجود خطا در دیتابیس، بی‌صدا ادامه می‌دهیم
 }
@@ -156,7 +161,7 @@ $countQueryStr = "
     SELECT COUNT(n.id) AS total
     FROM news n
     LEFT JOIN news_categories c ON c.id = n.category_id
-    WHERE n.status = 'published'
+    WHERE $languageScope AND n.status = 'published'
       AND n.publish_date <= NOW()
       AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
 ";
@@ -167,7 +172,7 @@ if ($activeCategory) {
     $countParams[] = $activeCategory;
 }
 if ($searchQuery !== '') {
-    $countQueryStr .= " AND (n.title LIKE ? OR n.content LIKE ?)";
+    $countQueryStr .= " AND ($searchTitle LIKE ? OR $searchContent LIKE ?)";
     $countParams[] = '%' . $searchQuery . '%';
     $countParams[] = '%' . $searchQuery . '%';
 }
@@ -190,7 +195,7 @@ if ($hasFeatured) {
     } else {
         $totalPages = 1 + (int)ceil(($totalNewsCount - 7) / $perPage);
     }
-    
+
     if ($currentPage === 1) {
         $limit = $perPage + 1; // ۷ پست (۱ شاخص + ۶ کارت)
         $offset = 0;
@@ -219,7 +224,7 @@ $queryStr = "
     SELECT n.*, c.name AS category_name
     FROM news n
     LEFT JOIN news_categories c ON c.id = n.category_id
-    WHERE n.status = 'published'
+    WHERE $languageScope AND n.status = 'published'
       AND n.publish_date <= NOW()
       AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
 ";
@@ -230,7 +235,7 @@ if ($activeCategory) {
     $queryParams[] = $activeCategory;
 }
 if ($searchQuery !== '') {
-    $queryStr .= " AND (n.title LIKE ? OR n.content LIKE ?)";
+    $queryStr .= " AND ($searchTitle LIKE ? OR $searchContent LIKE ?)";
     $queryParams[] = '%' . $searchQuery . '%';
     $queryParams[] = '%' . $searchQuery . '%';
 }
@@ -240,7 +245,7 @@ $queryStr .= " ORDER BY n.publish_date DESC LIMIT $limit OFFSET $offset";
 try {
     $stmt = $pdo->prepare($queryStr);
     $stmt->execute($queryParams);
-    $allNews = $stmt->fetchAll();
+    $allNews = content_rows($pdo,'news',$stmt->fetchAll());
 } catch (PDOException $e) {
     die("خطا در بارگذاری اخبار: " . $e->getMessage());
 }
@@ -255,6 +260,7 @@ if ($hasFeatured && $currentPage === 1 && count($allNews) > 0) {
 }
 
 function getNewsImageUrl($row, $basePath) {
+    if(!empty($row['featured_image'])&&preg_match('~^(?:/|https?://)~',$row['featured_image']))return $row['featured_image'];
     if (!empty($row['featured_image']) && !empty($row['news_code'])) {
         return $basePath . '/uploads/news/' . rawurlencode($row['news_code']) . '/' . rawurlencode($row['featured_image']);
     } else {
@@ -917,7 +923,7 @@ render_dashboard_component('header', get_defined_vars());
                 <?= site_e('نتایج جستجو') ?>
                 <?php if ($searchQuery !== ''): ?> <?= site_e('برای «') ?><strong><?= htmlspecialchars($searchQuery) ?></strong>»<?php endif; ?>
                 <?php if ($activeCategory): ?>
-                    <?php 
+                    <?php
                     $activeCatName = '';
                     foreach ($categories as $cat) {
                         if ((int)$cat['id'] === $activeCategory) {
@@ -935,7 +941,7 @@ render_dashboard_component('header', get_defined_vars());
     <?php endif; ?>
 
     <!-- بخش خبر ویژه (شاخص) در صورتی که فیلتری اعمال نشده باشد -->
-    <?php if ($featuredNews): 
+    <?php if ($featuredNews):
         $excerpt = !empty($featuredNews['subtitle']) ? $featuredNews['subtitle'] : (mb_substr(strip_tags($featuredNews['content']), 0, 200) . '...');
         $imageUrl = getNewsImageUrl($featuredNews, $basePath);
         $author = !empty($featuredNews['author']) ? $featuredNews['author'] : 'روابط عمومی مکسا';
@@ -957,7 +963,7 @@ render_dashboard_component('header', get_defined_vars());
                 </div>
                 <h2 class="hero-post-title"><?= htmlspecialchars($featuredNews['title']) ?></h2>
                 <p class="hero-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
-                
+
                 <div class="hero-post-footer">
                     <span class="hero-read-time"><?= iconoir('clock', '', 15) ?> <?= $readTimeFa ?> <?= site_e('دقیقه مطالعه') ?></span>
                     <a href="<?= htmlspecialchars($newsUrl) ?>" class="hero-more-btn">
@@ -971,10 +977,10 @@ render_dashboard_component('header', get_defined_vars());
 
     <!-- ساختار محتوایی اصلی (دو ستونه) -->
     <div class="news-content-layout">
-        
+
         <!-- ستون سمت راست: لیست خبرها -->
         <div class="news-grid-column">
-            
+
             <!-- اسکلت لودینگ پیش‌فرض -->
             <div id="news-skeleton" class="skeleton-grid-layout">
                 <?php for ($i = 0; $i < 4; $i++): ?>
@@ -995,7 +1001,7 @@ render_dashboard_component('header', get_defined_vars());
             <div id="news-grid" class="news-grid-wrapper-container news-grid-hidden">
                 <?php if (count($gridNews) > 0): ?>
                     <div class="news-grid-cards">
-                        <?php foreach ($gridNews as $row): 
+                        <?php foreach ($gridNews as $row):
                             $excerpt = !empty($row['subtitle']) ? $row['subtitle'] : (mb_substr(strip_tags($row['content']), 0, 110) . '...');
                             $imageUrl = getNewsImageUrl($row, $basePath);
                             $author = !empty($row['author']) ? $row['author'] : 'روابط عمومی مکسا';
@@ -1017,7 +1023,7 @@ render_dashboard_component('header', get_defined_vars());
                                     </div>
                                     <h3 class="card-post-title"><?= htmlspecialchars($row['title']) ?></h3>
                                     <p class="card-post-excerpt"><?= htmlspecialchars($excerpt) ?></p>
-                                    
+
                                     <div class="card-post-footer">
                                         <span class="card-read-time" style="display:inline-flex;align-items:center;gap:5px;"><?= iconoir('clock', '', 14) ?> <?= $readTimeFa ?> <?= site_e('دقیقه مطالعه') ?></span>
                                         <a href="<?= htmlspecialchars($newsUrl) ?>" class="card-more-btn">
@@ -1070,7 +1076,7 @@ render_dashboard_component('header', get_defined_vars());
 
         <!-- ستون سمت چپ: سایدبار -->
         <aside class="news-sidebar">
-            
+
             <!-- ویجت جستجو -->
             <div class="sidebar-widget">
                 <h4 class="widget-title"><?= site_e('جستجو در اخبار') ?></h4>
@@ -1111,7 +1117,7 @@ render_dashboard_component('header', get_defined_vars());
                 <div class="sidebar-widget">
                     <h4 class="widget-title"><?= site_e('محبوب‌ترین اخبار') ?></h4>
                     <div class="widget-pop-list">
-                        <?php foreach ($popularNews as $pop): 
+                        <?php foreach ($popularNews as $pop):
                             $popUrl = 'news.php?category=' . (int)$pop['category_id'];
                             $newsSlug = slugify($pop['title'] ?? '');
                             $newsUrl = '/' . (int)$pop['id'] . '/' . rawurlencode($newsSlug) . '/';

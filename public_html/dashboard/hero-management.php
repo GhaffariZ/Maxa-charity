@@ -269,6 +269,7 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 
           <?php if($hid > 0){ ?>
           <div class="hm-row-actions">
+            <a class="btn" href="hero-create.php?id=<?= $hid ?>">ویرایش محتوا و زبان‌های انتشار</a>
             <button type="button" class="hm-del" onclick="deleteHero(<?= $hid ?>, this)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               حذف این هیرو

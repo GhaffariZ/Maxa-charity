@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 dash_require('pages');
+$editPageId=(int)($_GET['id']??0);$editingPage=null;
+if($editPageId){content_access($pdo,'pages',(string)$editPageId);$s=$pdo->prepare('SELECT * FROM pages WHERE id=?');$s->execute([$editPageId]);$editingPage=$s->fetch();}
 $components_path = __DIR__ . "/components/";
 $component_dirs = array_filter(glob($components_path . "*"), function($v){ return is_dir($v); });
 $components = [];
@@ -302,7 +304,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 <script>
 let components = <?php echo json_encode($components, JSON_UNESCAPED_UNICODE); ?>;
-let selectedComponents = [];
+let selectedComponents = <?= json_encode($editingPage?json_decode($editingPage['components'],true):[],JSON_HEX_TAG|JSON_HEX_AMP) ?>;
 let dragIndex = null;
 
 /* تم (دارک/لایت) از «داشبورد مدیریت» کنترل می‌شود — کلید مشترک: maxa-theme */
@@ -440,6 +442,8 @@ function closePreview() {
 }
 
 function saveTemplate() {
+  if(window.ContentLanguages&&!ContentLanguages.validate())return;
+  const languageData=new FormData();window.ContentLanguages?.append(languageData);
   let name = document.getElementById("template_name").value.trim();
 
   if (!name) {
@@ -460,6 +464,8 @@ function saveTemplate() {
     },
     body: JSON.stringify({
       name: name,
+      id: <?= (int)($_GET['id']??0) ?>,
+      content_languages: languageData.get('content_languages'),
       components: selectedComponents
     })
   })
@@ -478,6 +484,7 @@ function saveTemplate() {
 renderSelected();
 </script>
 
+<?php content_editor('pages',isset($_GET['id'])?(string)(int)$_GET['id']:'','.page-builder-wrapper .container',['sourceFields'=>['title'=>'#template_name'],'submit'=>'[onclick="saveTemplate()"]']); ?>
 </body>
 
 
@@ -1212,5 +1219,6 @@ renderSelected();
   </script>
   <script src="assets/js/dashboard/dashboard-ecommerce.js">
   </script>
+<?php if($editingPage): ?><script>document.getElementById('template_name').value=<?= json_encode($editingPage['title'],JSON_HEX_TAG|JSON_HEX_AMP) ?>;renderSelected();</script><?php endif; ?>
 </body>
 </html>

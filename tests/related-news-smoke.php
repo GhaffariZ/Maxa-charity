@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 // Run the actual controller query against local fixtures, without a site database.
+// Locale SQL/overlays are exercised against MySQL in content-locales.php.
+function content_where(PDO $db,string $type,string $column): string { if($type!=='news')throw new RuntimeException('Unexpected content type');return '1=1'; }
+function content_rows(PDO $db,string $type,array $rows): array { return $rows; }
 $source = file_get_contents(__DIR__ . '/../public_html/dashboard/news-view.php');
 if (!preg_match('/\$relatedNews = \[\];.*?\n\}\s*(?=\/\/)/s', $source, $match)) {
     throw new RuntimeException('Related-news controller block not found.');

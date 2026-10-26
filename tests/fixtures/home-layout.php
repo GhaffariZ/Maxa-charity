@@ -21,6 +21,11 @@ require __DIR__ . '/../../public_html/core/component-renderer.php';
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home layout check</title>
+<link rel="stylesheet" href="/assets/site-locale.css">
+<link rel="stylesheet" href="/assets/site-navigation.css">
+<script src="/assets/public-content.js"></script>
+<script src="/assets/site-locale.js" defer></script>
+<script src="/assets/site-navigation.js" defer></script>
 <!-- Same critical sizing rules as page-view.php. -->
 <style>*{box-sizing:border-box}html,body{margin:0;padding:0;overflow-x:hidden}body{font-family:Vazirmatn,Tahoma,sans-serif;color:#111}img{max-width:100%;height:auto}</style>
 </head>

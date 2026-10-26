@@ -10,6 +10,8 @@ use Maksa\Core\Response;
 use PDO;
 use Throwable;
 
+require_once dirname(__DIR__,3).'/core/content-locales.php';
+
 final class StandController
 {
     /**
@@ -76,6 +78,7 @@ final class StandController
         self::ensureSchema($pdo);
 
         // واکشی استان‌ها و شهرهای شعب فعال دارای استند فعال (بدون ستاد مرکزی)
+        $scope=content_where($pdo,'stands','s.id');
         $sql = "
             SELECT DISTINCT
                 b.id AS branch_id,
@@ -84,7 +87,7 @@ final class StandController
                 COALESCE(b.city, b.name) AS city,
                 COUNT(s.id) AS stands_count
             FROM branches b
-            INNER JOIN stands s ON s.branch_id = b.id AND s.is_active = 1
+            INNER JOIN stands s ON s.branch_id = b.id AND s.is_active = 1 AND $scope
             LEFT JOIN branch_features bf ON bf.branch_id = b.id AND bf.feature = 'stands'
             WHERE b.is_hq = 0 
               AND b.status = 'active'
@@ -101,30 +104,10 @@ final class StandController
             $branchesWithStands = [];
         }
 
-        // اگر هنوز هیچ استندی ثبت نشده باشد، فقط شعبی را برگردان که قابلیت
-        // stands برایشان فعال است؛ مراکز تخصصی نباید وارد انتخاب شعبه شوند.
-        if (empty($branchesWithStands)) {
-            try {
-                $stmt = $pdo->query("
-                    SELECT b.id AS branch_id, b.name AS branch_name,
-                           COALESCE(b.province, b.name) AS province,
-                           COALESCE(b.city, b.name) AS city
-                    FROM branches b
-                    LEFT JOIN branch_features bf ON bf.branch_id = b.id AND bf.feature = 'stands'
-                    WHERE b.is_hq = 0 AND b.status = 'active'
-                      AND (bf.enabled = 1 OR bf.enabled IS NULL)
-                    ORDER BY b.id ASC
-                ");
-                $branchesWithStands = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            } catch (Throwable $e) {
-                $branchesWithStands = [];
-            }
-        }
-
-        // هر شعبه یک گزینه مستقل است. این موضوع برای شهرهایی مثل کاشان و
-        // اصفهان که در یک استان‌اند ضروری است تا branch_id اشتباه نشود.
         $provinces = [];
         foreach ($branchesWithStands as $row) {
+            $context=content_branch_context($pdo,['id'=>$row['branch_id'],'name'=>$row['branch_name'],'province'=>$row['province'],'city'=>$row['city']]);
+            $row=array_merge($row,['branch_name'=>$context['name'],'province'=>$context['province']?:$context['name'],'city'=>$context['city']?:$context['name']]);
             $prov = trim((string)$row['province']);
             if ($prov === '' || str_contains($prov, 'ستاد') || str_contains($prov, 'مرکزی')) {
                 continue;
@@ -177,6 +160,7 @@ final class StandController
             $targetBranch = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         }
 
+        $targetBranch=content_branch_context($pdo,$targetBranch);
         if (!$targetBranch) {
             Response::success([
                 'branch' => null,
@@ -197,26 +181,7 @@ final class StandController
         $stmt->execute([$bId]);
         $stands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // اگر این شعبه استند اختصاصی در دیتابیس نداشت، ۴ استند پیش‌فرض مکسا را برایش اینسرت می‌کنیم تا همیشه نمایش داده شود
-        if (empty($stands)) {
-            $defaults = [
-                ['title' => 'استند تبریک و شادباش - طرح اول', 'type' => 'congrats', 'image' => '/dashboard/components/event-cards/images/1-removebg-preview.png', 'price' => 300000, 'desc' => 'با سفارش این استند، ضمن تبریک به عزیزانتان، حامی بیماران مبتلا به سرطان باشید.'],
-                ['title' => 'استند تبریک و شادباش - طرح دوم', 'type' => 'congrats', 'image' => '/dashboard/components/event-cards/images/2-removebg-preview.png', 'price' => 350000, 'desc' => 'شادی‌های خود را با مهربانی پیوند بزنید.'],
-                ['title' => 'استند تسلیت و ابراز همدردی - طرح اول', 'type' => 'condolence', 'image' => '/dashboard/components/event-cards/images/3-removebg-preview.png', 'price' => 300000, 'desc' => 'تسلی بخش دل بازماندگان و امیدی برای بیماران سرطانی.'],
-                ['title' => 'استند تسلیت و ابراز همدردی - طرح دوم', 'type' => 'condolence', 'image' => '/dashboard/components/event-cards/images/4-removebg-preview.png', 'price' => 400000, 'desc' => 'با اهدای هزینه تاج گل به خیریه، نامی ماندگار از عزیز از دست رفته به یادگار بگذارید.'],
-            ];
-            $ins = $pdo->prepare("INSERT INTO stands (branch_id, title, stand_type, image, unit_price, description, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, 1, ?)");
-            $orderNum = 1;
-            foreach ($defaults as $d) {
-                try {
-                    $ins->execute([$bId, $d['title'], $d['type'], $d['image'], $d['price'], $d['desc'], $orderNum++]);
-                } catch (Throwable $e) {}
-            }
-
-            $stmt->execute([$bId]);
-            $stands = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-
+        $stands=content_rows($pdo,'stands',$stands);
         // فرمت کردن مبالغ و افزودن نام شهر و استان شعبه
         $formattedStands = array_map(function ($s) use ($targetBranch) {
             $priceInt = (int)$s['unit_price'];

@@ -454,6 +454,7 @@ function campaign_service_present(array $campaign, array $branch): array
     return [
         'id' => (string)($campaign['id'] ?? ''),
         'campaign_code' => (string)($campaign['id'] ?? ''),
+        'created_at' => (string)($campaign['created_at'] ?? ''),
         'title' => (string)($campaign['title'] ?? ''),
         'short_description' => (string)($campaign['short_description'] ?? $campaign['shortDescription'] ?? ''),
         'description' => (string)($campaign['description'] ?? $campaign['short_description'] ?? $campaign['shortDescription'] ?? ''),

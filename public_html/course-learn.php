@@ -10,6 +10,7 @@ require __DIR__ . '/course-ui.php';
 $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 if (!$course) {
+  http_response_code(404);
   course_html_head('دوره یافت نشد');
   echo '<body style="display:grid;place-items:center;min-height:100vh"><div style="text-align:center"><h1>دوره پیدا نشد</h1><a href="/courses" class="btn btn-primary" target="_top" style="margin-top:14px">بازگشت به دوره‌ها</a></div></body></html>';
   exit;

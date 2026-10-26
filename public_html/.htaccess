@@ -17,6 +17,8 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # Public language variants. Panels, APIs and assets retain their existing URLs.
 RewriteRule ^(?:en|ar)(?:/.*)?$ localized.php [END,QSA]
 RewriteRule ^contact(?:us|-us)/?$ contactus.php [L,QSA]
+# Branch upload directories must not shadow the public branch listing.
+RewriteRule ^branches/?$ branches.php [END,QSA]
 
 # ---- Redirect root to /home -----------------------------------------------------
 RewriteRule ^$ /home [R=301,L]

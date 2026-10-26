@@ -25,6 +25,7 @@ if ($id <= 0 || !dash_is_hq_view()) {
 $stmt = $conn->prepare("DELETE FROM `employee_profiles` WHERE `id` = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
+if($stmt->affected_rows>0)content_delete($pdo,'employee_profiles',(string)$id);
 $stmt->close();
 $conn->close();
 

@@ -4,8 +4,9 @@ $homeCampaignSources = [];
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
         $homeCampaignSources = $pdo->query(
-            "SELECT name, slug FROM branches WHERE status = 'active' ORDER BY is_hq DESC, id ASC"
+            "SELECT id, name, slug, is_hq FROM branches WHERE status = 'active' ORDER BY is_hq DESC, id ASC"
         )->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        $homeCampaignSources=array_map(static fn($branch)=>content_branch_context($pdo,$branch),$homeCampaignSources);
     } catch (Throwable $error) {
         error_log('[home-campaigns] branch list: ' . $error->getMessage());
     }

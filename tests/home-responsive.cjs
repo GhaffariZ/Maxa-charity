@@ -114,13 +114,15 @@ async function inspect(page) {
                     const rows = await page.locator('.macsa-gallery > .gallery-item').evaluateAll(cards => cards.map(c => Math.round(c.getBoundingClientRect().bottom)));
                     assert.ok(Math.max(...rows) - Math.min(...rows) <= 1, `${width}px gallery keeps all five cards on one row`);
                 }
-                if (width <= 1279) {
+                if (await page.locator('[data-site-nav]').getAttribute('data-nav-mode') === 'compact') {
                     await page.locator('#menuToggle').click();
                     await page.waitForTimeout(450);
                     assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'true');
                     await assertInside(page, '.mobile-menu-header', '#mobileMenu', 'Mobile menu header');
-                    await page.locator('#mobileMenu .mega-toggle').first().click();
-                    assert.ok(await page.locator('#mobileMenu .mega-menu-content.active').first().isVisible(), 'Mobile submenu opens');
+                    const submenu=page.locator('#mobileMenu .site-nav-submenu').first();
+                    await submenu.click();
+                    assert.equal(await submenu.getAttribute('aria-expanded'),'true','Mobile submenu opens');
+                    assert.ok(await submenu.locator('..').locator('.mega-menu-content').isVisible(), 'Mobile submenu is visible');
                     await page.keyboard.press('Escape');
                     assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'false');
                     await page.locator('#menuToggle').click();

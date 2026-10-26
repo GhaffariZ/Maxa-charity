@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/core/site-locale.php';
+require_once __DIR__.'/core/content-locales.php';
 
 require_once __DIR__ . '/core/database.php';
 require_once __DIR__ . '/event-lib.php';
@@ -54,31 +55,22 @@ if ($slugParam !== '' || $idParam > 0) {
         $matchCondition = '(' . implode(' OR ', $whereParts) . ')';
 
         // 1. Primary search: status != 'archived'
-        $sql = "SELECT n.*, e.title AS event_title, e.slug AS event_slug 
-                FROM event_news n 
-                LEFT JOIN events e ON e.id = n.event_id 
-                WHERE {$matchCondition} AND (n.status != 'archived' OR n.status IS NULL) 
-                ORDER BY CASE WHEN n.status = 'published' THEN 0 ELSE 1 END, n.id DESC 
+        $sql = "SELECT n.*, e.title AS event_title, e.slug AS event_slug
+                FROM event_news n
+                LEFT JOIN events e ON e.id = n.event_id
+                WHERE {$matchCondition} AND n.status='published'
+                ORDER BY CASE WHEN n.status = 'published' THEN 0 ELSE 1 END, n.id DESC
                 LIMIT 1";
         $st = $pdo->prepare($sql);
         $st->execute($params);
         $news = $st->fetch();
 
-        // 2. Fallback search: any status (including preview or draft)
-        if (!$news) {
-            $sql = "SELECT n.*, e.title AS event_title, e.slug AS event_slug 
-                    FROM event_news n 
-                    LEFT JOIN events e ON e.id = n.event_id 
-                    WHERE {$matchCondition} 
-                    ORDER BY n.id DESC 
-                    LIMIT 1";
-            $st = $pdo->prepare($sql);
-            $st->execute($params);
-            $news = $st->fetch();
-        }
+
     }
 }
 
+$news=$pdo?content_row($pdo,'event_news',$news?:null):null;
+if($news){$parent=content_row($pdo,'events',['id'=>$news['event_id'],'title'=>$news['event_title']]);$news['event_title']=$parent['title']??'';}
 if (!$news) {
     http_response_code(404);
     $pageTitle = site_text('خبر یافت نشد');
@@ -94,13 +86,14 @@ require __DIR__ . '/dashboard/components/header/component.php';
 
 $related = [];
 if (!empty($news['event_id'])) {
-    $relatedStmt = $pdo->prepare("SELECT id, title, slug, published_at, created_at, image 
-                                  FROM event_news 
-                                  WHERE event_id = ? AND (status != 'archived' OR status IS NULL) AND id <> ? 
-                                  ORDER BY COALESCE(published_at, created_at) DESC, id DESC 
+    $relatedLanguageScope=content_where($pdo,'event_news');
+    $relatedStmt = $pdo->prepare("SELECT id, title, slug, published_at, created_at, image
+                                  FROM event_news
+                                  WHERE {$relatedLanguageScope} AND event_id = ? AND status='published' AND id <> ?
+                                  ORDER BY COALESCE(published_at, created_at) DESC, id DESC
                                   LIMIT 5");
     $relatedStmt->execute([(int)$news['event_id'], (int)$news['id']]);
-    $related = $relatedStmt->fetchAll();
+    $related = content_rows($pdo,'event_news',$relatedStmt->fetchAll());
 }
 ?>
 <style>

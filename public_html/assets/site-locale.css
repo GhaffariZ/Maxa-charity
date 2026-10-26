@@ -1,3 +1,4 @@
+.cta-hero[hidden]{display:none!important}
 /* Language picker and public document direction. Navigation layout lives in site-navigation.css. */
 .site-language{position:relative;flex:none;font-family:inherit;font-size:13px;line-height:1.5}
 .site-language summary{display:flex;align-items:center;justify-content:center;gap:5px;min-width:44px;min-height:44px;padding:8px;border:1px solid #7caaa7;border-radius:10px;background:#fff;color:#005d60;cursor:pointer;list-style:none;font-weight:700;box-sizing:border-box}
@@ -18,6 +19,6 @@ html[lang=en] .gf-footer,html[lang=en] .cu-wrap{direction:ltr!important}
 html[lang=en] .gf-footer{text-align:left}
 html[lang=en] .gf-col a::before{content:'→'}
 html[lang=en] .gf-title{font-size:clamp(24px,3vw,38px);line-height:1.4}
-html[lang=en] [data-site-dynamic]{direction:rtl!important}
+html[lang=en] [data-site-dynamic]{direction:ltr!important}
 html[lang=ar] body{direction:rtl}
 @media(max-width:600px){.site-language summary{width:44px;padding:6px}.site-language-icon,.site-language-caret{display:none}}

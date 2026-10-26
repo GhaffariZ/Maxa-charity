@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/html-sanitizer.php';
 require_once __DIR__ . '/site-locale.php';
+require_once __DIR__ . '/content-locales.php';
 
 /** Resolve legacy aliases while preventing path traversal. */
 function dashboard_component_name(string $raw): ?string
@@ -106,7 +107,8 @@ function render_dashboard_component(string $rawName, array $scope = []): bool
 
     $data = dashboard_component_data($name);
     if ($data !== null) {
-        echo $data;
+        $localized=content_row(content_pdo(),'components',['id'=>$name,'content'=>$data]);
+        if($localized)echo $localized['content'];
         return true;
     }
 

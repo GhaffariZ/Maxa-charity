@@ -9,193 +9,30 @@ $DB = require __DIR__ . '/../core/db-config.php';
 // ==========================================
 // حالت ویرایش: بارگذاری داده‌های فعلی از دیتابیس
 // ==========================================
-$is_edit_mode = false;
-$edit_data    = null;
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $eid = (int)$_GET['id'];
-    if ($eid > 0) {
-        $c_get = new mysqli($DB['host'], $DB['user'], $DB['pass'], $DB['name']);
-        if (!$c_get->connect_error) {
-            $c_get->set_charset('utf8mb4');
-            $s_get = $c_get->prepare('SELECT * FROM employee_profiles WHERE id = ? LIMIT 1');
-            $s_get->bind_param('i', $eid);
-            $s_get->execute();
-            $r_get = $s_get->get_result();
-            if ($r_get->num_rows > 0) {
-                $edit_data    = $r_get->fetch_assoc();
-                $is_edit_mode = true;
-            }
-            $s_get->close();
-            $c_get->close();
-        }
-    }
+$is_edit_mode=false;$edit_data=null;
+$eid=(int)($_GET['id']??$_POST['edit_id']??0);
+if($eid>0){
+    content_access($pdo,'employee_profiles',(string)$eid);
+    $get=$pdo->prepare('SELECT * FROM employee_profiles WHERE id=?');$get->execute([$eid]);$edit_data=$get->fetch();
+    $is_edit_mode=(bool)$edit_data;
 }
-
-// بررسی اینکه آیا درخواست از نوع POST (توسط fetch جاوااسکریپت) است
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // تنظیم هدر برای پاسخ به صورت JSON
-    header('Content-Type: application/json');
-
-    // Database Configuration (from config file outside git)
-    $servername = $DB['host'];
-    $username = $DB['user'];
-    $password = $DB['pass'];
-    $dbname = $DB['name'];
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        echo json_encode(["status" => "error", "message" => "خطا در اتصال به دیتابیس"]);
-        exit;
-    }
-
-    $conn->set_charset("utf8mb4");
-
-    // ==========================================
-    // ایزولاسیون شعبه: «محل خدمت» همیشه شعبه‌ی فعالِ کاربر است (سمتِ سرور تعیین می‌شود،
-    // نه از روی ورودیِ فرم). نام شعبه در ستونِ متنیِ branch و شناسه در branch_id ذخیره می‌شود.
-    // ==========================================
-    $__branchId   = dash_active_branch_id();
-    $__branchRow  = dash_load_branch($__branchId);
-    $__branchName = $__branchRow['name'] ?? '';
-
-    // ==========================================
-    // آپلود عکس (مشترک بین ثبت و ویرایش)
-    // ==========================================
-    $edit_id    = isset($_POST['edit_id']) ? (int)$_POST['edit_id'] : 0;
-    $is_update  = ($edit_id > 0);
-
-    // IDOR: در حالتِ ویرایش، رکوردِ هدف باید متعلق به همین شعبه باشد (مگر ستاد مرکزی)
-    if ($is_update && !dash_is_hq_view()) {
-        $own = $conn->prepare('SELECT branch_id FROM employee_profiles WHERE id = ? LIMIT 1');
-        $own->bind_param('i', $edit_id);
-        $own->execute();
-        $ownRes = $own->get_result()->fetch_assoc();
-        $own->close();
-        if (!$ownRes || (int)$ownRes['branch_id'] !== $__branchId) {
-            echo json_encode(["status" => "error", "message" => "دسترسی غیرمجاز به این رکورد."]);
-            $conn->close();
-            exit;
-        }
-    }
-
-    // اگر ویرایش است، مسیر عکس قدیمی را به عنوان پیش‌فرض نگه می‌داریم
-    $raw_existing = isset($_POST['existing_pic']) ? trim($_POST['existing_pic']) : '';
-    $pic_path = !empty($raw_existing) ? $raw_existing : NULL;
-
-    if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == 0) {
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/users-profile-pic/';
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
-        }
-        $file_info      = pathinfo($_FILES['profile_pic']['name']);
-        $file_extension = strtolower($file_info['extension']);
-        $new_file_name  = uniqid('profile_') . '.' . $file_extension;
-        $target_file    = $upload_dir . $new_file_name;
-        $allowed_types  = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($file_extension, $allowed_types)) {
-            if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_file)) {
-                $pic_path = '/uploads/users-profile-pic/' . $new_file_name;
-            } else {
-                echo json_encode(["status" => "error", "message" => "خطا در ذخیره فایل عکس در سرور."]);
-                exit;
-            }
-        } else {
-            echo json_encode(["status" => "error", "message" => "فرمت عکس نامعتبر است. فقط JPG, PNG, WEBP مجاز هستند."]);
-            exit;
-        }
-    }
-
-    // ==========================================
-    // ذخیره در دیتابیس (INSERT یا UPDATE)
-    // ==========================================
-    try {
-        $job_category    = isset($_POST['job_category'])    ? $_POST['job_category']    : '';
-        $role            = isset($_POST['role'])            ? $_POST['role']            : '';
-        $medical_id      = isset($_POST['medical_id'])      ? $_POST['medical_id']      : '';
-        $start_work_year = isset($_POST['start_work_year']) ? (int)$_POST['start_work_year'] : 0;
-        $maxa_join_year  = isset($_POST['maxa_join_year'])  ? (int)$_POST['maxa_join_year']  : 0;
-
-        if ($is_update) {
-            // ─── UPDATE ───
-            // محل خدمت (branch) و branch_id همیشه از شعبه‌ی فعالِ سرور؛ نه از فرم.
-            $stmt = $conn->prepare(
-                "UPDATE employee_profiles
-                 SET fullname=?, profile_pic=?, email=?, branch=?, job_category=?, role=?,
-                     medical_id=?, study_field=?, start_work_year=?, maxa_join_year=?,
-                     instagram=?, linkedin=?, bio_professional=?, academic_background=?,
-                     maxa_responsibilities=?, branch_id=?
-                 WHERE id=?"
-            );
-            $stmt->bind_param("ssssssssiisssssii",
-                $_POST['fullname'],
-                $pic_path,
-                $_POST['email'],
-                $__branchName,
-                $job_category,
-                $role,
-                $medical_id,
-                $_POST['study_field'],
-                $start_work_year,
-                $maxa_join_year,
-                $_POST['instagram'],
-                $_POST['linkedin'],
-                $_POST['bio_professional'],
-                $_POST['academic_background'],
-                $_POST['maxa_responsibilities'],
-                $__branchId,
-                $edit_id
-            );
-            if ($stmt->execute()) {
-                echo json_encode(["status" => "success", "message" => "پروفایل همکار با موفقیت بروزرسانی شد."]);
-            } else {
-                echo json_encode(["status" => "error", "message" => "خطا در بروزرسانی: " . $stmt->error]);
-            }
-        } else {
-            // ─── INSERT ───
-            // محل خدمت (branch) و branch_id همیشه از شعبه‌ی فعالِ سرور؛ نه از فرم.
-            $stmt = $conn->prepare(
-                "INSERT INTO employee_profiles
-                 (fullname, profile_pic, email, branch, job_category, role, medical_id,
-                  study_field, start_work_year, maxa_join_year, instagram, linkedin,
-                  bio_professional, academic_background, maxa_responsibilities, branch_id)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            );
-            $stmt->bind_param("ssssssssiisssssi",
-                $_POST['fullname'],
-                $pic_path,
-                $_POST['email'],
-                $__branchName,
-                $job_category,
-                $role,
-                $medical_id,
-                $_POST['study_field'],
-                $start_work_year,
-                $maxa_join_year,
-                $_POST['instagram'],
-                $_POST['linkedin'],
-                $_POST['bio_professional'],
-                $_POST['academic_background'],
-                $_POST['maxa_responsibilities'],
-                $__branchId
-            );
-            if ($stmt->execute()) {
-                echo json_encode(["status" => "success", "message" => "پروفایل همکار با موفقیت در دیتابیس ثبت شد."]);
-            } else {
-                echo json_encode(["status" => "error", "message" => "خطا در ثبت اطلاعات: " . $stmt->error]);
-            }
-        }
-
-        $stmt->close();
-    } catch (Exception $e) {
-        echo json_encode(["status" => "error", "message" => "خطای سیستم: " . $e->getMessage()]);
-    }
-
-    $conn->close();
-    // پایان اجرای اسکریپت پس از بازگرداندن JSON تا کدهای HTML رندر نشوند
+if($_SERVER['REQUEST_METHOD']==='POST'){
+    header('Content-Type: application/json; charset=utf-8');
+    try{
+        csrf_check();content_prepare($pdo,'employee_profiles');
+        $fullname=trim((string)($_POST['fullname']??''));if($fullname==='')throw new InvalidArgumentException('نام همکار الزامی است.');
+        $branch=dash_load_branch(dash_active_branch_id());
+        $picture=$edit_data['profile_pic']??null;
+        if(!empty($_FILES['profile_pic']['name'])){require_once __DIR__.'/../core/image-optimizer.php';$picture=maxa_upload_and_optimize($_FILES['profile_pic'],'users-profile-pic','profile_',82,1200);}
+        $fields=['fullname'=>$fullname,'profile_pic'=>$picture,'branch'=>$branch['name']??'','branch_id'=>dash_active_branch_id()];
+        foreach(['email','job_category','role','medical_id','study_field','instagram','linkedin','bio_professional','academic_background','maxa_responsibilities'] as $key)$fields[$key]=trim((string)($_POST[$key]??''));
+        foreach(['start_work_year','maxa_join_year'] as $key)$fields[$key]=(int)($_POST[$key]??0);
+        $pdo->beginTransaction();
+        if($eid){$set=implode(',',array_map(static fn($key)=>"`$key`=?",array_keys($fields)));$pdo->prepare("UPDATE employee_profiles SET $set WHERE id=?")->execute(array_merge(array_values($fields),[$eid]));}
+        else{$columns=implode(',',array_keys($fields));$marks=implode(',',array_fill(0,count($fields),'?'));$pdo->prepare("INSERT INTO employee_profiles($columns) VALUES($marks)")->execute(array_values($fields));$eid=(int)$pdo->lastInsertId();}
+        content_save($pdo,'employee_profiles',(string)$eid);$pdo->commit();
+        echo json_encode(['status'=>'success','message'=>'محتوای همکار و زبان‌های انتشار ذخیره شد.','id'=>$eid],JSON_UNESCAPED_UNICODE);
+    }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();http_response_code(422);echo json_encode(['status'=>'error','message'=>$e->getMessage()],JSON_UNESCAPED_UNICODE);}
     exit;
 }
 // --- END OF BACKEND LOGIC ---
@@ -1119,6 +956,7 @@ function validateForm() {
 }
 
 function saveData() {
+    if(window.ContentLanguages&&!ContentLanguages.validate())return;
     const errors = validateForm();
     const statusBox = document.getElementById("statusBox");
     
@@ -1139,6 +977,8 @@ function saveData() {
     statusBox.style.borderColor = "";
     
     const formData = new FormData();
+    formData.append("csrf_token", <?= json_encode(csrf_token()) ?>);
+    window.ContentLanguages?.append(formData);
     formData.append("fullname", document.getElementById("fullname").value.trim());
     
     const fileInput = document.getElementById("profile_pic");
@@ -1358,5 +1198,6 @@ document.addEventListener('DOMContentLoaded', function(){
 <?php endif; ?>
 </script>
 
+<?php content_editor('employee_profiles',$eid?(string)$eid:'','.container',['submit'=>'[onclick="saveData()"]','sourceFields'=>['role'=>'#role_input']]); ?>
 </body>
 </html>

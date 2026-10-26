@@ -54,51 +54,13 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS `macsa_stories` (
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-// Seed initial default stories if empty
-$count = (int)$pdo->query("SELECT COUNT(*) FROM `macsa_stories`")->fetchColumn();
-if ($count === 0) {
-    $seedStmt = $pdo->prepare("INSERT INTO `macsa_stories` (`title`, `narrator_name`, `narrator_role`, `tag`, `excerpt`, `content`, `read_time`, `status`, `sort_order`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $seedStmt->execute([
-        'زندگی تا آخرین لحظه',
-        'دکتر زهرا جعفری',
-        'روانشناس مراقبت درمنزل شعبه تهران',
-        'روایت کادر درمان',
-        'یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود ...',
-        'یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود. در جریان درمان و همراهی با این خانواده، شاهد پیوند عمیق عاطفی و امید بی‌پایان به زندگی بودیم که تا آخرین لحظات نیز جریان داشت.',
-        '۴ دقیقه مطالعه',
-        'published',
-        1
-    ]);
-    $seedStmt->execute([
-        'وقتی نوشتن، درمان است',
-        'آقای جواد چنگی',
-        'روانشناس مراقبت در منزل شعبه تهران',
-        'روایت کادر درمان',
-        'در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد و....',
-        'در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد. با شروع جلسات روان‌شناختی و ترغیب ایشان به ثبت احساسات و نوشتن خاطرات، شاهد تحولی شگرف در پذیرش بیماری و آرامش روانی بیمار و اعضای خانواده‌اش بودیم.',
-        '۴ دقیقه مطالعه',
-        'published',
-        2
-    ]);
-    $seedStmt->execute([
-        'از بحران تا ثبات؛ تجربه‌ای از همراهی مستمر اجتماعی',
-        'آقای علی یزدانی',
-        'مددکار اجتماعی مراقبت در منزل شعبه تهران',
-        'روایت کادر درمان',
-        'سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود و متاسفانه دچار زخم بستر هم شده بود. توان انجام هیچ فعالیتی را نداشت و....',
-        'سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود و متاسفانه دچار زخم بستر هم شده بود. تیم مددکاری مکسا با حضور در منزل و تأمین تجهیزات و حمایت‌های معیشتی و دارویی، باری سنگین را از دوش این خانواده برداشت.',
-        '۵ دقیقه مطالعه',
-        'published',
-        3
-    ]);
-}
-
 // Handle Form Submissions (Add, Edit, Delete, Toggle Status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $action = $_POST['action'] ?? '';
 
     if ($action === 'create' || $action === 'update') {
+        try{content_prepare($pdo,'macsa_stories');
         $title        = trim($_POST['title'] ?? '');
         $narratorName = trim($_POST['narrator_name'] ?? '');
         $narratorRole = trim($_POST['narrator_role'] ?? '');
@@ -130,9 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($title !== '' && $narratorName !== '' && $content !== '') {
+            $pdo->beginTransaction();
             if ($action === 'create') {
                 $stmt = $pdo->prepare("INSERT INTO `macsa_stories` (`title`, `narrator_name`, `narrator_role`, `tag`, `excerpt`, `content`, `image`, `read_time`, `status`, `sort_order`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
                 $stmt->execute([$title, $narratorName, $narratorRole, $tag, $excerpt, $content, $imagePath, $readTime, $status, $sortOrder]);
+                $id=(int)$pdo->lastInsertId();
                 $_SESSION['stories_flash'] = ['type' => 'ok', 'text' => 'روایت جدید با موفقیت ثبت و به صفحه اصلی متصل شد.'];
             } else {
                 $id = (int)($_POST['id'] ?? 0);
@@ -140,15 +104,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$title, $narratorName, $narratorRole, $tag, $excerpt, $content, $imagePath, $readTime, $status, $sortOrder, $id]);
                 $_SESSION['stories_flash'] = ['type' => 'ok', 'text' => 'روایت مورد نظر با موفقیت به‌روزرسانی شد.'];
             }
+            content_save($pdo,'macsa_stories',(string)$id);$pdo->commit();
             header("Location: macsa-stories.php");
             exit;
         } else {
             $_SESSION['stories_flash'] = ['type' => 'err', 'text' => 'لطفاً عنوان، نام راوی و متن کامل روایت را وارد نمایید.'];
         }
+        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();$_SESSION['stories_flash']=['type'=>'err','text'=>$e->getMessage()];}
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
             $pdo->prepare("DELETE FROM `macsa_stories` WHERE `id` = ?")->execute([$id]);
+            content_delete($pdo,'macsa_stories',(string)$id);
             $_SESSION['stories_flash'] = ['type' => 'ok', 'text' => 'روایت مورد نظر با موفقیت حذف شد.'];
         }
         header("Location: macsa-stories.php");
@@ -631,6 +598,7 @@ textarea.form-control{min-height:100px;resize:vertical;line-height:1.7}
 
 <script>
 function openCreateModal() {
+  window.ContentLanguages?.load('macsa_stories','').catch(()=>{});
   document.getElementById('formAction').value = 'create';
   document.getElementById('modalTitle').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:20px;height:20px;color:var(--color-primary)"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> افزودن روایت جدید';
   document.getElementById('storyId').value = '';
@@ -641,6 +609,7 @@ function openCreateModal() {
 }
 
 function openEditModal(story) {
+  window.ContentLanguages?.load('macsa_stories',story.id).catch(()=>{});
   document.getElementById('formAction').value = 'update';
   document.getElementById('modalTitle').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:20px;height:20px;color:var(--color-primary)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ویرایش روایت';
   document.getElementById('storyId').value = story.id;
@@ -747,5 +716,6 @@ window.addEventListener('storage', function(e){
 });
 </script>
 
+<?php content_editor('macsa_stories','','#storyForm'); ?>
 </body>
 </html>

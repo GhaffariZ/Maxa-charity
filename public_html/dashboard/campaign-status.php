@@ -527,6 +527,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
             '<div class="card-img-wrapper"><img class="card-img" alt=""></div>' +
             '<div class="card-body">' +
                 '<h4 class="card-title">' + escapeHtml(campaign.title) + '</h4>' + badge +
+                '<a class="btn-support" href="campaign-edit.php?id='+encodeURIComponent(campaign.id)+'&branch='+encodeURIComponent(campaign.branch_slug)+'">ویرایش محتوا و زبان‌های انتشار</a>' +
                 '<div class="card-desc">' + escapeHtml(campaign.description).replace(/\n/g, '<br>') + '</div>' +
                 progressMarkup +
                 '<button class="btn-support" ' + (active ? '' : 'disabled') + '><i class="fas fa-heart"></i> حمایت مالی مستقیم</button>' +

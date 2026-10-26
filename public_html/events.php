@@ -3,17 +3,19 @@ declare(strict_types=1);
 require_once __DIR__ . '/core/site-locale.php';
 
 require_once __DIR__ . '/core/database.php';
+require_once __DIR__.'/core/content-locales.php';
+$languageScope=content_where($pdo,'events');
 require_once __DIR__ . '/event-lib.php';
 
 $filter = isset($_GET['filter']) && in_array($_GET['filter'], ['upcoming', 'past'], true) ? (string)$_GET['filter'] : 'all';
 $q = trim((string)($_GET['q'] ?? ''));
 
 // Get counts for tabs
-$countAll = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE status='published'")->fetchColumn();
-$countUpcoming = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE status='published' AND event_date >= CURDATE()")->fetchColumn();
-$countPast = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE status='published' AND event_date < CURDATE()")->fetchColumn();
+$countAll = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE $languageScope AND status='published'")->fetchColumn();
+$countUpcoming = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE $languageScope AND status='published' AND event_date >= CURDATE()")->fetchColumn();
+$countPast = (int)$pdo->query("SELECT COUNT(*) FROM events WHERE $languageScope AND status='published' AND event_date < CURDATE()")->fetchColumn();
 
-$where = "status='published'";
+$where = "$languageScope AND status='published'";
 $params = [];
 
 if ($filter === 'upcoming') {
@@ -23,15 +25,16 @@ if ($filter === 'upcoming') {
 }
 
 if ($q !== '') {
-    $where .= ' AND (title LIKE ? OR short_description LIKE ? OR description LIKE ? OR location LIKE ?)';
+    $titleExpr=content_expression($pdo,'events','id','title','title');$descriptionExpr=content_expression($pdo,'events','id','short_description','short_description');
+    $where .= " AND ($titleExpr LIKE ? OR $descriptionExpr LIKE ?)";
     $like = '%' . $q . '%';
-    $params = [$like, $like, $like, $like];
+    $params = [$like, $like];
 }
 
 $orderBy = $filter === 'past' ? 'event_date DESC, id DESC' : 'event_date ASC, id DESC';
 $st = $pdo->prepare("SELECT * FROM events WHERE {$where} ORDER BY {$orderBy}");
 $st->execute($params);
-$events = $st->fetchAll(PDO::FETCH_ASSOC);
+$events = content_rows($pdo,'events',$st->fetchAll(PDO::FETCH_ASSOC));
 
 $pageTitle = site_text('رویدادها و همایش‌ها · مؤسسه خیریه مکسا');
 require __DIR__ . '/dashboard/components/header/component.php';

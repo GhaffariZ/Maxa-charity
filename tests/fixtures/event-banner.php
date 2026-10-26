@@ -2,6 +2,8 @@
 // Render the real public components without a database or authenticated session.
 class BannerTestStatement extends PDOStatement
 {
+    public function execute(?array $params = null): bool { return true; }
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array { return []; }
     public function fetch(int $mode = PDO::FETCH_DEFAULT, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0): mixed
     {
         if (($GLOBALS['argv'][2] ?? '') === 'disabled') return false;
@@ -16,6 +18,7 @@ class BannerTestStatement extends PDOStatement
 class BannerTestPDO extends PDO
 {
     public function __construct() {}
+    public function prepare(string $query, array $options = []): PDOStatement|false { return new BannerTestStatement(); }
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false
     {
         return new BannerTestStatement();

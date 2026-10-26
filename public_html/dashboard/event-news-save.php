@@ -36,6 +36,7 @@ if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $sen
 
 try {
     $pdo = dash_pdo();
+    content_prepare($pdo,'event_news');
     $id = (int)($_POST['id'] ?? 0);
     $eventId = (int)($_POST['event_id'] ?? 0);
     $title = trim((string)($_POST['title'] ?? ''));
@@ -74,6 +75,7 @@ try {
         $image = event_asset($_FILES['image'], 'event-news', ['jpg', 'jpeg', 'png', 'webp'], 12000000);
     }
 
+    $pdo->beginTransaction();
     if ($id > 0) {
         // ویرایش خبر
         $fields = ['event_id = ?', 'title = ?', 'slug = ?', 'excerpt = ?', 'content = ?', 'status = ?'];
@@ -106,6 +108,8 @@ try {
         $id = (int)$pdo->lastInsertId();
     }
 
+    content_save($pdo,'event_news',(string)$id);
+    $pdo->commit();
     if ($isJson) {
         sendJson([
             'status' => 'success',
@@ -119,6 +123,7 @@ try {
     exit;
 
 } catch (Throwable $e) {
+    if(isset($pdo)&&$pdo instanceof PDO&&$pdo->inTransaction())$pdo->rollBack();
     if ($isJson) {
         sendJson([
             'status' => 'error',

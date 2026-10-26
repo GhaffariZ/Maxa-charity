@@ -59,6 +59,8 @@ $msgType = 'success';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $action = $_POST['action'] ?? '';
+    try{
+    if(in_array($action,['create','update'],true)){content_prepare($pdo,'stands');$pdo->beginTransaction();}
 
     // Verify target branch is valid and NOT HQ
     if (!$targetBranch || (int)$targetBranch['is_hq'] === 1) {
@@ -85,6 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($imagePath)) {
                 $imagePath = trim((string)($_POST['preset_image'] ?? ''));
             }
+            if($imagePath===''&&isset($_POST['content_languages'])){
+                $publication=json_decode($_POST['content_languages'],true);
+                if(!in_array('fa',$publication['enabled'],true))foreach($publication['enabled'] as $locale){
+                    $candidate=$publication['translations'][$locale]['fields']['image']??'';
+                    if(is_string($candidate)&&$candidate!==''){$imagePath=$candidate;break;}
+                }
+            }
 
             if (empty($title)) {
                 $msg = 'لطفاً عنوان استند را وارد کنید.';
@@ -98,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ");
                 $st->execute([$targetBranchId, $title, $standType, $imagePath, $unitPrice, $description, $isActive, $sortOrder]);
+                content_save($pdo,'stands',(string)$pdo->lastInsertId());
                 dash_audit('stand_create', ['branch_id' => $targetBranchId, 'title' => $title]);
                 $msg = 'طرح استند با موفقیت ایجاد شد.';
                 $msgType = 'success';
@@ -141,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         WHERE `id` = ? AND `branch_id` = ?
                     ");
                     $st->execute([$title, $standType, $imagePath, $unitPrice, $description, $isActive, $sortOrder, $standId, $targetBranchId]);
+                    content_save($pdo,'stands',(string)$standId);
                     dash_audit('stand_update', ['id' => $standId, 'title' => $title]);
                     $msg = 'طرح استند با موفقیت بروزرسانی شد.';
                     $msgType = 'success';
@@ -159,10 +170,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $st = $pdo->prepare("DELETE FROM `stands` WHERE `id` = ? AND `branch_id` = ?");
             $st->execute([$standId, $targetBranchId]);
             dash_audit('stand_delete', ['id' => $standId]);
+            if($st->rowCount()>0)content_delete($pdo,'stands',(string)$standId);
             $msg = 'طرح استند با موفقیت حذف شد.';
             $msgType = 'success';
         }
     }
+    if($pdo->inTransaction()){if($msgType==='success')$pdo->commit();else $pdo->rollBack();}
+    }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();$msg=$e->getMessage();$msgType='danger';}
 }
 
 // Fetch all branches with stands feature for Super Admin
@@ -526,6 +540,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 <script>
 function openAddModal() {
+  window.ContentLanguages?.load('stands','').catch(()=>{});
   document.getElementById('modalTitle').textContent = 'افزودن طرح استند جدید';
   document.getElementById('formAction').value = 'create';
   document.getElementById('standId').value = '';
@@ -542,6 +557,7 @@ function openAddModal() {
 }
 
 function openEditModal(st) {
+  window.ContentLanguages?.load('stands',st.id).catch(()=>{});
   document.getElementById('modalTitle').textContent = 'ویرایش طرح استند: ' + st.title;
   document.getElementById('formAction').value = 'update';
   document.getElementById('standId').value = st.id;
@@ -585,5 +601,6 @@ document.getElementById('standModal').addEventListener('click', function(e) {
 });
 </script>
 
+<?php content_editor('stands','','#standForm'); ?>
 </body>
 </html>

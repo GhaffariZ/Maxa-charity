@@ -78,6 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
   $msg      = '';
 
   try {
+    csrf_check();
+    if(in_array($action,['create','update'],true)){content_prepare($pdo,'maxapedia_items');$pdo->beginTransaction();}
     if ($action === 'create') {
       $url       = trim((string)($_POST['url'] ?? ''));
       $thumbnail = trim((string)($_POST['thumbnail'] ?? ''));
@@ -115,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
       ]);
 
+      content_save($pdo,'maxapedia_items',(string)$newId);$pdo->commit();
       if ($section === 'gallery') {
         header('Location: maxapedia.php?section=gallery&album_id=' . $newId . '&msg=album_created');
         exit;
@@ -167,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'status'      => $_POST['status'] ?? 'published',
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
       ]);
+      content_save($pdo,'maxapedia_items',(string)$id);$pdo->commit();
       $msg = 'updated';
 
     } elseif ($action === 'delete') {
@@ -297,6 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       exit;
     }
   } catch (Throwable $e) {
+    if($pdo->inTransaction())$pdo->rollBack();
     $errorMsg = $e->getMessage();
     $msg = 'error';
   }
@@ -1026,7 +1031,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     <!-- باکس آپلود گروهی عکس‌ها (Drag & Drop Multi-upload) -->
     <div class="mx-multi-uploader-card">
-      <form method="post" action="maxapedia.php?section=gallery" enctype="multipart/form-data" id="galleryMultiUploadForm">
+      <form method="post" action="maxapedia.php?section=gallery" enctype="multipart/form-data" id="galleryMultiUploadForm"><?= csrf_field() ?>
         <input type="hidden" name="action" value="gallery_upload_photos">
         <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
 
@@ -1059,7 +1064,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
     <!-- گرید مدیریت تصاویر و ویرایش کپشن‌ها -->
     <div class="mx-photos-container">
-      <form method="post" action="maxapedia.php?section=gallery" id="gallerySavePhotosForm">
+      <form method="post" action="maxapedia.php?section=gallery" id="gallerySavePhotosForm"><?= csrf_field() ?>
         <input type="hidden" name="action" value="gallery_save_photos">
         <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
 
@@ -1148,14 +1153,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </form>
 
       <!-- فرم مخفی حذف عکس تک‌تک -->
-      <form id="galleryDelPhotoForm" method="post" action="maxapedia.php?section=gallery" style="display:none;">
+      <form id="galleryDelPhotoForm" method="post" action="maxapedia.php?section=gallery" style="display:none;"><?= csrf_field() ?>
         <input type="hidden" name="action" value="gallery_delete_photo">
         <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
         <input type="hidden" name="photo_id" id="galleryDelPhotoId" value="">
       </form>
 
       <!-- فرم مخفی حذف دسته‌ای تصاویر -->
-      <form id="galleryBatchDelForm" method="post" action="maxapedia.php?section=gallery" style="display:none;">
+      <form id="galleryBatchDelForm" method="post" action="maxapedia.php?section=gallery" style="display:none;"><?= csrf_field() ?>
         <input type="hidden" name="action" value="gallery_batch_delete_photos">
         <input type="hidden" name="album_id" value="<?= (int)$activeAlbum['id'] ?>">
         <div id="galleryBatchDelInputs"></div>
@@ -1167,7 +1172,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   <div class="mx-grid">
 
     <!-- فرم افزودن / ویرایش محتوا -->
-    <form class="mx-card <?= $isEditing ? 'mx-card--editing' : '' ?>" method="post" action="maxapedia.php?section=<?= e($section) ?>" enctype="multipart/form-data">
+    <form id="maxapediaContentForm" class="mx-card <?= $isEditing ? 'mx-card--editing' : '' ?>" method="post" action="maxapedia.php?section=<?= e($section) ?>" enctype="multipart/form-data">
+      <?= csrf_field() ?>
       <?php if ($section === 'gallery'): ?>
         <h2><?= $meta['icon'] ?> <?= $isEditing ? 'ویرایش آلبوم «' . e($editItem['title']) . '»' : 'افزودن آلبوم جدید به گالری مکسا' ?></h2>
       <?php else: ?>
@@ -1446,7 +1452,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
-                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
+                <form method="post" action="maxapedia.php?section=<?= e($section) ?><?= csrf_field() ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="section" value="<?= e($section) ?>">
                   <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
@@ -1846,5 +1852,6 @@ window.submitBatchDelete = function() {
   }
 })();
 </script>
+<?php content_editor('maxapedia_items',$isEditing?(string)$editItem['id']:'','#maxapediaContentForm'); ?>
 </body>
 </html>

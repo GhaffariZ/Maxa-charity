@@ -12,6 +12,7 @@ public_html/core/db.local.php
 maksa-private/
 # Local runtimes, databases, certificates, sessions, and private settings
 /.local/
+/public_html/uploads/content-locales/
 # Keep only the credential-free legacy database entry point in version control
 /config/*
 !/config/database.php

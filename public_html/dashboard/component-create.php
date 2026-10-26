@@ -935,7 +935,7 @@ text-align:center;
 
 <h2>ایجاد کامپوننت</h2>
 
-<form action="components-save.php" method="POST" enctype="multipart/form-data">
+<form id="newComponentForm" action="components-save.php" method="POST" enctype="multipart/form-data">
 
 <?= csrf_field() ?>
 
@@ -991,7 +991,7 @@ text-align:center;
 
 <div class="component-box">
 
-<form action="component-update.php" method="POST" enctype="multipart/form-data">
+<form id="componentForm-<?= htmlspecialchars($item['name'],ENT_QUOTES) ?>" action="component-update.php" method="POST" enctype="multipart/form-data">
 
 <?= csrf_field() ?>
 
@@ -1011,7 +1011,7 @@ text-align:center;
 
 </div>
 
-<div class="component-content">
+<div class="component-content" id="componentContent-<?= htmlspecialchars($item['name'],ENT_QUOTES) ?>">
 
 <input type="hidden" name="component_name" value="<?= $item['name'] ?>">
 
@@ -1147,6 +1147,7 @@ onclick="return confirm('حذف شود؟')">
 </div>
 
 </form>
+<?php content_editor('components',(string)$item['name'],'#componentContent-'.$item['name']); ?>
 
 </div>
 
@@ -1349,6 +1350,7 @@ function removeImage(index){
 
 </script>
 
+<?php content_editor('components','','#newComponentForm'); ?>
 </body>
 
 </html>

@@ -3660,6 +3660,7 @@ function validateNewsForm(){
 }
 
 async function saveNews() {
+    if(window.ContentLanguages&&!ContentLanguages.validate())return;
     const title = document.getElementById("title").value.trim();
     const content = document.getElementById("editor").innerHTML.trim();
 
@@ -3679,6 +3680,7 @@ async function saveNews() {
 
         const fd = new FormData();
         fd.append("csrf_token", CSRF_TOKEN);
+        window.ContentLanguages?.append(fd);
         fd.append("id", "<?= $id ?>");
         fd.append("title", title);
         fd.append("subtitle", document.getElementById("subtitle").value.trim());
@@ -3925,5 +3927,6 @@ document.getElementById("editor").addEventListener("keydown", function(e) {
 });
 </script>
 
+<?php content_editor($event_mode?'event_news':'news',$id?(string)$id:'','.layout',['sourceFields'=>['featured_image'=>'#featured_image','image'=>'#featured_image']]); ?>
 </body>
 </html>

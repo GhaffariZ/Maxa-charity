@@ -11,6 +11,7 @@ $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 
 if (!$course) {
+  http_response_code(404);
   course_site_head('دوره یافت نشد');
   echo '<div class="page" style="text-align:center;padding:80px 20px">'
      . '<div style="width:80px;height:80px;border-radius:22px;display:grid;place-items:center;margin:0 auto 18px;background:var(--primary-08);color:var(--color-primary)">'.cic('search').'</div>'

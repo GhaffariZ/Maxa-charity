@@ -15,36 +15,7 @@
 <div class="maxsa-testimonial-wrapper">
 
 <div class="maxsa-testimonial-track" id="homeStoriesTrack">
-  <!-- Default initial cards, replaced/augmented dynamically via API -->
-  <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
-      <span style="font-size:11px;color:#888"><?= site_e('۴ دقیقه مطالعه') ?></span>
-    </div>
-    <div class="maxsa-author">دکتر زهرا جعفری</div>
-    <div class="maxsa-role">روانشناس مراقبت درمنزل شعبه تهران</div>
-    <p>یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...</p>
-  </a>
 
-  <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
-      <span style="font-size:11px;color:#888"><?= site_e('۴ دقیقه مطالعه') ?></span>
-    </div>
-    <div class="maxsa-author">آقای جواد چنگی</div>
-    <div class="maxsa-role">روانشناس مراقبت در منزل شعبه تهران</div>
-    <p>در تابستان امسال، خانمی در دهه پنجم زندگی‌اش با تشخیص سرطان پستان متاستاز داده به مکسا ارجاع داده شد و....</p>
-  </a>
-
-  <a href="/macsa-stories-details" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700"><?= site_e('روایت کادر درمان') ?></span>
-      <span style="font-size:11px;color:#888"><?= site_e('۵ دقیقه مطالعه') ?></span>
-    </div>
-    <div class="maxsa-author">آقای علی یزدانی</div>
-    <div class="maxsa-role">مددکار اجتماعی مراقبت در منزل شعبه تهران</div>
-    <p>سرپرست یک خانواده به دلیل درگیری مغزی ناشی از سرطان، بستری شده بود و به قول معروف وابسته به تخت بود...</p>
-  </a>
 </div>
 </div>
 
@@ -91,7 +62,7 @@
           const tag = st.tag || <?= site_js_text('روایت امید') ?>;
 
           return `
-            <a href="/macsa-story.php?id=${st.id}" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
+            <a href="<?= site_url('/macsa-story.php') ?>?id=${st.id}" class="maxsa-card" style="text-decoration:none;color:inherit;display:block">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                 <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(0, 143, 138,.12);color:#008f8a;font-size:11px;font-weight:700">${escapeHtml(tag)}</span>
                 <span style="font-size:11px;color:#888">${escapeHtml(readTime)}</span>
@@ -109,7 +80,7 @@
       }
     })
     .catch(() => {
-      // Keep default fallback cards
+      track.innerHTML = '';
     });
 })();
 </script>

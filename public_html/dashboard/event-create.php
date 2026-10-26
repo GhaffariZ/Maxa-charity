@@ -3277,7 +3277,7 @@ function deleteCurrentPdf() {
 
     // On mobile devices (<= 768px), auto-activate mobile preview so banner fits screen naturally
     if (window.innerWidth <= 768) {
-      tabMobile.click();
+      requestAnimationFrame(() => tabMobile.click());
     }
   }
 
@@ -4132,5 +4132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </div>
+<?php if(!defined('IN_SNAPSHOT'))content_editor('events',$id?(string)$id:'','#eventForm'); ?>
 </body>
 </html>

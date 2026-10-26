@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo && $coursesSchemaReady) {
       q($pdo, "DELETE FROM course_sections WHERE course_id=?", [$id]);
       q($pdo, "DELETE FROM course_enrollments WHERE course_id=?", [$id]);
       q($pdo, "DELETE FROM courses WHERE id=?", [$id]);
+      content_delete($pdo,'courses',(string)$id);
       $flash = 'دوره حذف شد.';
     } elseif ($id && $act === 'publish') {
       q($pdo, "UPDATE courses SET status='published' WHERE id=?", [$id]); $flash = 'دوره منتشر شد.';

@@ -28,7 +28,7 @@ const origin='http://localhost:8080';
   }
   const hero=await (await context.request.get(origin+'/dashboard/hero-list.php')).json();
   const image=hero.data?.[0]?.image||'/favicon.png';
-  await page.route('**/dashboard/hero-list.php',route=>route.fulfill({json:{status:'success',data:[{title:'تماس با ما',description:'خدمات مکسا',image,button_link:''}]}}));
+  await page.route('**/dashboard/hero-list.php*',route=>route.fulfill({json:{status:'success',data:[{title:'تماس با ما',description:'خدمات مکسا',image,button_link:''}]}}));
   for(const locale of ['en','ar']) {
    await page.goto(origin+'/'+locale+'/home',{waitUntil:'networkidle'});
    assert.equal(await page.locator('#heroTitle').innerText(),'تماس با ما','Database-like hero title must remain Persian');
@@ -65,10 +65,13 @@ const origin='http://localhost:8080';
   if(articleUrl) {
    const plain=new URL(articleUrl,origin);
    await page.goto(origin+plain.pathname,{waitUntil:'domcontentloaded'});
-   const articleBody=await page.locator('.article-content').innerHTML();
+   assert.equal(await page.locator('.article-content').count(),1);
    for(const locale of ['en','ar']) {
-    await page.goto(origin+'/'+locale+plain.pathname,{waitUntil:'domcontentloaded'});
-    assert.equal(await page.locator('.article-content').innerHTML(),articleBody,'Actual news body changed');
+    const localizedFeed=await (await context.request.get(origin+'/dashboard/recent-news-feed.php?limit=12&lang='+locale)).json();
+    const available=localizedFeed.items?.some(item=>item.id===article.id);
+    const response=await page.goto(origin+'/'+locale+plain.pathname,{waitUntil:'domcontentloaded'});
+    if(!available)assert.equal(response.status(),404,'Unconfigured article has no Persian fallback');
+    else assert.equal(await page.locator('.article-content').count(),1);
    }
   }
   await page.goto(origin+'/dashboard/login.php',{waitUntil:'domcontentloaded'});

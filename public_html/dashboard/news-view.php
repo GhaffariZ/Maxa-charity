@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/site-locale.php';
+require_once __DIR__.'/../core/content-locales.php';
 // اصلاح نحوه اتصال به دیتابیس برای سازگاری در توسعه محلی و پروداکشن
 if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/../config/database.php")) {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
@@ -53,10 +54,11 @@ $stmt = $pdo->prepare("
     WHERE n.id = ?
 ");
 $stmt->execute([$id]);
-$news = $stmt->fetch(PDO::FETCH_ASSOC);
+$news = content_row($pdo,'news',$stmt->fetch(PDO::FETCH_ASSOC)?:null);
+if($news&&(($news['status']??'')!=='published'||strtotime($news['publish_date'])>time()||trim((string)($news['reject_reason']??''))!==''))$news=null;
 
 if (!$news) {
-    die("خبر یافت نشد");
+    site_error_page();exit;
 }
 
 // دریافت برچسب‌های چندگانه خبر
@@ -69,7 +71,7 @@ try {
         WHERE m.news_id = ?
     ");
     $stmt_db_tags->execute([$id]);
-    $db_tags = $stmt_db_tags->fetchAll(PDO::FETCH_COLUMN);
+    $db_tags = content_language()==='fa'?$stmt_db_tags->fetchAll(PDO::FETCH_COLUMN):array_filter(array_map('trim',explode(',',(string)($news['tags']??''))));
 } catch (Exception $e) {
     $db_tags = [];
 }
@@ -202,7 +204,7 @@ try {
 $featured_path = '';
 $has_featured_image = false;
 if (!empty($news['featured_image']) && !empty($news['news_code'])) {
-  $featured_path = "/uploads/news/{$news['news_code']}/" . $news['featured_image'];
+  $featured_path = preg_match('~^(?:/|https?://)~',$news['featured_image'])?$news['featured_image']:"/uploads/news/{$news['news_code']}/" . $news['featured_image'];
   if (file_exists($_SERVER['DOCUMENT_ROOT'] . $featured_path) || file_exists(__DIR__ . '/..' . $featured_path)) {
     $has_featured_image = true;
   }
@@ -215,12 +217,13 @@ $readTimeFa = faNumbers($readTimeValue);
 
 // سه خبر جدید از همان دسته، غیر از خبر فعلی
 $relatedNews = [];
+$relatedLanguageScope=content_where($pdo,'news','n.id');
 try {
     $latStmt = $pdo->prepare("
         SELECT n.*, c.name AS category_name
         FROM news n
         LEFT JOIN news_categories c ON c.id = n.category_id
-        WHERE n.status = 'published'
+        WHERE {$relatedLanguageScope} AND n.status = 'published'
           AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
           AND n.id <> ?
@@ -229,7 +232,7 @@ try {
         LIMIT 3
     ");
     $latStmt->execute([$id, $news['category_id'] ?? null]);
-    $relatedNews = $latStmt->fetchAll(PDO::FETCH_ASSOC);
+    $relatedNews = content_rows($pdo,'news',$latStmt->fetchAll(PDO::FETCH_ASSOC));
 } catch (PDOException $e) {
     // ignore
 }
@@ -988,7 +991,7 @@ render_dashboard_component('header', get_defined_vars());
                     $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
                     $latImage = '';
                     if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
-                        $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
+                        $latImage = preg_match('~^(?:/|https?://)~',$lat['featured_image'])?$lat['featured_image']:"/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
                     } else {
                         $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
                     }

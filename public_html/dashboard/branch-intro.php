@@ -141,6 +141,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ثبت یا به‌روزرسانی در دیتابیس
         try {
+            content_prepare($pdo,'branch_intros');
+            $pdo->beginTransaction();
             $imagesJson = json_encode($existingImages, JSON_UNESCAPED_UNICODE);
             
             $upsert = $pdo->prepare("
@@ -155,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     images = VALUES(images)
             ");
             $upsert->execute([$branchId, $title, $introText, $address, $phone, $workingHours, $imagesJson]);
+            content_save($pdo,'branch_intros',(string)$branchId);$pdo->commit();
 
             // به‌روزرسانی متغیرهای نمایشی
             $intro['title']         = $title;
@@ -167,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             dash_audit('branch_intro_update', ['branch_id' => $branchId]);
             $ok = 'اطلاعات و تصاویر معرفی شعبه با موفقیت ذخیره شد.';
         } catch (Throwable $e) {
+            if($pdo->inTransaction())$pdo->rollBack();
             $err = 'خطا در ذخیره‌سازی اطلاعات: ' . $e->getMessage();
         }
     }
@@ -405,7 +409,7 @@ require_once __DIR__ . '/_panel_head.php';
     </a>
   </div>
 
-  <form method="POST" action="branch-intro.php" enctype="multipart/form-data">
+  <form id="branchIntroForm" method="POST" action="branch-intro.php" enctype="multipart/form-data">
     <?= csrf_field() ?>
 
     <!-- بخش اول: متن و عنوان معرفی -->
@@ -553,5 +557,6 @@ require_once __DIR__ . '/_panel_head.php';
   }
 </script>
 
+<?php content_editor('branch_intros',(string)$branchId,'#branchIntroForm'); ?>
 </body>
 </html>

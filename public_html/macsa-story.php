@@ -6,42 +6,31 @@ require_once __DIR__ . '/core/site-locale.php';
  */
 
 require_once __DIR__ . '/core/database.php';
+require_once __DIR__.'/core/content-locales.php';
+$languageScope=content_where($pdo,'macsa_stories');
 
 $id = (int)($_GET['id'] ?? 0);
 $story = null;
 
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE `id` = ? AND `status` = 'published' LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE $languageScope AND `id` = ? AND `status` = 'published' LIMIT 1");
     $stmt->execute([$id]);
     $story = $stmt->fetch();
 }
 
 // Fallback: If story ID is invalid or not provided, fetch the latest published story
-if (!$story) {
-    $fallbackStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status` = 'published' ORDER BY `sort_order` ASC, `id` DESC LIMIT 1");
+if (!$story && $id===0) {
+    $fallbackStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE $languageScope AND `status` = 'published' ORDER BY `sort_order` ASC, `id` DESC LIMIT 1");
     $story = $fallbackStmt->fetch();
 }
 
-// If database is completely empty
-if (!$story) {
-    $story = [
-        'id' => 1,
-        'title' => 'زندگی تا آخرین لحظه',
-        'narrator_name' => 'دکتر زهرا جعفری',
-        'narrator_role' => 'روانشناس مراقبت درمنزل شعبه تهران',
-        'tag' => 'روایت کادر درمان',
-        'excerpt' => 'یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...',
-        'content' => "یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود.\n\nدر جریان درمان و همراهی با این خانواده، شاهد پیوند عمیق عاطفی و امید بی‌پایان به زندگی بودیم که تا آخرین لحظات نیز جریان داشت. تیم مراقبت در منزل مکسا با ارائه مشاوره‌های منظم روانشناختی، آموزش مهارت‌های تاب‌آوری به همراهان، و ایجاد فضایی امن و آرام، تلاش کرد تا کیفیت زندگی بیمار و اطرافیان در بالاترین سطح ممکن حفظ شود.\n\nتجربه این خانواده نشان داد که مراقبت تسکینی تنها افزودن روز به زندگی نیست، بلکه بخشیدن زندگی، معنا و آرامش به لحظه‌لحظه روزهاست.",
-        'image' => '',
-        'read_time' => '۴ دقیقه مطالعه',
-        'created_at' => date('Y-m-d H:i:s')
-    ];
-}
+$story=content_row($pdo,'macsa_stories',$story?:null);
+if(!$story){site_error_page();exit;}
 
 // Fetch other related stories (excluding current)
-$relatedStmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE `status` = 'published' AND `id` != ? ORDER BY `sort_order` ASC, `id` DESC LIMIT 3");
+$relatedStmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE $languageScope AND `status` = 'published' AND `id` != ? ORDER BY `sort_order` ASC, `id` DESC LIMIT 3");
 $relatedStmt->execute([$story['id']]);
-$relatedStories = $relatedStmt->fetchAll();
+$relatedStories = content_rows($pdo,'macsa_stories',$relatedStmt->fetchAll());
 
 $pageTitle = 'روایت امید مکسا | ' . htmlspecialchars($story['title']);
 require_once __DIR__ . '/core/component-renderer.php';
@@ -463,11 +452,11 @@ body {
     <div class="story-meta-top">
       <span class="story-tag-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <?= htmlspecialchars($story['tag'] ?: 'روایت امید') ?>
+        <?= htmlspecialchars($story['tag'] ?: site_text('روایت امید')) ?>
       </span>
       <span class="story-read-time">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <?= htmlspecialchars($story['read_time'] ?: '۴ دقیقه مطالعه') ?>
+        <?= htmlspecialchars($story['read_time'] ?: site_text('۴ دقیقه مطالعه')) ?>
       </span>
     </div>
 
@@ -486,7 +475,7 @@ body {
         </div>
         <div>
           <div class="narrator-name"><?= htmlspecialchars($story['narrator_name']) ?></div>
-          <div class="narrator-sub"><?= htmlspecialchars($story['narrator_role'] ?: 'همراه و حامی مکسا') ?></div>
+          <div class="narrator-sub"><?= htmlspecialchars($story['narrator_role'] ?: site_text('همراه و حامی مکسا')) ?></div>
         </div>
       </div>
 
@@ -550,7 +539,7 @@ body {
         <?php foreach ($relatedStories as $rel): ?>
           <a href="/macsa-story.php?id=<?= $rel['id'] ?>" class="related-card">
             <div>
-              <span class="related-tag"><?= htmlspecialchars($rel['tag'] ?: 'روایت امید') ?></span>
+              <span class="related-tag"><?= htmlspecialchars($rel['tag'] ?: site_text('روایت امید')) ?></span>
               <h4><?= htmlspecialchars($rel['title']) ?></h4>
               <p><?= htmlspecialchars($rel['excerpt'] ?: mb_substr(strip_tags($rel['content']), 0, 100, 'UTF-8') . '...') ?></p>
             </div>

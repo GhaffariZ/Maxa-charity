@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($err === '') {
         try {
-            $pdo->beginTransaction();
+            content_prepare($pdo,'branches');
 
             $oldSlug = $branch['slug'];
 
@@ -143,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
                 }
             } catch (Throwable $eCols) {}
+            $pdo->beginTransaction();
 
             // 1) نام + slug + استان + شهر + مختصات نقشه ایران
             if ($isHq) {
@@ -197,6 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // 4) صفحه‌ی home شعبه: عنوان را با نام جدید همگام کن (slug ثابت می‌ماند: 'home')
             $pdo->prepare("UPDATE pages SET title = ? WHERE branch_id = ? AND slug = 'home'")->execute([$name, $branchId]);
 
+            content_save($pdo,'branches',(string)$branchId);
             $pdo->commit();
 
             // 5) تغییرِ نامِ پوشه‌ی فایل‌های شعبه در صورت تغییر slug (نام فقط از slug تأییدشده)
@@ -244,7 +246,7 @@ require __DIR__ . '/_panel_head.php';
   <?php if ($err): ?><div class="msg err"><?= e($err) ?></div><?php endif; ?>
   <?php if ($ok && !$passChanged): ?><div class="msg ok"><?= e($ok) ?></div><?php endif; ?>
 
-  <form method="POST" autocomplete="off">
+  <form id="branchContentForm" method="POST" autocomplete="off">
     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
     <input type="hidden" name="branch_id" value="<?= (int)$branchId ?>">
 
@@ -420,4 +422,5 @@ require __DIR__ . '/_panel_head.php';
     });
   })();
 </script>
-</div></body></html>
+</div><?php content_editor('branches',(string)$branchId,'#branchContentForm'); ?>
+</body></html>
