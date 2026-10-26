@@ -8,6 +8,7 @@ $isSuper = dash_is_super();
 $isHq = dash_is_hq_view();
 $activeBranchId = dash_active_branch_id();
 $search = trim((string)($_GET['q'] ?? ''));
+$isExport = ($_GET['export'] ?? '') === 'xlsx';
 $where = [];
 $params = [];
 
@@ -25,6 +26,7 @@ $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 $records = [];
 $filesByRecord = [];
 $dbError = null;
+$limitSql = $isExport ? '' : 'LIMIT 200';
 
 try {
     $stmt = $pdo->prepare(
@@ -33,9 +35,14 @@ try {
            LEFT JOIN branches b ON b.id = mr.branch_id
            {$whereSql}
           ORDER BY mr.id DESC
-          LIMIT 200"
+          {$limitSql}"
     );
     $stmt->execute($params);
+    if ($isExport) {
+        require_once __DIR__ . '/medical-record-export.php';
+        medical_export_xlsx($stmt);
+        exit;
+    }
     $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ($records) {
@@ -84,6 +91,7 @@ function medical_status(string $status): string {
   <form class="search" method="get">
     <input name="q" value="<?= medical_e($search) ?>" placeholder="جستجو با نام، موبایل، استان یا شهر">
     <button type="submit">جستجو</button>
+    <button type="submit" name="export" value="xlsx" <?= $dbError ? 'disabled' : '' ?>>خروجی اکسل</button>
   </form>
 
   <div class="table-wrap">
@@ -96,7 +104,10 @@ function medical_status(string $status): string {
       <?php foreach ($records as $record): ?>
         <tr>
           <td>#<?= (int)$record['id'] ?><br><small><?= medical_e($record['branch_name']) ?></small></td>
-          <td><strong><?= medical_e($record['full_name']) ?></strong><br><a href="tel:<?= medical_e($record['phone']) ?>"><?= medical_e($record['phone']) ?></a><?php if ($record['age']): ?><br><?= (int)$record['age'] ?> سال<?php endif; ?></td>
+          <td><strong><?= medical_e($record['full_name']) ?></strong><br><a href="tel:<?= medical_e($record['phone']) ?>"><?= medical_e($record['phone']) ?></a><?php if ($record['age'] !== null): ?><br><?= (int)$record['age'] ?> سال<?php endif; ?>
+            <?php if (!empty($record['identity_code'])): ?><br><?= !empty($record['is_foreign']) ? 'کد فراگیر' : 'کد ملی' ?>: <bdi><?= medical_e($record['identity_code']) ?></bdi><?php endif; ?>
+            <?php if (!empty($record['birth_date'])): ?><br>تولد (میلادی): <bdi><?= medical_e($record['birth_date']) ?></bdi><?php endif; ?>
+          </td>
           <td><?= medical_e($record['province']) ?>، <?= medical_e($record['city']) ?></td>
           <td class="details">
             <div><?= medical_e($record['cancer_type'] ?: 'نوع سرطان ثبت نشده') ?> — <?= medical_e($record['diagnosis_status'] ?: 'وضعیت تشخیص ثبت نشده') ?></div>
