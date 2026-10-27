@@ -3206,8 +3206,8 @@ function deleteCurrentPdf() {
     const chkPart = document.getElementById('chk-partners');
     if (chkPart) chkPart.classList.toggle('is-done', document.querySelectorAll('#partner-list .hq-repeat-card').length > 0);
 
-    const doneCount = document.querySelectorAll('.hq-sidebar-links .hq-check.is-done').length;
     const countEl = document.getElementById('sidebarFilledCount');
+    const doneCount = countEl?.closest('.hq-sidebar-nav')?.querySelectorAll('.hq-check.is-done').length || 0;
     if (countEl) {
       const faCount = String(doneCount).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
       countEl.textContent = faCount + ' از ۹ پر شده';
@@ -3766,6 +3766,7 @@ function deleteCurrentPdf() {
     }
   };
 
+  window.ContentEditorRowTemplates={...(window.ContentEditorRowTemplates||{}),events:{heroes:()=>templates.hero(),people:()=>templates.person(),speakers:()=>templates.speaker(),partners:()=>templates.partner()}};
   // Add and remove repeatable items
   document.addEventListener('click', e => {
     const addBtn = e.target.closest('[data-add]');

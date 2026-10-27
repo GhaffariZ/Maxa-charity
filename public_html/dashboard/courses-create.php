@@ -475,9 +475,8 @@ course_html_head('ساخت دوره جدید', $pageCss);
   }
   function clearEmpty(){ var e=$('emptyCur'); if(e) e.remove(); }
 
-  function addSection(title){
-    clearEmpty();
-    secCount++;
+  function addSection(title, templateOnly){
+    if(!templateOnly){ clearEmpty(); secCount++; }
     var sec = document.createElement('div');
     sec.className = 'cur-section';
     sec.setAttribute('draggable','false');
@@ -499,9 +498,7 @@ course_html_head('ساخت دوره جدید', $pageCss);
           '<button type="button" class="btn btn-soft addLesson" data-type="quiz">'+svg('quiz')+' آزمون</button>'+
         '</div>'+
       '</div>';
-    curEl.appendChild(sec);
-    wireSection(sec);
-    sync();
+    if(!templateOnly){ curEl.appendChild(sec); wireSection(sec); sync(); }
     return sec;
   }
 
@@ -548,7 +545,7 @@ course_html_head('ساخت دوره جدید', $pageCss);
   }
 
   /* ---------- درس ---------- */
-  function addLesson(sec, type, data){
+  function addLesson(sec, type, data, templateOnly){
     var lessons = sec.querySelector('.lessons');
     var wrap = document.createElement('div');
     wrap.className = 'lesson-wrap';
@@ -571,7 +568,7 @@ course_html_head('ساخت دوره جدید', $pageCss);
     cfg.innerHTML = buildCfg(type);
     wrap.appendChild(ls); wrap.appendChild(cfg);
     lessons.appendChild(wrap);
-    wireLesson(sec, wrap, ls, cfg);
+    if(!templateOnly)wireLesson(sec, wrap, ls, cfg);
     // مقداردهی (درس جدید یا داده‌ی موجود هنگام ویرایش)
     ls.querySelector('.lesson-title-inp').value = (data && data.title!=null) ? data.title : ('درس جدید — '+TYPE_LABEL[type]);
     if (data) {
@@ -586,7 +583,8 @@ course_html_head('ساخت دوره جدید', $pageCss);
         t.className='lesson-prev-tag'; t.textContent='پیش‌نمایش'; sub.appendChild(t);
       }
     }
-    sync();
+    if(!templateOnly)sync();
+    return wrap;
   }
 
   function buildCfg(type){
@@ -731,7 +729,7 @@ course_html_head('ساخت دوره جدید', $pageCss);
       lessons: lessons>0
     };
     var done=0, total=0;
-    document.querySelectorAll('.chk').forEach(function(c){
+    $('chkPct').closest('.card').querySelectorAll('.chk').forEach(function(c){
       total++; var k=c.getAttribute('data-chk');
       if(st[k]){ c.classList.add('done'); done++; } else c.classList.remove('done');
     });
@@ -802,6 +800,14 @@ course_html_head('ساخت دوره جدید', $pageCss);
     t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); }, 3200);
   }
   window.__toast = showToast;
+  // The locale editor uses the same markup without binding Persian data handlers.
+  window.ContentEditorRowTemplates = {...(window.ContentEditorRowTemplates||{}), courses:{
+    curriculum:()=>addSection('',true).outerHTML,
+    lessons:(data={})=>{
+      const section=document.createElement('div');section.innerHTML='<div class="lessons"></div>';
+      return addLesson(section,data.type||'video',data,true).outerHTML;
+    }
+  }};
 
   /* ---------- راه‌اندازی ---------- */
   bindPreview();

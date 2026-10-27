@@ -1852,6 +1852,22 @@ window.submitBatchDelete = function() {
   }
 })();
 </script>
-<?php content_editor('maxapedia_items',$isEditing?(string)$editItem['id']:'','#maxapediaContentForm'); ?>
+<?php if($section==='gallery'): ?>
+<template id="contentPhotoTemplate">
+  <div class="mx-photo-item">
+    <div class="mx-photo-img-wrap">
+      <div class="mx-dropzone"><input type="file" name="image_url" accept="image/jpeg,image/png,image/webp,image/gif"><div class="mx-dropzone-icon"><?= iconoir('media-image-plus','',40) ?></div><div class="mx-dropzone-title">انتخاب تصویر</div></div>
+      <span class="mx-drag-handle" title="جابه‌جایی تصویر"><?= iconoir('drag-hand-gesture','',14) ?></span>
+    </div>
+    <div class="mx-photo-body">
+      <div class="mx-photo-field"><label>نیمچه کپشن (توضیح کوتاه زیر عکس):</label><input name="caption" placeholder="مثلاً: سخنرانی مراسم افتتاحیه..."></div>
+      <div class="mx-photo-field"><label>اندازه در گرید:</label><select name="layout_span"><option value="normal">عادی (۱×۱)</option><option value="wide">عریض (۲ ستونه)</option><option value="tall">عمودی (۲ سطره)</option><option value="featured">شاخص بزرگ (۲×۲)</option></select></div>
+      <button type="button" class="mx-btn-bulk-del" data-cl-remove-row><?= iconoir('trash','',14) ?> حذف تصویر</button>
+    </div>
+  </div>
+</template>
+<script>window.ContentEditorRowTemplates={...(window.ContentEditorRowTemplates||{}),maxapedia_items:{photos:()=>document.getElementById('contentPhotoTemplate').innerHTML}};</script>
+<?php endif; ?>
+<?php content_editor('maxapedia_items',$isEditing?(string)$editItem['id']:'','#maxapediaContentForm',['section'=>$section]); ?>
 </body>
 </html>

@@ -113,6 +113,15 @@ async function get(api,route){return json(await api.get(origin+route));}
   const eventResponse=await api.post(origin+'/dashboard/event-save.php',{form:{csrf_token:csrf,title:prefix+' رویداد',jalali_date:'1405/08/05',status:'published','speaker_name[]':'سخنران','speaker_title[]':'عنوان',content_languages:versions({title:prefix+' Event',about:'<p>English event body</p>',speakers:[{name:'English speaker',title:'Researcher',image:''}]})}});
   assert.equal(eventResponse.status(),200,await eventResponse.text());
   const eventId=remember('events',query('SELECT id FROM events WHERE title=?',[prefix+' رویداد'])[0].id);
+  // Editing an event with a Persian poster must leave the English picker visible and independent.
+  query('UPDATE events SET poster=? WHERE id=?',['/favicon.png',eventId]);
+  await page.goto(origin+'/dashboard/event-create.php?id='+eventId,{waitUntil:'networkidle'});
+  await page.locator('[role=tab]').filter({hasText:/^انگلیسی$/}).click();
+  assert.equal(await page.locator('.cl-panel:not([hidden]) [data-cl-field=poster] .hq-dropzone').isVisible(),true,'Persian media state cannot hide the English upload area');
+  await page.locator('.cl-panel:not([hidden]) [data-cl-field=poster] input[type=file]').setInputFiles(path.join(root,'public_html/favicon.png'));
+  await Promise.all([page.waitForURL(/event-list\.php/),page.locator('.cl-footer button').first().click()]);track('events',eventId);
+  assert.equal(query('SELECT poster FROM events WHERE id=?',[eventId])[0].poster,'/favicon.png','English poster upload preserves Persian media');
+  assert.match(JSON.parse(state('events',eventId).find(row=>row.locale==='en').payload).poster,/^\/uploads\/content-locales\/events\/en\//);
   const eventHtml=await (await api.get(origin+'/en/event.php?id='+eventId)).text();assert.ok(eventHtml.includes('English event body')&&eventHtml.includes('English speaker'));
   assert.equal((await api.get(origin+'/ar/event.php?id='+eventId)).status(),404);
   const eventNews=await json(await api.post(origin+'/dashboard/event-news-save.php',{headers:{Accept:'application/json'},form:{csrf_token:csrf,event_id:eventId,title:prefix+' خبر رویداد',content:'<p>خبر فارسی</p>',status:'published',content_languages:versions({title:prefix+' Event news',content:'<p>English event news</p>'})}}));

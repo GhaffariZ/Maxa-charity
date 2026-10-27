@@ -11,6 +11,7 @@
     const uid='content-languages-'+(++serial),form=scope.closest('form');
     let id=String(config.id||''),state=clone(config.state),active='fa',pending=new Map(),loading=false,failed=false;
     const originalSubmit=(form||document).querySelector(config.submit||'button[type="submit"],input[type="submit"],.btn-save');
+    const requiredOriginal=new Set(scope.querySelectorAll('[required]'));
     const primary=node('div',{'class':'cl-primary','role':'tabpanel',id:uid+'-fa','aria-labelledby':uid+'-tab-fa'});
     while(scope.firstChild)primary.append(scope.firstChild);
     const box=node('section',{'class':'cl-editor','data-content-type':config.type});
@@ -20,10 +21,15 @@
     const tabs=node('div',{'class':'cl-tabs','role':'tablist','aria-label':'ویرایش محتوای زبان‌ها'});
     const error=node('p',{'class':'cl-error','role':'alert',hidden:''});
     const panes=node('div',{'class':'cl-panes'}),buttons={},checks={},panels={fa:primary};
-    const footer=node('div',{'class':'cl-footer'}),save=node('button',{'type':'button','class':'cl-save'},'ذخیرهٔ محتوا و زبان‌ها');
-    save.addEventListener('click',()=>{if(!validate())return;if(originalSubmit){originalSubmit.disabled=false;originalSubmit.click();}else if(form)form.requestSubmit();});footer.append(save);
-    box.append(title,help,choices,tabs,error,panes);
-    scope.append(box,primary,footer);
+    const footer=node('div',{'class':'cl-footer'}),submitters=form?[...form.querySelectorAll('button[type="submit"],input[type="submit"]')].filter(e=>!e.matches('[formaction*="delete"]')):[];
+    if(originalSubmit&&!submitters.includes(originalSubmit))submitters.unshift(originalSubmit);
+    for(const original of submitters.length?submitters:[null]){
+      const save=node('button',{'type':'button','class':original?original.className+' cl-native-save':'cl-save'},'ذخیرهٔ محتوا و زبان‌ها');
+      if(original)save.innerHTML=original.innerHTML||original.value;
+      save.addEventListener('click',()=>{if(!validate())return;if(original){original.disabled=false;original.click();}else if(form)form.requestSubmit();});footer.append(save);
+    }
+    box.append(title,help,choices,tabs,error);
+    scope.append(box,primary,panes,footer);
 
     for(const locale of Object.keys(labels)){
       const label=node('label'),check=node('input',{type:'checkbox','data-content-language':locale});checks[locale]=check;
@@ -83,6 +89,8 @@
       return fields;
     }
     function refresh(){
+      const localized=new Set(Object.entries(config.fields).map(([key,definition])=>find(definition.input,key)).filter(Boolean));
+      for(const input of requiredOriginal)if(localized.has(input))input.required=state.enabled.includes('fa');
       for(const locale of Object.keys(labels))buttons[locale].hidden=locale!=='fa'&&!state.enabled.includes(locale);
       buttons.fa.textContent=state.enabled.includes('fa')?'فارسی':'فارسی (منتشر نمی‌شود)';
       for(const locale of ['ar','en'])if(state.translations[locale]?.copy){state.translations[locale].fields=readPrimary();if(active===locale)render(locale);}
@@ -91,57 +99,87 @@
     function activate(locale){
       active=locale;
       for(const key of Object.keys(labels)){panels[key].hidden=key!==locale;buttons[key].setAttribute('aria-selected',String(key===locale));buttons[key].tabIndex=key===locale?0:-1;}
-      footer.hidden=locale==='fa'&&!!originalSubmit;
+      footer.hidden=!!originalSubmit&&(locale==='fa'||!primary.contains(originalSubmit));
       if(locale!=='fa')render(locale);
     }
     function changed(locale){const t=ensure(locale);t.copy=false;const checkbox=panels[locale].querySelector('[data-copy-fa]');if(checkbox)checkbox.checked=false;sync();}
     function render(locale){
-      const panel=panels[locale],translation=ensure(locale);panel.replaceChildren();
-      const copyLabel=node('label',{'class':'cl-copy'}),copy=node('input',{type:'checkbox','data-copy-fa':locale});copy.checked=translation.copy;
-      copyLabel.append(copy,document.createTextNode('استفاده از همین محتوای تب فارسی برای '+labels[locale]));panel.append(copyLabel,node('p',{'class':'cl-help'},'این گزینه ترجمه انجام نمی‌دهد؛ متن و فایل‌های فارسی کپی می‌شوند. با ویرایش هر فیلد، تیک به‌طور خودکار برداشته می‌شود.'));
+      const panel=panels[locale],translation=ensure(locale);panel.querySelectorAll('.cl-native-layout').forEach(e=>e._clDispose?.());panel.replaceChildren();
+      const copyBox=node('div',{'class':'cl-copy-box'}),copyLabel=node('label',{'class':'cl-copy'}),copy=node('input',{type:'checkbox','data-copy-fa':locale});copy.checked=translation.copy;
+      copyLabel.append(copy,document.createTextNode('استفاده از همین محتوای تب فارسی برای '+labels[locale]));copyBox.append(copyLabel,node('p',{'class':'cl-help'},'این گزینه ترجمه انجام نمی‌دهد؛ متن و فایل‌های فارسی کپی می‌شوند. با ویرایش هر فیلد، تیک به‌طور خودکار برداشته می‌شود.'));panel.append(copyBox);
       copy.addEventListener('change',()=>{translation.copy=copy.checked;if(copy.checked)translation.fields=readPrimary();render(locale);sync();});
-      const grid=node('div',{'class':'cl-fields',dir:locale==='en'?'ltr':'rtl',lang:locale});panel.append(grid);
+      const grid=node('div',{'class':'cl-fields',dir:'rtl',lang:locale});panel.append(grid);
       renderFields(grid,config.fields,translation.fields,locale,'');
+      window.ContentEditorLayout?.project(grid,primary,config,uid+'-'+locale);
     }
     function renderFields(parent,definitions,values,locale,path){
       for(const [key,originalDefinition]of Object.entries(definitions)){
+        if(!path&&config.type==='maxapedia_items'&&((key==='photos'&&config.section!=='gallery')||(key==='url'&&config.section==='gallery')))continue;
         let definition=originalDefinition;
+        const native=path?'':window.ContentEditorLayout?.source(primary,config,key,definition);
+        if(native?.tagName==='TEXTAREA'&&['html','text'].includes(definition.type))definition={...definition,type:'textarea'};
         if(config.type==='courses'&&key==='content'&&values.type){
           const accept={video:'video/*',image:'image/*',pdf:'application/pdf'};
           definition={...definition,...(accept[values.type]?{type:'asset',accept:accept[values.type]}:{type:'textarea'})};
         }
-        const fieldPath=path?path+'.'+key:key,field=node('div',{'class':'cl-field'}),fieldId=uid+'-'+locale+'-'+fieldPath.replaceAll('.','-');
+        const fieldPath=path?path+'.'+key:key,field=node('div',{'class':'cl-field','data-cl-field':fieldPath}),fieldId=uid+'-'+locale+'-'+fieldPath.replaceAll('.','-');
         const label=node('label',{'for':fieldId},definition.label);field.append(label);parent.append(field);
         let value=values[key]??(definition.type==='list'?[]:''),input;
         const update=newValue=>{values[key]=newValue;changed(locale);};
         if(definition.type==='list'){
           values[key]=Array.isArray(value)?value:[];
+          if(native?.type==='file'&&native.multiple&&Object.keys(definition.fields).length===1){
+            field.dataset.clMulti='true';const childKey=Object.keys(definition.fields)[0],file=node('input',{type:'file',multiple:'',accept:native.accept||'image/*'}),preview=node('div',{'class':'cl-asset-preview cl-multi-preview'});
+            file.addEventListener('change',()=>{for(const selected of file.files){const token='asset_'+(++serial);pending.set(token,selected);values[key].push({[childKey]:{upload:token}});}changed(locale);render(locale);});
+            file.addEventListener('cl-clear',()=>{values[key]=[];changed(locale);render(locale);});
+            values[key].forEach((entry,index)=>{const asset=entry[childKey],source=state.source?.[key]?.[index]?.[childKey],selected=native.files?.[index-(state.source?.[key]?.length||0)],url=typeof asset==='string'?asset:asset?.upload&&pending.has(asset.upload)?URL.createObjectURL(pending.get(asset.upload)):asset?.source_fa?(selected?URL.createObjectURL(selected):source):'';const item=node('div',{'class':'cl-multi-item'});if(url)item.append(node('img',{src:url,alt:definition.label}));const remove=node('button',{type:'button','class':'cl-remove','aria-label':'حذف تصویر'},'×');remove.addEventListener('click',event=>{event.stopPropagation();values[key].splice(index,1);changed(locale);render(locale);});item.append(remove);preview.append(item);});
+            field.append(file,preview);continue;
+          }
           const list=node('div',{'class':'cl-list'});field.append(list);
-          values[key].forEach((item,index)=>{const row=node('div',{'class':'cl-list-row'}),remove=node('button',{type:'button','class':'cl-remove'},'حذف مورد');remove.addEventListener('click',()=>{values[key].splice(index,1);changed(locale);render(locale)});row.append(remove);list.append(row);renderFields(row,definition.fields,item,locale,fieldPath+'.'+index);});
-          const add=node('button',{type:'button','class':'cl-add'},'افزودن مورد');add.addEventListener('click',()=>{values[key].push({});changed(locale);render(locale)});field.append(add);continue;
+          const rowTemplate=window.ContentEditorRowTemplates?.[config.type]?.[key];
+          if(rowTemplate&&config.type==='events')list.className='cl-list hq-repeat-grid';
+          if(rowTemplate&&config.type==='maxapedia_items')list.className='cl-list mx-photos-grid';
+          let draggingIndex=null;
+          const move=(from,to)=>{if(from===to)return;const [item]=values[key].splice(from,1);values[key].splice(to,0,item);changed(locale);render(locale);};
+          values[key].forEach((item,index)=>{
+            const row=node('div',{'class':'cl-list-row'}),remove=node('button',{type:'button','class':'cl-remove'},'حذف مورد');
+            const removeRow=()=>{values[key].splice(index,1);changed(locale);render(locale);};remove.addEventListener('click',event=>{event.stopPropagation();removeRow();});row.append(remove);list.append(row);renderFields(row,definition.fields,item,locale,fieldPath+'.'+index);
+            if(rowTemplate){
+              const template=document.createElement('template');template.innerHTML=rowTemplate(item);window.ContentEditorLayout?.project(row,template.content.firstElementChild,{...config,rowFields:definition.fields},uid+'-'+locale+'-'+fieldPath+'-'+index,fieldPath+'.'+index,removeRow);row.classList.add('cl-native-repeat-row');
+              const card=row.firstElementChild,grip=card?.querySelector('.grip,.mx-drag-handle');
+              if(grip){grip.tabIndex=0;grip.setAttribute('role','button');grip.setAttribute('aria-label','جابه‌جایی با کلیدهای بالا و پایین');grip.addEventListener('mousedown',()=>card.draggable=true);grip.addEventListener('mouseup',()=>card.draggable=false);grip.addEventListener('keydown',event=>{if(['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();event.stopPropagation();move(index,Math.max(0,Math.min(values[key].length-1,index+(event.key==='ArrowUp'?-1:1))));}});card.addEventListener('dragstart',event=>{event.stopPropagation();draggingIndex=index;event.dataTransfer.effectAllowed='move';});card.addEventListener('dragend',()=>{draggingIndex=null;card.draggable=false;});card.addEventListener('dragover',event=>{if(draggingIndex!==null){event.preventDefault();event.stopPropagation();}});card.addEventListener('drop',event=>{if(draggingIndex!==null){event.preventDefault();event.stopPropagation();move(draggingIndex,index);draggingIndex=null;}});}
+            }
+          });
+          const addItem=item=>{values[key].push(item);changed(locale);render(locale);};
+          if(config.type==='courses'&&key==='lessons'){
+            const actions=node('div',{'class':'add-row'}),template=window.ContentEditorRowTemplates?.courses?.curriculum?.();
+            if(template){const wrapper=document.createElement('div');wrapper.innerHTML=template;wrapper.querySelectorAll('.addLesson').forEach(original=>{const button=original.cloneNode(true);button.addEventListener('click',event=>{event.stopPropagation();addItem({type:button.dataset.type});});actions.append(button);});}field.append(actions);
+          }else{const add=node('button',{type:'button','class':'cl-add'},'افزودن مورد');add.addEventListener('click',event=>{event.stopPropagation();addItem({})});field.append(add);}continue;
         }
         if(definition.type==='asset'){
-          input=node('input',{type:'url',id:fieldId,placeholder:'https://… یا /uploads/…',dir:'ltr'});
-          input.type='text';input.value=typeof value==='string'?value:'';field.append(input);
-          input.addEventListener('input',()=>update(input.value));
+          input=node(native?.tagName==='TEXTAREA'?'textarea':'input',{id:fieldId,placeholder:'https://… یا /uploads/…',dir:'ltr','data-cl-asset-url':''});
+          if(input.tagName==='INPUT')input.type='text';input.value=typeof value==='string'?value:'';field.append(input);
+          input.addEventListener('input',()=>{file.value='';update(input.value);showPreview(input.value);});
           const file=node('input',{type:'file',accept:definition.accept||'image/*','aria-label':definition.label});field.append(file);
-          file.addEventListener('change',()=>{if(!file.files[0])return;const token='asset_'+(++serial);pending.set(token,file.files[0]);update({upload:token});showPreview(URL.createObjectURL(file.files[0]));});
+          file.addEventListener('change',()=>{if(!file.files[0])return;const token='asset_'+(++serial);pending.set(token,file.files[0]);input.value='';update({upload:token});showPreview(URL.createObjectURL(file.files[0]));});
+          file.addEventListener('cl-clear',()=>{input.value='';update('');showPreview('');});
           const preview=node('div',{'class':'cl-asset-preview'});field.append(preview);
           function showPreview(url){preview.replaceChildren();if(url&&/^(?:https?:\/\/|blob:|\/(?!\/))/.test(url)){if((definition.accept||'image/*').startsWith('image/'))preview.append(node('img',{src:url,alt:definition.label}));else preview.append(node('a',{href:url,target:'_blank',rel:'noopener'},'مشاهدهٔ فایل'));}}
           const primaryValue=state.source?.[key];
-          if(typeof value==='string')showPreview(value);else if(value?.source_fa&&typeof primaryValue==='string')showPreview(primaryValue);
+          if(typeof value==='string')showPreview(value);else if(value?.source_fa){if(native?.files?.[0])showPreview(URL.createObjectURL(native.files[0]));else if(typeof primaryValue==='string')showPreview(primaryValue);}
           if(value?.source_fa)preview.append(node('span',{},'فایل تب فارسی پس از ذخیره کپی می‌شود.'));
           if(value?.upload)preview.append(node('span',{},pending.get(value.upload)?.name||'فایل انتخاب‌شده'));
           continue;
         }
         if(definition.type==='html'){
-          const tools=node('div',{'class':'cl-tools'});input=node('div',{contenteditable:'true',id:fieldId,role:'textbox','aria-multiline':'true','aria-label':definition.label,'class':'cl-rich'});input.innerHTML=typeof value==='string'?value:'';
+          const tools=node('div',{'class':'cl-tools'});input=node('div',{contenteditable:'true',id:fieldId,role:'textbox','aria-multiline':'true','aria-label':definition.label,'class':'cl-rich','data-cl-value':''});input.innerHTML=typeof value==='string'?value:'';
           for(const [command,text]of [['bold','B'],['italic','I'],['insertUnorderedList','فهرست'],['undo','بازگشت']]){const button=node('button',{type:'button','aria-label':text},text);button.addEventListener('mousedown',event=>event.preventDefault());button.addEventListener('click',()=>{input.focus();document.execCommand(command);update(input.innerHTML)});tools.append(button);}field.append(tools,input);input.addEventListener('input',()=>update(input.innerHTML));continue;
         }
         if(definition.type==='select'){input=node('select',{id:fieldId});for(const [option,text]of Object.entries(definition.options))input.append(node('option',{value:option},text));if(!Object.hasOwn(definition.options,value))value=values[key]=Object.keys(definition.options)[0];}
         else if(definition.type==='textarea')input=node('textarea',{id:fieldId,rows:'4'});
         else input=node('input',{id:fieldId,type:definition.type==='checkbox'?'checkbox':definition.type==='number'?'number':'text'});
         if(definition.type==='checkbox')input.checked=!!value;else input.value=String(value??'');
+        input.dataset.clValue='';input.dir=locale==='en'?'ltr':'rtl';
         input.addEventListener('input',()=>{update(definition.type==='checkbox'?input.checked:input.value);if(config.type==='courses'&&key==='type')render(locale);});field.append(input);
       }
     }
@@ -165,16 +203,25 @@
           }
         }
       }
+      if(active!=='fa'){
+        const missing=[...requiredOriginal].find(input=>{
+          if(!input.required||input.disabled||(['checkbox','radio'].includes(input.type)?input.checked:input.value?.trim()))return false;
+          for(let p=input.parentElement;p&&p!==primary;p=p.parentElement)if(p.hidden||getComputedStyle(p).display==='none')return false;
+          return !['checkbox','radio'].includes(input.type)||!input.checked;
+        });
+        if(missing){activate('fa');error.textContent='ابتدا فیلدهای لازم و تنظیمات مشترک را در تب فارسی کامل کنید؛ این اطلاعات فقط یک‌بار وارد می‌شوند.';error.hidden=false;if(missing.type!=='hidden')missing.focus();error.scrollIntoView({block:'center'});return false;}
+      }
       refresh();return true;
     }
     function append(fd){sync();fd.set('content_languages',envelope.value);for(const [token,file]of pending)fd.set('content_uploads['+token+']',file);}
     async function load(nextId){
       id=String(nextId||'');loading=true;failed=true;error.hidden=true;
+      box.setAttribute('aria-busy','true');for(const locale of Object.keys(labels)){checks[locale].disabled=true;buttons[locale].disabled=true;}
       try{
         const response=await fetch('/dashboard/content-languages.php?type='+encodeURIComponent(config.type)+'&id='+encodeURIComponent(id),{credentials:'same-origin'});
         const data=await response.json();if(!response.ok||!data.state)throw Error(data.message||'بارگذاری نسخه‌های زبان انجام نشد.');
         state=data.state;pending.clear();failed=false;for(const locale of Object.keys(labels))checks[locale].checked=state.enabled.includes(locale);activate('fa');refresh();
-      }catch(e){error.textContent=e.message;error.hidden=false;throw e;}finally{loading=false;}
+      }catch(e){error.textContent=e.message;error.hidden=false;throw e;}finally{loading=false;box.removeAttribute('aria-busy');for(const locale of Object.keys(labels)){checks[locale].disabled=false;buttons[locale].disabled=false;}}
     }
     primary.addEventListener('input',refresh);primary.addEventListener('change',refresh);
     if(form){form.addEventListener('submit',event=>{if(event.submitter?.matches('[formaction*="delete"]'))return;if(!validate()){event.preventDefault();event.stopImmediatePropagation();}},true);form.addEventListener('formdata',event=>append(event.formData));form.addEventListener('invalid',()=>activate('fa'),true);}

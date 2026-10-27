@@ -22,15 +22,15 @@ function content_types(): array
             'author'=>$text('نویسنده','author'),'category_name'=>$text('نام دسته‌بندی'),'keywords'=>$text('کلیدواژه‌ها','keywords'),
             'tags'=>$text('برچسب‌ها','tags'),'featured_image'=>$media('تصویر شاخص','featured_image')]],
         'employee_profiles'=>['permission'=>'partners','branch'=>true,'fields'=>[
-            'fullname'=>$text('نام و نام خانوادگی','fullname'),'role'=>$text('سمت','role'),'job_category'=>$text('گروه شغلی','job_category'),
+            'fullname'=>$text('نام و نام خانوادگی','fullname'),'role'=>$text('سمت','role'),
             'branch'=>$text('نام محل خدمت'),'study_field'=>$text('رشتهٔ تحصیلی','study_field'),
             'bio_professional'=>$area('معرفی حرفه‌ای','bio_professional'),'academic_background'=>$area('سوابق علمی','academic_background'),
             'maxa_responsibilities'=>$area('مسئولیت‌ها در مکسا','maxa_responsibilities'),'profile_pic'=>$media('عکس همکار','profile_pic'),
-            'email'=>$text('ایمیل','email'),'instagram'=>$text('اینستاگرام','instagram'),'linkedin'=>$text('لینکدین','linkedin')]],
+            'instagram'=>$text('اینستاگرام','instagram'),'linkedin'=>$text('لینکدین','linkedin')]],
         'branches'=>['permission'=>'super','fields'=>['name'=>$text('نام شعبه','name'),'province'=>$text('استان','province'),'city'=>$text('شهر','city')]],
         'branch_intros'=>['permission'=>'branch','key'=>'branch_id','branch'=>true,'fields'=>[
             'title'=>$text('عنوان','title'),'intro_text'=>$area('متن معرفی','intro_text'),'address'=>$area('نشانی','address'),
-            'phone'=>$text('تلفن','phone'),'working_hours'=>$text('ساعت کاری','working_hours'),
+            'working_hours'=>$text('ساعت کاری','working_hours'),
             'images'=>$list('تصاویر شعبه',['url'=>$media('تصویر')])]],
         'courses'=>['permission'=>'courses','branch'=>true,'fields'=>[
             'title'=>$text('عنوان دوره','title'),'subtitle'=>$text('زیرعنوان','subtitle'),'description'=>$html('معرفی دوره','description'),
@@ -39,8 +39,7 @@ function content_types(): array
             'what_you_learn'=>$area('آنچه یاد می‌گیرید','what_you_learn'),'requirements'=>$area('پیش‌نیازها','requirements'),
             'curriculum'=>$list('سرفصل‌ها',['title'=>$text('عنوان فصل'),'lessons'=>$list('درس‌ها',[
                 'title'=>$text('عنوان درس'),'type'=>['label'=>'نوع درس','type'=>'select','options'=>['video'=>'ویدیو','text'=>'متن','image'=>'تصویر','pdf'=>'PDF','quiz'=>'آزمون']],
-                'content'=>$html('محتوا یا نشانی فایل'),'duration'=>['label'=>'مدت به دقیقه','type'=>'number'],
-                'is_preview'=>['label'=>'پیش‌نمایش رایگان','type'=>'checkbox']])])]],
+                'content'=>$html('محتوا یا نشانی فایل'),'duration'=>['label'=>'مدت به دقیقه','type'=>'number']])])]],
         'events'=>['permission'=>'events','hq'=>true,'fields'=>[
             'title'=>$text('عنوان رویداد','title'),'short_description'=>$area('خلاصه','short_description'),'about'=>$html('دربارهٔ رویداد','about'),
             'poster'=>$media('پوستر','poster'),'schedule_pdf'=>$media('برنامهٔ رویداد','schedule_pdf','application/pdf'),
@@ -296,7 +295,7 @@ function content_save(PDO $db,string $type,string $id,?string $raw=null,?array $
         if($locale!=='fa'){
             $fields=content_clean_fields($definition['fields'],is_array($fields)?$fields:[],$source,$type,$locale);
             if($type==='components')$fields['content']=preg_replace_callback('/\{\{image([1-9][0-9]*)\}\}/',static fn($match)=>(string)($fields['images'][(int)$match[1]-1]['url']??''),$fields['content']);
-            if($type==='courses')foreach($fields['curriculum'] as $si=>&$section){$section['id']=$source['curriculum'][$si]['id']??($si+1);foreach($section['lessons'] as $li=>&$lesson)$lesson['id']=$source['curriculum'][$si]['lessons'][$li]['id']??(1000000000+($si*1000)+$li);unset($lesson);}unset($section);
+            if($type==='courses')foreach($fields['curriculum'] as $si=>&$section){$section['id']=$source['curriculum'][$si]['id']??($si+1);foreach($section['lessons'] as $li=>&$lesson){$lesson['id']=$source['curriculum'][$si]['lessons'][$li]['id']??(1000000000+($si*1000)+$li);$lesson['is_preview']=(int)($source['curriculum'][$si]['lessons'][$li]['is_preview']??0);}unset($lesson);}unset($section);
             if(in_array($locale,$enabled,true)){
                 $titleKey=isset($definition['fields']['title'])?'title':(isset($definition['fields']['fullname'])?'fullname':(isset($definition['fields']['name'])?'name':null));
                 if($titleKey&&trim((string)($fields[$titleKey]??''))==='')throw new InvalidArgumentException('عنوان / نام را در تب '.($locale==='en'?'انگلیسی':'عربی').' وارد کنید.');
@@ -425,5 +424,5 @@ function content_editor(string $type,string $id,string $selector,array $options=
     $config=['type'=>$type,'id'=>$id,'selector'=>$selector,'fields'=>content_type($type)['fields'],'state'=>content_state($db,$type,$id)]+$options;
     if(isset($options['source']))$config['state']['source']=array_intersect_key($options['source'],content_type($type)['fields']);
     echo '<script type="application/json" class="content-locale-config">'.json_encode($config,JSON_UNESCAPED_UNICODE|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_THROW_ON_ERROR).'</script>';
-    static $assets=false;if(!$assets){$assets=true;echo '<link rel="stylesheet" href="/assets/content-editor.css?v='.filemtime(dirname(__DIR__).'/assets/content-editor.css').'"><script src="/assets/content-editor.js?v='.filemtime(dirname(__DIR__).'/assets/content-editor.js').'" defer></script>';}
+    static $assets=false;if(!$assets){$assets=true;echo '<link rel="stylesheet" href="/assets/content-editor.css?v='.filemtime(dirname(__DIR__).'/assets/content-editor.css').'"><script src="/assets/content-editor-layout.js?v='.filemtime(dirname(__DIR__).'/assets/content-editor-layout.js').'" defer></script><script src="/assets/content-editor.js?v='.filemtime(dirname(__DIR__).'/assets/content-editor.js').'" defer></script>';}
 }

@@ -257,7 +257,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 /* Branch Selector Card for Super Admin */
 .branch-selector-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:18px 22px;margin-bottom:22px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
-.branch-select-form{display:flex;align-items:center;gap:10px}
+.branch-select-form{display:flex;align-items:center;gap:10px;max-width:100%;min-width:0}
+.branch-select-form select{max-width:100%;min-width:0}
 .branch-select{background:var(--color-bg);border:1px solid var(--color-border);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13.5px;color:var(--color-text);outline:none;cursor:pointer}
 
 /* Main Cards */
@@ -270,7 +271,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .btn-add svg{width:16px;height:16px}
 
 /* Stands Grid */
-.stands-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:20px}
+.stands-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(min(320px,100%), 1fr));gap:20px}
 .stand-card{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm);overflow:hidden;display:flex;flex-direction:column;transition:border-color .25s var(--ease),box-shadow .25s var(--ease)}
 .stand-card:hover{border-color:var(--color-primary-light);box-shadow:var(--shadow-md)}
 

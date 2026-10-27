@@ -44,10 +44,15 @@ try{
         if($type==='courses')$source['curriculum']=[['id'=>101,'title'=>'فصل','lessons'=>[['id'=>202,'title'=>'درس','type'=>'text','content'=>'متن','duration'=>5,'is_preview'=>1]]]];
         if($type==='components')$source['content']='<p>فارسی</p>';
         $en=$source;foreach($definition['fields'] as $field=>$spec)if($spec['type']==='text')$en[$field]='EN '.$field;
+        if($type==='employee_profiles'){$base['email']='shared@example.test';$base['job_category']='admin';$en['email']='stale@example.test';$en['job_category']='stale';}
+        if($type==='branch_intros'){$base['phone']='021-00000000';$en['phone']='stale';}
+        if($type==='courses')$en['curriculum'][0]['lessons'][0]['is_preview']=0;
         $payload=['enabled'=>['fa','en','ar'],'translations'=>['en'=>['copy'=>false,'fields'=>$en],'ar'=>['copy'=>true,'fields'=>[]]]];
         content_save($db,$type,$id,json_encode($payload,JSON_UNESCAPED_UNICODE),$source);
         $english=content_row($db,$type,$base,'en',$key);$arabic=content_row($db,$type,$base,'ar',$key);
         verify($english!==null&&$arabic!==null,$type.': both versions available');
+        if($type==='employee_profiles')verify($english['email']==='shared@example.test'&&$english['job_category']==='admin','Partner email and job classification stay shared');
+        if($type==='branch_intros')verify($english['phone']==='021-00000000','Branch phone stays shared');
         $firstText=array_key_first(array_filter($definition['fields'],static fn($spec)=>$spec['type']==='text'));
         if($firstText){verify($english[$firstText]==='EN '.$firstText,$type.': independent English');verify($arabic[$firstText]===$source[$firstText],$type.': explicit Persian snapshot');}
         $payload['enabled']=['en'];content_save($db,$type,$id,json_encode($payload,JSON_UNESCAPED_UNICODE),$source);
@@ -56,7 +61,10 @@ try{
         if(empty($definition['remote'])&&$type!=='components'){
             $scope=content_where($db,$type,$key,'en');$s=$db->prepare("SELECT COUNT(*) FROM `$type` WHERE `$key`=? AND $scope");$s->execute([$id]);verify((int)$s->fetchColumn()===1,$type.': SQL scope / database collation');
         }
-        if($type==='courses')verify($english['curriculum'][0]['lessons'][0]['id']===202,'Course identities survive localization');
+        if($type==='courses'){
+            verify($english['curriculum'][0]['lessons'][0]['id']===202,'Course identities survive localization');
+            verify($english['curriculum'][0]['lessons'][0]['is_preview']===1,'Lesson access stays shared despite a stale translated flag');
+        }
         $cases++;
     }
     foreach(['tickets','orders','panel_users','donation_impacts'] as $private){try{content_type($private);throw new RuntimeException('Private registry accepted');}catch(InvalidArgumentException $expected){}}
