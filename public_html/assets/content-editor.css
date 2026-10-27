@@ -48,3 +48,7 @@
 .cl-native-layout .mx-photo-img-wrap .cl-asset-preview{display:block;height:100%;margin:0}
 .cl-native-layout .mx-photo-img-wrap .cl-asset-preview img{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover}
 .cl-native-list-field>.cl-add.mx-btn-upload-submit{background:var(--color-primary,#008f8a);color:#fff;border:0}
+.cl-translate{max-width:100%;font-family:inherit;line-height:1.8;white-space:normal}
+.cl-translate:disabled{opacity:.7;cursor:progress}
+.cl-translation-status{font-size:13px;line-height:1.9;margin:10px 0 0}
+.cl-translation-status:empty{display:none}

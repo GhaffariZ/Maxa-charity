@@ -421,7 +421,7 @@ function content_upload(string $token,array $field,string $type,string $locale):
 function content_editor(string $type,string $id,string $selector,array $options=[]): void
 {
     $db=content_pdo();content_install($db);
-    $config=['type'=>$type,'id'=>$id,'selector'=>$selector,'fields'=>content_type($type)['fields'],'state'=>content_state($db,$type,$id)]+$options;
+    $config=['type'=>$type,'id'=>$id,'selector'=>$selector,'fields'=>content_type($type)['fields'],'state'=>content_state($db,$type,$id),'csrf'=>csrf_token()]+$options;
     if(isset($options['source']))$config['state']['source']=array_intersect_key($options['source'],content_type($type)['fields']);
     echo '<script type="application/json" class="content-locale-config">'.json_encode($config,JSON_UNESCAPED_UNICODE|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_THROW_ON_ERROR).'</script>';
     static $assets=false;if(!$assets){$assets=true;echo '<link rel="stylesheet" href="/assets/content-editor.css?v='.filemtime(dirname(__DIR__).'/assets/content-editor.css').'"><script src="/assets/content-editor-layout.js?v='.filemtime(dirname(__DIR__).'/assets/content-editor-layout.js').'" defer></script><script src="/assets/content-editor.js?v='.filemtime(dirname(__DIR__).'/assets/content-editor.js').'" defer></script>';}

@@ -4,6 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {installTranslationMock,translateTab}=require('./content-translation-mock.cjs');
 const root=path.resolve(__dirname,'..'),origin='http://localhost:8080';
 const php=path.join(root,'.local/runtime/php/php.exe');
 const prefix='content-integration-'+Date.now();
@@ -32,19 +33,20 @@ async function get(api,route){return json(await api.get(origin+route));}
   const csrf=login.match(/name="csrf_token" value="([^"]+)"/)[1];
   await context.request.post(origin+'/dashboard/login.php',{form:{username:'local-admin',password:secrets.loginPassword,csrf_token:csrf}});
   const api=context.request;
-  // Hero: real tabs, copying, automatic unlinking, file snapshots and later language removal.
+  await installTranslationMock(page);
+  // Hero: real translation actions (mock provider), editable snapshots, files and language removal.
   await page.goto(origin+'/dashboard/hero-create.php',{waitUntil:'networkidle'});
   await page.locator('[data-content-locale-ready=true]').waitFor();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Mobile editor has no horizontal overflow');
   await page.locator('#title').fill(prefix+' FA');await page.locator('#editor').fill('متن فارسی');
   await page.locator('#featured_image').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64')});
-  await page.locator('[data-content-language=en]').check();await page.locator('[data-copy-fa=en]').check();
+  await page.locator('[data-content-language=en]').check();await translateTab(page,'en');
   await page.locator('.cl-panel:not([hidden]) input[type=text]').first().fill(prefix+' EN');
-  assert.equal(await page.locator('[data-copy-fa=en]').isChecked(),false,'Typing unchecks Persian-copy mode');
-  await page.locator('[data-copy-fa=en]').check();
-  assert.equal(await page.locator('.cl-panel:not([hidden]) input[type=text]').first().inputValue(),prefix+' FA','Rechecking copies current Persian text again');
+  assert.equal(await page.locator('[data-copy-fa]').count(),0,'Translation replaces the former Persian-copy checkbox');
+  await translateTab(page,'en');
+  assert.equal(await page.locator('.cl-panel:not([hidden]) input[type=text]').first().inputValue(),'EN: '+prefix+' FA','Clicking again refills a translated snapshot of current Persian text');
   await page.locator('.cl-panel:not([hidden]) input[type=text]').first().fill(prefix+' EN');
-  await page.locator('[data-content-language=ar]').check();await page.locator('[data-copy-fa=ar]').check();
+  await page.locator('[data-content-language=ar]').check();await translateTab(page,'ar');
   await page.locator('[role=tab]').filter({hasText:/^فارسی$/}).click();
   await page.locator('#title').fill(prefix+' FA revised');await page.evaluate(()=>document.getElementById('publish_date').value='');
   if(process.env.CONTENT_DEBUG)console.log(await page.evaluate(()=>{const fd=new FormData();ContentLanguages.append(fd);return JSON.parse(fd.get('content_languages'));}));
@@ -53,7 +55,7 @@ async function get(api,route){return json(await api.get(origin+route));}
   await page.waitForFunction(()=>document.querySelector('[data-content-locale-ready]'));
   track('hero_slides',heroId);
   const baseHero=query('SELECT * FROM hero_slides WHERE id=?',[heroId])[0];files.add(baseHero.image);
-  for(const [locale,title]of [['fa',prefix+' FA revised'],['en',prefix+' EN'],['ar',prefix+' FA revised']]){
+  for(const [locale,title]of [['fa',prefix+' FA revised'],['en',prefix+' EN'],['ar','AR: '+prefix+' FA']]){
    const feed=await get(api,'/dashboard/hero-list.php?lang='+locale);const record=feed.data.find(row=>Number(row.id)===Number(heroId));assert.equal(record?.title,title,'Hero visibility: '+locale);
   }
   const englishImage=JSON.parse(state('hero_slides',heroId).find(row=>row.locale==='en').payload).image;
@@ -150,6 +152,8 @@ async function get(api,route){return json(await api.get(origin+route));}
   const hqPage=query('SELECT p.id FROM pages p JOIN branches b ON b.id=p.branch_id WHERE b.is_hq=1 LIMIT 1')[0].id;
   assert.equal((await restricted.request.get(origin+'/dashboard/content-languages.php?type=pages&id='+hqPage)).status(),403,'Language metadata cannot cross branch boundaries');
   assert.equal((await restricted.request.get(origin+'/dashboard/content-languages.php?type=orders&id=1')).status(),403,'Private tables cannot enter the editorial endpoint');
+  assert.equal((await restricted.request.post(origin+'/dashboard/content-translate.php',{form:{csrf_token:restrictedCsrf,type:'pages',id:hqPage,locale:'en',fields:'{}'}})).status(),403,'Translation cannot cross branch boundaries');
+  assert.equal((await restricted.request.post(origin+'/dashboard/content-translate.php',{form:{csrf_token:restrictedCsrf,type:'orders',id:'1',locale:'en',fields:'{}'}})).status(),403,'Translation cannot access private modules');
   await restricted.close();
   const stands=await get(api,'/api/stands?branch_id='+branchId+'&lang=en');assert.ok(JSON.stringify(stands).includes(prefix+' Stand'));assert.ok(!JSON.stringify(await get(api,'/api/stands?branch_id='+branchId+'&lang=ar')).includes(prefix+' استند'));
   const component=prefix+'-component';directories.add(path.join(root,'public_html/dashboard/components',component));remember('components',component);

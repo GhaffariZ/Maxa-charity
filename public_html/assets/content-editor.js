@@ -10,6 +10,8 @@
     const scope=document.querySelector(config.selector);if(!scope)return;
     const uid='content-languages-'+(++serial),form=scope.closest('form');
     let id=String(config.id||''),state=clone(config.state),active='fa',pending=new Map(),loading=false,failed=false;
+    let translating=null,translationController=null,translationSerial=0;
+    const translationNotices={};
     const originalSubmit=(form||document).querySelector(config.submit||'button[type="submit"],input[type="submit"],.btn-save');
     const requiredOriginal=new Set(scope.querySelectorAll('[required]'));
     const primary=node('div',{'class':'cl-primary','role':'tabpanel',id:uid+'-fa','aria-labelledby':uid+'-tab-fa'});
@@ -50,6 +52,7 @@
       if(Array.isArray(state.translations))state.translations={...state.translations};
       const translation=state.translations[locale]??={copy:false,fields:{}};
       if(Array.isArray(translation.fields))translation.fields={...translation.fields};
+      translation.copy=false; // Old copy flags become independent snapshots when this editor saves.
       return translation;
     }
     function find(input,key){
@@ -84,7 +87,9 @@
           continue;
         }
         if(input)fields[key]=input.isContentEditable?input.innerHTML:input.value;
+        if(config.type==='employee_profiles'&&key==='branch'&&input?.selectedOptions?.length)fields[key]=input.selectedOptions[0].textContent.trim();
         if(config.type==='employee_profiles'&&key==='role'){const select=primary.querySelector('#role_select');if(select&&getComputedStyle(select).display!=='none')fields[key]=select.value;}
+        if(config.type==='macsa_stories'&&key==='tag'&&input?.value==='custom')fields[key]=primary.querySelector('#fCustomTag')?.value||'';
       }
       return fields;
     }
@@ -93,7 +98,6 @@
       for(const input of requiredOriginal)if(localized.has(input))input.required=state.enabled.includes('fa');
       for(const locale of Object.keys(labels))buttons[locale].hidden=locale!=='fa'&&!state.enabled.includes(locale);
       buttons.fa.textContent=state.enabled.includes('fa')?'فارسی':'فارسی (منتشر نمی‌شود)';
-      for(const locale of ['ar','en'])if(state.translations[locale]?.copy){state.translations[locale].fields=readPrimary();if(active===locale)render(locale);}
       sync();
     }
     function activate(locale){
@@ -102,12 +106,34 @@
       footer.hidden=!!originalSubmit&&(locale==='fa'||!primary.contains(originalSubmit));
       if(locale!=='fa')render(locale);
     }
-    function changed(locale){const t=ensure(locale);t.copy=false;const checkbox=panels[locale].querySelector('[data-copy-fa]');if(checkbox)checkbox.checked=false;sync();}
+    function changed(locale){ensure(locale).copy=false;delete translationNotices[locale];const status=panels[locale].querySelector('[data-translation-status]');if(status)status.textContent='';sync();}
+    async function translate(locale){
+      if(translating||loading)return;
+      const source=readPrimary(),before=JSON.stringify(ensure(locale).fields),sourceBefore=JSON.stringify(source),record=id,request=++translationSerial;
+      translating=locale;const controller=translationController=new AbortController();translationNotices[locale]={text:'در حال ترجمهٔ محتوای فارسی…'};error.hidden=true;render(locale);
+      const timer=setTimeout(()=>controller.abort(),75000);
+      try{
+        const data=new FormData();data.set('type',config.type);data.set('id',record);data.set('locale',locale);data.set('fields',JSON.stringify(source));data.set('csrf_token',config.csrf||'');
+        const branch=new URLSearchParams(location.search).get('branch');
+        const response=await fetch('/dashboard/content-translate.php'+(branch?'?branch='+encodeURIComponent(branch):''),{method:'POST',body:data,credentials:'same-origin',signal:controller.signal});
+        let result;try{result=await response.json();}catch{throw Error('پاسخ سرویس معتبر نبود؛ اتصال یا نشست مدیریت را بررسی کنید.');}
+        if(!response.ok||!result.fields||Array.isArray(result.fields)||typeof result.fields!=='object')throw Error(result.message||'ترجمه انجام نشد؛ دوباره تلاش کنید.');
+        if(request!==translationSerial||id!==record)return;
+        if(sourceBefore!==JSON.stringify(readPrimary())||before!==JSON.stringify(ensure(locale).fields))throw Error('محتوای فارسی یا این تب هنگام ترجمه تغییر کرد؛ برای حفظ ویرایش‌ها، دوباره دکمهٔ ترجمه را بزنید.');
+        state.translations[locale]={copy:false,fields:result.fields};sync();
+        translationNotices[locale]={text:'ترجمه و پرکردن انجام شد. می‌توانید متن را ویرایش و سپس فرم را ذخیره کنید.'};
+      }catch(error){if(request===translationSerial)translationNotices[locale]={error:true,text:error.name==='AbortError'?'زمان پاسخ ترجمه تمام شد؛ محتوای قبلی حفظ شده است. دوباره تلاش کنید.':error.message};}
+      finally{
+        clearTimeout(timer);
+        if(request===translationSerial){translating=null;translationController=null;error.hidden=true;if(active===locale)render(locale);else if(active!=='fa')render(active);}
+      }
+    }
     function render(locale){
       const panel=panels[locale],translation=ensure(locale);panel.querySelectorAll('.cl-native-layout').forEach(e=>e._clDispose?.());panel.replaceChildren();
-      const copyBox=node('div',{'class':'cl-copy-box'}),copyLabel=node('label',{'class':'cl-copy'}),copy=node('input',{type:'checkbox','data-copy-fa':locale});copy.checked=translation.copy;
-      copyLabel.append(copy,document.createTextNode('استفاده از همین محتوای تب فارسی برای '+labels[locale]));copyBox.append(copyLabel,node('p',{'class':'cl-help'},'این گزینه ترجمه انجام نمی‌دهد؛ متن و فایل‌های فارسی کپی می‌شوند. با ویرایش هر فیلد، تیک به‌طور خودکار برداشته می‌شود.'));panel.append(copyBox);
-      copy.addEventListener('change',()=>{translation.copy=copy.checked;if(copy.checked)translation.fields=readPrimary();render(locale);sync();});
+      const copyBox=node('div',{'class':'cl-copy-box'}),translateButton=node('button',{type:'button','class':'cl-save cl-translate','data-translate-fa':locale},translating===locale?'در حال ترجمه…':'ترجمه و پرکردن از فارسی');
+      translateButton.disabled=!!translating;translateButton.setAttribute('aria-busy',String(translating===locale));translateButton.addEventListener('click',()=>translate(locale));
+      copyBox.append(translateButton,node('p',{'class':'cl-help'},'متن فارسی به '+labels[locale]+' ترجمه و جایگزین محتوای این تب می‌شود. تصاویر و فایل‌های فارسی هنگام ذخیره کپی می‌شوند؛ ترجمه پس از پرشدن قابل ویرایش است.'));
+      const notice=translationNotices[locale],status=node('p',{'data-translation-status':locale,'class':notice?.error?'cl-error cl-translation-status':'cl-translation-status',role:notice?.error?'alert':'status','aria-live':'polite'},notice?.text||'');copyBox.append(status);panel.append(copyBox);
       const grid=node('div',{'class':'cl-fields',dir:'rtl',lang:locale});panel.append(grid);
       renderFields(grid,config.fields,translation.fields,locale,'');
       window.ContentEditorLayout?.project(grid,primary,config,uid+'-'+locale);
@@ -188,6 +214,7 @@
     function validate(){
       error.hidden=true;
       if(loading||failed){error.textContent='نسخه‌های زبان هنوز بارگذاری نشده‌اند؛ دوباره این محتوا را باز کنید.';error.hidden=false;return false;}
+      if(translating){error.textContent='ترجمه در حال انجام است؛ پس از دریافت نتیجه فرم را ذخیره کنید.';error.hidden=false;error.scrollIntoView({block:'center'});return false;}
       if(!state.enabled.length){error.textContent='حداقل یک زبان را برای انتشار انتخاب کنید.';error.hidden=false;return false;}
       for(const locale of ['ar','en'])if(state.enabled.includes(locale)){
         const t=ensure(locale),fields=t.copy?readPrimary():t.fields,key=['title','fullname','name'].find(k=>config.fields[k]);
@@ -215,12 +242,13 @@
     }
     function append(fd){sync();fd.set('content_languages',envelope.value);for(const [token,file]of pending)fd.set('content_uploads['+token+']',file);}
     async function load(nextId){
+      translationSerial++;translationController?.abort();translationController=null;translating=null;for(const locale of ['ar','en'])delete translationNotices[locale];
       id=String(nextId||'');loading=true;failed=true;error.hidden=true;
       box.setAttribute('aria-busy','true');for(const locale of Object.keys(labels)){checks[locale].disabled=true;buttons[locale].disabled=true;}
       try{
         const response=await fetch('/dashboard/content-languages.php?type='+encodeURIComponent(config.type)+'&id='+encodeURIComponent(id),{credentials:'same-origin'});
         const data=await response.json();if(!response.ok||!data.state)throw Error(data.message||'بارگذاری نسخه‌های زبان انجام نشد.');
-        state=data.state;pending.clear();failed=false;for(const locale of Object.keys(labels))checks[locale].checked=state.enabled.includes(locale);activate('fa');refresh();
+        state=data.state;pending.clear();failed=false;for(const locale of ['ar','en'])ensure(locale);for(const locale of Object.keys(labels))checks[locale].checked=state.enabled.includes(locale);activate('fa');refresh();
       }catch(e){error.textContent=e.message;error.hidden=false;throw e;}finally{loading=false;box.removeAttribute('aria-busy');for(const locale of Object.keys(labels)){checks[locale].disabled=false;buttons[locale].disabled=false;}}
     }
     primary.addEventListener('input',refresh);primary.addEventListener('change',refresh);

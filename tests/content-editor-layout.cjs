@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {installTranslationMock,translateTab}=require('./content-translation-mock.cjs');
 const root=path.resolve(__dirname,'..'),origin='http://localhost:8080';
 const panelSelector='.cl-panel:not([hidden])';
 
@@ -13,6 +14,7 @@ const panelSelector='.cl-panel:not([hidden])';
  try{
   const context=await browser.newContext({viewport:{width:1366,height:950},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
   page.on('pageerror',error=>errors.push(page.url()+': '+error.message));
+  await installTranslationMock(page);
   const secrets=JSON.parse(fs.readFileSync(path.join(root,'.local/conf/secrets.json')));
   const html=await(await context.request.get(origin+'/dashboard/login.php')).text();
   await context.request.post(origin+'/dashboard/login.php',{form:{username:'local-admin',password:secrets.loginPassword,csrf_token:html.match(/name="csrf_token" value="([^"]+)"/)[1]}});
@@ -27,6 +29,8 @@ const panelSelector='.cl-panel:not([hidden])';
    const scope=page.locator(JSON.parse(config).selector),panel=scope.locator(panelSelector);
    for(const locale of ['en','ar']){
     await scope.locator('[data-content-language='+locale+']').check();
+    assert.equal(await panel.locator('[data-translate-fa='+locale+']').count(),1,route+': automatic translation is available');
+    assert.equal(await panel.locator('[data-copy-fa]').count(),0,route+': former copy checkbox removed');
     assert.equal(await panel.locator('[name]').count(),0,route+': translated controls cannot overwrite shared form names');
     assert.equal(await panel.locator('[onclick],[onchange]').count(),0,route+': target controls cannot call Persian handlers');
     const duplicateIds=await page.evaluate(()=>{const ids=[...document.querySelectorAll('[id]')].map(e=>e.id);return ids.filter((id,i)=>ids.indexOf(id)!==i);});
@@ -106,10 +110,10 @@ const panelSelector='.cl-panel:not([hidden])';
     assert.doesNotMatch(await link.innerText(),/تاریخ|زمان‌بندی|خبر/,'Guide omits shared scheduling and separate news');
     assert.ok(await page.locator(await link.getAttribute('href')).count(),'Every guide link has its own section');
    }
-   await target.locator('[data-copy-fa]').check();
-   assert.equal(await target.locator('[data-cl-field=title] [data-cl-value]').inputValue(),'Persian event');
+   await translateTab(page,locale);
+   assert.equal(await target.locator('[data-cl-field=title] [data-cl-value]').inputValue(),(locale==='en'?'EN: ':'AR: ')+'Persian event');
    await target.locator('[data-cl-field=title] [data-cl-value]').fill(locale+' event');
-   assert.equal(await target.locator('[data-copy-fa]').isChecked(),false,'Editing unlinks the copy');
+   assert.equal(await target.locator('[data-copy-fa]').count(),0,'Translated fields remain ordinary editable inputs');
    await target.locator('[data-cl-field=heroes]>.cl-add').click();
    const hero=target.locator('[data-cl-field="heroes.0.title"] input');
    await hero.fill(locale+' hero');
@@ -171,6 +175,6 @@ const panelSelector='.cl-panel:not([hidden])';
   assert.match(await editor.innerHTML(),/font-weight: bold|<b>|<strong>/);
   assert.equal(await page.locator('.cl-primary #editor').innerText(),'');
   assert.deepEqual(errors,[],'No browser runtime errors');
-  console.log('PASS native layout/icon parity across 13 forms in English/Arabic at four widths; event guide, shared fields, own media, course controls, copy and rich text.');
+  console.log('PASS native layout/icon parity across 13 forms in English/Arabic at four widths; event guide, shared fields, own media, course controls, translation and rich text.');
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
