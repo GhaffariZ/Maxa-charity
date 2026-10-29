@@ -56,7 +56,12 @@ function campaign_bridge_payment(array $payment): array {
 $nonce = null;
 $returnUrl = '';
 try {
-    $returnUrl = campaign_bridge_setting('MAHRAMANE_CAMPAIGN_CALLBACK_URL');
+    $returnUrl = campaign_service_env('MAHRAMANE_CAMPAIGN_CALLBACK_URL');
+    if ($returnUrl === '') {
+        $ticketCallback = campaign_bridge_setting('MAHRAMANE_CALLBACK_URL');
+        if (!str_ends_with($ticketCallback, '/api/v1/payments/callback')) throw new RuntimeException('CONFIG_MISSING');
+        $returnUrl = substr($ticketCallback, 0, -strlen('/api/v1/payments/callback')) . '/api/v1/campaigns/payments/callback';
+    }
     $bridgeUrl = campaign_service_env('MAHRAMANE_CAMPAIGN_BRIDGE_URL', 'https://macsa.ir/mahramane/campaigns/');
     if (!campaign_bridge_https($returnUrl) || !str_ends_with($returnUrl, '/api/v1/campaigns/payments/callback') || !campaign_bridge_https($bridgeUrl) || str_contains($bridgeUrl, '?')) throw new RuntimeException('CONFIG_MISSING');
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_GET['callback'])) {
@@ -65,7 +70,8 @@ try {
         $data = json_decode($raw, true, 24, JSON_THROW_ON_ERROR);
         if (!is_array($data) || !preg_match('/^[a-f0-9]{48}$/D', (string)($data['nonce'] ?? ''))) throw new RuntimeException('INVALID_REQUEST');
         $nonce = $data['nonce'];
-        if (!is_int($data['at'] ?? null) || abs(time() - $data['at']) > 60 || ($data['callback'] ?? '') !== $returnUrl) campaign_bridge_reply($nonce, ['error' => 'INVALID_REQUEST'], 400);
+        if (!is_int($data['at'] ?? null) || abs(time() - $data['at']) > 60) campaign_bridge_reply($nonce, ['error' => 'CLOCK_MISMATCH'], 400);
+        if (($data['callback'] ?? '') !== $returnUrl) campaign_bridge_reply($nonce, ['error' => 'CALLBACK_MISMATCH'], 400);
         $client = new CampaignServiceClient('hq');
         if (($data['action'] ?? '') === 'start') {
             $attempt = (string)($data['attemptId'] ?? '');
@@ -73,7 +79,7 @@ try {
             $phone = (string)($data['phone'] ?? '');
             $name = trim((string)($data['fullName'] ?? ''));
             $amount = $data['amountRial'] ?? null;
-            if (!campaign_service_is_uuid($attempt) || !campaign_service_is_uuid($campaign) || !preg_match('/^09[0-9]{9}$/D', $phone) || $name === '' || strlen($name) > 800 || !is_int($amount) || $amount < 10000 || $amount > 2000000000 || $campaign === campaign_service_env('CAMPAIGN_HQ_ONLINE_DONATION_CAMPAIGN_ID')) campaign_bridge_reply($nonce, ['error' => 'INVALID_REQUEST'], 400);
+            if (!campaign_service_is_uuid($attempt) || !campaign_service_is_uuid($campaign) || !preg_match('/^09[0-9]{9}$/D', $phone) || strlen($name) > 800 || !is_int($amount) || $amount < 10000 || $amount > 2000000000 || $campaign === campaign_service_env('CAMPAIGN_HQ_ONLINE_DONATION_CAMPAIGN_ID')) campaign_bridge_reply($nonce, ['error' => 'INVALID_REQUEST'], 400);
             $callback = $bridgeUrl . '?' . http_build_query(['callback' => '1', 'receipt' => $attempt, 'proof' => campaign_bridge_sign('campaign-receipt:' . $attempt)]);
             $payment = $client->startPayment($campaign, $phone, $name, $amount, 'mahramane:campaign:' . $attempt, $callback);
             campaign_bridge_reply($nonce, ['result' => campaign_bridge_payment($payment)]);
@@ -127,7 +133,13 @@ try {
     <?php exit;
 } catch (Throwable $error) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_GET['callback'])) {
-        try { campaign_bridge_reply($nonce, ['error' => 'CAMPAIGN_PAYMENT_UNAVAILABLE'], 503); } catch (Throwable) { http_response_code(503); exit; }
+        $code = $error->getMessage() === 'CONFIG_MISSING' ? 'CONFIG_MISSING' : 'CAMPAIGN_PAYMENT_UNAVAILABLE';
+        if ($error instanceof CampaignServiceException) {
+            if (in_array($error->status, [401, 403], true)) $code = 'UPSTREAM_AUTH_FAILED';
+            if ($error->errorCode === 'PAYMENT_CALLBACK_NOT_ALLOWED') $code = 'CALLBACK_NOT_ALLOWED';
+            if ($error->errorCode === 'PAYMENT_INITIALIZATION_FAILED') $code = 'GATEWAY_REJECTED';
+        }
+        try { campaign_bridge_reply($nonce, ['error' => $code], 503); } catch (Throwable) { http_response_code(503); exit; }
     }
     http_response_code(503);
 }
