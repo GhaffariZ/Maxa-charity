@@ -80,7 +80,9 @@ try {
             $name = trim((string)($data['fullName'] ?? ''));
             $amount = $data['amountRial'] ?? null;
             if (!campaign_service_is_uuid($attempt) || !campaign_service_is_uuid($campaign) || !preg_match('/^09[0-9]{9}$/D', $phone) || strlen($name) > 800 || !is_int($amount) || $amount < 10000 || $amount > 2000000000 || $campaign === campaign_service_env('CAMPAIGN_HQ_ONLINE_DONATION_CAMPAIGN_ID')) campaign_bridge_reply($nonce, ['error' => 'INVALID_REQUEST'], 400);
-            $callback = $bridgeUrl . '?' . http_build_query(['callback' => '1', 'receipt' => $attempt, 'proof' => campaign_bridge_sign('campaign-receipt:' . $attempt)]);
+            $callback = ($data['returnMode'] ?? 'legacy') === 'token'
+                ? rtrim($bridgeUrl, '/') . '/callback.php'
+                : $bridgeUrl . '?' . http_build_query(['callback' => '1', 'receipt' => $attempt, 'proof' => campaign_bridge_sign('campaign-receipt:' . $attempt)]);
             $payment = $client->startPayment($campaign, $phone, $name, $amount, 'mahramane:campaign:' . $attempt, $callback);
             campaign_bridge_reply($nonce, ['result' => campaign_bridge_payment($payment)]);
         }
@@ -95,16 +97,19 @@ try {
         }
         campaign_bridge_reply($nonce, ['result' => campaign_bridge_payment($client->paymentStatus((string)$data['paymentId']))]);
     }
-    if (isset($_GET['callback']) && $_GET['callback'] === '1') {
+    if (isset($_GET['callback']) && in_array($_GET['callback'], ['1', 'token'], true)) {
         $receipt = (string)($_GET['receipt'] ?? '');
-        if (!campaign_service_is_uuid($receipt) || !hash_equals(campaign_bridge_sign('campaign-receipt:' . $receipt), (string)($_GET['proof'] ?? ''))) throw new RuntimeException('INVALID_CALLBACK');
+        $legacy = $_GET['callback'] === '1';
+        if ($legacy && (!campaign_service_is_uuid($receipt) || !hash_equals(campaign_bridge_sign('campaign-receipt:' . $receipt), (string)($_GET['proof'] ?? '')))) throw new RuntimeException('INVALID_CALLBACK');
         $params = array_merge($_GET, $_POST);
         $gateway = isset($params['token']) ? 'vandar' : (isset($params['Authority']) ? 'zarinpal' : 'behpardakht');
         $fields = [];
         foreach (['token', 'payment_status', 'Authority', 'Status', 'RefId', 'ResCode', 'SaleOrderId', 'SaleReferenceId'] as $key) {
             if (isset($params[$key]) && is_scalar($params[$key]) && strlen((string)$params[$key]) <= 500) $fields[$key] = (string)$params[$key];
         }
-        $payload = campaign_bridge_encode(['receipt' => $receipt, 'gateway' => $gateway, 'fields' => (object)$fields]);
+        $callback = ['gateway' => $gateway, 'fields' => (object)$fields];
+        if ($legacy) $callback['receipt'] = $receipt;
+        $payload = campaign_bridge_encode($callback);
         header('Location: ' . $returnUrl . '?' . http_build_query(['payload' => $payload, 'signature' => campaign_bridge_sign('campaign-return:' . $payload)]), true, 303);
         exit;
     }
