@@ -2,11 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router";
 import {
   TrendingUp,
-  Heart,
   ChevronLeft,
-  Calendar,
   Award,
-  Gift,
   Loader2,
 } from "lucide-react";
 import {
@@ -18,7 +15,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { motion } from "motion/react";
 import { toast } from "sonner";
 import { api, type DashboardDto } from "../../api/client";
 import { faNumber, faToman, faDate } from "../lib/format";
@@ -62,124 +58,93 @@ export function Dashboard() {
   }));
 
   const cards = [
-    { label: "مجموع مشارکت‌ها", value: faToman(stats?.total_amount ?? 0), icon: TrendingUp, color: "bg-primary" },
-    { label: "تعداد کمک‌ها", value: `${faNumber(stats?.donation_count ?? 0)} کمک`, icon: Gift, color: "bg-secondary" },
-    { label: "روزهای همراهی", value: `${faNumber(stats?.days_supporting ?? 0)} روز`, icon: Calendar, color: "bg-accent" },
-    { label: "امتیاز مهربانی", value: faNumber(data?.kindness_points ?? 0), icon: Heart, color: "bg-destructive" },
+    { label: "مجموع مشارکت‌ها", value: faToman(stats?.total_amount ?? 0) },
+    { label: "تعداد کمک‌ها", value: `${faNumber(stats?.donation_count ?? 0)} کمک` },
+    { label: "روزهای همراهی", value: `${faNumber(stats?.days_supporting ?? 0)} روز` },
+    { label: "امتیاز مهربانی", value: faNumber(data?.kindness_points ?? 0) },
   ];
 
   return (
-    <div className="space-y-8 pb-12">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2.5rem] bg-primary p-8 md:p-12 text-white shadow-xl shadow-primary/20"
-      >
-        <div className="relative z-10 max-w-2xl">
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
-            ممنون که دنیای دیگران را <br /> زیباتر می‌کنید
-          </h2>
-          <p className="text-primary-light text-lg mb-8 leading-relaxed opacity-90">
-            هر کمک شما، گامی به سوی دنیایی مهربان‌تر است. گزارش اثرگذاری مشارکت‌هایتان را ببینید.
-          </p>
-          <button
-            onClick={() => navigate("/impact")}
-            className="bg-secondary hover:bg-secondary/90 text-white px-8 py-4 rounded-2xl font-bold transition-all flex items-center gap-2 group shadow-lg shadow-secondary/30"
-          >
-            مشاهده گزارش اثرگذاری
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          </button>
+    <div className="space-y-6 pb-8 tabular-nums">
+      <section className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
+        <div>
+          <h2 className="mb-2 text-2xl font-semibold md:text-3xl">مشارکت‌های شما در مکسا</h2>
+          <p className="text-sm text-muted-foreground">خلاصه کمک‌ها، روند مشارکت و فعالیت‌های اخیر</p>
         </div>
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 left-1/2 w-64 h-64 bg-secondary/20 rounded-full blur-3xl" />
-        </div>
-      </motion.div>
+        <button
+          onClick={() => navigate("/impact")}
+          className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          مشاهده گزارش اثرگذاری
+          <ChevronLeft size={18} strokeWidth={1.5} aria-hidden="true" />
+        </button>
+      </section>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cards.map((stat, idx) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="bg-surface p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all group"
-          >
-            <div className={`w-14 h-14 ${stat.color} rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-current/10`}>
-              <stat.icon size={28} />
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {cards.map((stat) => (
+          <div key={stat.label} className="min-w-0 rounded-xl border border-border bg-surface p-5">
             <p className="text-muted-foreground text-sm font-medium mb-1">{stat.label}</p>
-            <h3 className="text-xl font-extrabold">{stat.value}</h3>
-          </motion.div>
+            <h3 className="text-xl font-semibold">{stat.value}</h3>
+          </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-2 bg-surface p-8 rounded-[2.5rem] border border-border"
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div
+          className="min-w-0 xl:col-span-2 bg-surface p-5 md:p-6 rounded-xl border border-border border-s-4 border-s-primary"
         >
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-bold mb-1">روند مشارکت‌ها</h3>
+              <h3 className="text-xl font-medium mb-1">روند مشارکت‌ها</h3>
               <p className="text-sm text-muted-foreground">گزارش شش ماههٔ کمک‌های شما</p>
             </div>
           </div>
 
-          <div className="h-[300px] w-full">
+          <div className="h-72 w-full">
             {chartData.length === 0 ? (
               <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                هنوز کمکی ثبت نشده است.
+                هنوز کمکی ثبت نشده است
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#008f8a" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#008f8a" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f3f5" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#9d9d9d", fontSize: 12 }} dy={10} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} dy={8} />
                   <YAxis hide />
                   <Tooltip
                     formatter={(v: number) => [faToman(v), "مبلغ"]}
-                    contentStyle={{ borderRadius: "1rem", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)", textAlign: "right" }}
+                    contentStyle={{ borderRadius: "8px", border: "1px solid var(--border)", textAlign: "right" }}
                   />
-                  <Area type="monotone" dataKey="amount" stroke="#008f8a" strokeWidth={4} fillOpacity={1} fill="url(#colorAmount)" />
+                  <Area type="monotone" dataKey="amount" stroke="var(--primary)" strokeWidth={2} fillOpacity={0.08} fill="var(--primary)" isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-surface p-8 rounded-[2.5rem] border border-border"
+        <div
+          className="min-w-0 bg-surface p-5 md:p-6 rounded-xl border border-border"
         >
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-bold">فعالیت‌های اخیر</h3>
-            <button onClick={() => navigate("/history")} className="text-primary text-sm font-bold hover:underline">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-medium">فعالیت‌های اخیر</h3>
+            <button onClick={() => navigate("/history")} className="text-primary text-sm font-medium hover:underline">
               مشاهده همه
             </button>
           </div>
 
-          <div className="space-y-6">
+          <div className="divide-y divide-border">
             {(data?.recent_activity ?? []).length === 0 && (
-              <p className="text-sm text-muted-foreground">فعالیتی برای نمایش وجود ندارد.</p>
+              <p className="text-sm text-muted-foreground">فعالیتی برای نمایش وجود ندارد</p>
             )}
             {(data?.recent_activity ?? []).map((activity) => (
-              <div key={activity.reference} className="flex gap-4 group">
-                <div className="shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/10 text-primary">
-                  <TrendingUp size={20} />
+              <div key={activity.reference} className="flex items-start gap-3 py-3">
+                <div className="shrink-0 pt-1 text-muted-foreground">
+                  <TrendingUp size={18} strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="font-bold text-sm truncate">{activity.campaign_title ?? "کمک مالی"}</h4>
-                    <span className="text-xs font-bold text-primary">{faNumber(activity.amount)}</span>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h4 className="font-medium text-sm truncate">{activity.campaign_title ?? "کمک مالی"}</h4>
+                    <span className="shrink-0 text-xs font-medium">{faToman(activity.amount)}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{faDate(activity.created_at)}</p>
                 </div>
@@ -187,18 +152,18 @@ export function Dashboard() {
             ))}
           </div>
 
-          <div className="mt-10 p-6 bg-muted/30 rounded-3xl border border-dashed border-border text-center">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-              <Award className="text-secondary" />
+          <div className="mt-4 border-t border-border pt-4">
+            <div className="mb-2 text-muted-foreground">
+              <Award size={18} strokeWidth={1.5} aria-hidden="true" />
             </div>
-            <p className="text-sm font-bold mb-1">
+            <p className="text-sm font-medium mb-1">
               {data?.tier?.name ? `سطح فعلی: ${data.tier.name}` : "سطح حمایت شما"}
             </p>
             <p className="text-xs text-muted-foreground">
               امتیاز مهربانی شما: {faNumber(data?.kindness_points ?? 0)}
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
