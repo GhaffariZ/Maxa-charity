@@ -1,26 +1,5 @@
 <?php
 require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; } ?>
-<?php
-$heroLayouts = [
-    'split' => 'دو ستونه',
-    'centered' => 'تیتر مرکزی',
-    'cinematic' => 'تصویر تمام‌عرض',
-    'offset' => 'پنل روی تصویر',
-    'framed' => 'قاب تصویری',
-];
-$newHeroLayouts = [
-    'marquee' => 'سردر سینمایی',
-    'atlas' => 'صفحهٔ معماری',
-    'contact-sheet' => 'نگارخانه',
-    'ribbon' => 'روبان روایی',
-    'aperture' => 'دریچهٔ نور',
-];
-$requestedHeroLayout = $_GET['hero-preview'] ?? '';
-$heroPreview = is_string($requestedHeroLayout)
-    && ($requestedHeroLayout === 'feature' || isset(($heroLayouts + $newHeroLayouts)[$requestedHeroLayout]))
-    ? $requestedHeroLayout : null;
-$isNewHeroPreview = $heroPreview !== null && isset($newHeroLayouts[$heroPreview]);
-?>
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -1797,21 +1776,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
     </div>
     <div class="cta-navbar-spacer" data-site-nav-spacer aria-hidden="true"></div>
 
-    <?php if ($heroPreview !== null): ?>
-      <link rel="stylesheet" href="/assets/hero-previews.css">
-      <?php if ($isNewHeroPreview): ?>
-        <link rel="stylesheet" href="/assets/hero-previews-round-two.css">
-      <?php endif; ?>
-      <?php if ($heroPreview !== 'feature'): ?>
-      <nav class="hero-preview-picker" aria-label="<?= site_e('پیش‌نمایش طرح هیرو') ?>">
-        <?php foreach (($isNewHeroPreview ? $newHeroLayouts : $heroLayouts) as $layout => $label):
-          $previewQuery = http_build_query(array_replace($_GET, ['hero-preview' => $layout])); ?>
-          <a href="?<?= htmlspecialchars($previewQuery, ENT_QUOTES, 'UTF-8') ?>"<?= $layout === $heroPreview ? ' aria-current="page"' : '' ?>><?= site_e($label) ?></a>
-        <?php endforeach; ?>
-      </nav>
-      <?php endif; ?>
-    <?php endif; ?>
-    <section class="cta-hero" aria-label="CTA Hero Slider"<?= $heroPreview !== null ? ' data-hero-layout="' . $heroPreview . '"' : '' ?> hidden>
+    <section class="cta-hero" aria-label="CTA Hero Slider" hidden>
 
       <div class="cta-slider" id="ctaSlider">
          <div class="cta-track" id="ctaTrack">
@@ -1845,9 +1810,6 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
       </button>
 
       <div class="cta-dots" id="ctaDots" aria-label="<?= site_e('نشانگر اسلایدها') ?>"></div>
-      <?php if ($heroPreview !== null): ?>
-        <button class="hero-preview-autoplay" type="button" aria-pressed="false" hidden><?= site_e('پخش خودکار') ?></button>
-      <?php endif; ?>
 
     </section>
 
@@ -2021,13 +1983,6 @@ function initSlider() {
 
     if(!track || slides.length === 0){ return; }
 
-    const hero = track.closest(".cta-hero");
-    const preview = hero.hasAttribute("data-hero-layout");
-    const autoplayButton = hero.querySelector(".hero-preview-autoplay");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const previewCopy = preview ? hero.querySelector(".cta-text") : null;
-    let previewAutoplay = false;
-    let copyAnimation;
     const AUTOPLAY_MS = 4000;
     let index = 0;
     let timer = null;
@@ -2040,9 +1995,6 @@ function initSlider() {
       b.className = "cta-dot" + (i === 0 ? " active" : "");
       b.type = "button";
       b.setAttribute("aria-label", "رفتن به اسلاید " + (i + 1));
-      if (hero.dataset.heroLayout === "contact-sheet") {
-        b.style.backgroundImage = slides[i].style.backgroundImage;
-      }
       b.addEventListener("click", function(){ goTo(i, true); });
       dotsWrap.appendChild(b);
     });
@@ -2052,28 +2004,13 @@ function initSlider() {
     function setActiveDot(i){
       dots.forEach(function(d, di){
         d.classList.toggle("active", di === i);
-        if (preview) {
-          d.setAttribute("aria-current", di === i ? "true" : "false");
-          slides[di].classList.toggle("is-preview-active", di === i);
-        }
       });
     }
 
-    function animatePreviewCopy() {
-      if (!previewCopy || reducedMotion.matches) return;
-      copyAnimation?.cancel();
-      copyAnimation = previewCopy.animate(
-        [{opacity: .35, translate: "0 16px"}, {opacity: 1, translate: "0 0"}],
-        {duration: 560, easing: "cubic-bezier(.16,1,.3,1)"}
-      );
-    }
-
     function applyTransform(){
-      if (hero.dataset.heroLayout === "feature") return;
       // در ساختار راست به چپ (RTL)، اسلاید بعدی در سمت چپ اسلاید فعلی قرار دارد.
       // بنابراین برای نمایش اسلاید با ایندکس بزرگتر، باید تراک را به سمت راست (مقدار مثبت) حرکت دهیم.
-      const direction = preview && getComputedStyle(track).direction === "ltr" ? -1 : 1;
-      track.style.transform = "translateX(" + (direction * index * 100) + "%)";
+      track.style.transform = "translateX(" + (index * 100) + "%)";
     }
 
     function goTo(i, userAction){
@@ -2101,7 +2038,6 @@ function initSlider() {
         }
       }
 
-      animatePreviewCopy();
       if(userAction){ restartAutoplay(); }
     }
 
@@ -2117,7 +2053,6 @@ function initSlider() {
 
     function startAutoplay(){
       stopAutoplay();
-      if (preview && (!previewAutoplay || reducedMotion.matches)) return;
       timer = setInterval(function(){ next(false); }, AUTOPLAY_MS);
     }
 
@@ -2128,19 +2063,7 @@ function initSlider() {
 
     function restartAutoplay(){ startAutoplay(); }
 
-    if (autoplayButton && slides.length > 1) {
-      autoplayButton.hidden = reducedMotion.matches;
-      autoplayButton.addEventListener("click", function() {
-        previewAutoplay = !previewAutoplay;
-        autoplayButton.setAttribute("aria-pressed", String(previewAutoplay));
-        startAutoplay();
-      });
-      reducedMotion.addEventListener("change", function() {
-        autoplayButton.hidden = reducedMotion.matches;
-        startAutoplay();
-      });
-    }
-
+    const hero = document.querySelector(".cta-hero");
     if(hero){
       hero.onmouseenter = stopAutoplay;
       hero.onmouseleave = startAutoplay;
@@ -2169,18 +2092,12 @@ function initSlider() {
       };
     }
 
-    const onArrowKey = function(e){
+    window.onkeydown = function(e){
       if(e.key === "ArrowLeft"){ next(true); }
       if(e.key === "ArrowRight"){ prev(true); }
     };
-    if (preview) hero.addEventListener("keydown", onArrowKey);
-    else window.onkeydown = onArrowKey;
 
     applyTransform();
-    if (preview) {
-      setActiveDot(index);
-      animatePreviewCopy();
-    }
     startAutoplay();
 }
 
