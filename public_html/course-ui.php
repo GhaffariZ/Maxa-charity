@@ -122,7 +122,7 @@ endif;
 
 /* پوسته‌ی <head> برای صفحه‌های مستقلِ تمام‌صفحه (پخش/یادگیری و ادمینِ دوره‌ها) */
 if (!function_exists('course_html_head')):
-function course_html_head(string $title, string $pageStyles = ''): void { ?>
+function course_html_head(string $title, string $pageStyles = '', bool $admin = false): void { ?>
 <!DOCTYPE html>
 <html lang="fa" dir="<?= site_direction() ?>">
 <head>
@@ -151,6 +151,9 @@ svg.ic{display:block;width:18px;height:18px;flex-shrink:0}
 <?= $pageStyles ?>
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
 </style>
+<?php if ($admin): ?>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
+<?php endif; ?>
 </head>
 <?php }
 endif;

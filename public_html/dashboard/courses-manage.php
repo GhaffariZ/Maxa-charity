@@ -56,7 +56,7 @@ $pageCss = <<<CSS
 .mstat .top{display:flex;align-items:center;justify-content:space-between}
 .mstat .mi{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent)}
 .mstat .mi .ic{width:22px;height:22px}
-.mstat .v{font-size:25px;font-weight:800;margin-top:14px;font-variant-numeric:tabular-nums}
+.mstat .v{font-size:25px;font-weight:600;margin-top:14px;font-variant-numeric:tabular-nums}
 .mstat .l{font-size:12.5px;color:var(--color-muted);font-weight:600;margin-top:3px}
 
 .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
@@ -65,11 +65,11 @@ $pageCss = <<<CSS
 .search-box .ic{width:18px;height:18px;color:var(--color-muted)}
 .search-box input{border:none;background:none;outline:none;flex:1;font-size:13.5px;color:var(--color-text)}
 .fbtns{display:flex;gap:6px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:13px;padding:4px}
-.fbtns button{padding:9px 15px;border-radius:10px;font-weight:700;font-size:12.5px;color:var(--color-muted);transition:background .18s,color .18s}
+.fbtns button{padding:9px 15px;border-radius:10px;font-weight:600;font-size:12.5px;color:var(--color-muted);transition:background .18s,color .18s}
 .fbtns button.on{background:var(--primary-08);color:var(--color-primary-dark)}
 
 .ctable{width:100%;border-collapse:collapse;font-size:13px}
-.ctable th{text-align:right;font-size:11.5px;font-weight:700;color:var(--color-muted);padding:0 14px 14px;border-bottom:1px solid var(--color-border);white-space:nowrap}
+.ctable th{text-align:right;font-size:11.5px;font-weight:600;color:var(--color-muted);padding:0 14px 14px;border-bottom:1px solid var(--color-border);white-space:nowrap}
 .ctable th:last-child,.ctable td:last-child{text-align:left}
 .ctable td{padding:13px 14px;border-bottom:1px solid var(--color-border);vertical-align:middle}
 .ctable tbody tr{transition:background .18s}
@@ -79,12 +79,12 @@ $pageCss = <<<CSS
 .c-thumb{width:64px;height:42px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;color:#fff;overflow:hidden;position:relative}
 .c-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .c-thumb .ic{width:18px;height:18px;opacity:.85}
-.c-name{font-weight:700;font-size:13.5px;line-height:1.4}
+.c-name{font-weight:600;font-size:13.5px;line-height:1.4}
 .c-meta{font-size:11.5px;color:var(--color-muted);margin-top:2px}
-.c-price{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.c-price{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .c-price small{font-weight:600;color:var(--color-muted);font-size:10px}
 .c-old{font-size:11px;color:var(--color-muted);text-decoration:line-through}
-.rate{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:#b9760a}
+.rate{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:#b9760a}
 .rate .ic{width:14px;height:14px;fill:var(--warning);stroke:var(--warning)}
 .row-actions{display:flex;align-items:center;gap:3px;justify-content:flex-end}
 .menu-wrap{position:relative}
@@ -107,12 +107,12 @@ $pageCss = <<<CSS
 .modal{background:var(--color-surface);border-radius:20px;box-shadow:var(--shadow-lg);max-width:400px;width:100%;padding:24px;text-align:center;animation:fadeUp .35s var(--ease)}
 .modal .mic{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;margin:0 auto 14px;background:rgba(224,85,107,.12);color:var(--danger)}
 .modal .mic .ic{width:28px;height:28px}
-.modal h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.modal h3{font-size:17px;font-weight:600;margin-bottom:6px}
 .modal p{font-size:13px;color:var(--color-muted);margin-bottom:20px}
 .modal .row{display:flex;gap:10px}
 CSS;
 
-course_html_head('مدیریت دوره‌ها', $pageCss);
+course_html_head('مدیریت دوره‌ها', $pageCss, admin: true);
 ?>
 <body>
 <div class="page">
@@ -185,11 +185,11 @@ course_html_head('مدیریت دوره‌ها', $pageCss);
           <tr data-status="<?= $isPub?'published':'draft' ?>" data-search="<?= e(mb_strtolower(($c['title']??'').' '.($c['instructor']??''))) ?>">
             <td>
               <div class="c-cell">
-                <div class="c-thumb" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>cc)">
+                <div class="c-thumb" style="background:<?= $accent ?>">
                   <?php if ($thumb): ?><img src="<?= e($thumb) ?>" alt=""><?php else: ?><?= cic('book') ?><?php endif; ?>
                 </div>
                 <div>
-                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?><?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?> <span style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#008f8a;background:rgba(0, 143, 138,.10);padding:2px 8px;border-radius:99px;"><?= iconoir('building', '', 13) ?> <?= e($c['branch_name']) ?></span><?php endif; ?></div>
+                  <div class="c-name"><?= e($c['title'] ?? 'بدون عنوان') ?><?php if (dash_is_hq_view() && !empty($c['branch_name'])): ?> <span style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:#008f8a;background:rgba(0, 143, 138,.10);padding:2px 8px;border-radius:99px;"><?= iconoir('building', '', 13) ?> <?= e($c['branch_name']) ?></span><?php endif; ?></div>
                   <div class="c-meta"><?= e($c['instructor'] ?? 'مدرس نامشخص') ?> · <?= fa_digits((int)($c['lessons'] ?? 0)) ?> درس</div>
                 </div>
               </div>

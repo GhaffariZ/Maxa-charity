@@ -78,19 +78,18 @@ $csrf = csrf_token();
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--color-text);
   min-height:100vh;display:grid;place-items:center;padding:20px;
-  background-image:radial-gradient(120% 80% at 100% 0,rgba(0, 143, 138,.10),transparent 55%),
-                   radial-gradient(90% 70% at 0 100%,rgba(250, 166, 26,.08),transparent 60%);}
+  background-image:none;}
 .auth-card{width:100%;max-width:410px;background:var(--color-surface);border:1px solid var(--color-border);
   border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:34px 30px;animation:rise .5s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .brand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:26px}
 .brand-badge{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-  box-shadow:0 12px 24px -12px rgba(0,102,101,.85);font-weight:800;font-size:22px}
-.brand h1{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  background:var(--color-primary-dark);
+  box-shadow:none;font-weight:600;font-size:22px}
+.brand h1{font-size:19px;font-weight:600;letter-spacing:-.01em}
 .brand p{font-size:12.5px;color:var(--color-muted);font-weight:500}
 .field{margin-bottom:15px}
-.field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:7px;color:#5b6469}
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:7px;color:#5b6469}
 .input-wrap{display:flex;align-items:center;gap:10px;background:var(--color-bg);border:1px solid var(--color-border);
   border-radius:13px;padding:0 14px;height:48px;transition:border-color .2s,box-shadow .2s,background .2s}
 .input-wrap:focus-within{border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:#fff}
@@ -98,16 +97,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .input-wrap input{border:none;background:none;outline:none;flex:1;font-family:inherit;font-size:14px;color:var(--color-text)}
 .input-wrap input::placeholder{color:var(--color-muted)}
 .btn-submit{width:100%;height:50px;margin-top:8px;border:none;border-radius:14px;cursor:pointer;
-  font-family:inherit;font-weight:800;font-size:14.5px;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-  box-shadow:0 12px 24px -12px rgba(0, 143, 138,.8);transition:transform .15s var(--ease),box-shadow .22s}
-.btn-submit:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0, 143, 138,.9)}
+  font-family:inherit;font-weight:600;font-size:14.5px;color:#fff;
+  background:var(--color-primary-dark);
+  box-shadow:none;transition:transform .15s var(--ease),box-shadow .22s}
+.btn-submit:hover{background:#005d59}
 .btn-submit:active{transform:scale(.97)}
 .msg{border-radius:12px;padding:11px 14px;font-size:12.5px;font-weight:600;margin-bottom:18px;line-height:1.7}
 .msg.err{background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22)}
 .msg.note{background:var(--primary-08);color:var(--color-primary-dark);border:1px solid rgba(0, 143, 138,.18)}
 .foot{text-align:center;margin-top:20px;font-size:11.5px;color:var(--color-muted)}
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
   <form class="auth-card" method="POST" autocomplete="off" novalidate>

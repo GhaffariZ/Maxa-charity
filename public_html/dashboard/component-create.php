@@ -181,7 +181,7 @@ box-sizing:border-box;
 body{
 font-family:"Vazirmatn","IRANSans","Tahoma",sans-serif;
 background:
-radial-gradient(circle at top right, #ffffff 0%, #f7fbff 28%, #f4f7fb 65%);
+var(--color-bg, #f8f9fa);
 direction:rtl;
 padding:36px;
 margin:0;
@@ -209,14 +209,14 @@ border:1px solid var(--border);
 h2{
 margin:0 0 26px;
 font-size:30px;
-font-weight:900;
+font-weight:600;
 letter-spacing:-.6px;
 color:var(--text);
 }
 
 .group-title{
 font-size:24px;
-font-weight:900;
+font-weight:600;
 margin-top:50px;
 margin-bottom:18px;
 color:var(--text);
@@ -280,7 +280,7 @@ border-radius:12px;
 cursor:pointer;
 font-family:inherit;
 font-size:13px;
-font-weight:800;
+font-weight:600;
 transition:.2s ease;
 display:inline-flex;
 align-items:center;
@@ -298,27 +298,27 @@ transform:translateY(0);
 }
 
 .btn_main{
-background:linear-gradient(135deg,var(--primary),#6366f1);
+background:#00736f;
 color:#fff;
 }
 
 .edit-btn{
-background:linear-gradient(135deg,#0ea5e9,#0284c7);
+background:#036b99;
 color:#fff;
 }
 
 .save-btn{
-background:linear-gradient(135deg,#16a34a,#15803d);
+background:#15803d;
 color:#fff;
 }
 
 .copy-btn{
-background:linear-gradient(135deg,#64748b,#475569);
+background:#475569;
 color:#fff;
 }
 
 .delete-btn{
-background:linear-gradient(135deg,#ef4444,#dc2626);
+background:#b91c1c;
 color:#fff;
 }
 
@@ -364,13 +364,13 @@ justify-content:space-between;
 align-items:center;
 padding:22px 26px;
 cursor:pointer;
-background:linear-gradient(to left,#ffffff,#f8fbff);
+background:var(--color-surface, #fff);
 border-bottom:1px solid rgba(226,232,240,.6);
 }
 
 .component-name{
 font-size:18px;
-font-weight:900;
+font-weight:600;
 letter-spacing:-.3px;
 color:var(--text);
 }
@@ -381,7 +381,7 @@ padding:7px 14px;
 border-radius:999px;
 font-size:12px;
 margin-right:12px;
-font-weight:800;
+font-weight:600;
 box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
@@ -446,7 +446,7 @@ direction:ltr;
 
 .editor-panel,
 .preview-panel{
-background:linear-gradient(to bottom,#fbfdff,#f8fbff);
+background:var(--color-surface, #fff);
 padding:18px;
 border-radius:20px;
 border:1px solid var(--border);
@@ -456,7 +456,7 @@ min-width:0;
 
 .panel-title{
 font-size:14px;
-font-weight:900;
+font-weight:600;
 margin-bottom:14px;
 color:var(--text-soft);
 direction:rtl;
@@ -486,7 +486,7 @@ padding-top:8px;
 
 .group-title{
 font-size:27px;
-font-weight:900;
+font-weight:600;
 margin-top:50px;
 margin-bottom:22px;
 color:#0f172a;
@@ -519,7 +519,7 @@ border-radius:18px;
 padding:34px;
 text-align:center;
 cursor:pointer;
-background:linear-gradient(to bottom,#fbfdff,#f8fbff);
+background:var(--color-surface, #fff);
 transition:.22s ease;
 position:relative;
 }
@@ -538,7 +538,7 @@ cursor:pointer;
 
 .upload-text{
 font-size:14px;
-font-weight:700;
+font-weight:600;
 color:var(--text-soft);
 }
 
@@ -693,7 +693,7 @@ font-size:22px;
 
 .panel-title{
     font-size:15px;
-    font-weight:800;
+    font-weight:600;
     margin-bottom:15px;
     color:#334155;
     direction:rtl;
@@ -737,7 +737,7 @@ line-height:2;
 
 .component-images-editor{
 margin-top:24px;
-background:linear-gradient(to bottom,#fffdf7,#fffaf0);
+background:var(--color-surface, #fff);
 border:1px solid #f3e8c7;
 border-radius:20px;
 padding:20px;
@@ -784,7 +784,7 @@ text-align:left;
 
 .existing-image-info span{
 font-size:13px;
-font-weight:900;
+font-weight:600;
 color:#b45309;
 }
 
@@ -803,7 +803,7 @@ padding:10px 12px;
 background:#fff1f2;
 color:#dc2626;
 font-size:13px;
-font-weight:800;
+font-weight:600;
 cursor:pointer;
 border-top:1px solid #ffe4e6;
 }
@@ -823,7 +823,7 @@ margin-top:6px;
 .add-images-box label{
 display:block;
 font-size:14px;
-font-weight:900;
+font-weight:600;
 margin-bottom:8px;
 color:#92400e;
 }
@@ -891,7 +891,7 @@ text-align:center;
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder{color:#7c8589}
 [data-theme="dark"] .component-box{background:var(--card)}
-[data-theme="dark"] .component-header{background:linear-gradient(to left,#1d2932,#19232a)}
+[data-theme="dark"] .component-header{background:var(--color-surface, #fff)}
 [data-theme="dark"] .component-box:hover{box-shadow:0 18px 40px rgba(0,0,0,.55)}
 [data-theme="dark"] .image-item{background:#0f1518}
 [data-theme="dark"] .image-item span{color:#cfd6da}
@@ -925,6 +925,7 @@ text-align:center;
 [data-theme="dark"] .no-image{background:#11181d;color:var(--muted);border-color:#5b4630;}
 </style>
 
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 
 <body>

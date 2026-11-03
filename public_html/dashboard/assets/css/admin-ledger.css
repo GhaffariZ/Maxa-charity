@@ -1,0 +1,77 @@
+/* Ledger treatment adapted from unslop by Damir Sokolovsky (@heydamir), CC BY 4.0. */
+:root {
+  --color-muted: #60696d;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgb(24 32 36 / 5%);
+  --shadow-md: 0 4px 12px rgb(24 32 36 / 8%);
+  --shadow-lg: 0 12px 28px rgb(24 32 36 / 14%);
+  --ledger-ink: #00736f;
+  --ledger-focus: #008f8a;
+}
+:root[data-theme="dark"] {
+  --color-muted: #a4aeb4;
+  --ledger-ink: #79cbc7;
+  --ledger-focus: #79cbc7;
+}
+body { font-variant-numeric: tabular-nums; }
+
+:where(h1, h2, h3) {
+  letter-spacing: normal;
+  font-weight: 600;
+}
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ledger-focus);
+  outline-offset: 2px;
+}
+:is(.page-head, .panel-head, .head-bar, .ac-head, .fm-head, .mx-head) {
+  gap: 12px;
+  margin-block-end: 24px;
+}
+:is(.page-head, .panel-head, .head-info, .ac-head, .fm-head, .mx-head) > :is(.ph-ic, .head-ic, .ac-head-ic, .fm-head-ic, .mx-head-ic) {
+  background: var(--primary-08, #edf4f3);
+  color: var(--ledger-ink);
+  box-shadow: none;
+  border-radius: 8px;
+}
+:is(.ph-ic, .head-ic, .ac-head-ic, .fm-head-ic, .mx-head-ic) :is(svg, .iconoir-icon) {
+  inline-size: 18px;
+  block-size: 18px;
+  flex-shrink: 0;
+}
+:where(.card, .panel, .form-card) {
+  min-inline-size: 0;
+  border-radius: 12px;
+}
+:is(.page-head, .head-bar, .fm-head, .mx-head) + :is(.card, .panel, .form-card) {
+  border-inline-start: 3px solid var(--ledger-focus);
+}
+:where(.card, .panel, .form-card) :where(input, select, textarea) {
+  max-inline-size: 100%;
+}
+:where(.table-wrap, .table-responsive, .tbl-wrap) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+:is(.btn, .btn-primary, .btn-secondary) {
+  border-radius: 8px;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
+}
+@media (max-width: 640px) {
+  .mx-tabs, .mx-grid { min-inline-size: 0; }
+  .mx-tabs > *, .mx-grid > *, .mx-toolbar > * { min-inline-size: 0; }
+  .mx-toolbar, .mx-head { flex-wrap: wrap; }
+  .mx-toolbar input[type="search"] { min-inline-size: 0; }
+  .mx-row { flex-wrap: wrap; }
+  .mx-row-actions { flex: 1 0 100%; flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(*, *::before, *::after) {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

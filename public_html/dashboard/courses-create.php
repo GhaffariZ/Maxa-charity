@@ -128,9 +128,9 @@ $pageCss = <<<CSS
 .builder>.main-col,.builder>.rail{min-width:0}
 .fsection{margin-bottom:18px;scroll-margin-top:20px}
 .fsection-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.fsection-num{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0;
+.fsection-num{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:600;font-size:14px;flex-shrink:0;
   background:var(--primary-08);color:var(--color-primary-dark)}
-.fsection-head h2{font-size:17px;font-weight:800}
+.fsection-head h2{font-size:17px;font-weight:600}
 .fsection-head .s{font-size:12px;color:var(--color-muted);font-weight:500}
 
 /* ---- آپلودر تصویر ---- */
@@ -153,7 +153,7 @@ $pageCss = <<<CSS
 .cur-sec-head{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--color-bg)}
 .cur-sec-head .grip{color:var(--color-muted);cursor:grab;display:grid;place-items:center;width:24px;flex-shrink:0}
 .cur-sec-head .grip:active{cursor:grabbing}
-.cur-sec-title{flex:1;background:transparent;border:1.5px solid transparent;border-radius:10px;padding:7px 10px;font-weight:800;font-size:14px;color:var(--color-text);transition:border-color .2s,background .2s}
+.cur-sec-title{flex:1;background:transparent;border:1.5px solid transparent;border-radius:10px;padding:7px 10px;font-weight:600;font-size:14px;color:var(--color-text);transition:border-color .2s,background .2s}
 .cur-sec-title:focus{outline:none;border-color:var(--color-primary-light);background:var(--color-surface)}
 .cur-sec-meta{font-size:11.5px;color:var(--color-muted);font-weight:600;white-space:nowrap}
 .icon-btn-sm{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--color-muted);transition:background .2s,color .2s;flex-shrink:0}
@@ -172,8 +172,8 @@ $pageCss = <<<CSS
 .lesson .grip{color:var(--color-muted);cursor:grab;flex-shrink:0;display:grid;place-items:center}
 .lesson-type-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;color:#fff}
 .lesson-type-ic .ic{width:18px;height:18px}
-.lt-video{background:linear-gradient(135deg,#008f8a,#00736f)}
-.lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
+.lt-video{background:#00736f}
+.lt-text{background:#6d3fd1}
 .lt-image{background:linear-gradient(135deg,#faa61a,#db8d0c)}
 .lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}
 .lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
@@ -182,14 +182,14 @@ $pageCss = <<<CSS
 .lesson-title-inp:focus{outline:none;border-color:var(--color-primary-light);background:var(--color-surface)}
 .lesson-sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px;padding:0 8px}
 .lesson-sub .typ{font-size:11px;color:var(--color-muted);font-weight:600}
-.lesson-prev-tag{font-size:10px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:2px 7px;border-radius:99px}
+.lesson-prev-tag{font-size:10px;font-weight:600;color:var(--color-primary-dark);background:var(--primary-08);padding:2px 7px;border-radius:99px}
 .lesson-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
 
 /* پنل تنظیمات درس */
 .lesson-cfg{display:none;margin:-2px 0 10px;padding:14px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-surface)}
 .lesson.cfg-open + .lesson-cfg{display:block}
 .seg{display:inline-flex;background:var(--color-bg);border:1px solid var(--color-border);border-radius:11px;padding:4px;gap:3px;flex-wrap:wrap}
-.seg button{padding:7px 12px;border-radius:8px;font-weight:700;font-size:12px;color:var(--color-muted);display:inline-flex;align-items:center;gap:6px;transition:background .18s,color .18s}
+.seg button{padding:7px 12px;border-radius:8px;font-weight:600;font-size:12px;color:var(--color-muted);display:inline-flex;align-items:center;gap:6px;transition:background .18s,color .18s}
 .seg button .ic{width:14px;height:14px}
 .seg button.on{background:var(--color-surface);color:var(--color-primary-dark);box-shadow:var(--shadow-sm)}
 .add-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
@@ -201,13 +201,13 @@ $pageCss = <<<CSS
 .pv-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pv-thumb .ph{position:relative;z-index:1;opacity:.5}.pv-thumb .ph .ic{width:40px;height:40px}
 .pv-body{padding:15px}
-.pv-cat{font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:4px 10px;border-radius:99px;display:inline-block}
-.pv-title{font-weight:800;font-size:15px;margin:9px 0 4px;line-height:1.5}
+.pv-cat{font-size:11px;font-weight:600;color:var(--color-primary-dark);background:var(--primary-08);padding:4px 10px;border-radius:99px;display:inline-block}
+.pv-title{font-weight:600;font-size:15px;margin:9px 0 4px;line-height:1.5}
 .pv-sub{font-size:12px;color:var(--color-muted);line-height:1.6;min-height:20px}
 .pv-meta{display:flex;gap:14px;margin-top:11px;padding-top:11px;border-top:1px solid var(--color-border);font-size:11.5px;color:var(--color-muted);font-weight:600}
 .pv-meta span{display:inline-flex;align-items:center;gap:5px}.pv-meta .ic{width:14px;height:14px}
 .pv-price{display:flex;align-items:baseline;gap:8px;margin-top:12px}
-.pv-price b{font-size:20px;font-weight:800;color:var(--color-text)}
+.pv-price b{font-size:20px;font-weight:600;color:var(--color-text)}
 .pv-price del{font-size:13px;color:var(--color-muted)}
 
 .checklist{display:flex;flex-direction:column;gap:9px}
@@ -227,7 +227,7 @@ $pageCss = <<<CSS
 .empty-cur{text-align:center;padding:30px;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:16px;font-size:13px}
 CSS;
 
-course_html_head('ساخت دوره جدید', $pageCss);
+course_html_head('ساخت دوره جدید', $pageCss, admin: true);
 ?>
 <body>
 <form class="page" id="courseForm" method="post" autocomplete="off">

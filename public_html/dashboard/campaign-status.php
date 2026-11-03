@@ -284,7 +284,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
 
     .progress-fill { 
         height: 100%; 
-        background: linear-gradient(90deg, var(--secondary-color), #ffb94b); 
+        background: var(--secondary-color);
         border-radius: 10px; 
         width: 0;
         transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -315,7 +315,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
         gap: 8px;
     }
     .btn-support:hover { 
-        background: var(--secondary-color); 
+        background: var(--secondary-color);
         color: white; 
         box-shadow: 0 5px 15px rgba(247, 159, 31, 0.3);
     }
@@ -372,7 +372,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
     }
     .loading-card h3 { margin: 0 0 8px; color: var(--primary-color); font-size: 18px; }
     .loading-card p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.9; }
-    .loading-progress { margin-top: 14px; color: var(--secondary-color); font-size: 12px; font-weight: 700; }
+    .loading-progress { margin-top: 14px; color: var(--secondary-color); font-size: 12px; font-weight:600; }
     .campaign-message {
         display: none;
         margin-bottom: 20px;
@@ -445,6 +445,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
     }
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

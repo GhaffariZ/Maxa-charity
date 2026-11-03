@@ -416,25 +416,25 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .tk-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .tk-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
+  background:var(--color-primary-dark);box-shadow:none}
 .tk-head-ic svg{width:27px;height:27px}
-.tk-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.tk-head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .tk-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 .tk-head .tk-spacer{flex:1}
 
 /* دکمه‌ها */
-.btn{font-family:inherit;font-weight:700;border:none;cursor:pointer;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
+.btn{font-family:inherit;font-weight:600;border:none;cursor:pointer;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
   transition:filter .2s,transform .14s,box-shadow .22s,border-color .2s}
 .btn svg{width:16px;height:16px}
 .btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0, 143, 138,.8)}
+.btn-primary{background:var(--color-primary-dark);color:#fff;padding:11px 18px;font-size:13px;box-shadow:none}
 .btn-primary:hover{transform:translateY(-1px)}
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border);padding:10px 15px;font-size:12.5px}
 .btn-ghost:hover{border-color:var(--color-primary-light)}
 .btn-sm{padding:7px 13px;font-size:12px;border-radius:10px}
 
 /* پیام flash */
-.tk-flash{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:18px;line-height:1.8;display:flex;align-items:center;gap:9px}
+.tk-flash{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:600;margin-bottom:18px;line-height:1.8;display:flex;align-items:center;gap:9px}
 .tk-flash svg{width:18px;height:18px;flex-shrink:0}
 .tk-flash.ok{background:var(--success-12);color:var(--success);border:1px solid rgba(22,163,122,.25)}
 .tk-flash.err{background:var(--danger-12);color:var(--danger);border:1px solid rgba(224,85,107,.25)}
@@ -446,7 +446,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-new-panel[hidden]{display:none}
 @keyframes tkIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .tk-field{margin-bottom:14px}
-.tk-field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:7px;color:#5b6469}
+.tk-field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:7px;color:#5b6469}
 [data-theme="dark"] .tk-field label{color:var(--color-muted)}
 .tk-field input[type=text],.tk-field select,.tk-field textarea{width:100%;font-family:inherit;font-size:13.5px;color:var(--color-text);
   background:var(--color-bg);border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;line-height:1.9;
@@ -455,13 +455,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-field textarea{resize:vertical;min-height:96px}
 .tk-grid2{display:grid;grid-template-columns:1fr 200px;gap:14px}
 .tk-form-foot{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-top:6px}
-.tk-form-foot .to{font-size:12px;color:var(--color-muted);font-weight:700}
+.tk-form-foot .to{font-size:12px;color:var(--color-muted);font-weight:600}
 .tk-form-foot .to b{color:var(--color-primary-dark)}
 
 /* جعبه‌ها (دریافتی/ارسالی) — برای مدیر شعبه */
 .tk-boxes{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .tk-box-btn{font-family:inherit;cursor:pointer;background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:13px;
-  padding:10px 16px;font-size:13px;font-weight:700;color:var(--color-muted);display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,color .2s}
+  padding:10px 16px;font-size:13px;font-weight:600;color:var(--color-muted);display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,color .2s}
 .tk-box-btn b{font-variant-numeric:tabular-nums}
 .tk-box-btn:hover{border-color:var(--color-primary-light)}
 .tk-box-btn.active{border-color:var(--color-primary);color:var(--color-primary-dark);background:var(--primary-08)}
@@ -474,7 +474,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-tab.active{border-color:var(--color-primary)}
 .tk-tab-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
 .tk-tab-ic svg{width:20px;height:20px}
-.tk-tab b{font-size:20px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
+.tk-tab b{font-size:20px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block}
 .tk-tab span{font-size:11px;color:var(--color-muted);font-weight:600;margin-top:4px;display:block;line-height:1.5}
 .ic-all{background:var(--primary-08);color:var(--color-primary)}
 .ic-open{background:var(--secondary-12);color:var(--color-secondary-dark)}
@@ -488,14 +488,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-card:hover{box-shadow:var(--shadow-md)}
 .tk-card.unread{border-inline-start:4px solid var(--color-secondary)}
 .tk-card.closed{opacity:.82}
-.tk-av{width:46px;height:46px;border-radius:14px;flex-shrink:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm)}
+.tk-av{width:46px;height:46px;border-radius:14px;flex-shrink:0;display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;box-shadow:var(--shadow-sm)}
 .tk-body{flex:1;min-width:0}
 .tk-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.tk-subject{font-weight:800;font-size:15px;line-height:1.6;word-break:break-word}
-.tk-num{font-size:11px;color:var(--color-muted);font-weight:700;white-space:nowrap}
+.tk-subject{font-weight:600;font-size:15px;line-height:1.6;word-break:break-word}
+.tk-num{font-size:11px;color:var(--color-muted);font-weight:600;white-space:nowrap}
 .tk-date{font-size:11.5px;color:var(--color-muted);font-weight:600;white-space:nowrap;flex-shrink:0}
 .tk-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
-.tk-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.tk-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;white-space:nowrap}
 .tk-badge .dot{width:6px;height:6px;border-radius:50%}
 .prio-low{background:var(--primary-08);color:var(--color-primary-dark)} .prio-low .dot{background:var(--color-primary)}
 .prio-normal{background:var(--violet-12);color:var(--violet)} .prio-normal .dot{background:var(--violet)}
@@ -503,14 +503,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .st-open{background:var(--secondary-12);color:var(--color-secondary-dark)} .st-open .dot{background:var(--color-secondary)}
 .st-answered{background:var(--success-12);color:var(--success)} .st-answered .dot{background:var(--success)}
 .st-closed{background:rgba(157,157,157,.16);color:var(--color-muted)} .st-closed .dot{background:var(--color-muted)}
-.tk-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--color-bg);color:var(--color-muted);border:1px solid var(--color-border)}
+.tk-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--color-bg);color:var(--color-muted);border:1px solid var(--color-border)}
 .tk-chip svg{width:12px;height:12px}
 .tk-chip.esc{background:var(--secondary-12);color:var(--color-secondary-dark);border-color:transparent}
 .tk-chip.escin{background:var(--violet-12);color:var(--violet);border-color:transparent}
 .tk-chip.new{background:var(--danger-12);color:var(--danger);border-color:transparent}
 .tk-preview{font-size:13px;color:var(--color-text);line-height:1.85;margin-top:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tk-foot{display:flex;align-items:center;gap:9px;margin-top:13px;flex-wrap:wrap}
-.tk-count{font-size:11.5px;color:var(--color-muted);font-weight:700;margin-inline-start:auto}
+.tk-count{font-size:11.5px;color:var(--color-muted);font-weight:600;margin-inline-start:auto}
 
 /* نخِ گفتگو (بازشونده) */
 .tk-thread{margin-top:14px;padding-top:14px;border-top:1px dashed var(--color-border)}
@@ -523,8 +523,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-msg.role-branch_admin{background:var(--violet-12);border-color:rgba(124,77,219,.25)}
 .tk-msg.role-super{background:var(--secondary-12);border-color:rgba(250, 166, 26,.35)}
 .tk-msg .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
-.tk-msg .mwho{font-size:12px;font-weight:800}
-.tk-msg .mrole{font-size:10.5px;font-weight:700;color:var(--color-muted)}
+.tk-msg .mwho{font-size:12px;font-weight:600}
+.tk-msg .mrole{font-size:10.5px;font-weight:600;color:var(--color-muted)}
 .tk-msg .mdate{font-size:10.5px;color:var(--color-muted);font-weight:600}
 .tk-msg p{font-size:13px;line-height:1.9;word-break:break-word;white-space:pre-wrap}
 .tk-actions{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap;justify-content:flex-end}
@@ -536,14 +536,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tk-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-start;flex-wrap:wrap}
 .btn-danger{background:var(--danger-12);color:var(--danger);padding:7px 13px;font-size:12px;border-radius:10px}
 .btn-warn{background:var(--secondary-12);color:var(--color-secondary-dark);padding:7px 13px;font-size:12px;border-radius:10px}
-.btn-send{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:9px 16px;font-size:12.5px}
-.tk-locked{font-size:12px;color:var(--color-muted);font-weight:700;margin-top:12px;text-align:center;padding:10px;background:var(--color-bg);border-radius:12px}
+.btn-send{background:var(--color-primary-dark);color:#fff;padding:9px 16px;font-size:12.5px}
+.tk-locked{font-size:12px;color:var(--color-muted);font-weight:600;margin-top:12px;text-align:center;padding:10px;background:var(--color-bg);border-radius:12px}
 
 .tk-empty{text-align:center;padding:50px 20px;color:var(--color-muted);font-weight:600;background:var(--color-surface);
   border:1.5px dashed var(--color-border);border-radius:var(--radius)}
 
 .tk-setup{background:var(--color-surface);border:1.5px dashed var(--color-secondary);border-radius:var(--radius);padding:26px;line-height:2}
-.tk-setup h2{font-size:16px;font-weight:800;margin-bottom:8px}
+.tk-setup h2{font-size:16px;font-weight:600;margin-bottom:8px}
 .tk-setup code{background:var(--color-bg);border:1px solid var(--color-border);border-radius:8px;padding:3px 8px;font-size:12.5px;direction:ltr;display:inline-block}
 
 .tk-notification-dot{
@@ -581,6 +581,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   .tk-head h1{font-size:19px}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 
@@ -720,7 +721,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       ?>
       <article class="tk-card <?= $V['unread']?'unread':'' ?> <?= $status==='closed'?'closed':'' ?>"
                data-id="<?= $tid ?>" data-box="<?= e($box) ?>" data-status="<?= e($status) ?>">
-        <div class="tk-av" style="background:linear-gradient(135deg,<?= tk_color($t['created_by']) ?>,<?= tk_color($t['created_by']) ?>cc)"><?= e(tk_initials($V['creator'])) ?></div>
+        <div class="tk-av" style="background:<?= tk_color($t['created_by']) ?>"><?= e(tk_initials($V['creator'])) ?></div>
         <div class="tk-body">
           <div class="tk-top">
             <div>

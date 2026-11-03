@@ -202,7 +202,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .page-builder-wrapper{margin-right:0;padding:28px 22px;min-height:100vh}
 .container{max-width:1000px;margin:0 auto}
 .card{background:var(--color-surface);border:1px solid var(--color-border);padding:26px;border-radius:var(--radius);box-shadow:var(--shadow-sm);margin-bottom:30px}
-.card h2{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.card h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
 
 .input-group{margin-bottom:22px}
 .input{width:100%;padding:12px 14px;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--color-text);background:var(--color-bg);transition:border-color .2s,box-shadow .2s,background .2s}
@@ -210,19 +210,19 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 #builderPlaceholder{border:2px dashed var(--color-border) !important;border-radius:var(--radius-sm);color:var(--color-muted) !important;background:var(--color-bg)}
 
 .builder-toolbar{display:flex;gap:12px;margin-top:25px;padding-top:20px;border-top:1px dashed var(--color-border)}
-.btn{border:none;padding:12px 22px;border-radius:13px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:800;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
+.btn{border:none;padding:12px 22px;border-radius:13px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:scale(.97)}
-.btn-add{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
+.btn-add{background:var(--color-primary-dark);color:#fff;box-shadow:none}
 .btn-preview{background:var(--primary-08);color:var(--color-primary-dark)}
 .btn-preview:hover{filter:brightness(.97)}
-.btn-save{background:linear-gradient(135deg,#1bb98a,var(--success));color:#fff;box-shadow:0 10px 22px -10px rgba(22,163,122,.7)}
+.btn-save{background:#00736f;color:#fff;box-shadow:none}
 
 .component-box{display:flex;align-items:center;justify-content:space-between;background:var(--color-bg);border:1px solid var(--color-border);padding:14px 16px;border-radius:var(--radius-sm);margin-bottom:12px;cursor:grab;transition:border-color .2s,box-shadow .2s}
 .component-box:hover{border-color:var(--color-primary-light);box-shadow:var(--shadow-sm)}
 .comp-left{display:flex;align-items:center;gap:15px}
-.order{width:30px;height:30px;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0}
-.remove{background:rgba(224,85,107,.12);color:var(--danger);border:none;padding:7px 14px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12.5px;transition:filter .2s}
+.order{width:30px;height:30px;background:var(--color-primary-dark);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;font-weight:600;flex-shrink:0}
+.remove{background:rgba(224,85,107,.12);color:var(--danger);border:none;padding:7px 14px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:600;font-size:12.5px;transition:filter .2s}
 .remove:hover{filter:brightness(.96)}
 /* خوانایی نامِ کامپوننتِ انتخاب‌شده در دارک‌مود (override رنگِ inline داخل JS) */
 .component-box .comp-left > div:last-child{color:var(--color-text) !important}
@@ -231,13 +231,13 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .modal{position:fixed;inset:0;background:rgba(16,40,40,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1000}
 .modal-content{background:var(--color-surface);color:var(--color-text);width:90%;max-width:600px;max-height:72vh;overflow-y:auto;padding:26px;border-radius:var(--radius);border:1px solid var(--color-border);box-shadow:var(--shadow-lg)}
-.modal-content h3{font-size:17px;font-weight:800}
+.modal-content h3{font-size:17px;font-weight:600}
 .tag-group{margin-bottom:24px}
-.tag-title{font-weight:800;color:var(--color-muted);border-bottom:2px solid var(--color-border);padding-bottom:9px;margin-bottom:14px;font-size:13px}
+.tag-title{font-weight:600;color:var(--color-muted);border-bottom:2px solid var(--color-border);padding-bottom:9px;margin-bottom:14px;font-size:13px}
 .comp-item{display:inline-block;padding:10px 18px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:11px;margin:5px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s}
-.comp-item:hover{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;border-color:transparent}
+.comp-item:hover{background:var(--color-primary-dark);color:#fff;border-color:transparent}
 .preview-frame{width:100%;height:500px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:#fff}
-#blockCount{background:var(--primary-08);color:var(--color-primary-dark);padding:6px 15px;border-radius:99px;font-size:12.5px;font-weight:800;display:inline-block}
+#blockCount{background:var(--primary-08);color:var(--color-primary-dark);padding:6px 15px;border-radius:99px;font-size:12.5px;font-weight:600;display:inline-block}
 
 @media (max-width:768px){
   .page-builder-wrapper{margin-right:0;padding:16px 12px}
@@ -246,6 +246,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   .btn{width:100%}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 
@@ -490,7 +491,8 @@ renderSelected();
 
 <!-- ========== SIDEBAR ========== -->
   <!-- استایل‌های قالب Conca حذف شدند تا با تم داشبورد تداخل نکنند (بخش زیر نیز مخفی است) -->
- </head>
+ <link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
+</head>
  <body>
   <div class="app-main">
    <!-- app wrapper start -->

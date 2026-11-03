@@ -86,19 +86,19 @@ require __DIR__ . '/_panel_head.php';
     }
     .modal-icon-wrap.danger  { background: rgba(239, 68, 68, 0.07); }
     .modal-icon-wrap.success { background: rgba(34, 197, 94, 0.07); }
-    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight: 800; text-align: center; }
+    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight:600; text-align: center; }
     .modal-desc  { margin: 0 0 26px; font-size: 13.5px; color: var(--color-muted, #64748b); text-align: center; line-height: 1.75; }
-    .modal-name  { color: var(--color-text, #1e293b); font-weight: 800; }
+    .modal-name  { color: var(--color-text, #1e293b); font-weight:600; }
     .modal-actions { display: flex; gap: 10px; }
     .btn-modal-cancel {
         flex: 1; padding: 12px; border-radius: 14px;
         background: transparent; border: 1px solid var(--color-border, #e2e8f0);
         color: var(--color-muted, #64748b);
-        font-size: 14px; font-weight: 700; cursor: pointer;
+        font-size: 14px; font-weight:600; cursor: pointer;
     }
     .btn-modal-confirm {
         flex: 1; padding: 12px; border-radius: 14px; border: none;
-        font-size: 14px; font-weight: 700; cursor: pointer; color: #fff;
+        font-size: 14px; font-weight:600; cursor: pointer; color: #fff;
     }
     .btn-modal-confirm.danger  { background: #ef4444; }
     .btn-modal-confirm.success { background: #22c55e; }
