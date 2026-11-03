@@ -18,16 +18,9 @@ $BRANCH_ID = dash_active_branch_id();   // شعبه‌ای که کاربر در 
 $err = ''; $ok = '';
 $old = ['full_name' => '', 'username' => '', 'permissions' => []];
 
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
-];
-// دسترسی‌های ویژه‌ی ستاد مرکزی فقط آن‌جا قابل‌واگذاری‌اند.
-if (dash_is_hq_view()) {
-    $FEATURE_LABELS['events']     = 'رویدادها';
-    $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
-    $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
+$FEATURE_LABELS = dash_feature_labels(dash_is_hq_view());
+if (!dash_is_hq_view()) {
+    unset($FEATURE_LABELS['events']);
 }
 $GRANTABLE = array_keys($FEATURE_LABELS);
 

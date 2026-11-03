@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+dash_require('donation_impacts');
 require_once __DIR__ . '/../core/image-optimizer.php';
 
 // Create table if it doesn't exist

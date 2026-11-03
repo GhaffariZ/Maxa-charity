@@ -10,6 +10,7 @@
  * ========================================================================== */
 
 require_once __DIR__ . '/_guard.php';
+dash_require('branch_intro');
 
 $pdo = dash_pdo();
 $branchId = dash_active_branch_id();

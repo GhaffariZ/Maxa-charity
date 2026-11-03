@@ -297,32 +297,17 @@ $isSuper = dash_is_super();
 
 // قابلیت‌های فعالِ شعبه‌ی فعلی
 $activeFeatures = [];
-foreach (DASH_FEATURES as $f) {
+$featureKeys = array_keys(DASH_FEATURE_LABELS);
+foreach ($featureKeys as $f) {
   if (dash_branch_feature_enabled($BRANCH_ID, $f)) $activeFeatures[] = $f;
 }
 // آیتم‌های منو فقط وقتی نمایش داده می‌شوند که هم برای شعبه فعال باشند و هم کاربر دسترسی داشته باشد
-$visible = static function (string $feature) use ($U, $BRANCH_ID): bool {
-  return in_array($feature, $U['permissions'], true) && dash_branch_feature_enabled($BRANCH_ID, $feature);
-};
-
 // فهرست شعبه‌ها برای dropdown (فقط سوپرادمین همه را می‌بیند)
 $branchList = $isSuper ? dash_all_branches() : [array_filter($ACTIVE_BRANCH_ROW ?? [], static fn($k)=>in_array($k,['id','name','slug','is_hq','status'],true), ARRAY_FILTER_USE_KEY)];
 
 $MENU = [
   'features'      => $activeFeatures,
-  'can'           => [
-    'hero'      => $visible('hero'),
-    'news'      => $visible('news'),
-    'events'    => $visible('events'),
-    'campaigns' => $visible('campaigns'),
-    'partners'  => $visible('partners'),
-    'courses'   => $visible('courses'),
-    'pages'     => $visible('pages'),
-    'financial' => $visible('financial'),
-    'feedback'  => $visible('feedback'),
-    'medical'   => $visible('medical'),
-    'stands'    => $visible('stands'),
-  ],
+  'can'           => array_combine($featureKeys, array_map('dash_can', $featureKeys)),
   'isSuper'       => $isSuper,
   'isBranchAdmin' => dash_is_branch_admin(),
   'isHqView'      => $IS_HQ_VIEW,
@@ -1125,9 +1110,9 @@ body.spa-loading .spa-frame{opacity:.6}
   // مکساپدیا فقط از «ستاد مرکزی» و فقط برای مدیر مرکزی (یا کاربرِ دارای دسترسیِ صریح)
   if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
   // روایات امید مکسا (فقط دفتر مرکزی / ستاد — و هرگز برای مدیر مالی)
-  if (MENU.isHqView && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
+  if (CAN.macsa_stories && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
   // صفحه معرفی شعبه (فقط برای شعب — غیر از ستاد مرکزی)
-  if (!MENU.isHqView) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
+  if (CAN.branch_intro) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
   if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
                        {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
                        {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
@@ -1142,12 +1127,11 @@ body.spa-loading .spa-frame{opacity:.6}
   const people=[];
   if (CAN.feedback) people.push({single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'});
   if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
-  // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل به جز مدیر مالی
-  if (!MENU.isFinanceOnly && !MENU.isFinanceUser) {
+  if (CAN.tickets && !MENU.isFinanceOnly && !MENU.isFinanceUser) {
     people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
   }
   // اثرات کمک (Impact of Donations)
-  people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
+  if (CAN.donation_impacts) people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
   // --- استندها و سفارشات ---

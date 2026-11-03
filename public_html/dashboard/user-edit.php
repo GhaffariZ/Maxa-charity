@@ -16,15 +16,9 @@ if (!dash_is_branch_admin() && !dash_is_super()) {
 $BRANCH_ID = dash_active_branch_id();
 $me        = (int)$DASH_USER['id'];
 
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
-];
-if (dash_is_hq_view()) {
-    $FEATURE_LABELS['events']     = 'رویدادها';
-    $FEATURE_LABELS['news_editor'] = 'سردبیری خبر (تایید/انتشار)';
-    $FEATURE_LABELS['maxapedia']   = 'مکساپدیا';
+$FEATURE_LABELS = dash_feature_labels(dash_is_hq_view());
+if (!dash_is_hq_view()) {
+    unset($FEATURE_LABELS['events']);
 }
 $GRANTABLE = array_keys($FEATURE_LABELS);
 

@@ -4,8 +4,7 @@ require_once __DIR__ . '/../core/image-optimizer.php';
 
 // Access guard: Only Central Headquarters (HQ) or Super Admin can access, and never financial manager
 $isFinance = dash_is_finance_only() || dash_is_finance_user();
-$isHq = (dash_is_hq_view() || !empty($DASH_USER['is_super'])) && !$isFinance;
-if (!$isHq) {
+if (!dash_can('macsa_stories') || $isFinance) {
     http_response_code(403);
     ?>
     <!DOCTYPE html>
@@ -29,7 +28,7 @@ if (!$isHq) {
     <body>
         <div class="box">
             <h1>دسترسی محدود است</h1>
-            <p><?= $isFinance ? 'دسترسی به «بانک روایات امید مکسا» برای کاربران بخش مالی امکان‌پذیر نمی‌باشد.' : 'مدیریت «بانک روایات امید مکسا» یک امکان متمرکز است و تنها از طریق <strong>دفتر مرکزی (ستاد)</strong> قابل دسترسی می‌باشد.' ?></p>
+            <p><?= $isFinance ? 'دسترسی به «بانک روایات امید مکسا» برای کاربران بخش مالی امکان‌پذیر نمی‌باشد.' : 'برای مدیریت «بانک روایات امید مکسا» به دسترسی این بخش در دفتر مرکزی نیاز دارید.' ?></p>
             <a href="<?= $isFinance ? 'financial-management.php' : 'index.php' ?>"><?= $isFinance ? 'بازگشت به پنل مالی' : 'بازگشت به داشبورد' ?></a>
         </div>
     </body>

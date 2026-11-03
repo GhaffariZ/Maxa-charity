@@ -19,7 +19,7 @@ if (dash_is_finance_only() || dash_is_finance_user()) {
     exit;
 }
 
-/* توجه: سیستم تیکتینگ برای سایر کاربرانِ پنل در دسترس است و سطحِ دسترسی *درونِ* صفحه اعمال می‌شود. */
+dash_require('tickets');
 
 $U             = dash_user();
 $ME            = (int)$U['id'];

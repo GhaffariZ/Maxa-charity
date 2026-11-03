@@ -58,11 +58,7 @@ $st = $pdo->prepare(
 $st->execute([$BRANCH_ID]);
 $users = $st->fetchAll();
 
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'صفحات', 'financial' => 'مالی', 'feedback' => 'انتقادات', 'medical' => 'پزشکی',
-    'stands' => 'استندها و سفارشات',
-];
+$FEATURE_LABELS = DASH_FEATURE_LABELS;
 $branchRow = dash_load_branch($BRANCH_ID);
 
 $PANEL_TITLE = 'مدیریت کاربران';
