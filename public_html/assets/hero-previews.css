@@ -1,0 +1,401 @@
+.hero-preview-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f6f4ed;
+  border-bottom: 1px solid #d8e1dc;
+}
+.hero-preview-picker a {
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: #174542;
+  font-size: .875rem;
+}
+.hero-preview-picker a[aria-current="page"] {
+  background: #006d69;
+  color: white;
+}
+
+.cta-hero[data-hero-layout] {
+  --preview-paper: #f6f4ed;
+  --preview-ink: #143a38;
+  --preview-rail: clamp(24px, 6vw, 88px);
+  background: var(--preview-paper);
+  min-height: auto;
+}
+.cta-hero[data-hero-layout][hidden] { display: none; }
+.cta-hero[data-hero-layout]::before { content: none; }
+.cta-hero[data-hero-layout] .cta-content {
+  min-height: clamp(480px, 45vw, 660px);
+  padding: 48px 0 84px;
+}
+.cta-hero[data-hero-layout] .cta-content .cta-container {
+  padding-inline: var(--preview-rail);
+}
+.cta-hero[data-hero-layout] .cta-text {
+  color: var(--preview-ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cta-hero[data-hero-layout] .cta-title {
+  font-size: clamp(28px, 4vw, 64px);
+  line-height: 1.3;
+  text-shadow: none;
+}
+.cta-hero[data-hero-layout] .cta-desc {
+  font-size: clamp(15px, 1.25vw, 18px);
+  color: inherit;
+}
+.cta-hero[data-hero-layout] .cta-btn {
+  color: #172521;
+  box-shadow: none;
+}
+.cta-hero[data-hero-layout] :is(.cta-arrow, .cta-dot) {
+  background: #174542;
+  border-color: #6c8a85;
+}
+.cta-hero[data-hero-layout] .cta-arrow {
+  top: auto;
+  bottom: 14px;
+  transform: none;
+}
+.cta-hero[data-hero-layout] .cta-dots {
+  min-height: 36px;
+  bottom: 14px;
+}
+.cta-hero[data-hero-layout] .cta-dot.active { background: #faa61a; }
+:is(.hero-preview-picker, .cta-hero[data-hero-layout]) :is(a, button):focus-visible {
+  outline: 3px solid #d48400;
+  outline-offset: 4px;
+}
+.cta-hero[data-hero-layout] .cta-slider {
+  overflow: hidden;
+  background: #123b39;
+}
+.cta-hero[data-hero-layout] .cta-slide {
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: none;
+}
+.cta-hero[data-hero-layout] .cta-slide::after { content: none; }
+.cta-hero[data-hero-layout] .cta-slider {
+  box-shadow: inset 0 0 0 1px #ffffff32;
+}
+.cta-hero[data-hero-layout] .cta-track {
+  transition-timing-function: cubic-bezier(.22, .68, .2, 1);
+}
+.hero-preview-autoplay {
+  position: absolute;
+  z-index: 8;
+  inset-inline-end: 70px;
+  bottom: 19px;
+  padding: 5px 12px;
+  border: 1px solid #90a8a1;
+  border-radius: 99px;
+  background: #123b39;
+  color: white;
+  font: inherit;
+  font-size: .8rem;
+  cursor: pointer;
+}
+.hero-preview-autoplay[aria-pressed="true"] {
+  background: #faa61a;
+  color: #172521;
+}
+
+/* Split editorial layout with the entire slide visible. */
+.cta-hero[data-hero-layout="split"] .cta-slider { inset-inline-start: 48%; }
+.cta-hero[data-hero-layout="split"] .cta-content .cta-container {
+  padding-inline-end: calc(52% + 24px);
+}
+.cta-hero[data-hero-layout="split"] .cta-title {
+  border-inline-start: 4px solid #faa61a;
+  padding-inline-start: 16px;
+}
+.cta-hero[data-hero-layout="split"] {
+  background: repeating-linear-gradient(90deg, transparent 0 79px, #1745420d 79px 80px), #f6f4ed;
+}
+.cta-hero[data-hero-layout="split"] .cta-slider {
+  inset-block: 18px 62px;
+  inset-inline-end: 18px;
+  border-radius: 4px 32px 4px 32px;
+}
+
+/* Centered introduction above a wide media window. */
+.cta-hero[data-hero-layout="centered"] { display: grid; }
+.cta-hero[data-hero-layout="centered"] .cta-content {
+  grid-row: 1;
+  min-height: 0;
+  padding-block: clamp(32px, 5vw, 72px);
+}
+.cta-hero[data-hero-layout="centered"] .cta-text {
+  width: min(850px, 100%);
+  margin-inline: auto;
+  text-align: center;
+}
+.cta-hero[data-hero-layout="centered"] .cta-desc { margin-inline: auto; }
+.cta-hero[data-hero-layout="centered"] .cta-slider {
+  position: relative;
+  margin: 0 var(--preview-rail) 66px;
+  border-radius: 20px;
+  height: clamp(220px, 29vw, 460px);
+}
+.cta-hero[data-hero-layout="centered"] {
+  background: radial-gradient(ellipse at 50% 32%, #fcfbf4 15%, #dceae3 100%);
+}
+.cta-hero[data-hero-layout="centered"] .cta-slider {
+  width: min(1040px, calc(100% - 2 * var(--preview-rail)));
+  margin-inline: auto;
+  border: 1px solid #8eaea2;
+  border-radius: 110px 110px 20px 20px / 48px 48px 20px 20px;
+}
+
+/* Full-width imagery with a low caption. */
+.cta-hero[data-hero-layout="cinematic"] { background: #102927; }
+.cta-hero[data-hero-layout="cinematic"] .cta-slide { background-size: cover; }
+.cta-hero[data-hero-layout="cinematic"] .cta-slide::after {
+  content: "";
+  background: linear-gradient(0deg, #071f1e, #071f1edb 46%, transparent 90%);
+}
+.cta-hero[data-hero-layout="cinematic"] .cta-content { align-items: end; }
+.cta-hero[data-hero-layout="cinematic"] .cta-text {
+  color: white;
+  width: min(850px, 100%);
+}
+.cta-hero[data-hero-layout="cinematic"] .cta-title {
+  max-width: 18ch;
+  font-size: clamp(31px, 5.8vw, 86px);
+  text-wrap: balance;
+}
+
+/* Ivory panel overlapping a framed stage. */
+.cta-hero[data-hero-layout="offset"] { background: #e4eee9; }
+.cta-hero[data-hero-layout="offset"] .cta-slider {
+  inset: 24px var(--preview-rail) 66px;
+  inset-inline-start: 27%;
+  border-radius: 24px;
+}
+.cta-hero[data-hero-layout="offset"] .cta-text {
+  background: #fffdf7;
+  border: 1px solid #ccdcd4;
+  border-radius: 16px;
+  padding: clamp(20px, 3.5vw, 56px);
+  box-shadow: 0 16px 40px #173a3820;
+}
+.cta-hero[data-hero-layout="offset"] .cta-slider {
+  border: 1px solid #355f56;
+  border-radius: 4px 80px 4px 28px;
+}
+.cta-hero[data-hero-layout="offset"] .cta-text {
+  border-block-start: 4px solid #faa61a;
+  border-radius: 6px 6px 24px 6px;
+}
+
+/* Reversed split with a bordered image and a dark canvas. */
+.cta-hero[data-hero-layout="framed"] {
+  background: radial-gradient(ellipse at 30% 100%, #2e6053, transparent 55%), #123b39;
+}
+.cta-hero[data-hero-layout="framed"] .cta-slider {
+  inset: 24px var(--preview-rail) 66px;
+  inset-inline-end: 47%;
+  border: 1px solid #87a29a;
+  border-radius: 8px;
+  background: #0d302e;
+}
+.cta-hero[data-hero-layout="framed"] .cta-content .cta-container {
+  padding-inline-start: calc(53% + 24px);
+}
+.cta-hero[data-hero-layout="framed"] .cta-text { color: #f6f4ed; }
+.cta-hero[data-hero-layout="framed"] .cta-title {
+  border-block-end: 1px solid #87a29a;
+  padding-block-end: 14px;
+}
+.cta-hero[data-hero-layout="framed"] .cta-slider {
+  outline: 1px solid #a5bdb369;
+  outline-offset: 8px;
+  border-radius: 48px 8px 48px 8px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cta-hero[data-hero-layout] .is-preview-active {
+    animation: var(--preview-image-motion) 850ms cubic-bezier(.16, 1, .3, 1) both;
+  }
+  [data-hero-layout="split"] { --preview-image-motion: hero-split-reveal; }
+  [data-hero-layout="centered"] { --preview-image-motion: hero-center-reveal; }
+  [data-hero-layout="cinematic"] { --preview-image-motion: hero-cinema-reveal; }
+  [data-hero-layout="offset"] { --preview-image-motion: hero-offset-reveal; }
+  [data-hero-layout="framed"] { --preview-image-motion: hero-frame-reveal; }
+  .cta-hero[data-hero-layout="offset"]:not([hidden]) .cta-content {
+    animation: hero-panel-enter 780ms cubic-bezier(.16, 1, .3, 1) both;
+  }
+  @supports (animation-timeline: view()) {
+    .cta-hero[data-hero-layout="centered"] .cta-slider {
+      animation: hero-media-scroll linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+  }
+}
+@keyframes hero-split-reveal {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0); }
+}
+@keyframes hero-center-reveal {
+  from { opacity: .35; scale: .96; }
+  to { opacity: 1; scale: 1; }
+}
+@keyframes hero-cinema-reveal {
+  from { opacity: .45; scale: 1.07; }
+  to { opacity: 1; scale: 1; }
+}
+@keyframes hero-offset-reveal {
+  from { clip-path: inset(0 0 42% 0 round 24px); }
+  to { clip-path: inset(0); }
+}
+@keyframes hero-frame-reveal {
+  from { opacity: .35; translate: 0 18px; rotate: -1deg; }
+  to { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+@keyframes hero-panel-enter {
+  from { translate: 0 32px; }
+  to { translate: 0 0; }
+}
+@keyframes hero-media-scroll {
+  from { scale: .92; opacity: .65; }
+  to { scale: 1; opacity: 1; }
+}
+
+@media (max-width: 800px) {
+  .cta-hero[data-hero-layout="cinematic"] .cta-slider {
+    position: relative;
+    height: clamp(200px, 56vw, 420px);
+  }
+  .cta-hero[data-hero-layout="cinematic"] .cta-slide { background-size: contain; }
+  .cta-hero[data-hero-layout="cinematic"] .cta-slide::after { content: none; }
+  .cta-hero[data-hero-layout="cinematic"] .cta-content {
+    min-height: 0;
+    padding-block: 24px 76px;
+  }
+  .cta-hero[data-hero-layout]:not([data-hero-layout="cinematic"]):not([hidden]) {
+    display: grid;
+    padding-block-end: 64px;
+  }
+  .cta-hero[data-hero-layout]:not([data-hero-layout="cinematic"]) .cta-content {
+    min-height: 0;
+    padding: 24px 0;
+  }
+  .cta-hero[data-hero-layout] .cta-content .cta-container {
+    padding-inline: var(--preview-rail);
+  }
+  .cta-hero[data-hero-layout]:not([data-hero-layout="cinematic"]) .cta-slider {
+    position: relative;
+    inset: auto;
+    height: clamp(176px, 42vw, 300px);
+    margin: 12px var(--preview-rail) 0;
+  }
+  .cta-hero[data-hero-layout="offset"] .cta-text { margin-block-start: -40px; }
+  .cta-hero[data-hero-layout="split"] .cta-title { border: 0; padding: 0; }
+  .hero-preview-autoplay {
+    inset-inline-end: 54px;
+    padding-inline: 7px;
+    font-size: .7rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-hero[data-hero-layout] :is(.cta-track, .cta-btn, .cta-arrow, .cta-dot) {
+    transition: none;
+  }
+}
+
+/* Compact featured carousel inspired by Bitgraph's center artwork and side actions. */
+.cta-hero[data-hero-layout="feature"] {
+  width: min(1344px, calc(100% - 48px));
+  margin: clamp(24px, 4vw, 56px) auto;
+  border-radius: 22px;
+  border: 1px solid #2c4d44;
+  background: #102824;
+}
+.cta-hero[data-hero-layout="feature"] .cta-slider {
+  inset-inline: 23% 18%;
+  background: transparent;
+  box-shadow: none;
+}
+.cta-hero[data-hero-layout="feature"] .cta-track {
+  display: block;
+  position: relative;
+  will-change: auto;
+}
+.cta-hero[data-hero-layout="feature"] .cta-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  scale: 1.02;
+  transition: opacity 450ms ease, scale 600ms ease-out;
+}
+.cta-hero[data-hero-layout="feature"] .cta-slide.is-preview-active {
+  opacity: 1;
+  scale: 1;
+}
+.cta-hero[data-hero-layout="feature"] .cta-content {
+  min-height: clamp(320px, 29vw, 418px);
+  padding: 36px 0 72px;
+  pointer-events: none;
+}
+.cta-hero[data-hero-layout="feature"] .cta-content .cta-container {
+  padding-inline: clamp(24px, 3vw, 44px);
+}
+.cta-hero[data-hero-layout="feature"] .cta-text {
+  display: grid;
+  grid-template-columns: minmax(0, 22fr) minmax(0, 63fr) minmax(0, 15fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  width: 100%;
+  color: #f9f5e9;
+}
+.cta-hero[data-hero-layout="feature"] .cta-title {
+  grid-column: 1;
+  font-size: clamp(22px, 2.2vw, 36px);
+  margin-bottom: 10px;
+}
+.cta-hero[data-hero-layout="feature"] .cta-desc {
+  grid-column: 1;
+  margin: 0;
+  font-size: .95rem;
+  color: #dae7df;
+}
+.cta-hero[data-hero-layout="feature"] .cta-btn {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  pointer-events: auto;
+  text-align: start;
+}
+.cta-hero[data-hero-layout="feature"] .cta-arrow { width: 36px; height: 36px; }
+@media (max-width: 900px) {
+  .cta-hero[data-hero-layout="feature"]:not([hidden]) {
+    display: block;
+    width: calc(100% - 24px);
+    padding-block-end: 60px;
+    border-radius: 16px;
+  }
+  .cta-hero[data-hero-layout="feature"]:not([hidden]) .cta-slider {
+    position: relative;
+    inset: auto;
+    margin: 0;
+    height: clamp(170px, 49vw, 360px);
+  }
+  .cta-hero[data-hero-layout="feature"]:not([hidden]) .cta-content {
+    min-height: auto;
+    padding: 14px 0 8px;
+  }
+  .cta-hero[data-hero-layout="feature"] .cta-text {
+    display: block;
+    text-align: start;
+  }
+  .cta-hero[data-hero-layout="feature"] .cta-btn { margin-top: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-hero[data-hero-layout="feature"] .cta-slide { transition: none; }
+}
