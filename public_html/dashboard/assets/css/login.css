@@ -160,8 +160,8 @@ svg {
 }
 
 .btn-submit::before {
-    padding: 1px;
-    background: conic-gradient(from var(--submit-angle, 0deg), #287571 55%, #8bf0d9 83%, #ffe1a1 94%, #287571);
+    padding: 2px;
+    background: conic-gradient(from var(--submit-angle, 0deg), var(--amber) 65%, #fff0bd 86%, var(--amber) 100%);
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
 }
