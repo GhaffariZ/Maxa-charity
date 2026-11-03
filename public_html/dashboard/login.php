@@ -119,5 +119,20 @@ $csrf = csrf_token();
       <p>همراه بیماران مبتلا به سرطان</p>
     </aside>
   </main>
+  <script>
+    const loginArt = document.querySelector('.login-art');
+    const canFollowPointer = matchMedia('(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)');
+
+    loginArt.addEventListener('pointermove', (event) => {
+      if (event.pointerType === 'touch' || !canFollowPointer.matches) return;
+
+      const bounds = loginArt.getBoundingClientRect();
+      loginArt.style.setProperty('--pointer-x', (event.clientX - bounds.left) + 'px');
+      loginArt.style.setProperty('--pointer-y', (event.clientY - bounds.top) + 'px');
+      loginArt.classList.add('is-tracking');
+    });
+
+    loginArt.addEventListener('pointerleave', () => loginArt.classList.remove('is-tracking'));
+  </script>
 </body>
 </html>

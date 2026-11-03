@@ -30,7 +30,7 @@ body {
 
 .login {
     display: grid;
-    grid-template-columns: 1fr 1.07fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.07fr);
     width: min(100%, 68rem);
     min-height: 37rem;
     overflow: hidden;
@@ -135,12 +135,16 @@ svg {
     font: inherit;
     font-weight: 750;
     cursor: pointer;
-    transition: background-color .18s, transform .18s;
+    transition: background-color .18s, transform .18s ease-out;
 }
 
-.btn-submit:hover { background: #004b49; }
-.btn-submit:active { transform: translateY(1px); }
 .btn-submit:focus-visible { outline: 2px solid var(--teal-dark); outline-offset: 3px; }
+
+@media (hover: hover) {
+    .btn-submit:hover { background: #004b49; }
+}
+
+.btn-submit:active { background: #003f3d; }
 
 .msg {
     margin-bottom: 16px;
@@ -179,6 +183,21 @@ svg {
     opacity: .34;
 }
 
+@media (any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .login-art::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse 160px 140px at var(--pointer-x, 50%) var(--pointer-y, 50%), #8ce8d54a, transparent);
+        opacity: 0;
+        transition: opacity .28s ease-out;
+    }
+
+    .login-art.is-tracking::after { opacity: 1; }
+}
+
 .art-wordmark { font-size: .86rem; font-weight: 800; letter-spacing: .32em; }
 
 .art-orbit {
@@ -195,10 +214,9 @@ svg {
 .art-orbit::before {
     content: "";
     position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    background: radial-gradient(circle at 50% 4px, var(--amber) 3px, transparent 4px);
-    animation: orbit 34s linear infinite;
+    inset: -5px;
+    background: radial-gradient(circle at 50% 4.5px, var(--amber) 3px, transparent 3.75px);
+    transform: rotate(32deg);
 }
 
 .art-orbit::after {
@@ -225,14 +243,27 @@ svg {
     font-weight: 600;
 }
 
-@keyframes orbit { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: no-preference) {
+    .login-art::before { animation: reveal-dots .65s ease-out; }
+    .art-orbit::before { animation: orbit 4.6s cubic-bezier(.35, 0, .3, 1); }
+    .btn-submit svg { transition: transform .22s ease-out; }
+    .btn-submit:active { transform: translateY(1px); }
+    .btn-submit:focus-visible svg { transform: translateX(-4px); }
+
+    @media (hover: hover) {
+        .btn-submit:hover svg { transform: translateX(-4px); }
+    }
+}
+
+@keyframes reveal-dots { from { opacity: 0; } }
+@keyframes orbit { to { transform: rotate(392deg); } }
 
 @media (max-width: 720px) {
-    .login { grid-template-columns: 1fr; max-width: 30rem; min-height: 0; }
+    .login { grid-template-columns: minmax(0, 1fr); max-width: 30rem; min-height: 0; }
     .login-main { gap: 25px; padding: 24px clamp(20px, 6vw, 36px); }
     .login-art {
         grid-row: 1;
-        grid-template: "mark orbit" auto "caption orbit" auto / 1fr auto;
+        grid-template: "mark orbit" auto "caption orbit" auto / minmax(0, 1fr) auto;
         justify-items: start;
         align-items: center;
         column-gap: 12px;
@@ -246,6 +277,5 @@ svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .art-orbit::before { animation: none; }
     .btn-submit, .input-wrap { transition: none; }
 }
