@@ -587,7 +587,7 @@ function dash_set_active_branch(int $branchId): bool
 function dash_can(string $feature): bool
 {
     $u = dash_user();
-    if (!$u) {
+    if (!$u || !isset(DASH_FEATURE_LABELS[$feature])) {
         return false;
     }
     if (in_array($feature, DASH_HQ_FEATURES, true) && !dash_is_hq_view()) {
@@ -596,8 +596,8 @@ function dash_can(string $feature): bool
     if ($feature === 'branch_intro' && dash_is_hq_view()) {
         return false;
     }
-    // باید هم کاربر دسترسی داشته باشد و هم آن قابلیت برای شعبه‌ی فعال روشن باشد
-    $hasPerm = in_array($feature, $u['permissions'], true);
+    // مدیر مرکزی به فهرست دسترسی‌های ذخیره‌شده در نشست وابسته نیست.
+    $hasPerm = !empty($u['is_super']) || in_array($feature, $u['permissions'], true);
     return $hasPerm && dash_branch_feature_enabled(dash_active_branch_id(), $feature);
 }
 
