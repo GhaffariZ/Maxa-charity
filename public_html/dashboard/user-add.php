@@ -2,7 +2,7 @@
 /* ============================================================================
  *  افزودن کاربر شعبه (مدیر شعبه یا مدیر مرکزی — در محدوده‌ی شعبه‌ی فعال)
  * ----------------------------------------------------------------------------
- *  - نام، نام‌کاربری، رمز، و نقش (از نقش‌های موجود یا ساختِ نقش جدید با تیک‌ها).
+ *  - نام، نام‌کاربری، رمز و دسترسی‌ها.
  *  - کاربر در شعبه‌ی فعال ساخته می‌شود. مدیر شعبه نمی‌تواند سوپرادمین بسازد.
  *  امنیت: CSRF، فقط ادمین، ایزولاسیون شعبه روی همه‌ی کوئری‌ها.
  * ========================================================================== */
@@ -16,7 +16,7 @@ if (!dash_is_branch_admin() && !dash_is_super()) {
 
 $BRANCH_ID = dash_active_branch_id();   // شعبه‌ای که کاربر در آن ساخته می‌شود
 $err = ''; $ok = '';
-$old = ['full_name' => '', 'username' => '', 'role_mode' => 'existing', 'role_id' => '', 'new_role_name' => '', 'new_perms' => []];
+$old = ['full_name' => '', 'username' => '', 'permissions' => []];
 
 $FEATURE_LABELS = [
     'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
@@ -36,15 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim((string)($_POST['full_name'] ?? ''));
     $username = trim((string)($_POST['username'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
-    $roleMode = (string)($_POST['role_mode'] ?? 'existing');
-    $roleId   = (int)($_POST['role_id'] ?? 0);
-    $newName  = trim((string)($_POST['new_role_name'] ?? ''));
-    $newPerms = array_values(array_intersect((array)($_POST['new_perms'] ?? []), $GRANTABLE));
+    $posted = $_POST['permissions'] ?? [];
+    $permissions = is_array($posted)
+        ? array_values(array_intersect($GRANTABLE, array_filter($posted, 'is_string')))
+        : [];
+    $old = ['full_name' => $fullName, 'username' => $username, 'permissions' => $permissions];
 
-    $old = ['full_name' => $fullName, 'username' => $username, 'role_mode' => $roleMode,
-            'role_id' => $roleId ?: '', 'new_role_name' => $newName, 'new_perms' => $newPerms];
-
-    if (!preg_match('/^[A-Za-z0-9_.-]{3,60}$/', $username)) {
+    if (($_POST['edit_permissions'] ?? '') !== '1' || !is_array($posted)) {
+        $err = 'فرم را دوباره باز کنید و دسترسی‌ها را انتخاب کنید.';
+    } elseif (!preg_match('/^[A-Za-z0-9_.-]{3,60}$/', $username)) {
         $err = 'نام کاربری نامعتبر است (۳ تا ۶۰ کاراکترِ مجاز).';
     } elseif (strlen($password) < 8) {
         $err = 'رمز عبور باید حداقل ۸ کاراکتر باشد.';
@@ -56,61 +56,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // تعیین نقش
-    $finalRoleId = null;
-    if ($err === '') {
-        if ($roleMode === 'new') {
-            if ($newName === '' || mb_strlen($newName) > 80) {
-                $err = 'نام نقش جدید را وارد کنید.';
-            } elseif (!$newPerms) {
-                $err = 'برای نقش جدید حداقل یک دسترسی انتخاب کنید.';
-            } else {
-                // یکتایی نام نقش در همین شعبه
-                $rc = $pdo->prepare('SELECT 1 FROM dashboard_roles WHERE branch_id = ? AND name = ? LIMIT 1');
-                $rc->execute([$BRANCH_ID, $newName]);
-                if ($rc->fetch()) { $err = 'نقشی با این نام در این شعبه وجود دارد.'; }
-            }
-        } else { // existing
-            if ($roleId <= 0) {
-                $err = 'یک نقش انتخاب کنید یا نقش جدید بسازید.';
-            } else {
-                // IDOR: نقش باید متعلق به همین شعبه باشد
-                $rc = $pdo->prepare('SELECT id FROM dashboard_roles WHERE id = ? AND branch_id = ? LIMIT 1');
-                $rc->execute([$roleId, $BRANCH_ID]);
-                if (!$rc->fetch()) { $err = 'نقش انتخاب‌شده معتبر نیست.'; }
-                else { $finalRoleId = $roleId; }
-            }
-        }
-    }
-
     if ($err === '') {
         try {
             $pdo->beginTransaction();
-            if ($roleMode === 'new') {
-                $pdo->prepare('INSERT INTO dashboard_roles (branch_id, name, permissions, is_preset) VALUES (?,?,?,0)')
-                    ->execute([$BRANCH_ID, $newName, json_encode($newPerms, JSON_UNESCAPED_UNICODE)]);
-                $finalRoleId = (int)$pdo->lastInsertId();
-            }
             $hash = password_hash($password, PASSWORD_DEFAULT);
             // is_super و is_branch_admin همیشه 0 — مدیر شعبه نمی‌تواند ارتقا دهد (least privilege)
-            $pdo->prepare("INSERT INTO dashboard_users (branch_id, username, password_hash, full_name, role_id, is_super, is_branch_admin, status) VALUES (?,?,?,?,?,0,0,'active')")
-                ->execute([$BRANCH_ID, $username, $hash, $fullName ?: null, $finalRoleId]);
+            $pdo->prepare("INSERT INTO dashboard_users (branch_id, username, password_hash, full_name, direct_permissions, is_super, is_branch_admin, status) VALUES (?,?,?,?,?,0,0,'active')")
+                ->execute([$BRANCH_ID, $username, $hash, $fullName ?: null, json_encode($permissions, JSON_THROW_ON_ERROR)]);
             $pdo->commit();
-            dash_audit('user_created', ['branch_id' => $BRANCH_ID, 'username' => $username, 'role_id' => $finalRoleId]);
+            dash_audit('user_created', ['branch_id' => $BRANCH_ID, 'username' => $username, 'permissions' => $permissions]);
             $ok = 'کاربر «' . $username . '» با موفقیت ساخته شد.';
-            $old = ['full_name' => '', 'username' => '', 'role_mode' => 'existing', 'role_id' => '', 'new_role_name' => '', 'new_perms' => []];
+            $old = ['full_name' => '', 'username' => '', 'permissions' => []];
         } catch (Throwable $ex) {
             if ($pdo->inTransaction()) { $pdo->rollBack(); }
             $err = 'خطا در ساخت کاربر. دوباره تلاش کنید.';
         }
     }
 }
-
-// نقش‌های موجودِ همین شعبه
-dash_ensure_financial_role($BRANCH_ID);
-$roleStmt = $pdo->prepare('SELECT id, name, permissions, is_preset FROM dashboard_roles WHERE branch_id = ? ORDER BY is_preset DESC, name ASC');
-$roleStmt->execute([$BRANCH_ID]);
-$roles = $roleStmt->fetchAll();
 
 $branchRow = dash_load_branch($BRANCH_ID);
 
@@ -153,46 +115,17 @@ require __DIR__ . '/_panel_head.php';
     </div>
 
     <div class="card">
-      <h2>نقش و دسترسی</h2>
-      <div class="hint">یک نقش موجود انتخاب کنید یا نقش جدیدی با دسترسی‌های دلخواه بسازید.</div>
-
-      <div class="field">
-        <label class="check" style="display:inline-flex;margin-inline-end:10px">
-          <input type="radio" name="role_mode" value="existing" <?= $old['role_mode'] !== 'new' ? 'checked' : '' ?>>
-          <span>نقش موجود</span>
-        </label>
-        <label class="check" style="display:inline-flex">
-          <input type="radio" name="role_mode" value="new" <?= $old['role_mode'] === 'new' ? 'checked' : '' ?>>
-          <span>افزودن نقش جدید</span>
-        </label>
-      </div>
-
-      <div id="existingBox" class="field">
-        <label>انتخاب نقش</label>
-        <select name="role_id">
-          <option value="">— انتخاب کنید —</option>
-          <?php foreach ($roles as $r):
-            $perms = implode('، ', array_map(fn($p)=>$FEATURE_LABELS[$p] ?? $p, (array)json_decode($r['permissions'], true) ?: [])); ?>
-            <option value="<?= (int)$r['id'] ?>" <?= (string)$old['role_id'] === (string)$r['id'] ? 'selected' : '' ?>>
-              <?= e($r['name']) ?> (<?= e($perms) ?>)
-            </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div id="newBox" class="field" style="display:none">
-        <label>نام نقش جدید</label>
-        <input type="text" name="new_role_name" value="<?= e($old['new_role_name']) ?>" placeholder="مثلاً: خبرنگار">
-        <div class="sub" style="margin:12px 0 8px">دسترسی‌های این نقش:</div>
-        <div class="checks">
-          <?php foreach ($FEATURE_LABELS as $key => $label):
-            $checked = in_array($key, $old['new_perms'], true); ?>
-            <label class="check <?= $checked ? 'on' : '' ?>">
-              <input type="checkbox" name="new_perms[]" value="<?= e($key) ?>" <?= $checked ? 'checked' : '' ?>>
-              <span><?= e($label) ?></span>
-            </label>
-          <?php endforeach; ?>
-        </div>
+      <h2>دسترسی‌های کاربر</h2>
+      <div class="hint">بخش‌هایی را که این کاربر به آن‌ها نیاز دارد انتخاب کنید</div>
+      <input type="hidden" name="edit_permissions" value="1">
+      <div class="checks">
+        <?php foreach ($FEATURE_LABELS as $key => $label):
+          $checked = in_array($key, $old['permissions'], true); ?>
+          <label class="check <?= $checked ? 'on' : '' ?>">
+            <input type="checkbox" name="permissions[]" value="<?= e($key) ?>" <?= $checked ? 'checked' : '' ?>>
+            <span><?= e($label) ?></span>
+          </label>
+        <?php endforeach; ?>
       </div>
     </div>
 
@@ -206,16 +139,9 @@ require __DIR__ . '/_panel_head.php';
   </form>
 
 <script>
-  function syncRoleMode(){
-    var isNew=document.querySelector('input[name=role_mode]:checked').value==='new';
-    document.getElementById('newBox').style.display=isNew?'block':'none';
-    document.getElementById('existingBox').style.display=isNew?'none':'block';
-  }
-  document.querySelectorAll('input[name=role_mode]').forEach(r=>r.addEventListener('change',syncRoleMode));
   document.querySelectorAll('.check input[type=checkbox]').forEach(function(cb){
     cb.addEventListener('change',function(){ cb.closest('.check').classList.toggle('on',cb.checked); });
   });
-  syncRoleMode();
 
   (function(){
     var btn=document.getElementById('genPass'); if(!btn) return;

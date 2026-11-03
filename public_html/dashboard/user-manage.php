@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // فقط کاربرانِ همین شعبه (سوپرادمین‌ها در فهرست نمی‌آیند)
 $st = $pdo->prepare(
-    "SELECT u.id, u.username, u.full_name, u.status, u.is_branch_admin, u.last_login_at, r.name AS role_name, r.permissions
+    "SELECT u.id, u.username, u.full_name, u.status, u.is_branch_admin, u.last_login_at, COALESCE(u.direct_permissions, r.permissions) AS permissions
        FROM dashboard_users u
        LEFT JOIN dashboard_roles r ON r.id = u.role_id
       WHERE u.branch_id = ? AND u.is_super = 0
@@ -169,7 +169,7 @@ function triggerUserModal(id, action, name) {
 
   <div class="card" style="padding:14px 18px">
     <table class="tbl">
-      <thead><tr><th>کاربر</th><th>نقش</th><th>دسترسی‌ها</th><th>آخرین ورود</th><th>وضعیت</th><th></th></tr></thead>
+      <thead><tr><th>کاربر</th><th>دسترسی‌ها</th><th>آخرین ورود</th><th>وضعیت</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $u):
         $active = $u['status'] === 'active';
@@ -184,7 +184,6 @@ function triggerUserModal(id, action, name) {
             <div style="font-weight:700"><?= e($u['full_name'] ?: $u['username']) ?></div>
             <div style="font-size:11px;color:var(--color-muted)" dir="ltr"><?= e($u['username']) ?></div>
           </td>
-          <td data-label="نقش"><?= $isAdmin ? '<span class="badge hq">مدیر شعبه</span>' : e($u['role_name'] ?: '—') ?></td>
           <td data-label="دسترسی‌ها" style="font-size:12px;color:var(--color-muted)"><?= e($permsTxt) ?></td>
           <td data-label="آخرین ورود" style="font-size:12px;color:var(--color-muted)"><?= $u['last_login_at'] ? e($u['last_login_at']) : 'بدون ورود' ?></td>
           <td data-label="وضعیت"><?= $active ? '<span class="badge ok">فعال</span>' : '<span class="badge off">غیرفعال</span>' ?></td>
@@ -214,7 +213,7 @@ function triggerUserModal(id, action, name) {
           </td>
         </tr>
       <?php endforeach; ?>
-      <?php if (!$users): ?><tr><td colspan="6" style="text-align:center;color:var(--color-muted)">هنوز کاربری برای این شعبه ساخته نشده است.</td></tr><?php endif; ?>
+      <?php if (!$users): ?><tr><td colspan="5" style="text-align:center;color:var(--color-muted)">هنوز کاربری برای این شعبه ساخته نشده است.</td></tr><?php endif; ?>
       </tbody>
     </table>
   </div>

@@ -265,6 +265,7 @@ function dash_establish_session(array $u): void
         'branch_id'       => (int)$u['branch_id'],
         'role_id'         => $u['role_id'] !== null ? (int)$u['role_id'] : null,
         'role_name'       => $roleName,
+        'has_direct_permissions' => isset($u['direct_permissions']),
         'is_super'        => (int)$u['is_super'] === 1,
         'is_branch_admin' => (int)$u['is_branch_admin'] === 1,
         'permissions'     => $perms,
@@ -303,6 +304,12 @@ function dash_resolve_permissions(array $u): array
             }
         }
         return $base;
+    }
+    if (isset($u['direct_permissions'])) {
+        $permissions = json_decode($u['direct_permissions'], true);
+        return is_array($permissions)
+            ? array_values(array_intersect($allowed, array_filter($permissions, 'is_string')))
+            : [];
     }
     // کاربر شعبه: از روی نقش
     if (!empty($u['role_id'])) {
@@ -434,6 +441,9 @@ function dash_is_finance_user(): bool
     }
     if (dash_is_finance_only()) {
         return true;
+    }
+    if (!empty($u['has_direct_permissions'])) {
+        return false;
     }
     $roleName = dash_user_role_name();
     if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
