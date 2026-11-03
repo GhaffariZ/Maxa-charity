@@ -1,0 +1,251 @@
+@font-face {
+    font-family: Vazirmatn;
+    src: url("/webfont/Vazirmatn%5Bwght%5D.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    --teal: #008f8a;
+    --teal-dark: #006362;
+    --ink: #153431;
+    --muted: #526b67;
+    --line: #d5e4e0;
+    --amber: #faa61a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: clamp(16px, 4vw, 56px);
+    background: #eaf2ef;
+    color: var(--ink);
+    font: 400 1rem/1.65 Vazirmatn, Tahoma, sans-serif;
+}
+
+.login {
+    display: grid;
+    grid-template-columns: 1fr 1.07fr;
+    width: min(100%, 68rem);
+    min-height: 37rem;
+    overflow: hidden;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 26px 70px -36px #15443b70;
+}
+
+.login-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 36px;
+    padding: clamp(32px, 5vw, 72px);
+    padding-block: clamp(28px, 4vw, 48px) 26px;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    line-height: 1.45;
+}
+
+.login-brand img { object-fit: contain; }
+.login-brand strong { display: block; font-size: .95rem; font-weight: 800; }
+.login-brand span, .login-footer { color: var(--muted); font-size: .77rem; }
+
+h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    font-weight: 850;
+    line-height: 1.3;
+    text-wrap: balance;
+}
+
+.login-intro {
+    margin: 12px 0 29px;
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.field { margin-bottom: 17px; }
+.field label { display: block; margin-bottom: 6px; font-size: .86rem; font-weight: 700; }
+
+.input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 52px;
+    padding-inline: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f6faf8;
+    transition: border-color .18s, background-color .18s;
+}
+
+.input-wrap:focus-within {
+    background: #fff;
+    border-color: var(--teal-dark);
+    outline: 2px solid var(--teal-dark);
+    outline-offset: 2px;
+}
+
+.input-wrap input {
+    min-width: 0;
+    flex: 1;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+svg {
+    flex: none;
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.input-wrap svg { color: var(--muted); }
+
+.btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 23px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--teal-dark);
+    color: #fff;
+    font: inherit;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background-color .18s, transform .18s;
+}
+
+.btn-submit:hover { background: #004b49; }
+.btn-submit:active { transform: translateY(1px); }
+.btn-submit:focus-visible { outline: 2px solid var(--teal-dark); outline-offset: 3px; }
+
+.msg {
+    margin-bottom: 16px;
+    padding: 9px 12px;
+    border-inline-start: 3px solid currentColor;
+    border-radius: 7px;
+    font-size: .84rem;
+}
+
+.msg.note { background: #e6f5f1; color: #005b57; }
+.msg.err { background: #fff0f0; color: #a22a3a; }
+
+.login-footer { padding-top: 16px; border-top: 1px solid var(--line); }
+
+.login-art {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    justify-items: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 42px 24px 32px;
+    background: radial-gradient(ellipse at 45% 42%, var(--teal) -35%, #075552 46%, #073635 100%);
+    color: #e0f4ee;
+    text-align: center;
+}
+
+.login-art::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: radial-gradient(circle, #b8ebdb 1px, transparent 1.5px) center / 13px 13px;
+    mask-image: radial-gradient(ellipse, transparent 12%, #000 58%, transparent 87%);
+    opacity: .34;
+}
+
+.art-wordmark { font-size: .86rem; font-weight: 800; letter-spacing: .32em; }
+
+.art-orbit {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(69%, 21rem);
+    aspect-ratio: 1;
+    border: 1px solid #b8ebdb53;
+    border-radius: 50%;
+    box-shadow: 0 0 0 24px #b8ebdb0b, inset 0 0 0 25px #b8ebdb0a;
+}
+
+.art-orbit::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 4px, var(--amber) 3px, transparent 4px);
+    animation: orbit 34s linear infinite;
+}
+
+.art-orbit::after {
+    content: "";
+    position: absolute;
+    inset: 15%;
+    border: 1px dashed #b8ebdb69;
+    border-radius: inherit;
+}
+
+.art-orbit img {
+    width: 38%;
+    height: auto;
+    border-radius: 25%;
+    box-shadow: 0 14px 32px #043a3970;
+    transform: rotate(-9deg);
+}
+
+.login-art p {
+    margin: 0;
+    padding-top: 13px;
+    border-top: 1px solid #b8ebdb53;
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+@keyframes orbit { to { transform: rotate(1turn); } }
+
+@media (max-width: 720px) {
+    .login { grid-template-columns: 1fr; max-width: 30rem; min-height: 0; }
+    .login-main { gap: 25px; padding: 24px clamp(20px, 6vw, 36px); }
+    .login-art {
+        grid-row: 1;
+        grid-template: "mark orbit" auto "caption orbit" auto / 1fr auto;
+        justify-items: start;
+        align-items: center;
+        column-gap: 12px;
+        padding: 18px clamp(20px, 6vw, 36px);
+        text-align: start;
+    }
+    .art-wordmark { grid-area: mark; }
+    .art-orbit { grid-area: orbit; width: 68px; box-shadow: none; }
+    .art-orbit img { width: 48%; }
+    .login-art p { grid-area: caption; padding: 0; border: 0; font-size: .78rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .art-orbit::before { animation: none; }
+    .btn-submit, .input-wrap { transition: none; }
+}
