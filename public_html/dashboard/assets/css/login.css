@@ -331,6 +331,7 @@ svg {
     .btn-submit:focus-visible::before { animation-name: submit-shine-active; }
     .login-art::before { animation: reveal-dots .65s ease-out; }
     .art-orbit::before { animation: orbit 4.6s cubic-bezier(.35, 0, .3, 1); }
+    .art-orbit img { animation: logo-wiggle .8s ease-in-out .3s; }
     .btn-submit svg { transition: transform .22s ease-out; }
     .submit-intent { transition: grid-template-columns .24s ease-out, height .24s ease-out, padding .24s ease-out; }
     .submit-intent > span { transition: opacity .16s ease-out; }
@@ -345,6 +346,11 @@ svg {
 
 @keyframes reveal-dots { from { opacity: 0; } }
 @keyframes orbit { to { transform: rotate(392deg); } }
+@keyframes logo-wiggle {
+    30% { transform: rotate(-5deg); }
+    60% { transform: rotate(-11deg); }
+    82% { transform: rotate(-8deg); }
+}
 @property --submit-angle {
     syntax: "<angle>";
     initial-value: 0deg;
