@@ -121,6 +121,9 @@ svg {
 .input-wrap svg { color: var(--muted); }
 
 .btn-submit {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -131,6 +134,7 @@ svg {
     border: 0;
     border-radius: 10px;
     background: var(--teal-dark);
+    box-shadow: inset 0 0 0 1px #a4eed945, inset 0 1px 0 #d4fff65c;
     color: #fff;
     font: inherit;
     font-weight: 750;
@@ -229,7 +233,7 @@ svg {
         z-index: -1;
         inset: 0;
         pointer-events: none;
-        background: radial-gradient(ellipse 160px 140px at var(--pointer-x, 50%) var(--pointer-y, 50%), #8ce8d54a, transparent);
+        background: radial-gradient(ellipse 210px 170px at var(--pointer-x, 50%) var(--pointer-y, 50%), #c0ffe975, #64d9bd29 52%, transparent 76%);
         opacity: 0;
         transition: opacity .28s ease-out;
     }
@@ -283,6 +287,17 @@ svg {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+    .btn-submit::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(112deg, transparent 35%, #b9ffec22 48%, #ffe1a145 52%, transparent 66%);
+        transform: translateX(100%);
+    }
+
+    .btn-submit:focus-visible::before { animation: submit-shine .65s ease-out; }
     .login-art::before { animation: reveal-dots .65s ease-out; }
     .art-orbit::before { animation: orbit 4.6s cubic-bezier(.35, 0, .3, 1); }
     .btn-submit svg { transition: transform .22s ease-out; }
@@ -292,12 +307,14 @@ svg {
     .btn-submit:focus-visible svg { transform: translateX(-4px); }
 
     @media (hover: hover) {
+        .btn-submit:hover::before { animation: submit-shine .65s ease-out; }
         .btn-submit:hover svg { transform: translateX(-4px); }
     }
 }
 
 @keyframes reveal-dots { from { opacity: 0; } }
 @keyframes orbit { to { transform: rotate(392deg); } }
+@keyframes submit-shine { to { transform: translateX(-100%); } }
 
 @media (max-width: 720px) {
     .login { grid-template-columns: minmax(0, 1fr); max-width: 30rem; min-height: 0; }
