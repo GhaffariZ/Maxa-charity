@@ -6954,5 +6954,57 @@
   "همکاران مکسا": {
     "en": "MACSA team",
     "ar": "فريق مكسا"
+  },
+  "مکسا": {
+    "en": "MACSA",
+    "ar": "مكسا"
+  },
+  "مسیر صفحه": {
+    "en": "Breadcrumb",
+    "ar": "مسار الصفحة"
+  },
+  "تخصص در کنار همدلی": {
+    "en": "Expertise with compassion",
+    "ar": "الخبرة مع التعاطف"
+  },
+  "تیمی چندرشته‌ای برای مراقبت از بیماران مبتلا به سرطان و خانواده‌های آنان؛ از ارزیابی پزشکی تا حمایت روانی و مراقبت در منزل.": {
+    "en": "A multidisciplinary team caring for people with cancer and their families, from medical assessment to emotional support and care at home.",
+    "ar": "فريق متعدد التخصصات لرعاية مرضى السرطان وعائلاتهم، من التقييم الطبي إلى الدعم النفسي والرعاية المنزلية."
+  },
+  "مطالعه مقالات تخصصی": {
+    "en": "Read clinical articles",
+    "ar": "قراءة المقالات الطبية"
+  },
+  "آشنایی با تیم درمان": {
+    "en": "Meet the care team",
+    "ar": "تعرف إلى فريق الرعاية"
+  },
+  "دانش برای مراقبت بهتر": {
+    "en": "Knowledge for better care",
+    "ar": "معرفة من أجل رعاية أفضل"
+  },
+  "مقالات کادر درمان": {
+    "en": "Care team articles",
+    "ar": "مقالات فريق الرعاية"
+  },
+  "یادداشت‌ها و مطالب تخصصی منتشرشده توسط تیم مکسا": {
+    "en": "Clinical notes and articles published by the MACSA team",
+    "ar": "ملاحظات ومقالات طبية نشرها فريق مكسا"
+  },
+  "همه مقالات": {
+    "en": "All articles",
+    "ar": "جميع المقالات"
+  },
+  "مقاله تخصصی": {
+    "en": "Clinical article",
+    "ar": "مقالة طبية"
+  },
+  "مطالعه مقاله": {
+    "en": "Read article",
+    "ar": "قراءة المقالة"
+  },
+  "مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.": {
+    "en": "No articles have been published here yet. New articles will appear soon.",
+    "ar": "لم تُنشر مقالات هنا بعد. ستظهر مقالات جديدة قريباً."
   }
 }

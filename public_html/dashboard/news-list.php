@@ -106,25 +106,30 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 $__branch    = dash_active_branch_id();
 $__isEditor  = dash_is_news_editor();
 $__reviewOnly = !empty($_GET['review']);  // صفِ بررسیِ سردبیری
+$__doctorsOnly = ($_GET['section'] ?? '') === 'doctors';
+$__doctorsCategory = null;
+if ($__doctorsOnly) {
+    $__doctorsCategory = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' LIMIT 1")->fetchColumn() ?: -1;
+}
 
 if ($__isEditor) {
     // سردبیر: همه‌ی شعب، با نامِ شعبه؛ اخبارِ «در حال بررسی» در ابتدا (اولویتِ نمایش).
-    $where = $__reviewOnly ? "WHERE n.status = 'review'" : "";
+    $where = $__reviewOnly ? "WHERE n.status = 'review'" : ($__doctorsOnly ? "WHERE n.category_id = ?" : "");
     $stmt = $pdo->prepare(
         "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
            FROM news n LEFT JOIN branches b ON b.id = n.branch_id
            $where
           ORDER BY (n.status = 'review') DESC, n.id DESC"
     );
-    $stmt->execute();
+    $stmt->execute($__doctorsOnly && !$__reviewOnly ? [$__doctorsCategory] : []);
 } else {
     // ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
     $stmt = $pdo->prepare(
         "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
            FROM news n LEFT JOIN branches b ON b.id = n.branch_id
-          WHERE n.branch_id = ? ORDER BY n.id DESC"
+          WHERE n.branch_id = ?" . ($__doctorsOnly ? " AND n.category_id = ?" : "") . " ORDER BY n.id DESC"
     );
-    $stmt->execute([$__branch]);
+    $stmt->execute($__doctorsOnly ? [$__branch, $__doctorsCategory] : [$__branch]);
 }
 $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -386,8 +391,8 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </span>
         <div>
-            <h1><?= $__reviewOnly ? 'بررسی سردبیری' : 'مدیریت اخبار' ?></h1>
-            <p><?= $__reviewOnly ? 'اخبار ارسال‌شده در صف بررسی' : 'فهرست و وضعیت اخبار' ?></p>
+            <h1><?= $__reviewOnly ? 'بررسی سردبیری' : ($__doctorsOnly ? 'مقالات کادر درمان' : 'مدیریت اخبار') ?></h1>
+            <p><?= $__reviewOnly ? 'اخبار ارسال‌شده در صف بررسی' : ($__doctorsOnly ? 'مقاله‌های صفحه کادر درمان' : 'فهرست و وضعیت اخبار') ?></p>
         </div>
     </div>
 
@@ -396,9 +401,9 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             انتخاب اخبار
         </button>
-        <a href="news-create.php" class="btn btn-new">
+        <a href="news-create.php<?= $__doctorsOnly ? '?section=doctors' : '' ?>" class="btn btn-new">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            ساخت خبر جدید
+            <?= $__doctorsOnly ? 'ساخت مقاله جدید' : 'ساخت خبر جدید' ?>
         </a>
     </div>
 </div>
@@ -540,7 +545,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   مشاهده
                 </a>
-                <a href="news-create.php?id=<?= $news['id'] ?>" class="btn-min">
+                <a href="news-create.php?id=<?= $news['id'] ?><?= $__doctorsOnly ? '&section=doctors' : '' ?>" class="btn-min">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   ویرایش
                 </a>

@@ -76,6 +76,10 @@ if ($event_mode && !empty($news_data['image'])) {
 
 $tags = [];
 $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
+if (!$event_mode && $id === 0 && ($_GET['section'] ?? '') === 'doctors') {
+    $category = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' AND is_active = 1 LIMIT 1")->fetchColumn();
+    $selectedCategoryId = (int)$category;
+}
 
 // آماده‌سازی زمان برای فرمت datetime-local مرورگر
 $pub_val = '';
@@ -3745,7 +3749,7 @@ async function saveNews() {
         setUploadProgress(100, "با موفقیت ذخیره شد");
         showStatus(`${data.message} در حال انتقال...`, true);
         setTimeout(() => {
-            window.location.href = EVENT_MODE ? "event-news-list.php?event_id=" + encodeURIComponent(EVENT_ID) : "news-list.php";
+            window.location.href = EVENT_MODE ? "event-news-list.php?event_id=" + encodeURIComponent(EVENT_ID) : (new URLSearchParams(location.search).get('section') === 'doctors' ? 'news-list.php?section=doctors' : 'news-list.php');
         }, 1000);
 
     } catch (err) {

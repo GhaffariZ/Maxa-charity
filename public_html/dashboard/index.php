@@ -1094,7 +1094,8 @@ body.spa-loading .spa-frame{opacity:.6}
   if (CAN.news){
     var newsChildren=[
       {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
-      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}];
+      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'},
+      {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'}];
     // سردبیر (ستاد مرکزی): صفِ بررسیِ اخبارِ ارسال‌شده
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
