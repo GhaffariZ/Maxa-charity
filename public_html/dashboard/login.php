@@ -103,7 +103,10 @@ $csrf = csrf_token();
 
           <button class="btn-submit" type="submit">
             ورود به پنل
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+            <span class="submit-action" aria-hidden="true">
+              <span class="submit-intent"><span>باز کردن داشبورد</span></span>
+              <svg viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+            </span>
           </button>
         </form>
       </div>

@@ -146,6 +146,45 @@ svg {
 
 .btn-submit:active { background: #003f3d; }
 
+.submit-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.submit-intent {
+    display: grid;
+    grid-template-columns: 0fr;
+    align-items: center;
+    min-width: 7px;
+    height: 7px;
+    border-radius: 20px;
+    background: var(--amber);
+    color: #253326;
+    font-size: .68rem;
+    white-space: nowrap;
+}
+
+.submit-intent > span { min-width: 0; overflow: hidden; opacity: 0; }
+
+.btn-submit:focus-visible .submit-intent {
+    grid-template-columns: 1fr;
+    height: 24px;
+    padding-inline: 8px;
+}
+
+.btn-submit:focus-visible .submit-intent > span { opacity: 1; }
+
+@media (hover: hover) and (pointer: fine) {
+    .btn-submit:hover .submit-intent {
+        grid-template-columns: 1fr;
+        height: 24px;
+        padding-inline: 8px;
+    }
+
+    .btn-submit:hover .submit-intent > span { opacity: 1; }
+}
+
 .msg {
     margin-bottom: 16px;
     padding: 9px 12px;
@@ -247,6 +286,8 @@ svg {
     .login-art::before { animation: reveal-dots .65s ease-out; }
     .art-orbit::before { animation: orbit 4.6s cubic-bezier(.35, 0, .3, 1); }
     .btn-submit svg { transition: transform .22s ease-out; }
+    .submit-intent { transition: grid-template-columns .24s ease-out, height .24s ease-out, padding .24s ease-out; }
+    .submit-intent > span { transition: opacity .16s ease-out; }
     .btn-submit:active { transform: translateY(1px); }
     .btn-submit:focus-visible svg { transform: translateX(-4px); }
 
