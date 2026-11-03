@@ -806,9 +806,13 @@ body.spa-loading .spa-frame{opacity:.6}
 .stat-trend{border-radius:4px;padding:2px 4px}
 .stat-value{margin-top:8px;flex-wrap:wrap;gap:4px}
 .stat-label,.stat-foot{margin-top:8px}
-.stat-chart-btn{background:var(--color-bg);color:var(--color-text);border-radius:8px}
-.stat-card.charting{box-shadow:inset 0 0 0 1px var(--color-primary)}
-.stat-card.charting .stat-chart-btn{background:#00736f}
+.stat-card[data-metric]:not([data-metric=""]){
+  background:color-mix(in srgb,var(--accent) 6%,var(--color-surface));
+  border-color:var(--accent);
+}
+.stat-chart-btn{color:var(--color-text);border-radius:8px}
+.stat-card.charting{box-shadow:inset 0 0 0 1px var(--accent)}
+.stat-card.charting:not([data-metric="amount"]) .stat-chart-btn{color:#11181b}
 .chart-card{border-inline-start:4px solid var(--color-primary)}
 @media (max-width:420px){
   .welcome{padding:16px;gap:16px}
