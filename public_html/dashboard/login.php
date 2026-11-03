@@ -126,7 +126,7 @@ $csrf = csrf_token();
     const loginArt = document.querySelector('.login-art');
     const canFollowPointer = matchMedia('(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)');
 
-    loginArt.addEventListener('pointermove', (event) => {
+    document.addEventListener('pointermove', (event) => {
       if (event.pointerType === 'touch' || !canFollowPointer.matches) return;
 
       const bounds = loginArt.getBoundingClientRect();
@@ -135,7 +135,7 @@ $csrf = csrf_token();
       loginArt.classList.add('is-tracking');
     });
 
-    loginArt.addEventListener('pointerleave', () => loginArt.classList.remove('is-tracking'));
+    document.documentElement.addEventListener('pointerleave', () => loginArt.classList.remove('is-tracking'));
   </script>
 </body>
 </html>
