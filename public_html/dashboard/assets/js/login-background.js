@@ -2,14 +2,19 @@
   'use strict';
   const background = document.getElementById('loginBackground');
   if (!background || !window.Wayglim) return;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducedMotion.matches) return;
+  let motion;
+  const showStill = () => { motion?.destroy(); motion = null; background.replaceChildren(); };
   try {
-    const motion = window.Wayglim.mount(background, {
+    motion = window.Wayglim.mount(background, {
       aspectRatio: 0,
       background: [0.024, 0.106, 0.114],
       durationSeconds: 60,
       startSeconds: 18,
       pace: 0.28,
-      maxPixelRatio: 1,
+      maxPixelRatio: 0.5,
+      onSlow: showStill,
       pauseOffscreen: true,
       respectReducedMotion: true,
       // Grain is disabled; its unused texture stays neutral.
@@ -29,18 +34,7 @@
         spectrum: 'custom', speed: 50, spread: 62, wobble: 42
       }
     });
-    const toggle = document.getElementById('loginMotionToggle');
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    const updateToggle = () => { toggle.hidden = reducedMotion.matches || !background.querySelector('canvas'); };
-    updateToggle();
-    reducedMotion.addEventListener?.('change', updateToggle);
-    let paused = false;
-    toggle.addEventListener('click', () => {
-      paused = !paused;
-      motion.setPaused(paused);
-      toggle.setAttribute('aria-pressed', String(paused));
-      toggle.textContent = paused ? 'ادامهٔ حرکت پس‌زمینه' : 'توقف حرکت پس‌زمینه';
-    });
+    reducedMotion.addEventListener?.('change', event => { if (event.matches) showStill(); });
   } catch (_) {
     background.replaceChildren();
   }

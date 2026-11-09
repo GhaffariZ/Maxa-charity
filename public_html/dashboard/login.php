@@ -114,7 +114,6 @@ $csrf = csrf_token();
 
       <footer class="login-footer">
         <span>مؤسسه نیکوکاری کنترل سرطان ایرانیان</span>
-        <button type="button" class="motion-toggle" id="loginMotionToggle" aria-pressed="false" hidden>توقف حرکت پس‌زمینه</button>
       </footer>
     </section>
 

@@ -36,7 +36,7 @@ body {
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
-    background: radial-gradient(ellipse at 25% 65%, #008f8a66, transparent 65%), #061b1d;
+    background: #061b1d url("../img/login-background.jpg") center / cover no-repeat;
 }
 
 .login {
@@ -244,9 +244,6 @@ svg {
 .msg.err { background: #fff0f0; color: #a22a3a; }
 
 .login-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-top: 16px; border-top: 1px solid var(--line); }
-.motion-toggle { min-height: 32px; padding: 3px 0; border: 0; background: none; color: var(--teal-dark); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
-.motion-toggle:focus-visible { outline: 2px solid var(--teal-dark); outline-offset: 3px; }
-.motion-toggle[hidden] { display: none; }
 
 .login-art {
     position: relative;
