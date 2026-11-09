@@ -4,6 +4,9 @@ import {
   TrendingUp,
   ChevronLeft,
   Award,
+  Gift,
+  CalendarDays,
+  Heart,
 } from "lucide-react";
 import {
   AreaChart,
@@ -54,22 +57,26 @@ export function Dashboard() {
   }));
 
   const cards = [
-    { label: "مجموع مشارکت‌ها", value: faToman(stats?.total_amount ?? 0) },
-    { label: "تعداد کمک‌ها", value: `${faNumber(stats?.donation_count ?? 0)} کمک` },
-    { label: "روزهای همراهی", value: `${faNumber(stats?.days_supporting ?? 0)} روز` },
-    { label: "امتیاز مهربانی", value: faNumber(data?.kindness_points ?? 0) },
+    { label: "مجموع مشارکت‌ها", value: faToman(stats?.total_amount ?? 0), icon: TrendingUp, tone: "teal" },
+    { label: "تعداد کمک‌ها", value: `${faNumber(stats?.donation_count ?? 0)} کمک`, icon: Gift, tone: "gold" },
+    { label: "روزهای همراهی", value: `${faNumber(stats?.days_supporting ?? 0)} روز`, icon: CalendarDays, tone: "aqua" },
+    { label: "امتیاز مهربانی", value: faNumber(data?.kindness_points ?? 0), icon: Heart, tone: "violet" },
   ];
 
   return (
     <div className="space-y-6 pb-8 tabular-nums">
-      <section className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
-        <div>
+      <section className="donor-welcome">
+        <svg className="donor-welcome-flower" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
+          <ellipse cx="50" cy="25" rx="15" ry="22" /><ellipse cx="50" cy="75" rx="15" ry="22" />
+          <ellipse cx="25" cy="50" rx="22" ry="15" /><ellipse cx="75" cy="50" rx="22" ry="15" /><circle cx="50" cy="50" r="14" />
+        </svg>
+        <div className="relative">
           <h2 className="mb-2 text-2xl font-semibold md:text-3xl">مشارکت‌های شما در مکسا</h2>
-          <p className="text-sm text-muted-foreground">خلاصه کمک‌ها، روند مشارکت و فعالیت‌های اخیر</p>
+          <p className="donor-welcome-description">خلاصه کمک‌ها، روند مشارکت و فعالیت‌های اخیر</p>
         </div>
         <button
           onClick={() => navigate("/impact")}
-          className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="donor-impact-button"
         >
           مشاهده گزارش اثرگذاری
           <ChevronLeft size={18} strokeWidth={1.5} aria-hidden="true" />
@@ -78,22 +85,24 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {cards.map((stat) => (
-          <div key={stat.label} className="min-w-0 rounded-xl border border-border bg-surface p-5">
-            <p className="text-muted-foreground text-sm font-medium mb-1">{stat.label}</p>
-            <h3 className="text-xl font-semibold">{stat.value}</h3>
+          <div key={stat.label} className={`donor-stat donor-stat--${stat.tone}`}>
+            <div className="donor-stat-icon"><stat.icon size={24} strokeWidth={1.75} aria-hidden="true" /></div>
+            <p className="text-muted-foreground text-sm font-medium mb-2">{stat.label}</p>
+            <h3 className="donor-stat-value">{stat.value}</h3>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div
-          className="min-w-0 xl:col-span-2 bg-surface p-5 md:p-6 rounded-xl border border-border border-s-4 border-s-primary"
+          className="donor-panel donor-chart min-w-0 xl:col-span-2 p-5 md:p-6"
         >
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-xl font-medium mb-1">روند مشارکت‌ها</h3>
               <p className="text-sm text-muted-foreground">گزارش شش ماههٔ کمک‌های شما</p>
             </div>
+            <span className="donor-chart-icon" aria-hidden="true"><TrendingUp size={22} strokeWidth={1.75} /></span>
           </div>
 
           <div className="h-72 w-full">
@@ -104,14 +113,20 @@ export function Dashboard() {
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
+                  <defs>
+                    <linearGradient id="donorAmountFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#008f8a" stopOpacity={0.28} />
+                      <stop offset="100%" stopColor="#008f8a" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} dy={8} />
                   <YAxis hide />
                   <Tooltip
                     formatter={(v: number) => [faToman(v), "مبلغ"]}
-                    contentStyle={{ borderRadius: "8px", border: "1px solid var(--border)", textAlign: "right" }}
+                    contentStyle={{ borderRadius: "12px", border: "1px solid #b6ded9", textAlign: "right" }}
                   />
-                  <Area type="monotone" dataKey="amount" stroke="var(--primary)" strokeWidth={2} fillOpacity={0.08} fill="var(--primary)" isAnimationActive={false} />
+                  <Area type="monotone" dataKey="amount" stroke="#008f8a" strokeWidth={3} fillOpacity={1} fill="url(#donorAmountFill)" activeDot={{ r: 5, fill: "#faa61a", stroke: "#fff", strokeWidth: 3 }} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -119,7 +134,7 @@ export function Dashboard() {
         </div>
 
         <div
-          className="min-w-0 bg-surface p-5 md:p-6 rounded-xl border border-border"
+          className="donor-panel donor-activity min-w-0 p-5 md:p-6"
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-medium">فعالیت‌های اخیر</h3>
@@ -134,13 +149,13 @@ export function Dashboard() {
             )}
             {(data?.recent_activity ?? []).map((activity) => (
               <div key={activity.reference} className="flex items-start gap-3 py-3">
-                <div className="shrink-0 pt-1 text-muted-foreground">
+                <div className="donor-activity-icon">
                   <TrendingUp size={18} strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mb-1">
                     <h4 className="font-medium text-sm truncate">{activity.campaign_title ?? "کمک مالی"}</h4>
-                    <span className="shrink-0 text-xs font-medium">{faToman(activity.amount)}</span>
+                    <span className="shrink-0 text-xs font-semibold text-primary">{faToman(activity.amount)}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{faDate(activity.created_at)}</p>
                 </div>
@@ -148,16 +163,18 @@ export function Dashboard() {
             ))}
           </div>
 
-          <div className="mt-4 border-t border-border pt-4">
-            <div className="mb-2 text-muted-foreground">
-              <Award size={18} strokeWidth={1.5} aria-hidden="true" />
+          <div className="donor-tier mt-4">
+            <div className="donor-tier-icon">
+              <Award size={24} strokeWidth={1.75} aria-hidden="true" />
             </div>
-            <p className="text-sm font-medium mb-1">
-              {data?.tier?.name ? `سطح فعلی: ${data.tier.name}` : "سطح حمایت شما"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              امتیاز مهربانی شما: {faNumber(data?.kindness_points ?? 0)}
-            </p>
+            <div>
+              <p className="text-sm font-medium mb-1">
+                {data?.tier?.name ? `سطح فعلی: ${data.tier.name}` : "سطح حمایت شما"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                امتیاز مهربانی شما: {faNumber(data?.kindness_points ?? 0)}
+              </p>
+            </div>
           </div>
         </div>
       </div>

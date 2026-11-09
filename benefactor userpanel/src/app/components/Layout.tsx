@@ -14,8 +14,6 @@ import {
   LogOut,
   Package
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "../../contexts/AuthContext";
 
 const navItems = [
@@ -46,11 +44,11 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen [--primary:#00736f] [--muted-foreground:#5b6469] bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
+    <div className="donor-shell min-h-screen [--primary:#00736f] [--muted-foreground:#5b6469] bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between p-4 bg-surface border-b border-border sticky top-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center text-primary">
+          <div className="donor-brand-icon w-8 h-8 rounded-lg flex items-center justify-center">
             <HeartHandshake size={18} strokeWidth={1.5} />
           </div>
           <span className="font-semibold text-lg">مکسا</span>
@@ -67,12 +65,12 @@ export function Layout() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-16 bottom-0 right-0 z-45 w-64 shrink-0 overflow-y-auto motion-reduce:transition-none bg-surface border-l border-border transition-transform duration-300 ease-in-out md:translate-x-0 md:static
+        donor-sidebar fixed top-16 bottom-0 right-0 z-45 w-64 shrink-0 overflow-y-auto motion-reduce:transition-none bg-surface border-l border-border transition-transform duration-300 ease-in-out md:translate-x-0 md:static
         ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
       `}>
         <div className="h-full flex flex-col p-4">
-          <div className="hidden md:flex items-center gap-3 mb-6 p-2">
-            <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-primary">
+          <div className="donor-brand hidden md:flex items-center gap-3 mb-6 p-2">
+            <div className="donor-brand-icon w-10 h-10 rounded-xl flex items-center justify-center">
               <HeartHandshake size={18} strokeWidth={1.5} />
             </div>
             <div>
@@ -91,13 +89,11 @@ export function Layout() {
                   aria-current={isActive ? "page" : undefined}
                   onClick={() => setIsSidebarOpen(false)}
                   className={`
-                    flex items-center gap-2 min-h-9 px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary
-                    ${isActive 
-                      ? "bg-muted text-primary"
-                      : "hover:bg-primary-light/10 text-muted-foreground hover:text-primary"}
+                    donor-nav-link donor-nav-${item.id} flex items-center gap-3 min-h-11 px-3 py-2 rounded-xl text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary
+                    ${isActive ? "is-active" : "text-muted-foreground"}
                   `}
                 >
-                  <item.icon size={18} strokeWidth={1.5} />
+                  <span className="donor-nav-icon"><item.icon size={18} strokeWidth={1.75} aria-hidden="true" /></span>
                   <span className="font-medium">{item.label}</span>
                 </Link>
               );
@@ -105,8 +101,8 @@ export function Layout() {
           </nav>
 
           <div className="mt-auto pt-6 border-t border-border space-y-3">
-            <div className="bg-muted/50 rounded-xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold overflow-hidden">
+            <div className="donor-profile rounded-xl p-4 flex items-center gap-3">
+              <div className="donor-avatar w-10 h-10 shrink-0 rounded-xl flex items-center justify-center font-semibold overflow-hidden">
                 {user?.avatar_url ? (
                   <img src={user.avatar_url} alt={fullName} className="w-full h-full object-cover" />
                 ) : (
@@ -116,7 +112,7 @@ export function Layout() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">{fullName}</p>
                 {tierName && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground font-semibold">
+                  <div className="donor-profile-tier flex items-center gap-1 text-xs font-semibold">
                     <Award size={12} />
                     <span>{tierName}</span>
                   </div>
@@ -151,7 +147,7 @@ export function Layout() {
             </h2>
           </div>
           <div className="flex items-center gap-4">
-            <button aria-label="اعلان‌ها" className="p-2 bg-muted/50 hover:bg-muted text-muted-foreground rounded-xl transition-colors relative">
+            <button aria-label="اعلان‌ها" className="donor-notification p-2 rounded-xl transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-surface"></span>
             </button>
