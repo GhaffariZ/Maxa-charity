@@ -35,7 +35,7 @@ if (!dash_is_authenticated()) {
 }
 
 /* انقضای نشست */
-dash_enforce_timeouts();
+dash_enforce_timeouts(!defined('DASH_PASSIVE_REQUEST') || !DASH_PASSIVE_REQUEST);
 
 /* بررسی زنده‌ی وضعیت کاربر در هر درخواست (مثلاً غیرفعال‌شدن توسط ادمین) */
 try {

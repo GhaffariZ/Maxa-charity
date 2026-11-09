@@ -107,25 +107,17 @@ $__branch    = dash_active_branch_id();
 $__isEditor  = dash_is_news_editor();
 $__reviewOnly = !empty($_GET['review']);  // صفِ بررسیِ سردبیری
 
-if ($__isEditor) {
-    // سردبیر: همه‌ی شعب، با نامِ شعبه؛ اخبارِ «در حال بررسی» در ابتدا (اولویتِ نمایش).
-    $where = $__reviewOnly ? "WHERE n.status = 'review'" : "";
-    $stmt = $pdo->prepare(
-        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
-           $where
-          ORDER BY (n.status = 'review') DESC, n.id DESC"
-    );
-    $stmt->execute();
-} else {
-    // ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
-    $stmt = $pdo->prepare(
-        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
-          WHERE n.branch_id = ? ORDER BY n.id DESC"
-    );
-    $stmt->execute([$__branch]);
+$where = []; $params = [];
+if (!$__isEditor || ($_GET['scope'] ?? '') === 'active') {
+    $where[] = 'n.branch_id = ?'; $params[] = $__branch;
 }
+if ($__reviewOnly) $where[] = "n.status = 'review'";
+if ((int)($_GET['id'] ?? 0) > 0) { $where[] = 'n.id = ?'; $params[] = (int)$_GET['id']; }
+$whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+$stmt = $pdo->prepare("SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
+    FROM news n LEFT JOIN branches b ON b.id = n.branch_id $whereSql
+    ORDER BY (n.status = 'review') DESC, n.id DESC");
+$stmt->execute($params);
 $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>

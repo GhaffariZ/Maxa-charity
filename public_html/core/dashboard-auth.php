@@ -105,7 +105,7 @@ function dash_session_start(): void
 }
 
 /* ---------- مدیریت انقضای نشست ---------- */
-function dash_enforce_timeouts(): void
+function dash_enforce_timeouts(bool $recordActivity = true): void
 {
     $now = time();
     if (isset($_SESSION['dash_login_at']) && ($now - (int)$_SESSION['dash_login_at']) > DASH_ABSOLUTE_TIMEOUT) {
@@ -116,7 +116,7 @@ function dash_enforce_timeouts(): void
         dash_logout();
         dash_redirect_login('idle');
     }
-    $_SESSION['dash_last_seen'] = $now;
+    if ($recordActivity) $_SESSION['dash_last_seen'] = $now;
 }
 
 /* ---------- CSRF ---------- */

@@ -219,7 +219,7 @@ course_html_head('مدیریت دوره‌ها', $pageCss, admin: true);
                     <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
                   </button>
                   <div class="menu-pop">
-                    <a href="Courses-create.php?edit=<?= $id ?>"><?= cic('edit') ?> ویرایش دوره</a>
+                    <a href="courses-create.php?edit=<?= $id ?>"><?= cic('edit') ?> ویرایش دوره</a>
                     <a href="/courses/learn/<?= $id ?>" target="_top"><?= cic('play') ?> پیش‌نمایش محتوا</a>
                     <div class="menu-sep"></div>
                     <?php if ($isPub): ?>

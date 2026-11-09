@@ -1,3 +1,4 @@
+@import url("dashboard-responsive.css");
 /* Ledger treatment adapted from unslop by Damir Sokolovsky (@heydamir), CC BY 4.0. */
 :root {
   --color-muted: #60696d;

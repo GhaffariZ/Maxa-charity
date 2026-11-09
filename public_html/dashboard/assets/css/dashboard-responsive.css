@@ -1,0 +1,16 @@
+/* Shared by embedded pages; wide data tables scroll inside their own region. */
+.dash-table-scroll{max-width:100%;min-width:0;overflow:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+@media(max-width:760px){
+  html{min-width:0}body{min-width:0;overflow-wrap:break-word}
+  :where(.wrap,.container,.container-fluid,.page-container,.page-wrapper,.main-content,.content,.panel,.card,.form-card,.grid,.row,.col){min-width:0;max-width:100%;box-sizing:border-box}
+  :where(.wrap,.container,.container-fluid,.page-container,.page-wrapper){width:100%}
+  :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea){max-width:100%;box-sizing:border-box;font-size:max(16px,1em)}
+  :where(.page-head,.panel-head,.head-bar,.toolbar,.filter-form,.filter-bar,.filters,.form-actions,.actions,.btn-group){flex-wrap:wrap;min-width:0;gap:8px}
+  :where(.search-box,.search-wrapper,.search-wrap,.filter-input){min-width:0;max-width:100%}
+  :where(.table-wrap,.table-responsive,.table-scroll,.tbl-wrap){max-width:100%;min-width:0;overflow-x:auto}
+  :where(.modal-box,.modal-card,.modal-content){max-width:calc(100vw - 24px);box-sizing:border-box}
+  :where(img,video,canvas){max-width:100%}pre{max-width:100%;overflow:auto}
+  :where(button,.btn,input[type="submit"]){touch-action:manipulation}
+  .dash-table-scroll:focus-visible{outline:2px solid #008f8a;outline-offset:2px}
+  body.dashboard-embedded{padding:16px 12px!important;margin:0!important}
+}

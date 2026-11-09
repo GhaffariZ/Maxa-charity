@@ -312,6 +312,12 @@ if (!$SETUP_NEEDED) {
   } else { // user
     $where = "t.created_by = ?"; $params = [$ME];
   }
+  if (!empty($_GET['pending'])) {
+    $where = "($where) AND t.branch_id = ? AND t.status <> 'closed'
+      AND (SELECT tm.user_id FROM ticket_messages tm WHERE tm.ticket_id = t.id ORDER BY tm.id DESC LIMIT 1) <> ?";
+    array_push($params, $MY_BRANCH, $ME);
+  }
+  if ((int)($_GET['id'] ?? 0) > 0) { $where = "($where) AND t.id = ?"; $params[] = (int)$_GET['id']; }
   $sql = "SELECT t.*, du.full_name, du.username, b.name AS branch_name,
                  (SELECT COUNT(*) FROM tickets c WHERE c.escalated_from = t.id) AS child_count
             FROM tickets t
@@ -997,6 +1003,17 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       var body=new URLSearchParams(); body.set('action','read'); body.set('ticket_id',id); body.set('csrf_token',CSRF);
       fetch('tickets.php',{method:'POST',headers:{'X-CSRF-TOKEN':CSRF},body:body,credentials:'same-origin'});
     }catch(e){}
+  }
+
+  var requested = new URLSearchParams(location.search);
+  if (requested.has('id') || requested.has('pending')) {
+    activeBox = null;
+    applyFilters();
+    if (requested.has('id')) {
+      var selectedCard = list.querySelector('.tk-card[data-id="'+Number(requested.get('id'))+'"]');
+      var openButton = selectedCard && selectedCard.querySelector('[onclick*="tkToggle"]');
+      if (openButton) { openButton.click(); selectedCard.scrollIntoView({block:'start'}); }
+    }
   }
 
   /* ---- تمِ روشن/تاریک هم‌گام با داشبورد ---- */

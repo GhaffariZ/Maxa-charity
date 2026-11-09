@@ -733,30 +733,6 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 [data-theme="dark"] .theme-toggle .ic-sun{transform:rotate(90deg) scale(.4);opacity:0}
 [data-theme="dark"] .theme-toggle .ic-moon{transform:rotate(0) scale(1);opacity:1}
 
-/* ============ پنل اعلان‌ها ============ */
-.notif-overlay{position:fixed;inset:0;background:rgba(16,40,40,.42);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;z-index:70}
-.notif-overlay.show{opacity:1;visibility:visible}
-.notif-panel{position:fixed;top:0;left:0;height:100vh;height:100dvh;width:390px;max-width:92vw;background:var(--color-surface);border-right:1px solid var(--color-border);box-shadow:var(--shadow-lg);transform:translateX(-100%);transition:transform .42s var(--ease);z-index:75;display:flex;flex-direction:column}
-.notif-panel.show{transform:translateX(0)}
-.notif-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 18px 16px;border-bottom:1px solid var(--color-border);flex-shrink:0}
-.notif-head-title{display:flex;align-items:center;gap:12px;min-width:0}
-.notif-head-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--color-primary-dark);color:#fff;flex-shrink:0}
-.notif-head-ic .ic{width:21px;height:21px}
-.notif-head h3{font-size:16px;font-weight:600}
-.notif-head span{font-size:12px;color:var(--color-muted)}
-.notif-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
-.notif-item{display:flex;gap:12px;padding:13px 12px;border-radius:15px;transition:background .2s;position:relative}
-.notif-item:hover{background:var(--primary-08)}
-.notif-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
-.notif-ic .ic{width:20px;height:20px}
-.notif-body{flex:1;min-width:0}
-.notif-title{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:7px}
-.notif-item.unread .notif-title::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--color-secondary);flex-shrink:0;box-shadow:0 0 0 3px var(--secondary-12)}
-.notif-text{font-size:12.5px;color:var(--color-muted);margin-top:3px;line-height:1.6}
-.notif-time{font-size:11px;color:var(--color-muted);font-weight:600;margin-top:6px;opacity:.85}
-.notif-foot{padding:14px;border-top:1px solid var(--color-border);flex-shrink:0}
-.notif-foot .btn{width:100%;justify-content:center}
-
 /* ============ تم تاریک ============ */
 :root[data-theme="dark"]{
   --color-text:#e7ecee; --color-muted:#8e989d; --color-border:#2a343a;
@@ -824,6 +800,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 .dash-btn:hover,.nav-sub-link:hover{transform:none;box-shadow:none}
 :where(button,a):focus-visible{outline:2px solid var(--color-primary-light);outline-offset:2px}
 </style>
+<link rel="stylesheet" href="assets/css/dashboard-tools.css?v=<?= filemtime(__DIR__.'/assets/css/dashboard-tools.css') ?>">
 </head>
 <body>
 <div class="app" id="app">
@@ -860,6 +837,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       <?php endif; ?>
     </div>
     <nav class="sb-nav"><div class="nav-list" id="navList"></div></nav>
+    <button class="sidebar-help" id="helpBtn" type="button" aria-haspopup="dialog" aria-controls="helpPanel"><span aria-hidden="true">?</span><span>راهنمای این بخش</span></button>
     <div class="sb-footer">
       <a href="logout.php" id="logoutLink" class="logout-link" target="_top" title="خروج از حساب" aria-label="خروج از حساب">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -878,21 +856,23 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   <!-- ============ MAIN ============ -->
   <div class="main">
     <header class="topbar">
-      <button class="icon-btn" id="toggleBtn" aria-label="باز و بسته کردن منو">
+      <button class="icon-btn" id="toggleBtn" aria-label="باز و بسته کردن منو" aria-controls="sidebar">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="tb-title">
         <h1 id="pageTitle">داشبورد</h1>
         <span id="topDate">—</span>
       </div>
+      <div class="tb-branch" title="شعبهٔ فعال"><span>شعبهٔ فعال: <?= e($ACTIVE_BRANCH_ROW['name'] ?? '') ?></span></div>
       <div class="tb-spacer"></div>
+      <button class="command-trigger" id="commandBtn" type="button" aria-label="جست‌وجو و فرمان" aria-haspopup="dialog" aria-controls="commandDialog"><?= iconoir('search') ?><span>جست‌وجو و فرمان…</span><kbd>Ctrl K</kbd></button>
       <button class="icon-btn theme-toggle" id="themeBtn" type="button" aria-label="تغییر تم روشن و تاریک" title="روشن / تاریک" aria-pressed="false">
         <svg class="ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.93 4.93l1.84 1.84M17.23 17.23l1.84 1.84M19.07 4.93l-1.84 1.84M6.77 17.23l-1.84 1.84"/></svg>
         <svg class="ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"/></svg>
       </button>
-      <button class="icon-btn" id="notifBtn" type="button" aria-label="اعلان‌ها">
+      <button class="icon-btn" id="notifBtn" type="button" aria-label="اعلان‌ها" aria-haspopup="dialog" aria-controls="notifPanel">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        <span class="bell-dot"></span>
+        <span class="notif-count" id="notifCount" hidden></span>
       </button>
       <!-- حساب کاربریِ هدر طبق درخواست مخفی شد (کد حفظ شده، فقط کامنت است)
       <a href="maxa-link.php" class="profile">
@@ -926,12 +906,18 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
             <div class="goal-title">هدف ماهانه خیریه</div>
             <div class="goal-fig"><span>جمع‌آوری‌شده</span><b><?= money_compact($goalCollected) ?> تومان</b></div>
             <div class="goal-fig"><span>هدف این ماه</span><b><?= money_compact($goalTarget) ?> تومان</b></div>
-            <a href="maxa-link.php" class="btn btn-gold">
+            <a href="financial-management.php" class="btn btn-gold" <?= empty($MENU['can']['financial']) ? 'hidden' : '' ?>>
               <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               گزارش‌گیری
             </a>
           </div>
         </div>
+      </section>
+
+      <section class="attention-section" aria-labelledby="attentionTitle">
+        <div class="attention-head"><div><h2 id="attentionTitle">نیازمند رسیدگی</h2><p>کارهای منتظر اقدام در شعبهٔ فعال؛ مطابق دسترسی شما</p></div><div class="attention-controls"><span class="attention-time" id="attentionTime"></span><button type="button" id="attentionRefresh">به‌روزرسانی</button></div></div>
+        <div class="attention-grid" id="attentionGrid" aria-busy="true"></div>
+        <p class="tool-status" id="attentionStatus" role="status">در حال دریافت کارهای منتظر رسیدگی…</p>
       </section>
 
       <!-- stats -->
@@ -988,7 +974,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       <section class="card table-card reveal" style="animation-delay:.55s">
         <div class="card-head">
           <div><h3>حمایت‌های اخیر</h3><div class="sub">آخرین تراکنش‌های ثبت‌شده در سامانه</div></div>
-          <a href="maxa-link.php" class="link-more">مشاهده همه
+          <a href="financial-management.php" class="link-more" <?= empty($MENU['can']['financial']) ? 'hidden' : '' ?>>مشاهده همه
             <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           </a>
         </div>
@@ -1015,21 +1001,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   </div>
 </div>
 
-<!-- ============ پنل اعلان‌ها ============ -->
-<div class="notif-overlay" id="notifOverlay"></div>
-<aside class="notif-panel" id="notifPanel" aria-hidden="true" aria-label="اعلان‌ها">
-  <div class="notif-head">
-    <div class="notif-head-title">
-      <div class="notif-head-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
-      <div><h3>اعلان‌ها</h3><span>آخرین رویدادهای سامانه</span></div>
-    </div>
-    <button class="icon-btn" id="notifClose" type="button" aria-label="بستن">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="notif-list" id="notifList"></div>
-  <div class="notif-foot"><button class="btn btn-primary" id="notifMark" type="button">علامت‌گذاری همه به‌عنوان خوانده‌شده</button></div>
-</aside>
+<?php require __DIR__ . '/_dashboard_tools.php'; ?>
 
 <script>
 (function(){
@@ -1040,6 +1012,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 
   /* ---------- helpers ---------- */
   const toFa = s => String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]).replace(/\./g,'٫');
+  const escapeText = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const sep  = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'٬');
   const faNum= n => toFa(sep(n));
   function compact(v){
@@ -1186,6 +1159,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   }
 
   const navEl=document.getElementById('navList');
+  window.MACSA_DASHBOARD={menu:MENU,nav:NAV};
   let delay=0;
   NAV.forEach(item=>{
     if(item.title){ navEl.insertAdjacentHTML('beforeend','<div class="nav-section-title" style="animation-delay:'+(delay+=0.04)+'s">'+item.title+'</div>'); return; }
@@ -1201,11 +1175,14 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       '</div>');
   });
   navEl.querySelectorAll('.nav-group-header').forEach(btn=>{
+    btn.setAttribute('aria-expanded','false');
+    btn.closest('.nav-group').querySelector('.nav-sub').inert=true;
     btn.addEventListener('click',()=>{
       const group=btn.closest('.nav-group');
       const sub=group.querySelector('.nav-sub');
       const open=group.classList.contains('open');
-      navEl.querySelectorAll('.nav-group.open').forEach(g=>{ if(g!==group){ g.classList.remove('open'); g.querySelector('.nav-sub').style.maxHeight='0px'; }});
+      navEl.querySelectorAll('.nav-group.open').forEach(g=>{ if(g!==group){ g.classList.remove('open'); g.querySelector('.nav-sub').style.maxHeight='0px'; g.querySelector('.nav-sub').inert=true; g.querySelector('.nav-group-header').setAttribute('aria-expanded','false'); }});
+      sub.inert=open; btn.setAttribute('aria-expanded',String(!open));
       if(open){ group.classList.remove('open'); sub.style.maxHeight='0px'; }
       else { group.classList.add('open'); sub.style.maxHeight=(sub.scrollHeight+8)+'px'; }
     });
@@ -1246,7 +1223,13 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   /* ---------- sidebar toggle ---------- */
   const app=document.getElementById('app');
   const mq=()=>window.innerWidth<=1024;
-  function setOverlay(){ if(mq() && !app.classList.contains('collapsed')) app.classList.add('show-overlay'); else app.classList.remove('show-overlay'); }
+  function setOverlay(){
+    const collapsed=app.classList.contains('collapsed');
+    app.classList.toggle('show-overlay',mq() && !collapsed);
+    document.getElementById('sidebar').inert=collapsed;
+    document.getElementById('sidebar').setAttribute('aria-hidden',String(collapsed));
+    document.getElementById('toggleBtn').setAttribute('aria-expanded',String(!collapsed));
+  }
   function toggle(){ app.classList.toggle('collapsed'); setOverlay(); }
   document.getElementById('toggleBtn').addEventListener('click',toggle);
   document.getElementById('overlay').addEventListener('click',()=>{ app.classList.add('collapsed'); setOverlay(); });
@@ -1315,9 +1298,10 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
         a.classList.add('active');
         const g=a.closest('.nav-group');
         if(g && !g.classList.contains('open')){
-          navEl.querySelectorAll('.nav-group.open').forEach(o=>{ if(o!==g){ o.classList.remove('open'); const s=o.querySelector('.nav-sub'); if(s) s.style.maxHeight='0px'; }});
+          navEl.querySelectorAll('.nav-group.open').forEach(o=>{ if(o!==g){ o.classList.remove('open'); const s=o.querySelector('.nav-sub'); if(s){s.style.maxHeight='0px';s.inert=true;} o.querySelector('.nav-group-header').setAttribute('aria-expanded','false'); }});
           g.classList.add('open');
-          const sub=g.querySelector('.nav-sub'); if(sub) sub.style.maxHeight=(sub.scrollHeight+8)+'px';
+          const sub=g.querySelector('.nav-sub'); if(sub){sub.style.maxHeight=(sub.scrollHeight+8)+'px';sub.inert=false;}
+          g.querySelector('.nav-group-header').setAttribute('aria-expanded','true');
         }
       });
     }
@@ -1449,7 +1433,8 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       // (رفعِ باگِ «دوبار زدنِ back/forward»: قبلاً تغییرِ src یک ورودی می‌ساخت و hash هم یکی)
       try{ frame.contentWindow.location.replace(href); }catch(e){ frame.setAttribute('src',href); }
       if(push){ syncing=true; location.hash='page='+encodeURIComponent(href); setTimeout(()=>{ syncing=false; },0); }
-      app.classList.add('collapsed'); setOverlay();   // پس از ناوبری، پنل بسته می‌شود (در همه‌ی اندازه‌ها) — با دکمه‌ی هدر دوباره باز می‌شود
+      if(mq()) app.classList.add('collapsed');
+      setOverlay();
     }
 
     // پس از بارگذاری صفحه‌ی داخلی: پنل و هدرِ خودِ آن صفحه را مخفی کن و عنوان را همگام کن
@@ -1464,6 +1449,18 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
         const st=doc.createElement('style');
         st.textContent='.sidebar,.topbar,.overlay{display:none!important}.main{margin:0!important}.app.collapsed .main{margin:0!important}';
         (doc.head||doc.documentElement).appendChild(st);
+        doc.body.classList.add('dashboard-embedded');
+        if(document.documentElement.getAttribute('data-theme')==='dark') doc.documentElement.setAttribute('data-theme','dark');
+        else doc.documentElement.removeAttribute('data-theme');
+        const responsive=doc.createElement('link');
+        responsive.rel='stylesheet'; responsive.href='/dashboard/assets/css/dashboard-responsive.css';
+        (doc.head||doc.documentElement).appendChild(responsive);
+        doc.querySelectorAll('table').forEach(table=>{
+          if(table.closest('.table-wrap,.table-scroll,.table-responsive,.tbl-wrap,.dash-table-scroll,[contenteditable="true"],.editor')) return;
+          const wrap=doc.createElement('div'); wrap.className='dash-table-scroll';
+          wrap.tabIndex=0; wrap.setAttribute('role','region'); wrap.setAttribute('aria-label','جدول؛ برای دیدن ستون‌های بیشتر پیمایش کنید');
+          table.before(wrap); wrap.appendChild(table);
+        });
       }catch(e){}
       try{
         const p=fileOf(doc.location.href)||current;
@@ -1475,6 +1472,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
           setTimeout(()=>{ syncing=false; },0);
         }
         setTitle(p,docTitle);
+        window.dispatchEvent(new CustomEvent('macsa:page-change',{detail:{file:p}}));
       }catch(e){}
 
       // Start only for real navigation, not downloads or forms handled with AJAX.
@@ -1535,54 +1533,13 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       apply(cur);
       try{ localStorage.setItem('maxa-theme',cur); }catch(e){}
       try {
-        const iframe = document.getElementById('frame');
+        const iframe = document.getElementById('spaFrame');
         if (iframe && iframe.contentDocument && iframe.contentDocument.documentElement) {
           if (cur === 'dark') iframe.contentDocument.documentElement.setAttribute('data-theme', 'dark');
           else iframe.contentDocument.documentElement.removeAttribute('data-theme');
         }
       } catch(e) {}
     });
-  })();
-
-  /* ---------- پنل اعلان‌ها ---------- */
-  (function(){
-    const btn=document.getElementById('notifBtn');
-    const panel=document.getElementById('notifPanel');
-    const ov=document.getElementById('notifOverlay');
-    const closeBtn=document.getElementById('notifClose');
-    const markBtn=document.getElementById('notifMark');
-    const listEl=document.getElementById('notifList');
-    if(!btn||!panel) return;
-
-    // اعلان‌های نمونه (بعداً می‌توان از سرور پر کرد)
-    const NOTIFS=[
-      {ic:'wallet',accent:'#008f8a',bg:'rgba(0, 143, 138,.12)',title:'کمک جدید ثبت شد',text:'یک حمایت موفق ۲٬۵۰۰٬۰۰۰ تومانی دریافت شد.',time:'چند لحظه پیش',unread:true},
-      {ic:'users', accent:'#dd8d0c',bg:'rgba(250, 166, 26,.16)',title:'همکار جدید',text:'پروفایل یک همکار جدید در انتظار تأیید است.',time:'۲۰ دقیقه پیش',unread:true},
-      {ic:'flag',  accent:'#7c4ddb',bg:'rgba(139,92,246,.16)',title:'کمپین به هدف رسید',text:'کمپین «مهر تحصیلی» به ۱۰۰٪ هدف رسید.',time:'۳ ساعت پیش',unread:false},
-      {ic:'news',  accent:'#2f9e9c',bg:'rgba(79,178,176,.18)',title:'خبر منتشر شد',text:'خبر تازه با موفقیت روی سایت منتشر شد.',time:'دیروز',unread:false}
-    ];
-    if(listEl){
-      listEl.innerHTML = NOTIFS.length ? NOTIFS.map(n=>(
-        '<div class="notif-item'+(n.unread?' unread':'')+'">'+
-          '<div class="notif-ic" style="background:'+n.bg+';color:'+n.accent+'">'+icon(n.ic)+'</div>'+
-          '<div class="notif-body">'+
-            '<div class="notif-title">'+n.title+'</div>'+
-            '<div class="notif-text">'+n.text+'</div>'+
-            '<div class="notif-time">'+n.time+'</div>'+
-          '</div>'+
-        '</div>')).join('') :
-        '<div style="display:grid;place-items:center;flex:1;min-height:200px;color:var(--color-muted);font-size:13px;font-weight:600">اعلان جدیدی وجود ندارد</div>';
-    }
-    function open(){ panel.classList.add('show'); ov.classList.add('show'); panel.setAttribute('aria-hidden','false'); }
-    function close(){ panel.classList.remove('show'); ov.classList.remove('show'); panel.setAttribute('aria-hidden','true'); }
-    btn.addEventListener('click',open);
-    if(closeBtn) closeBtn.addEventListener('click',close);
-    if(ov) ov.addEventListener('click',close);
-    if(markBtn) markBtn.addEventListener('click',function(){
-      listEl.querySelectorAll('.notif-item.unread').forEach(x=>x.classList.remove('unread'));
-      const dot=btn.querySelector('.bell-dot'); if(dot) dot.style.display='none';
-    });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
   })();
 
   /* ---------- stat cards ---------- */
@@ -1948,7 +1905,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
         '<td><span class="badge type-'+t.typeKey+'"><span class="bd"></span>'+t.typeLabel+'</span></td>'+
         '<td><span class="date-cell">'+t.date+'</span></td>'+
         '<td><span class="badge st-'+t.stKey+'"><span class="bd"></span>'+t.stLabel+'</span></td>'+
-        '<td><button class="tbtn" type="button" aria-label="عملیات">'+icon('more')+'</button></td>'+
+        '<td><button class="tbtn" type="button" data-copy-ref="'+escapeText(t.ref)+'" aria-label="کپی کد پیگیری" title="کپی کد پیگیری">کپی</button></td>'+
       '</tr>')).join('');
     renderPager();
   }
@@ -1972,5 +1929,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 
 })();
 </script>
+<script src="assets/js/dashboard-catalog.js?v=<?= filemtime(__DIR__.'/assets/js/dashboard-catalog.js') ?>"></script>
+<script src="assets/js/dashboard-tools.js?v=<?= filemtime(__DIR__.'/assets/js/dashboard-tools.js') ?>"></script>
 </body>
 </html>
