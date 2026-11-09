@@ -50,7 +50,7 @@ if ($path === '/dashboard/index.php') {
     $series = ['labels'=>['خرداد','تیر','مرداد','شهریور','مهر','آبان'],'campaigns'=>[120,160,140,210,195,240],'periods'=>[0,0,0,0,0,0],'free'=>[60,80,70,110,80,140],'totalDonors'=>[120,135,150,160,175,187],'activeDonors'=>[35,40,38,50,51,63]];
     render_template($public . '/dashboard/index.php', [
       'isSuper'=>!$restricted,'ACTIVE_BRANCH_ROW'=>['name'=>'دفتر مرکزی مکسا · دادهٔ آزمایشی'],
-      'U'=>['full_name'=>'مدیر آزمایشی','username'=>'preview'], 'ringPct'=>62,'goalCollected'=>62000000,'goalTarget'=>100000000,
+      'U'=>['full_name'=>'مدیر آزمایشی','username'=>'preview'],
       'SERVER'=>['stats'=>['totalDonors'=>187,'activeDonors'=>63,'totalCollected'=>62000000,'activeCampaigns'=>4,'trends'=>[]],
         'chart'=>array_fill_keys(['day','week','month','year'],$series),
         'donors'=>[['name'=>'حامی آزمایشی','count'=>7,'amt'=>2500000]],

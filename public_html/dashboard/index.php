@@ -108,7 +108,7 @@ if ($pdo) { try {
   $activeCampaigns= (int)q($pdo, "SELECT COUNT(*) c FROM campaigns WHERE is_active=1 AND branch_id = ?", [$BRANCH_ID])->fetch()['c'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 
-/* ---------- هدف ماهانه (حلقه‌ی پیشرفت) ---------- */
+/* ---------- درصد هدف ماهانه برای کارت مجموع کمک‌ها ---------- */
 $goalTarget = 650000000.0;  // هدف پیش‌فرض ماهانه (تومان) — قابل تنظیم در جدول settings
 $goalCollected = 0.0;
 if ($pdo) { try {
@@ -120,7 +120,7 @@ if ($pdo) { try {
   $row = q($pdo, "SELECT value FROM settings WHERE name='monthly_goal_irt' LIMIT 1")->fetch();
   if ($row && is_numeric($row['value'])) $goalTarget = (float)$row['value'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
-$ringPct = $goalTarget > 0 ? (int)min(100, round($goalCollected / $goalTarget * 100)) : 0;
+$goalPct = $goalTarget > 0 ? (int)min(100, round($goalCollected / $goalTarget * 100)) : 0;
 
 /* ---------- خیرین برتر (بیشترین مبلغ حمایت) ---------- */
 $donorsRaw = [];
@@ -266,7 +266,7 @@ function build_series(array $don, array $users, string $mode): array {
 $trends = [
   'donors'    => ($newThisWeek > 0 ? '+' : '').fa_digits((string)$newThisWeek).' این هفته',
   'active'    => ($totalDonors > 0 ? fa_digits((string)round($activeDonors / $totalDonors * 100)) : '۰').'٪',
-  'collected' => fa_digits((string)$ringPct).'٪ هدف',
+  'collected' => fa_digits((string)$goalPct).'٪ هدف',
   'campaigns' => fa_digits((string)$activeCampaigns).' فعال',
 ];
 
@@ -365,11 +365,6 @@ input{font-family:inherit}
 ::selection{background:var(--primary-16);color:var(--color-primary-dark)}
 svg.ic{display:block}
 
-*::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:rgba(0, 143, 138,.34);background-clip:padding-box}
-*::-webkit-scrollbar-track{background:transparent}
-
 .app{min-height:100vh}
 
 /* ============ SIDEBAR ============ */
@@ -465,19 +460,6 @@ svg.ic{display:block}
   background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='%23ffffff'%3E%3Cellipse%20cx='50'%20cy='25'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='50'%20cy='75'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='25'%20cy='50'%20rx='22'%20ry='15'/%3E%3Cellipse%20cx='75'%20cy='50'%20rx='22'%20ry='15'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='14'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
 .welcome:hover::after{transform:rotate(3deg) scale(1.08);opacity:.15}
 .welcome-text{position:relative;z-index:1;min-width:0}
-.welcome-goal{position:relative;z-index:1;display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:15px 18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-shrink:0}
-.ring{position:relative;width:100px;height:100px;flex-shrink:0}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:rgba(255,255,255,.22);stroke-width:9}
-.ring-fg{fill:none;stroke:url(#welcomeGoalGradient);stroke-width:9;stroke-linecap:round;stroke-dasharray:314.159;stroke-dashoffset:314.159;transition:stroke-dashoffset 1.3s var(--ease)}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
-.ring-center b{font-size:21px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.ring-center span{font-size:10px;opacity:.85;margin-top:3px}
-.goal-meta{display:flex;flex-direction:column;gap:6px;min-width:165px}
-.goal-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
-.goal-fig{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;color:rgba(255,255,255,.82);font-weight:600}
-.goal-fig b{color:#fff;font-weight:600;font-variant-numeric:tabular-nums}
-.goal-meta .btn{margin-top:8px;justify-content:center}
 .grid-2>*{min-width:0}
 .chart-wrap{min-width:0}
 .chart-wrap canvas{max-width:100%!important}
@@ -640,7 +622,6 @@ svg.ic{display:block}
   .welcome{flex-direction:column;align-items:flex-start;padding:24px}
   .welcome-actions{width:100%}
   .welcome-actions .btn{flex:1;justify-content:center}
-  .welcome-goal{width:100%;justify-content:center}
   .content{padding:16px}
   .profile .pm{display:none}
   .chart-wrap{height:260px}
@@ -744,13 +725,7 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
   color-scheme:dark;
   background-color:var(--color-bg);                   /* ناودانِ اسکرول‌بار/کانواسِ html در دارک‌مود تیره شود */
-  scrollbar-color:rgba(255,255,255,.22) transparent;  /* اسکرول‌بار فایرفاکس */
 }
-/* اسکرول‌بارِ وب‌کیت (کروم/اج/سافاری) در دارک‌مود — هم خودِ html و هم عناصر داخلی */
-[data-theme="dark"]::-webkit-scrollbar-thumb,
-[data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
-[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
-[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.32);background-clip:padding-box}
 [data-theme="dark"] .topbar{background:rgba(16,23,27,.82)}
 [data-theme="dark"] .search:focus-within,
 [data-theme="dark"] .select.open .select-btn,
@@ -775,9 +750,6 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 
 /* Ledger treatment adapted from unslop by Damir Sokolovsky (@heydamir), CC BY 4.0. */
 .welcome-text p{color:rgba(255,255,255,.86)}
-.welcome .btn{padding:8px 12px;border-radius:8px}
-.welcome .btn-gold{background:linear-gradient(135deg,#ffc24d,#faa61a);color:#5c3d00;box-shadow:0 8px 20px -10px rgba(250,166,26,.65)}
-.welcome .btn-gold:hover{background:linear-gradient(135deg,#ffce70,#ffb329)}
 .nav-item.active,[data-theme="dark"] .nav-item.active{background:var(--primary-08);color:var(--color-text)}
 .brand-logo,.card,.stat-card{box-shadow:none}
 .stat-trend{border-radius:4px;padding:2px 4px}
@@ -791,15 +763,12 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
 .chart-card{border-inline-start:4px solid var(--color-primary)}
 @media (max-width:420px){
   .welcome{padding:16px;gap:16px}
-  .welcome-goal{flex-wrap:wrap;justify-content:flex-start}
-  .ring{width:80px;height:80px}
-  .goal-meta{min-width:0;flex:1 1 144px}
-  .goal-fig{flex-wrap:wrap;gap:4px 12px}
 }
 .chip{border-radius:8px}
 .dash-btn:hover,.nav-sub-link:hover{transform:none;box-shadow:none}
 :where(button,a):focus-visible{outline:2px solid var(--color-primary-light);outline-offset:2px}
 </style>
+<link rel="stylesheet" href="assets/css/dashboard-responsive.css?v=<?= filemtime(__DIR__.'/assets/css/dashboard-responsive.css') ?>">
 <link rel="stylesheet" href="assets/css/dashboard-tools.css?v=<?= filemtime(__DIR__.'/assets/css/dashboard-tools.css') ?>">
 </head>
 <body>
@@ -891,33 +860,11 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
           <h2>سلام، خوش آمدید <span style="display:inline-block;vertical-align:middle;color:var(--color-secondary);"><?= iconoir('sparks', '', 22) ?></span></h2>
           <p id="welcomeDate">خلاصه کمک‌ها، خیرین و تراکنش‌های مکسا</p>
         </div>
-        <div class="welcome-goal">
-          <div class="ring" data-pct="<?= $ringPct ?>">
-            <svg viewBox="0 0 120 120">
-              <defs><linearGradient id="welcomeGoalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#faa61a"/>
-              </linearGradient></defs>
-              <circle class="ring-bg" cx="60" cy="60" r="50"/>
-              <circle class="ring-fg" cx="60" cy="60" r="50"/>
-            </svg>
-            <div class="ring-center"><b data-pctlabel>۰٪</b><span>تحقق هدف</span></div>
-          </div>
-          <div class="goal-meta">
-            <div class="goal-title">هدف ماهانه خیریه</div>
-            <div class="goal-fig"><span>جمع‌آوری‌شده</span><b><?= money_compact($goalCollected) ?> تومان</b></div>
-            <div class="goal-fig"><span>هدف این ماه</span><b><?= money_compact($goalTarget) ?> تومان</b></div>
-            <a href="financial-management.php" class="btn btn-gold" <?= empty($MENU['can']['financial']) ? 'hidden' : '' ?>>
-              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              گزارش‌گیری
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="attention-section" aria-labelledby="attentionTitle">
-        <div class="attention-head"><div><h2 id="attentionTitle">نیازمند رسیدگی</h2><p>کارهای منتظر اقدام در شعبهٔ فعال؛ مطابق دسترسی شما</p></div><div class="attention-controls"><span class="attention-time" id="attentionTime"></span><button type="button" id="attentionRefresh">به‌روزرسانی</button></div></div>
-        <div class="attention-grid" id="attentionGrid" aria-busy="true"></div>
-        <p class="tool-status" id="attentionStatus" role="status">در حال دریافت کارهای منتظر رسیدگی…</p>
+        <section class="attention-section" aria-labelledby="attentionTitle">
+          <div class="attention-head"><div><h2 id="attentionTitle">نیازمند رسیدگی</h2><p>کارهای منتظر اقدام در شعبهٔ فعال؛ مطابق دسترسی شما</p></div><div class="attention-controls"><span class="attention-time" id="attentionTime"></span><button type="button" id="attentionRefresh">به‌روزرسانی</button></div></div>
+          <div class="attention-grid" id="attentionGrid" aria-busy="true"></div>
+          <p class="tool-status" id="attentionStatus" role="status">در حال دریافت کارهای منتظر رسیدگی…</p>
+        </section>
       </section>
 
       <!-- stats -->
@@ -1580,18 +1527,6 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       '</div>');
   });
   donorsEl.querySelectorAll('.donor-bar i').forEach(i=>i.style.width=i.dataset.w+'%');
-
-  /* ---------- monthly goal ring ---------- */
-  (function(){
-    const ring=document.querySelector('.ring'); if(!ring) return;
-    const pct=+ring.dataset.pct, circ=2*Math.PI*50;
-    const fg=ring.querySelector('.ring-fg'), lbl=ring.querySelector('[data-pctlabel]');
-    setTimeout(()=>{ fg.style.strokeDashoffset=circ*(1-pct/100); },420);
-    const s=performance.now()+420, dur=1300;
-    function t(now){ let p=Math.min(Math.max((now-s)/dur,0),1); p=1-Math.pow(1-p,3);
-      lbl.textContent=toFa(Math.round(pct*p))+'٪'; if(p<1) requestAnimationFrame(t); else lbl.textContent=toFa(pct)+'٪'; }
-    requestAnimationFrame(t);
-  })();
 
   /* ---------- chart ---------- */
   const EMPTY={labels:[],campaigns:[],periods:[],free:[],totalDonors:[],activeDonors:[]};

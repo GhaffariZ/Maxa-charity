@@ -17,7 +17,6 @@ function e($s){return htmlspecialchars($s);} function money_compact($s){return n
 function dash_is_branch_admin(){return true;}
 if(!function_exists('mb_substr')){function mb_substr($s,$start,$len,$encoding){return iconv_substr($s,$start,$len,$encoding);}}
 $isSuper=true; $ACTIVE_BRANCH_ROW=['name'=>'دفتر مرکزی مکسا']; $U=['full_name'=>'کاربر آزمایشی'];
-$ringPct=62; $goalCollected=62000000; $goalTarget=100000000;
 $series=['labels'=>['مهر','آبان'],'campaigns'=>[100,200],'periods'=>[50,75],'free'=>[10,20]];
 $SERVER=['stats'=>['totalDonors'=>187,'activeDonors'=>63,'totalCollected'=>62000000,'activeCampaigns'=>4,'trends'=>[]],
  'chart'=>['day'=>$series,'week'=>$series,'month'=>$series,'year'=>$series],'donors'=>[],'tx'=>[]];
