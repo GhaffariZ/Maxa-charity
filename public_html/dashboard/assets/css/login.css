@@ -17,15 +17,26 @@
 * { box-sizing: border-box; }
 
 body {
+    position: relative;
+    isolation: isolate;
     margin: 0;
     min-height: 100vh;
     min-height: 100dvh;
     display: grid;
     place-items: center;
     padding: clamp(16px, 4vw, 56px);
-    background: #eaf2ef;
+    background: #061b1d;
     color: var(--ink);
     font: 400 1rem/1.65 Vazirmatn, Tahoma, sans-serif;
+}
+
+.login-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 25% 65%, #008f8a66, transparent 65%), #061b1d;
 }
 
 .login {
@@ -35,11 +46,13 @@ body {
     min-height: 37rem;
     overflow: hidden;
     border-radius: 28px;
-    background: #fff;
-    box-shadow: 0 26px 70px -36px #15443b70;
+    background: transparent;
+    border: 1px solid #b8ebdb26;
+    box-shadow: 0 26px 70px -36px #0009;
 }
 
 .login-main {
+    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -230,7 +243,10 @@ svg {
 .msg.note { background: #e6f5f1; color: #005b57; }
 .msg.err { background: #fff0f0; color: #a22a3a; }
 
-.login-footer { padding-top: 16px; border-top: 1px solid var(--line); }
+.login-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.motion-toggle { min-height: 32px; padding: 3px 0; border: 0; background: none; color: var(--teal-dark); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.motion-toggle:focus-visible { outline: 2px solid var(--teal-dark); outline-offset: 3px; }
+.motion-toggle[hidden] { display: none; }
 
 .login-art {
     position: relative;
@@ -241,43 +257,9 @@ svg {
     align-items: center;
     overflow: hidden;
     padding: 42px 24px 32px;
-    background: radial-gradient(ellipse at 45% 42%, var(--teal) -35%, #075552 46%, #073635 100%);
+    background: #05252635;
     color: #e0f4ee;
     text-align: center;
-}
-
-.login-art::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    background: radial-gradient(circle, #b8ebdb 1px, transparent 1.5px) center / 13px 13px;
-    mask-image: radial-gradient(ellipse, transparent 12%, #000 58%, transparent 87%);
-    opacity: .34;
-}
-
-@media (any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .login-art.is-tracking {
-        background:
-            radial-gradient(circle 250px at var(--pointer-x) var(--pointer-y), #7bffcd33, transparent 78%),
-            radial-gradient(ellipse at 45% 42%, var(--teal) -35%, #075552 46%, #073635 100%);
-    }
-
-    .login-art::after {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        inset: 0;
-        pointer-events: none;
-        border: 2px solid transparent;
-        background: radial-gradient(circle 150px at var(--pointer-x) var(--pointer-y), #d5ffed, #55e4bdb3 42%, transparent 90%) border-box;
-        mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
-        mask-composite: exclude;
-        opacity: 0;
-        transition: opacity .28s ease-out;
-    }
-
-    .login-art.is-tracking::after { opacity: 1; }
 }
 
 .art-wordmark { font-size: .86rem; font-weight: 800; letter-spacing: .32em; }
@@ -329,7 +311,6 @@ svg {
     .btn-submit::before { animation: submit-shine 4s linear; }
     .btn-submit::after { transition: opacity .25s ease-out; }
     .btn-submit:focus-visible::before { animation-name: submit-shine-active; }
-    .login-art::before { animation: reveal-dots .65s ease-out; }
     .art-orbit::before { animation: orbit 4.6s cubic-bezier(.35, 0, .3, 1); }
     .art-orbit img { animation: logo-wiggle .8s ease-in-out .3s; }
     .btn-submit svg { transition: transform .22s ease-out; }
@@ -344,7 +325,6 @@ svg {
     }
 }
 
-@keyframes reveal-dots { from { opacity: 0; } }
 @keyframes orbit { to { transform: rotate(392deg); } }
 @keyframes logo-wiggle {
     30% { transform: rotate(-5deg); }

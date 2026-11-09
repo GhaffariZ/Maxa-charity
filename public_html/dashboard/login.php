@@ -62,9 +62,10 @@ $csrf = csrf_token();
      کلِ پوسته را با صفحه‌ی ورودِ تمام‌صفحه جایگزین کن تا سایدبار/منو باقی نماند. -->
 <script>if(window.top!==window.self){window.top.location.replace('/dashboard/login.php');}</script>
 <link rel="icon" href="/favicon.png" type="image/png">
-<link rel="stylesheet" href="/dashboard/assets/css/login.css">
+<link rel="stylesheet" href="/dashboard/assets/css/login.css?v=<?= filemtime(__DIR__.'/assets/css/login.css') ?>">
 </head>
 <body>
+  <div class="login-background" id="loginBackground" aria-hidden="true"></div>
   <main class="login">
     <section class="login-main" aria-labelledby="login-title">
       <header class="login-brand">
@@ -111,7 +112,10 @@ $csrf = csrf_token();
         </form>
       </div>
 
-      <footer class="login-footer">مؤسسه نیکوکاری کنترل سرطان ایرانیان</footer>
+      <footer class="login-footer">
+        <span>مؤسسه نیکوکاری کنترل سرطان ایرانیان</span>
+        <button type="button" class="motion-toggle" id="loginMotionToggle" aria-pressed="false" hidden>توقف حرکت پس‌زمینه</button>
+      </footer>
     </section>
 
     <aside class="login-art" aria-hidden="true">
@@ -122,20 +126,7 @@ $csrf = csrf_token();
       <p>همراه بیماران مبتلا به سرطان</p>
     </aside>
   </main>
-  <script>
-    const loginArt = document.querySelector('.login-art');
-    const canFollowPointer = matchMedia('(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)');
-
-    document.addEventListener('pointermove', (event) => {
-      if (event.pointerType === 'touch' || !canFollowPointer.matches) return;
-
-      const bounds = loginArt.getBoundingClientRect();
-      loginArt.style.setProperty('--pointer-x', (event.clientX - bounds.left) + 'px');
-      loginArt.style.setProperty('--pointer-y', (event.clientY - bounds.top) + 'px');
-      loginArt.classList.add('is-tracking');
-    });
-
-    document.documentElement.addEventListener('pointerleave', () => loginArt.classList.remove('is-tracking'));
-  </script>
+  <script defer src="/dashboard/assets/js/vendor/wayglim.js?v=<?= filemtime(__DIR__.'/assets/js/vendor/wayglim.js') ?>"></script>
+  <script defer src="/dashboard/assets/js/login-background.js?v=<?= filemtime(__DIR__.'/assets/js/login-background.js') ?>"></script>
 </body>
 </html>
