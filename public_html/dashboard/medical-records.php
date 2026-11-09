@@ -57,7 +57,8 @@ try {
         }
     }
 } catch (Throwable $e) {
-    $dbError = 'جدول پرونده‌های پزشکی هنوز ایجاد نشده است. مهاجرت 017_medical_records.sql را اجرا کنید.';
+    error_log('Dashboard medical records: ' . $e->getMessage());
+    $dbError = 'دریافت پرونده‌های پزشکی ناموفق بود. مدیر سامانه باید اتصال و سازگاری ساختار دیتابیس با مهاجرت‌های 017 و 027 را بررسی کند.';
 }
 
 function medical_e(?string $value): string {
