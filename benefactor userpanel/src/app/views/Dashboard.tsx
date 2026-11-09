@@ -4,7 +4,6 @@ import {
   TrendingUp,
   ChevronLeft,
   Award,
-  Loader2,
 } from "lucide-react";
 import {
   AreaChart,
@@ -18,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { api, type DashboardDto } from "../../api/client";
 import { faNumber, faToman, faDate } from "../lib/format";
+import { DashboardSkeleton } from "../components/ui/dashboard-skeleton";
 
 /** Persian (Jalali) long month label from a "YYYY-MM" key. */
 function faMonthLabel(ym: string): string {
@@ -44,11 +44,7 @@ export function Dashboard() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-32">
-        <Loader2 className="animate-spin text-primary" size={32} />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   const stats = data?.stats;

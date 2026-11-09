@@ -6,6 +6,7 @@
  * ========================================================================== */
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/loading-ui.php';
 
 // اگر کاربر مسئول یا مدیر مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
 if (dash_is_finance_only() || dash_is_finance_user()) {
@@ -329,6 +330,7 @@ $MENU = [
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<link rel="stylesheet" href="/assets/macsa-loading.css?v=<?= filemtime(__DIR__.'/../assets/macsa-loading.css') ?>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>پنل مدیریت | خیریه مکسا</title>
@@ -383,7 +385,7 @@ svg.ic{display:block}
 
 .sb-nav{flex:1;overflow-y:auto;padding:6px 12px 14px}
 .nav-section-title{font-size:11px;color:var(--color-muted);font-weight:600;padding:16px 12px 7px;letter-spacing:.04em;display:flex;align-items:center;gap:9px}
-.nav-section-title::before{content:'';width:16px;height:3px;border-radius:99px;background:var(--color-primary-dark);flex-shrink:0}
+.nav-section-title::before{content:'';width:16px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--color-secondary),#e08e12);flex-shrink:0}
 @keyframes navIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 
 .nav-item,.nav-group-header{width:100%;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;font-weight:600;font-size:13.5px;color:#5b6469;transition:background .22s,color .22s,box-shadow .22s;position:relative}
@@ -455,15 +457,19 @@ svg.ic{display:block}
 .cable-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;opacity:0;transition:opacity .45s var(--ease)}
 .cable-svg.show{opacity:1}
 
-.welcome{position:relative;overflow:hidden;border-radius:var(--radius-lg);
-  background:var(--color-primary-dark);
-  color:#fff;padding:28px 30px;display:flex;align-items:center;justify-content:space-between;gap:22px;box-shadow:var(--shadow-lg)}
+.welcome{position:relative;overflow:hidden;border-radius:24px;
+  background:linear-gradient(120deg,#008786 0%,#00736f 58%,#004a49 100%);
+  color:#fff;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:var(--shadow-lg)}
+.welcome::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 130% at 88% -10%,rgba(255,255,255,.18),transparent 55%);pointer-events:none}
+.welcome::after{content:'';position:absolute;left:-26px;bottom:-72px;width:240px;height:240px;opacity:.10;transform:rotate(-14deg);pointer-events:none;transition:transform .7s var(--ease),opacity .7s ease;
+  background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='%23ffffff'%3E%3Cellipse%20cx='50'%20cy='25'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='50'%20cy='75'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='25'%20cy='50'%20rx='22'%20ry='15'/%3E%3Cellipse%20cx='75'%20cy='50'%20rx='22'%20ry='15'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='14'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+.welcome:hover::after{transform:rotate(3deg) scale(1.08);opacity:.15}
 .welcome-text{position:relative;z-index:1;min-width:0}
 .welcome-goal{position:relative;z-index:1;display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:15px 18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-shrink:0}
 .ring{position:relative;width:100px;height:100px;flex-shrink:0}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:var(--color-border);stroke-width:9}
-.ring-fg{fill:none;stroke:var(--color-primary);stroke-width:9;stroke-linecap:round;stroke-dasharray:314.159;stroke-dashoffset:314.159;transition:stroke-dashoffset 1.3s var(--ease)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.22);stroke-width:9}
+.ring-fg{fill:none;stroke:url(#welcomeGoalGradient);stroke-width:9;stroke-linecap:round;stroke-dasharray:314.159;stroke-dashoffset:314.159;transition:stroke-dashoffset 1.3s var(--ease)}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
 .ring-center b{font-size:21px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
 .ring-center span{font-size:10px;opacity:.85;margin-top:3px}
@@ -494,7 +500,11 @@ svg.ic{display:block}
 /* stat cards */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
 .stat-card{position:relative;z-index:1;overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s}
+.stat-card::after{content:'';position:absolute;left:-24px;top:-24px;width:96px;height:96px;border-radius:50%;background:var(--accent-bg);opacity:.55;pointer-events:none;transition:transform .3s var(--ease)}
+.stat-card:hover::after{transform:scale(1.2)}
 .stat-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.stat-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent)}
+.stat-icon .ic{width:24px;height:24px}
 .stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:99px}
 .stat-trend.up{background:rgba(22,163,122,.12);color:var(--success)}
 .stat-trend.down{background:rgba(224,85,107,.12);color:var(--danger)}
@@ -559,6 +569,12 @@ svg.ic{display:block}
 .donor:hover{background:var(--color-bg)}
 .rank-badge{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:600;flex-shrink:0;background:var(--color-bg);color:var(--color-muted)}
 .donor-av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:600;font-size:13.5px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.donor:nth-child(3n+1) .donor-av{background:linear-gradient(135deg,#008f8a,#00736f)}
+.donor:nth-child(3n+2) .donor-av{background:linear-gradient(135deg,#ffc24d,#faa61a);color:#5c3d00}
+.donor:nth-child(3n) .donor-av{background:linear-gradient(135deg,#8b5cf6,#6d3fd1)}
+.donor:nth-child(1) .rank-badge{background:linear-gradient(135deg,#f6c453,#e0a528);color:#5c3d00}
+.donor:nth-child(2) .rank-badge{background:linear-gradient(135deg,#cdd5dd,#a9b3bc);color:#263238}
+.donor:nth-child(3) .rank-badge{background:linear-gradient(135deg,#e7b182,#cf8a4f);color:#4f2c13}
 .donor-info{flex:1;min-width:0}
 .donor-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .donor-bar{height:5px;border-radius:99px;background:#eef1f3;margin-top:7px;overflow:hidden}
@@ -640,7 +656,12 @@ svg.ic{display:block}
 .spa-frame{display:none;width:100%;height:calc(100vh - 70px);border:0;background:var(--color-bg);transition:opacity .25s var(--ease)}
 body.spa-active .spa-frame{display:block;animation:fadeUp .35s var(--ease)}
 body.spa-active .content{display:none}
-body.spa-loading .spa-frame{opacity:.6}
+.spa-region{position:relative;display:none}
+body.spa-active .spa-region{display:block}
+body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
+.spa-pending{position:absolute;inset:0;overflow:auto;padding:32px;background:var(--color-bg)}
+.spa-pending[hidden]{display:none}
+@media(max-width:760px){.spa-pending{padding:20px 16px}}
 
 /* نوار پیشرفت مدل یوتیوب (YouTube-style Top Loading Bar) */
 .spa-bar-wrap{position:fixed;top:0;right:0;left:0;height:3.5px;z-index:999999;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
@@ -777,32 +798,27 @@ body.spa-loading .spa-frame{opacity:.6}
 }
 
 /* Ledger treatment adapted from unslop by Damir Sokolovsky (@heydamir), CC BY 4.0. */
-.welcome{background:var(--color-surface);color:var(--color-text);padding:24px;gap:24px;border:1px solid var(--color-border);box-shadow:none}
-.welcome-text p,.goal-fig,.ring-center span{color:var(--color-muted)}
-.welcome-goal{background:var(--color-bg);border-color:var(--color-border);border-radius:12px;padding:12px;gap:16px;backdrop-filter:none}
-.goal-title,.goal-fig b,.ring-center{color:var(--color-text)}
-.ring{width:80px;height:80px}
+.welcome-text p{color:rgba(255,255,255,.86)}
 .welcome .btn{padding:8px 12px;border-radius:8px}
-.welcome .btn:hover{background:#005d59;transform:none;box-shadow:none}
+.welcome .btn-gold{background:linear-gradient(135deg,#ffc24d,#faa61a);color:#5c3d00;box-shadow:0 8px 20px -10px rgba(250,166,26,.65)}
+.welcome .btn-gold:hover{background:linear-gradient(135deg,#ffce70,#ffb329)}
 .nav-item.active,[data-theme="dark"] .nav-item.active{background:var(--primary-08);color:var(--color-text)}
-.nav-section-title::before{background:var(--color-border)}
 .brand-logo,.card,.stat-card{box-shadow:none}
-.stat-top{min-height:24px;justify-content:flex-end}
 .stat-trend{border-radius:4px;padding:2px 4px}
 .stat-value{margin-top:8px;flex-wrap:wrap;gap:4px}
 .stat-label,.stat-foot{margin-top:8px}
-.stat-card[data-metric]:not([data-metric=""]){
-  background:color-mix(in srgb,var(--accent) 6%,var(--color-surface));
-  border-color:var(--accent);
-}
-.stat-chart-btn{color:var(--color-text);border-radius:8px}
-.stat-card.charting{box-shadow:inset 0 0 0 1px var(--accent)}
+.stat-chart-btn{border-radius:8px}
+.stat-card.charting{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.stat-card:not(.charting) .stat-chart-btn{color:color-mix(in srgb,var(--accent) 70%,#163331)}
+[data-theme="dark"] .stat-card:not(.charting) .stat-chart-btn{color:color-mix(in srgb,var(--accent) 70%,#fff)}
 .stat-card.charting:not([data-metric="amount"]) .stat-chart-btn{color:#11181b}
 .chart-card{border-inline-start:4px solid var(--color-primary)}
 @media (max-width:420px){
   .welcome{padding:16px;gap:16px}
   .welcome-goal{flex-wrap:wrap;justify-content:flex-start}
+  .ring{width:80px;height:80px}
   .goal-meta{min-width:0;flex:1 1 144px}
+  .goal-fig{flex-wrap:wrap;gap:4px 12px}
 }
 .chip{border-radius:8px}
 .dash-btn:hover,.nav-sub-link:hover{transform:none;box-shadow:none}
@@ -892,12 +908,15 @@ body.spa-loading .spa-frame{opacity:.6}
       <!-- welcome -->
       <section class="welcome reveal" style="animation-delay:.05s">
         <div class="welcome-text">
-          <h2>گزارش جذب کمک‌های خیریه</h2>
+          <h2>سلام، خوش آمدید <span style="display:inline-block;vertical-align:middle;color:var(--color-secondary);"><?= iconoir('sparks', '', 22) ?></span></h2>
           <p id="welcomeDate">خلاصه کمک‌ها، خیرین و تراکنش‌های مکسا</p>
         </div>
         <div class="welcome-goal">
           <div class="ring" data-pct="<?= $ringPct ?>">
             <svg viewBox="0 0 120 120">
+              <defs><linearGradient id="welcomeGoalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#faa61a"/>
+              </linearGradient></defs>
               <circle class="ring-bg" cx="60" cy="60" r="50"/>
               <circle class="ring-fg" cx="60" cy="60" r="50"/>
             </svg>
@@ -989,7 +1008,10 @@ body.spa-loading .spa-frame{opacity:.6}
     </main>
 
     <!-- ناحیه‌ی محتوای SPA: صفحات دیگر این‌جا (داخل آی‌فریم) بارگذاری می‌شوند -->
-    <iframe class="spa-frame" id="spaFrame" title="محتوای صفحه" frameborder="0"></iframe>
+    <div class="spa-region">
+      <div class="spa-pending" id="spaPending" hidden><?php macsa_dashboard_skeleton(); ?></div>
+      <iframe class="spa-frame" id="spaFrame" title="محتوای صفحه" frameborder="0" aria-busy="false"></iframe>
+    </div>
   </div>
 </div>
 
@@ -1241,6 +1263,7 @@ body.spa-loading .spa-frame{opacity:.6}
   /* ---------- ناوبری SPA: محتوا داخل آی‌فریم؛ پنل و هدر ثابت می‌مانند ---------- */
   (function(){
     const frame=document.getElementById('spaFrame');
+    const pending=document.getElementById('spaPending');
     const barWrap=document.getElementById('spaBarWrap');
     const bar=document.getElementById('spaBar');
     const dashBtn=document.getElementById('dashHomeBtn');
@@ -1310,7 +1333,6 @@ body.spa-loading .spa-frame{opacity:.6}
     /* ---------- نوار پیشرفت مدل یوتیوب (YouTube Progress Bar Engine) ---------- */
     let curProgress = 0;
     let trickleTimer = null;
-    let pollTimer = null;
     let safetyTimer = null;
     let isBarActive = false;
 
@@ -1326,7 +1348,6 @@ body.spa-loading .spa-frame{opacity:.6}
 
     function clearBarTimers() {
       if (trickleTimer) { clearInterval(trickleTimer); trickleTimer = null; }
-      if (pollTimer)    { clearInterval(pollTimer); pollTimer = null; }
       if (safetyTimer)  { clearTimeout(safetyTimer); safetyTimer = null; }
     }
 
@@ -1335,6 +1356,10 @@ body.spa-loading .spa-frame{opacity:.6}
       clearBarTimers();
       isBarActive = true;
       document.body.classList.add('spa-loading');
+      pending.hidden=false;
+      frame.inert=true;
+      frame.setAttribute('aria-hidden','true');
+      frame.setAttribute('aria-busy','true');
 
       // نقطه شروع: فورا از ۰ (پنهان در سمت راست) بدون انیمیشن
       bar.style.transition = 'none';
@@ -1368,18 +1393,6 @@ body.spa-loading .spa-frame{opacity:.6}
         }
       }, 250);
 
-      // پایش آماده‌سازی سند آی‌فریم
-      pollTimer = setInterval(function() {
-        if (!isBarActive) return;
-        var d = null;
-        try { d = frame.contentDocument; } catch(e) {}
-        try {
-          if (d && fileOf(d.location.href) === current && /interactive|complete/.test(d.readyState)) {
-            finishBar();
-          }
-        } catch(e) {}
-      }, 70);
-
       // تایم‌اوت ایمنی ۲۰ ثانیه‌ای برای شبکه‌های کند
       safetyTimer = setTimeout(finishBar, 20000);
     }
@@ -1389,6 +1402,10 @@ body.spa-loading .spa-frame{opacity:.6}
       isBarActive = false;
       clearBarTimers();
       document.body.classList.remove('spa-loading');
+      pending.hidden=true;
+      frame.inert=false;
+      frame.removeAttribute('aria-hidden');
+      frame.setAttribute('aria-busy','false');
 
       // پرتاب نهایی به ۱۰۰٪ (کل صفحه)
       setBarProgress(1, 160);
@@ -1437,6 +1454,7 @@ body.spa-loading .spa-frame{opacity:.6}
 
     // پس از بارگذاری صفحه‌ی داخلی: پنل و هدرِ خودِ آن صفحه را مخفی کن و عنوان را همگام کن
     frame.addEventListener('load',function(){
+      try { if(current && frame.contentWindow.location.href==='about:blank') return; } catch(e) {}
       finishBar();
       // اگر به داشبورد برگشته‌ایم، رویدادِ load مربوط به about:blank نباید تیترِ خانه را خراب کند
       if(!document.body.classList.contains('spa-active')) return;
@@ -1459,24 +1477,11 @@ body.spa-loading .spa-frame{opacity:.6}
         setTitle(p,docTitle);
       }catch(e){}
 
-      // رهگیری کلیک‌ها، تب‌ها و ارسال فرم‌ها در داخل آی‌فریم برای فعال‌سازی بلافاصله لودینگ مدل یوتیوب
+      // Start only for real navigation, not downloads or forms handled with AJAX.
       try{
-        doc.addEventListener('click',function(e){
-          const a=e.target.closest?e.target.closest('a[href]'):null;
-          if(!a) return;
-          const href=a.getAttribute('href')||'';
-          if(!href || href.charAt(0)==='#' || /^(javascript:|mailto:|tel:)/i.test(href)) return;
-          if(a.target && a.target!=='_self') return;
-          startBar();
-        }, true);
-
-        doc.addEventListener('submit',function(){
-          startBar();
-        }, true);
-
         if(doc.defaultView){
           doc.defaultView.addEventListener('beforeunload',function(){
-            startBar();
+            if(document.body.classList.contains('spa-active')) startBar();
           });
         }
       }catch(e){}
@@ -1592,7 +1597,7 @@ body.spa-loading .spa-frame{opacity:.6}
   STATS.forEach(s=>{
     statsEl.insertAdjacentHTML('beforeend',
       '<div class="stat-card reveal" data-metric="'+(s.metric||'')+'" style="--accent:'+s.accent+';--accent-bg:'+s.bg+'">'+
-        '<div class="stat-top">'+
+        '<div class="stat-top"><div class="stat-icon">'+icon(s.icon)+'</div>'+
         (s.trend?'<span class="stat-trend '+(s.up?'up':'down')+'">'+icon(s.up?'up':'down')+s.trend+'</span>':'')+'</div>'+
         '<div class="stat-value"><span>'+fmtStat(s.target,s.dec)+'</span><span class="stat-unit">'+s.unit+'</span></div>'+
         '<div class="stat-label">'+s.label+'</div>'+
@@ -1610,7 +1615,7 @@ body.spa-loading .spa-frame{opacity:.6}
     donorsEl.insertAdjacentHTML('beforeend',
       '<div class="donor">'+
         '<div class="rank-badge">'+toFa(i+1)+'</div>'+
-        '<div class="donor-av" style="background:var(--color-bg);color:var(--color-text)">'+initials(d.name)+'</div>'+
+        '<div class="donor-av">'+initials(d.name)+'</div>'+
         '<div class="donor-info"><div class="donor-name">'+d.name+'</div>'+
           '<div class="donor-bar"><i data-w="'+Math.round(d.amt/maxAmt*100)+'"></i></div></div>'+
         '<div class="donor-amt-wrap"><div class="donor-amt">'+faNum(d.amt)+' <small>تومان</small></div>'+
