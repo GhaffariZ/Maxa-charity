@@ -15,6 +15,7 @@ import {
   Package
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   { id: "dashboard", label: "داشبورد", icon: LayoutDashboard, path: "/" },
@@ -44,7 +45,7 @@ export function Layout() {
   };
 
   return (
-    <div className="donor-shell min-h-screen [--primary:#00736f] [--muted-foreground:#5b6469] bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
+    <div className="donor-shell min-h-screen bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between p-4 bg-surface border-b border-border sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -53,14 +54,17 @@ export function Layout() {
           </div>
           <span className="font-semibold text-lg">مکسا</span>
         </div>
-        <button 
-          aria-label="منوی پیشخوان"
-          aria-expanded={isSidebarOpen}
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 hover:bg-muted rounded-lg"
-        >
-          {isSidebarOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            aria-label="منوی پیشخوان"
+            aria-expanded={isSidebarOpen}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-muted rounded-lg"
+          >
+            {isSidebarOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </header>
 
       {/* Sidebar */}
@@ -147,6 +151,7 @@ export function Layout() {
             </h2>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <button aria-label="اعلان‌ها" className="donor-notification p-2 rounded-xl transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-surface"></span>

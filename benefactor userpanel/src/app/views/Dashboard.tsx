@@ -115,8 +115,8 @@ export function Dashboard() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="donorAmountFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#008f8a" stopOpacity={0.28} />
-                      <stop offset="100%" stopColor="#008f8a" stopOpacity={0.02} />
+                      <stop offset="0%" stopColor="var(--primary-ink)" stopOpacity={0.28} />
+                      <stop offset="100%" stopColor="var(--primary-ink)" stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
@@ -124,9 +124,10 @@ export function Dashboard() {
                   <YAxis hide />
                   <Tooltip
                     formatter={(v: number) => [faToman(v), "مبلغ"]}
-                    contentStyle={{ borderRadius: "12px", border: "1px solid #b6ded9", textAlign: "right" }}
+                    contentStyle={{ borderRadius: "12px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", textAlign: "right" }}
+                    itemStyle={{ color: "var(--primary-ink)" }}
                   />
-                  <Area type="monotone" dataKey="amount" stroke="#008f8a" strokeWidth={3} fillOpacity={1} fill="url(#donorAmountFill)" activeDot={{ r: 5, fill: "#faa61a", stroke: "#fff", strokeWidth: 3 }} isAnimationActive={false} />
+                  <Area type="monotone" dataKey="amount" stroke="var(--primary-ink)" strokeWidth={3} fillOpacity={1} fill="url(#donorAmountFill)" activeDot={{ r: 5, fill: "#faa61a", stroke: "var(--card)", strokeWidth: 3 }} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             )}

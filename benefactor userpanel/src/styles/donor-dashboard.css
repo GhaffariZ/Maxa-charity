@@ -1,4 +1,3 @@
-.donor-shell { --background: #f6f8f8; }
 .donor-welcome {
   position: relative; isolation: isolate; overflow: hidden;
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;
@@ -20,7 +19,7 @@
 .donor-stat {
   --stat-ink: #00736f; --stat-tint: #e7f5f2; --stat-color: #008f8a; --stat-border: #b8ded8;
   position: relative; isolation: isolate; overflow: hidden; min-width: 0; padding: 20px;
-  border: 1px solid var(--stat-border); border-radius: 20px; background: #fff;
+  border: 1px solid var(--stat-border); border-radius: 20px; background: var(--card);
   box-shadow: 0 4px 12px #152c2904; transition: border-color .18s ease, box-shadow .18s ease;
 }
 .donor-stat--gold { --stat-ink: #895900; --stat-tint: #fff3d6; --stat-color: #faa61a; --stat-border: #eed9a8; }
@@ -30,7 +29,7 @@
 .donor-stat-icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 16px; border-radius: 16px; background: var(--stat-tint); color: var(--stat-ink); }
 .donor-stat-value { font-size: clamp(18px, 1.6vw, 24px); font-weight: 600; color: var(--stat-ink); overflow-wrap: anywhere; }
 .donor-stat:hover { border-color: var(--stat-color); box-shadow: 0 6px 20px #152c290a; }
-.donor-panel { border: 1px solid #dfe7e6; border-radius: 20px; background: #fff; box-shadow: 0 4px 16px #152c2904; }
+.donor-panel { border: 1px solid var(--border); border-radius: 20px; background: var(--card); box-shadow: 0 4px 16px #152c2904; }
 .donor-chart { border-block-start: 3px solid #008f8a; }
 .donor-chart-icon, .donor-activity-icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; color: #00736f; background: #e7f5f2; }
 .donor-activity { border-block-start: 3px solid #faa61a; }
@@ -45,7 +44,7 @@
 .donor-nav-history .donor-nav-icon, .donor-nav-impact .donor-nav-icon { background: #f1eafb; color: #7044b9; }
 .donor-nav-orders .donor-nav-icon, .donor-nav-campaigns .donor-nav-icon { background: #fff3d6; color: #895900; }
 .donor-nav-link:hover { background: #eff7f5; color: #00736f; }
-.donor-nav-link:focus-visible { outline: 2px solid #00736f; outline-offset: 3px; }
+.donor-nav-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 .donor-nav-link.is-active { background: #00736f; color: #fff; box-shadow: 0 4px 12px #00736f18; }
 .donor-nav-link.is-active::after { content: ""; position: absolute; right: 0; top: 16px; bottom: 16px; width: 3px; border-radius: 2px; background: #ffc856; }
 .donor-nav-link.is-active .donor-nav-icon { color: #fff; background: #ffffff24; }
@@ -53,6 +52,43 @@
 .donor-profile-tier { color: #805700; margin-top: 4px; }
 .donor-notification { background: #fff3d6; color: #895900; }
 .donor-notification:hover { background: #ffe6af; }
+.donor-theme-toggle { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border: 1px solid var(--border); border-radius: 12px; color: var(--foreground); background: var(--card); transition: background-color .18s ease, color .18s ease; cursor: pointer; }
+.donor-theme-toggle:hover { background: var(--muted); }
+.donor-theme-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.dark .donor-theme-toggle { color: #ffd275; }
+.dark .donor-stat { --stat-ink: #6bd5cb; --stat-tint: #203b3d; --stat-border: #315450; }
+.dark .donor-stat--gold { --stat-ink: #f5c96f; --stat-tint: #373327; --stat-border: #5b5035; }
+.dark .donor-stat--aqua { --stat-ink: #83d6df; --stat-tint: #223940; --stat-border: #33555e; }
+.dark .donor-stat--violet { --stat-ink: #c5a6fa; --stat-tint: #302d45; --stat-border: #514166; }
+.dark .donor-chart-icon, .dark .donor-activity-icon, .dark .donor-nav-icon { color: #6bd5cb; background: #203b3d; }
+.dark .donor-nav-history .donor-nav-icon, .dark .donor-nav-impact .donor-nav-icon { color: #c5a6fa; background: #302d45; }
+.dark .donor-nav-orders .donor-nav-icon, .dark .donor-nav-campaigns .donor-nav-icon { color: #f5c96f; background: #373327; }
+.dark .donor-nav-link:hover { background: #213a3b; color: #b2ece5; }
+.dark .donor-nav-link.is-active { background: #00736f; color: #fff; }
+.dark .donor-nav-link.is-active .donor-nav-icon { color: #fff; background: #ffffff24; }
+.dark .donor-profile { background: #203435; border-color: #315450; }
+.dark .donor-tier { background: linear-gradient(110deg, #292c28, #373327); border-color: #5b5035; }
+.dark .donor-profile-tier, .dark .donor-notification { color: #f5c96f; }
+.dark .donor-notification { background: #373327; }
+.dark .donor-notification:hover { background: #4b4029; }
+.dark .text-primary:not(:disabled), .dark .group:hover .group-hover\:text-primary { color: var(--primary-ink); }
+.dark .macsa-loader { color: var(--primary-ink); }
+
+html[data-theme-transition="reveal"] *,
+html[data-theme-transition="reveal"] *::before,
+html[data-theme-transition="reveal"] *::after { transition: none !important; }
+html[data-theme-transition="reveal"]::view-transition-group(root) { animation: none; }
+html[data-theme-transition="reveal"]::view-transition-old(root),
+html[data-theme-transition="reveal"]::view-transition-new(root) { mix-blend-mode: normal; }
+html[data-theme-transition="reveal"]::view-transition-old(root) { animation: none; z-index: 1; }
+html[data-theme-transition="reveal"]::view-transition-new(root) { z-index: 2; animation: donor-theme-reveal .55s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes donor-theme-reveal {
+  from { clip-path: circle(0 at var(--theme-x) var(--theme-y)); }
+  to { clip-path: circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
+}
+html[data-theme-transition="fade"] body,
+html[data-theme-transition="fade"] .donor-shell,
+html[data-theme-transition="fade"] .donor-shell * { transition: background-color .24s ease, color .24s ease, border-color .24s ease !important; }
 @media (max-width: 640px) {
   .donor-welcome { min-height: 0; padding: 24px; gap: 20px; border-radius: 20px; }
   .donor-welcome h2 { font-size: 24px; line-height: 1.7; }
@@ -64,5 +100,6 @@
   .donor-stat-value { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .donor-stat, .donor-impact-button { transition: none; }
+  .donor-shell, .donor-shell * { transition: none !important; }
+  html[data-theme-transition="reveal"]::view-transition-new(root) { animation: none; }
 }
