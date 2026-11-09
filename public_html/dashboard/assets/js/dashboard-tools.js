@@ -179,7 +179,7 @@
     renderCommands(); $('commandInput').focus();
   });
   function shortcuts(event) {
-    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'k') { event.preventDefault(); openCommands(); }
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.code === 'KeyK') { event.preventDefault(); openCommands(); }
     if (event.key === 'Escape' && $('app').classList.contains('show-overlay')) {
       $('toggleBtn').click(); $('toggleBtn').focus();
     }
