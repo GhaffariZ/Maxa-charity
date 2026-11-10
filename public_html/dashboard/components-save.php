@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Method not allowed.');
 }
 csrf_check();
+content_prepare($pdo,'components');
 
 $name = trim($_POST['component_name'] ?? '');
 $tag  = trim($_POST['component_tag'] ?? '');
@@ -133,5 +134,6 @@ if (isset($_FILES['component_images'])) {
     }
 }
 
+content_save($pdo,'components',$name);
 header("Location: component-create.php");
 exit;

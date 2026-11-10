@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!-- اضافه کردن این خط به <head> سایت برای نمایش آیکون‌ها -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -7,44 +8,44 @@
             
             <a href="/onlinedonation" class="support-card">
                 <div class="card-icon heart"><i class="fa-solid fa-hand-holding-heart"></i></div>
-                <h3>حمایت مالی آنلاین</h3>
-                <p>هرکمک، نوری در دل تاریکی است</p>
+                <h3><?= site_e('حمایت مالی آنلاین') ?></h3>
+                <p><?= site_e('هرکمک، نوری در دل تاریکی است') ?></p>
             </a>
 
             <a href="/stand-order.php" class="support-card">
                 <div class="card-icon flower"><i class="fa-solid fa-seedling"></i></div>
-                <h3>استند تبریک و تسلیت</h3>
-                <p>هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان</p>
+                <h3><?= site_e('استند تبریک و تسلیت') ?></h3>
+                <p><?= site_e('هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان') ?></p>
             </a>
 
             <a href="/under-construction.html" class="support-card">
                 <div class="card-icon science"><i class="fa-solid fa-dna"></i></div>
-                <h3>حمایت های علمی و تخصصی</h3>
-                <p>با دانش، مسیر درمان را تغییر دهیم</p>
+                <h3><?= site_e('حمایت های علمی و تخصصی') ?></h3>
+                <p><?= site_e('با دانش، مسیر درمان را تغییر دهیم') ?></p>
             </a>
 
             <a href="/under-construction.html" class="support-card">
                 <div class="card-icon handshake"><i class="fa-solid fa-handshake"></i></div>
-                <h3>مسئولیت اجتماعی</h3>
-                <p>دست در دست برند شما برای همراهی بیماران مبتلا به سرطان</p>
+                <h3><?= site_e('مسئولیت اجتماعی') ?></h3>
+                <p><?= site_e('دست در دست برند شما برای همراهی بیماران مبتلا به سرطان') ?></p>
             </a>
 
             <a href="/under-construction.html" class="support-card">
                 <div class="card-icon art"><i class="fa-solid fa-palette"></i></div>
-                <h3>حمایت خلاقانه و هنری</h3>
-                <p>خرید کن، هدیه بده، زندگی ببخش</p>
+                <h3><?= site_e('حمایت خلاقانه و هنری') ?></h3>
+                <p><?= site_e('خرید کن، هدیه بده، زندگی ببخش') ?></p>
             </a>
 
             <a href="/under-construction.html" class="support-card">
                 <div class="card-icon volunteer"><i class="fa-solid fa-people-group"></i></div>
-                <h3>حامیان و داوطلبان</h3>
-                <p>با هر قدم داوطلبانه، داستانی از شفا نوشته می‌شود</p>
+                <h3><?= site_e('حامیان و داوطلبان') ?></h3>
+                <p><?= site_e('با هر قدم داوطلبانه، داستانی از شفا نوشته می‌شود') ?></p>
             </a>
 
             <a href="/under-construction.html" class="support-card">
                 <div class="card-icon medical"><i class="fa-solid fa-hospital"></i></div>
-                <h3>اهدای تجهیزات پزشکی</h3>
-                <p>ایستگاه همدلی: اهدای تجهیزات، پشتیبانی بدون کلام</p>
+                <h3><?= site_e('اهدای تجهیزات پزشکی') ?></h3>
+                <p><?= site_e('ایستگاه همدلی: اهدای تجهیزات، پشتیبانی بدون کلام') ?></p>
             </a>
 
         </div>
@@ -74,7 +75,7 @@
 .support-methods{
     padding:40px 20px;
     background:#ffffff;
-    direction:rtl;
+    direction:var(--site-direction, rtl);
 }
 
 .support-grid{

@@ -1,15 +1,16 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="macsa-hero-section">
 
 <!-- عنوان -->
 <div class="macsa-hero-header">
   <h2>
-    همراهی مکسا در مسیر درمان و امید
+    <?= site_e('همراهی مکسا در مسیر درمان و امید') ?>
     <br>
-    <span>راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور</span>
+    <span><?= site_e('راه ارتباطی شما با شبکه درمان، حمایت و همراهی مکسا در سراسر کشور') ?></span>
   </h2>
 
   <p>
-    در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.
+    <?= site_e('در مکسا تنها نیستید؛ شبکه‌ای از همراهان، درمانگران و حامیان کنار شماست.') ?>
   </p>
 </div>
 
@@ -17,52 +18,51 @@
 
   <a href="/branches.php" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/1.webp" alt="شعب مکسا" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/1.webp" alt="<?= site_e('شعب مکسا') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">شعب مکسا</span>
+    <span class="macsa-btn"><?= site_e('شعب مکسا') ?></span>
   </a>
 
   <a href="/contact-center" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/2.webp" alt="مرکز تماس کشوری" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/2.webp" alt="<?= site_e('مرکز تماس کشوری') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">مرکز تماس کشوری</span>
+    <span class="macsa-btn"><?= site_e('مرکز تماس کشوری') ?></span>
   </a>
 
   <a href="https://mymacsa.ir/single-fundraising-option" class="gallery-item">
     <div class="card card-sm">
-      <img src="/dashboard/components/hamrah/images/3.webp" alt="حامیان و داوطلبان" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/3.webp" alt="<?= site_e('حامیان و داوطلبان') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">حامیان و داوطلبان</span>
+    <span class="macsa-btn"><?= site_e('حامیان و داوطلبان') ?></span>
   </a>
 
   <a href="/doctorspage" class="gallery-item">
     <div class="card card-md">
-      <img src="/dashboard/components/hamrah/images/4.webp" alt="کادر درمان" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/4.webp" alt="<?= site_e('کادر درمان') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">کادر درمان</span>
+    <span class="macsa-btn"><?= site_e('کادر درمان') ?></span>
   </a>
 
   <a href="/patient-option" class="gallery-item">
     <div class="card card-lg">
-      <img src="/dashboard/components/hamrah/images/5.webp" alt="بیماران و مراقبین" width="600" height="600" loading="lazy" decoding="async">
+      <img src="/dashboard/components/hamrah/images/5.webp" alt="<?= site_e('بیماران و مراقبین') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>
-    <span class="macsa-btn">بیماران و مراقبین</span>
+    <span class="macsa-btn"><?= site_e('بیماران و مراقبین') ?></span>
   </a>
 
 </div>
 
 <!-- نقاط راهنما (فقط موبایل) -->
 <div class="macsa-dots">
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۱"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۲"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۳"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۴"></button>
-  <button class="macsa-dot" type="button" aria-label="اسلاید ۵"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۱') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۲') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۳') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۴') ?>"></button>
+  <button class="macsa-dot" type="button" aria-label="<?= site_e('اسلاید ۵') ?>"></button>
 </div>
 
 </section>
-<div class="skill-divider"></div>
 
 
 
@@ -109,10 +109,11 @@
 .macsa-gallery{
   max-width:1200px;
   margin:auto;
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  gap:22px;
+  padding-inline:16px;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  align-items:end;
+  gap:clamp(12px,1.8vw,22px);
 }
 
 /* کارت‌ها */
@@ -134,19 +135,16 @@
 }
 
 /* اندازه‌ها */
-.card-lg{
-  width:210px;
-  height:380px;
+.macsa-gallery .card-lg{
+  height:clamp(260px,30vw,380px);
 }
 
-.card-md{
-  width:200px;
-  height:320px;
+.macsa-gallery .card-md{
+  height:clamp(230px,26vw,320px);
 }
 
-.card-sm{
-  width:190px;
-  height:260px;
+.macsa-gallery .card-sm{
+  height:clamp(200px,22vw,260px);
 }
 
 /* افکت هاور */
@@ -173,18 +171,19 @@
   border-color:#1f7a63;
 }
 
-.gallery-item{
+.macsa-gallery > .gallery-item{
   display:flex;
   flex-direction:column;
   align-items:stretch; /* دکمه کل عرض آیتم را بگیرد */
   gap:12px;
-  width:fit-content;   /* عرض آیتم = عرض کارت */
+  min-width:0;
+  width:100%;
 }
 
-.gallery-item a{
+.macsa-gallery > .gallery-item,
+.macsa-gallery > .gallery-item:hover{
   text-decoration: none;
   color: inherit;
-  display: block;
 }
 
 
@@ -193,7 +192,11 @@
   width:100%;          /* دقیقاً هم‌عرض عکس */
   background:#faa61a;
   border:none;
-  padding:12px 0;
+  padding:12px 6px;
+  min-height:48px;
+  display:grid;
+  place-items:center;
+  line-height:1.6;
   border-radius:14px;
   font-weight:700;
   font-size:.95rem;
@@ -211,21 +214,15 @@
 /* نقاط راهنما — به‌صورت پیش‌فرض پنهان (فقط در موبایل دیده می‌شود) */
 .macsa-dots{ display:none; }
 
-/* نسخه دسکتاپ دست نخورده بماند... */
-
-/* تبلت: کارت‌ها را کوچک‌تر کن تا ردیف ۵تایی جا شود */
-@media (max-width:1024px) and (min-width:701px){
-  .macsa-gallery{ gap:14px; flex-wrap:wrap; }
-  .card-lg{ width:170px; height:300px; }
-  .card-md{ width:160px; height:260px; }
-  .card-sm{ width:150px; height:220px; }
-  .macsa-hero-header h1{ font-size:1.9rem; }
+.macsa-hero-header h2{
+  font-size:clamp(26px,3.5vw,35px);
 }
 
 @media (max-width:700px){
 
   /* اسلایدر افقی قابل کشیدن با انگشت (swipe) */
   .macsa-gallery{
+    --gallery-card-width:min(80vw,320px);
     position:relative;
     width:100%;
     height:auto;
@@ -238,16 +235,16 @@
     overflow-y:hidden;
     scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch;
-    scroll-padding:0 10vw;
-    padding:10px 10vw 16px;   /* نمایش گوشهٔ کارت بعدی/قبلی */
+    scroll-padding-inline:calc((100% - var(--gallery-card-width))/2);
+    padding:10px calc((100% - var(--gallery-card-width))/2) 16px;
     scrollbar-width:none;      /* Firefox */
   }
   .macsa-gallery::-webkit-scrollbar{ display:none; } /* WebKit */
 
-  .gallery-item{
+  .macsa-gallery > .gallery-item{
     position:static;
-    flex:0 0 80vw;
-    width:80vw;
+    flex:0 0 var(--gallery-card-width);
+    width:var(--gallery-card-width);
     transform:none;
     opacity:1;
     z-index:auto;
@@ -256,7 +253,8 @@
 
   .macsa-gallery .card{
     width:100%;
-    height:70vh;        /* کشیده‌تر */
+    height:auto;
+    aspect-ratio:3/4;
     border-radius:22px;
     overflow:hidden;
   }
@@ -270,13 +268,13 @@
   /* دکمه طلایی دقیقاً مثل دسکتاپ */
   .macsa-btn{
     display:block;
-    margin-top:18px;
+    margin-top:0;
     padding:14px 0;
     text-align:center;
     border-radius:30px;
     font-weight:600;
-    background:#c9a227;   /* طلایی */
-    color:#fff;
+    background:#faa61a;
+    color:#3b2c00;
     text-decoration:none;
     box-shadow:0 6px 18px rgba(0,0,0,.15);
   }
@@ -311,31 +309,23 @@
 (function(){
   function initHamrah(){
     const gallery = document.querySelector(".macsa-gallery");
-    const cards   = document.querySelectorAll(".gallery-item");
+    const cards   = gallery ? gallery.querySelectorAll(".gallery-item") : [];
     const dots    = document.querySelectorAll(".macsa-dot");
     if(!gallery || !cards.length) return;
 
     const isMobile = () => window.matchMedia("(max-width:700px)").matches;
-
-    /* ---------- نسخهٔ دسکتاپ: همان فید قبلی ---------- */
-    let current = 0;
-    let fadeTimer = null;
-
-    function showCard(index){
-      cards[current].classList.remove("active");
-      current = index;
-      cards[current].classList.add("active");
-    }
 
     /* ---------- نسخهٔ موبایل: اسلایدر قابل کشیدن + پخش خودکار ملایم ---------- */
     let autoTimer  = null;
     let pauseUntil = 0;   // تا این لحظه پخش خودکار متوقف است (پس از تعامل کاربر)
 
     function activeSlide(){
-      const center = gallery.scrollLeft + gallery.clientWidth / 2;
+      const bounds = gallery.getBoundingClientRect();
+      const center = bounds.left + bounds.width / 2;
       let best = 0, bestDist = Infinity;
       cards.forEach((c, i)=>{
-        const cc = c.offsetLeft + c.offsetWidth / 2;
+        const rect = c.getBoundingClientRect();
+        const cc = rect.left + rect.width / 2;
         const d  = Math.abs(cc - center);
         if(d < bestDist){ bestDist = d; best = i; }
       });
@@ -344,14 +334,20 @@
 
     function goTo(i){
       const card = cards[(i + cards.length) % cards.length];
-      const left = card.offsetLeft - (gallery.clientWidth - card.offsetWidth) / 2;
-      gallery.scrollTo({ left: left, behavior: "smooth" });
+      const bounds = gallery.getBoundingClientRect();
+      const rect = card.getBoundingClientRect();
+      // Relative geometry works with negative RTL scrollLeft as well as LTR.
+      const left = rect.left + rect.width / 2 - bounds.left - bounds.width / 2;
+      gallery.scrollBy({ left, behavior: "smooth" });
     }
 
     function syncDots(){
       if(!dots.length) return;
       const active = activeSlide();
-      dots.forEach((d, i)=> d.classList.toggle("active", i === active));
+      dots.forEach((d, i)=>{
+        d.classList.toggle("active", i === active);
+        d.setAttribute("aria-current", i === active ? "true" : "false");
+      });
     }
 
     // کلیک روی نقطه = رفتن به همان اسلاید
@@ -385,17 +381,11 @@
 
     function setup(){
       stopAuto();
-      if(fadeTimer){ clearInterval(fadeTimer); fadeTimer = null; }
-      cards.forEach(c=>c.classList.remove("active"));
 
       if(isMobile()){
         gallery.scrollLeft = 0;
         syncDots();
-        startAuto();
-      } else {
-        current = 0;
-        showCard(0);
-        fadeTimer = setInterval(()=>{ showCard((current + 1) % cards.length); }, 2500);
+        if(!window.matchMedia("(prefers-reduced-motion:reduce)").matches) startAuto();
       }
     }
 

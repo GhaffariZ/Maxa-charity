@@ -1,10 +1,26 @@
-<?php if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; } ?>
+<?php
+require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__ . '/../../../core/content-locales.php';
+if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; }
+
+$doctorArticles = [];
+if (isset($pdo) && $pdo instanceof PDO) {
+    $articleScope = content_where($pdo, 'news', 'n.id');
+    $articleStmt = $pdo->prepare("SELECT n.id, n.title, n.subtitle, n.content, n.author, n.category_id, n.publish_date, n.news_code, n.featured_image, n.read_time
+        FROM news n JOIN news_categories c ON c.id = n.category_id
+        WHERE c.slug = 'doctors-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
+          AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 4");
+    $articleStmt->execute();
+    $doctorArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
+}
+?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کادر درمان و متخصصان | مکسا</title>
+    <title><?= site_e('کادر درمان و متخصصان | مکسا') ?></title>
     <style>
         /* Self-hosted Vazirmatn variable font */
         @font-face {
@@ -268,7 +284,7 @@
             color: var(--text-muted);
             margin: 0 0 16px 0;
             line-height: 1.6;
-            text-align: right;
+            text-align: start;
         }
 
         .doctor-card-action {
@@ -332,7 +348,7 @@
             margin: 0;
             color: var(--text-muted);
             line-height: 1.55;
-            text-align: right;
+            text-align: start;
         }
 
         /* ---------------- کپسول نقل قول و همکاری ---------------- */
@@ -786,47 +802,180 @@
             .header-capsule h1 { font-size: 1.35rem; }
             .hero-image-container { height: 200px; border-radius: 16px; }
         }
+
+        body { background: #f7f9f7; }
+        .page-container { max-width: 1240px; margin: 0 auto; padding: 24px 24px 100px; }
+        .doctors-hero { min-height: 500px; position: relative; overflow: hidden; display: flex; align-items: flex-end; isolation: isolate; border-radius: 30px; background: #163c3a; color: #fff; }
+        .doctors-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(8,42,40,.25), rgba(8,42,40,.88) 78%); }
+        [dir="ltr"] .doctors-hero::after { background: linear-gradient(270deg, rgba(8,42,40,.25), rgba(8,42,40,.88) 78%); }
+        .doctors-hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+        .doctors-hero-content { width: min(760px, 100%); padding: clamp(28px, 5vw, 68px); }
+        .doctors-breadcrumb { display: flex; align-items: center; gap: 12px; color: #d0e8e3; font-size: .84rem; margin-bottom: 44px; }
+        .doctors-breadcrumb a { color: inherit; text-decoration: none; }
+        .doctors-breadcrumb a:hover { color: #fff; }
+        .doctors-eyebrow, .doctors-section-kicker { display: inline-block; font-size: .86rem; font-weight: 700; letter-spacing: .01em; color: #91d9cc; }
+        .doctors-hero h1 { margin: 10px 0 16px; max-width: 670px; font-size: clamp(2.25rem, 5vw, 4.4rem); line-height: 1.3; font-weight: 800; text-wrap: balance; }
+        .doctors-hero p { max-width: 590px; color: #e3eeeb; line-height: 2; font-size: 1.07rem; margin: 0 0 28px; }
+        .doctors-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+        .doctors-primary-link, .doctors-secondary-link { display: inline-flex; align-items: center; gap: 16px; min-height: 48px; text-decoration: none; font-weight: 700; transition: transform .2s, background .2s; }
+        .doctors-primary-link { color: #174943; background: #f9ffff; padding: 9px 22px; border-radius: 8px; }
+        .doctors-secondary-link { color: #fff; }
+        .doctors-primary-link:hover, .doctors-secondary-link:hover { transform: translateY(-2px); }
+        .doctors-primary-link:active, .doctors-secondary-link:active { transform: translateY(1px); }
+        .article-content { padding: 0; }
+        .article-content > h2 { margin: 90px 0 18px; max-width: 760px; border: 0; padding: 0; color: #193f3d; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.45; text-wrap: balance; }
+        .article-content > p { max-width: 900px; margin-bottom: 32px; text-align: start; line-height: 2.05; color: #506562; }
+        .science-highlight-box { margin: 50px 0 90px; padding: 28px; background: #eaf2ef; border: 0; box-shadow: none; border-radius: 20px; }
+        .science-highlight-box:hover { box-shadow: none; }
+        .science-image-wrap { box-shadow: none; border-radius: 12px; }
+        .science-text h3 { color: #173f3b; }
+        .science-badge { background: transparent; color: #127e74; padding: 0; }
+        .doctor-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 32px 0 80px; }
+        .doctor-card { border: 0; box-shadow: none; border-radius: 18px; background: #fff; }
+        .doctor-card::before { display: none; }
+        .doctor-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(18,73,67,.09); border: 0; }
+        .doctor-card-img-wrap { height: 200px; background: #e7efec; }
+        .doctor-card-body { padding: 26px; }
+        .doctor-card-body h3 { font-size: 1.3rem; }
+        .doctor-card-body p { line-height: 1.9; }
+        .teams-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 84px; }
+        .team-pill-card { background: transparent; border: 0; border-top: 1px solid #d9e4df; box-shadow: none; padding: 23px 8px; border-radius: 0; }
+        .team-pill-card:hover { border-color: #85b8ad; box-shadow: none; transform: none; }
+        .team-icon-box { background: #e3f0eb; border-radius: 10px; }
+        .quote-capsule { background: #e9f1ed; border-right-color: #187f73; border-radius: 12px; }
+        .resume-showcase-box { background: #eaf3ef; border: 0; box-shadow: none; margin-top: 60px; }
+        .resume-showcase-box:hover { box-shadow: none; border: 0; transform: none; }
+        .resume-showcase-box::before { display: none; }
+        .resume-badge-main { background: #117d72; box-shadow: none; }
+        .resume-badge-tag { background: #fff; border-color: #d9e7e1; color: #396660; }
+        .doctors-articles { margin: 0 0 95px; scroll-margin-top: 30px; }
+        .doctors-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
+        .doctors-section-kicker { color: #147d72; }
+        .doctors-section-heading h2 { border: 0; padding: 0; margin: 8px 0; color: #193f3d; font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
+        .doctors-section-heading p { margin: 0; color: #627673; font-size: 1rem; }
+        .doctors-all-link { color: #137a70; font-weight: 700; text-decoration: none; white-space: nowrap; padding: 8px 0; }
+        .doctors-articles-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+        .doctors-article-card { min-width: 0; display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 18px; padding: 14px; color: inherit; text-decoration: none; background: #fff; border-radius: 14px; transition: transform .2s, box-shadow .2s; }
+        .doctors-article-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(20,72,66,.09); }
+        .doctors-article-featured { grid-row: span 3; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+        .doctors-article-image { min-height: 132px; background: #dcece6; color: #147d72; display: grid; place-items: center; overflow: hidden; border-radius: 8px; }
+        .doctors-article-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .doctors-article-featured .doctors-article-image { height: 280px; border-radius: 0; }
+        .doctors-article-body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+        .doctors-article-featured .doctors-article-body { padding: 22px 28px 28px; flex: 1; }
+        .doctors-article-label { color: #148174; font-size: .78rem; font-weight: 700; }
+        .doctors-article-body h3 { margin: 6px 0 9px; color: #183c39; font-size: 1.12rem; line-height: 1.65; text-wrap: pretty; }
+        .doctors-article-featured h3 { font-size: 1.6rem; }
+        .doctors-article-body p { margin: 0 0 12px; color: #637572; font-size: .87rem; line-height: 1.8; text-align: start; }
+        .doctors-article-featured p { font-size: .98rem; }
+        .doctors-article-meta { color: #82918c; font-size: .76rem; margin-top: auto; }
+        .doctors-article-read { color: #127b70; font-size: .86rem; font-weight: 700; margin-top: 12px; }
+        .doctors-articles-empty { background: #eaf3ef; color: #526b65; border-radius: 14px; padding: 48px 24px; text-align: center; }
+        a:focus-visible { outline: 3px solid #f0ad44; outline-offset: 4px; }
+        @media (max-width: 900px) {
+            .doctors-articles-grid { grid-template-columns: 1fr; }
+            .doctors-article-featured { grid-row: auto; }
+            .doctors-article-featured .doctors-article-image { height: 230px; }
+        }
+        @media (max-width: 650px) {
+            .page-container { padding: 12px 14px 70px; }
+            .doctors-hero { min-height: 540px; border-radius: 18px; }
+            .doctors-hero::after { background: linear-gradient(0deg, rgba(8,42,40,.96), rgba(8,42,40,.20)); }
+            .doctors-hero-content { padding: 28px; }
+            .doctors-breadcrumb { margin-bottom: 28px; }
+            .article-content > h2 { margin-top: 68px; }
+            .science-highlight-box { margin-bottom: 65px; }
+            .doctor-cards-grid, .teams-grid { grid-template-columns: 1fr; }
+            .doctors-section-heading { align-items: start; flex-direction: column; }
+            .doctors-article-card { grid-template-columns: 110px minmax(0,1fr); gap: 12px; }
+            .doctors-article-image { min-height: 110px; }
+            .doctors-article-featured { display: flex; }
+            .doctors-article-featured .doctors-article-body { padding: 18px; }
+        }
     </style>
 </head>
 <body>
 
     <main class="page-container">
         
-        <header class="header-capsule">
-            <h1>همراه با متخصصان و کادر درمان</h1>
-            <div class="breadcrumb-pill">صفحه اصلی / خدمات / کادر درمان</div>
+        <header class="doctors-hero">
+            <img src="{{image1}}" alt="<?= site_e('کادر درمان و متخصصان مکسا') ?>" class="doctors-hero-image">
+            <div class="doctors-hero-content">
+                <nav class="doctors-breadcrumb" aria-label="<?= site_e('مسیر صفحه') ?>"><a href="/"><?= site_e('صفحه اصلی') ?></a><span aria-hidden="true">/</span><?= site_e('کادر درمان و متخصصان مکسا') ?></nav>
+                <span class="doctors-eyebrow"><?= site_e('تخصص در کنار همدلی') ?></span>
+                <h1><?= site_e('همراه با متخصصان و کادر درمان') ?></h1>
+                <p><?= site_e('تیمی چندرشته‌ای برای مراقبت از بیماران مبتلا به سرطان و خانواده‌های آنان؛ از ارزیابی پزشکی تا حمایت روانی و مراقبت در منزل.') ?></p>
+                <div class="doctors-hero-actions">
+                    <a href="#doctor-articles" class="doctors-primary-link"><?= site_e('مطالعه مقالات تخصصی') ?> <span aria-hidden="true">←</span></a>
+                    <a href="/network.php?role=treatment" class="doctors-secondary-link"><?= site_e('آشنایی با تیم درمان') ?> <span aria-hidden="true">↙</span></a>
+                </div>
+            </div>
         </header>
-
-        <div class="hero-image-container">
-            <img src="{{image1}}" alt="کادر درمان و متخصصان مکسا" class="hero-image">
-        </div>
         
         <article class="article-content">
-            <h2 class="wow fadeInUp" data-wow-delay="0.2s">جایگاه کادر درمان در منظومه مراقبت‌های تسکینی مکسا</h2>
+            <h2 class="wow fadeInUp" data-wow-delay="0.2s"><?= site_e('جایگاه کادر درمان در منظومه مراقبت‌های تسکینی مکسا') ?></h2>
 
             <p class="wow fadeInUp" data-wow-delay="0.3s">
-                ارائه مراقبت‌های جامع حمایتی و تسکینی به بیماران مبتلا به سرطان و خانواده‌های آنان، نیازمند هم‌افزایی همه‌جانبه یک تیم چندرشته‌ای (Multidisciplinary Team) متخصص و متعهد است. کادر درمان مکسا شامل پزشکان متخصص، پرستاران بالینی، روانشناسان، مددکاران اجتماعی، متخصصان تغذیه و توانبخشی و مشاوران ژنتیک است که در کنار هم، با اتکا به دانش روز جهانی و مهرورزی انسانی، کیفیت زندگی بیماران را از بدو تشخیص تا مراحل مختلف درمان ارتقا می‌بخشند.
+                <?= site_e('ارائه مراقبت‌های جامع حمایتی و تسکینی به بیماران مبتلا به سرطان و خانواده‌های آنان، نیازمند هم‌افزایی همه‌جانبه یک تیم چندرشته‌ای (Multidisciplinary Team) متخصص و متعهد است. کادر درمان مکسا شامل پزشکان متخصص، پرستاران بالینی، روانشناسان، مددکاران اجتماعی، متخصصان تغذیه و توانبخشی و مشاوران ژنتیک است که در کنار هم، با اتکا به دانش روز جهانی و مهرورزی انسانی، کیفیت زندگی بیماران را از بدو تشخیص تا مراحل مختلف درمان ارتقا می‌بخشند.') ?>
             </p>
 
             <!-- بخش تازه‌های علم و پژوهش -->
             <div class="science-highlight-box wow fadeInUp" data-wow-delay="0.4s">
                 <div class="science-text">
-                    <span class="science-badge"><?= iconoir('microscope', '', 18) ?> پژوهش و دانش بالینی</span>
-                    <h3>تازه‌های علم طب تسکینی و انکولوژی</h3>
+                    <span class="science-badge"><?= iconoir('microscope', '', 18) ?> <?= site_e('پژوهش و دانش بالینی') ?></span>
+                    <h3><?= site_e('تازه‌های علم طب تسکینی و انکولوژی') ?></h3>
                     <p>
-                        مکسا به عنوان متولی ملی و علمی مراقبت‌های حمایتی و تسکینی در ایران، با همکاری انستیتو کوری فرانسه و دانشگاه‌های علوم پزشکی برتر کشور، جدیدترین گایدلاین‌های مدیریت درد، تسکین علائم، کنترل عوارض درمان و مداخلات روانشناختی انکولوژی را در قالب پروتکل‌های بالینی کاربردی در اختیار کادر درمان قرار می‌دهد.
+                        <?= site_e('مکسا به عنوان متولی ملی و علمی مراقبت‌های حمایتی و تسکینی در ایران، با همکاری انستیتو کوری فرانسه و دانشگاه‌های علوم پزشکی برتر کشور، جدیدترین گایدلاین‌های مدیریت درد، تسکین علائم، کنترل عوارض درمان و مداخلات روانشناختی انکولوژی را در قالب پروتکل‌های بالینی کاربردی در اختیار کادر درمان قرار می‌دهد.') ?>
                     </p>
-                    <a href="/macsapedia" class="doctor-card-action">مشاهده منابع علمی در مکساپدیا ←</a>
+                    <a href="/macsapedia" class="doctor-card-action"><?= site_e('مشاهده منابع علمی در مکساپدیا ←') ?></a>
                 </div>
                 <div class="science-image-wrap">
-                    <img src="{{image2}}" alt="پژوهش و دانش بالینی مکسا">
+                    <img src="{{image2}}" alt="<?= site_e('پژوهش و دانش بالینی مکسا') ?>">
                 </div>
             </div>
 
-            <h2 class="wow fadeInUp" data-wow-delay="0.5s">خدمات و بسترهای همراهی ویژه همکاران کادر درمان</h2>
+            <section id="doctor-articles" class="doctors-articles" aria-labelledby="doctor-articles-title">
+                <div class="doctors-section-heading">
+                    <div>
+                        <span class="doctors-section-kicker"><?= site_e('دانش برای مراقبت بهتر') ?></span>
+                        <h2 id="doctor-articles-title"><?= site_e('مقالات کادر درمان') ?></h2>
+                        <p><?= site_e('یادداشت‌ها و مطالب تخصصی منتشرشده توسط تیم مکسا') ?></p>
+                    </div>
+                    <?php if ($doctorArticles): ?><a href="/news.php?category=<?= (int)$doctorArticles[0]['category_id'] ?>" class="doctors-all-link"><?= site_e('همه مقالات') ?> <span aria-hidden="true">←</span></a><?php endif; ?>
+                </div>
+                <?php if ($doctorArticles): ?>
+                    <div class="doctors-articles-grid">
+                        <?php foreach ($doctorArticles as $index => $article):
+                            $articleImage = !empty($article['featured_image'])
+                                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
+                                    ? (string)$article['featured_image']
+                                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
+                                : '';
+                            $articleExcerpt = trim(strip_tags((string)($article['subtitle'] ?: $article['content'])));
+                        ?>
+                        <a class="doctors-article-card<?= $index === 0 ? ' doctors-article-featured' : '' ?>" href="/<?= (int)$article['id'] ?>/">
+                            <div class="doctors-article-image">
+                                <?php if ($articleImage): ?><img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy"><?php else: ?><span aria-hidden="true"><?= iconoir('book', '', 34) ?></span><?php endif; ?>
+                            </div>
+                            <div class="doctors-article-body">
+                                <span class="doctors-article-label"><?= site_e('مقاله تخصصی') ?></span>
+                                <h3><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                                <p><?= htmlspecialchars(mb_substr($articleExcerpt, 0, $index === 0 ? 165 : 105, 'UTF-8'), ENT_QUOTES, 'UTF-8') ?><?= mb_strlen($articleExcerpt, 'UTF-8') > ($index === 0 ? 165 : 105) ? '…' : '' ?></p>
+                                <span class="doctors-article-meta"><?= htmlspecialchars((string)($article['author'] ?: site_text('مکسا')), ENT_QUOTES, 'UTF-8') ?> · <?= max(1, (int)$article['read_time']) ?> <?= site_e('دقیقه مطالعه') ?></span>
+                                <span class="doctors-article-read"><?= site_e('مطالعه مقاله') ?> <span aria-hidden="true">←</span></span>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="doctors-articles-empty"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
+                <?php endif; ?>
+            </section>
+
+            <h2 class="wow fadeInUp" data-wow-delay="0.5s"><?= site_e('خدمات و بسترهای همراهی ویژه همکاران کادر درمان') ?></h2>
 
             <p class="wow fadeInUp" data-wow-delay="0.5s">
-                پزشکان، بیمارستان‌ها، کلینیک‌ها و کادر درمان در سراسر کشور می‌توانند از طریق بسترهای زیر با شبکه گسترده خدمات حمایتی و تسکینی مکسا در ارتباط باشند:
+                <?= site_e('پزشکان، بیمارستان‌ها، کلینیک‌ها و کادر درمان در سراسر کشور می‌توانند از طریق بسترهای زیر با شبکه گسترده خدمات حمایتی و تسکینی مکسا در ارتباط باشند:') ?>
             </p>
 
             <!-- شبکه ۶ کارت خدمات و همکاری با کادر درمان -->
@@ -835,12 +984,12 @@
                 <a href="/patientintake" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image3}}" alt="ارجاع بیمار به مکسا">
+                            <img src="{{image3}}" alt="<?= site_e('ارجاع بیمار به مکسا') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>ارجاع بیمار به مکسا</h3>
-                            <p>پزشکان و مراکز درمانی می‌توانند بیماران نیازمند مراقبت در منزل، تجهیزات پزشکی و خدمات حمایتی را مستقیماً به مکسا معرفی نمایند.</p>
-                            <span class="doctor-card-action">فرآیند ارجاع بیمار ←</span>
+                            <h3><?= site_e('ارجاع بیمار به مکسا') ?></h3>
+                            <p><?= site_e('پزشکان و مراکز درمانی می‌توانند بیماران نیازمند مراقبت در منزل، تجهیزات پزشکی و خدمات حمایتی را مستقیماً به مکسا معرفی نمایند.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('فرآیند ارجاع بیمار ←') ?></span>
                         </div>
                     </div>
                 </a>
@@ -848,12 +997,12 @@
                 <a href="/contactus" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image4}}" alt="همکاری علمی و درمانی با مکسا">
+                            <img src="{{image4}}" alt="<?= site_e('همکاری علمی و درمانی با مکسا') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>همکاری بالینی و علمی</h3>
-                            <p>پیوستن به شبکه داوطلبانه و تخصصی پزشکان، درمانگران و مشاوران مکسا برای ارائه خدمات در درمانگاه‌ها و شبکه مراقبت در منزل.</p>
-                            <span class="doctor-card-action">همکاری با مکسا ←</span>
+                            <h3><?= site_e('همکاری بالینی و علمی') ?></h3>
+                            <p><?= site_e('پیوستن به شبکه داوطلبانه و تخصصی پزشکان، درمانگران و مشاوران مکسا برای ارائه خدمات در درمانگاه‌ها و شبکه مراقبت در منزل.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('همکاری با مکسا ←') ?></span>
                         </div>
                     </div>
                 </a>
@@ -861,12 +1010,12 @@
                 <a href="/courses" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image5}}" alt="آموزش و دوره‌های تخصصی طب تسکینی">
+                            <img src="{{image5}}" alt="<?= site_e('آموزش و دوره‌های تخصصی طب تسکینی') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>آموزش‌های مهارتی و دوره‌ها</h3>
-                            <p>شرکت در دوره‌های مهارتی و بازآموزی مراقبت‌های حمایتی و تسکینی سرطان ویژه پزشکان، پرستاران و کادر توانبخشی سلامت.</p>
-                            <span class="doctor-card-action">مشاهده دوره‌ها ←</span>
+                            <h3><?= site_e('آموزش‌های مهارتی و دوره‌ها') ?></h3>
+                            <p><?= site_e('شرکت در دوره‌های مهارتی و بازآموزی مراقبت‌های حمایتی و تسکینی سرطان ویژه پزشکان، پرستاران و کادر توانبخشی سلامت.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('مشاهده دوره‌ها ←') ?></span>
                         </div>
                     </div>
                 </a>
@@ -874,12 +1023,12 @@
                 <a href="/branches.php" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image6}}" alt="راه‌اندازی مراکز جدید با مکسا">
+                            <img src="{{image6}}" alt="<?= site_e('راه‌اندازی مراکز جدید با مکسا') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>راه‌اندازی مراکز جدید</h3>
-                            <p>مشاوره، انتقال پروتکل‌های استاندارد و همکاری مشترک با دانشگاه‌های علوم پزشکی جهت تأسیس بخش‌های طب تسکینی بیمارستانی.</p>
-                            <span class="doctor-card-action">شعب و مراکز همکار ←</span>
+                            <h3><?= site_e('راه‌اندازی مراکز جدید') ?></h3>
+                            <p><?= site_e('مشاوره، انتقال پروتکل‌های استاندارد و همکاری مشترک با دانشگاه‌های علوم پزشکی جهت تأسیس بخش‌های طب تسکینی بیمارستانی.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('شعب و مراکز همکار ←') ?></span>
                         </div>
                     </div>
                 </a>
@@ -887,12 +1036,12 @@
                 <a href="/macsapedia" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image2}}" alt="منابع علمی مراقبت های حمایتی و تسکینی">
+                            <img src="{{image2}}" alt="<?= site_e('منابع علمی مراقبت های حمایتی و تسکینی') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>منابع علمی و پروتکل‌ها</h3>
-                            <p>دسترسی به کتاب‌ها، گایدلاین‌های ترجمه‌شده، مقالات روز و درس‌نامه‌های کاربردی طب حمایتی و تسکینی سرطان.</p>
-                            <span class="doctor-card-action">کتابخانه و مقالات ←</span>
+                            <h3><?= site_e('منابع علمی و پروتکل‌ها') ?></h3>
+                            <p><?= site_e('دسترسی به کتاب‌ها، گایدلاین‌های ترجمه‌شده، مقالات روز و درس‌نامه‌های کاربردی طب حمایتی و تسکینی سرطان.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('کتابخانه و مقالات ←') ?></span>
                         </div>
                     </div>
                 </a>
@@ -900,22 +1049,22 @@
                 <a href="/iran-situation-in-palliative" class="doctor-card-link">
                     <div class="doctor-card">
                         <div class="doctor-card-img-wrap">
-                            <img src="{{image1}}" alt="وضعیت مراقبت های حمایتی و تسکینی">
+                            <img src="{{image1}}" alt="<?= site_e('وضعیت مراقبت های حمایتی و تسکینی') ?>">
                         </div>
                         <div class="doctor-card-body">
-                            <h3>طب تسکینی در ایران و جهان</h3>
-                            <p>بررسی آماری، شاخص‌های ملی و مقایسه تطبیقی جایگاه مراقبت‌های تسکینی ایران با استانداردهای نظام جهانی بهداشت.</p>
-                            <span class="doctor-card-action">مطالعه گزارش تحلیلی ←</span>
+                            <h3><?= site_e('طب تسکینی در ایران و جهان') ?></h3>
+                            <p><?= site_e('بررسی آماری، شاخص‌های ملی و مقایسه تطبیقی جایگاه مراقبت‌های تسکینی ایران با استانداردهای نظام جهانی بهداشت.') ?></p>
+                            <span class="doctor-card-action"><?= site_e('مطالعه گزارش تحلیلی ←') ?></span>
                         </div>
                     </div>
                 </a>
 
             </div>
 
-            <h2 class="wow fadeInUp" data-wow-delay="0.6s">دپارتمان‌های تخصصی تیم سلامت مکسا (MDT)</h2>
+            <h2 class="wow fadeInUp" data-wow-delay="0.6s"><?= site_e('دپارتمان‌های تخصصی تیم سلامت مکسا (MDT)') ?></h2>
 
             <p class="wow fadeInUp" data-wow-delay="0.6s">
-                کادر درمان مکسا در قالب گروه‌های تخصصی به‌هم‌پیوسته، خدمات رایگان پزشکی و حمایتی را ارائه می‌دهند:
+                <?= site_e('کادر درمان مکسا در قالب گروه‌های تخصصی به‌هم‌پیوسته، خدمات رایگان پزشکی و حمایتی را ارائه می‌دهند:') ?>
             </p>
 
             <div class="teams-grid wow fadeInUp" data-wow-delay="0.7s">
@@ -923,64 +1072,64 @@
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('stethoscope', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>پزشکان طب تسکینی و انکولوژی</h4>
-                        <p>ارزیابی بالینی جامع، پروتکل‌های تسکین درد، کنترل علائم گوارشی و تنفسی، و نظارت بر سیر بیماری.</p>
+                        <h4><?= site_e('پزشکان طب تسکینی و انکولوژی') ?></h4>
+                        <p><?= site_e('ارزیابی بالینی جامع، پروتکل‌های تسکین درد، کنترل علائم گوارشی و تنفسی، و نظارت بر سیر بیماری.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('healthcare', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>پرستاران بالینی و مراقبت در منزل</h4>
-                        <p>مراقبت تخصصی از زخم و استومی، کنترل علائم حیاتی، پورت‌گذاری، شیمی‌درمانی حمایتی و آموزش مراقبت به خانواده.</p>
+                        <h4><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></h4>
+                        <p><?= site_e('مراقبت تخصصی از زخم و استومی، کنترل علائم حیاتی، پورت‌گذاری، شیمی‌درمانی حمایتی و آموزش مراقبت به خانواده.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('brain', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>روانشناسان سلامت و مشاوره</h4>
-                        <p>روان‌درمانی حمایتی، مداخلات مدیریت اضطراب و افسردگی بیماری، مشاوره سوگ و جلسات حمایتی خانوادگی.</p>
+                        <h4><?= site_e('روانشناسان سلامت و مشاوره') ?></h4>
+                        <p><?= site_e('روان‌درمانی حمایتی، مداخلات مدیریت اضطراب و افسردگی بیماری، مشاوره سوگ و جلسات حمایتی خانوادگی.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('handshake', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>مددکاران اجتماعی بالینی</h4>
-                        <p>ارزیابی نیازهای اقتصادی و معیشتی، پیگیری امور بیمه و درمان، و اتصال بیمار به زنجیره خدمات خیریه.</p>
+                        <h4><?= site_e('مددکاران اجتماعی بالینی') ?></h4>
+                        <p><?= site_e('ارزیابی نیازهای اقتصادی و معیشتی، پیگیری امور بیمه و درمان، و اتصال بیمار به زنجیره خدمات خیریه.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-info-box team-icon-box"><?= iconoir('apple', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>متخصصان تغذیه و رژیم‌درمانی</h4>
-                        <p>تنظیم رژیم‌های اختصاصی در دوران درمان، مدیریت بی‌اشتهایی و کاشکسی، و تغذیه بالینی انترال/پارنترال.</p>
+                        <h4><?= site_e('متخصصان تغذیه و رژیم‌درمانی') ?></h4>
+                        <p><?= site_e('تنظیم رژیم‌های اختصاصی در دوران درمان، مدیریت بی‌اشتهایی و کاشکسی، و تغذیه بالینی انترال/پارنترال.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('activity', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>فیزیوتراپی و مدیریت لنف‌ادم</h4>
-                        <p>بازتوانی حرکتی، ماساژ تخصصی تخلیه لنفاوی (CDT)، بانداژ فشاری و پیشگیری از ناتوانی‌های اسکلتی عضلانی.</p>
+                        <h4><?= site_e('فیزیوتراپی و مدیریت لنف‌ادم') ?></h4>
+                        <p><?= site_e('بازتوانی حرکتی، ماساژ تخصصی تخلیه لنفاوی (CDT)، بانداژ فشاری و پیشگیری از ناتوانی‌های اسکلتی عضلانی.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('dna', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>مشاوره ژنتیک و غربالگری</h4>
-                        <p>بررسی سندروم‌های توارثی سرطان، ارزیابی شجره‌نامه ژنتیکی و راهنمایی آزمایش‌های تشخیصی زودهنگام خانواده.</p>
+                        <h4><?= site_e('مشاوره ژنتیک و غربالگری') ?></h4>
+                        <p><?= site_e('بررسی سندروم‌های توارثی سرطان، ارزیابی شجره‌نامه ژنتیکی و راهنمایی آزمایش‌های تشخیصی زودهنگام خانواده.') ?></p>
                     </div>
                 </div>
 
                 <div class="team-pill-card">
                     <div class="team-icon-box"><?= iconoir('heart', '', 24) ?></div>
                     <div class="team-info">
-                        <h4>مشاوران مراقبت معنوی</h4>
-                        <p>پاسخ به چالش‌های وجودی، بازیابی آرامش قلبی، امیدبخشی و تقویت تاب‌آوری معنوی بیمار و همراهان.</p>
+                        <h4><?= site_e('مشاوران مراقبت معنوی') ?></h4>
+                        <p><?= site_e('پاسخ به چالش‌های وجودی، بازیابی آرامش قلبی، امیدبخشی و تقویت تاب‌آوری معنوی بیمار و همراهان.') ?></p>
                     </div>
                 </div>
 
@@ -989,7 +1138,7 @@
             <!-- ========================================================= -->
             <!-- بخش اختصاصی معرفی و دسترسی به رزومه کادر درمان مکسا -->
             <!-- ========================================================= -->
-            <section class="resume-showcase-box wow fadeInUp" data-wow-delay="0.65s" aria-label="سامانه رزومه کادر درمان مکسا">
+            <section class="resume-showcase-box wow fadeInUp" data-wow-delay="0.65s" aria-label="<?= site_e('سامانه رزومه کادر درمان مکسا') ?>">
                 <div class="resume-showcase-content">
                     <div class="resume-badge-group">
                         <span class="resume-badge-main">
@@ -1000,44 +1149,44 @@
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                                 <polyline points="10 9 9 9 8 9"></polyline>
                             </svg>
-                            سامانه معرفی و رزومه
+                            <?= site_e('سامانه معرفی و رزومه') ?>
                         </span>
-                        <span class="resume-badge-tag">پزشکان و درمانگران مکسا</span>
+                        <span class="resume-badge-tag"><?= site_e('پزشکان و درمانگران مکسا') ?></span>
                     </div>
 
-                    <h2 class="resume-title">آشنایی با پزشکان، درمانگران و کادر تخصصی مکسا</h2>
+                    <h2 class="resume-title"><?= site_e('آشنایی با پزشکان، درمانگران و کادر تخصصی مکسا') ?></h2>
 
                     <p class="resume-desc">
-                        تیم درمان مکسا متشکل از برجسته‌ترین متخصصان انکولوژی، طب تسکینی، پرستاران بالینی، روانشناسان سلامت، مددکاران، متخصصان تغذیه و توانبخشی است. با مراجعه به سامانه رزومه کادر درمان، می‌توانید سوابق علمی، مدارک دانشگاهی، تجارب بالینی، حوزه‌های تخصصی و شعب محل خدمت هر یک از اعضای کادر درمان را مشاهده فرمایید.
+                        <?= site_e('تیم درمان مکسا متشکل از برجسته‌ترین متخصصان انکولوژی، طب تسکینی، پرستاران بالینی، روانشناسان سلامت، مددکاران، متخصصان تغذیه و توانبخشی است. با مراجعه به سامانه رزومه کادر درمان، می‌توانید سوابق علمی، مدارک دانشگاهی، تجارب بالینی، حوزه‌های تخصصی و شعب محل خدمت هر یک از اعضای کادر درمان را مشاهده فرمایید.') ?>
                     </p>
 
                     <div class="resume-features-grid">
                         <div class="resume-feature-card">
                             <span class="resume-feature-icon"><?= iconoir('graduation-cap', '', 22) ?></span>
                             <div class="resume-feature-text">
-                                <strong>سوابق علمی و دانشگاهی</strong>
-                                <small>مدارک تخصصی و فلوشیپ‌ها</small>
+                                <strong><?= site_e('سوابق علمی و دانشگاهی') ?></strong>
+                                <small><?= site_e('مدارک تخصصی و فلوشیپ‌ها') ?></small>
                             </div>
                         </div>
                         <div class="resume-feature-card">
                             <span class="resume-feature-icon"><?= iconoir('hospital', '', 22) ?></span>
                             <div class="resume-feature-text">
-                                <strong>شعب و دپارتمان‌های خدمت</strong>
-                                <small>درمانگاه‌ها و مراقبت در منزل</small>
+                                <strong><?= site_e('شعب و دپارتمان‌های خدمت') ?></strong>
+                                <small><?= site_e('درمانگاه‌ها و مراقبت در منزل') ?></small>
                             </div>
                         </div>
                         <div class="resume-feature-card">
                             <span class="resume-feature-icon"><?= iconoir('stethoscope', '', 22) ?></span>
                             <div class="resume-feature-text">
-                                <strong>حوزه‌های تخصصی و بالینی</strong>
-                                <small>طب تسکینی، درد و انکولوژی</small>
+                                <strong><?= site_e('حوزه‌های تخصصی و بالینی') ?></strong>
+                                <small><?= site_e('طب تسکینی، درد و انکولوژی') ?></small>
                             </div>
                         </div>
                     </div>
 
                     <div class="resume-action-area">
                         <a href="/network.php?role=treatment" class="btn-resume-cta" id="btn-view-doctor-resumes">
-                            <span>مشاهده رزومه و سوابق کادر درمان مکسا</span>
+                            <span><?= site_e('مشاهده رزومه و سوابق کادر درمان مکسا') ?></span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -1049,7 +1198,7 @@
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            امکان فیلتر بر اساس شعبه، تخصص و رشته درمانی
+                            <?= site_e('امکان فیلتر بر اساس شعبه، تخصص و رشته درمانی') ?>
                         </span>
                     </div>
                 </div>
@@ -1058,32 +1207,32 @@
                     <div class="resume-preview-widget">
                         <div class="rpw-top">
                             <div class="rpw-avatars">
-                                <div class="rpw-avatar rpw-av1" title="پزشک متخصص"><?= iconoir('stethoscope', '', 18) ?></div>
-                                <div class="rpw-avatar rpw-av2" title="پرستار بالینی"><?= iconoir('healthcare', '', 18) ?></div>
-                                <div class="rpw-avatar rpw-av3" title="روانشناس سلامت"><?= iconoir('brain', '', 18) ?></div>
+                                <div class="rpw-avatar rpw-av1" title="<?= site_e('پزشک متخصص') ?>"><?= iconoir('stethoscope', '', 18) ?></div>
+                                <div class="rpw-avatar rpw-av2" title="<?= site_e('پرستار بالینی') ?>"><?= iconoir('healthcare', '', 18) ?></div>
+                                <div class="rpw-avatar rpw-av3" title="<?= site_e('روانشناس سلامت') ?>"><?= iconoir('brain', '', 18) ?></div>
                                 <div class="rpw-avatar rpw-av4">+</div>
                             </div>
                             <div class="rpw-stat-pill">
-                                <strong>۱۰۰+ همکار</strong>
-                                <span>کادر درمان و سلامت</span>
+                                <strong><?= site_e('۱۰۰+ همکار') ?></strong>
+                                <span><?= site_e('کادر درمان و سلامت') ?></span>
                             </div>
                         </div>
 
                         <div class="rpw-list">
                             <div class="rpw-item">
                                 <div class="rpw-dot"></div>
-                                <span class="rpw-item-title">پزشکان متخصص و فلوشیپ طب تسکینی</span>
-                                <span class="rpw-item-tag">درمانگاه و ستاد</span>
+                                <span class="rpw-item-title"><?= site_e('پزشکان متخصص و فلوشیپ طب تسکینی') ?></span>
+                                <span class="rpw-item-tag"><?= site_e('درمانگاه و ستاد') ?></span>
                             </div>
                             <div class="rpw-item">
                                 <div class="rpw-dot"></div>
-                                <span class="rpw-item-title">پرستاران بالینی و مراقبت در منزل</span>
-                                <span class="rpw-item-tag">شبکه هوم‌کر</span>
+                                <span class="rpw-item-title"><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></span>
+                                <span class="rpw-item-tag"><?= site_e('شبکه هوم‌کر') ?></span>
                             </div>
                             <div class="rpw-item">
                                 <div class="rpw-dot"></div>
-                                <span class="rpw-item-title">روانشناسان، مددکاران و مشاوران سلامت</span>
-                                <span class="rpw-item-tag">تیم جامع MDT</span>
+                                <span class="rpw-item-title"><?= site_e('روانشناسان، مددکاران و مشاوران سلامت') ?></span>
+                                <span class="rpw-item-tag"><?= site_e('تیم جامع MDT') ?></span>
                             </div>
                         </div>
                     </div>
@@ -1091,21 +1240,10 @@
             </section>
 
             <div class="quote-capsule wow fadeInUp" data-wow-delay="0.7s">
-                «مکسا پلی استوار میان جامعه پزشکی و بیماران نیازمند؛ جایی که تخصص بالینی با ایثار و محبت درمی‌آمیزد تا هیچ بیماری در مواجهه با سرطان احساس تنهایی و درماندگی نکند.»
+                <?= site_e('«مکسا پلی استوار میان جامعه پزشکی و بیماران نیازمند؛ جایی که تخصص بالینی با ایثار و محبت درمی‌آمیزد تا هیچ بیماری در مواجهه با سرطان احساس تنهایی و درماندگی نکند.»') ?>
             </div>
 
-            <!-- بنر دعوت به اقدام کادر درمان -->
-            <div class="cta-banner wow fadeInUp" data-wow-delay="0.8s">
-                <h3>به شبکه همکاران و درمانگران مکسا بپیوندید</h3>
-                <p>
-                    اگر شما نیز پزشک، پرستار، روانشناس، مددکار یا متخصص حوزه سلامت هستید، دست گرم شما را برای هم‌افزایی علمی و خدمت‌رسانی به بیماران عزیز مبتلا به سرطان به گرمی می‌فشاریم.
-                </p>
-                <div class="cta-buttons-wrap">
-                    <a href="/contactus" class="cta-btn-primary">همکاری با کادر درمان مکسا</a>
-                    <a href="/network.php?role=treatment" class="cta-btn-outline">رزومه و پروفایل کادر درمان</a>
-                    <a href="/courses" class="cta-btn-outline">مشاهده دوره‌های آموزشی</a>
-                </div>
-            </div>
+
 
         </article>
 

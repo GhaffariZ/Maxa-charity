@@ -10,6 +10,7 @@
  * ========================================================================== */
 
 require_once __DIR__ . '/_guard.php';
+dash_require('branch_intro');
 
 $pdo = dash_pdo();
 $branchId = dash_active_branch_id();
@@ -141,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ثبت یا به‌روزرسانی در دیتابیس
         try {
+            content_prepare($pdo,'branch_intros');
+            $pdo->beginTransaction();
             $imagesJson = json_encode($existingImages, JSON_UNESCAPED_UNICODE);
             
             $upsert = $pdo->prepare("
@@ -155,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     images = VALUES(images)
             ");
             $upsert->execute([$branchId, $title, $introText, $address, $phone, $workingHours, $imagesJson]);
+            content_save($pdo,'branch_intros',(string)$branchId);$pdo->commit();
 
             // به‌روزرسانی متغیرهای نمایشی
             $intro['title']         = $title;
@@ -167,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             dash_audit('branch_intro_update', ['branch_id' => $branchId]);
             $ok = 'اطلاعات و تصاویر معرفی شعبه با موفقیت ذخیره شد.';
         } catch (Throwable $e) {
+            if($pdo->inTransaction())$pdo->rollBack();
             $err = 'خطا در ذخیره‌سازی اطلاعات: ' . $e->getMessage();
         }
     }
@@ -187,7 +192,7 @@ require_once __DIR__ . '/_panel_head.php';
   }
   .intro-card h2 {
     font-size: 16px;
-    font-weight: 800;
+    font-weight:600;
     margin-bottom: 6px;
     color: var(--color-text);
     display: flex;
@@ -206,7 +211,7 @@ require_once __DIR__ . '/_panel_head.php';
   .field-group label {
     display: block;
     font-size: 13px;
-    font-weight: 700;
+    font-weight:600;
     margin-bottom: 8px;
     color: var(--color-text);
   }
@@ -243,7 +248,7 @@ require_once __DIR__ . '/_panel_head.php';
     text-align: center;
     background: var(--color-bg);
     cursor: pointer;
-    transition: all .2s ease;
+    transition:background-color .2s ease;
     position: relative;
     overflow: hidden;
   }
@@ -272,7 +277,7 @@ require_once __DIR__ . '/_panel_head.php';
   }
   .uploader-title {
     font-size: 14px;
-    font-weight: 800;
+    font-weight:600;
     color: var(--color-text);
     margin-bottom: 4px;
   }
@@ -328,7 +333,7 @@ require_once __DIR__ . '/_panel_head.php';
     padding: 8px 14px;
     font-family: inherit;
     font-size: 12px;
-    font-weight: 700;
+    font-weight:600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -352,7 +357,7 @@ require_once __DIR__ . '/_panel_head.php';
     margin-bottom: 22px;
   }
   .preview-bar a {
-    font-weight: 800;
+    font-weight:600;
     color: var(--color-primary);
     font-size: 13px;
     display: inline-flex;
@@ -405,7 +410,7 @@ require_once __DIR__ . '/_panel_head.php';
     </a>
   </div>
 
-  <form method="POST" action="branch-intro.php" enctype="multipart/form-data">
+  <form id="branchIntroForm" method="POST" action="branch-intro.php" enctype="multipart/form-data">
     <?= csrf_field() ?>
 
     <!-- بخش اول: متن و عنوان معرفی -->
@@ -553,5 +558,6 @@ require_once __DIR__ . '/_panel_head.php';
   }
 </script>
 
+<?php content_editor('branch_intros',(string)$branchId,'#branchIntroForm'); ?>
 </body>
 </html>

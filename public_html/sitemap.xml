@@ -49,6 +49,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://mymacsa.ir/annual-reports</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mymacsa.ir/financial-reports</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://mymacsa.ir/stand-order</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>

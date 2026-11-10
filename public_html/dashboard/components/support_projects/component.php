@@ -1,10 +1,11 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>اهداف محبوب | خیریه مکسا</title>
+  <title><?= site_e('اهداف محبوب | خیریه مکسا') ?></title>
 
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -55,7 +56,7 @@
       font-family: 'Vazirmatn', sans-serif;
       background: var(--color-bg);
       color: var(--color-text);
-      direction: rtl;
+      direction: var(--site-direction, rtl);
       font-size: 14px;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
@@ -688,21 +689,21 @@
   <div class="projects-section">
     <div class="container">
       <div class="header">
-        <h1>پروژه‌های در حال اجرا جهت کمک به <span>بیماران</span></h1>
-        <p>با کمک‌های خود به بیماران زندگی هدیه دهید</p>
+        <h1><?= site_e('پروژه‌های در حال اجرا جهت کمک به') ?> <span><?= site_e('بیماران') ?></span></h1>
+        <p><?= site_e('با کمک‌های خود به بیماران زندگی هدیه دهید') ?></p>
       </div>
 
       <div class="course-categories">
         <ul>
-          <li class="active" data-filter="all">همه</li>
-          <li data-filter="drug">دارو</li>
-          <li data-filter="food">غذا</li>
-          <li data-filter="education">مهارت آموزی</li>
+          <li class="active" data-filter="all"><?= site_e('همه') ?></li>
+          <li data-filter="drug"><?= site_e('دارو') ?></li>
+          <li data-filter="food"><?= site_e('غذا') ?></li>
+          <li data-filter="education"><?= site_e('مهارت آموزی') ?></li>
         </ul>
       </div>
 
       <section class="cta-cards-wrap" aria-label="Cards">
-        <button class="slider-btn prev-btn" id="sliderPrevBtn" aria-label="صفحه قبلی">
+        <button class="slider-btn prev-btn" id="sliderPrevBtn" aria-label="<?= site_e('صفحه قبلی') ?>">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -710,7 +711,7 @@
         <div class="cta-cards-viewport">
           <div class="cta-cards" id="ctaCards"></div>
         </div>
-        <button class="slider-btn next-btn" id="sliderNextBtn" aria-label="صفحه بعدی">
+        <button class="slider-btn next-btn" id="sliderNextBtn" aria-label="<?= site_e('صفحه بعدی') ?>">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -752,14 +753,14 @@
           // حالت سوم: خطا در دیتابیس یا کوئری
         } else if (json.status === "error") {
           const ctaCards = document.getElementById("ctaCards");
-          if (ctaCards) ctaCards.innerHTML = `<p class="empty-state error">خطای بکاند: ${json.message}</p>`;
+          if (ctaCards) ctaCards.innerHTML = `<?= site_js_fragment('<p class="empty-state error">خطای بکاند: ') ?>${json.message}</p>`;
           initSlider([]);
         }
 
       } catch (error) {
-        console.error("خطا در ارتباط:", error);
+        console.error(<?= site_js_text('خطا در ارتباط:') ?>, error);
         const ctaCards = document.getElementById("ctaCards");
-        if (ctaCards) ctaCards.innerHTML = "<p class='empty-state error'>خطا در لود فایل API (احتمالاً آدرس اشتباه است یا فایل ارور ۵۰۰ دارد).</p>";
+        if (ctaCards) ctaCards.innerHTML = <?= site_js_text('<p class=\'empty-state error\'>خطا در لود فایل API (احتمالاً آدرس اشتباه است یا فایل ارور ۵۰۰ دارد).</p>') ?>;
         initSlider([]);
       }
     })();
@@ -771,7 +772,7 @@
       ctaCards.innerHTML = ""; // پاکسازی محتوای قدیمی
 
       if (campaigns.length === 0) {
-        ctaCards.innerHTML = `<p class="empty-state">هیچ کمپینی در این دسته‌بندی وجود ندارد.</p>`;
+        ctaCards.innerHTML = `<?= site_js_fragment('<p class="empty-state">هیچ کمپینی در این دسته‌بندی وجود ندارد.</p>') ?>`;
         initSlider([]);
         return;
       }
@@ -805,15 +806,15 @@
                     <div class="card-desc">${descHtml}</div>
 
                     ${target > 0 ? `<div class="progress-container">
-                        <div class="progress-badge">${Number(percent).toLocaleString('fa-IR')}٪</div>
+                        <div class="progress-badge">${Number(percent).toLocaleString('fa-IR')}<?= site_js_fragment('٪</div>
                         <div class="progress-info">
-                            <span>جمع‌آوری شده: ${Number(collected).toLocaleString('fa-IR')} تومان</span>
-                            <span>هدف: ${Number(target).toLocaleString('fa-IR')} تومان</span>
+                            <span>جمع‌آوری شده: ') ?>${Number(collected).toLocaleString('fa-IR')}<?= site_js_fragment(' تومان</span>
+                            <span>هدف: ') ?>${Number(target).toLocaleString('fa-IR')}<?= site_js_fragment(' تومان</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percent}%;"></div>
+                            <div class="progress-fill" style="width: ') ?>${percent}%;"></div>
                         </div>
-                    </div>` : ''}
+                    </div>` : ''}<?= site_js_fragment('
 
                     <div class="card-footer">
                         <button class="btn-help" type="button">همین حالا کمک کنید</button>
@@ -821,7 +822,7 @@
 
                     <div class="mobile-indicator"><i class="fas fa-ellipsis-h"></i></div>
                 </div>
-            `;
+            ') ?>`;
 
         cardDiv.querySelector('.btn-help').addEventListener('click', (event) => {
           event.stopPropagation();
@@ -907,7 +908,7 @@
         const dot = document.createElement('div');
         dot.className = `slider-dot ${i === currentPage ? 'active' : ''}`;
         dot.setAttribute('role', 'button');
-        dot.setAttribute('aria-label', `برو به صفحه ${i + 1}`);
+        dot.setAttribute('aria-label', `<?= site_js_fragment('برو به صفحه ') ?>${i + 1}`);
         dot.addEventListener('click', () => {
           currentPage = i;
           updateSlider();

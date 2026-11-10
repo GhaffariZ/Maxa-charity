@@ -11,10 +11,26 @@ use PDO;
 final class DonationRepository
 {
     private PDO $db;
+    private ?array $remoteCampaignColumns = null;
 
     public function __construct()
     {
         $this->db = Database::connection();
+    }
+
+    private function hasRemoteCampaignColumn(string $column): bool
+    {
+        $this->remoteCampaignColumns ??= $this->db->query(
+            "SHOW COLUMNS FROM panel_donations WHERE Field IN ('remote_campaign_id', 'remote_campaign_title')"
+        )->fetchAll(PDO::FETCH_COLUMN);
+        return in_array($column, $this->remoteCampaignColumns, true);
+    }
+
+    private function campaignTitleExpression(): string
+    {
+        return $this->hasRemoteCampaignColumn('remote_campaign_title')
+            ? 'COALESCE(d.remote_campaign_title, c.title)'
+            : 'c.title';
     }
 
     /** Creates a pending donation, returns [id, reference]. @return array{0:int,1:string} */
@@ -143,11 +159,12 @@ final class DonationRepository
         $offset = ($page - 1) * $perPage;
         $like = '%' . $search . '%';
         $hasSearch = $search !== '';
+        $campaignTitle = $this->campaignTitleExpression();
 
         // Distinct placeholders (:q1/:q2) — native prepares forbid reusing :q.
         $where = 'd.user_id = :uid';
         if ($hasSearch) {
-            $where .= ' AND (d.reference LIKE :q1 OR COALESCE(d.remote_campaign_title, c.title) LIKE :q2)';
+            $where .= " AND (d.reference LIKE :q1 OR {$campaignTitle} LIKE :q2)";
         }
 
         $countSql = "SELECT COUNT(*) FROM panel_donations d LEFT JOIN campaigns c ON c.id = d.campaign_id WHERE {$where}";
@@ -161,7 +178,7 @@ final class DonationRepository
         $total = (int) $countStmt->fetchColumn();
 
         $sql = "SELECT d.reference, d.amount, d.type, d.status, d.receipt_number,
-                       d.created_at, d.paid_at, COALESCE(d.remote_campaign_title, c.title) AS campaign_title
+                       d.created_at, d.paid_at, {$campaignTitle} AS campaign_title
                   FROM panel_donations d
              LEFT JOIN campaigns c ON c.id = d.campaign_id
                  WHERE {$where}
@@ -194,11 +211,14 @@ final class DonationRepository
     /** Aggregate KPIs + 6-month series for the dashboard. @return array<string,mixed> */
     public function dashboardStats(int $userId): array
     {
+        $campaignId = $this->hasRemoteCampaignColumn('remote_campaign_id')
+            ? 'COALESCE(remote_campaign_id, CAST(campaign_id AS CHAR))'
+            : 'campaign_id';
         $totals = $this->db->prepare(
             "SELECT
                 COALESCE(SUM(amount), 0)                              AS total_amount,
                 COUNT(*)                                             AS donation_count,
-                COUNT(DISTINCT COALESCE(remote_campaign_id, CAST(campaign_id AS CHAR))) AS campaigns_supported,
+                COUNT(DISTINCT {$campaignId}) AS campaigns_supported,
                 MIN(created_at)                                      AS first_donation_at
              FROM panel_donations WHERE user_id = :uid AND status = 'success'"
         );
@@ -235,9 +255,10 @@ final class DonationRepository
     /** Recent activity feed for the dashboard. @return list<array<string,mixed>> */
     public function recentActivity(int $userId, int $limit = 5): array
     {
+        $campaignTitle = $this->campaignTitleExpression();
         $stmt = $this->db->prepare(
             "SELECT d.reference, d.amount, d.status, d.created_at,
-                    COALESCE(d.remote_campaign_title, c.title) AS campaign_title
+                    {$campaignTitle} AS campaign_title
                FROM panel_donations d
           LEFT JOIN campaigns c ON c.id = d.campaign_id
               WHERE d.user_id = :uid

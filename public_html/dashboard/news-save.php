@@ -4,6 +4,7 @@ dash_require('news');
 // news-save.php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../core/html-sanitizer.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 
 $newImagePath = null;
 $oldImagePath = null;
@@ -27,6 +28,7 @@ try {
     }
 
     csrf_check();
+    content_prepare($pdo,'news');
 
     if (empty($_POST['title']) || empty($_POST['content'])) {
         throw new Exception("عنوان یا متن خبر وارد نشده است.");
@@ -278,17 +280,24 @@ try {
             throw new Exception("فایل انتخاب‌شده یک تصویر معتبر نیست.");
         }
 
-        $filename = 'featured_' . bin2hex(random_bytes(12)) . '.' . $ext;
+        $imageName = 'featured_' . bin2hex(random_bytes(12));
+        $filename = $imageName . '.webp';
         $destination = $uploadDir . '/' . $filename;
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            $newImagePath = $destination;
-            $stmt_img = $pdo->prepare("UPDATE news SET featured_image = ? WHERE id = ?");
-            $stmt_img->execute([$filename, $record_id]);
-        } else {
-            throw new Exception("آپلود تصویر انجام نشد، لطفاً دسترسی پوشه uploads را بررسی کنید.");
+        $converted = maxa_optimize_image_to_webp($file['tmp_name'], $destination, 82, 1920);
+        if (!$converted || !is_file($destination)) {
+            if (is_file($destination)) @unlink($destination);
+            $filename = $imageName . '.' . $ext;
+            $destination = $uploadDir . '/' . $filename;
+            if (!move_uploaded_file($file['tmp_name'], $destination)) {
+                throw new Exception("آپلود تصویر انجام نشد، لطفاً دسترسی پوشه uploads را بررسی کنید.");
+            }
         }
+        $newImagePath = $destination;
+        $stmt_img = $pdo->prepare("UPDATE news SET featured_image = ? WHERE id = ?");
+        $stmt_img->execute([$filename, $record_id]);
     }
 
+    content_save($pdo,'news',(string)$record_id);
     $pdo->commit();
     if ($oldImagePath !== null && is_file($oldImagePath)) {
         @unlink($oldImagePath);
@@ -303,7 +312,7 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
-    if ($pdo instanceof PDO && $pdo->inTransaction()) {
+    if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     if ($newImagePath !== null && is_file($newImagePath)) {

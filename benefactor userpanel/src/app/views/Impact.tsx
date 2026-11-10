@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { api, ImpactDto } from "../../api/client";
+import { Loader } from "../components/ui/loader";
 
 export function Impact() {
   const [impacts, setImpacts] = useState<ImpactDto[]>([]);
@@ -36,7 +37,7 @@ export function Impact() {
       </div>
 
       {loading ? (
-        <div className="text-center text-muted-foreground py-10">در حال بارگذاری...</div>
+        <div className="macsa-loading-status py-10"><Loader variant="pulse" label="در حال دریافت اثر کمک‌ها" /></div>
       ) : impacts.length === 0 ? (
         <div className="text-center text-muted-foreground border-2 border-dashed border-border p-10 rounded-3xl">هنوز اثری برای نمایش وجود ندارد.</div>
       ) : (

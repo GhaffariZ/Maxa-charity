@@ -8,6 +8,7 @@
 // می‌شوند؛ بدون پارامتر یا اگر slug ناشناخته بود، هیروهای «ستاد مرکزی» (HQ).
 
 header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__.'/../core/content-locales.php';
 
 try {
     // اتصال به دیتابیس از طریق loaderِ امن (نه مسیرِ مطلقِ سرور)
@@ -31,14 +32,15 @@ try {
     header('Cache-Control: public, max-age=300');
 
     // هیروهای فعالِ همان شعبه
+    $languageScope=content_where($pdo,'hero_slides');
     $stmt = $pdo->prepare(
-        "SELECT title, description, image, button_link
+        "SELECT id, title, description, image, button_link
            FROM hero_slides
-          WHERE status = 1 AND branch_id = ?
-          ORDER BY id DESC LIMIT 3"
+          WHERE status = 1 AND branch_id = ? AND $languageScope AND (publish_date IS NULL OR publish_date<=NOW())
+          ORDER BY sort_order ASC,id DESC LIMIT 3"
     );
     $stmt->execute([$branchId]);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data = content_rows($pdo,'hero_slides',$stmt->fetchAll(PDO::FETCH_ASSOC));
 
     // جایگزینی تصویر با نسخه WebP سبک‌تر در صورت وجود
     foreach ($data as &$slide) {

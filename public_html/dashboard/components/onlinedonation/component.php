@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="donation-shell">
   <div class="donation-card">
 
@@ -30,7 +31,7 @@
             -->
 
             <div class="donation-media-overlay">
-              <span class="media-chip">کمپین فعال</span>
+              <span class="media-chip"><?= site_e('کمپین فعال') ?></span>
             </div>
           </div>
         </div>
@@ -39,12 +40,12 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          پرداخت مستقیم و امن به خیریه
+          <?= site_e('پرداخت مستقیم و امن به خیریه') ?>
         </div>
 
-        <h2 class="donation-title">سهم شما در درمان بیماران، <span>ماندگار و امیدبخش</span> است</h2>
+        <h2 class="donation-title"><?= site_e('سهم شما در درمان بیماران،') ?> <span><?= site_e('ماندگار و امیدبخش') ?></span> <?= site_e('است') ?></h2>
         <p class="donation-desc">
-          مجموعه مکسا با شفافیت کامل مالی و ارائه گزارش‌های دقیق، کمک‌های نقدی شما را مستقیماً جهت تأمین داروهای خاص و خدمات درمانی بیماران مبتلا به سرطان مصرف می‌کند.
+          <?= site_e('مجموعه مکسا با شفافیت کامل مالی و ارائه گزارش‌های دقیق، کمک‌های نقدی شما را مستقیماً جهت تأمین داروهای خاص و خدمات درمانی بیماران مبتلا به سرطان مصرف می‌کند.') ?>
         </p>
 
         <div class="premium-features">
@@ -56,8 +57,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h4>نظارت و شفافیت مالی کامل</h4>
-              <p>امکان پیگیری لحظه‌ای مسیر مصرف مبالغ اهدایی توسط نیکوکاران</p>
+              <h4><?= site_e('نظارت و شفافیت مالی کامل') ?></h4>
+              <p><?= site_e('امکان پیگیری لحظه‌ای مسیر مصرف مبالغ اهدایی توسط نیکوکاران') ?></p>
             </div>
           </div>
 
@@ -68,8 +69,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h4>مرکز پشتیبانی و ارتباط مردمی</h4>
-              <p>پاسخگویی سریع از طریق خط کشوری <strong class="phone-link">021-91092030</strong></p>
+              <h4><?= site_e('مرکز پشتیبانی و ارتباط مردمی') ?></h4>
+              <p><?= site_e('پاسخگویی سریع از طریق خط کشوری') ?> <strong class="phone-link">021-91092030</strong></p>
             </div>
           </div>
         </div>
@@ -77,18 +78,18 @@
 
       <div class="donation-stats-strip">
         <div class="stat-box">
-          <span class="stat-number">۱۰۰٪</span>
-          <span class="stat-label">شفافیت مالی</span>
+          <span class="stat-number"><?= site_e('۱۰۰٪') ?></span>
+          <span class="stat-label"><?= site_e('شفافیت مالی') ?></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-box">
-          <span class="stat-number">۲۴/۷</span>
-          <span class="stat-label">درگاه فعال امن</span>
+          <span class="stat-number"><?= site_e('۲۴/۷') ?></span>
+          <span class="stat-label"><?= site_e('درگاه فعال امن') ?></span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-box">
-          <span class="stat-number">۳۰+</span>
-          <span class="stat-label">خدمات حمایتی</span>
+          <span class="stat-number"><?= site_e('۳۰+') ?></span>
+          <span class="stat-label"><?= site_e('خدمات حمایتی') ?></span>
         </div>
       </div>
     </div>
@@ -97,50 +98,50 @@
     <div class="donation-form-wrap">
       <form class="donation-form" id="onlineDonationForm" action="#" method="post">
         <div class="form-header">
-          <h3>ثبت اطلاعات پرداخت</h3>
-          <p>مبالغ اهدایی مشمول معافیت مالیاتی می‌باشند</p>
+          <h3><?= site_e('ثبت اطلاعات پرداخت') ?></h3>
+          <p><?= site_e('مبالغ اهدایی مشمول معافیت مالیاتی می‌باشند') ?></p>
         </div>
 
         <div class="form-grid">
           <div class="field">
-            <label>نام</label>
-            <input type="text" name="first_name" placeholder="مثلاً: رضا" required>
+            <label><?= site_e('نام') ?></label>
+            <input type="text" name="first_name" placeholder="<?= site_e('مثلاً: رضا') ?>" required>
           </div>
 
           <div class="field">
-            <label>نام خانوادگی</label>
-            <input type="text" name="last_name" placeholder="مثلاً: محمدی" required>
+            <label><?= site_e('نام خانوادگی') ?></label>
+            <input type="text" name="last_name" placeholder="<?= site_e('مثلاً: محمدی') ?>" required>
           </div>
         </div>
 
         <div class="field">
-          <label>شماره همراه (اجباری)</label>
+          <label><?= site_e('شماره همراه (اجباری)') ?></label>
           <input type="tel" name="phone" placeholder="09123456789" required
-                 pattern="^09[0-9]{9}$" title="شماره تماس معتبر موبایل وارد کنید">
+                 pattern="^09[0-9]{9}$" title="<?= site_e('شماره تماس معتبر موبایل وارد کنید') ?>">
         </div>
 
         <div class="field">
-          <label>مبلغ اهدایی مورد نظر</label>
+          <label><?= site_e('مبلغ اهدایی مورد نظر') ?></label>
           <div class="amount-grid">
-            <button type="button" class="amount-chip" onclick="setAmount(50000, event)">۵۰,۰۰۰</button>
-            <button type="button" class="amount-chip" onclick="setAmount(100000, event)">۱۰۰,۰۰۰</button>
-            <button type="button" class="amount-chip active" onclick="setAmount(200000, event)">۲۰۰,۰۰۰</button>
-            <button type="button" class="amount-chip" onclick="setAmount(500000, event)">۵۰۰,۰۰۰</button>
+            <button type="button" class="amount-chip" onclick="setAmount(50000, event)"><?= site_e('۵۰,۰۰۰') ?></button>
+            <button type="button" class="amount-chip" onclick="setAmount(100000, event)"><?= site_e('۱۰۰,۰۰۰') ?></button>
+            <button type="button" class="amount-chip active" onclick="setAmount(200000, event)"><?= site_e('۲۰۰,۰۰۰') ?></button>
+            <button type="button" class="amount-chip" onclick="setAmount(500000, event)"><?= site_e('۵۰۰,۰۰۰') ?></button>
           </div>
         </div>
 
         <div class="field">
-          <label>مبلغ دلخواه شما (تومان)</label>
-          <input type="number" id="customAmount" name="amount" placeholder="مبلغ دلخواه را وارد کنید" value="200000">
+          <label><?= site_e('مبلغ دلخواه شما (تومان)') ?></label>
+          <input type="number" id="customAmount" name="amount" placeholder="<?= site_e('مبلغ دلخواه را وارد کنید') ?>" value="200000">
         </div>
 
         <div class="field">
-          <label>بابت درمان (اختیاری)</label>
-          <input type="text" name="note" placeholder="مثلاً: تأمین داروی شیمی‌درمانی">
+          <label><?= site_e('بابت درمان (اختیاری)') ?></label>
+          <input type="text" name="note" placeholder="<?= site_e('مثلاً: تأمین داروی شیمی‌درمانی') ?>">
         </div>
 
         <button type="submit" class="submit-btn">
-          <span>تایید و اتصال به درگاه بانکی</span>
+          <span><?= site_e('تایید و اتصال به درگاه بانکی') ?></span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -151,7 +152,7 @@
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          تراکنش‌های مالی رمزنگاری‌شده توسط پروتکل امن SSL بانک مرکزی
+          <?= site_e('تراکنش‌های مالی رمزنگاری‌شده توسط پروتکل امن SSL بانک مرکزی') ?>
         </p>
       </form>
     </div>
@@ -200,7 +201,7 @@
 
   .donation-shell {
     padding: 70px 20px;
-    direction: rtl;
+    direction: var(--site-direction, rtl);
     font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
     background:
       radial-gradient(circle at 12% 10%, rgba(16,174,184,0.08), transparent 30%),
@@ -757,11 +758,11 @@
         full_name: (firstName + ' ' + lastName).trim(),
         mobile: form.elements.phone.value.trim(),
         amount_toman: Number(form.elements.amount.value),
-        onSuccess: function () { alert('پرداخت شما با موفقیت ثبت شد. سپاسگزاریم.'); },
-        onFailure: function () { alert('پرداخت ناموفق بود یا لغو شد.'); }
+        onSuccess: function () { alert(<?= site_js_text('پرداخت شما با موفقیت ثبت شد. سپاسگزاریم.') ?>); },
+        onFailure: function () { alert(<?= site_js_text('پرداخت ناموفق بود یا لغو شد.') ?>); }
       });
     } catch (error) {
-      alert(error && error.message ? error.message : 'اتصال به درگاه ناموفق بود.');
+      alert(error && error.message ? error.message : <?= site_js_text('اتصال به درگاه ناموفق بود.') ?>);
     } finally {
       button.disabled = false;
     }

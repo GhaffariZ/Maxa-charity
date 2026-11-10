@@ -36,6 +36,7 @@ $stmt = $pdo->prepare("DELETE FROM pages WHERE id = ? AND branch_id = ?");
 $stmt->execute([$id, $ACTIVE_BRANCH]);
 
 if ($stmt->rowCount() > 0) {
+    content_delete($pdo,'pages',(string)$id);
     // Log the action
     $logStmt = $pdo->prepare("
         INSERT INTO page_logs (page_id, action, user_name, created_at)

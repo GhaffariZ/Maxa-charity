@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Imports database/schema.sql into the production MySQL database.
-# Run automatically by cPanel on every deploy (see ../.cpanel.yml).
+# Manual use only; cPanel deployment does not run this script.
 #
 # ⚠️  This OVERWRITES the database with the contents of schema.sql.
 #     It is safe ONLY while the site has no real data (test phase).

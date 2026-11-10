@@ -20,6 +20,7 @@ use Maksa\Repositories\UserRepository;
 use Maksa\Support\Audit;
 use Maksa\Support\Cookie;
 use Maksa\Support\RateLimiter;
+use Maksa\Support\Logger;
 
 final class AuthController
 {
@@ -51,24 +52,38 @@ final class AuthController
             throw new ValidationException(['password' => $pwError]);
         }
 
-        // Enumeration-safe: do NOT reveal whether the email already exists. We
-        // only actually create + email when it's new; the response is identical
-        // either way.
-        if (!$this->users->emailExists($data['email'])) {
-            $userId = $this->users->createDonor(
-                $data['email'],
-                PasswordPolicy::hash($data['password']),
-                $data['first_name'] ?? null,
-                $data['last_name'] ?? null,
-            );
-            $this->sendVerification($userId, $data['email'], $data['first_name'] ?? '');
-            Audit::log($userId, 'register', $request->ip(), $request->userAgent());
+        // Repeated registration can recover a missing verification email, but
+        // must never replace an existing account's password or profile.
+        $user = $this->users->findByEmail($data['email']);
+        if ($user === null) {
+            try {
+                $userId = $this->users->createDonor(
+                    $data['email'],
+                    PasswordPolicy::hash($data['password']),
+                    $data['first_name'] ?? null,
+                    $data['last_name'] ?? null,
+                );
+            } catch (\PDOException $error) {
+                // Another registration may have created this address meanwhile.
+                $user = $this->users->findByEmail($data['email']);
+                if ($error->getCode() !== '23000' || $user === null) {
+                    throw $error;
+                }
+                $userId = (int) $user['id'];
+            }
         } else {
-            Audit::log(null, 'register_existing_email', $request->ip(), $request->userAgent(), ['email' => $data['email']]);
+            $userId = (int) $user['id'];
         }
+        if ($user === null || ($user['email_verified_at'] === null && $user['status'] !== 'suspended')) {
+            $name = $user === null ? ($data['first_name'] ?? '') : $this->firstName($userId);
+            $this->sendVerification($userId, $data['email'], $name);
+        }
+        Audit::log($userId, $user === null ? 'register' : 'register_existing_email', $request->ip(), $request->userAgent());
 
+        // Identical response for new, verified and unverified addresses, even
+        // when SMTP is unavailable. Do not promise inbox delivery or leak accounts.
         Response::success([
-            'message' => 'اگر این ایمیل جدید باشد، لینک تأیید برای شما ارسال شد. لطفاً صندوق ورودی خود را بررسی کنید.',
+            'message' => 'درخواست شما ثبت شد. برای تکمیل ثبت‌نام، ایمیل تأیید را در صندوق ورودی یا پوشه اسپم بررسی کنید. اگر دریافت نکردید، ارسال مجدد را بزنید.',
         ], 201);
     }
 
@@ -96,12 +111,12 @@ final class AuthController
         $user = $this->users->findByEmail($data['email']);
         // Only send if the account exists and is not yet verified. Always return
         // the same generic response (no enumeration).
-        if ($user !== null && $user['email_verified_at'] === null) {
+        if ($user !== null && $user['email_verified_at'] === null && $user['status'] !== 'suspended') {
             $name = $this->firstName($user['id']);
             $this->sendVerification((int) $user['id'], $data['email'], $name);
         }
 
-        Response::success(['message' => 'اگر حساب تأییدنشده‌ای با این ایمیل وجود داشته باشد، لینک تأیید مجدداً ارسال شد.']);
+        Response::success(['message' => 'درخواست ارسال مجدد ثبت شد. صندوق ورودی و پوشه اسپم را بررسی کنید؛ در صورت عدم دریافت ایمیل، یک دقیقه بعد دوباره تلاش کنید.']);
     }
 
     // ---- POST /auth/login ---------------------------------------------------
@@ -330,10 +345,20 @@ final class AuthController
 
     private function sendVerification(int $userId, string $email, string $name): void
     {
+        if ($this->tokens->emailVerificationRecentlyRequested($userId)) {
+            return;
+        }
         $token = $this->tokens->createEmailVerification($userId);
-        $link = $this->appUrl('/verify?token=' . urlencode($token));
-        $tpl = EmailTemplates::verifyEmail($name, $link);
-        $this->mailer->send($email, $name, $tpl['subject'], $tpl['html'], $tpl['text']);
+        try {
+            $link = $this->appUrl('/verify?token=' . urlencode($token));
+            $tpl = EmailTemplates::verifyEmail($name, $link);
+            if (!$this->mailer->send($email, $name, $tpl['subject'], $tpl['html'], $tpl['text'])) {
+                Logger::error('Verification email not accepted by SMTP; resend is available after 60 seconds', ['user_id' => $userId]);
+            }
+        } catch (\Throwable $error) {
+            // Keep the account and issued links usable so a retry can recover.
+            Logger::error('Verification email preparation failed', ['user_id' => $userId, 'error' => $error->getMessage()]);
+        }
     }
 
     private function firstName(int $userId): string
@@ -347,6 +372,15 @@ final class AuthController
 
     private function appUrl(string $path): string
     {
-        return rtrim((string) Config::get('APP_URL', ''), '/') . $path;
+        $base = rtrim(trim((string) Config::require('APP_URL')), '/');
+        $parts = parse_url($base);
+        if (!filter_var($base, FILTER_VALIDATE_URL) || !in_array($parts['scheme'] ?? '', ['http', 'https'], true)
+            || isset($parts['query']) || isset($parts['fragment']) || isset($parts['user']) || isset($parts['pass'])) {
+            throw new \RuntimeException('APP_URL must be an absolute frontend URL without query, fragment or credentials.');
+        }
+        if (empty($parts['path'])) {
+            $base .= '/benefactor-dashboard';
+        }
+        return $base . $path;
     }
 }

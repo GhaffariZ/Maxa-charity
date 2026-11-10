@@ -20,7 +20,8 @@ dash_require_hq();
 $err = '';
 $ok  = '';
 $created = null;  // پس از ساختِ موفق پر می‌شود تا مودالِ اعتبارنامه نمایش داده شود
-$old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES, 'map_x' => '', 'map_y' => ''];
+$FEATURE_LABELS = dash_feature_labels(false);
+$old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => array_keys($FEATURE_LABELS), 'map_x' => '', 'map_y' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city      = trim((string)($_POST['city'] ?? ''));
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
-    $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
+    $features  = array_values(array_intersect((array)($_POST['features'] ?? []), array_keys($FEATURE_LABELS)));
     $mapX      = (isset($_POST['map_x']) && $_POST['map_x'] !== '') ? (float)$_POST['map_x'] : null;
     $mapY      = (isset($_POST['map_y']) && $_POST['map_y'] !== '') ? (float)$_POST['map_y'] : null;
     if ($mapX !== null && ($mapX < 0 || $mapX > 1156)) { $mapX = null; }
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($err === '') {
         try {
-            $pdo->beginTransaction();
+            content_prepare($pdo,'branches');
 
             // 1) ردیف شعبه (با ذخیره مختصات نشانگر روی نقشه ایران)
             // بررسی و ایجاد ستون‌های مختصات نقشه در صورت عدم وجود (سازگار با کلیه نسخه‌های MySQL)
@@ -83,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
                 }
             } catch (Throwable $eCols) {}
+            $pdo->beginTransaction();
 
             try {
                 $st = $pdo->prepare("INSERT INTO branches (name, slug, province, city, map_x, map_y, is_hq, status) VALUES (?,?,?,?,?,?,0,'active')");
@@ -123,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("INSERT INTO pages (title, slug, components, status, branch_id) VALUES (?, 'home', ?, 'published', ?)")
                 ->execute([$name, $defaultComponents, $branchId]);
 
+            content_save($pdo,'branches',(string)$branchId);
             $pdo->commit();
 
             // 6) پوشه‌ی فایل‌های شعبه — نام فقط از slug تأییدشده ساخته می‌شود
@@ -141,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             dash_audit('branch_created', ['branch_id' => $branchId, 'slug' => $slug, 'admin' => $adminUser]);
             // اطلاعاتِ نمایش در مودالِ پروفایل (رمز فقط همین یک‌بار به سوپرادمینِ سازنده نشان داده می‌شود)
             $created = ['name' => $name, 'slug' => $slug, 'admin_user' => $adminUser, 'admin_pass' => $adminPass];
-            $old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => DASH_FEATURES, 'map_x' => '', 'map_y' => ''];
+            $old = ['name' => '', 'slug' => '', 'province' => '', 'city' => '', 'admin_user' => '', 'features' => array_keys($FEATURE_LABELS), 'map_x' => '', 'map_y' => ''];
 
         } catch (Throwable $ex) {
             if ($pdo->inTransaction()) { $pdo->rollBack(); }
@@ -151,12 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'events' => 'رویدادها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
-];
 
 $PANEL_TITLE = 'تعریف شعبه‌ی جدید';
 require __DIR__ . '/_panel_head.php';
@@ -169,7 +166,7 @@ require __DIR__ . '/_panel_head.php';
   <?php if ($err): ?><div class="msg err"><?= e($err) ?></div><?php endif; ?>
   <?php if ($ok):  ?><div class="msg ok"><?= e($ok) ?></div><?php endif; ?>
 
-  <form method="POST" autocomplete="off">
+  <form id="branchContentForm" method="POST" autocomplete="off">
     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
     <div class="card">
@@ -352,4 +349,5 @@ require __DIR__ . '/_panel_head.php';
     });
   })();
 </script>
-</div></body></html>
+</div><?php content_editor('branches','','#branchContentForm'); ?>
+</body></html>

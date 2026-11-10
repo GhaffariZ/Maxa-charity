@@ -27,6 +27,7 @@ try {
 
     // حذف از دیتابیس
     $pdo->prepare("DELETE FROM news WHERE id=?")->execute([$id]);
+    content_delete($pdo,'news',(string)$id);
 
     // حذف پوشه فایل‌ها
     $folder = $_SERVER['DOCUMENT_ROOT'] . "/uploads/news/" . $news_code;

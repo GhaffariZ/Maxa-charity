@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router";
-import { Loader2 } from "lucide-react";
+import { Loader } from "./components/ui/loader";
 import { useAuth } from "../contexts/AuthContext";
 
 // ---------------------------------------------------------------------------
@@ -12,8 +12,10 @@ import { useAuth } from "../contexts/AuthContext";
 
 function FullScreenLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background" dir="rtl">
-      <Loader2 className="animate-spin text-primary" size={32} />
+    <div className="macsa-loading-status macsa-loading-status--session bg-background" dir="rtl">
+      <Loader size={64} label="در حال آماده‌سازی پنل خیرین" />
+      <p className="macsa-loading-label" aria-hidden="true">در حال آماده‌سازی پنل خیرین</p>
+      <p className="macsa-loading-note">مکسا، همراه مسیر درمان</p>
     </div>
   );
 }

@@ -26,6 +26,10 @@ final class Config
         if ($customPath !== null) {
             $paths[] = $customPath;
         }
+        $envPath = getenv('MAKSA_ENV_PATH');
+        if ($envPath !== false && $envPath !== '') {
+            $paths[] = $envPath;
+        }
 
         $roots = [];
         for ($level = 2; $level <= 6; $level++) {
@@ -33,11 +37,13 @@ final class Config
         }
         foreach ($roots as $root) {
             $paths[] = $root . '/maksa-private/.env';
+        }
+        foreach ($roots as $root) {
             $paths[] = $root . '/.env';
         }
 
         foreach (array_unique($paths) as $path) {
-            if (is_file($path) && is_readable($path)) {
+            if (@is_file($path) && @is_readable($path)) {
                 self::parse($path);
             }
         }
@@ -63,9 +69,17 @@ final class Config
                 continue;
             }
 
-            // Strip surrounding quotes
-            $val = trim($val, " \t\n\r\0\x0B\"'");
+            // Quoted passwords may contain #; unquoted values allow inline comments.
+            if (preg_match('/^([\'"])(.*?)\1(?:\s+#.*)?$/', $val, $match)) {
+                $val = $match[2];
+            } else {
+                $val = trim(preg_replace('/\s+#.*$/', '', $val) ?? $val);
+            }
 
+            // The first file containing a key wins; deployment environment wins over files.
+            if (array_key_exists($key, self::$env)) {
+                continue;
+            }
             self::$env[$key] = $val;
             if (getenv($key) === false) {
                 putenv($key . '=' . $val);
@@ -85,13 +99,13 @@ final class Config
             self::load();
         }
 
-        if (array_key_exists($key, self::$env)) {
-            return self::$env[$key];
+        $fromEnv = getenv($key);
+        if ($fromEnv !== false) {
+            return $fromEnv;
         }
 
-        $fromEnv = getenv($key);
-        if ($fromEnv !== false && $fromEnv !== '') {
-            return $fromEnv;
+        if (array_key_exists($key, self::$env)) {
+            return self::$env[$key];
         }
 
         if (isset($_ENV[$key]) && $_ENV[$key] !== '') {

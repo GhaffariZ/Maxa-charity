@@ -10,6 +10,12 @@ database/db.conf
 # Database credentials read by the app (keep on server only, never commit)
 public_html/core/db.local.php
 maksa-private/
+# Local runtimes, databases, certificates, sessions, and private settings
+/.local/
+/public_html/uploads/content-locales/
+# Keep only the credential-free legacy database entry point in version control
+/config/*
+!/config/database.php
 # OS / editor junk
 .DS_Store
 Thumbs.db
@@ -23,17 +29,49 @@ error_log
 /AGENTS.md
 /.agents/
 
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archives and deployment bundles (never serve or commit these)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+/public_html/public_html.zip
+
+# Node standalone environments
+node-env/
+**/node-env/
+
 # Local one-time maintenance/bootstrap scripts
 /create-admin-once.php
 
-# Local deployment archives (never serve or commit these)
-/public_html/public_html.zip
 # Dependencies (if you use them)
 /vendor/
 /node_modules/
+# Portable local servers, database files, credentials, and logs
+/.local/
+/config/database.php
 # Untracked app folder
 /public_html/eo/
 # Locally installed agent skills
 .agents/skills/
 # Local markdown documentation and prompt files
 Markdowns/
+
+# Temporary & scratch scripts in root
+/scratch_*.py
+
+# Test / debug scripts
+/public_html/test*.php
+/public_html/test*.txt
+
+# Resume & source PDF files (never commit)
+*.pdf
+رزومه دکتر محمد جهانگیری2.pdf
+preview_server.py
+/_DSC892557.jpg

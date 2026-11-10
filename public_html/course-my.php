@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  دوره‌های من (بخش کاربری) — آکادمی مکسا
  *  دوره‌های خریداری/ثبت‌نام‌شده + میزان پیشرفت (localStorage)
@@ -51,13 +52,13 @@ course_site_head('دوره‌های من', $pageCss);
 <div class="page">
   <div class="page-head">
     <div class="ph-icon"><?= cic('grad') ?></div>
-    <div><h1>دوره‌های من</h1><div class="ph-sub">به یادگیری ادامه دهید و پیشرفت خود را دنبال کنید.</div></div>
+    <div><h1><?= site_e('دوره‌های من') ?></h1><div class="ph-sub"><?= site_e('به یادگیری ادامه دهید و پیشرفت خود را دنبال کنید.') ?></div></div>
   </div>
 
   <div class="mc-stats" id="mcStats" style="display:none">
-    <div class="mc-stat" style="--accent:#007b7a;--accent-bg:var(--primary-08)"><div class="si"><?= cic('book') ?></div><div><div class="sv" id="stCount">۰</div><div class="sl">دوره‌ی فعال</div></div></div>
-    <div class="mc-stat" style="--accent:#16a37a;--accent-bg:rgba(22,163,122,.12)"><div class="si"><?= cic('check') ?></div><div><div class="sv" id="stDone">۰</div><div class="sl">دوره‌ی تکمیل‌شده</div></div></div>
-    <div class="mc-stat" style="--accent:#7c4ddb;--accent-bg:var(--violet-12)"><div class="si"><?= cic('target') ?></div><div><div class="sv" id="stAvg">۰٪</div><div class="sl">میانگین پیشرفت</div></div></div>
+    <div class="mc-stat" style="--accent:#007b7a;--accent-bg:var(--primary-08)"><div class="si"><?= cic('book') ?></div><div><div class="sv" id="stCount"><?= site_e('۰') ?></div><div class="sl"><?= site_e('دوره‌ی فعال') ?></div></div></div>
+    <div class="mc-stat" style="--accent:#16a37a;--accent-bg:rgba(22,163,122,.12)"><div class="si"><?= cic('check') ?></div><div><div class="sv" id="stDone"><?= site_e('۰') ?></div><div class="sl"><?= site_e('دوره‌ی تکمیل‌شده') ?></div></div></div>
+    <div class="mc-stat" style="--accent:#7c4ddb;--accent-bg:var(--violet-12)"><div class="si"><?= cic('target') ?></div><div><div class="sv" id="stAvg"><?= site_e('۰٪') ?></div><div class="sl"><?= site_e('میانگین پیشرفت') ?></div></div></div>
   </div>
 
   <div id="mcArea"></div>
@@ -95,11 +96,11 @@ course_site_head('دوره‌های من', $pageCss);
   var html='<div class="mc-grid">', sumPct=0, doneCount=0;
   ids.forEach(function(id){
     var c=COURSES[id]; var pct=progress(id); sumPct+=pct; if(pct>=100) doneCount++;
-    var cta = pct>=100?'مرور دوباره':(pct>0?'ادامه‌ی یادگیری':'شروع دوره');
+    var cta = pct>=100?<?= site_js_text('مرور دوباره') ?>:(pct>0?<?= site_js_text('ادامه‌ی یادگیری') ?>:<?= site_js_text('شروع دوره') ?>);
     html+='<div class="mc">'+
       '<div class="mc-thumb" style="background:linear-gradient(135deg,'+c.accent+','+c.accent+'cc)">'+
         (c.thumbnail?'<img src="'+c.thumbnail+'" alt="">':'<span class="ph">'+BOOK+'</span>')+
-        '<span class="mc-badge">'+(pct>=100?'<svg class="iconoir-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:3px;"><path d="M5 13L9 17L19 7"/></svg> تکمیل‌شده':toFa(pct)+'٪')+'</span></div>'+
+        '<span class="mc-badge">'+(pct>=100?<?= site_js_text('<svg class="iconoir-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:3px;"><path d="M5 13L9 17L19 7"/></svg> تکمیل‌شده') ?>:toFa(pct)+'٪')+'</span></div>'+
       '<div class="mc-body">'+
         (c.category?'<span class="mc-cat">'+c.category+'</span>':'')+
         '<div class="mc-title">'+c.title+'</div>'+

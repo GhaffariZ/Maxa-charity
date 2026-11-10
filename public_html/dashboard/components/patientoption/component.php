@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!-- ========================= -->
 <!-- Section 1 — Link Cards (no images, links stacked) -->
 <section class="po-section">
@@ -5,8 +6,8 @@
 
     <div class="po-header wow fadeInUp">
       <span class="po-header-accent"></span>
-      <h2 class="po-heading">شناخت و درک سرطان</h2>
-      <p class="po-desc">اطلاعات علمی و به‌روز درباره سرطان، علل ایجاد، روش‌های تشخیص و انواع آن</p>
+      <h2 class="po-heading"><?= site_e('شناخت و درک سرطان') ?></h2>
+      <p class="po-desc"><?= site_e('اطلاعات علمی و به‌روز درباره سرطان، علل ایجاد، روش‌های تشخیص و انواع آن') ?></p>
     </div>
 
     <div class="po-grid">
@@ -14,12 +15,12 @@
         <div class="po-link-icon">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h3 class="po-link-title">شناخت و درک سرطان</h3>
+        <h3 class="po-link-title"><?= site_e('شناخت و درک سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="cancer1.html" class="po-link-item"><span class="po-link-dot"></span>تعریف سرطان</a>
-          <a href="cancer2.html" class="po-link-item"><span class="po-link-dot"></span>تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی</a>
-          <a href="understandingcancer.html" class="po-link-item"><span class="po-link-dot"></span>درک سرطان</a>
-          <a href="tissuealterations.html" class="po-link-item"><span class="po-link-dot"></span>تغییرات بافتی که سرطان نیستند</a>
+          <a href="cancer1.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تعریف سرطان') ?></a>
+          <a href="cancer2.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی') ?></a>
+          <a href="understandingcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('درک سرطان') ?></a>
+          <a href="tissuealterations.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تغییرات بافتی که سرطان نیستند') ?></a>
         </div>
       </div>
 
@@ -27,12 +28,12 @@
         <div class="po-link-icon">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>
         </div>
-        <h3 class="po-link-title">علل، عوامل و فرآیند ایجاد سرطان</h3>
+        <h3 class="po-link-title"><?= site_e('علل، عوامل و فرآیند ایجاد سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="carcinogenesis.html" class="po-link-item"><span class="po-link-dot"></span>نحوه ایجاد سرطان</a>
-          <a href="cancergenes.html" class="po-link-item"><span class="po-link-dot"></span>ژن‌های دخیل در سرطان</a>
-          <a href="riskfactors.html" class="po-link-item"><span class="po-link-dot"></span>عوامل خطر در بروز سرطان</a>
-          <a href="AYAcancer.html" class="po-link-item"><span class="po-link-dot"></span>نوجوانان و جوانان مبتلا به سرطان</a>
+          <a href="carcinogenesis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نحوه ایجاد سرطان') ?></a>
+          <a href="cancergenes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('ژن‌های دخیل در سرطان') ?></a>
+          <a href="riskfactors.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('عوامل خطر در بروز سرطان') ?></a>
+          <a href="AYAcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نوجوانان و جوانان مبتلا به سرطان') ?></a>
         </div>
       </div>
 
@@ -40,12 +41,12 @@
         <div class="po-link-icon">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h3 class="po-link-title">تشخیص، پیشرفت و گسترش سرطان</h3>
+        <h3 class="po-link-title"><?= site_e('تشخیص، پیشرفت و گسترش سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="diagnosis.html" class="po-link-item"><span class="po-link-dot"></span>تشخیص و مرحله‌بندی</a>
-          <a href="metastasis.html" class="po-link-item"><span class="po-link-dot"></span>متاستاز سرطان</a>
-          <a href="cancerspread.html" class="po-link-item"><span class="po-link-dot"></span>محل و نحوه گسترش سرطان</a>
-          <a href="cancertypes.html" class="po-link-item"><span class="po-link-dot"></span>انواع سرطان</a>
+          <a href="diagnosis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تشخیص و مرحله‌بندی') ?></a>
+          <a href="metastasis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('متاستاز سرطان') ?></a>
+          <a href="cancerspread.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('محل و نحوه گسترش سرطان') ?></a>
+          <a href="cancertypes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('انواع سرطان') ?></a>
         </div>
       </div>
     </div>
@@ -60,20 +61,20 @@
 
     <div class="po-header wow fadeInUp">
       <span class="po-header-accent"></span>
-      <h2 class="po-heading">مراقبت‌های حمایتی و تسکینی</h2>
-      <p class="po-desc">مدیریت احساسات و چالش‌های روانی ناشی از بیماری سرطان</p>
+      <h2 class="po-heading"><?= site_e('مراقبت‌های حمایتی و تسکینی') ?></h2>
+      <p class="po-desc"><?= site_e('مدیریت احساسات و چالش‌های روانی ناشی از بیماری سرطان') ?></p>
     </div>
 
     <div class="po-grid">
       <a href="fear.html" class="po-card-link">
         <div class="po-card wow fadeInUp">
           <div class="po-card-img">
-            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="مدیریت ترس از عوارض جانبی">
-            <span class="po-badge">ترس</span>
+            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
+            <span class="po-badge"><?= site_e('ترس') ?></span>
           </div>
           <div class="po-card-body">
-            <h3 class="po-card-title">مدیریت ترس از عوارض جانبی ناشی از درمان سرطان</h3>
-            <span class="po-card-cta">مطالعه بیشتر <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
+            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
         </div>
       </a>
@@ -81,12 +82,12 @@
       <a href="stress.html" class="po-card-link">
         <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
           <div class="po-card-img">
-            <img src="/dashboard/components/socialworkcare/images/1.png" alt="مدیریت استرس">
-            <span class="po-badge">استرس</span>
+            <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
+            <span class="po-badge"><?= site_e('استرس') ?></span>
           </div>
           <div class="po-card-body">
-            <h3 class="po-card-title">مدیریت استرس ناشی از روند بیماری</h3>
-            <span class="po-card-cta">مطالعه بیشتر <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
+            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
         </div>
       </a>
@@ -94,12 +95,12 @@
       <a href="anger.html" class="po-card-link">
         <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
           <div class="po-card-img">
-            <img src="/dashboard/components/spritualcare/images/1.png" alt="مدیریت خشم">
-            <span class="po-badge">خشم</span>
+            <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
+            <span class="po-badge"><?= site_e('خشم') ?></span>
           </div>
           <div class="po-card-body">
-            <h3 class="po-card-title">مدیریت و مدارا با خشم</h3>
-            <span class="po-card-cta">مطالعه بیشتر <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
+            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
         </div>
       </a>
@@ -115,24 +116,23 @@
 
     <div class="po-header wow fadeInUp">
       <span class="po-header-accent"></span>
-      <h2 class="po-heading">مراقبت جامع و همه‌جانبه</h2>
-      <p class="po-desc">بیماری سرطان فقط یک بیماری جسمی نیست، مراقبت واقعی شامل ذهن، روح و زندگی روزمره بیمار و خانواده‌اش است</p>
+      <h2 class="po-heading"><?= site_e('مراقبت جامع و همه‌جانبه') ?></h2>
+      <p class="po-desc"><?= site_e('بیماری سرطان فقط یک بیماری جسمی نیست، مراقبت واقعی شامل ذهن، روح و زندگی روزمره بیمار و خانواده‌اش است') ?></p>
     </div>
 
     <div class="po-feature wow fadeInUp" data-wow-delay="0.2s">
       <div class="po-feature-text">
-        <h3 class="po-feature-title">چرا مراقبت‌های حمایتی و تسکینی مهم هستند؟</h3>
+        <h3 class="po-feature-title"><?= site_e('چرا مراقبت‌های حمایتی و تسکینی مهم هستند؟') ?></h3>
         <p>
-          مراقبت‌های حمایتی و تسکینی بر بهبود کیفیت زندگی بیماران مبتلا به سرطان و خانواده‌هایشان تمرکز دارد.
-          این مراقبت‌ها شامل مدیریت درد و علائم فیزیکی، حمایت روانی، مشاوره اجتماعی و کمک در تصمیم‌گیری‌های درمانی است.
+          <?= site_e('مراقبت‌های حمایتی و تسکینی بر بهبود کیفیت زندگی بیماران مبتلا به سرطان و خانواده‌هایشان تمرکز دارد. این مراقبت‌ها شامل مدیریت درد و علائم فیزیکی، حمایت روانی، مشاوره اجتماعی و کمک در تصمیم‌گیری‌های درمانی است.') ?>
         </p>
         <a href="socialcare.html" class="po-feature-btn">
-          آشنایی با خدمات
+          <?= site_e('آشنایی با خدمات') ?>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>
       <div class="po-feature-img">
-        <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="مراقبت حمایتی و تسکینی">
+        <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="<?= site_e('مراقبت حمایتی و تسکینی') ?>">
       </div>
     </div>
 
@@ -153,8 +153,8 @@
   --po-radius: 22px;
 
   padding: 40px 20px;
-  direction: rtl;
-  text-align: right;
+  direction: var(--site-direction, rtl);
+  text-align: start;
   font-family: 'Vazirmatn', Tahoma, sans-serif;
   background: var(--po-bg);
 }

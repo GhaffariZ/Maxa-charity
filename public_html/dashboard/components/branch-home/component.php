@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!-- ============================================================================
      کامپوننت «صفحه‌ی اصلیِ شعبه» — طراحیِ اختصاصی و منطبق با برندِ مکسا
      ----------------------------------------------------------------------------
@@ -26,7 +27,7 @@
     --shadow-md:0 10px 24px rgba(16,40,40,.07),0 4px 10px rgba(16,40,40,.05);
     --ease:cubic-bezier(.2,.8,.2,1);
     font-family:'Vazirmatn',Tahoma,sans-serif;
-    direction:rtl; color:var(--text); background:var(--surface);
+    direction:var(--site-direction, rtl); color:var(--text); background:var(--surface);
   }
   .bh *{box-sizing:border-box}
   .bh-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
@@ -46,7 +47,7 @@
       linear-gradient(to left,rgba(0,40,40,.62),rgba(0,40,40,.30) 55%,rgba(0,40,40,.14)),
       radial-gradient(circle at 14% 28%,rgba(0,0,0,.10),transparent 55%);z-index:0}
   .bh-hero-inner{position:relative;z-index:5;width:100%;padding:140px 0 90px}
-  .bh-hero-text{width:min(580px,100%);color:#fff;text-align:right}
+  .bh-hero-text{width:min(580px,100%);color:#fff;text-align:start}
   .bh-kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
       color:#fff;background:rgba(250, 166, 26,.92);padding:6px 14px;border-radius:999px;margin-bottom:16px}
   .bh-hero-title{font-size:42px;line-height:1.18;margin:0 0 14px;font-weight:800;text-shadow:0 10px 18px rgba(0,0,0,.22)}
@@ -246,25 +247,25 @@
   <!-- HERO -->
   <section class="bh-hero" id="bh-hero">
     <div class="bh-hero-slides"><div class="bh-hero-track" id="bh-hero-track"></div></div>
-    <button class="bh-arrow prev" id="bh-prev" aria-label="قبلی" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-    <button class="bh-arrow next" id="bh-next" aria-label="بعدی" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="bh-arrow prev" id="bh-prev" aria-label="<?= site_e('قبلی') ?>" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="bh-arrow next" id="bh-next" aria-label="<?= site_e('بعدی') ?>" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="bh-dots" id="bh-dots"></div>
   </section>
 
   <!-- BRANCH IDENTITY BAR (portfolio-style) -->
   <section class="bh-id">
     <div class="bh-wrap bh-id-inner">
-      <div class="bh-id-badge" id="bh-id-badge" role="img" aria-label="نماد شعبه"></div>
+      <div class="bh-id-badge" id="bh-id-badge" role="img" aria-label="<?= site_e('نماد شعبه') ?>"></div>
       <div class="bh-id-main">
         <span class="bh-id-kicker">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
-          شعبه‌ای از خیریه مکسا
+          <?= site_e('شعبه‌ای از خیریه مکسا') ?>
         </span>
-        <h2 class="bh-id-name" id="bh-id-name">شعبه‌ی مکسا</h2>
-        <p class="bh-id-sub">به صفحه‌ی این شعبه از مؤسسه‌ی نیکوکاری مکسا خوش آمدید؛ این‌جا کمپین‌ها، اخبار و دوره‌های همین شعبه را دنبال می‌کنید.</p>
+        <h2 class="bh-id-name" id="bh-id-name"><?= site_e('شعبه‌ی مکسا') ?></h2>
+        <p class="bh-id-sub"><?= site_e('به صفحه‌ی این شعبه از مؤسسه‌ی نیکوکاری مکسا خوش آمدید؛ این‌جا کمپین‌ها، اخبار و دوره‌های همین شعبه را دنبال می‌کنید.') ?></p>
         <div class="bh-id-line">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z"/></svg>
-          <span id="bh-id-tagline">در خدمت مردم، در کنار شما</span>
+          <span id="bh-id-tagline"><?= site_e('در خدمت مردم، در کنار شما') ?></span>
           <span class="bh-id-rule"></span>
         </div>
       </div>
@@ -276,7 +277,7 @@
             <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
             <path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
           </svg>
-          <span>معرفی شعبه</span>
+          <span><?= site_e('معرفی شعبه') ?></span>
           <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
           </svg>
@@ -294,7 +295,7 @@
     <!-- NEWS -->
     <section class="bh-sec" id="bh-news">
       <div class="bh-wrap">
-        <div class="bh-head"><h2>آخرین اخبار شعبه</h2></div>
+        <div class="bh-head"><h2><?= site_e('آخرین اخبار شعبه') ?></h2></div>
         <div class="bh-news-grid" id="bh-news-grid"></div>
       </div>
     </section>
@@ -302,7 +303,7 @@
     <!-- CAMPAIGNS -->
     <section class="bh-sec" id="bh-campaigns">
       <div class="bh-wrap">
-        <div class="bh-head"><h2>کمپین‌های شعبه</h2></div>
+        <div class="bh-head"><h2><?= site_e('کمپین‌های شعبه') ?></h2></div>
         <div class="bh-grid" id="bh-campaigns-grid"></div>
       </div>
     </section>
@@ -310,7 +311,7 @@
     <!-- COURSES -->
     <section class="bh-sec" id="bh-courses">
       <div class="bh-wrap">
-        <div class="bh-head"><h2>دوره‌های شعبه</h2></div>
+        <div class="bh-head"><h2><?= site_e('دوره‌های شعبه') ?></h2></div>
         <div class="bh-courses-grid" id="bh-courses-grid"></div>
       </div>
     </section>
@@ -338,25 +339,25 @@
     var key=(String(slug||'')+' '+String(name||'')).toLowerCase();
     var open='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
     var close='</svg>';
-    if(key.indexOf('tehran')>-1||key.indexOf('تهران')>-1){
+    if(key.indexOf('tehran')>-1||key.indexOf(<?= site_js_text('تهران') ?>)>-1){
       return open+'<path d="M9 41h30M15 41l5-31h8l5 31M18 25h12M16.5 33h15"/><path d="M20 41c0-7 8-7 8 0M21 10l3-5 3 5"/>'+close;
     }
-    if(key.indexOf('esfahan')>-1||key.indexOf('isfahan')>-1||key.indexOf('اصفهان')>-1){
+    if(key.indexOf('esfahan')>-1||key.indexOf('isfahan')>-1||key.indexOf(<?= site_js_text('اصفهان') ?>)>-1){
       return open+'<path d="M5 36h38M7 17h34v19M7 22h34"/><path d="M10 36v-6a4 4 0 0 1 8 0v6M20 36v-6a4 4 0 0 1 8 0v6M30 36v-6a4 4 0 0 1 8 0v6M9 13h30M12 9h24"/><path d="M7 41c5-3 10 3 15 0s10 3 19 0"/>'+close;
     }
-    if(key.indexOf('kashan')>-1||key.indexOf('کاشان')>-1){
+    if(key.indexOf('kashan')>-1||key.indexOf(<?= site_js_text('کاشان') ?>)>-1){
       return open+'<path d="M7 41h34M11 41V24l7-5 6 5 6-5 7 5v17"/><path d="M19 19V8h10v11M22 8V4M26 8V4M20 13h8M16 41v-8a3 3 0 0 1 6 0v8M26 41v-8a3 3 0 0 1 6 0v8"/>'+close;
     }
-    if(key.indexOf('mashhad')>-1||key.indexOf('مشهد')>-1){
+    if(key.indexOf('mashhad')>-1||key.indexOf(<?= site_js_text('مشهد') ?>)>-1){
       return open+'<path d="M7 41h34M13 41V19M35 41V19M10 19h6M32 19h6M12 15h4M34 15h4"/><path d="M17 41V27c0-7 14-7 14 0v14M18 27h12M24 17v-6M21 11h6M14 11v4M36 11v4"/>'+close;
     }
-    if(key.indexOf('ahvaz')>-1||key.indexOf('اهواز')>-1){
+    if(key.indexOf('ahvaz')>-1||key.indexOf(<?= site_js_text('اهواز') ?>)>-1){
       return open+'<path d="M5 36h38M9 36V17M39 36V17M9 18l15 18 15-18M9 18h30M15 25h18M5 42c6-3 10 3 16 0s11 3 22 0"/><path d="M24 36V15"/>'+close;
     }
-    if(key.indexOf('tabriz')>-1||key.indexOf('تبریز')>-1){
+    if(key.indexOf('tabriz')>-1||key.indexOf(<?= site_js_text('تبریز') ?>)>-1){
       return open+'<path d="M8 41h32M12 41V10h24v31M17 41V26c0-10 14-10 14 0v15M16 15h16M12 8h24"/><path d="M18 20h12"/>'+close;
     }
-    if(key.indexOf('qom')>-1||key.indexOf('قم')>-1){
+    if(key.indexOf('qom')>-1||key.indexOf(<?= site_js_text('قم') ?>)>-1){
       return open+'<path d="M6 41h36M10 41V17M38 41V17M8 17h4M36 17h4M10 12v5M38 12v5"/><path d="M17 41V28c0-8 14-8 14 0v13M18 28h12M24 18v-6M21 12h6"/><path d="M15 35h18"/>'+close;
     }
     return open+'<path d="M6 42h36M10 42V15l14-8 14 8v27M17 20h4M27 20h4M17 27h4M27 27h4M21 42v-8h6v8"/>'+close;
@@ -377,7 +378,7 @@
 
   /* ---- BRANCH IDENTITY BAR ---- */
   (function(){
-    var nm=NAME||'مکسا';
+    var nm=NAME||<?= site_js_text('مکسا') ?>;
     var nameEl=document.getElementById('bh-id-name');
     if(nameEl) nameEl.textContent='شعبه‌ی '+nm;
     var badge=document.getElementById('bh-id-badge');
@@ -395,7 +396,7 @@
     var track=document.getElementById('bh-hero-track');
     var dots=document.getElementById('bh-dots');
     var prev=document.getElementById('bh-prev'), next=document.getElementById('bh-next');
-    var kickerName=NAME?('شعبه‌ی '+NAME):'شعبه‌ی مکسا';
+    var kickerName=NAME?('شعبه‌ی '+NAME):<?= site_js_text('شعبه‌ی مکسا') ?>;
     jget('/dashboard/hero-list.php'+Q).then(function(d){
       var items=(d&&d.data)||[];
       if(!items.length){
@@ -433,19 +434,19 @@
   jget('/dashboard/recent-news-feed.php?limit=3'+QA).then(function(d){
     var items=(d&&d.items)||[]; var grid=document.getElementById('bh-news-grid');
     grid.className='bh-grid';   // برای حالتِ خالی، گریدِ معمولی تا «به‌زودی» تمام‌عرض شود
-    if(!items.length){grid.innerHTML=soon('هنوز خبری برای این شعبه منتشر نشده است.');return;}
+    if(!items.length){grid.innerHTML=soon(<?= site_js_text('هنوز خبری برای این شعبه منتشر نشده است.') ?>);return;}
     grid.className='bh-news-grid';
     var first=items[0], rest=items.slice(1);
     var main='<a class="bh-news-main" href="'+esc(first.url||'#')+'" target="_top">'
       +'<img src="'+esc(first.image||ph)+'" alt="" onerror="this.src=\''+ph+'\'">'
-      +'<div class="bh-news-main-c"><span class="bh-news-badge">'+esc(first.category||'اخبار')+'</span>'
+      +'<div class="bh-news-main-c"><span class="bh-news-badge">'+esc(first.category||<?= site_js_text('اخبار') ?>)+'</span>'
       +'<h3>'+esc(first.title||'')+'</h3>'
       +'<div class="bh-meta"><span>'+fa(first.date||'')+'</span><span>•</span><span>'+fa(first.read_time||1)+' دقیقه مطالعه</span></div>'
       +'</div></a>';
     var side='<div class="bh-news-side">'+rest.map(function(n){
       return '<a class="bh-news-card" href="'+esc(n.url||'#')+'" target="_top">'
         +'<div class="bh-news-thumb"><img src="'+esc(n.image||ph)+'" alt="" onerror="this.src=\''+ph+'\'"></div>'
-        +'<div class="bh-news-cbody"><span class="bh-cat">'+esc(n.category||'اخبار')+'</span>'
+        +'<div class="bh-news-cbody"><span class="bh-cat">'+esc(n.category||<?= site_js_text('اخبار') ?>)+'</span>'
         +'<h4>'+esc(cut(n.title||'',70))+'</h4><time>'+fa(n.date||'')+'</time></div></a>';
     }).join('')+'</div>';
     grid.innerHTML=main+side;
@@ -454,7 +455,7 @@
   /* ---- CAMPAIGNS ---- */
   jget('/dashboard/campaign-list.php'+Q).then(function(d){
     var items=(d&&d.data)||[]; var grid=document.getElementById('bh-campaigns-grid');
-    if(!items.length){grid.innerHTML=soon('هنوز کمپینی برای این شعبه تعریف نشده است.');return;}
+    if(!items.length){grid.innerHTML=soon(<?= site_js_text('هنوز کمپینی برای این شعبه تعریف نشده است.') ?>);return;}
     grid.innerHTML=items.slice(0,3).map(function(c,index){
       var tgt=parseFloat(c.target_amount)||0, col=parseFloat(c.collected_amount)||0;
       var pct=tgt>0?Math.min(100,Math.round(col/tgt*100)):0;
@@ -481,18 +482,18 @@
   /* ---- COURSES (minimal compact cards) ---- */
   jget('/dashboard/branch-courses-feed.php?limit=8'+QA).then(function(d){
     var items=(d&&d.items)||[]; var grid=document.getElementById('bh-courses-grid');
-    if(!items.length){grid.className='bh-grid';grid.innerHTML=soon('هنوز دوره‌ای برای این شعبه منتشر نشده است.');return;}
+    if(!items.length){grid.className='bh-grid';grid.innerHTML=soon(<?= site_js_text('هنوز دوره‌ای برای این شعبه منتشر نشده است.') ?>);return;}
     grid.innerHTML=items.map(function(c){
       var img=c.image||ph;
-      var price=c.is_free?'<b class="free">رایگان</b>':(c.discount>0?('<b>'+money(c.discount)+' ت</b>'):('<b>'+money(c.price)+' ت</b>'));
+      var price=c.is_free?<?= site_js_text('<b class="free">رایگان</b>') ?>:(c.discount>0?('<b>'+money(c.discount)+' ت</b>'):('<b>'+money(c.price)+' ت</b>'));
       return '<a class="bh-ccard" href="'+esc(c.url||'#')+'" target="_top">'
         +'<div class="bh-ccard-thumb"><img src="'+esc(img)+'" alt="" onerror="this.src=\''+ph+'\'">'
-        +'<span class="bh-ccard-cat">'+esc(c.category||'عمومی')+'</span></div>'
+        +'<span class="bh-ccard-cat">'+esc(c.category||<?= site_js_text('عمومی') ?>)+'</span></div>'
         +'<div class="bh-ccard-body">'
         +'<h3>'+esc(c.title||'')+'</h3>'
-        +'<div class="bh-ccard-inst">'+esc(c.instructor||'مدرس مکسا')+'</div>'
+        +'<div class="bh-ccard-inst">'+esc(c.instructor||<?= site_js_text('مدرس مکسا') ?>)+'</div>'
         +'<div class="bh-ccard-foot"><span class="bh-ccard-price">'+price+'</span>'
-        +'<span class="bh-ccard-meta">'+(c.lessons?(fa(c.lessons)+' درس'):'مشاهده ‹')+'</span></div>'
+        +'<span class="bh-ccard-meta">'+(c.lessons?(fa(c.lessons)+' درس'):<?= site_js_text('مشاهده ‹') ?>)+'</span></div>'
         +'</div></a>';
     }).join('');
   });

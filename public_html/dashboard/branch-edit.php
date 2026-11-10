@@ -17,12 +17,6 @@ if (!dash_is_super()) {
 }
 dash_require_hq();
 
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'events' => 'رویدادها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
-    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی', 'stands' => 'استندها و سفارشات',
-];
-
 $branchId = (int)($_GET['id'] ?? ($_POST['branch_id'] ?? 0));
 $branch   = dash_load_branch($branchId);
 if (!$branch) {
@@ -30,6 +24,7 @@ if (!$branch) {
     exit('۴۰۴ | شعبه یافت نشد.');
 }
 $isHq = (int)$branch['is_hq'] === 1;
+$FEATURE_LABELS = dash_feature_labels($isHq);
 
 // مدیرِ فعلیِ شعبه (در HQ ممکن است نباشد)
 $adminRow = null;
@@ -91,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city      = trim((string)($_POST['city'] ?? ''));
     $adminUser = trim((string)($_POST['admin_user'] ?? ''));
     $adminPass = (string)($_POST['admin_pass'] ?? '');
-    $features  = array_values(array_intersect((array)($_POST['features'] ?? []), DASH_FEATURES));
+    $features  = array_values(array_intersect((array)($_POST['features'] ?? []), array_keys($FEATURE_LABELS)));
     $mapX      = (isset($_POST['map_x']) && $_POST['map_x'] !== '') ? (float)$_POST['map_x'] : null;
     $mapY      = (isset($_POST['map_y']) && $_POST['map_y'] !== '') ? (float)$_POST['map_y'] : null;
     if ($mapX !== null && ($mapX < 0 || $mapX > 1156)) { $mapX = null; }
@@ -128,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($err === '') {
         try {
-            $pdo->beginTransaction();
+            content_prepare($pdo,'branches');
 
             $oldSlug = $branch['slug'];
 
@@ -143,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->exec("ALTER TABLE `branches` ADD `map_y` FLOAT NULL DEFAULT NULL AFTER `map_x`");
                 }
             } catch (Throwable $eCols) {}
+            $pdo->beginTransaction();
 
             // 1) نام + slug + استان + شهر + مختصات نقشه ایران
             if ($isHq) {
@@ -161,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // 2) قابلیت‌ها — diff (افزودن جدیدها، حذفِ برداشته‌شده‌ها؛ محتوا پاک نمی‌شود)
             $toAdd    = array_diff($features, $curFeatures);
-            $toRemove = array_diff($curFeatures, $features);
+            $toRemove = array_diff(array_intersect($curFeatures, array_keys($FEATURE_LABELS)), $features);
             if ($toAdd) {
                 $ins = $pdo->prepare('INSERT INTO branch_features (branch_id, feature, enabled) VALUES (?,?,1)
                                       ON DUPLICATE KEY UPDATE enabled = 1');
@@ -197,6 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // 4) صفحه‌ی home شعبه: عنوان را با نام جدید همگام کن (slug ثابت می‌ماند: 'home')
             $pdo->prepare("UPDATE pages SET title = ? WHERE branch_id = ? AND slug = 'home'")->execute([$name, $branchId]);
 
+            content_save($pdo,'branches',(string)$branchId);
             $pdo->commit();
 
             // 5) تغییرِ نامِ پوشه‌ی فایل‌های شعبه در صورت تغییر slug (نام فقط از slug تأییدشده)
@@ -244,7 +241,7 @@ require __DIR__ . '/_panel_head.php';
   <?php if ($err): ?><div class="msg err"><?= e($err) ?></div><?php endif; ?>
   <?php if ($ok && !$passChanged): ?><div class="msg ok"><?= e($ok) ?></div><?php endif; ?>
 
-  <form method="POST" autocomplete="off">
+  <form id="branchContentForm" method="POST" autocomplete="off">
     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
     <input type="hidden" name="branch_id" value="<?= (int)$branchId ?>">
 
@@ -420,4 +417,5 @@ require __DIR__ . '/_panel_head.php';
     });
   })();
 </script>
-</div></body></html>
+</div><?php content_editor('branches',(string)$branchId,'#branchContentForm'); ?>
+</body></html>

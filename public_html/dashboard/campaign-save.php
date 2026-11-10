@@ -112,6 +112,7 @@ try {
         throw new Exception("Title and target amount are required.");
     }
     csrf_check();
+    content_prepare($pdo,'campaigns');
     $title = trim((string)$_POST['title']);
     $description = isset($_POST['description']) ? HtmlSanitizer::sanitize($_POST['description']) : '';
     $targetAmountToman = filter_var($_POST['target_amount'], FILTER_VALIDATE_INT);
@@ -122,11 +123,17 @@ try {
     $category = isset($_POST['category']) ? $_POST['category'] : 'food';
     if (!in_array($category, $allowed_categories, true)) $category = 'food';
 
-    $branch = dash_load_branch(dash_active_branch_id());
+    $branch = content_campaign_branch($pdo,(string)($_POST['branch_slug']??''));
     if (!$branch) {
         throw new Exception('مرکز فعال یافت نشد.');
     }
     $client = new CampaignServiceClient((string)$branch['slug']);
+    $editId=trim((string)($_POST['id']??''));
+    $ownedCampaign=[];
+    if($editId!==''){
+        $owned=false;foreach($client->managementCampaigns() as $item)if((string)($item['id']??'')===$editId){$owned=true;$ownedCampaign=$item;break;}
+        if(!$owned)throw new RuntimeException('کمپین در این مرکز یافت نشد.');
+    }
     $imageFileId = null;
 
     if (!empty($_FILES['featured_image']['name'])) {
@@ -197,12 +204,18 @@ try {
     if ($imageFileId !== null) {
         $payload['image_file_id'] = $imageFileId;
     }
-    $created = $client->createCampaign($payload);
-    dash_audit('campaign_created', [
+    if($editId!==''){
+        foreach(['starts_at','ends_at','status','manual_raised_amount','participation_type'] as $key)unset($payload[$key]);
+        $created=$client->updateCampaign($editId,$payload);$created['id']=$editId;
+    }else $created = $client->createCampaign($payload);
+    $source=campaign_service_present(array_merge($ownedCampaign,['title'=>$title,'description'=>$description],$created),$branch);
+    if(empty($source['image_url']))$source['image_url']=$imageFileId!==null?($uploaded['url']??$uploaded['public_url']??''):($ownedCampaign['image_url']??'');
+    content_save($pdo,'campaigns',(string)$created['id'],null,$source);
+    dash_audit($editId!==''?'campaign_updated':'campaign_created', [
         'campaign_id' => $created['id'] ?? null,
         'center' => $branch['slug'],
     ]);
-    echo json_encode(["status" => "success", "message" => "Campaign created successfully", "id" => $created['id'] ?? null], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["status" => "success", "message" => "محتوای کمپین و زبان‌های انتشار ذخیره شد.", "id" => $created['id'] ?? null], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code($e instanceof CampaignServiceException && $e->status >= 400 && $e->status < 500 ? 422 : 502);
     echo json_encode(["status" => "error", "message" => $e->getMessage()], JSON_UNESCAPED_UNICODE);

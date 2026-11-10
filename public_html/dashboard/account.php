@@ -83,9 +83,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .ac-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
 .ac-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
+  background:var(--color-primary-dark);box-shadow:none}
 .ac-head-ic svg{width:27px;height:27px}
-.ac-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.ac-head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .ac-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 
 /* کارت پروفایل — سطحِ معمولی با لهجه‌ی طلایی (بدون بخش سبز) */
@@ -94,11 +94,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .ac-profile::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,#ffc24d,var(--color-secondary),#e08e12)}
 .ac-profile::after{content:'';position:absolute;inset-inline-end:-40px;top:-60px;width:190px;height:190px;border-radius:50%;
   background:radial-gradient(circle,var(--secondary-12),transparent 70%);pointer-events:none}
-.ac-avatar{width:78px;height:78px;border-radius:22px;flex-shrink:0;display:grid;place-items:center;font-size:28px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 26px -10px rgba(0, 143, 138,.6);position:relative;z-index:1}
+.ac-avatar{width:78px;height:78px;border-radius:22px;flex-shrink:0;display:grid;place-items:center;font-size:28px;font-weight:600;color:#fff;
+  background:var(--color-primary-dark);box-shadow:none;position:relative;z-index:1}
 .ac-profile-info{position:relative;z-index:1;min-width:0}
-.ac-profile-info h2{font-size:20px;font-weight:800;letter-spacing:-.01em}
-.ac-role{display:inline-block;font-size:12px;font-weight:800;color:var(--color-secondary-dark);background:var(--secondary-12);
+.ac-profile-info h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.ac-role{display:inline-block;font-size:12px;font-weight:600;color:var(--color-secondary-dark);background:var(--secondary-12);
   padding:5px 13px;border-radius:99px;margin-top:7px}
 .ac-mail{font-size:13px;color:var(--color-muted);margin-top:9px;direction:ltr;text-align:right;font-weight:600}
 
@@ -110,14 +110,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .ac-card-ic.teal{background:var(--primary-08);color:var(--color-primary)}
 .ac-card-ic.red{background:var(--danger-12);color:var(--danger)}
 .ac-card-ic svg{width:19px;height:19px}
-.ac-card-head h3{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.ac-card-head h3{font-size:16px;font-weight:600;letter-spacing:-.01em}
 .ac-card-head span{font-size:12px;color:var(--color-muted);display:block;margin-top:2px}
 
 /* فرم‌ها (ویرایشِ درون‌صفحه‌ای) */
 .ac-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ac-col-2{grid-column:1 / -1}
 .ac-field{display:flex;flex-direction:column;gap:7px;min-width:0}
-.ac-field label{font-size:12.5px;font-weight:700;color:var(--color-text)}
+.ac-field label{font-size:12.5px;font-weight:600;color:var(--color-text)}
 .ac-field input{font-family:inherit;font-size:13.5px;color:var(--color-text);background:var(--color-bg);
   border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
 .ac-field input:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
@@ -128,14 +128,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .ac-foot{display:flex;justify-content:flex-end;margin-top:18px}
 
-.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:600;font-size:14px;border:none;cursor:pointer;
   padding:12px 24px;border-radius:13px;transition:transform .15s var(--ease),box-shadow .25s,filter .2s;text-decoration:none}
 .btn svg{width:18px;height:18px}
 .btn:active{transform:scale(.97)}
 .btn-gold{color:#5c3d00;background:linear-gradient(135deg,#ffc24d,var(--color-secondary));box-shadow:0 10px 24px -10px rgba(250, 166, 26,.75)}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(250, 166, 26,.9)}
-.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 24px -10px rgba(0, 143, 138,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
+.btn-primary{color:#fff;background:var(--color-primary-dark);box-shadow:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:none}
 .btn-danger{color:var(--danger);background:var(--danger-12)}
 .btn-danger:hover{filter:brightness(.97)}
 
@@ -150,6 +150,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   .ac-head h1{font-size:19px}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../core/content-locales.php';
 /* ============================================================================
  *  فید عمومیِ کمپین‌های مالی از Campaign Service.
  *  ایزولاسیون: با ?branch=<slug> مرکز همان شعبه؛ بدون آن، ستاد مرکزی (hq).
@@ -15,6 +16,12 @@ try {
     );
 
     require_once __DIR__ . '/../core/campaign-service.php';
+    if(content_language()!=='fa'){
+        $has=content_ready($pdo)?$pdo->prepare("SELECT 1 FROM public_content_locales WHERE content_type='campaigns' AND locale=? AND enabled=1 LIMIT 1"):null;
+        if($has)$has->execute([content_language()]);
+        if(!$has||!$has->fetchColumn()){echo json_encode(['status'=>'empty','data'=>[]]);exit;}
+    }
+
 
     // تعیین شعبه از روی slug (وگرنه HQ)
     $slug = isset($_GET['branch']) ? trim(strtolower((string)$_GET['branch'])) : '';
@@ -34,12 +41,14 @@ try {
         throw new RuntimeException('مرکز انتخاب‌شده یافت نشد.');
     }
 
+    $branch=content_branch_context($pdo,$branch);
     $remote = (new CampaignServiceClient((string)$branch['slug']))->publicCampaigns();
     $campaigns = array_values(array_filter(array_map(
         static fn(array $campaign): array => campaign_service_present($campaign, $branch),
         $remote
     ), static fn(array $campaign): bool => (int)$campaign['is_active'] === 1));
 
+    $campaigns=content_rows($pdo,'campaigns',$campaigns);
     if (count($campaigns) > 0) {
         echo json_encode(["status" => "success", "data" => $campaigns], JSON_UNESCAPED_UNICODE);
     } else {

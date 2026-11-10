@@ -1,6 +1,24 @@
-<!-- Standalone pages also use this fragment without a document head. -->
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<?php
+require_once __DIR__ . '/../../../core/site-locale.php';
+// اگر هدر در صفحه‌ای خارج از page-view (صفحات مستقل مثل branches.php, news.php, macsapedia.php و...)
+// فراخوانی شده باشد، تگ‌های استاندارد سند HTML5، جهت راست‌به‌چپ (dir="rtl") و متاتگ‌های ضروری را خروجی می‌دهیم.
+// در صفحات تحت مدیریت page-view، این تگ‌ها از قبل چاپ شده و با define('MAXA_PAGE_VIEW_ACTIVE', true) مشخص هستند.
+$__isStandaloneHeader = !defined('MAXA_PAGE_VIEW_ACTIVE') && !defined('MAXA_HTML_SHELL_OPENED');
+if ($__isStandaloneHeader) {
+    define('MAXA_HTML_SHELL_OPENED', true);
+}
+?>
+<?php if ($__isStandaloneHeader): ?>
+<!DOCTYPE html>
+<html lang="fa" dir="<?= site_direction() ?>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= htmlspecialchars($pageTitle ?? 'مکسا — مؤسسه نیکوکاری کنترل سرطان') ?></title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="preload" href="/webfont/Vazirmatn[wght].woff2" as="font" type="font/woff2" crossorigin>
+<?php endif; ?>
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -11,9 +29,21 @@
     font-style: normal;
     font-display: swap;
   } 
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    direction: var(--site-direction, rtl);
+    text-align: start;
+  }
   body {
     font-family: 'Vazirmatn', sans-serif !important;
-    overflow-x: hidden;
+    color: #111;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
   }
     :root{
       --cta-orange:#faa61a;
@@ -31,8 +61,9 @@
 
     .cta {
       font-family: inherit;
-      direction: rtl;
       position: relative;
+      direction: var(--site-direction, rtl);
+      text-align: start;
     }
     .cta a{ color:inherit; text-decoration:none; }
     .cta button, .cta input{ font-family: inherit; }
@@ -57,6 +88,8 @@
       background: var(--cta-orange);
       box-shadow: 0 4px 24px -2px rgba(0,0,0,0.14);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), top 0.3s ease, height 0.3s ease;
+      direction: var(--site-direction, rtl);
+      text-align: start;
     }
 
     /* Detached look when scrolled */
@@ -84,6 +117,7 @@
       padding: 0 16px;
       height: 100%;
       width: 100%;
+      direction: var(--site-direction, rtl);
     }
 
     /* راست: لوگو با صفحه شیشه‌ای مات که از زیر قسمت زرد هدر بیرون زده */
@@ -200,6 +234,7 @@
       gap: 6px;
       white-space: nowrap;
       flex-wrap: nowrap;
+      direction: var(--site-direction, rtl);
     }
 
     .cta-menu > li{
@@ -335,8 +370,8 @@
         0 20px 40px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
       z-index: 9999;
-      direction: rtl;
-      text-align: right;
+      direction: var(--site-direction, rtl);
+      text-align: start;
       border-radius: 16px;
       overflow: hidden;
       box-sizing: border-box;
@@ -488,7 +523,7 @@
       touch-action: pan-y;
       visibility: hidden;
       transition: right 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s;
-      direction: rtl;
+      direction: var(--site-direction, rtl);
     }
 
     .mobile-menu-sidebar.open {
@@ -1008,7 +1043,7 @@
       box-shadow:0 20px 40px rgba(0,0,0,.45);padding:8px;
       opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top left;
       transition:opacity .2s,transform .22s cubic-bezier(.16,1,.3,1),visibility .2s;
-      z-index:100001;direction:rtl;text-align:right;
+      z-index:100001;direction:var(--site-direction, rtl);text-align:start;
       max-width: calc(100vw - 20px);
     }
 
@@ -1027,9 +1062,9 @@
     .cta-account-head strong{display:block;color:#fff;font-size:13.5px;font-weight:800;
       max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .cta-account-head span{display:block;color:rgba(255,255,255,.6);font-size:11.5px;
-      max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+      max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:start}
     .cta-account-menu a,.cta-account-menu button{
-      display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+      display:flex;align-items:center;gap:10px;width:100%;text-align:start;
       padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.9);font-size:13px;font-weight:600;
       background:none;border:none;cursor:pointer;transition:background .18s,color .18s;font-family:inherit;text-decoration:none;
     }
@@ -1040,157 +1075,160 @@
     [hidden]{display:none !important}
   </style>
 
+<?php if ($__isStandaloneHeader): ?>
+</head>
+<body class="maxa-standalone-page">
+<?php endif; ?>
 
-  <div class="cta" dir="rtl">
 
-    <div class="cta-topbar">
+
+  <div class="cta" dir="<?= site_direction() ?>">
+
+    <div class="cta-topbar" data-site-nav data-nav-mode="compact" data-submenu-label="<?= site_e('زیرمنو') ?>">
       <div class="cta-container cta-header">
 
         <div class="cta-right">
           <div class="cta-glass-underlay" aria-hidden="true"></div>
           <a class="cta-brand" href="/home">
-            <img src="/dashboard/components/header/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="182" height="52" decoding="async">
+            <img src="/dashboard/components/header/images/1.png" alt="<?= site_e('مکسا - مؤسسه نیکوکاری کنترل سرطان') ?>" width="182" height="52" decoding="async">
           </a>
         </div>
 
         <!-- منوی افقی + مگا منو -->
         <div class="cta-center">
-          <nav class="cta-navbox" aria-label="منوی بالا">
+          <nav class="cta-navbox" aria-label="<?= site_e('منوی بالا') ?>">
             <ul class="cta-menu" id="menu">
 
               <li>
-                <a href="/home">خانه</a>
+                <a href="/home"><?= site_e('خانه') ?></a>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/history">آشنایی با مکسا</a>
+                <a class="mega-toggle" href="/history"><?= site_e('آشنایی با مکسا') ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <div class="mega-col-title">معرفی</div>
-                      <a href="/history">تاریخچه و نحوه تاسیس</a>
-                      <a href="/mission-vision">ماموریت و چشم انداز</a>
-                      <a href="/association">اساسنامه</a>
-                      <a href="/organizationalchart">چارت سازمانی</a>
-                      <a href="/headdirectors">شورای عالی</a>
-                      <a href="/directors">هیئت مدیره</a>
-                      <a href="/CEOoffice">مدیرعامل</a>
-                      <a href="/network.php">شبکه همکاران</a>
+                      <div class="mega-col-title"><?= site_e('معرفی') ?></div>
+                      <a href="/history"><?= site_e('تاریخچه و نحوه تاسیس') ?></a>
+                      <a href="/mission-vision"><?= site_e('ماموریت و چشم انداز') ?></a>
+                      <a href="/association"><?= site_e('اساسنامه') ?></a>
+                      <a href="/organizationalchart"><?= site_e('چارت سازمانی') ?></a>
+                      <a href="/headdirectors"><?= site_e('شورای عالی') ?></a>
+                      <a href="/directors"><?= site_e('هیئت مدیره') ?></a>
+                      <a href="/CEOoffice"><?= site_e('مدیرعامل') ?></a>
+                      <a href="/network.php"><?= site_e('شبکه همکاران') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">مراکز تابعه مکسا</div>
-                      <a href="/cdst">مرکز رویش استعدادهای دانشجویی مکسا</a>
-                      <a href="/amoozesh_maharati.html">مرکز آموزش مهارتی مکسا</a>
+                      <div class="mega-col-title"><?= site_e('مراکز تابعه مکسا') ?></div>
+                      <a href="/cdst"><?= site_e('مرکز رویش استعدادهای دانشجویی مکسا') ?></a>
+                      <a href="/amoozesh_maharati.html"><?= site_e('مرکز آموزش مهارتی مکسا') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">گزارش‌ها</div>
-                      <a href="/image-gallery.html">گزارش‌های سالانه</a>
-                      <a href="/video-gallery.html">صورت‌های مالی</a>
+                      <div class="mega-col-title"><?= site_e('گزارش‌ها') ?></div>
+                      <a href="/annual-reports"><?= site_e('گزارش‌های سالانه') ?></a>
+                      <a href="/financial-reports"><?= site_e('صورت‌های مالی') ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/supportiveandpalliativecare">خدمات مکسا</a>
+                <a class="mega-toggle" href="/supportiveandpalliativecare"><?= site_e(site_locale() === 'en' ? 'خدمات' : 'خدمات مکسا') ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <div class="mega-col-title">مراقبت های حمایتی و تسکینی</div>
-                      <a href="/supportiveandpalliativecare">مفهوم مراقبت های حمایتی و تسکینی</a>
-                      <a href="/supportiveandpalliativecareteam">اعضای تیم حمایتی و تسکینی</a>
-                      <a href="/endoflifecare">مراقبت‌های پایان زندگی</a>
-                      <a href="/iran-situation-in-palliative">وضعیت مراقبت های حمایتی و تسکینی در ایران</a>
-                      <a href="/doctorspage">نقش کادر درمان</a>
+                      <div class="mega-col-title"><?= site_e('مراقبت های حمایتی و تسکینی') ?></div>
+                      <a href="/supportiveandpalliativecare"><?= site_e('مفهوم مراقبت های حمایتی و تسکینی') ?></a>
+                      <a href="/supportiveandpalliativecareteam"><?= site_e('اعضای تیم حمایتی و تسکینی') ?></a>
+                      <a href="/endoflifecare"><?= site_e('مراقبت‌های پایان زندگی') ?></a>
+                      <a href="/iran-situation-in-palliative"><?= site_e('وضعیت مراقبت های حمایتی و تسکینی در ایران') ?></a>
+                      <a href="/doctorspage"><?= site_e('نقش کادر درمان') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">مراقبت های حمایتی و تسکینی</div>
-                      <a href="/medicalcare">مراقبت های پزشکی تسکینی</a>
-                      <a href="/nursecare">مراقبت های پرستاری تسکینی</a>
-                      <a href="/psychologicalcare">مراقبت های روانشناختی</a>
-                      <a href="/socialworkcare">مددکاری اجتماعی</a>
-                      <a href="/spritualcare">مراقبت های معنوی</a>
-                      <a href="/nutritioncare">مراقبت های تغذیه</a>
-                      <a href="/physiotherapycare">مراقبت های بازتوانی و توانبخشی</a>
-                      <a href="/geneticconseuling">مشاوره ژنتیک و غربالگری</a>
-                      <a href="/medicalequipments">تامین تجهیزات پزشکی</a>
+                      <div class="mega-col-title"><?= site_e('مراقبت های حمایتی و تسکینی') ?></div>
+                      <a href="/medicalcare"><?= site_e('مراقبت های پزشکی تسکینی') ?></a>
+                      <a href="/nursecare"><?= site_e('مراقبت های پرستاری تسکینی') ?></a>
+                      <a href="/psychologicalcare"><?= site_e('مراقبت های روانشناختی') ?></a>
+                      <a href="/socialworkcare"><?= site_e('مددکاری اجتماعی') ?></a>
+                      <a href="/spritualcare"><?= site_e('مراقبت های معنوی') ?></a>
+                      <a href="/nutritioncare"><?= site_e('مراقبت های تغذیه') ?></a>
+                      <a href="/physiotherapycare"><?= site_e('مراقبت های بازتوانی و توانبخشی') ?></a>
+                      <a href="/geneticconseuling"><?= site_e('مشاوره ژنتیک و غربالگری') ?></a>
+                      <a href="/medicalequipments"><?= site_e('تامین تجهیزات پزشکی') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">بخش‌ها</div>
-                      <a href="/supportiveandpalliativecare">مراقبت در منزل</a>
-                      <a href="/MACSAservices.html">بستری</a>
-                      <a href="/MACSAservices.html">سرپایی</a>
-                      <a href="/MACSAservices.html">کلینیک</a>
+                      <div class="mega-col-title"><?= site_e('بخش‌ها') ?></div>
+                      <a href="/supportiveandpalliativecare"><?= site_e('مراقبت در منزل') ?></a>
+                      <a href="/MACSAservices.html"><?= site_e('بستری') ?></a>
+                      <a href="/MACSAservices.html"><?= site_e('سرپایی') ?></a>
+                      <a href="/MACSAservices.html"><?= site_e('کلینیک') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">پذیرش بیمار</div>
-                      <a href="/patientintake">نوبت دهی</a>
-                      <a href="/patientintake">مدارک موردنیاز</a>
+                      <div class="mega-col-title"><?= site_e('پذیرش بیمار') ?></div>
+                      <a href="/patientintake"><?= site_e('نوبت دهی') ?></a>
+                      <a href="/patientintake"><?= site_e('مدارک موردنیاز') ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
               <li class="mega-menu">
-                <a class="mega-toggle" href="/single-fundraising-option">روش های حمایت</a>
+                <a class="mega-toggle" href="/single-fundraising-option"><?= site_e(site_locale() === 'en' ? 'حمایت' : 'روش های حمایت') ?></a>
                 <div class="mega-menu-content">
                   <div class="mega-row">
                     <div class="mega-col">
-                      <div class="mega-col-title">همیاری مالی</div>
-                      <a href="/onlinedonation">حمایت مالی آنلاین</a>
-                      <a href="/under-construction.html">پرداخت مستمر هدایای نقدی</a>
+                      <div class="mega-col-title"><?= site_e('همیاری مالی') ?></div>
+                      <a href="/onlinedonation"><?= site_e('حمایت مالی آنلاین') ?></a>
+                      <a href="/under-construction.html"><?= site_e('پرداخت مستمر هدایای نقدی') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">همیاری اجتماعی و فرهنگی</div>
-                      <a href="/under-construction.html">مسئولیت اجتماعی</a>
-                      <a href="/under-construction.html">حمایت های خلاقانه و هنری</a>
+                      <div class="mega-col-title"><?= site_e('همیاری اجتماعی و فرهنگی') ?></div>
+                      <a href="/under-construction.html"><?= site_e('مسئولیت اجتماعی') ?></a>
+                      <a href="/under-construction.html"><?= site_e('حمایت های خلاقانه و هنری') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">همیاری علمی و تخصصی</div>
-                      <a href="/under-construction.html">حمایت علمی و تخصصی</a>
-                      <a href="/under-construction.html">اهدای تجهیزات پزشکی</a>
+                      <div class="mega-col-title"><?= site_e('همیاری علمی و تخصصی') ?></div>
+                      <a href="/under-construction.html"><?= site_e('حمایت علمی و تخصصی') ?></a>
+                      <a href="/under-construction.html"><?= site_e('اهدای تجهیزات پزشکی') ?></a>
                     </div>
                     <div class="mega-col">
-                      <div class="mega-col-title">مشارکت داوطلبی</div>
-                      <a href="/under-construction.html">همکاری داوطلبانه</a>
-                      <a href="/under-construction.html">شرایط جذب داوطلبان</a>
+                      <div class="mega-col-title"><?= site_e('مشارکت داوطلبی') ?></div>
+                      <a href="/under-construction.html"><?= site_e('همکاری داوطلبانه') ?></a>
+                      <a href="/under-construction.html"><?= site_e('شرایط جذب داوطلبان') ?></a>
                     </div>
                   </div>
                 </div>
               </li>
 
-              <li><a href="/branches.php">شعب</a></li>
-              <li><a href="/news.php">اخبار</a></li>
-              <li class="events-nav-link"><a href="/events.php">رویدادها و همایش‌ها</a></li>
-              <li><a href="/macsapedia.php">مکساپدیا</a></li>
-              <li><a href="/courses">دوره‌ها</a></li>
-              <li><a href="/contactus">تماس با ما</a></li>
+              <li><a href="/branches.php"><?= site_e('شعب') ?></a></li>
+              <li><a href="/news.php"><?= site_e('اخبار') ?></a></li>
+              <li class="events-nav-link"><a href="/events.php"><?= site_e(site_locale() === 'en' ? 'رویدادها' : 'رویدادها و همایش‌ها') ?></a></li>
+              <li><a href="/macsapedia.php"><?= site_e('مکساپدیا') ?></a></li>
+              <li><a href="/courses"><?= site_e('دوره‌ها') ?></a></li>
+              <li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
             </ul>
           </nav>
         </div>
 
         <div class="cta-left">
-          <div class="menu-icon" id="menuToggle" aria-label="منوی موبایل">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
+          <?= site_language_picker() ?>
+          <button type="button" class="menu-icon" id="menuToggle" aria-label="<?= site_e('منوی موبایل') ?>" aria-controls="mobileMenu" aria-expanded="false"><div></div><div></div><div></div></button>
 
-          <a class="cta-donate" href="/onlinedonation" aria-label="کمک آنلاین">
-            کمک آنلاین
+          <a class="cta-donate" href="/onlinedonation" aria-label="<?= site_e('کمک آنلاین') ?>">
+            <?= site_e('کمک آنلاین') ?>
           </a>
 
           <div class="cta-auth-slot">
-            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="ورود یا ثبت نام">
-              ورود / ثبت‌نام
+            <a class="cta-auth js-cta-login" href="/benefactor-dashboard/" aria-label="<?= site_e('ورود یا ثبت نام') ?>">
+              <span class="site-nav-auth-full"><?= site_e('ورود / ثبت‌نام') ?></span><span class="site-nav-auth-short"><?= site_e('ورود') ?></span>
             </a>
 
             <div class="cta-account js-cta-account" hidden>
-              <button class="cta-account-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="حساب کاربری">
+              <button class="cta-account-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="<?= site_e('حساب کاربری') ?>">
                 <span class="cta-account-avatar js-acc-avatar">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </span>
-                <span class="cta-account-name js-acc-name">حساب کاربری</span>
+                <span class="cta-account-name js-acc-name"><?= site_e('حساب کاربری') ?></span>
                 <svg class="cta-account-caret" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
 
@@ -1200,31 +1238,31 @@
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                   </span>
                   <div>
-                    <strong class="js-acc-fullname">کاربر مکسا</strong>
+                    <strong class="js-acc-fullname"><?= site_e('کاربر مکسا') ?></strong>
                     <span class="js-acc-email"></span>
                   </div>
                 </div>
 
                 <a role="menuitem" href="/benefactor-dashboard/">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
-                  داشبورد من
+                  <?= site_e('داشبورد من') ?>
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/profile">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  پروفایل کاربری
+                  <?= site_e('پروفایل کاربری') ?>
                 </a>
                 <a role="menuitem" href="/benefactor-dashboard/history">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10h18" stroke="currentColor" stroke-width="2"/></svg>
-                  پرداخت‌های من
+                  <?= site_e('پرداخت‌های من') ?>
                 </a>
                 <a role="menuitem" href="/onlinedonation">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  کمک آنلاین
+                  <?= site_e('کمک آنلاین') ?>
                 </a>
 
                 <button type="button" class="cta-account-logout js-cta-logout" role="menuitem">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17l-5-5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  خروج از حساب
+                  <?= site_e('خروج از حساب') ?>
                 </button>
               </div>
             </div>
@@ -1237,14 +1275,14 @@
   </div>
 
   <!-- فاصله‌گذار برای جبران ارتفاع نوار ثابت بالا -->
-  <div class="cta-navbar-spacer" aria-hidden="true"></div>
+  <div class="cta-navbar-spacer" data-site-nav-spacer aria-hidden="true"></div>
 
-  <nav class="mobile-menu-sidebar" id="mobileMenu" dir="rtl" aria-label="منوی موبایل">
+  <nav class="mobile-menu-sidebar" id="mobileMenu" data-site-drawer role="dialog" aria-hidden="true" inert aria-label="<?= site_e('منوی موبایل') ?>">
     <div class="mobile-menu-header">
       <div class="mobile-menu-brand">
-        <img src="/dashboard/components/header/images/1.png" alt="مکسا - مؤسسه نیکوکاری کنترل سرطان" width="182" height="52" loading="lazy" decoding="async">
+        <img src="/dashboard/components/header/images/1.png" alt="<?= site_e('مکسا - مؤسسه نیکوکاری کنترل سرطان') ?>" width="182" height="52" loading="lazy" decoding="async">
       </div>
-      <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="بستن منو">
+      <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="<?= site_e('بستن منو') ?>">
         <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -1254,11 +1292,11 @@
     <div class="mobile-menu-actions">
       <a class="mobile-action-donate" href="/onlinedonation">
         <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 21C12 21 4 14.5 4 9.5C4 7 6 5 8.5 5C10.2 5 11.4 5.9 12 7C12.6 5.9 13.8 5 15.5 5C18 5 20 7 20 9.5C20 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        کمک آنلاین
+        <?= site_e('کمک آنلاین') ?>
       </a>
       <a class="mobile-action-auth js-mobile-login" href="/benefactor-dashboard/">
         <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.2-3.5 4.2-5.5 8-5.5s6.8 2 8 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        ورود / ثبت‌نام
+        <?= site_e('ورود / ثبت‌نام') ?>
       </a>
     </div>
 
@@ -1267,149 +1305,12 @@
     <div class="mobile-menu-footer">
       <div class="mobile-footer-info">
         <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
-        <span>پشتیبانی: <a href="tel:02191092030" dir="ltr" style="display:inline-block; font-family:inherit; color:inherit; text-decoration:none; unicode-bidi:isolate;">021-91092030</a></span>
+        <span><?= site_e('پشتیبانی:') ?> <a href="tel:02191092030" dir="ltr" style="display:inline-block; font-family:inherit; color:inherit; text-decoration:none; unicode-bidi:isolate;">021-91092030</a></span>
       </div>
-      <div class="mobile-footer-tagline">مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)</div>
+      <div class="mobile-footer-tagline"><?= site_e('مؤسسه نیکوکاری کنترل سرطان ایرانیان (مکسا)') ?></div>
     </div>
   </nav>
-  <div class="mobile-backdrop" id="mobileBackdrop"></div>
-
-  <script>
-  (function(){
-    const toggleBtn = document.getElementById("menuToggle");
-    const closeBtn = document.getElementById("mobileMenuClose");
-    const menu = document.getElementById("mobileMenu");
-    const backdrop = document.getElementById("mobileBackdrop");
-
-    if(!toggleBtn || !menu) return;
-
-    function openMenu(){
-      menu.classList.add("open");
-      if(backdrop) backdrop.classList.add("show");
-      toggleBtn.classList.add("active");
-      document.body.classList.add("mobile-menu-open");
-    }
-
-    function closeMenu(){
-      menu.classList.remove("open");
-      if(backdrop) backdrop.classList.remove("show");
-      toggleBtn.classList.remove("active");
-      document.body.classList.remove("mobile-menu-open");
-    }
-
-    toggleBtn.addEventListener("click", function(e){
-      e.stopPropagation();
-      menu.classList.contains("open") ? closeMenu() : openMenu();
-    });
-
-    if(closeBtn) closeBtn.addEventListener("click", closeMenu);
-    if(backdrop) backdrop.addEventListener("click", closeMenu);
-
-    document.querySelectorAll(".toggle-sub").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        const sub = btn.nextElementSibling;
-        if(sub) sub.classList.toggle("active");
-      });
-    });
-
-    // مگا منو دسکتاپ: باز/بسته شدن با هاور
-    (function () {
-      const DELAY = 200; // مدت ماندگاری (ms)
-      const menus = document.querySelectorAll(".mega-menu");
-
-      menus.forEach(function (menu) {
-        let closeTimer = null;
-
-        function openMenu() {
-          if (closeTimer) {
-            clearTimeout(closeTimer);
-            closeTimer = null;
-          }
-
-          // بستن فوری بقیه مگا منوها بدون تاخیر
-          menus.forEach(function (other) {
-            if (other !== menu) {
-              if (other.__closeTimer__) {
-                clearTimeout(other.__closeTimer__);
-                other.__closeTimer__ = null;
-              }
-              other.classList.remove("open");
-            }
-          });
-
-          menu.classList.add("open");
-        }
-
-        function closeMenu() {
-          if (closeTimer) clearTimeout(closeTimer);
-
-          closeTimer = setTimeout(function () {
-            menu.classList.remove("open");
-            closeTimer = null;
-            menu.__closeTimer__ = null;
-          }, DELAY);
-
-          menu.__closeTimer__ = closeTimer;
-        }
-
-        const toggle = menu.querySelector(".mega-toggle");
-        const content = menu.querySelector(".mega-menu-content");
-
-        if (toggle) {
-          toggle.addEventListener("mouseenter", openMenu);
-          toggle.addEventListener("mouseleave", closeMenu);
-        }
-
-        if (content) {
-          content.addEventListener("mouseenter", openMenu);
-          content.addEventListener("mouseleave", closeMenu);
-        }
-      });
-    })();
-
-    document.addEventListener("DOMContentLoaded", function(){
-      const desktopMenu = document.querySelector(".cta-menu");
-      const container = document.getElementById("mobileMenuContainer");
-
-      if(!desktopMenu || !container) return;
-
-      // کپی کامل منو در کانتینر مخصوص اسکرول سایدبار
-      const clonedMenu = desktopMenu.cloneNode(true);
-      clonedMenu.classList.remove("cta-menu");
-      clonedMenu.classList.add("mobile-menu");
-      container.appendChild(clonedMenu);
-
-      // تبدیل مگا منو به آکاردئون
-      container.querySelectorAll(".mega-menu").forEach(function(item){
-        const toggle = item.querySelector(".mega-toggle");
-        const content = item.querySelector(".mega-menu-content");
-
-        if(toggle && content){
-          toggle.addEventListener("click", function(e){
-            e.preventDefault();
-            content.classList.toggle("active");
-            toggle.classList.toggle("open");
-          });
-        }
-      });
-
-      // هدر همیشه ثابت و قابل مشاهده؛ فقط ظاهر «جداشده» هنگام اسکرول
-      (function() {
-        const topbar = document.querySelector(".cta-topbar");
-        if (!topbar) return;
-
-        window.addEventListener("scroll", function() {
-          // اگر اسکرول بیشتر از 50 پیکسل بود هدر جدا شود (بدون مخفی شدن)
-          if (window.scrollY > 50) {
-            topbar.classList.add("scrolled");
-          } else {
-            topbar.classList.remove("scrolled");
-          }
-        });
-      })();
-    });
-  })();
-  </script>
+  <div class="mobile-backdrop" id="mobileBackdrop" data-site-backdrop hidden></div>
 
   <!-- ===== وضعیت ورود کاربر: تبدیل دکمه «ورود/ثبت‌نام» به منوی حساب کاربری ===== -->
   <script>
@@ -1430,7 +1331,7 @@
     function displayName(u){
       var n=((u.first_name||'')+' '+(u.last_name||'')).trim();
       if(n) return n;
-      return u.email ? u.email.split('@')[0] : 'حساب کاربری';
+      return u.email ? u.email.split('@')[0] : <?= site_js_text('حساب کاربری') ?>;
     }
     function setAvatar(el, u){
       if(!el) return;
@@ -1449,7 +1350,7 @@
       var mobLogin = document.querySelector('.js-mobile-login');
       if(mobLogin){
         mobLogin.href = '/benefactor-dashboard/';
-        mobLogin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> داشبورد من';
+        mobLogin.innerHTML = <?= site_js_text('<svg viewBox="0 0 24 24" fill="none" width="17" height="17"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg> داشبورد من') ?>;
       }
 
       if(!account) return;

@@ -2,34 +2,14 @@
 require_once __DIR__ . '/_guard.php';
 dash_require('campaigns');
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$__branch = dash_active_branch_id();
-$is_hq = dash_is_hq_view();
-
-$campaign = null;
-if ($id > 0) {
-    if ($is_hq) {
-        $stmt = $pdo->prepare(
-            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-               FROM campaigns c
-          LEFT JOIN branches b ON b.id = c.branch_id
-              WHERE c.id = ?
-              LIMIT 1"
-        );
-        $stmt->execute([$id]);
-    } else {
-        $stmt = $pdo->prepare(
-            "SELECT c.*, b.name AS branch_name, b.slug AS branch_slug
-               FROM campaigns c
-          LEFT JOIN branches b ON b.id = c.branch_id
-              WHERE c.id = ? AND c.branch_id = ?
-              LIMIT 1"
-        );
-        $stmt->execute([$id, $__branch]);
+require_once __DIR__.'/../core/campaign-service.php';
+$id=trim((string)($_GET['id']??''));$campaign=null;
+$branch=content_campaign_branch($pdo,(string)($_GET['branch']??''));
+if($id!==''){
+    foreach((new CampaignServiceClient((string)$branch['slug']))->managementCampaigns() as $item){
+        if((string)($item['id']??'')===$id){$campaign=campaign_service_present($item,$branch);break;}
     }
-    $campaign = $stmt->fetch();
 }
-
 $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZWVmMWYyIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjljMmM2IiBzdHJva2Utd2lkdGg9IjMiPjxyZWN0IHg9IjE1OCIgeT0iOTIiIHdpZHRoPSI4NCIgaGVpZ2h0PSI2NCIgcng9IjciLz48Y2lyY2xlIGN4PSIxODIiIGN5PSIxMTYiIHI9IjkiLz48cGF0aCBkPSJNMTYyIDE1MGwyNC0yMiAxNSAxMyAxOS0xNyAxOCAxNnYxMnoiLz48L2c+PC9zdmc+';
 ?>
 <!DOCTYPE html>
@@ -108,7 +88,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     .header-title-group h2 {
         margin: 0;
         font-size: 20px;
-        font-weight: 800;
+        font-weight:600;
         color: var(--primary-color);
         display: flex;
         align-items: center;
@@ -127,7 +107,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         background: rgba(0, 125, 117, 0.1);
         color: var(--primary-color);
         font-size: 12px;
-        font-weight: 700;
+        font-weight:600;
         padding: 4px 10px;
         border-radius: 99px;
     }
@@ -135,7 +115,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         background: rgba(247, 159, 31, 0.12);
         color: #d97706;
         font-size: 12px;
-        font-weight: 700;
+        font-weight:600;
         padding: 4px 10px;
         border-radius: 99px;
         font-family: monospace;
@@ -154,8 +134,8 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         border-radius: 10px;
         text-decoration: none;
         font-size: 13px;
-        font-weight: 700;
-        transition: all 0.2s;
+        font-weight:600;
+        transition:background-color 0.2s;
     }
     .btn-back:hover {
         border-color: var(--primary-color);
@@ -174,7 +154,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         background: var(--primary-color);
         color: #ffffff;
         padding: 18px 24px;
-        font-weight: 700;
+        font-weight:600;
         font-size: 16px;
         display: flex;
         align-items: center;
@@ -195,7 +175,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     label {
         display: block;
         margin-bottom: 8px;
-        font-weight: 700;
+        font-weight:600;
         color: var(--primary-color);
         font-size: 14px;
     }
@@ -246,7 +226,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         display: block;
         margin-bottom: 12px;
         font-size: 13px;
-        font-weight: 700;
+        font-weight:600;
         color: var(--text-muted);
     }
     .live-card {
@@ -270,7 +250,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         margin: 0 0 12px 0;
         color: var(--primary-color);
         font-size: 16px;
-        font-weight: 700;
+        font-weight:600;
         line-height: 1.5;
         min-height: 48px;
     }
@@ -284,7 +264,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     [data-theme="dark"] .live-progress { background: rgba(255,255,255,0.1); }
     .live-bar {
         height: 100%;
-        background: linear-gradient(90deg, var(--secondary-color), #ffb94b);
+        background: var(--secondary-color);
         border-radius: 10px;
         width: 0%;
         transition: width 0.4s ease;
@@ -293,7 +273,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         display: flex;
         justify-content: space-between;
         font-size: 12px;
-        font-weight: 700;
+        font-weight:600;
         margin-bottom: 8px;
     }
     .live-collected {
@@ -315,14 +295,14 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         padding: 14px 20px;
         border-radius: 12px;
         cursor: pointer;
-        font-weight: 700;
+        font-weight:600;
         font-size: 15px;
         font-family: inherit;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: all 0.2s;
+        transition:background-color 0.2s;
     }
     .btn-submit:hover:not(:disabled) {
         background: var(--primary-hover);
@@ -340,14 +320,14 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         border: 1px solid var(--border-color);
         padding: 14px 20px;
         border-radius: 12px;
-        font-weight: 700;
+        font-weight:600;
         font-size: 14px;
         text-decoration: none;
         font-family: inherit;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition:background-color 0.2s;
     }
     .btn-cancel:hover {
         background: var(--bg-color);
@@ -370,7 +350,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         align-items: center;
         gap: 10px;
         font-size: 14px;
-        font-weight: 700;
+        font-weight:600;
     }
     .toast.active { transform: translateX(0); }
     .toast.error { border-right-color: var(--danger-color); }
@@ -403,7 +383,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
     }
     .error-title {
         font-size: 20px;
-        font-weight: 800;
+        font-weight:600;
         margin: 0 0 10px 0;
         color: var(--text-color);
     }
@@ -421,6 +401,7 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
         .form-actions { flex-direction: column; }
     }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 
@@ -499,7 +480,9 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
             <!-- ستون فرم ویرایش -->
             <div class="form-side">
                 <form id="campEditForm" enctype="multipart/form-data">
-                    <input type="hidden" name="id" value="<?= (int)$campaign['id'] ?>">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="id" value="<?= htmlspecialchars((string)$campaign['id'],ENT_QUOTES) ?>">
+                    <input type="hidden" name="branch_slug" value="<?= htmlspecialchars((string)$branch['slug'],ENT_QUOTES) ?>">
 
                     <div class="form-group">
                         <label>تصویر شاخص کمپین</label>
@@ -673,5 +656,6 @@ $ph = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9
 })();
 </script>
 
+<?php if($campaign)content_editor('campaigns',(string)$campaign['id'],'#campEditForm',['source'=>$campaign]); ?>
 </body>
 </html>

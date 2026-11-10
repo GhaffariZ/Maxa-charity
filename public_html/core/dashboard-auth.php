@@ -30,15 +30,22 @@ const DASH_MAX_ATTEMPTS     = 5;      // پس از این تعداد تلاش ن
 const DASH_LOCK_MINUTES     = 15;     // مدت قفل (دقیقه)
 
 /* فهرست کامل بخش‌های قابل‌واگذاری (مرجعِ واحد در کل سامانه) */
-const DASH_FEATURES = [
-    'hero', 'news', 'events', 'campaigns', 'partners', 'courses',
-    'pages', 'financial', 'feedback', 'medical', 'stands',
+const DASH_FEATURE_LABELS = [
+    'hero' => 'هیروها', 'news' => 'خبرها', 'events' => 'رویدادها',
+    'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران', 'courses' => 'دوره‌ها',
+    'pages' => 'کامپوننت‌ها و صفحات', 'financial' => 'گزارش مالی',
+    'feedback' => 'انتقادات و پیشنهادات', 'medical' => 'پرونده‌های پزشکی',
+    'stands' => 'استندها و سفارشات', 'tickets' => 'تیکت‌ها',
+    'branch_intro' => 'صفحه معرفی شعبه', 'donation_impacts' => 'اثرات کمک',
+    'macsa_stories' => 'روایات امید مکسا', 'maxapedia' => 'مکساپدیا',
+    'news_editor' => 'سردبیری خبر (تأیید و انتشار)',
 ];
+const DASH_HQ_FEATURES = ['donation_impacts', 'macsa_stories', 'maxapedia', 'news_editor'];
 
-/* دسترسی‌های ویژه (نه یک «بخش» منو/شعبه؛ بلکه یک قابلیتِ اضافی روی یک بخش).
- * news_editor: اجازه‌ی تایید/رد/انتشارِ خبر در سطحِ سردبیریِ ستاد مرکزی.
- * maxapedia: دسترسی به مدیریتِ «مکساپدیا» (فقط ستاد مرکزی). */
-const DASH_EXTRA_PERMISSIONS = ['news_editor', 'maxapedia'];
+function dash_feature_labels(bool $isHq): array
+{
+    return array_diff_key(DASH_FEATURE_LABELS, array_flip($isHq ? ['branch_intro'] : DASH_HQ_FEATURES));
+}
 
 /* دسترسی‌هایی که به‌صورتِ پیش‌فرض فقط «مدیر مرکزی» (سوپرادمین) دارد و حتی به
  * ادمینِ شعبه‌ی ستاد هم خودبه‌خود داده نمی‌شود؛ مگر این‌که صریحاً در نقش واگذار شود.
@@ -98,7 +105,7 @@ function dash_session_start(): void
 }
 
 /* ---------- مدیریت انقضای نشست ---------- */
-function dash_enforce_timeouts(): void
+function dash_enforce_timeouts(bool $recordActivity = true): void
 {
     $now = time();
     if (isset($_SESSION['dash_login_at']) && ($now - (int)$_SESSION['dash_login_at']) > DASH_ABSOLUTE_TIMEOUT) {
@@ -109,7 +116,7 @@ function dash_enforce_timeouts(): void
         dash_logout();
         dash_redirect_login('idle');
     }
-    $_SESSION['dash_last_seen'] = $now;
+    if ($recordActivity) $_SESSION['dash_last_seen'] = $now;
 }
 
 /* ---------- CSRF ---------- */
@@ -265,6 +272,7 @@ function dash_establish_session(array $u): void
         'branch_id'       => (int)$u['branch_id'],
         'role_id'         => $u['role_id'] !== null ? (int)$u['role_id'] : null,
         'role_name'       => $roleName,
+        'has_direct_permissions' => isset($u['direct_permissions']),
         'is_super'        => (int)$u['is_super'] === 1,
         'is_branch_admin' => (int)$u['is_branch_admin'] === 1,
         'permissions'     => $perms,
@@ -280,7 +288,7 @@ function dash_establish_session(array $u): void
 /* ---------- محاسبه‌ی دسترسی‌ها ---------- */
 function dash_resolve_permissions(array $u): array
 {
-    $allowed = array_merge(DASH_FEATURES, DASH_EXTRA_PERMISSIONS);
+    $allowed = array_keys(DASH_FEATURE_LABELS);
     // سوپرادمین (مدیر مرکزی): همه‌ی قابلیت‌ها بدون استثنا
     if ((int)$u['is_super'] === 1) {
         return $allowed;
@@ -303,6 +311,12 @@ function dash_resolve_permissions(array $u): array
             }
         }
         return $base;
+    }
+    if (isset($u['direct_permissions'])) {
+        $permissions = json_decode($u['direct_permissions'], true);
+        return is_array($permissions)
+            ? array_values(array_intersect($allowed, array_filter($permissions, 'is_string')))
+            : [];
     }
     // کاربر شعبه: از روی نقش
     if (!empty($u['role_id'])) {
@@ -435,6 +449,9 @@ function dash_is_finance_user(): bool
     if (dash_is_finance_only()) {
         return true;
     }
+    if (!empty($u['has_direct_permissions'])) {
+        return false;
+    }
     $roleName = dash_user_role_name();
     if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
         return true;
@@ -508,7 +525,7 @@ function dash_require_hq(): void
  */
 function dash_is_news_editor(): bool
 {
-    if (!dash_is_hq_view()) {
+    if (!dash_is_hq_view() || !dash_branch_feature_enabled(dash_active_branch_id(), 'news_editor')) {
         return false;
     }
     $u = dash_user();
@@ -531,17 +548,7 @@ function dash_is_news_editor(): bool
  */
 function dash_can_maxapedia(): bool
 {
-    if (!dash_is_hq_view()) {
-        return false;
-    }
-    $u = dash_user();
-    if (!$u) {
-        return false;
-    }
-    if (!empty($u['is_super'])) {
-        return true;
-    }
-    return in_array('maxapedia', $u['permissions'] ?? [], true);
+    return dash_can('maxapedia');
 }
 
 /* ---------- شعبه‌ی فعال (با ایزولاسیون) ----------
@@ -580,11 +587,17 @@ function dash_set_active_branch(int $branchId): bool
 function dash_can(string $feature): bool
 {
     $u = dash_user();
-    if (!$u) {
+    if (!$u || !isset(DASH_FEATURE_LABELS[$feature])) {
         return false;
     }
-    // باید هم کاربر دسترسی داشته باشد و هم آن قابلیت برای شعبه‌ی فعال روشن باشد
-    $hasPerm = in_array($feature, $u['permissions'], true);
+    if (in_array($feature, DASH_HQ_FEATURES, true) && !dash_is_hq_view()) {
+        return false;
+    }
+    if ($feature === 'branch_intro' && dash_is_hq_view()) {
+        return false;
+    }
+    // مدیر مرکزی به فهرست دسترسی‌های ذخیره‌شده در نشست وابسته نیست.
+    $hasPerm = !empty($u['is_super']) || in_array($feature, $u['permissions'], true);
     return $hasPerm && dash_branch_feature_enabled(dash_active_branch_id(), $feature);
 }
 

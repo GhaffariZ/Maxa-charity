@@ -8,6 +8,7 @@
  *    • داده‌ی نمونه به‌عنوان fallback تا صفحات همیشه رندر شوند
  * ========================================================================== */
 declare(strict_types=1);
+require_once __DIR__.'/core/content-locales.php';
 if (!defined('MAXA_COURSES_BOOT')) {
   define('MAXA_COURSES_BOOT', 1);
   mb_internal_encoding('UTF-8');
@@ -205,14 +206,17 @@ function load_courses(?PDO $pdo, bool $ready, ?string $status = null, ?int $bran
               FROM courses c LEFT JOIN branches b ON b.id = c.branch_id";
       $p = []; $conds = [];
       if ($status)            { $conds[] = "c.status=?";    $p[] = $status; }
+      if(content_public())$conds[]=content_where($pdo,'courses','c.id');
       if ($branchId !== null) { $conds[] = "c.branch_id=?"; $p[] = $branchId; }
       if ($conds) { $sql .= " WHERE " . implode(' AND ', $conds); }
       $sql .= " ORDER BY c.created_at DESC, c.id DESC";
       $rows = q($pdo, $sql, $p)->fetchAll();
-      if ($rows) return $rows;
+      if(content_public()&&content_language()!=='fa')foreach($rows as &$row){$branch=content_row($pdo,'branches',['id'=>$row['branch_id'],'name'=>$row['branch_name']]);$row['branch_name']=$branch['name']??'';}unset($row);
+      return content_public()?content_rows($pdo,'courses',$rows):$rows;
     } catch (Throwable $e) { /* fall through to demo */ }
   }
   $demo = maxa_demo_courses();
+  if(content_language()!=='fa')return [];
   if ($status) $demo = array_values(array_filter($demo, fn($c)=>$c['status']===$status));
   return $demo;
 }
@@ -230,6 +234,7 @@ function load_course_full(?PDO $pdo, bool $ready, int $id): ?array {
           $curriculum[] = ['title'=>$s['title'], 'lessons'=>$ls];
         }
         $c['curriculum'] = $curriculum;
+        if(content_public()){$c=content_row($pdo,'courses',$c);if(!$c||$c['status']!=='published')return null;$curriculum=$c['curriculum'];}
         $c['lessons'] = array_sum(array_map(fn($s)=>count($s['lessons']), $curriculum));
         $c['duration'] = 0;
         foreach ($curriculum as $s) foreach ($s['lessons'] as $l) $c['duration'] += (int)($l['duration'] ?? 0);
@@ -237,6 +242,7 @@ function load_course_full(?PDO $pdo, bool $ready, int $id): ?array {
       }
     } catch (Throwable $e) { /* fall through */ }
   }
+  if(content_language()!=='fa')return null;
   // داده‌ی نمونه
   foreach (maxa_demo_courses() as $c) {
     if ((int)$c['id'] === $id) {

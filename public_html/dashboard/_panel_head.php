@@ -54,22 +54,22 @@ if (!isset($PANEL_TITLE)) { $PANEL_TITLE = 'پنل مکسا'; }
 }
 *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;font-family:'Vazirmatn',sans-serif}
 .iconoir-icon{display:inline-flex;vertical-align:middle;width:1.2em;height:1.2em;stroke-width:1.6;flex-shrink:0}
-body{font-family:'Vazirmatn',sans-serif !important;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;padding:26px}
+body{font-family:'Vazirmatn',sans-serif !important;background:var(--color-bg);color:var(--color-text);font-size:14px;line-height:1.7;padding:24px}
 input, button, select, textarea, optgroup, option{font-family:'Vazirmatn',sans-serif !important}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:920px;margin:0 auto}
-.page-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.page-head .ph-ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 12px 24px -12px rgba(0,102,101,.85);flex-shrink:0}
-.page-head .ph-ic .ic{width:24px;height:24px}
-.page-head h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.page-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.page-head .ph-ic{width:48px;height:48px;border-radius:8px;display:grid;place-items:center;color:var(--ledger-ink);
+  background:var(--primary-08);flex-shrink:0}
+.page-head .ph-ic .ic{width:18px;height:18px}
+.page-head h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
 .page-head p{font-size:12.5px;color:var(--color-muted)}
-.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;margin-bottom:18px}
-.card h2{font-size:15px;font-weight:800;margin-bottom:4px}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;margin-bottom:16px}
+.card h2{font-size:15px;font-weight:600;margin-bottom:4px}
 .card .hint{font-size:12px;color:var(--color-muted);margin-bottom:16px}
 .field{margin-bottom:16px}
-.field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:7px;color:#5b6469}
-.field input[type=text],.field input[type=password],.field select{width:100%;height:46px;border:1px solid var(--color-border);
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:8px;color:#5b6469}
+.field input[type=text],.field input[type=password],.field select{width:100%;height:44px;border:1px solid var(--color-border);
   background:var(--color-bg);border-radius:12px;padding:0 14px;font-family:inherit;font-size:14px;color:var(--color-text);transition:border-color .2s,box-shadow .2s,background .2s}
 .field input:focus,.field select:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
 .field .sub{font-size:11px;color:var(--color-muted);margin-top:5px}
@@ -81,24 +81,24 @@ a{color:inherit;text-decoration:none}
 .check:hover{border-color:var(--color-primary-light)}
 .check input{accent-color:var(--color-primary);width:17px;height:17px;flex-shrink:0}
 .check.on{border-color:var(--color-primary);background:var(--primary-08)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border:none;border-radius:13px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s var(--ease),box-shadow .22s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border:none;border-radius:13px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:transform .15s var(--ease),box-shadow .22s}
 .btn .ic{width:18px;height:18px}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 12px 24px -12px rgba(0, 143, 138,.8)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0, 143, 138,.9)}
+.btn-primary{background:var(--color-primary-dark);color:#fff;box-shadow:none}
+.btn-primary:hover{background:#005d59}
 .btn-ghost{background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border)}
-.msg{border-radius:12px;padding:12px 15px;font-size:13px;font-weight:600;margin-bottom:18px;line-height:1.8}
+.msg{border-radius:12px;padding:12px 15px;font-size:13px;font-weight:600;margin-bottom:16px;line-height:1.8}
 .msg.err{background:rgba(224,85,107,.10);color:#c33850;border:1px solid rgba(224,85,107,.22)}
 .msg.ok{background:rgba(22,163,122,.10);color:#0f7a5b;border:1px solid rgba(22,163,122,.22)}
 table.tbl{width:100%;border-collapse:collapse;font-size:13px}
-table.tbl th{text-align:right;font-size:11.5px;font-weight:700;color:var(--color-muted);padding:0 12px 12px;border-bottom:1px solid var(--color-border);white-space:nowrap}
+table.tbl th{text-align:right;font-size:11.5px;font-weight:600;color:var(--color-muted);padding:0 12px 12px;border-bottom:1px solid var(--color-border);white-space:nowrap}
 table.tbl td{padding:13px 12px;border-bottom:1px solid var(--color-border);vertical-align:middle}
 table.tbl tr:last-child td{border-bottom:none}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:600}
 .badge.ok{background:rgba(22,163,122,.12);color:var(--success)}
 .badge.off{background:rgba(224,85,107,.12);color:var(--danger)}
 .badge.hq{background:var(--secondary-12);color:#b9760a}
 .badge.tag{background:var(--primary-08);color:var(--color-primary-dark)}
-.tbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--color-border);background:var(--color-surface);border-radius:10px;font-family:inherit;font-weight:700;font-size:12px;color:var(--color-text);cursor:pointer;transition:background .2s,border-color .2s}
+.tbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--color-border);background:var(--color-surface);border-radius:10px;font-family:inherit;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer;transition:background .2s,border-color .2s}
 .tbtn:hover{border-color:var(--color-primary-light)}
 .tbtn.danger{color:var(--danger)}
 .tbtn.danger:hover{border-color:var(--danger);background:rgba(224,85,107,.06)}
@@ -107,8 +107,8 @@ table.tbl tr:last-child td{border-bottom:none}
 /* ---------- ورودی رمز + دکمه‌ی تولید ---------- */
 .pass-row{display:flex;gap:10px;align-items:stretch}
 .pass-row input{flex:1}
-.btn-gen{display:inline-flex;align-items:center;gap:7px;height:46px;padding:0 16px;border:1px solid var(--color-border);
-  background:var(--color-bg);border-radius:12px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--color-primary-dark);
+.btn-gen{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 16px;border:1px solid var(--color-border);
+  background:var(--color-bg);border-radius:12px;font-family:inherit;font-weight:600;font-size:12.5px;color:var(--color-primary-dark);
   cursor:pointer;white-space:nowrap;transition:border-color .2s,background .2s}
 .btn-gen:hover{border-color:var(--color-primary-light);background:var(--primary-08)}
 .btn-gen .ic{width:16px;height:16px}
@@ -123,17 +123,17 @@ table.tbl tr:last-child td{border-bottom:none}
   transform:translateY(14px) scale(.97);transition:transform .3s var(--ease)}
 .modal-overlay.show .modal-card{transform:none}
 .modal-top{padding:22px 22px 16px;text-align:center;position:relative;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff}
+  background:var(--color-primary-dark);color:#fff}
 .modal-top .m-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;margin:0 auto 10px;
   background:rgba(255,255,255,.18)}
 .modal-top .m-ic .ic{width:28px;height:28px}
-.modal-top h3{font-size:16px;font-weight:800}
+.modal-top h3{font-size:16px;font-weight:600}
 .modal-top p{font-size:12px;opacity:.9;margin-top:3px}
 .modal-body{padding:18px 22px 22px}
 .profile-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--color-border)}
 .profile-row:last-of-type{border-bottom:none}
-.profile-row .pk{font-size:12px;color:var(--color-muted);font-weight:700;flex-shrink:0}
-.profile-row .pv{font-size:13.5px;font-weight:800;text-align:left;word-break:break-all}
+.profile-row .pk{font-size:12px;color:var(--color-muted);font-weight:600;flex-shrink:0}
+.profile-row .pv{font-size:13.5px;font-weight:600;text-align:left;word-break:break-all}
 .profile-row .pv.ltr{direction:ltr}
 .modal-foot{margin-top:14px}
 .modal-foot .btn{width:100%;justify-content:center}
@@ -141,7 +141,7 @@ table.tbl tr:last-child td{border-bottom:none}
 /* ---------- توست ---------- */
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
   background:var(--color-text);color:var(--color-surface);padding:12px 20px;border-radius:12px;
-  font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);z-index:140;
+  font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);z-index:140;
   opacity:0;visibility:hidden;transition:opacity .25s,transform .3s var(--ease),visibility .25s;display:flex;align-items:center;gap:9px}
 .toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 .toast .ic{width:17px;height:17px;color:var(--success)}
@@ -157,11 +157,12 @@ table.tbl tr:last-child td{border-bottom:none}
   table.tbl td{display:flex;align-items:center;justify-content:space-between;gap:14px;
     padding:9px 0;border-bottom:1px dashed var(--color-border);text-align:left!important}
   table.tbl tr td:last-child{border-bottom:none}
-  table.tbl td::before{content:attr(data-label);font-size:11.5px;font-weight:700;color:var(--color-muted);flex-shrink:0;text-align:right}
+  table.tbl td::before{content:attr(data-label);font-size:11.5px;font-weight:600;color:var(--color-muted);flex-shrink:0;text-align:right}
   table.tbl td:empty{display:none}
   .btn{width:100%}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 <div class="wrap">

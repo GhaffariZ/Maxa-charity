@@ -5,7 +5,15 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>benefactor userpanel</title>
-      <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
+      <script>
+        try {
+          if (localStorage.getItem('macsa-donor-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          }
+        } catch {}
+      </script>
+      <style>html, body { height: 100%; margin: 0; } html { background: #f6f8f8; } html.dark { background: #0f171b; } #root { height: 100%; }</style>
     </head>
 
     <body>
@@ -13,4 +21,3 @@
       <script type="module" src="/src/main.tsx"></script>
     </body>
   </html>
-  

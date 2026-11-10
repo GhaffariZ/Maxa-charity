@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../core/content-locales.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=300');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
@@ -41,12 +42,13 @@ if ($branchSlug !== '') {
     if ($brow) { $branchId = (int)$brow['id']; }
 } 
 
+$languageScope=content_where($pdo,'news','n.id');
 try {
     $stmt = $pdo->prepare("
     SELECT n.id,n.title,n.subtitle,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
     FROM news n
     LEFT JOIN news_categories c ON c.id=n.category_id
-    WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
+    WHERE $languageScope AND n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
     ORDER BY n.publish_date DESC
     LIMIT {$limit}
     ");
@@ -58,7 +60,7 @@ try {
         SELECT n.id,n.title,n.content,n.publish_date,n.read_time,n.featured_image,n.news_code,c.name AS category_name
         FROM news n
         LEFT JOIN news_categories c ON c.id=n.category_id
-        WHERE n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
+        WHERE $languageScope AND n.status='published' AND n.publish_date<=NOW() AND n.branch_id = ? AND (n.reject_reason IS NULL OR TRIM(n.reject_reason)='')
         ORDER BY n.publish_date DESC
         LIMIT {$limit}
         ");
@@ -69,10 +71,12 @@ try {
     }
 }
 
+$rows=content_rows($pdo,'news',$rows);
 $data = array_map(function($row) use ($branchSlug){
     $image = (!empty($row['featured_image']) && !empty($row['news_code']))
       ? "/uploads/news/" . rawurlencode($row['news_code']) . "/" . rawurlencode($row['featured_image'])
       : "";
+    if(!empty($row['featured_image']) && preg_match('~^(?:/|https?://)~',$row['featured_image']))$image=$row['featured_image'];
     // لینکِ خبر: برای شعبه از مسیرِ داخلیِ شعبه (‎/{slug}/news/{id}) که page-view رندرش می‌کند؛
     // برای ستاد مرکزی همان مسیرِ قدیمیِ ‎/{id}/{slug}/.
     $url = $branchSlug !== ''

@@ -17,7 +17,7 @@ INSERT INTO `branches` (`name`, `province`, `city`, `slug`, `is_hq`, `status`) V
   ('تبریز (آذربایجان شرقی)', 'آذربایجان شرقی', 'تبریز', 'tabriz-branch', 0, 'active'),
   ('قم', 'قم', 'قم', 'qom-branch', 0, 'active'),
   ('کاشان', 'اصفهان', 'کاشان', 'kashan-branch', 0, 'active'),
-  ('مرکز ارتباطات و دورپزشکی', NULL, NULL, 'contact-center', 0, 'active'),
+  ('مرکز تخصصی ارتباطات و سلامت از راه دور', NULL, NULL, 'contact-center', 0, 'active'),
   ('مرکز رویش استعدادهای دانشجویی (CDST)', NULL, NULL, 'cdst', 0, 'active')
 ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),

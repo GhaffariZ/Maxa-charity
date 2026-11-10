@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__.'/../core/content-locales.php';
+require_once __DIR__.'/../core/icons.php';
+$contentDb=content_pdo();$languageScope=content_where($contentDb,'employee_profiles');
+$profileId=(int)($_GET['id']??0);
 // --- Database Configuration (from config file outside git) ---
 $DB = require __DIR__ . '/../core/db-config.php';
 $servername = $DB['host'];
@@ -18,32 +22,33 @@ $conn->set_charset("utf8mb4");
 // دریافت نام از متد GET برای URL اختصاصی و سئو محور (تبدیل خط تیره به فاصله)
 $name_slug = isset($_GET['name']) ? trim($_GET['name']) : '';
 
-if (empty($name_slug)) {
+if (empty($name_slug) && $profileId<=0) {
     die("<div style='text-align:center; padding:50px; font-family:tahoma; direction:rtl;'>نام همکار مشخص نشده است. <a href='../personal-resume-list.php'>بازگشت به لیست</a></div>");
 }
 
 $fullname_search = str_replace('-', ' ', $name_slug);
 
 // واکشی اطلاعات بر اساس نام کامل (مطابق با ساختار URL)
-$stmt = $conn->prepare("SELECT * FROM employee_profiles WHERE fullname = ?");
-$stmt->bind_param("s", $fullname_search);
+$stmt = $conn->prepare("SELECT * FROM employee_profiles WHERE $languageScope AND (id = ? OR (? = 0 AND fullname = ?))");
+$stmt->bind_param("iis", $profileId, $profileId, $fullname_search);
 $stmt->execute();
 $result = $stmt->get_result();
 
 // جستجوی جایگزین (اگر فرد با فاصله اضافه ثبت شده بود)
-if ($result->num_rows === 0) {
+if ($result->num_rows === 0 && $profileId<=0) {
     $search_like = "%" . $fullname_search . "%";
-    $stmt2 = $conn->prepare("SELECT * FROM employee_profiles WHERE fullname LIKE ? LIMIT 1");
+    $stmt2 = $conn->prepare("SELECT * FROM employee_profiles WHERE $languageScope AND fullname LIKE ? LIMIT 1");
     $stmt2->bind_param("s", $search_like);
     $stmt2->execute();
     $result = $stmt2->get_result();
 }
 
 if ($result->num_rows === 0) {
-    die("<div style='text-align:center; padding:50px; font-family:tahoma; direction:rtl;'>همکاری با نام '" . htmlspecialchars($fullname_search) . "' یافت نشد. <a href='../personal-resume-list.php'>بازگشت به لیست</a></div>");
+    site_error_page();exit;
 }
 
-$row = $result->fetch_assoc();
+$row = content_row($contentDb,'employee_profiles',$result->fetch_assoc());
+if(!$row){site_error_page();exit;}
 
 // بررسی وضعیت فعال بودن همکار — اگر غیرفعال باشد صفحه نمایش داده نمی‌شود
 if (isset($row['is_active']) && (int)$row['is_active'] === 0) {
@@ -80,25 +85,26 @@ $roles = [
     'ceo_office' => 'حوزه مدیر عامل'
 ];
 
+$branches=array_map('site_text',$branches);$roles=array_map('site_text',$roles);
 // --- تطبیق ۱۰۰٪ با ستون‌های دیتابیس ---
-$fullname = htmlspecialchars($row['fullname'] ?: 'همکار مکسا');
+$fullname = htmlspecialchars($row['fullname'] ?: site_text('همکار مکسا'));
 // رکوردهای جدید نامِ شعبه را مستقیم در ستونِ branch دارند؛ نگاشتِ قدیمی هم پشتیبانی می‌شود.
 $branch_text = $branches[$row['branch']] ?? (($row['branch'] ?? '') !== '' ? $row['branch'] : 'نامشخص');
-$role_text = isset($roles[$row['role']]) ? $roles[$row['role']] : ($row['role'] ?: 'ثبت نشده');
+$role_text = isset($roles[$row['role']]) ? $roles[$row['role']] : ($row['role'] ?: site_text('ثبت نشده'));
 
 $profile_pic = isset($row['profile_pic']) && !empty($row['profile_pic']) ? $row['profile_pic'] : '';
-$email = !empty($row['email']) ? htmlspecialchars($row['email']) : 'ثبت نشده';
+$email = !empty($row['email']) ? htmlspecialchars($row['email']) : site_text('ثبت نشده');
 
 // خالی گذاشتن متغیر نظام پزشکی در صورت عدم وجود (برای مخفی شدن باکس)
 $medical_id = !empty($row['medical_id']) ? htmlspecialchars($row['medical_id']) : '';
 
-$study_field = !empty($row['study_field']) ? htmlspecialchars($row['study_field']) : 'ثبت نشده';
-$start_work_year = !empty($row['start_work_year']) ? htmlspecialchars($row['start_work_year']) : 'نامشخص';
-$maxa_join_year = !empty($row['maxa_join_year']) ? htmlspecialchars($row['maxa_join_year']) : 'نامشخص';
+$study_field = !empty($row['study_field']) ? htmlspecialchars($row['study_field']) : site_text('ثبت نشده');
+$start_work_year = !empty($row['start_work_year']) ? htmlspecialchars($row['start_work_year']) : site_text('نامشخص');
+$maxa_join_year = !empty($row['maxa_join_year']) ? htmlspecialchars($row['maxa_join_year']) : site_text('نامشخص');
 
-$bio_professional = !empty($row['bio_professional']) ? htmlspecialchars($row['bio_professional']) : 'توضیحاتی ثبت نشده است.';
-$academic_background = !empty($row['academic_background']) ? htmlspecialchars($row['academic_background']) : 'سوابقی ثبت نشده است.';
-$maxa_responsibilities = !empty($row['maxa_responsibilities']) ? htmlspecialchars($row['maxa_responsibilities']) : 'موردی ثبت نشده است.';
+$bio_professional = !empty($row['bio_professional']) ? htmlspecialchars($row['bio_professional']) : site_text('توضیحاتی ثبت نشده است.');
+$academic_background = !empty($row['academic_background']) ? htmlspecialchars($row['academic_background']) : site_text('سوابقی ثبت نشده است.');
+$maxa_responsibilities = !empty($row['maxa_responsibilities']) ? htmlspecialchars($row['maxa_responsibilities']) : site_text('موردی ثبت نشده است.');
 
 $instagram = !empty($row['instagram']) ? htmlspecialchars($row['instagram']) : '';
 $linkedin = !empty($row['linkedin']) ? htmlspecialchars($row['linkedin']) : '';

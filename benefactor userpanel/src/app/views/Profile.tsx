@@ -1,4 +1,5 @@
 import React from "react";
+import { Loader } from "../components/ui/loader";
 import { useNavigate } from "react-router";
 import {
   User,
@@ -257,7 +258,7 @@ export function Profile() {
 
             {loadingRecord ? (
               <div className="flex justify-center p-4">
-                <Loader2 size={24} className="animate-spin text-primary" />
+                <Loader variant="pulse" size={32} label="در حال دریافت اطلاعات" />
               </div>
             ) : medicalRecord ? (
               <div className="bg-muted/30 p-6 rounded-2xl flex flex-col gap-4">

@@ -552,7 +552,8 @@ INSERT INTO `news_categories` (`id`, `name`, `slug`, `is_active`, `sort_order`, 
 (24, 'اجتماعی', 'ejtemaei', 1, 0, '2026-05-25 13:20:01', '2026-05-25 13:20:01'),
 (25, 'فرهنگی', 'farhangi', 1, 0, '2026-05-25 13:20:01', '2026-05-25 13:20:01'),
 (26, 'اقتصادی', 'eghtesadi', 1, 0, '2026-05-25 13:20:01', '2026-05-25 13:20:01'),
-(27, 'درون سازمانی', 'daroon-sazmani', 1, 0, '2026-05-25 13:20:01', '2026-05-25 13:20:01');
+(27, 'درون سازمانی', 'daroon-sazmani', 1, 0, '2026-05-25 13:20:01', '2026-05-25 13:20:01'),
+(28, 'مقالات کادر درمان', 'doctors-articles', 1, 10, '2026-11-03 00:00:00', '2026-11-03 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -1757,7 +1758,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `news_categories`
 --
 ALTER TABLE `news_categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `news_deleted`

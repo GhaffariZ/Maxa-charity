@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحه مقاله استاندارد</title>
+  <title><?= site_e('صفحه مقاله استاندارد') ?></title>
 
   <style>
     /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -99,7 +100,7 @@
       grid-template-areas: "sidebar content";
       gap: 32px;
       align-items: start;
-      direction: rtl;
+      direction: var(--site-direction, rtl);
     }
 
     .content-column {
@@ -109,13 +110,8 @@
 
     .article-sidebar {
       grid-area: sidebar;
-      position: sticky;
-      top: 24px;
-      align-self: start;
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-      height: fit-content;
+      align-self: stretch;
+      min-width: 0;
     }
 
     /* ---------------- hero image ---------------- */
@@ -144,20 +140,15 @@
 
 .article-sidebar {
   grid-area: sidebar;
-  align-self: start;
+  align-self: stretch;
   min-width: 0;
 }
 
-/*
-  نکته مهم:
-  sticky را روی sidebar-stack گذاشتیم نه خود aside.
-  این باعث می‌شود کنترل بهتری روی ارتفاع، فاصله بالا و خروج از پایین صفحه داشته باشیم.
-*/
-
-/* اصلاح sticky برای جلوگیری از تداخل با هدر */
+/* اصلاح sticky برای شناور ماندن سایدبار در تمام طول مقاله */
 .sidebar-stack {
+  position: -webkit-sticky;
   position: sticky;
-  top: 150px; /* مقدار بیشتر برای جلوگیری از برخورد با هدر */
+  top: 96px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -322,7 +313,7 @@
 }
 
 .popup-phone-label {
-  direction: rtl;
+  direction: var(--site-direction, rtl);
   margin-bottom: 4px;
   color: #64748b;
   font-size: 0.8rem;
@@ -571,7 +562,7 @@
   color: rgba(255,255,255,0.92);
   font-size: 0.98rem;
   line-height: 2;
-  text-align: right;
+  text-align: start;
 }
 
 .contact-info-list {
@@ -1109,10 +1100,10 @@
   <main class="page-container">
 
     <header class="header-capsule">
-      <h1>مراقبت های تغذیه</h1>
+      <h1><?= site_e('مراقبت های تغذیه') ?></h1>
 
       <a href="/home" class="breadcrumb-pill">
-        صفحه اصلی / خدمات
+        <?= site_e('صفحه اصلی / خدمات') ?>
       </a>
     </header>
 
@@ -1130,20 +1121,20 @@
 </svg>
 
       </div>
-      <h3 class="contact-card-title">برای مشاوره نیاز به کمک دارید؟</h3>
+      <h3 class="contact-card-title"><?= site_e('برای مشاوره نیاز به کمک دارید؟') ?></h3>
       <p class="contact-card-text">
-با مرکز ارتباطات کشوری به صورت 24 ساعت روز و 7 روز هفته در تماس باشید
+<?= site_e('با مرکز تخصصی ارتباطات و سلامت از راه دور به صورت 24 ساعت روز و 7 روز هفته در تماس باشید') ?>
       </p>
-      <button class="contact-card-btn js-call-btn">تماس با ما</button>
+      <button class="contact-card-btn js-call-btn"><?= site_e('تماس با ما') ?></button>
     </div>
 
     <!-- باکس مطالب مرتبط -->
     <div class="related-card">
-      <h3 class="related-card-title">مطالب مرتبط</h3>
+      <h3 class="related-card-title"><?= site_e('مطالب مرتبط') ?></h3>
       <ul class="related-list">
-        <li><a href="#">مراقبت حمایتی چیست؟</a></li>
-        <li><a href="#">خدمات تسکینی مکسا</a></li>
-        <li><a href="#">راهنمای دریافت مشاوره</a></li>
+        <li><a href="/supportiveandpalliativecare"><?= site_e('مراقبت حمایتی چیست؟') ?></a></li>
+        <li><a href="/patientoption"><?= site_e('خدمات تسکینی مکسا') ?></a></li>
+        <li><a href="/patientintake"><?= site_e('راهنمای دریافت مشاوره') ?></a></li>
       </ul>
     </div>
   </div>
@@ -1160,24 +1151,24 @@
       </svg>
     </div>
 
-    <h3 id="callPopupTitle">تماس با مرکز ارتباطات مکسا</h3>
+    <h3 id="callPopupTitle"><?= site_e('تماس با مرکز تخصصی ارتباطات و سلامت از راه دور') ?></h3>
 
     <p class="popup-desc">
-      برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.
+      <?= site_e('برای دریافت راهنمایی و مشاوره، می‌توانید با شماره زیر تماس بگیرید.') ?>
     </p>
 
     <a href="tel:03191092030" class="popup-phone-link">
-      <span class="popup-phone-label">شماره تماس</span>
-      <strong>۰۳۱-۹۱۰۹۲۰۳۰</strong>
+      <span class="popup-phone-label"><?= site_e('شماره تماس') ?></span>
+      <strong><?= site_e('۰۳۱-۹۱۰۹۲۰۳۰') ?></strong>
     </a>
 
     <div class="popup-actions">
       <button class="popup-copy-btn" type="button" data-phone="03191092030">
-        کپی شماره
+        <?= site_e('کپی شماره') ?>
       </button>
 
       <button class="popup-secondary-btn" type="button">
-        بستن
+        <?= site_e('بستن') ?>
       </button>
     </div>
 
@@ -1194,17 +1185,17 @@
 
         <article class="article-content main-article">
 
-                                <h2 class="">مراقبت های تغذیه</h2>
+                                <h2 class=""><?= site_e('مراقبت های تغذیه') ?></h2>
                                 <p class="wow fadeInUp">
-یکی از مهم‌ترین سوالات بیماران، شیـوه صحیح تغـذیه در حیـن انجام شیمی درمانی و پرتو درمانی و همچنین در دوران نقاهت بعد از آن می‌باشد. همچنین در شرایط بیمار یپیشرفته معمولاً تغذیۀ بیمار به شدت دچار مشکل شده و تأمین انرژی کافی برای بیمار به چالش بزرگی تبدیل می‌شود. از طرفی می‌دانیم که امروزه چاقی، اضافه وزن و پیروی از الگوی غذایی ناسالم به عنوان یکی از عوامل مهم در بروز و عود سرطان مطرح است.
+<?= site_e('یکی از مهم‌ترین سوالات بیماران، شیـوه صحیح تغـذیه در حیـن انجام شیمی درمانی و پرتو درمانی و همچنین در دوران نقاهت بعد از آن می‌باشد. همچنین در شرایط بیمار یپیشرفته معمولاً تغذیۀ بیمار به شدت دچار مشکل شده و تأمین انرژی کافی برای بیمار به چالش بزرگی تبدیل می‌شود. از طرفی می‌دانیم که امروزه چاقی، اضافه وزن و پیروی از الگوی غذایی ناسالم به عنوان یکی از عوامل مهم در بروز و عود سرطان مطرح است.') ?>
 </p>
-                                <h2 class="wow fadeInUp" data-wow-delay="0.8s">واحد مشاوره تغذیه مکسا به عنوان بخشی از برنامه مراقبتی حمایتی و تسکینی، خدمات زیر را ارائه می دهد:</h2>
+                                <h2 class="wow fadeInUp" data-wow-delay="0.8s"><?= site_e('واحد مشاوره تغذیه مکسا به عنوان بخشی از برنامه مراقبتی حمایتی و تسکینی، خدمات زیر را ارائه می دهد:') ?></h2>
                             <ul class="wow fadeInUp" data-wow-delay="1.2s">
-                                <li>مشاوره تغذیه برای بیماران در دوران شیمی درمانی و پرتو درمانی؛</li>
-                                <li>مشاوره تغذیه برای بیماران در دوران نقاهت بیماری؛</li>
-                                <li>مشاوره تغذیه به خانواده بیماران برای تأمین تغذیۀ مناسب برای بیمار بستری در منزل با استفاده از مکمل‌های غذایی خوراکی یا وریدی؛</li>
-                                <li>مشاوره به پزشکان در خصوص تنظیم رژیم تغذیه‌ای مناسب برای بیماران بستری و تحت مراقبت در منزل؛</li>
-                                <li>مشاوره به خانواده در راستای کاهش احتمال ابتلا به سرطان.</li>
+                                <li><?= site_e('مشاوره تغذیه برای بیماران در دوران شیمی درمانی و پرتو درمانی؛') ?></li>
+                                <li><?= site_e('مشاوره تغذیه برای بیماران در دوران نقاهت بیماری؛') ?></li>
+                                <li><?= site_e('مشاوره تغذیه به خانواده بیماران برای تأمین تغذیۀ مناسب برای بیمار بستری در منزل با استفاده از مکمل‌های غذایی خوراکی یا وریدی؛') ?></li>
+                                <li><?= site_e('مشاوره به پزشکان در خصوص تنظیم رژیم تغذیه‌ای مناسب برای بیماران بستری و تحت مراقبت در منزل؛') ?></li>
+                                <li><?= site_e('مشاوره به خانواده در راستای کاهش احتمال ابتلا به سرطان.') ?></li>
                             </ul>
 
                    </div>
@@ -1275,14 +1266,14 @@
     copyBtn.addEventListener('click', async function() {
       try {
         await navigator.clipboard.writeText(phoneNumber);
-        copyBtn.textContent = 'کپی شد';
+        copyBtn.textContent = <?= site_js_text('کپی شد') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       } catch (err) {
-        copyBtn.textContent = 'امکان کپی نبود';
+        copyBtn.textContent = <?= site_js_text('امکان کپی نبود') ?>;
         setTimeout(function() {
-          copyBtn.textContent = 'کپی شماره';
+          copyBtn.textContent = <?= site_js_text('کپی شماره') ?>;
         }, 1600);
       }
     });

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/image-optimizer.php';
 dash_require('hero');
 
 header('Content-Type: application/json; charset=utf-8');
@@ -29,24 +30,7 @@ function hero_save_image(array $file, string $uploadDir): ?string {
     if (empty($file['name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return null;
     }
-    if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-        throw new Exception('خطا در آپلود تصویر.');
-    }
-    // محدودیت حجم (5MB)
-    if (($file['size'] ?? 0) > 5 * 1024 * 1024) {
-        throw new Exception('حجم تصویر نباید بیشتر از 5 مگابایت باشد.');
-    }
-    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    if (!in_array($ext, $allowed, true)) {
-        throw new Exception('فرمت تصویر مجاز نیست. فقط jpg, jpeg, png, webp, gif');
-    }
-    $newName = 'hero_' . time() . '_' . random_int(1000, 9999) . '.' . $ext;
-    $dest = $uploadDir . $newName;
-    if (!move_uploaded_file($file['tmp_name'], $dest)) {
-        throw new Exception('انتقال تصویر به پوشه انجام نشد.');
-    }
-    return '/uploads/hero/' . $newName;
+    return maxa_upload_and_optimize($file, 'hero', 'hero_', 82, 1920);
 }
 
 try {
@@ -62,6 +46,7 @@ try {
 
     // محافظت در برابر CSRF (هم‌سان با endpointهای خبر)
     csrf_check();
+    content_prepare($pdo,'hero_slides');
 
     // پوشه‌ی آپلود
     $uploadDir = __DIR__ . '/../uploads/hero/';
@@ -179,6 +164,17 @@ try {
         ? hero_save_image($_FILES['image'], $uploadDir)
         : null;
 
+    $editId=(int)($_POST['id']??0);
+    $pdo->beginTransaction();
+    if($editId>0){
+        $own=$pdo->prepare('SELECT id FROM hero_slides WHERE id=? AND branch_id=?');$own->execute([$editId,$__branch]);
+        if(!$own->fetch())throw new RuntimeException('هیرو در این شعبه یافت نشد.');
+        $sql='UPDATE hero_slides SET title=?,description=?,button_link=?,category=?,publish_date=?';
+        $parameters=[$title,$description,$button_link,$category,$publish_date];
+        if($dbImagePath!==null){$sql.=',image=?';$parameters[]=$dbImagePath;}
+        $parameters[]=$editId;$parameters[]=$__branch;
+        $pdo->prepare($sql.' WHERE id=? AND branch_id=?')->execute($parameters);
+    }else{
     $stmt = $pdo->prepare("
         INSERT INTO hero_slides
             (title, description, image, button_link, category, publish_date, status, sort_order, branch_id)
@@ -194,13 +190,20 @@ try {
         ':publish_date' => $publish_date,
         ':branch_id'    => $__branch,
     ]);
+    $editId=(int)$pdo->lastInsertId();
+    }
+    content_save($pdo,'hero_slides',(string)$editId);
+    $pdo->commit();
 
     echo json_encode([
         'status'  => 'success',
-        'message' => 'هیرو با موفقیت ذخیره شد'
+        'message' => 'هیرو با موفقیت ذخیره شد',
+        'id'=>$editId,
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    if(isset($pdo)&&$pdo instanceof PDO&&$pdo->inTransaction())$pdo->rollBack();
+    http_response_code(422);
     echo json_encode([
         'status'  => 'error',
         'message' => $e->getMessage()

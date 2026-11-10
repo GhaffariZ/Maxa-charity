@@ -1,46 +1,36 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /**
  * صفحه اختصاصی خواندن تک‌روایت امید مکسا
  * Single Macsa Story Detail Page
  */
 
 require_once __DIR__ . '/core/database.php';
+require_once __DIR__.'/core/content-locales.php';
+$languageScope=content_where($pdo,'macsa_stories');
 
 $id = (int)($_GET['id'] ?? 0);
 $story = null;
 
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE `id` = ? AND `status` = 'published' LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE $languageScope AND `id` = ? AND `status` = 'published' LIMIT 1");
     $stmt->execute([$id]);
     $story = $stmt->fetch();
 }
 
 // Fallback: If story ID is invalid or not provided, fetch the latest published story
-if (!$story) {
-    $fallbackStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE `status` = 'published' ORDER BY `sort_order` ASC, `id` DESC LIMIT 1");
+if (!$story && $id===0) {
+    $fallbackStmt = $pdo->query("SELECT * FROM `macsa_stories` WHERE $languageScope AND `status` = 'published' ORDER BY `sort_order` ASC, `id` DESC LIMIT 1");
     $story = $fallbackStmt->fetch();
 }
 
-// If database is completely empty
-if (!$story) {
-    $story = [
-        'id' => 1,
-        'title' => 'زندگی تا آخرین لحظه',
-        'narrator_name' => 'دکتر زهرا جعفری',
-        'narrator_role' => 'روانشناس مراقبت درمنزل شعبه تهران',
-        'tag' => 'روایت کادر درمان',
-        'excerpt' => 'یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود...',
-        'content' => "یکی از بهترین خاطرات من در بخش مراقبت در منزل، مرتبط با مرجان، خانم جوانی بود که سال‌ها در آمریکا زندگی کرده بود. همسر ایشان ایرانی‌الاصل بود، اما در آمریکا بزرگ شده بود.\n\nدر جریان درمان و همراهی با این خانواده، شاهد پیوند عمیق عاطفی و امید بی‌پایان به زندگی بودیم که تا آخرین لحظات نیز جریان داشت. تیم مراقبت در منزل مکسا با ارائه مشاوره‌های منظم روانشناختی، آموزش مهارت‌های تاب‌آوری به همراهان، و ایجاد فضایی امن و آرام، تلاش کرد تا کیفیت زندگی بیمار و اطرافیان در بالاترین سطح ممکن حفظ شود.\n\nتجربه این خانواده نشان داد که مراقبت تسکینی تنها افزودن روز به زندگی نیست، بلکه بخشیدن زندگی، معنا و آرامش به لحظه‌لحظه روزهاست.",
-        'image' => '',
-        'read_time' => '۴ دقیقه مطالعه',
-        'created_at' => date('Y-m-d H:i:s')
-    ];
-}
+$story=content_row($pdo,'macsa_stories',$story?:null);
+if(!$story){site_error_page();exit;}
 
 // Fetch other related stories (excluding current)
-$relatedStmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE `status` = 'published' AND `id` != ? ORDER BY `sort_order` ASC, `id` DESC LIMIT 3");
+$relatedStmt = $pdo->prepare("SELECT * FROM `macsa_stories` WHERE $languageScope AND `status` = 'published' AND `id` != ? ORDER BY `sort_order` ASC, `id` DESC LIMIT 3");
 $relatedStmt->execute([$story['id']]);
-$relatedStories = $relatedStmt->fetchAll();
+$relatedStories = content_rows($pdo,'macsa_stories',$relatedStmt->fetchAll());
 
 $pageTitle = 'روایت امید مکسا | ' . htmlspecialchars($story['title']);
 require_once __DIR__ . '/core/component-renderer.php';
@@ -93,7 +83,7 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 32px 20px 48px;
-  direction: rtl;
+  direction: var(--site-direction, rtl);
 }
 
 /* Breadcrumbs */
@@ -447,10 +437,10 @@ body {
 <main class="story-wrapper">
 
   <!-- Breadcrumbs -->
-  <nav class="story-breadcrumb" aria-label="مسیریابی">
-    <a href="/home">صفحه اصلی</a>
+  <nav class="story-breadcrumb" aria-label="<?= site_e('مسیریابی') ?>">
+    <a href="/home"><?= site_e('صفحه اصلی') ?></a>
     <span class="sep">/</span>
-    <a href="/macsa-stories-details">بانک روایت‌های امید</a>
+    <a href="/macsa-stories-details"><?= site_e('بانک روایت‌های امید') ?></a>
     <span class="sep">/</span>
     <span class="current"><?= htmlspecialchars($story['title']) ?></span>
   </nav>
@@ -462,11 +452,11 @@ body {
     <div class="story-meta-top">
       <span class="story-tag-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <?= htmlspecialchars($story['tag'] ?: 'روایت امید') ?>
+        <?= htmlspecialchars($story['tag'] ?: site_text('روایت امید')) ?>
       </span>
       <span class="story-read-time">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <?= htmlspecialchars($story['read_time'] ?: '۴ دقیقه مطالعه') ?>
+        <?= htmlspecialchars($story['read_time'] ?: site_text('۴ دقیقه مطالعه')) ?>
       </span>
     </div>
 
@@ -485,7 +475,7 @@ body {
         </div>
         <div>
           <div class="narrator-name"><?= htmlspecialchars($story['narrator_name']) ?></div>
-          <div class="narrator-sub"><?= htmlspecialchars($story['narrator_role'] ?: 'همراه و حامی مکسا') ?></div>
+          <div class="narrator-sub"><?= htmlspecialchars($story['narrator_role'] ?: site_text('همراه و حامی مکسا')) ?></div>
         </div>
       </div>
 
@@ -493,7 +483,7 @@ body {
       <div class="story-share-actions">
         <button type="button" class="share-btn" onclick="copyStoryLink()" id="copyBtn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <span id="copyText">اشتراک‌گذاری</span>
+          <span id="copyText"><?= site_e('اشتراک‌گذاری') ?></span>
         </button>
       </div>
     </div>
@@ -527,12 +517,12 @@ body {
     <!-- CTA Banner -->
     <div class="story-cta-box">
       <div class="story-cta-text">
-        <h4>همراه با مکسا، نوری در دل تاریکی باشید</h4>
-        <p>با مشارکت در طرح‌های حمایتی و استندهای تبریک و تسلیت مکسا، به تداوم خدمات رایگان حمایتی و تسکینی برای بیماران مبتلا به سرطان کمک کنید.</p>
+        <h4><?= site_e('همراه با مکسا، نوری در دل تاریکی باشید') ?></h4>
+        <p><?= site_e('با مشارکت در طرح‌های حمایتی و استندهای تبریک و تسلیت مکسا، به تداوم خدمات رایگان حمایتی و تسکینی برای بیماران مبتلا به سرطان کمک کنید.') ?></p>
       </div>
       <div class="story-cta-btns">
-        <a href="/onlinedonation" class="cta-btn-gold">کمک و حمایت آنلاین</a>
-        <a href="/stand-order.php" class="cta-btn-outline">استند تبریک و تسلیت</a>
+        <a href="/onlinedonation" class="cta-btn-gold"><?= site_e('کمک و حمایت آنلاین') ?></a>
+        <a href="/stand-order.php" class="cta-btn-outline"><?= site_e('استند تبریک و تسلیت') ?></a>
       </div>
     </div>
 
@@ -543,19 +533,19 @@ body {
     <section class="related-stories-wrap">
       <h3 class="related-title">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#008f8a" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        سایر روایت‌های امید مکسا
+        <?= site_e('سایر روایت‌های امید مکسا') ?>
       </h3>
       <div class="related-grid">
         <?php foreach ($relatedStories as $rel): ?>
           <a href="/macsa-story.php?id=<?= $rel['id'] ?>" class="related-card">
             <div>
-              <span class="related-tag"><?= htmlspecialchars($rel['tag'] ?: 'روایت امید') ?></span>
+              <span class="related-tag"><?= htmlspecialchars($rel['tag'] ?: site_text('روایت امید')) ?></span>
               <h4><?= htmlspecialchars($rel['title']) ?></h4>
               <p><?= htmlspecialchars($rel['excerpt'] ?: mb_substr(strip_tags($rel['content']), 0, 100, 'UTF-8') . '...') ?></p>
             </div>
             <div class="related-footer">
               <span><?= htmlspecialchars($rel['narrator_name']) ?></span>
-              <span>خواندن روایت ←</span>
+              <span><?= site_e('خواندن روایت ←') ?></span>
             </div>
           </a>
         <?php endforeach; ?>
@@ -570,13 +560,13 @@ function copyStoryLink() {
   const url = window.location.href;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(url).then(() => {
-      document.getElementById('copyText').textContent = 'لینک کپی شد!';
+      document.getElementById('copyText').textContent = <?= site_js_text('لینک کپی شد!') ?>;
       setTimeout(() => {
-        document.getElementById('copyText').textContent = 'اشتراک‌گذاری';
+        document.getElementById('copyText').textContent = <?= site_js_text('اشتراک‌گذاری') ?>;
       }, 2500);
     });
   } else {
-    prompt('آدرس این روایت:', url);
+    prompt(<?= site_js_text('آدرس این روایت:') ?>, url);
   }
 }
 </script>

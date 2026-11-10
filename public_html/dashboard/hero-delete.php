@@ -24,6 +24,7 @@ try {
 
     // حذف از دیتابیس (قید branch_id برای ایمنی مضاعف)
     $pdo->prepare("DELETE FROM hero_slides WHERE id = ? AND branch_id = ?")->execute([$id, $__branch]);
+    content_delete($pdo,'hero_slides',(string)$id);
 
     // حذفِ فایلِ تصویر (مسیر مثل /uploads/hero/hero_xxx.png ذخیره شده)
     $image = trim((string)($row['image'] ?? ''));

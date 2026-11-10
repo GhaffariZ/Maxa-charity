@@ -17,6 +17,10 @@ for (const component of ['home', 'header']) {
 const types = { '.css': 'text/css', '.js': 'text/javascript', '.woff2': 'font/woff2', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
+    if(url.pathname==='/dashboard/hero-list.php'){
+        res.setHeader('Content-Type','application/json');
+        return res.end(JSON.stringify({status:'success',data:[{title:'Test hero',image:'/favicon.png',description:'',button_link:''}]}));
+    }
     if (pages[url.pathname]) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         return res.end(pages[url.pathname]);

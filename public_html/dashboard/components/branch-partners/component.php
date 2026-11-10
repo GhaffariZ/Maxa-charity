@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!-- ============================================================================
      کامپوننت «همکارانِ شعبه» — اسلایدرِ همکارانِ همان شعبه + دکمه‌ی «همه‌ی همکاران»
      ----------------------------------------------------------------------------
@@ -13,7 +14,7 @@
   @font-face{font-family:'Vazirmatn';src:url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations');font-weight:100 900;font-style:normal;font-display:swap}
   .bp{--teal:#008f8a;--teal-d:#00736f;--teal-l:#0d9488;--gold:#d97706;--gold-glow:rgba(217,119,6,.10);
       --text:#1e293b;--muted:#64748b;--line:#e2e8f0;--surface:#fff;--bg:#f4f7f6;
-      --ease:cubic-bezier(.25,1,.5,1);font-family:'Vazirmatn',Tahoma,sans-serif;direction:rtl;color:var(--text);
+      --ease:cubic-bezier(.25,1,.5,1);font-family:'Vazirmatn',Tahoma,sans-serif;direction:var(--site-direction, rtl);color:var(--text);
       background:var(--bg);padding:40px 0}
   .bp *{box-sizing:border-box}
   .bp-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
@@ -75,18 +76,18 @@
   <div class="bp-wrap">
     <div class="bp-head">
       <div>
-        <h2>همکاران شعبه</h2>
-        <p class="bp-sub" id="bp-sub">تیمی که در این شعبه در کنار شما هستند.</p>
+        <h2><?= site_e('همکاران شعبه') ?></h2>
+        <p class="bp-sub" id="bp-sub"><?= site_e('تیمی که در این شعبه در کنار شما هستند.') ?></p>
       </div>
       <a class="bp-all" id="bp-all" href="#" target="_top">
-        مشاهده‌ی همه‌ی همکاران
+        <?= site_e('مشاهده‌ی همه‌ی همکاران') ?>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </a>
     </div>
     <div class="bp-slider">
-      <button class="bp-nav prev" id="bp-prev" aria-label="قبلی" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <button class="bp-nav next" id="bp-next" aria-label="بعدی" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div class="bp-track" id="bp-track"><div class="bp-soon" style="flex:1">در حال بارگذاری همکاران...</div></div>
+      <button class="bp-nav prev" id="bp-prev" aria-label="<?= site_e('قبلی') ?>" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="bp-nav next" id="bp-next" aria-label="<?= site_e('بعدی') ?>" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="bp-track" id="bp-track"><div class="bp-soon" style="flex:1"><?= site_e('در حال بارگذاری همکاران...') ?></div></div>
     </div>
   </div>
 </section>
@@ -100,16 +101,17 @@
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 
   // نگاشتِ کلید→نامِ شعبه و نقش (همان نگاشتِ صفحه‌ی شبکه‌ی همکاران)
-  var BRANCHES={tehran:'شعبه تهران',isfahan:'شعبه اصفهان',mashhad:'شعبه مشهد',qom:'شعبه قم',tabriz:'شعبه تبریز',ahvaz:'شعبه اهواز',kerman:'شعبه کرمان',kashan:'شعبه کاشان',telemedicine:'پزشکی از راه دور مکسا',setad_markazi:'ستاد مرکزی'};
-  var ROLES={administrative:'سمت‌های اداری',doctors:'پزشک متخصص',nurses:'کادر پرستاری',psychologists:'روانشناس سلامت',social_workers:'مددکار اجتماعی',spiritual_care:'مراقب معنوی',nutritionists:'متخصص تغذیه',rehabilitation:'متخصص توانبخشی',genetic_counselors:'مشاور ژنتیک و غربالگری',deputies:'معاونت',admin:'کادر اداری',ceo_office:'حوزه مدیر عامل'};
+  var BRANCHES={tehran:<?= site_js_text('شعبه تهران') ?>,isfahan:<?= site_js_text('شعبه اصفهان') ?>,mashhad:<?= site_js_text('شعبه مشهد') ?>,qom:<?= site_js_text('شعبه قم') ?>,tabriz:<?= site_js_text('شعبه تبریز') ?>,ahvaz:<?= site_js_text('شعبه اهواز') ?>,kerman:<?= site_js_text('شعبه کرمان') ?>,kashan:<?= site_js_text('شعبه کاشان') ?>,telemedicine:<?= site_js_text('پزشکی از راه دور مکسا') ?>,setad_markazi:<?= site_js_text('ستاد مرکزی') ?>};
+  var ROLES={administrative:<?= site_js_text('سمت‌های اداری') ?>,doctors:<?= site_js_text('پزشک متخصص') ?>,nurses:<?= site_js_text('کادر پرستاری') ?>,psychologists:<?= site_js_text('روانشناس سلامت') ?>,social_workers:<?= site_js_text('مددکار اجتماعی') ?>,spiritual_care:<?= site_js_text('مراقب معنوی') ?>,nutritionists:<?= site_js_text('متخصص تغذیه') ?>,rehabilitation:<?= site_js_text('متخصص توانبخشی') ?>,genetic_counselors:<?= site_js_text('مشاور ژنتیک و غربالگری') ?>,deputies:<?= site_js_text('معاونت') ?>,admin:<?= site_js_text('کادر اداری') ?>,ceo_office:<?= site_js_text('حوزه مدیر عامل') ?>};
 
   // دکمه‌ی «همه‌ی همکاران» → صفحه‌ی شبکه‌ی همکارانِ همین شعبه
   var allBtn=document.getElementById('bp-all');
-  if(allBtn){ allBtn.setAttribute('href', SLUG?('/'+encodeURIComponent(SLUG)+'/network'):'#'); }
-  if(NAME){ var sub=document.getElementById('bp-sub'); if(sub) sub.textContent='تیمی که در شعبه‌ی '+NAME+' در کنار شما هستند.'; }
+  if(allBtn){ allBtn.setAttribute('href', SLUG?(<?= json_encode(site_locale()==='fa'?'':'/'.site_locale()) ?>+'/'+encodeURIComponent(SLUG)+'/network'):'#'); }
+  if(NAME){ var sub=document.getElementById('bp-sub'); if(sub) sub.textContent=<?= site_js_text('همکاران مکسا') ?>+' · '+NAME; }
 
   function inBranch(emp){
     if(!SLUG && !NAME) return true;
+    if(emp.branch_slug && SLUG) return emp.branch_slug===SLUG;
     var b=(emp.branch||'').trim();
     if(NAME && b===NAME) return true;
     if(SLUG && b===SLUG) return true;
@@ -118,10 +120,10 @@
   }
 
   function card(emp){
-    var name=emp.fullname||'همکار مکسا';
-    var branchText=BRANCHES[emp.branch]|| (emp.branch||NAME||'مکسا');
+    var name=emp.fullname||<?= site_js_text('همکار مکسا') ?>;
+    var branchText=BRANCHES[emp.branch]|| (emp.branch||NAME||<?= site_js_text('مکسا') ?>);
     var rawRole=emp.role||'', rawCat=emp.job_category||'';
-    var roleText=ROLES[rawRole]||(rawRole?rawRole:(ROLES[rawCat]||'ثبت نشده'));
+    var roleText=ROLES[rawRole]||(rawRole?rawRole:(ROLES[rawCat]||<?= site_js_text('ثبت نشده') ?>));
     var slug=encodeURIComponent(String(name).trim().replace(/\s+/g,'-'));
     var img=emp.profile_pic
       ? '<img src="'+esc(emp.profile_pic)+'" alt="'+esc(name)+'">'
@@ -132,14 +134,14 @@
       +'<div class="bp-pill bp-pill-branch" title="'+esc(branchText)+'"><span class="dot"></span><span class="vt">'+esc(branchText)+'</span></div>'
       +'<div class="bp-pill bp-pill-role" title="'+esc(roleText)+'"><span class="dot"></span><span class="vt">'+esc(roleText)+'</span></div>'
       +'</div>'
-      +'<div class="bp-more"><a class="bp-detail" href="/dashboard/personal-resume-detail.php?name='+slug+'" target="_top">اطلاعات بیشتر ‹</a></div>'
+      +'<div class="bp-more"><a class="bp-detail" href="<?= site_url('/personal-resume-detail.php') ?>?id='+emp.id+'&name='+slug+'" target="_top">اطلاعات بیشتر ‹</a></div>'
       +'</div></article>';
   }
 
   fetch('/api-employees.php').then(function(r){return r.json();}).then(function(list){
     var items=(Array.isArray(list)?list:[]).filter(inBranch).slice(0,12);
     if(!items.length){
-      track.innerHTML='<div class="bp-soon" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز همکاری برای این شعبه ثبت نشده است.</span></div>';
+      track.innerHTML=<?= site_js_text('<div class="bp-soon" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز همکاری برای این شعبه ثبت نشده است.</span></div>') ?>;
       if(allBtn) allBtn.style.display='none';
       return;
     }
@@ -153,7 +155,7 @@
     prev.addEventListener('click',function(){ track.scrollBy({left:step()*2,behavior:'smooth'}); });
     sync(); window.addEventListener('resize',sync);
   }).catch(function(){
-    track.innerHTML='<div class="bp-soon" style="flex:1">خطا در بارگذاری همکاران.</div>';
+    track.innerHTML=<?= site_js_text('<div class="bp-soon" style="flex:1">خطا در بارگذاری همکاران.</div>') ?>;
   });
 })();
 </script>

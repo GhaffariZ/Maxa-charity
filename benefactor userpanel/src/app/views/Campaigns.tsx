@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { api, ApiRequestError, type CampaignDto } from "../../api/client";
 import { faNumber, toFaDigits } from "../lib/format";
+import { Loader } from "../components/ui/loader";
 
 export function Campaigns() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ export function Campaigns() {
 
       {loading ? (
         <div className="flex items-center justify-center py-24">
-          <Loader2 className="animate-spin text-primary" size={32} />
+          <Loader label="در حال دریافت کمپین‌ها" />
         </div>
       ) : campaigns.length === 0 ? (
         <div className="text-center py-24 text-muted-foreground">کمپینی برای نمایش وجود ندارد.</div>

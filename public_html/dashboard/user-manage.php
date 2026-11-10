@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // فقط کاربرانِ همین شعبه (سوپرادمین‌ها در فهرست نمی‌آیند)
 $st = $pdo->prepare(
-    "SELECT u.id, u.username, u.full_name, u.status, u.is_branch_admin, u.last_login_at, r.name AS role_name, r.permissions
+    "SELECT u.id, u.username, u.full_name, u.status, u.is_branch_admin, u.last_login_at, COALESCE(u.direct_permissions, r.permissions) AS permissions
        FROM dashboard_users u
        LEFT JOIN dashboard_roles r ON r.id = u.role_id
       WHERE u.branch_id = ? AND u.is_super = 0
@@ -58,11 +58,7 @@ $st = $pdo->prepare(
 $st->execute([$BRANCH_ID]);
 $users = $st->fetchAll();
 
-$FEATURE_LABELS = [
-    'hero' => 'هیروها', 'news' => 'خبرها', 'campaigns' => 'کمپین‌ها', 'partners' => 'همکاران',
-    'courses' => 'دوره‌ها', 'pages' => 'صفحات', 'financial' => 'مالی', 'feedback' => 'انتقادات', 'medical' => 'پزشکی',
-    'stands' => 'استندها و سفارشات',
-];
+$FEATURE_LABELS = DASH_FEATURE_LABELS;
 $branchRow = dash_load_branch($BRANCH_ID);
 
 $PANEL_TITLE = 'مدیریت کاربران';
@@ -86,19 +82,19 @@ require __DIR__ . '/_panel_head.php';
     }
     .modal-icon-wrap.danger  { background: rgba(239, 68, 68, 0.07); }
     .modal-icon-wrap.success { background: rgba(34, 197, 94, 0.07); }
-    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight: 800; text-align: center; }
+    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight:600; text-align: center; }
     .modal-desc  { margin: 0 0 26px; font-size: 13.5px; color: var(--color-muted, #64748b); text-align: center; line-height: 1.75; }
-    .modal-name  { color: var(--color-text, #1e293b); font-weight: 800; }
+    .modal-name  { color: var(--color-text, #1e293b); font-weight:600; }
     .modal-actions { display: flex; gap: 10px; }
     .btn-modal-cancel {
         flex: 1; padding: 12px; border-radius: 14px;
         background: transparent; border: 1px solid var(--color-border, #e2e8f0);
         color: var(--color-muted, #64748b);
-        font-size: 14px; font-weight: 700; cursor: pointer;
+        font-size: 14px; font-weight:600; cursor: pointer;
     }
     .btn-modal-confirm {
         flex: 1; padding: 12px; border-radius: 14px; border: none;
-        font-size: 14px; font-weight: 700; cursor: pointer; color: #fff;
+        font-size: 14px; font-weight:600; cursor: pointer; color: #fff;
     }
     .btn-modal-confirm.danger  { background: #ef4444; }
     .btn-modal-confirm.success { background: #22c55e; }
@@ -169,7 +165,7 @@ function triggerUserModal(id, action, name) {
 
   <div class="card" style="padding:14px 18px">
     <table class="tbl">
-      <thead><tr><th>کاربر</th><th>نقش</th><th>دسترسی‌ها</th><th>آخرین ورود</th><th>وضعیت</th><th></th></tr></thead>
+      <thead><tr><th>کاربر</th><th>دسترسی‌ها</th><th>آخرین ورود</th><th>وضعیت</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $u):
         $active = $u['status'] === 'active';
@@ -184,7 +180,6 @@ function triggerUserModal(id, action, name) {
             <div style="font-weight:700"><?= e($u['full_name'] ?: $u['username']) ?></div>
             <div style="font-size:11px;color:var(--color-muted)" dir="ltr"><?= e($u['username']) ?></div>
           </td>
-          <td data-label="نقش"><?= $isAdmin ? '<span class="badge hq">مدیر شعبه</span>' : e($u['role_name'] ?: '—') ?></td>
           <td data-label="دسترسی‌ها" style="font-size:12px;color:var(--color-muted)"><?= e($permsTxt) ?></td>
           <td data-label="آخرین ورود" style="font-size:12px;color:var(--color-muted)"><?= $u['last_login_at'] ? e($u['last_login_at']) : 'بدون ورود' ?></td>
           <td data-label="وضعیت"><?= $active ? '<span class="badge ok">فعال</span>' : '<span class="badge off">غیرفعال</span>' ?></td>
@@ -214,7 +209,7 @@ function triggerUserModal(id, action, name) {
           </td>
         </tr>
       <?php endforeach; ?>
-      <?php if (!$users): ?><tr><td colspan="6" style="text-align:center;color:var(--color-muted)">هنوز کاربری برای این شعبه ساخته نشده است.</td></tr><?php endif; ?>
+      <?php if (!$users): ?><tr><td colspan="5" style="text-align:center;color:var(--color-muted)">هنوز کاربری برای این شعبه ساخته نشده است.</td></tr><?php endif; ?>
       </tbody>
     </table>
   </div>

@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سرطان پستان – نسخه عمومی</title>
+<title><?= site_e('سرطان پستان – نسخه عمومی') ?></title>
 
 <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -22,7 +23,7 @@
    PAGE SCOPE
 ============================= */
 .leukemia-page {
-    direction: rtl;
+    direction: var(--site-direction, rtl);
     background: #ffffff;
 }
 
@@ -215,8 +216,8 @@
 <div class="leukemia-container">
 
 <div class="leukemia-page-header">
-    <div class="leukemia-title">سرطان پستان – نسخه عمومی</div>
-    <a href="#" class="professional-btn">نسخه متخصصین</a>
+    <div class="leukemia-title"><?= site_e('سرطان پستان – نسخه عمومی') ?></div>
+    <a href="#" class="professional-btn"><?= site_e('نسخه متخصصین') ?></a>
 </div>
 
 <div class="leukemia-grid">
@@ -224,23 +225,22 @@
 <!-- مرور کلی -->
 <div class="leukemia-card">
     <div class="leukemia-header overview">
-        <span>مرور کلی</span>
+        <span><?= site_e('مرور کلی') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
         <p>
-            سرطان پستان یکی از شایع‌ترین سرطان‌ها در زنان است که تشخیص زودهنگام آن
-            نقش مهمی در بهبود نتایج درمان دارد.
+            <?= site_e('سرطان پستان یکی از شایع‌ترین سرطان‌ها در زنان است که تشخیص زودهنگام آن نقش مهمی در بهبود نتایج درمان دارد.') ?>
         </p>
 
-        <h4 class="section-title">انواع سرطان پستان</h4>
+        <h4 class="section-title"><?= site_e('انواع سرطان پستان') ?></h4>
         <ul>
-            <li>کارسینوم مجرایی درجا (DCIS)</li>
-            <li>کارسینوم مجرایی تهاجمی (IDC)</li>
-            <li>کارسینوم لوبولار تهاجمی (ILC)</li>
-            <li>سرطان پستان ارثی</li>
-            <li>سرطان پستان التهابی (IBC)</li>
-            <li>سرطان پستان در مردان</li>
+            <li><?= site_e('کارسینوم مجرایی درجا (DCIS)') ?></li>
+            <li><?= site_e('کارسینوم مجرایی تهاجمی (IDC)') ?></li>
+            <li><?= site_e('کارسینوم لوبولار تهاجمی (ILC)') ?></li>
+            <li><?= site_e('سرطان پستان ارثی') ?></li>
+            <li><?= site_e('سرطان پستان التهابی (IBC)') ?></li>
+            <li><?= site_e('سرطان پستان در مردان') ?></li>
         </ul>
     </div>
 </div>
@@ -248,16 +248,16 @@
 <!-- تشخیص -->
 <div class="leukemia-card">
     <div class="leukemia-header diagnosis">
-        <span>تشخیص</span>
+        <span><?= site_e('تشخیص') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
         <ul>
-            <li>معاینه پستان</li>
-            <li>ماموگرافی</li>
-            <li>سونوگرافی</li>
+            <li><?= site_e('معاینه پستان') ?></li>
+            <li><?= site_e('ماموگرافی') ?></li>
+            <li><?= site_e('سونوگرافی') ?></li>
             <li>MRI</li>
-            <li>بیوپسی</li>
+            <li><?= site_e('بیوپسی') ?></li>
         </ul>
     </div>
 </div>
@@ -265,16 +265,16 @@
 <!-- درمان -->
 <div class="leukemia-card">
     <div class="leukemia-header treatment">
-        <span>درمان</span>
+        <span><?= site_e('درمان') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
         <ul>
-            <li>شیمی درمانی</li>
-            <li>پرتو درمانی</li>
-            <li>جراحی</li>
-            <li>هورمون تراپی</li>
-            <li>ایمونوتراپی</li>
+            <li><?= site_e('شیمی درمانی') ?></li>
+            <li><?= site_e('پرتو درمانی') ?></li>
+            <li><?= site_e('جراحی') ?></li>
+            <li><?= site_e('هورمون تراپی') ?></li>
+            <li><?= site_e('ایمونوتراپی') ?></li>
         </ul>
     </div>
 </div>
@@ -282,16 +282,16 @@
 <!-- غربالگری -->
 <div class="leukemia-card">
     <div class="leukemia-header screening">
-        <span>غربالگری</span>
+        <span><?= site_e('غربالگری') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
         <ul>
-            <li>معاینه پستان</li>
-            <li>ماموگرافی</li>
-            <li>سونوگرافی</li>
+            <li><?= site_e('معاینه پستان') ?></li>
+            <li><?= site_e('ماموگرافی') ?></li>
+            <li><?= site_e('سونوگرافی') ?></li>
             <li>MRI</li>
-            <li>بیوپسی</li>
+            <li><?= site_e('بیوپسی') ?></li>
         </ul>
     </div>
 </div>
@@ -299,19 +299,19 @@
 <!-- مطالب تکمیلی -->
 <div class="leukemia-card">
     <div class="leukemia-header support">
-        <span>مطالب تکمیلی</span>
+        <span><?= site_e('مطالب تکمیلی') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
         <ul>
-            <li>علائم اسکلتی-عضلانی مهارکننده‌های آروماتاز</li>
-            <li>سرطان پستان و باروری</li>
-            <li>سرطان پستان و بزرگسالان مسن</li>
-            <li>سرطان پستان و سلامت جنسی</li>
-            <li>سرطان پستان و زنان جوان</li>
-            <li>بارداری و سرطان پستان</li>
-            <li>حمایت روانی-اجتماعی بیماران</li>
-            <li>گیرنده‌های تومور</li>
+            <li><?= site_e('علائم اسکلتی-عضلانی مهارکننده‌های آروماتاز') ?></li>
+            <li><?= site_e('سرطان پستان و باروری') ?></li>
+            <li><?= site_e('سرطان پستان و بزرگسالان مسن') ?></li>
+            <li><?= site_e('سرطان پستان و سلامت جنسی') ?></li>
+            <li><?= site_e('سرطان پستان و زنان جوان') ?></li>
+            <li><?= site_e('بارداری و سرطان پستان') ?></li>
+            <li><?= site_e('حمایت روانی-اجتماعی بیماران') ?></li>
+            <li><?= site_e('گیرنده‌های تومور') ?></li>
         </ul>
     </div>
 </div>
@@ -319,11 +319,11 @@
 <!-- مقالات -->
 <div class="leukemia-card">
     <div class="leukemia-header research">
-        <span>مقالات و پژوهش‌های مرتبط</span>
+        <span><?= site_e('مقالات و پژوهش‌های مرتبط') ?></span>
         <span class="leukemia-toggle">+</span>
     </div>
     <div class="leukemia-content">
-        آخرین مطالعات و مقالات علمی درباره سرطان پستان.
+        <?= site_e('آخرین مطالعات و مقالات علمی درباره سرطان پستان.') ?>
     </div>
 </div>
 

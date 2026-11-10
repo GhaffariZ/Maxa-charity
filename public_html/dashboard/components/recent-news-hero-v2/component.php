@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
   @font-face {
@@ -12,14 +13,14 @@
     font-family: 'Vazirmatn', sans-serif !important;
   }
 </style>
-<section class="rnhv2-section" dir="rtl" data-recent-news="hero-v2">
+<section class="rnhv2-section" dir="<?= site_direction() ?>" data-recent-news="hero-v2">
   <div class="rnhv2-container">
     <div class="rnhv2-head">
-      <span class="rnhv2-kicker">تازه چه خبر؟</span>
-      <h2 class="rnhv2-title">تازه ترین اخبار</h2>
+      <span class="rnhv2-kicker"><?= site_e('تازه چه خبر؟') ?></span>
+      <h2 class="rnhv2-title"><?= site_e('تازه ترین اخبار') ?></h2>
     </div>
     <div class="rnhv2-grid" id="rnhv2-grid">
-      <div class="rnhv2-empty">در حال بارگذاری اخبار...</div>
+      <div class="rnhv2-empty"><?= site_e('در حال بارگذاری اخبار...') ?></div>
     </div>
   </div>
 
@@ -46,6 +47,18 @@
 .rnhv2-soon span{font-size:13.5px}
 @media (min-width:1024px){.rnhv2-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.rnhv2-main{grid-column:span 7}.rnhv2-side{grid-column:span 5}}
 @media (max-width:768px){.rnhv2-section{padding:44px 0}.rnhv2-title{font-size:32px}.rnhv2-main-content{padding:20px}.rnhv2-main-title{font-size:26px}}
+/* Keep long headlines inside the image at every viewport width. */
+.rnhv2-grid > *, .rnhv2-side-body{min-width:0;overflow-wrap:anywhere}
+.rnhv2-main{display:flex;align-items:flex-end;min-width:0;width:100%}
+.rnhv2-main-content{position:relative;min-width:0;width:100%;right:auto;left:auto;bottom:auto}
+.rnhv2-main-title{font-size:clamp(22px,3vw,36px)}
+.rnhv2-meta{flex-wrap:wrap;gap:8px 12px}
+@media(max-width:540px){
+  .rnhv2-main{aspect-ratio:4/3;min-height:280px}
+  .rnhv2-head{margin-bottom:24px}
+  .rnhv2-side-card{padding:12px;gap:12px}
+  .rnhv2-side-thumb-wrap{width:76px;height:76px}
+}
 </style>
 <script>
 (function(){
@@ -55,16 +68,16 @@
   const ph='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#6b7280" font-size="56" font-family="Vazirmatn,Tahoma">بدون تصویر</text></svg>');
   const __b=(typeof window.__MAXA_BRANCH__==='string'&&window.__MAXA_BRANCH__)?('&branch='+encodeURIComponent(window.__MAXA_BRANCH__)):'';
   fetch('/dashboard/recent-news-feed.php?limit=3'+__b).then(r=>r.json()).then(d=>{
-    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML='<div class="rnhv2-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز خبری برای نمایش منتشر نشده است.</span></div>'; return;}
+    const items=(d&&d.items)||[]; if(!items.length){grid.innerHTML=<?= site_js_text('<div class="rnhv2-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><b>به‌زودی</b><span>هنوز خبری برای نمایش منتشر نشده است.</span></div>') ?>; return;}
     const first=items[0], rest=items.slice(1);
-    const firstTitle=(first.title||'تصویر خبر').replace(/"/g,'&quot;');
+    const firstTitle=(first.title||<?= site_js_text('تصویر خبر') ?>).replace(/"/g,'&quot;');
     grid.innerHTML='<a class="rnhv2-main" href="'+first.url+'"><img class="rnhv2-main-img" src="'+(first.image||ph)+'" alt="'+firstTitle+'" width="1200" height="800" loading="lazy" decoding="async"><div class="rnhv2-overlay"></div><div class="rnhv2-main-content"><span class="rnhv2-badge">'+first.category+'</span><h3 class="rnhv2-main-title">'+first.title+'</h3><div class="rnhv2-meta"><span>'+fa(first.date)+'</span><span class="rnhv2-dot"></span><span>'+fa(first.read_time)+' دقیقه مطالعه</span></div></div></a><div class="rnhv2-side"></div>';
     const side=grid.querySelector('.rnhv2-side');
     rest.forEach(n=>{
-      const sideTitle=(n.title||'تصویر خبر').replace(/"/g,'&quot;');
+      const sideTitle=(n.title||<?= site_js_text('تصویر خبر') ?>).replace(/"/g,'&quot;');
       side.insertAdjacentHTML('beforeend','<a class="rnhv2-side-card" href="'+n.url+'"><div class="rnhv2-side-thumb-wrap"><img class="rnhv2-side-thumb" src="'+(n.image||ph)+'" alt="'+sideTitle+'" width="96" height="96" loading="lazy" decoding="async"></div><div class="rnhv2-side-body"><span class="rnhv2-side-cat">'+n.category+'</span><h4 class="rnhv2-side-title">'+n.title+'</h4><time class="rnhv2-side-time">'+fa(n.date)+'</time></div></a>');
     });
-    side.insertAdjacentHTML('beforeend','<a href="/news.php" class="rnhv2-more">مشاهده همه موارد <span class="rnhv2-more-arrow">‹</span></a>');
-  }).catch(()=>{grid.innerHTML='<div class="rnhv2-empty">خطا در بارگذاری اخبار.</div>';});
+    side.insertAdjacentHTML('beforeend',<?= site_js_text('<a href="/news.php" class="rnhv2-more">مشاهده همه موارد <span class="rnhv2-more-arrow">‹</span></a>') ?>);
+  }).catch(()=>{grid.innerHTML=<?= site_js_text('<div class="rnhv2-empty">خطا در بارگذاری اخبار.</div>') ?>;});
 })();
 </script>

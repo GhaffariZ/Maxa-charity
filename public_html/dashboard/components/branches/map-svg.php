@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../../../core/content-locales.php';
 // خواندن اطلاعات شعب فعال ثبت‌شده از دیتابیس برای نمایش خودکار و هماهنگ پین‌های نقشه
 global $pdo;
 $db = null;
@@ -134,6 +135,8 @@ if ($db) {
         $stPins = $db->query("SELECT id, name, slug, province, city, map_x, map_y FROM branches WHERE status = 'active' AND is_hq = 0");
         $dbBranches = $stPins->fetchAll();
         foreach ($dbBranches as $brRow) {
+            $brRow=content_row($db,'branches',$brRow);
+            if(!$brRow)continue;
             $slug = trim($brRow['slug'] ?? '');
             $name = trim($brRow['name'] ?? '');
             $city = trim($brRow['city'] ?? '');

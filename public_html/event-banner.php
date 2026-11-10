@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
+require_once __DIR__.'/core/content-locales.php';
 if (!function_exists('event_h')) {
     function event_h($str): string {
         return htmlspecialchars((string)($str ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -40,49 +42,16 @@ function event_global_banner(?PDO $pdo = null): string {
     $e = null;
     if ($pdo instanceof PDO) {
         try {
-            // 1. Explicitly active banner
-            $st = $pdo->query("SELECT * FROM events WHERE banner_active = 1 AND status != 'archived' ORDER BY id DESC LIMIT 1");
-            $e = $st ? $st->fetch() : null;
-
-            if (!$e) {
-                $st = $pdo->query("SELECT * FROM events WHERE banner_active = 1 ORDER BY id DESC LIMIT 1");
-                $e = $st ? $st->fetch() : null;
-            }
-
-            // 2. Upcoming published event
-            if (!$e) {
-                $st = $pdo->query("SELECT * FROM events WHERE status = 'published' AND event_date >= CURDATE() ORDER BY event_date ASC LIMIT 1");
-                $e = $st ? $st->fetch() : null;
-            }
-
-            // 3. Any published event
-            if (!$e) {
-                $st = $pdo->query("SELECT * FROM events WHERE status = 'published' ORDER BY event_date DESC, id DESC LIMIT 1");
-                $e = $st ? $st->fetch() : null;
-            }
+            $scope=content_where($pdo,'events');
+            $st=$pdo->query("SELECT * FROM events WHERE $scope AND banner_active=1 AND status='published' ORDER BY id DESC LIMIT 1");
+            $e=$st?$st->fetch():null;
         } catch (Throwable $ex) {
             $e = null;
         }
     }
 
-    // Fallback if DB query fails or DB is unavailable
-    if (!$e) {
-        $e = [
-            'id' => 1,
-            'title' => 'همایش ملی مراقبت‌های حمایتی و تسکینی در بیماران مبتلا به سرطان',
-            'slug' => 'cancer-palliative-care-national-congress-2026',
-            'event_date' => '2026-10-08',
-            'start_time' => '08:00:00',
-            'banner_active' => 1,
-            'banner_label' => 'رویداد ویژه جاری',
-            'banner_cta' => 'ثبت‌نام مستقیم',
-            'banner_link' => '/event.php?slug=cancer-palliative-care-national-congress-2026',
-            'banner_background' => '#0A5C66',
-            'banner_text_color' => '#ffffff',
-            'banner_accent_color' => '#faa61a',
-            'banner_dismissible' => 1
-        ];
-    }
+    $e=$pdo?content_row($pdo,'events',$e?:null):null;
+    if(!$e)return '';
 
     $rendered = true;
 
@@ -110,7 +79,7 @@ function event_global_banner(?PDO $pdo = null): string {
         <div class="event-banner-copy">
             <span class="event-banner-label"><?= event_h($e['banner_label'] ?? 'رویداد جاری') ?></span>
             <b class="event-banner-title"><?= event_h($e['title'] ?? '') ?></b>
-            <span class="event-banner-count">در حال آماده‌سازی...</span>
+            <span class="event-banner-count"><?= site_e('در حال آماده‌سازی...') ?></span>
         </div>
         <a href="<?= event_h($link) ?>" class="event-banner-cta"><?= event_h(!empty($e['banner_cta']) ? $e['banner_cta'] : 'ثبت‌نام مستقیم') ?></a>
     </div>

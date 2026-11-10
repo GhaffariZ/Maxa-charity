@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  جزئیات دوره (بخش کاربری) — آکادمی مکسا
  *  صفحه‌ی فروش/معرفی یک دوره؛ سرفصل‌ها، مدرس و خرید
@@ -10,6 +11,7 @@ $id = (int)($_GET['id'] ?? 0);
 $course = load_course_full($pdo, $coursesSchemaReady, $id);
 
 if (!$course) {
+  http_response_code(404);
   course_site_head('دوره یافت نشد');
   echo '<div class="page" style="text-align:center;padding:80px 20px">'
      . '<div style="width:80px;height:80px;border-radius:22px;display:grid;place-items:center;margin:0 auto 18px;background:var(--primary-08);color:var(--color-primary)">'.cic('search').'</div>'
@@ -65,22 +67,25 @@ $pageCss = course_card_styles() . <<<CSS
 .learn-item .ck{width:23px;height:23px;border-radius:8px;background:rgba(22,163,122,.12);color:var(--success);display:grid;place-items:center;flex-shrink:0;margin-top:1px}
 .learn-item .ck .ic{width:14px;height:14px;stroke-width:3}
 
-.acc-sec{border:1px solid var(--color-border);border-radius:14px;margin-bottom:10px;overflow:hidden;background:var(--color-surface)}
-.acc-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;transition:background .18s;background:var(--color-bg)}
+.acc-sec{border:1px solid var(--color-border);border-radius:14px;margin-bottom:12px;overflow:hidden;background:var(--color-surface);transition:border-color .2s}
+.acc-sec.open{border-color:rgba(0, 143, 138, 0.35)}
+.acc-head{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;transition:background .18s;background:var(--color-bg);user-select:none}
 .acc-head:hover{background:var(--primary-08)}
-.acc-head .chev{margin-inline-start:auto;transition:transform .3s var(--ease);color:var(--color-muted)}
-.acc-sec.open .acc-head .chev{transform:rotate(180deg)}
+.acc-head .chev{margin-inline-start:auto;transition:transform .3s var(--ease);color:var(--color-muted);display:flex;align-items:center}
+.acc-sec.open .acc-head .chev{transform:rotate(180deg);color:var(--color-primary)}
 .acc-head .a-title{font-weight:800;font-size:14.5px}
 .acc-head .a-meta{font-size:11.5px;color:var(--color-muted);font-weight:600}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease)}
-.acc-lesson{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--color-border);font-size:13.5px}
+.acc-body{display:none;background:var(--color-surface)}
+.acc-sec.open .acc-body{display:block}
+.acc-lesson{display:flex;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid var(--color-border);font-size:13.5px}
 .acc-lesson .lt{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;color:#fff}
 .acc-lesson .lt .ic{width:16px;height:16px}
 .lt-video{background:linear-gradient(135deg,#007b7a,#006665)}.lt-text{background:linear-gradient(135deg,#7c4ddb,#6d3fd1)}
 .lt-image{background:linear-gradient(135deg,#f4a61e,#db8d0c)}.lt-pdf{background:linear-gradient(135deg,#e0556b,#c33f54)}.lt-quiz{background:linear-gradient(135deg,#16a37a,#0e7d5c)}
-.acc-lesson .l-name{flex:1}
+.acc-lesson .l-name{flex:1;font-weight:600}
 .acc-lesson .l-dur{font-size:11.5px;color:var(--color-muted);font-variant-numeric:tabular-nums}
-.acc-lesson .l-prev{font-size:10.5px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:3px 9px;border-radius:99px}
+.acc-lesson .l-prev{font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:4px 10px;border-radius:99px;transition:all .2s}
+.acc-lesson .l-prev:hover{background:var(--color-primary);color:#fff}
 .acc-lesson .l-lock{color:var(--color-muted)}.acc-lesson .l-lock .ic{width:15px;height:15px}
 
 .req-list li{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;line-height:1.8;margin-bottom:9px}
@@ -118,14 +123,14 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 <!-- قهرمان -->
 <section class="cd-hero">
   <div class="cd-hero-in">
-    <div class="crumb"><a href="/courses" target="_top">دوره‌ها</a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
+    <div class="crumb"><a href="/courses" target="_top"><?= site_e('دوره‌ها') ?></a><?= cic('chevron','') ?><span><?= e($course['category'] ?? 'عمومی') ?></span></div>
     <span class="cd-cat"><?= e($course['category'] ?? 'عمومی') ?> · <?= level_label((string)($course['level'] ?? 'all')) ?></span>
     <h1><?= e($course['title'] ?? '') ?></h1>
     <?php if (!empty($course['subtitle'])): ?><p class="cd-sub"><?= e($course['subtitle']) ?></p><?php endif; ?>
     <div class="cd-facts">
       <span><?= cic('star','star-y') ?><b class="cd-rate-b"><?= fa_digits(number_format((float)($course['rating'] ?? 0),1)) ?></b></span>
-      <span><?= cic('users') ?><?= fa_digits(number_format((int)($course['students'] ?? 0))) ?> فراگیر</span>
-      <span><?= cic('video') ?><?= fa_digits($lessons) ?> درس</span>
+      <span><?= cic('users') ?><?= fa_digits(number_format((int)($course['students'] ?? 0))) ?> <?= site_e('فراگیر') ?></span>
+      <span><?= cic('video') ?><?= fa_digits($lessons) ?> <?= site_e('درس') ?></span>
       <span><?= cic('clock') ?><?= fmt_duration($dur) ?></span>
       <span><?= cic('grad') ?><?= e($course['instructor'] ?? 'مدرس مکسا') ?></span>
     </div>
@@ -137,7 +142,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   <div class="cd-main">
     <?php if ($learn): ?>
     <div class="cd-block card card-pad">
-      <h2><?= cic('target') ?> در این دوره چه می‌آموزید</h2>
+      <h2><?= cic('target') ?> <?= site_e('در این دوره چه می‌آموزید') ?></h2>
       <div class="learn-grid">
         <?php foreach ($learn as $l): ?>
           <div class="learn-item"><span class="ck"><?= cic('check') ?></span><span><?= e($l) ?></span></div>
@@ -148,19 +153,19 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
     <?php if (!empty($course['description'])): ?>
     <div class="cd-block">
-      <h2><?= cic('book') ?> درباره‌ی این دوره</h2>
+      <h2><?= cic('book') ?> <?= site_e('درباره‌ی این دوره') ?></h2>
       <div style="font-size:14px;line-height:2;white-space:pre-line;color:var(--color-text)"><?= e($course['description']) ?></div>
     </div>
     <?php endif; ?>
 
     <!-- سرفصل‌ها -->
     <div class="cd-block">
-      <h2><?= cic('list') ?> سرفصل‌های دوره</h2>
+      <h2><?= cic('list') ?> <?= site_e('سرفصل‌های دوره') ?></h2>
       <div style="font-size:12.5px;color:var(--color-muted);margin:-8px 0 14px;font-weight:600">
-        <?= fa_digits(count($curr)) ?> فصل · <?= fa_digits($lessons) ?> درس · <?= fmt_duration($dur) ?>
+        <?= fa_digits(count($curr)) ?> <?= site_e('فصل ·') ?> <?= fa_digits($lessons) ?> <?= site_e('درس ·') ?> <?= fmt_duration($dur) ?>
       </div>
       <?php if (!$curr): ?>
-        <div style="padding:24px;text-align:center;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:14px">سرفصل‌های این دوره به‌زودی اضافه می‌شود.</div>
+        <div style="padding:24px;text-align:center;color:var(--color-muted);border:2px dashed var(--color-border);border-radius:14px"><?= site_e('سرفصل‌های این دوره به‌زودی اضافه می‌شود.') ?></div>
       <?php else: foreach ($curr as $si => $sec):
         $secLessons = $sec['lessons'] ?? [];
         $secDur = 0; foreach ($secLessons as $l) $secDur += (int)($l['duration'] ?? 0);
@@ -168,7 +173,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
         <div class="acc-sec<?= $si===0?' open':'' ?>">
           <div class="acc-head">
             <span class="a-title"><?= e($sec['title'] ?? 'فصل') ?></span>
-            <span class="a-meta"><?= fa_digits(count($secLessons)) ?> درس · <?= fmt_duration($secDur) ?></span>
+            <span class="a-meta"><?= fa_digits(count($secLessons)) ?> <?= site_e('درس ·') ?> <?= fmt_duration($secDur) ?></span>
             <span class="chev"><?= cic('chevron') ?></span>
           </div>
           <div class="acc-body">
@@ -179,9 +184,9 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
               <div class="acc-lesson">
                 <span class="lt lt-<?= e($type) ?>"><?= cic($type==='video'?'play':$type) ?></span>
                 <span class="l-name"><?= e($l['title'] ?? 'درس') ?></span>
-                <?php if ($isPrev): ?><a class="l-prev" href="/courses/learn/<?= $id ?>?preview=1" target="_top">پیش‌نمایش</a>
+                <?php if ($isPrev): ?><a class="l-prev" href="/courses/learn/<?= $id ?>?preview=1" target="_top"><?= site_e('پیش‌نمایش') ?></a>
                 <?php else: ?><span class="l-lock"><?= cic('lock') ?></span><?php endif; ?>
-                <?php if ((int)($l['duration'] ?? 0)>0): ?><span class="l-dur"><?= fa_digits((int)$l['duration']) ?>:۰۰</span><?php endif; ?>
+                <?php if ((int)($l['duration'] ?? 0)>0): ?><span class="l-dur"><?= fa_digits((int)$l['duration']) ?><?= site_e(':۰۰') ?></span><?php endif; ?>
               </div>
             <?php endforeach; ?>
           </div>
@@ -191,20 +196,20 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
     <?php if ($reqs): ?>
     <div class="cd-block">
-      <h2><?= cic('check') ?> پیش‌نیازها</h2>
+      <h2><?= cic('check') ?> <?= site_e('پیش‌نیازها') ?></h2>
       <ul class="req-list"><?php foreach ($reqs as $r): ?><li><span class="dot"></span><span><?= e($r) ?></span></li><?php endforeach; ?></ul>
     </div>
     <?php endif; ?>
 
     <!-- مدرس -->
     <div class="cd-block">
-      <h2><?= cic('grad') ?> مدرس دوره</h2>
+      <h2><?= cic('grad') ?> <?= site_e('مدرس دوره') ?></h2>
       <div class="inst-card">
         <div class="inst-av" style="background:linear-gradient(135deg,<?= $accent ?>,<?= $accent ?>aa)"><?= e(mb_substr(trim((string)($course['instructor'] ?? 'م')),0,1)) ?></div>
         <div>
           <div class="nm"><?= e($course['instructor'] ?? 'مدرس مکسا') ?></div>
           <?php if (!empty($course['instructor_bio'])): ?><div class="ti"><?= e($course['instructor_bio']) ?></div><?php endif; ?>
-          <div class="bio">مدرس باتجربه‌ی آکادمی مکسا با تمرکز بر آموزش کاربردی و پروژه‌محور.</div>
+          <div class="bio"><?= site_e('مدرس باتجربه‌ی آکادمی مکسا با تمرکز بر آموزش کاربردی و پروژه‌محور.') ?></div>
         </div>
       </div>
     </div>
@@ -219,31 +224,31 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
       </div>
       <div class="buy-pad">
         <div class="buy-price">
-          <?php if ($isFree): ?><b style="color:var(--violet)">رایگان</b>
-          <?php elseif ($hasDisc): ?><b><?= fa_digits(number_format($disc)) ?> تومان</b><del><?= fa_digits(number_format($price)) ?></del>
-          <?php else: ?><b><?= fa_digits(number_format($price)) ?> تومان</b><?php endif; ?>
+          <?php if ($isFree): ?><b style="color:var(--violet)"><?= site_e('رایگان') ?></b>
+          <?php elseif ($hasDisc): ?><b><?= fa_digits(number_format($disc)) ?> <?= site_e('تومان') ?></b><del><?= fa_digits(number_format($price)) ?></del>
+          <?php else: ?><b><?= fa_digits(number_format($price)) ?> <?= site_e('تومان') ?></b><?php endif; ?>
         </div>
-        <?php if ($hasDisc): $off=round((1-$disc/$price)*100); ?><span class="buy-off"><?= fa_digits($off) ?>٪ تخفیف ویژه</span><?php endif; ?>
+        <?php if ($hasDisc): $off=round((1-$disc/$price)*100); ?><span class="buy-off"><?= fa_digits($off) ?><?= site_e('٪ تخفیف ویژه') ?></span><?php endif; ?>
 
         <div class="buy-actions">
           <?php if ($isFree): ?>
-            <a href="/courses/learn/<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> شروع رایگان دوره</a>
+            <a href="/courses/learn/<?= $id ?>" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> <?= site_e('شروع رایگان دوره') ?></a>
           <?php else: ?>
-            <button class="btn btn-primary btn-block btn-lg" id="buyNow"><?= cic('cart') ?> خرید و ثبت‌نام</button>
-            <button class="btn btn-ghost btn-block" id="addCart"><?= cic('plus') ?> افزودن به سبد خرید</button>
+            <button class="btn btn-primary btn-block btn-lg" id="buyNow"><?= cic('cart') ?> <?= site_e('خرید و ثبت‌نام') ?></button>
+            <button class="btn btn-ghost btn-block" id="addCart"><?= cic('plus') ?> <?= site_e('افزودن به سبد خرید') ?></button>
           <?php endif; ?>
         </div>
 
         <div class="includes">
-          <div style="font-weight:800;font-size:13.5px;padding-bottom:6px">این دوره شامل:</div>
-          <li><?= cic('video') ?><?= fmt_duration($dur) ?> ویدئوی آموزشی</li>
-          <li><?= cic('list') ?><?= fa_digits($lessons) ?> درس در <?= fa_digits(count($curr)) ?> فصل</li>
-          <li><?= cic('infinity') ?>دسترسی مادام‌العمر</li>
-          <li><?= cic('pdf') ?>جزوه و منابع قابل دانلود</li>
-          <li><?= cic('award') ?>گواهی پایان دوره</li>
-          <li><?= cic('globe') ?>دسترسی روی موبایل و دسکتاپ</li>
+          <div style="font-weight:800;font-size:13.5px;padding-bottom:6px"><?= site_e('این دوره شامل:') ?></div>
+          <li><?= cic('video') ?><?= fmt_duration($dur) ?> <?= site_e('ویدئوی آموزشی') ?></li>
+          <li><?= cic('list') ?><?= fa_digits($lessons) ?> <?= site_e('درس در') ?> <?= fa_digits(count($curr)) ?> <?= site_e('فصل') ?></li>
+          <li><?= cic('infinity') ?><?= site_e('دسترسی مادام‌العمر') ?></li>
+          <li><?= cic('pdf') ?><?= site_e('جزوه و منابع قابل دانلود') ?></li>
+          <li><?= cic('award') ?><?= site_e('گواهی پایان دوره') ?></li>
+          <li><?= cic('globe') ?><?= site_e('دسترسی روی موبایل و دسکتاپ') ?></li>
         </div>
-        <div class="guarantee"><?= cic('check') ?> ضمانت بازگشت وجه تا ۷ روز</div>
+        <div class="guarantee"><?= cic('check') ?> <?= site_e('ضمانت بازگشت وجه تا ۷ روز') ?></div>
       </div>
     </div>
   </aside>
@@ -251,7 +256,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
 
 <?php if ($related): ?>
 <div class="page" style="padding-top:0">
-  <h2 style="font-size:20px;font-weight:800;margin-bottom:18px">دوره‌های مرتبط</h2>
+  <h2 style="font-size:20px;font-weight:800;margin-bottom:18px"><?= site_e('دوره‌های مرتبط') ?></h2>
   <div class="rel-grid"><?php foreach ($related as $rc) course_card($rc); ?></div>
 </div>
 <?php endif; ?>
@@ -261,7 +266,7 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
   <div style="max-width:840px;width:100%;background:#000;border-radius:18px;overflow:hidden;position:relative;aspect-ratio:16/9">
     <button id="promoClose" style="position:absolute;top:12px;left:12px;z-index:2;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);color:#fff;display:grid;place-items:center"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <div id="promoSlot" style="width:100%;height:100%;display:grid;place-items:center;color:#fff;text-align:center;padding:20px">
-      <div><?= cic('play','') ?><p style="margin-top:10px;opacity:.8">ویدئوی معرفی این دوره</p></div>
+      <div><?= cic('play','') ?><p style="margin-top:10px;opacity:.8"><?= site_e('ویدئوی معرفی این دوره') ?></p></div>
     </div>
   </div>
 </div>
@@ -275,62 +280,124 @@ course_site_head($course['title'] ?? 'دوره', $pageCss);
     id: <?= $id ?>,
     title: <?= json_encode($course['title'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
     price: <?= (int)$eff ?>,
-    instructor: <?= json_encode($course['instructor'] ?? '', JSON_UNESCAPED_UNICODE) ?>
+    instructor: <?= json_encode($course['instructor'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
+    thumbnail: <?= json_encode((string)($course['thumbnail'] ?? ''), JSON_UNESCAPED_UNICODE) ?>,
+    category: <?= json_encode((string)($course['category'] ?? ''), JSON_UNESCAPED_UNICODE) ?>
   };
   var promoUrl = <?= json_encode((string)($course['promo_video'] ?? ''), JSON_UNESCAPED_UNICODE) ?>;
-  var $=function(id){return document.getElementById(id);};
+  var $ = function(id){ return document.getElementById(id); };
 
-  function toast(msg){ var t=$('toast'); $('toastMsg').textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2800); }
+  function toast(msg){
+    var t = $('toast');
+    if(!t) return;
+    var msgEl = $('toastMsg');
+    if(msgEl) msgEl.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  }
 
-  // آکاردئون سرفصل‌ها
-  document.querySelectorAll('.acc-head').forEach(function(h){
-    h.addEventListener('click', function(){
-      var sec=h.closest('.acc-sec'), body=h.nextElementSibling;
-      var open=sec.classList.toggle('open');
-      body.style.maxHeight = open ? (body.scrollHeight+'px') : '0px';
+  // آکاردئون سرفصل‌ها (با قابلیت باز و بسته شدن آنی و روان)
+  var accHeads = document.querySelectorAll('.acc-head');
+  accHeads.forEach(function(h){
+    h.addEventListener('click', function(e){
+      e.preventDefault();
+      var sec = h.closest('.acc-sec');
+      if(sec){
+        sec.classList.toggle('open');
+      }
     });
   });
-  document.querySelectorAll('.acc-sec.open .acc-body').forEach(function(b){ b.style.maxHeight=b.scrollHeight+'px'; });
 
   // سبد خرید
-  function getCart(){ try{ return JSON.parse(localStorage.getItem('maxa-cart')||'[]'); }catch(e){ return []; } }
-  function setCart(c){ try{ localStorage.setItem('maxa-cart', JSON.stringify(c)); }catch(e){} }
-  function inCart(){ return getCart().some(function(x){ return x.id===COURSE.id; }); }
+  function getCart(){
+    try {
+      return JSON.parse(localStorage.getItem('maxa-cart') || '[]') || [];
+    } catch(e) {
+      return [];
+    }
+  }
+  function setCart(c){
+    try {
+      localStorage.setItem('maxa-cart', JSON.stringify(c));
+    } catch(e){}
+    if(window.maxaCartSync) window.maxaCartSync();
+  }
+  function inCart(){
+    return getCart().some(function(x){ return Number(x.id) === Number(COURSE.id); });
+  }
 
-  var addBtn=$('addCart');
+  var inCartHtml = <?= site_js_text('<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید') ?>;
+  var addCartHtml = '<?= cic('plus') ?> افزودن به سبد خرید';
+
+  var addBtn = $('addCart');
   if(addBtn){
-    var inCartHtml = '<svg class="iconoir-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-inline-end:4px;"><path d="M5 13L9 17L19 7"/></svg> در سبد خرید';
-    if(inCart()) addBtn.innerHTML=inCartHtml;
-    addBtn.addEventListener('click', function(){
-      var c=getCart();
-      if(!inCart()){ c.push(COURSE); setCart(c); toast('دوره به سبد خرید اضافه شد.'); addBtn.innerHTML=inCartHtml; }
-      else toast('این دوره از قبل در سبد شماست.');
-      if(window.maxaCartSync) window.maxaCartSync();
+    if(inCart()) {
+      addBtn.innerHTML = inCartHtml;
+      addBtn.classList.add('btn-soft');
+    }
+    addBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var c = getCart();
+      if(!inCart()){
+        c.push(COURSE);
+        setCart(c);
+        toast(<?= site_js_text('دوره با موفقیت به سبد خرید اضافه شد.') ?>);
+        addBtn.innerHTML = inCartHtml;
+        addBtn.classList.add('btn-soft');
+      } else {
+        toast(<?= site_js_text('این دوره از قبل در سبد خرید شما موجود است.') ?>);
+      }
     });
   }
-  var buyBtn=$('buyNow');
+
+  var buyBtn = $('buyNow');
   if(buyBtn){
-    buyBtn.addEventListener('click', function(){
-      var c=getCart(); if(!inCart()){ c.push(COURSE); setCart(c); }
-      if(window.maxaCartSync) window.maxaCartSync();
-      window.top.location.href='/courses/checkout?id='+COURSE.id;
+    buyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var c = getCart();
+      if(!inCart()){
+        c.push(COURSE);
+        setCart(c);
+      }
+      try {
+        if(window.top && window.top.location) {
+          window.top.location.href = '/courses/checkout?id=' + COURSE.id;
+        } else {
+          window.location.href = '/courses/checkout?id=' + COURSE.id;
+        }
+      } catch(err) {
+        window.location.href = '/courses/checkout?id=' + COURSE.id;
+      }
     });
   }
 
   // ویدئوی معرفی
-  var modal=$('promoModal');
-  $('promoBtn').addEventListener('click', function(){
-    if(promoUrl){
-      var slot=$('promoSlot');
-      if(/<iframe/i.test(promoUrl)) slot.innerHTML=promoUrl;
-      else if(/youtube|youtu\.be|aparat/i.test(promoUrl)) slot.innerHTML='<iframe src="'+promoUrl+'" style="width:100%;height:100%;border:0" allowfullscreen></iframe>';
-      else slot.innerHTML='<video src="'+promoUrl+'" controls autoplay style="width:100%;height:100%"></video>';
-    }
-    modal.style.display='grid';
-  });
-  function closeP(){ modal.style.display='none'; }
-  $('promoClose').addEventListener('click', closeP);
-  modal.addEventListener('click', function(e){ if(e.target===modal) closeP(); });
+  var modal = $('promoModal');
+  var promoBtn = $('promoBtn');
+  if(promoBtn && modal){
+    promoBtn.addEventListener('click', function(){
+      if(promoUrl){
+        var slot = $('promoSlot');
+        if(slot){
+          if(/<iframe/i.test(promoUrl)) {
+            slot.innerHTML = promoUrl;
+          } else if(/youtube|youtu\.be|aparat/i.test(promoUrl)) {
+            slot.innerHTML = '<iframe src="' + promoUrl + '" style="width:100%;height:100%;border:0" allowfullscreen></iframe>';
+          } else {
+            slot.innerHTML = '<video src="' + promoUrl + '" controls autoplay style="width:100%;height:100%"></video>';
+          }
+        }
+      }
+      modal.style.display = 'grid';
+    });
+  }
+  function closeP(){ if(modal) modal.style.display = 'none'; }
+  var promoClose = $('promoClose');
+  if(promoClose) promoClose.addEventListener('click', closeP);
+  if(modal){
+    modal.addEventListener('click', function(e){ if(e.target === modal) closeP(); });
+  }
 })();
 </script>
 <?php course_site_footer(); ?>

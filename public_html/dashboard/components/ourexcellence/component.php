@@ -1,4 +1,5 @@
-<section class="travel-stats-section" dir="rtl">
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<section class="travel-stats-section" dir="<?= site_direction() ?>">
 
 <div class="travel-box">
 
@@ -10,32 +11,32 @@
 <div class="travel-right">
 
 <div class="travel-header">
-<h2>روایتی از آمار مکسا</h2>
+<h2><?= site_e('روایتی از آمار مکسا') ?></h2>
 <p>
-این دستاورد حاصل اعتماد و همراهی شما، تلاش همکاران و حمایت ارزشمند خیرینی است که در مسیر خدمت به بیماران در کنار ما هستند.
+<?= site_e('این دستاورد حاصل اعتماد و همراهی شما، تلاش همکاران و حمایت ارزشمند خیرینی است که در مسیر خدمت به بیماران در کنار ما هستند.') ?>
 </p>
 </div>
 
 <div class="travel-stats-grid">
 
 <div class="travel-stat">
-<div class="travel-number" data-target="110392">۰</div>
-<div class="travel-label">جذب کمک های مردمی</div>
+<div class="travel-number" data-target="110392"><?= site_e('۰') ?></div>
+<div class="travel-label"><?= site_e('جذب کمک های مردمی') ?></div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="16">۰</div>
-<div class="travel-label">سال فعالیت</div>
+<div class="travel-number" data-target="16"><?= site_e('۰') ?></div>
+<div class="travel-label"><?= site_e('سال فعالیت') ?></div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="690000">۰</div>
-<div class="travel-label">خدمات مکسا</div>
+<div class="travel-number" data-target="690000"><?= site_e('۰') ?></div>
+<div class="travel-label"><?= site_e('خدمات مکسا') ?></div>
 </div>
 
 <div class="travel-stat">
-<div class="travel-number" data-target="59000">۰</div>
-<div class="travel-label">تعداد کل بیماران</div>
+<div class="travel-number" data-target="59000"><?= site_e('۰') ?></div>
+<div class="travel-label"><?= site_e('تعداد کل بیماران') ?></div>
 </div>
 
 </div>
@@ -52,13 +53,13 @@
 <div class="map-quick-legend">
   <span class="mql-item">
     <span class="mql-dot mql-dot--active"></span>
-    استان‌های دارای شعبه فعال
+    <?= site_e('استان‌های دارای شعبه فعال') ?>
   </span>
   <span class="mql-item">
     <span class="mql-dot mql-dot--cover"></span>
-    سایر استان‌های کشور
+    <?= site_e('سایر استان‌های کشور') ?>
   </span>
-  <a href="/branches.php" class="mql-link">مشاهده شعب و مراکز مکسا &larr;</a>
+  <a href="/branches.php" class="mql-link"><?= site_e('مشاهده شعب و مراکز مکسا') ?> &larr;</a>
 </div>
 
 </div>
@@ -88,7 +89,7 @@ font-display: swap;
 padding:40px 20px;
 background:transparent;
 font-family:'Vazirmatn', Tahoma, sans-serif;
-direction:rtl;
+direction:var(--site-direction, rtl);
 }
 
 /* box */
@@ -117,7 +118,7 @@ gap:48px;
 .travel-right{
 flex:1 1 500px;
 min-width:0;
-text-align:right;
+text-align:start;
 }
 
 .travel-left{

@@ -9,8 +9,8 @@ use Maksa\Support\Logger;
 
 /**
  * Sends transactional email. Uses PHPMailer over SMTP/TLS when the library is
- * present in api/vendor (recommended on cPanel); otherwise falls back to PHP
- * mail() with strictly sanitized headers. All addresses/subjects are scrubbed
+ * present in api/vendor. Missing SMTP support is logged as a failure rather
+ * than silently switching to unreliable PHP mail(). Addresses/subjects are scrubbed
  * of CR/LF to prevent header (email) injection.
  */
 final class Mailer
@@ -30,8 +30,8 @@ final class Mailer
             Logger::info('Mailer: sending via SMTP (PHPMailer)', ['to' => $toEmail, 'subject' => $subject]);
             return $this->sendViaPhpMailer($toEmail, $toName, $subject, $html, $text);
         }
-        Logger::warning('Mailer: PHPMailer not found — falling back to PHP mail() (often dropped on shared hosting)', ['to' => $toEmail]);
-        return $this->sendViaMailFn($toEmail, $subject, $html, $text);
+        Logger::error('Mailer: PHPMailer is missing; install api/vendor/PHPMailer/src');
+        return false;
     }
 
     private function sendViaPhpMailer(string $toEmail, string $toName, string $subject, string $html, string $text): bool
@@ -46,11 +46,19 @@ final class Mailer
             $mail->Password   = (string) Config::require('MAIL_PASSWORD');
             $mail->CharSet    = 'UTF-8';
             $mail->Encoding   = 'base64';
+            $mail->Timeout    = 15;
+            $mail->getSMTPInstance()->Timelimit = 15;
 
-            $encryption = strtolower((string) Config::get('MAIL_ENCRYPTION', 'tls'));
-            $mail->SMTPSecure = $encryption === 'starttls'
-                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
-                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+            $encryption = strtolower(trim((string) Config::get('MAIL_ENCRYPTION', 'auto')));
+            $mail->SMTPSecure = match ($encryption) {
+                'ssl', 'smtps' => \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS,
+                'starttls' => \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS,
+                // Keep the existing tls+465 configuration working; tls+587 uses STARTTLS.
+                'auto', 'tls' => $mail->Port === 465
+                    ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+                    : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS,
+                default => throw new \RuntimeException('Invalid MAIL_ENCRYPTION; use smtps or starttls.'),
+            };
 
             $mail->setFrom(
                 (string) Config::require('MAIL_FROM_ADDRESS'),
@@ -67,50 +75,22 @@ final class Mailer
             $mail->Body    = $html;
             $mail->AltBody = $text;
 
-            $mail->send();
+            if (!$mail->send()) {
+                throw new \RuntimeException('SMTP did not accept the message.');
+            }
             Logger::info('Mailer: SMTP send OK', ['to' => $toEmail]);
             return true;
         } catch (\Throwable $e) {
             // PHPMailer puts the useful detail in ErrorInfo.
             $detail = isset($mail) ? $mail->ErrorInfo : '';
-            Logger::error('Mailer (PHPMailer) failed', ['error' => $e->getMessage(), 'smtp' => $detail]);
+            Logger::error('Mailer (PHPMailer) failed', [
+                'error' => $e->getMessage(), 'smtp' => $detail,
+                'host' => $mail->Host, 'port' => $mail->Port, 'encryption' => $mail->SMTPSecure,
+            ]);
             return false;
+        } finally {
+            $mail->smtpClose();
         }
-    }
-
-    private function sendViaMailFn(string $toEmail, string $subject, string $html, string $text): bool
-    {
-        $boundary = 'b' . bin2hex(random_bytes(8));
-        $from     = self::sanitizeAddress((string) Config::get('MAIL_FROM_ADDRESS', 'no-reply@localhost'));
-        $fromName = self::sanitizeHeader((string) Config::get('MAIL_FROM_NAME', 'خیرین مکسا'));
-
-        $headers = implode("\r\n", [
-            'MIME-Version: 1.0',
-            'From: =?UTF-8?B?' . base64_encode($fromName) . "?= <{$from}>",
-            "Content-Type: multipart/alternative; boundary=\"{$boundary}\"",
-        ]);
-
-        $body = implode("\r\n", [
-            "--{$boundary}",
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: base64',
-            '',
-            chunk_split(base64_encode($text)),
-            "--{$boundary}",
-            'Content-Type: text/html; charset=UTF-8',
-            'Content-Transfer-Encoding: base64',
-            '',
-            chunk_split(base64_encode($html)),
-            "--{$boundary}--",
-        ]);
-
-        $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-        $ok = @mail($toEmail, $encodedSubject, $body, $headers);
-        // NOTE: mail() returning true only means the message was handed to the
-        // MTA — it does NOT mean delivery. On shared hosting it's frequently
-        // dropped or spam-filtered. Prefer authenticated SMTP (PHPMailer).
-        Logger::info('Mailer: PHP mail() returned ' . ($ok ? 'true' : 'false'), ['to' => $toEmail]);
-        return $ok;
     }
 
     /** Remove anything that could inject extra headers. */

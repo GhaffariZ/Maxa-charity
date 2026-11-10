@@ -1,0 +1,94 @@
+/* Shared by the public site, PHP admin shell and React donor panel. */
+.macsa-loader {
+  --loader-size: 48px;
+  --loader-speed: 1.8s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #008f8a;
+  vertical-align: middle;
+}
+.macsa-loader__helix { position: relative; display: block; width: var(--loader-size); height: var(--loader-size); direction: ltr; }
+.macsa-loader__pair { position: absolute; inset-inline: 0; top: calc(var(--row) * 14%); height: 12%; }
+.macsa-loader__pair::before {
+  content: "";
+  position: absolute;
+  left: 18%; right: 18%; top: 45%; height: 1px;
+  background: currentColor; opacity: .16;
+  animation: macsa-rung var(--loader-speed) ease-in-out infinite;
+  animation-delay: calc(var(--row) * var(--loader-speed) / -7);
+}
+.macsa-loader__pair i {
+  position: absolute; left: 0; width: 12%; aspect-ratio: 1; border-radius: 50%;
+  background: currentColor;
+  animation: macsa-helix var(--loader-speed) ease-in-out infinite;
+  animation-delay: calc(var(--row) * var(--loader-speed) / -7);
+}
+.macsa-loader__pair i + i { background: #faa61a; animation-delay: calc(var(--row) * var(--loader-speed) / -7 - var(--loader-speed) / 2); }
+@keyframes macsa-helix {
+  0%,100% { transform: translateX(600%) scale(1); opacity: 1; }
+  50% { transform: translateX(100%) scale(.6); opacity: .5; }
+}
+@keyframes macsa-rung { 0%,50%,100% { transform: scaleX(1); } 25%,75% { transform: scaleX(.15); } }
+.macsa-loader__pulse { display: block; width: calc(var(--loader-size) * 1.8); height: var(--loader-size); overflow: visible; }
+.macsa-loader__track { opacity: .18; }
+.macsa-loader__beat {
+  stroke-dasharray: 42 158;
+  animation: macsa-heartbeat var(--loader-speed) linear infinite;
+}
+@keyframes macsa-heartbeat { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+.macsa-loading-label { margin: 0; color: var(--color-text, var(--foreground, #263a3b)); font: inherit; font-size: 14px; font-weight: 500; }
+.macsa-loading-status { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 24px; }
+.macsa-loading-status--session { flex-direction: column; min-height: 100dvh; gap: 24px; }
+.macsa-loading-status--session .macsa-loader { --loader-size: 64px; }
+.macsa-loading-note { font-size: 12px; color: var(--color-text-muted, var(--muted-foreground, #647475)); margin: 0; }
+.macsa-skeleton { position: relative; overflow: hidden; background: currentColor; color: color-mix(in srgb, var(--color-text, var(--foreground, #263a3b)) 9%, transparent); border-radius: 6px; }
+.macsa-skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, #4fb2b0 16%, transparent), transparent);
+  transform: translateX(100%);
+  animation: macsa-shimmer 2.2s ease-in-out infinite;
+}
+@keyframes macsa-shimmer { to { transform: translateX(-100%); } }
+.macsa-loading-layout { width: 100%; min-width: 0; display: grid; gap: 24px; }
+.macsa-loading-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.macsa-loading-heading .macsa-loading-status { padding: 0; }
+.macsa-loading-lines { flex: 1; min-width: 0; display: grid; gap: 12px; }
+.macsa-loading-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.macsa-loading-card { min-width: 0; padding: 24px; display: grid; gap: 16px; border: 1px solid var(--color-border, var(--border, #dfe6e6)); border-radius: 16px; background: var(--color-surface, var(--card, #fff)); }
+.macsa-loading-stats .macsa-loading-card { border-block-start: 2px solid #008f8a; }
+.macsa-loading-stats .macsa-loading-card:nth-child(2) { border-block-start-color: #faa61a; }
+.macsa-loading-stats .macsa-loading-card:nth-child(3) { border-block-start-color: #8759dc; }
+.macsa-loading-columns { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.macsa-loading-chart { min-height: 224px; display: grid; place-items: center; background: repeating-linear-gradient(to top, transparent 0 55px, var(--color-border, var(--border, #dfe6e6)) 55px 56px); }
+.macsa-loading-chart .macsa-loader { --loader-size: 64px; }
+.macsa-loading-row { display: flex; align-items: center; gap: 16px; padding-block: 12px; }
+.macsa-loading-row + .macsa-loading-row { border-block-start: 1px solid var(--color-border, var(--border, #dfe6e6)); }
+.macsa-loading-line { width: 60%; height: 12px; }
+.macsa-loading-line--short { width: 36%; }
+.macsa-loading-number { width: 44%; height: 28px; }
+.macsa-loading-avatar { width: 36px; height: 36px; flex-shrink: 0; border-radius: 12px; }
+.macsa-site-loading { position: fixed; inset-block-end: 24px; inset-inline-end: 24px; z-index: 9999; max-width: calc(100vw - 32px); gap: 12px; padding: 12px 20px; background: #fff; border: 1px solid #dfe6e6; border-radius: 16px; box-shadow: 0 8px 32px #142b2b18; pointer-events: none; }
+.macsa-site-loading .macsa-loader { --loader-size: 28px; }
+.macsa-site-loading .macsa-loading-label { color: #263a3b; }
+.macsa-site-loading[hidden] { display: none; }
+@media (min-width: 641px) and (max-width: 1279px) { .macsa-loading-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .macsa-loading-layout { gap: 16px; }
+  .macsa-loading-heading { align-items: flex-start; }
+  .macsa-loading-heading .macsa-loading-lines { display: none; }
+  .macsa-loading-stats { grid-template-columns: 1fr; gap: 12px; }
+  .macsa-loading-stats .macsa-loading-card { grid-template-columns: 1fr 1fr; align-items: center; padding: 16px; }
+  .macsa-loading-stats .macsa-loading-card > :last-child { display: none; }
+  .macsa-loading-columns { grid-template-columns: 1fr; gap: 16px; }
+  .macsa-loading-card { padding: 20px; }
+  .macsa-site-loading { inset-block-end: 16px; inset-inline-end: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .macsa-loader__pair::before, .macsa-loader__pair i, .macsa-loader__beat, .macsa-skeleton::after { animation: none !important; }
+  .macsa-loader__pair i { transform: translateX(100%); }
+  .macsa-loader__pair i + i { transform: translateX(600%); }
+  .macsa-loader__beat { stroke-dasharray: none; }
+  .macsa-skeleton::after { display: none; }
+}

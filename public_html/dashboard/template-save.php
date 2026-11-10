@@ -21,6 +21,9 @@ try {
         throw new Exception("داده JSON دریافت نشد");
     }
 
+    if(is_string($data['content_languages']??null))$_POST['content_languages']=$data['content_languages'];
+    content_prepare($pdo,'pages');
+    $editPageId=(int)($data['id']??0);if($editPageId)content_access($pdo,'pages',(string)$editPageId);
     $name = trim($data["name"] ?? "");
     $components = $data["components"] ?? [];
 
@@ -65,18 +68,16 @@ try {
 
     $components_json = json_encode($components, JSON_UNESCAPED_UNICODE);
 
-$stmt = $pdo->prepare("
-    INSERT INTO pages (title, slug, components, status, created_at, branch_id)
-    VALUES (?, ?, ?, 'draft', NOW(), ?)
-");
-
-$stmt->execute([
-    $name,
-    $slug,
-    $components_json,
-    $__branch
-]);
-
+$pdo->beginTransaction();
+if($editPageId){
+    $existing=$pdo->prepare('SELECT slug FROM pages WHERE id=?');$existing->execute([$editPageId]);$slug=(string)$existing->fetchColumn();
+    $pdo->prepare('UPDATE pages SET title=?,components=? WHERE id=?')->execute([$name,$components_json,$editPageId]);
+    $pageId=$editPageId;
+}else{
+    $pdo->prepare("INSERT INTO pages(title,slug,components,status,created_at,branch_id) VALUES(?,?,?,'draft',NOW(),?)")->execute([$name,$slug,$components_json,$__branch]);
+    $pageId=(int)$pdo->lastInsertId();
+}
+content_save($pdo,'pages',(string)$pageId);$pdo->commit();
 
     echo json_encode([
         "status" => "success",
@@ -84,6 +85,7 @@ $stmt->execute([
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    if($pdo->inTransaction())$pdo->rollBack();
 
     echo json_encode([
         "status" => "error",

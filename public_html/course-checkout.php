@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/core/site-locale.php';
 /* ============================================================================
  *  تسویه‌حساب و خرید دوره — آکادمی مکسا
  *  سبد خرید (localStorage) + خلاصه‌ی پرداخت + ثبت‌نام
@@ -70,43 +71,43 @@ course_site_head('تسویه‌حساب', $pageCss);
 <div class="page">
   <div class="page-head">
     <div class="ph-icon"><?= cic('cart') ?></div>
-    <div><h1>سبد خرید و تسویه‌حساب</h1><div class="ph-sub">دوره‌های انتخابی خود را بررسی و ثبت‌نام را تکمیل کنید.</div></div>
+    <div><h1><?= site_e('سبد خرید و تسویه‌حساب') ?></h1><div class="ph-sub"><?= site_e('دوره‌های انتخابی خود را بررسی و ثبت‌نام را تکمیل کنید.') ?></div></div>
   </div>
 
   <div id="cartArea">
     <div class="co-wrap" id="coWrap" style="display:none">
       <!-- اقلام -->
       <div>
-        <div style="font-weight:800;font-size:15px;margin-bottom:14px"><span id="itemCount">۰</span> دوره در سبد شما</div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:14px"><span id="itemCount"><?= site_e('۰') ?></span> <?= site_e('دوره در سبد شما') ?></div>
         <div id="items"></div>
-        <a href="/courses" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> افزودن دوره‌ی بیشتر</a>
+        <a href="/courses" class="btn btn-ghost" target="_top" style="margin-top:6px"><?= cic('arrow') ?> <?= site_e('افزودن دوره‌ی بیشتر') ?></a>
       </div>
       <!-- خلاصه -->
       <aside class="summary card card-pad">
-        <h3 style="font-size:16px;font-weight:800;margin-bottom:8px">خلاصه‌ی سفارش</h3>
-        <div class="sum-row"><span class="muted">جمع کل دوره‌ها</span><span id="sumSubtotal">۰ تومان</span></div>
-        <div class="sum-row"><span class="muted">تخفیف</span><span class="green" id="sumDiscount">۰ تومان</span></div>
+        <h3 style="font-size:16px;font-weight:800;margin-bottom:8px"><?= site_e('خلاصه‌ی سفارش') ?></h3>
+        <div class="sum-row"><span class="muted"><?= site_e('جمع کل دوره‌ها') ?></span><span id="sumSubtotal"><?= site_e('۰ تومان') ?></span></div>
+        <div class="sum-row"><span class="muted"><?= site_e('تخفیف') ?></span><span class="green" id="sumDiscount"><?= site_e('۰ تومان') ?></span></div>
         <div class="coupon">
-          <input class="inp" id="couponInput" placeholder="کد تخفیف (مثلاً MAXA20)">
-          <button class="btn btn-soft" id="couponBtn">اعمال</button>
+          <input class="inp" id="couponInput" placeholder="<?= site_e('کد تخفیف (مثلاً MAXA20)') ?>">
+          <button class="btn btn-soft" id="couponBtn"><?= site_e('اعمال') ?></button>
         </div>
-        <div class="lbl" style="margin-top:4px">روش پرداخت</div>
+        <div class="lbl" style="margin-top:4px"><?= site_e('روش پرداخت') ?></div>
         <div class="pay-methods" id="payMethods">
-          <div class="pay-m on" data-m="zarin"><?= cic('wallet') ?>زرین‌پال</div>
-          <div class="pay-m" data-m="card"><?= cic('cart') ?>کارت به کارت</div>
+          <div class="pay-m on" data-m="zarin"><?= cic('wallet') ?><?= site_e('زرین‌پال') ?></div>
+          <div class="pay-m" data-m="card"><?= cic('cart') ?><?= site_e('کارت به کارت') ?></div>
         </div>
-        <div class="sum-row total"><span>مبلغ قابل پرداخت</span><span id="sumTotal">۰ تومان</span></div>
-        <button class="btn btn-primary btn-block btn-lg" id="payBtn" style="margin-top:14px"><?= cic('lock') ?> پرداخت امن و ثبت‌نام</button>
-        <div class="trust"><?= cic('check') ?> پرداخت امن · ضمانت بازگشت وجه تا ۷ روز</div>
+        <div class="sum-row total"><span><?= site_e('مبلغ قابل پرداخت') ?></span><span id="sumTotal"><?= site_e('۰ تومان') ?></span></div>
+        <button class="btn btn-primary btn-block btn-lg" id="payBtn" style="margin-top:14px"><?= cic('lock') ?> <?= site_e('پرداخت امن و ثبت‌نام') ?></button>
+        <div class="trust"><?= cic('check') ?> <?= site_e('پرداخت امن · ضمانت بازگشت وجه تا ۷ روز') ?></div>
       </aside>
     </div>
 
     <!-- سبد خالی -->
     <div class="empty-cart card card-pad" id="emptyCart" style="display:none">
       <div class="ei"><?= cic('cart') ?></div>
-      <h2 style="font-size:19px;font-weight:800">سبد خرید شما خالی است</h2>
-      <p style="color:var(--color-muted);margin:8px 0 20px">هنوز دوره‌ای انتخاب نکرده‌اید. از فروشگاه ما دیدن کنید!</p>
-      <a href="/courses" class="btn btn-primary" target="_top"><?= cic('grad') ?> مشاهده‌ی دوره‌ها</a>
+      <h2 style="font-size:19px;font-weight:800"><?= site_e('سبد خرید شما خالی است') ?></h2>
+      <p style="color:var(--color-muted);margin:8px 0 20px"><?= site_e('هنوز دوره‌ای انتخاب نکرده‌اید. از فروشگاه ما دیدن کنید!') ?></p>
+      <a href="/courses" class="btn btn-primary" target="_top"><?= cic('grad') ?> <?= site_e('مشاهده‌ی دوره‌ها') ?></a>
     </div>
   </div>
 </div>
@@ -115,10 +116,10 @@ course_site_head('تسویه‌حساب', $pageCss);
 <div class="ok-ov" id="okModal">
   <div class="ok-card">
     <div class="oic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-    <h2>ثبت‌نام موفق!</h2>
-    <p>دوره‌های شما با موفقیت ثبت شد. هم‌اکنون می‌توانید یادگیری را شروع کنید.</p>
-    <a href="/courses/my" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> رفتن به دوره‌های من</a>
-    <a href="/courses" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px">ادامه‌ی خرید</a>
+    <h2><?= site_e('ثبت‌نام موفق!') ?></h2>
+    <p><?= site_e('دوره‌های شما با موفقیت ثبت شد. هم‌اکنون می‌توانید یادگیری را شروع کنید.') ?></p>
+    <a href="/courses/my" class="btn btn-primary btn-block btn-lg" target="_top"><?= cic('play') ?> <?= site_e('رفتن به دوره‌های من') ?></a>
+    <a href="/courses" class="btn btn-ghost btn-block" target="_top" style="margin-top:10px"><?= site_e('ادامه‌ی خرید') ?></a>
   </div>
 </div>
 
@@ -130,7 +131,7 @@ course_site_head('تسویه‌حساب', $pageCss);
   var COURSES = <?= json_encode($map, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
   var toFa=function(s){return String(s).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];});};
   var sep=function(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'٬');};
-  var money=function(n){return n>0?(toFa(sep(n))+' تومان'):'رایگان';};
+  var money=function(n){return n>0?(toFa(sep(n))+' تومان'):<?= site_js_text('رایگان') ?>;};
   var $=function(id){return document.getElementById(id);};
   var BOOK='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>';
   var X='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -142,7 +143,7 @@ course_site_head('تسویه‌حساب', $pageCss);
   var coupon=0; // درصد تخفیف کد
 
   function info(item){ var c=COURSES[item.id]; if(c) return c; // fallback به داده‌ی ذخیره‌شده
-    return {id:item.id,title:item.title||'دوره',instructor:item.instructor||'مدرس مکسا',category:'',thumbnail:'',accent:'#007b7a',price:item.price||0,eff:item.price||0,free:(item.price||0)===0?1:0}; }
+    return {id:item.id,title:item.title||<?= site_js_text('دوره') ?>,instructor:item.instructor||<?= site_js_text('مدرس مکسا') ?>,category:'',thumbnail:'',accent:'#007b7a',price:item.price||0,eff:item.price||0,free:(item.price||0)===0?1:0}; }
 
   function render(){
     var cart=getCart();
@@ -154,7 +155,7 @@ course_site_head('تسویه‌حساب', $pageCss);
       html+='<div class="ci">'+
         '<div class="ci-thumb" style="background:linear-gradient(135deg,'+c.accent+','+c.accent+'cc)">'+(c.thumbnail?'<img src="'+c.thumbnail+'" alt="">':BOOK)+'</div>'+
         '<div class="ci-info"><div class="ci-title">'+c.title+'</div><div class="ci-inst">'+c.instructor+'</div>'+(c.category?'<span class="ci-cat">'+c.category+'</span>':'')+'</div>'+
-        '<div class="ci-right"><span class="ci-price">'+(c.eff>0?(toFa(sep(c.eff))+'<small> ت</small>'):'<span style="color:var(--violet)">رایگان</span>')+'</span>'+
+        '<div class="ci-right"><span class="ci-price">'+(c.eff>0?(toFa(sep(c.eff))+'<small> ت</small>'):<?= site_js_text('<span style="color:var(--violet)">رایگان</span>') ?>)+'</span>'+
         '<button class="ci-remove" data-id="'+c.id+'">'+X+' حذف</button></div></div>';
     });
     $('items').innerHTML=html;
@@ -175,9 +176,9 @@ course_site_head('تسویه‌حساب', $pageCss);
   // کد تخفیف نمونه
   $('couponBtn').addEventListener('click', function(){
     var code=($('couponInput').value||'').trim().toUpperCase();
-    if(code==='MAXA20'){ coupon=20; toast('کد تخفیف ۲۰٪ اعمال شد.'); }
-    else if(code==='MAXA50'){ coupon=50; toast('کد تخفیف ۵۰٪ اعمال شد.'); }
-    else { coupon=0; toast('کد تخفیف نامعتبر است.'); }
+    if(code==='MAXA20'){ coupon=20; toast(<?= site_js_text('کد تخفیف ۲۰٪ اعمال شد.') ?>); }
+    else if(code==='MAXA50'){ coupon=50; toast(<?= site_js_text('کد تخفیف ۵۰٪ اعمال شد.') ?>); }
+    else { coupon=0; toast(<?= site_js_text('کد تخفیف نامعتبر است.') ?>); }
     render();
   });
   $('payMethods').addEventListener('click', function(e){ var m=e.target.closest('.pay-m'); if(!m) return;

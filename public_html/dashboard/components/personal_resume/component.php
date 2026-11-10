@@ -1,9 +1,10 @@
-<?php if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; } ?>
+<?php
+require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; } ?>
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="<?= site_direction() ?>">
 <head>
     <meta charset="UTF-8" />
-    <title>پروفایل کادر درمان | مکسا</title>
+    <title><?= site_e('پروفایل کادر درمان | مکسا') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
@@ -723,24 +724,24 @@
                 <div class="card-sidebar-inner">
                     <div class="sidebar-header">
                         <div>
-                            <div class="sidebar-title">اطلاعات تماس و نوبت‌دهی</div>
-                            <div class="sidebar-subtitle">مرکز جامع سرطان مکسا</div>
+                            <div class="sidebar-title"><?= site_e('اطلاعات تماس و نوبت‌دهی') ?></div>
+                            <div class="sidebar-subtitle"><?= site_e('مرکز جامع سرطان مکسا') ?></div>
                         </div>
-                        <span class="badge-availability">امکان مشاوره حضوری و آنلاین</span>
+                        <span class="badge-availability"><?= site_e('امکان مشاوره حضوری و آنلاین') ?></span>
                     </div>
 
                     <ul class="contact-list">
                         <li>
-                            <span class="contact-label">تلفن:</span>
+                            <span class="contact-label"><?= site_e('تلفن:') ?></span>
                             <span class="contact-value">021-XXXXXXX</span>
                         </li>
                         <li>
-                            <span class="contact-label">ایمیل:</span>
+                            <span class="contact-label"><?= site_e('ایمیل:') ?></span>
                             <span class="contact-value">doctor@example.com</span>
                         </li>
                         <li>
-                            <span class="contact-label">آدرس:</span>
-                            <span>تهران، ... ، مرکز مکسا</span>
+                            <span class="contact-label"><?= site_e('آدرس:') ?></span>
+                            <span><?= site_e('تهران، ... ، مرکز مکسا') ?></span>
                         </li>
                     </ul>
 
@@ -751,50 +752,49 @@
                         </a>
                         <a href="#" class="contact-chip">
                             <span class="contact-chip-icon"><?= iconoir('globe', '', 18) ?></span>
-                            <span>وب‌سایت شخصی</span>
+                            <span><?= site_e('وب‌سایت شخصی') ?></span>
                         </a>
                         <a href="#" class="contact-chip">
                             <span class="contact-chip-icon"><?= iconoir('notes', '', 18) ?></span>
-                            <span>رزومه PDF</span>
+                            <span><?= site_e('رزومه PDF') ?></span>
                         </a>
                     </div>
 
                     <div class="stats-row">
                         <div class="stat-box">
-                            <div class="stat-label">سال تجربه</div>
-                            <div class="stat-value">۱۲+</div>
-                            <div class="stat-hint">در درمان بیماران سرطانی</div>
+                            <div class="stat-label"><?= site_e('سال تجربه') ?></div>
+                            <div class="stat-value"><?= site_e('۱۲+') ?></div>
+                            <div class="stat-hint"><?= site_e('در درمان بیماران سرطانی') ?></div>
                         </div>
                         <div class="stat-box">
-                            <div class="stat-label">بیمار تحت درمان</div>
-                            <div class="stat-value">۸۰۰+</div>
-                            <div class="stat-hint">به‌صورت فردی یا تیمی</div>
+                            <div class="stat-label"><?= site_e('بیمار تحت درمان') ?></div>
+                            <div class="stat-value"><?= site_e('۸۰۰+') ?></div>
+                            <div class="stat-hint"><?= site_e('به‌صورت فردی یا تیمی') ?></div>
                         </div>
                         <div class="stat-box">
-                            <div class="stat-label">کارگاه / سخنرانی</div>
-                            <div class="stat-value">۵۰+</div>
-                            <div class="stat-hint">آموزش به تیم‌های درمان</div>
+                            <div class="stat-label"><?= site_e('کارگاه / سخنرانی') ?></div>
+                            <div class="stat-value"><?= site_e('۵۰+') ?></div>
+                            <div class="stat-hint"><?= site_e('آموزش به تیم‌های درمان') ?></div>
                         </div>
                     </div>
 
                     <div class="sidebar-footer-note">
-                        برای هماهنگی نوبت، لطفاً با واحد پذیرش مکسا تماس بگیرید
-                        یا از طریق فرم آنلاین نوبت‌دهی اقدام کنید.
+                        <?= site_e('برای هماهنگی نوبت، لطفاً با واحد پذیرش مکسا تماس بگیرید یا از طریق فرم آنلاین نوبت‌دهی اقدام کنید.') ?>
                     </div>
                 </div>
 <!-- جایگزین باکس زمان‌های پاسخ‌گویی: باکس حوزه‌های تخصصی -->
 <section class="card-skills">
     <div class="card-header">
-        <h3 class="card-title">حوزه‌های تخصصی و علاقه‌مندی</h3>
+        <h3 class="card-title"><?= site_e('حوزه‌های تخصصی و علاقه‌مندی') ?></h3>
     </div>
 
     <div class="card-body">
         <div class="tags-row">
-            <span class="tag">مراقبت‌های تسکینی</span>
-            <span class="tag">مدیریت درد</span>
-            <span class="tag">انکولوژی بالینی</span>
-            <span class="tag">حمایت روانی-اجتماعی</span>
-            <span class="tag">آموزش خانواده بیماران</span>
+            <span class="tag"><?= site_e('مراقبت‌های تسکینی') ?></span>
+            <span class="tag"><?= site_e('مدیریت درد') ?></span>
+            <span class="tag"><?= site_e('انکولوژی بالینی') ?></span>
+            <span class="tag"><?= site_e('حمایت روانی-اجتماعی') ?></span>
+            <span class="tag"><?= site_e('آموزش خانواده بیماران') ?></span>
         </div>
     </div>
 </section>
@@ -811,28 +811,28 @@
                         <div class="avatar-ring">
                             <div class="avatar-inner">
                                 <!-- اینجا آدرس عکس فرد را بگذارید -->
-                                <img src="https://via.placeholder.com/400x400.png?text=Doctor+Photo" alt="عکس پروفایل">
+                                <img src="https://via.placeholder.com/400x400.png?text=Doctor+Photo" alt="<?= site_e('عکس پروفایل') ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="profile-ident">
                         <div class="name-row">
-                            <h1>دکتر نام و نام‌خانوادگی</h1>
-                            <span class="degree">فوق‌تخصص انکولوژی</span>
+                            <h1><?= site_e('دکتر نام و نام‌خانوادگی') ?></h1>
+                            <span class="degree"><?= site_e('فوق‌تخصص انکولوژی') ?></span>
                         </div>
 
-                        <div class="role">متخصص درمان حمایتی و تسکینی بیماران سرطانی</div>
+                        <div class="role"><?= site_e('متخصص درمان حمایتی و تسکینی بیماران سرطانی') ?></div>
 
                         <div class="sub-meta">
-                            <span>شماره نظام پزشکی: ۱۲۳۴۵۶</span>
-                            <span>مرکز: مکسا - تهران</span>
-                            <span>وضعیت: عضو هیئت علمی / همکار تمام‌وقت</span>
+                            <span><?= site_e('شماره نظام پزشکی: ۱۲۳۴۵۶') ?></span>
+                            <span><?= site_e('مرکز: مکسا - تهران') ?></span>
+                            <span><?= site_e('وضعیت: عضو هیئت علمی / همکار تمام‌وقت') ?></span>
                         </div>
 
                         <div class="badge-maksa">
                             <span class="badge-maksa-dot"></span>
-                            <span>همکاری با مکسا از سال ۱۳۹۵ تاکنون</span>
+                            <span><?= site_e('همکاری با مکسا از سال ۱۳۹۵ تاکنون') ?></span>
                         </div>
                     </div>
                 </header>
@@ -840,38 +840,38 @@
                 <!-- اطلاعات کلیدی (سوابق مختصر) -->
                 <section class="meta-grid">
                     <div class="meta-item">
-                        <div class="meta-label">رشته تخصصی</div>
-                        <div class="meta-value">داخلی - انکولوژی</div>
-                        <div class="meta-hint">فارغ‌التحصیل دانشگاه تهران</div>
+                        <div class="meta-label"><?= site_e('رشته تخصصی') ?></div>
+                        <div class="meta-value"><?= site_e('داخلی - انکولوژی') ?></div>
+                        <div class="meta-hint"><?= site_e('فارغ‌التحصیل دانشگاه تهران') ?></div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">سال شروع فعالیت</div>
-                        <div class="meta-value">۱۳۸۸</div>
-                        <div class="meta-hint">بیش از ۱۵ سال سابقه کار بالینی</div>
+                        <div class="meta-label"><?= site_e('سال شروع فعالیت') ?></div>
+                        <div class="meta-value"><?= site_e('۱۳۸۸') ?></div>
+                        <div class="meta-hint"><?= site_e('بیش از ۱۵ سال سابقه کار بالینی') ?></div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">سال همکاری با مکسا</div>
-                        <div class="meta-value">۱۳۹۵</div>
-                        <div class="meta-hint">عضو تیم چندرشته‌ای مکسا</div>
+                        <div class="meta-label"><?= site_e('سال همکاری با مکسا') ?></div>
+                        <div class="meta-value"><?= site_e('۱۳۹۵') ?></div>
+                        <div class="meta-hint"><?= site_e('عضو تیم چندرشته‌ای مکسا') ?></div>
                     </div>
                     <div class="meta-item highlight">
-                        <div class="meta-label">حوزه تمرکز</div>
-                        <div class="meta-value">کنترل درد و مراقبت حمایتی</div>
-                        <div class="meta-hint">بهبود کیفیت زندگی بیماران</div>
+                        <div class="meta-label"><?= site_e('حوزه تمرکز') ?></div>
+                        <div class="meta-value"><?= site_e('کنترل درد و مراقبت حمایتی') ?></div>
+                        <div class="meta-hint"><?= site_e('بهبود کیفیت زندگی بیماران') ?></div>
                     </div>
                 </section>
 
                 <!-- نوار ابزار / تب‌ها -->
 <section class="section-toolbar">
-    <div class="nav-pills" role="tablist" aria-label="تب‌های پروفایل">
+    <div class="nav-pills" role="tablist" aria-label="<?= site_e('تب‌های پروفایل') ?>">
         <button class="nav-pill active" type="button" role="tab" aria-selected="true" data-tab="bio">
-            بیوگرافی حرفه‌ای
+            <?= site_e('بیوگرافی حرفه‌ای') ?>
         </button>
         <button class="nav-pill" type="button" role="tab" aria-selected="false" data-tab="research">
-            سوابق علمی و پژوهشی
+            <?= site_e('سوابق علمی و پژوهشی') ?>
         </button>
         <button class="nav-pill" type="button" role="tab" aria-selected="false" data-tab="maksa">
-            مسئولیت‌ها در مکسا
+            <?= site_e('مسئولیت‌ها در مکسا') ?>
         </button>
     </div>
 </section>
@@ -885,13 +885,13 @@
     <!-- پنل ۱: بیوگرافی -->
     <section class="section-box tab-panel" id="tab-bio" data-panel="bio" role="tabpanel">
         <div class="section-header">
-            <div class="section-title">بیوگرافی حرفه‌ای <span class="section-title-pill">معرفی کوتاه</span></div>
+            <div class="section-title"><?= site_e('بیوگرافی حرفه‌ای') ?> <span class="section-title-pill"><?= site_e('معرفی کوتاه') ?></span></div>
         </div>
         <div class="section-body">
-            <p>دکتر نام و نام‌خانوادگی، متخصص داخلی و فوق‌تخصص انکولوژی، با بیش از ۱۵ سال سابقه فعالیت بالینی در حوزه درمان و مراقبت از بیماران مبتلا به سرطان است. ایشان از سال ۱۳۹۵ به عنوان عضو فعال تیم چندرشته‌ای مرکز مکسا فعالیت می‌کنند.</p>
+            <p><?= site_e('دکتر نام و نام‌خانوادگی، متخصص داخلی و فوق‌تخصص انکولوژی، با بیش از ۱۵ سال سابقه فعالیت بالینی در حوزه درمان و مراقبت از بیماران مبتلا به سرطان است. ایشان از سال ۱۳۹۵ به عنوان عضو فعال تیم چندرشته‌ای مرکز مکسا فعالیت می‌کنند.') ?></p>
             <div class="tags-row">
-                <span class="tag primary">نگاه انسان‌محور به درمان</span>
-                <span class="tag accent">تأکید بر کیفیت زندگی</span>
+                <span class="tag primary"><?= site_e('نگاه انسان‌محور به درمان') ?></span>
+                <span class="tag accent"><?= site_e('تأکید بر کیفیت زندگی') ?></span>
             </div>
         </div>
     </section>
@@ -899,13 +899,13 @@
     <!-- پنل ۲: سوابق علمی و پژوهشی -->
     <section class="section-box tab-panel" id="tab-research" data-panel="research" role="tabpanel" hidden>
         <div class="section-header">
-            <div class="section-title">سوابق علمی و پژوهشی <span class="section-title-pill">رزومه علمی</span></div>
+            <div class="section-title"><?= site_e('سوابق علمی و پژوهشی') ?> <span class="section-title-pill"><?= site_e('رزومه علمی') ?></span></div>
         </div>
         <div class="section-body">
             <ul class="list">
-                <li><span class="list-bullet"></span><span>چاپ و پذیرش مقالات در حوزه مراقبت حمایتی و تسکینی.</span></li>
-                <li><span class="list-bullet"></span><span>ارائه سخنرانی در کنگره‌ها و کارگاه‌های تخصصی مرتبط.</span></li>
-                <li><span class="list-bullet"></span><span>مشارکت در پروژه‌های پژوهشی کیفیت زندگی بیماران.</span></li>
+                <li><span class="list-bullet"></span><span><?= site_e('چاپ و پذیرش مقالات در حوزه مراقبت حمایتی و تسکینی.') ?></span></li>
+                <li><span class="list-bullet"></span><span><?= site_e('ارائه سخنرانی در کنگره‌ها و کارگاه‌های تخصصی مرتبط.') ?></span></li>
+                <li><span class="list-bullet"></span><span><?= site_e('مشارکت در پروژه‌های پژوهشی کیفیت زندگی بیماران.') ?></span></li>
             </ul>
         </div>
     </section>
@@ -914,11 +914,11 @@
     <!-- پنل ۳: مسئولیت‌ها -->
     <section class="section-box tab-panel" id="tab-maksa" data-panel="maksa" role="tabpanel" hidden>
         <div class="section-header">
-            <div class="section-title">مسئولیت‌ها در مکسا</div>
+            <div class="section-title"><?= site_e('مسئولیت‌ها در مکسا') ?></div>
         </div>
         <div class="section-body">
             <ul class="list">
-                <li><span class="list-bullet"></span><span>عضو تیم چندرشته‌ای درمان تسکینی مکسا...</span></li>
+                <li><span class="list-bullet"></span><span><?= site_e('عضو تیم چندرشته‌ای درمان تسکینی مکسا...') ?></span></li>
             </ul>
         </div>
     </section>

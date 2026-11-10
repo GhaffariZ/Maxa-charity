@@ -36,10 +36,9 @@ function event_date_label(?string $date): string {
 function event_slug(string $title, int $id = 0): string {
     $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', trim(mb_strtolower($title, 'UTF-8'))) ?? ''; $slug = trim($slug, '-'); return ($slug !== '' ? $slug : 'event') . ($id ? '-' . $id : '-' . substr((string)time(), -5));
 }
+require_once __DIR__ . '/core/image-optimizer.php';
+
 function event_asset(array $file, string $kind, array $allowed, int $maxBytes = 8388608): ?string {
     if (empty($file['name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return null;
-    if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || ($file['size'] ?? 0) > $maxBytes) throw new RuntimeException('فایل انتخاب‌شده معتبر نیست یا حجم آن زیاد است.');
-    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION)); if (!in_array($ext, $allowed, true)) throw new RuntimeException('فرمت فایل انتخاب‌شده مجاز نیست.');
-    $dir = __DIR__ . '/uploads/events/'; if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) throw new RuntimeException('پوشه آپلود ساخته نشد.');
-    $name = $kind . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(3)) . '.' . $ext; if (!move_uploaded_file($file['tmp_name'], $dir . $name)) throw new RuntimeException('ذخیره فایل انجام نشد.'); return '/uploads/events/' . $name;
+    return maxa_upload_and_optimize($file, 'events', $kind . '_', 82, 1920);
 }

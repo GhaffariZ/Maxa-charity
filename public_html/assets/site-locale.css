@@ -1,0 +1,24 @@
+.cta-hero[hidden]{display:none!important}
+/* Language picker and public document direction. Navigation layout lives in site-navigation.css. */
+.site-language{position:relative;flex:none;font-family:inherit;font-size:13px;line-height:1.5}
+.site-language summary{display:flex;align-items:center;justify-content:center;gap:5px;min-width:44px;min-height:44px;padding:8px;border:1px solid #7caaa7;border-radius:10px;background:#fff;color:#005d60;cursor:pointer;list-style:none;font-weight:700;box-sizing:border-box}
+.site-language summary::-webkit-details-marker{display:none}
+.site-language summary:hover{background:#edf7f4}
+.site-language summary:focus-visible,.site-language a:focus-visible{outline:3px solid #005d60;outline-offset:3px}
+.site-language-icon{display:flex;align-items:center}
+.site-language-icon svg{width:17px;height:17px}
+.site-language-caret{font-size:15px;line-height:1}
+.site-language-options{position:absolute;inset-inline-end:0;top:calc(100% + 8px);width:172px;max-width:calc(100vw - 24px);padding:6px;background:#fff;color:#16464a;border:1px solid #d5e5e4;border-radius:12px;box-shadow:0 8px 24px #003d3f26;box-sizing:border-box;z-index:8}
+.site-language-options a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:10px 12px;border-radius:8px;text-decoration:none;white-space:nowrap;box-sizing:border-box}
+.site-language-options a:hover,.site-language-options a[aria-current]{background:#e6f4f2;color:#005d60}
+.site-language-options a[aria-current]::after{content:'✓';font-size:15px}
+html[lang=en]{--site-direction:ltr}
+html[lang=en] body{font-family:Arial,'Vazirmatn',sans-serif!important;direction:ltr!important;text-align:left}
+html[lang=en] [data-site-static]{direction:ltr!important;text-align:inherit}
+html[lang=en] .gf-footer,html[lang=en] .cu-wrap{direction:ltr!important}
+html[lang=en] .gf-footer{text-align:left}
+html[lang=en] .gf-col a::before{content:'→'}
+html[lang=en] .gf-title{font-size:clamp(24px,3vw,38px);line-height:1.4}
+html[lang=en] [data-site-dynamic]{direction:ltr!important}
+html[lang=ar] body{direction:rtl}
+@media(max-width:600px){.site-language summary{width:44px;padding:6px}.site-language-icon,.site-language-caret{display:none}}

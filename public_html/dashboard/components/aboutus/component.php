@@ -1,26 +1,23 @@
+<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
 <section class="skill-hero">
   <div class="skill-hero-container">
 
     <div class="skill-hero-left">
       <h2 class="skill-hero-title">
-        خدمات مکسا <br>
-        <span>در حیطه مراقبت های حمایتی و تسکینی سرطان</span>
+        <?= site_e('خدمات مکسا') ?> <br>
+        <span><?= site_e('در حیطه مراقبت های حمایتی و تسکینی سرطان') ?></span>
       </h2>
 
       <ul class="skill-hero-features">
-        <li>خدمات پزشکی و مراقبتی</li>
-        <li>مراقبت های روانشناختی و معنوی</li>
-        <li>مراقبت های توانبخشی  </li>
-        <li>خدمات مددکاری اجتماعی</li>
-        <li>ارائه نجهیزات پزشکی</li>
-        <li>مشاوره ژنتیک و غربالگری</li>
-        <li>پشتیبانی جامع بیمار و خانواده</li>
-        <li>مرکز پاسخگویی ۲۴ ساعته</li>
+        <li><?= site_e('خدمات پزشکی و مراقبتی') ?></li>
+        <li><?= site_e('مراقبت های روانشناختی و معنوی') ?></li>
+        <li><?= site_e('مراقبت های توانبخشی') ?>  </li>
+        <li><?= site_e('خدمات مددکاری اجتماعی') ?></li>
+        <li><?= site_e('ارائه نجهیزات پزشکی') ?></li>
+        <li><?= site_e('مشاوره ژنتیک و غربالگری') ?></li>
+        <li><?= site_e('پشتیبانی جامع بیمار و خانواده') ?></li>
+        <li><?= site_e('مرکز پاسخگویی ۲۴ ساعته') ?></li>
       </ul>
-
-      <a href="/MACSAservices.html" class="skill-hero-btn">
-        اطلاعات بیشتر درباره خدمات مکسا
-      </a>
     </div>
 
     <div class="skill-hero-right">
@@ -28,18 +25,18 @@
       <!-- ستون ویدئو -->
       <div class="skill-video-column">
         <div class="skill-video-box">
-          <img src="{{image1}}" alt="تیم درمان و مراقبت در منزل مکسا" width="800" height="800" loading="lazy" decoding="async">
+          <img src="{{image1}}" alt="<?= site_e('تیم درمان و مراقبت در منزل مکسا') ?>" width="800" height="800" loading="lazy" decoding="async">
         </div>
 
         <div class="skill-exp-box">
           <span>+16</span>
-          <p>سال تجربه</p>
+          <p><?= site_e('سال تجربه') ?></p>
         </div>
       </div>
 
       <!-- تصویر بلند سمت راست -->
       <div class="skill-main-image">
-        <img src="{{image2}}" alt="خدمات تخصصی مراقبت‌های حمایتی و تسکینی مکسا" width="600" height="800" loading="lazy" decoding="async">
+        <img src="{{image2}}" alt="<?= site_e('خدمات تخصصی مراقبت‌های حمایتی و تسکینی مکسا') ?>" width="600" height="800" loading="lazy" decoding="async">
       </div>
 
     </div>
@@ -54,7 +51,7 @@
 <style>
 .skill-hero{
   padding:40px 0;
-  direction:rtl;
+  direction:var(--site-direction, rtl);
   position:relative;
   font-family:'Vazirmatn', Tahoma, sans-serif;
 }
@@ -62,18 +59,19 @@
 .skill-hero-container{
   max-width:1200px;
   margin:auto;
-  display:flex;
-  gap:48px;
+  padding-inline:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(24px,4vw,48px);
   align-items:center;
-  flex-wrap:wrap;
-  flex-direction:row-reverse;
+  direction:ltr;
 }
 
 /* LEFT TEXT */
 
 .skill-hero-left{
-  flex:1;
-  min-width:320px;
+  min-width:0;
+  direction:var(--site-direction, rtl);
   text-align:center; /* وسط‌چین دسکتاپ */
 }
 
@@ -87,9 +85,9 @@
 }
 
 .skill-hero-title{
-  font-size:40px;
+  font-size:clamp(26px,3vw,40px);
   line-height:1.7;
-  margin-bottom:20px;
+  margin:0 0 20px;
 }
 
 .skill-hero-title span{
@@ -107,20 +105,20 @@
   list-style:none;
   padding:0;
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
   margin-bottom:30px;
 }
 
 .skill-hero-features li{
   position:relative;
-  padding-right:22px;
+  padding-inline-start:22px;
 }
 
 .skill-hero-features li::before{
   content:"";
   position:absolute;
-  right:0;
+  inset-inline-start:0;
   top:4px;
   width:15px;
   height:15px;
@@ -129,61 +127,20 @@
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center/contain;
 }
 
-.skill-hero-btn{
-  background:#faa61a;
-  color:#000;
-  padding:12px 28px;
-  border-radius:10px;
-  text-decoration:none;
-  display:inline-block;
-  font-weight:600;
-  transition:all .25s ease;
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-/* وقتی موس میره روش */
-
-.skill-hero-btn:hover{
-  background:#FFD700;
-  transform:translateY(-3px);
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
-  cursor:pointer;
-}
-
-/* وقتی کلیک میشه */
-
-.skill-hero-btn:active{
-  transform:translateY(-1px);
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
-}
-
-
 /* RIGHT IMAGES */
 
 .skill-hero-right{
-  flex:1;
+  min-width:0;
+  width:100%;
+  max-width:590px;
+  margin-inline:auto;
+  direction:var(--site-direction, rtl);
   display:flex;
-  gap:30px;
+  gap:clamp(12px,2.5vw,30px);
   align-items:flex-end; /* به جای flex-start */
   position:relative;
   flex-direction:row-reverse;
 }
-
-.skill-main-image{
-  width:300px;
-  height:390px;
-  border-radius:24px;
-  overflow:hidden;
-  position:relative;
-  z-index:1;
-}
-
-.skill-video-column{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  z-index:1;
-}
-
 
 /* yellow circle */
 
@@ -195,7 +152,7 @@
   background:#f4c400;
   border-radius:50%;
   top:-40px;
-  right:-30px;
+  right:0;
   z-index:0;
 }
 
@@ -221,11 +178,13 @@
   flex-direction:column;
   gap:20px;
   z-index:1;
+  flex:0 0 46%;
+  min-width:0;
 }
 
 .skill-video-box{
-  width:260px;
-  height:340px;
+  width:100%;
+  aspect-ratio:13/17;
   border-radius:20px;
   overflow:hidden;
   position:relative;
@@ -240,18 +199,20 @@
 /* EXPERIENCE */
 
 .skill-exp-box{
-  width:260px;
+  width:100%;
   background:#008B8B;
   color:#fff;
-  padding:22px;
+  padding:clamp(10px,2vw,22px);
   border-radius:16px;
   display:flex;
   align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
   gap:10px;
 }
 
 .skill-exp-box span{
-  font-size:34px;
+  font-size:clamp(24px,3vw,34px);
   font-weight:bold;
 }
 
@@ -263,8 +224,11 @@
 /* MAIN IMAGE */
 
 .skill-main-image{
-  width:300px;
-  height:390px;
+  flex:1;
+  min-width:0;
+  width:auto;
+  height:auto;
+  aspect-ratio:10/13;
   border-radius:24px;
   overflow:hidden;
   position:relative;
@@ -297,35 +261,17 @@
 @media(max-width:900px){
 
   .skill-hero-container{
-    flex-direction:column;
-  }
-
-.skill-hero-left{
-  flex:1;
-  min-width:320px;
-}
-
-  .skill-hero-right{
-    flex-direction:row-reverse !important; /* دقیقا مثل دسکتاپ */
-    justify-content:center;
-    gap:20px;
-  }
-
-  .skill-video-column{
-    flex-direction:column;
-    align-items:center;
+    grid-template-columns:minmax(0,1fr);
   }
 
 }
 
 @media(max-width:560px){
   .skill-hero{ padding:32px 0; }
-  .skill-hero-title{ font-size:28px; }
+}
+
+@media(max-width:480px){
   .skill-hero-features{ grid-template-columns:1fr; }
-  .skill-hero-right{ flex-direction:column !important; align-items:center; }
-  .skill-main-image,
-  .skill-video-box{ width:100%; max-width:300px; height:auto; aspect-ratio:3/4; }
-  .skill-exp-box{ width:100%; max-width:300px; }
 }
 
 </style>

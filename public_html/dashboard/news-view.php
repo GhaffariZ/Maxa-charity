@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../core/site-locale.php';
+require_once __DIR__ . '/../core/content-locales.php';
 require_once __DIR__ . '/../core/database.php';
 require_once __DIR__ . '/../core/html-sanitizer.php';
 require_once __DIR__ . '/../core/component-renderer.php';
@@ -47,10 +49,11 @@ $stmt = $pdo->prepare("
     WHERE n.id = ?
 ");
 $stmt->execute([$id]);
-$news = $stmt->fetch(PDO::FETCH_ASSOC);
+$news = content_row($pdo,'news',$stmt->fetch(PDO::FETCH_ASSOC)?:null);
+if($news&&(($news['status']??'')!=='published'||strtotime($news['publish_date'])>time()||trim((string)($news['reject_reason']??''))!==''))$news=null;
 
 if (!$news) {
-    die("خبر یافت نشد");
+    site_error_page();exit;
 }
 
 // دریافت برچسب‌های چندگانه خبر
@@ -63,7 +66,7 @@ try {
         WHERE m.news_id = ?
     ");
     $stmt_db_tags->execute([$id]);
-    $db_tags = $stmt_db_tags->fetchAll(PDO::FETCH_COLUMN);
+    $db_tags = content_language()==='fa'?$stmt_db_tags->fetchAll(PDO::FETCH_COLUMN):array_filter(array_map('trim',explode(',',(string)($news['tags']??''))));
 } catch (Exception $e) {
     $db_tags = [];
 }
@@ -196,7 +199,7 @@ try {
 $featured_path = '';
 $has_featured_image = false;
 if (!empty($news['featured_image']) && !empty($news['news_code'])) {
-  $featured_path = "/uploads/news/{$news['news_code']}/" . $news['featured_image'];
+  $featured_path = preg_match('~^(?:/|https?://)~',$news['featured_image'])?$news['featured_image']:"/uploads/news/{$news['news_code']}/" . $news['featured_image'];
   if (file_exists($_SERVER['DOCUMENT_ROOT'] . $featured_path) || file_exists(__DIR__ . '/..' . $featured_path)) {
     $has_featured_image = true;
   }
@@ -207,22 +210,24 @@ $readTimeValue = isset($news['read_time']) ? (int)$news['read_time'] : 1;
 if ($readTimeValue < 1) { $readTimeValue = 1; }
 $readTimeFa = faNumbers($readTimeValue);
 
-// واکشی ۴ خبر آخر (غیر از خبر فعلی)
-$latestNews = [];
+// سه خبر جدید از همان دسته، غیر از خبر فعلی
+$relatedNews = [];
+$relatedLanguageScope=content_where($pdo,'news','n.id');
 try {
     $latStmt = $pdo->prepare("
         SELECT n.*, c.name AS category_name
         FROM news n
         LEFT JOIN news_categories c ON c.id = n.category_id
-        WHERE n.status = 'published'
+        WHERE {$relatedLanguageScope} AND n.status = 'published'
           AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '')
           AND n.id <> ?
-        ORDER BY n.publish_date DESC
+          AND n.category_id = ?
+        ORDER BY n.publish_date DESC, n.id DESC
         LIMIT 3
     ");
-    $latStmt->execute([$id]);
-    $latestNews = $latStmt->fetchAll(PDO::FETCH_ASSOC);
+    $latStmt->execute([$id, $news['category_id'] ?? null]);
+    $relatedNews = content_rows($pdo,'news',$latStmt->fetchAll(PDO::FETCH_ASSOC));
 } catch (PDOException $e) {
     // ignore
 }
@@ -285,10 +290,10 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
     }
 
     .news-detail-wrapper {
-        max-width: var(--cta-container, 1440px);
+        max-width: 1240px;
         margin: 0 auto;
         padding: 48px 20px 80px;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
     }
 
     /* بردکرامب */
@@ -296,7 +301,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         font-size: 13.5px;
         color: var(--news-text-muted);
         margin-bottom: 24px;
-        text-align: right;
+        text-align: start;
     }
     .news-detail-breadcrumbs a {
         color: var(--news-primary);
@@ -316,6 +321,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
 
     /* ستون راست: بدنه و محتوای خبر */
     .article-container {
+        min-width: 0;
         background: var(--news-card-bg);
         border: 1px solid var(--news-border);
         border-radius: 24px;
@@ -372,7 +378,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         display: flex;
         flex-direction: column;
         gap: 14px;
-        text-align: right;
+        text-align: start;
     }
     .article-hero-category {
         align-self: flex-start;
@@ -419,10 +425,14 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
 
     /* بدنه مقاله */
     .article-body-wrapper {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 940px;
+        margin-inline: auto;
         padding: 40px;
     }
     .article-header {
-        text-align: right;
+        text-align: start;
         margin-bottom: 32px;
     }
     .article-category {
@@ -464,6 +474,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         line-height: 2.05;
         color: rgba(47, 52, 55, 0.9);
         text-align: justify;
+        overflow-wrap: anywhere;
     }
     .article-content::after {
         content: "";
@@ -505,7 +516,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         margin: 8px 0 20px 24px !important;
         display: block !important;
         clear: right !important;
-        text-align: right;
+        text-align: start;
         width: 50%;
         max-width: 100%;
     }
@@ -591,7 +602,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         flex-wrap: wrap;
         align-items: center;
         gap: 10px;
-        text-align: right;
+        text-align: start;
     }
     .article-tags strong {
         font-size: 13.5px;
@@ -622,14 +633,14 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
         border-bottom: 1px solid var(--news-border);
         padding: 56px 0;
         width: 100%;
-        direction: rtl;
+        direction: var(--site-direction, rtl);
         margin-top: 48px;
     }
     .related-news-section-inner {
-        max-width: var(--cta-container, 1440px);
+        max-width: 1240px;
         margin: 0 auto;
         padding: 0 20px;
-        text-align: right;
+        text-align: start;
     }
     .related-title {
         font-size: 18px;
@@ -725,10 +736,6 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
     }
 
     @media (max-width: 1024px) {
-        .news-detail-layout {
-            grid-template-columns: 1fr;
-            gap: 28px;
-        }
         .news-detail-wrapper {
             padding: 32px 16px 60px;
         }
@@ -750,20 +757,18 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
     }
 </style>
 
-<div class="cta-navbar-spacer"></div>
-
 <div class="news-detail-wrapper">
     <!-- بردکرامب -->
-    <nav class="news-detail-breadcrumbs" aria-label="مسیر راهنما">
-        <a href="/home">خانه</a> / 
-        <a href="/news.php">اخبار</a> / 
+    <nav class="news-detail-breadcrumbs" aria-label="<?= site_e('مسیر راهنما') ?>">
+        <a href="/home"><?= site_e('خانه') ?></a> /
+        <a href="/news.php"><?= site_e('اخبار') ?></a> /
         <span><?= htmlspecialchars($news['category_name'] ?? 'خبر') ?></span>
     </nav>
 
     <!-- جزئیات خبر در یک ستون -->
     <div class="news-detail-layout">
         
-        <!-- ستون راست: متن خبر -->
+        <!-- متن خبر -->
         <article class="article-container <?= $has_featured_image ? 'has-hero' : 'no-hero' ?>">
             <?php if ($has_featured_image): ?>
                 <header class="article-hero-banner">
@@ -774,13 +779,13 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
                             <span class="article-hero-category"><?= htmlspecialchars($news['category_name']) ?></span>
                         <?php endif; ?>
 
-                        <h1 class="article-hero-title"><?= htmlspecialchars($news['title']) ?></h1>
+                        <h1 class="article-hero-title" lang="fa" dir="rtl" data-site-dynamic><?= htmlspecialchars($news['title']) ?></h1>
 
                         <div class="article-hero-meta">
-                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
-                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
-                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
-                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                            <span><i class="far fa-user"></i> <?= site_e('نویسنده:') ?> <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> <?= site_e('تاریخ:') ?> <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> <?= site_e('بازدید:') ?> <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> <?= site_e('زمان مطالعه:') ?> <?= htmlspecialchars($readTimeFa) ?> <?= site_e('دقیقه') ?></span>
                         </div>
                     </div>
                 </header>
@@ -790,18 +795,18 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
                 <?php if (!$has_featured_image): ?>
                     <header class="article-header">
                         <span class="article-category"><?= htmlspecialchars($news['category_name'] ?? 'اخبار') ?></span>
-                        <h1 class="article-title"><?= htmlspecialchars($news['title']) ?></h1>
+                        <h1 class="article-title" lang="fa" dir="rtl" data-site-dynamic><?= htmlspecialchars($news['title']) ?></h1>
 
                         <div class="article-meta">
-                            <span><i class="far fa-user"></i> نویسنده: <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
-                            <span><i class="far fa-calendar-alt"></i> تاریخ: <?= htmlspecialchars($publishDateFa) ?></span>
-                            <span><i class="far fa-eye"></i> بازدید: <?= htmlspecialchars($totalViewsFa) ?></span>
-                            <span><i class="far fa-clock"></i> زمان مطالعه: <?= htmlspecialchars($readTimeFa) ?> دقیقه</span>
+                            <span><i class="far fa-user"></i> <?= site_e('نویسنده:') ?> <?= htmlspecialchars($news['author'] ?: 'روابط عمومی مکسا') ?></span>
+                            <span><i class="far fa-calendar-alt"></i> <?= site_e('تاریخ:') ?> <?= htmlspecialchars($publishDateFa) ?></span>
+                            <span><i class="far fa-eye"></i> <?= site_e('بازدید:') ?> <?= htmlspecialchars($totalViewsFa) ?></span>
+                            <span><i class="far fa-clock"></i> <?= site_e('زمان مطالعه:') ?> <?= htmlspecialchars($readTimeFa) ?> <?= site_e('دقیقه') ?></span>
                         </div>
                     </header>
                 <?php endif; ?>
 
-                <section class="article-content">
+                <section class="article-content" lang="fa" dir="rtl" data-site-dynamic>
                     <?= HtmlSanitizer::sanitize($news['content']) ?>
                 </section>
 
@@ -813,7 +818,7 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
                 if (!empty($all_news_tags)): 
                 ?>
                     <footer class="article-tags">
-                        <strong>برچسب‌ها:</strong>
+                        <strong><?= site_e('برچسب‌ها:') ?></strong>
                         <?php foreach ($all_news_tags as $tag): ?>
                             <a href="/news.php?q=<?= urlencode($tag) ?>" class="tag-chip"><?= htmlspecialchars($tag) ?></a>
                         <?php endforeach; ?>
@@ -826,17 +831,17 @@ $pageTitle = $news['title'] . ' — آخرین اخبار مکسا';
 </div>
 
 <!-- اخبار مرتبط در خارج از کانتینر اصلی، بالای فوتر با پس‌زمینه نرم -->
-<?php if (count($latestNews) > 0): ?>
+<?php if (count($relatedNews) > 0): ?>
     <section class="related-news-section-outer">
         <div class="related-news-section-inner">
-            <h3 class="related-title">اخبار مرتبط</h3>
+            <h3 class="related-title"><?= site_e('اخبار مرتبط') ?></h3>
             <div class="related-grid">
-                <?php foreach ($latestNews as $lat): 
+                <?php foreach ($relatedNews as $lat):
                     $newsSlug = slugify($lat['title'] ?? '');
                     $latUrl = '/' . (int)$lat['id'] . '/' . rawurlencode($newsSlug) . '/';
                     $latImage = '';
                     if (!empty($lat['featured_image']) && !empty($lat['news_code'])) {
-                        $latImage = "/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
+                        $latImage = preg_match('~^(?:/|https?://)~',$lat['featured_image'])?$lat['featured_image']:"/uploads/news/{$lat['news_code']}/" . $lat['featured_image'];
                     } else {
                         $latImage = buildLocalPlaceholderImageDetail('بدون تصویر');
                     }

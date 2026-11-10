@@ -1,0 +1,51 @@
+<?php
+declare(strict_types=1);
+date_default_timezone_set('Asia/Tehran');
+require __DIR__ . '/../public_html/core/dashboard-notifications.php';
+require __DIR__ . '/fixtures/dashboard-test-db.php';
+require __DIR__ . '/../public_html/core/dashboard-auth.php';
+function check(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); }
+$_SESSION = ['dash_login_at'=>time(), 'dash_last_seen'=>time()-300];
+$lastSeen = $_SESSION['dash_last_seen'];
+dash_enforce_timeouts(false);
+check($_SESSION['dash_last_seen'] === $lastSeen, 'Background refresh cannot prolong idle sessions.');
+dash_enforce_timeouts();
+check($_SESSION['dash_last_seen'] >= time()-1, 'Interactive requests still record activity.');
+$db = new DashboardTestPDO(); dashboard_test_seed($db);
+$context = dashboard_test_context();
+$query = dash_notification_query($db, $context);
+$feed = dash_notification_feed($db, $query, $context, 'all', 1);
+check($query['unavailable'] === [], 'Production SELECTs must execute.');
+check(count($feed['items']) === 8 && $feed['unread'] === 8, 'All authorized source events are included.');
+check($feed['attention'] === ['medical'=>2,'news'=>2,'tickets'=>3], 'Pending work is counted independently of notifications.');
+check(!str_contains(json_encode($feed), 'PRIVATE'), 'Medical identity and diagnoses must never enter notifications.');
+check(!in_array('medical:204', array_column($feed['items'],'key')), 'Active branch isolation.');
+dash_notification_mark($db,$query,$context,'medical:204');
+check((int)$db->query('SELECT COUNT(*) FROM dashboard_notification_reads')->fetchColumn() === 0, 'Forged foreign keys cannot be acknowledged.');
+dash_notification_mark($db,$query,$context,'medical:201');
+$after = dash_notification_feed($db,$query,$context,'all',1);
+check($after['unread'] === 7 && $after['attention'] === $feed['attention'], 'Reading a notification never completes pending work.');
+$db->exec("INSERT INTO ticket_reads VALUES(1,1,'2999-01-01 00:00:00')");
+check(dash_notification_feed($db,$query,$context,'all',1)['unread'] === 6, 'Native ticket reads also clear the bell.');
+dash_notification_mark($db,$query,$context,null);
+check(dash_notification_feed($db,$query,$context,'unread',1)['items'] === [], 'Read-all persists across subsequent requests.');
+$other = dashboard_test_context(['user'=>9]);
+check(dash_notification_feed($db,dash_notification_query($db,$other),$other,'all',1)['unread'] === 9, 'Read state is private to each admin (including messages authored by admin 1).');
+$db->prepare("INSERT INTO audit_log VALUES (2,'news_status_changed',?,?)")->execute([json_encode(['news_id'=>101,'status'=>'review']),date('Y-m-d H:i:s')]);
+$fresh = dash_notification_feed($db,dash_notification_query($db,$context),$context,'unread',1);
+check(array_column($fresh['items'],'key') === ['news:101:2'], 'Re-submission generates a distinct unread event.');
+$user = dashboard_test_context(['user'=>2,'branch_admin'=>false,'news'=>false,'medical'=>false]);
+check(dash_notification_feed($db,dash_notification_query($db,$user),$user,'all',1)['items'] === [], 'Users cannot see coworkers tickets or self-authored messages.');
+$super = dashboard_test_context(['user'=>10,'super'=>true,'branch'=>2,'news'=>false,'medical'=>false]);
+check(array_column(dash_notification_feed($db,dash_notification_query($db,$super),$super,'all',1)['items'],'key') === ['ticket:14'], 'HQ ticket target and active branch are both enforced.');
+$none = dashboard_test_context(['tickets'=>false,'medical'=>false,'news'=>false]);
+check(dash_notification_feed($db,dash_notification_query($db,$none),$none,'all',1)['total'] === 0, 'Empty permissions produce no data.');
+for ($i=300;$i<326;$i++) $db->prepare("INSERT INTO medical_records VALUES (?,1,'new',?,'SECRET')")->execute([$i,date('Y-m-d H:i:s')]);
+$paged = dash_notification_feed($db,dash_notification_query($db,$context),$context,'all',2);
+check(count($paged['items']) === 14 && $paged['total'] === 34 && !$paged['has_more'], 'Pagination preserves total/unread counts beyond the first page.');
+try { dash_notification_mark($db,$query,$context,"medical:1' OR 1=1"); throw new RuntimeException('Invalid key accepted.'); } catch (InvalidArgumentException $expected) {}
+try { dash_notification_mark($db,$query,$context,'medical:'.str_repeat('1',101)); throw new RuntimeException('Oversized key accepted.'); } catch (InvalidArgumentException $expected) {}
+$db->exec('DROP TABLE medical_records');
+$partial = dash_notification_query($db,$context);
+check($partial['unavailable'] === ['medical'] && count(dash_notification_feed($db,$partial,$context,'all',1)['items']) === 5, 'Unavailable optional modules do not hide healthy data.');
+echo "PASS notification scope, privacy, persistence, pending counts, re-submission, paging and partial failures\n";

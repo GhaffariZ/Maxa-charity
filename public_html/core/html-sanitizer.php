@@ -251,7 +251,7 @@ final class HtmlSanitizer
     /**
      * Check whether a URL value is safe (only http/https, no JS/VB/data URIs).
      */
-    private static function isSafeUrl(string $url): bool
+    public static function isSafeUrl(string $url): bool
     {
         $url = trim($url);
 

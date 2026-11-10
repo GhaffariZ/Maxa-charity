@@ -59,5 +59,6 @@ try {
 }
 
 // بازگشت به صفحهٔ اصلی
+content_delete($pdo,'components',$component_name);
 header("Location: component-create.php?deleted=1");
 exit;

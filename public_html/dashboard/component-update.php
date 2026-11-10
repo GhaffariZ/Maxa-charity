@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 csrf_check();
+content_prepare($pdo,'components');
 
 if (!isset($_POST['component_name'], $_POST['component_tag'])) {
     header("Location: component-create.php?error=missing_data");
@@ -197,5 +198,6 @@ foreach ($temp_files as $file) {
     $counter++;
 }
 
+content_save($pdo,'components',$component_name);
 header("Location: component-create.php?updated=1");
 exit;

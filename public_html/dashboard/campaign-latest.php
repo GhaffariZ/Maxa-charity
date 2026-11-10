@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../core/content-locales.php';
 /* Latest public campaign for one active center, with a short shared cache. */
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=120, stale-while-revalidate=300');
@@ -20,6 +21,12 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
     );
     require_once __DIR__ . '/../core/campaign-service.php';
+    if(content_language()!=='fa'){
+        $has=content_ready($pdo)?$pdo->prepare("SELECT 1 FROM public_content_locales WHERE content_type='campaigns' AND locale=? AND enabled=1 LIMIT 1"):null;
+        if($has)$has->execute([content_language()]);
+        if(!$has||!$has->fetchColumn()){echo json_encode(['status'=>'empty','data'=>null]);exit;}
+    }
+
 
     $slug = campaign_service_normalize_slug((string)($_GET['branch'] ?? ''));
     $statement = $pdo->prepare("SELECT id, name, slug, is_hq FROM branches WHERE slug = ? AND status = 'active' LIMIT 1");
@@ -29,8 +36,14 @@ try {
         latest_campaign_json(['status' => 'error', 'message' => 'مرکز انتخاب‌شده یافت نشد.'], 404);
     }
 
+    $branch=content_branch_context($pdo,$branch);
+    $revision='';
+    if(content_ready($pdo)){
+        $versions=$pdo->prepare("SELECT content_id,enabled,payload FROM public_content_locales WHERE content_type IN ('campaigns','branches') AND locale=? ORDER BY content_type,content_id");
+        $versions->execute([content_language()]);$revision=hash('sha256',json_encode($versions->fetchAll()));
+    }
     $cacheFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
-        . DIRECTORY_SEPARATOR . 'macsa-latest-campaign-v2-' . hash('sha256', $slug) . '.json';
+        . DIRECTORY_SEPARATOR . 'macsa-latest-campaign-v4-' . hash('sha256', $slug.'/'.content_language().'/'.$revision) . '.json';
     $readCache = static function (string $path): ?array {
         if (!is_file($path)) {
             return null;
@@ -66,8 +79,16 @@ try {
                 $excludedIds[] = $onlineDonationId;
             }
         }
-        $remote = (new CampaignServiceClient($slug))->latestPublicCampaign($excludedIds);
-        $campaign = $remote ? campaign_service_present($remote, $branch) : null;
+        $client=new CampaignServiceClient($slug);
+        $remote=content_language()==='fa'?$client->latestPublicCampaign($excludedIds):null;
+        $campaign=$remote?content_row($pdo,'campaigns',campaign_service_present($remote,$branch)):null;
+        if(content_language()!=='fa'||($remote&&!$campaign)){
+            $items=(new CampaignServiceClient($slug))->publicCampaigns();
+            $items=array_map(static fn($row)=>campaign_service_present($row,$branch),$items);
+            $items=array_values(array_filter(content_rows($pdo,'campaigns',$items),static fn($row)=>!in_array((string)$row['id'],$excludedIds,true)));
+            usort($items,static fn($a,$b)=>strcmp((string)($b['created_at']??''),(string)($a['created_at']??'')));
+            $campaign=$items[0]??null;
+        }
         $payload = $campaign
             ? ['status' => 'success', 'data' => $campaign]
             : ['status' => 'empty', 'data' => null];
