@@ -1,3 +1,5 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+@import './donor-dashboard.css';
+@import '../../../public_html/assets/macsa-loading.css';

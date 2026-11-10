@@ -328,12 +328,12 @@ body::before {
   transform: translateX(-50%);
   width: 960px;
   height: 420px;
-  background: radial-gradient(ellipse at center, rgba(0, 143, 138, 0.12) 0%, rgba(79, 178, 176, 0.04) 50%, transparent 75%);
+  background:none;
   pointer-events: none;
   z-index: 0;
 }
 :root[data-theme="dark"] body::before {
-  background: radial-gradient(ellipse at center, rgba(79, 178, 176, 0.16) 0%, rgba(0, 143, 138, 0.04) 50%, transparent 75%);
+  background:none;
 }
 
 /* ==========================================================================
@@ -376,7 +376,7 @@ body::before {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #008f8a, #005554);
+  background:#00736f;
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -700,13 +700,13 @@ body::before {
   z-index: 99999;
 }
 .header-btn-primary {
-  background: linear-gradient(135deg, #008f8a, #005c5b);
+  background:#00736f;
   border-color: transparent;
   color: #ffffff !important;
   box-shadow: 0 4px 12px -2px rgba(0, 143, 138, 0.4);
 }
 .header-btn-primary:hover {
-  background: linear-gradient(135deg, #00736f, #004b4a);
+  background:#00736f;
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -1892,7 +1892,7 @@ body::before {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #008f8a, #005c5b);
+  background:#00736f;
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
@@ -1903,7 +1903,7 @@ body::before {
   box-shadow: 0 2px 8px rgba(0, 143, 138, 0.3);
 }
 :root[data-theme="dark"] .doc-step-badge {
-  background: linear-gradient(135deg, #008f8a, #4fb2b0);
+  background:#00736f;
 }
 /* هاله نورانی دور نشانگر عدد (Glowing Ambient Halo) */
 .doc-step-badge::before {
@@ -2335,6 +2335,8 @@ body::before {
   }
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
+</head>
 <body>
 
 <!-- فیلتر SVG جلوه ذوب مایع گووی (Gooey Melt Filter - الهام از Libraries.dev Gooey) -->

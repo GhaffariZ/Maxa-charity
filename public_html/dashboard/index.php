@@ -6,6 +6,7 @@
  * ========================================================================== */
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/loading-ui.php';
 
 // اگر کاربر مسئول یا مدیر مالی است، مستقیماً به پنل تخصصی مالی هدایت شود
 if (dash_is_finance_only() || dash_is_finance_user()) {
@@ -107,7 +108,7 @@ if ($pdo) { try {
   $activeCampaigns= (int)q($pdo, "SELECT COUNT(*) c FROM campaigns WHERE is_active=1 AND branch_id = ?", [$BRANCH_ID])->fetch()['c'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
 
-/* ---------- هدف ماهانه (حلقه‌ی پیشرفت) ---------- */
+/* ---------- درصد هدف ماهانه برای کارت مجموع کمک‌ها ---------- */
 $goalTarget = 650000000.0;  // هدف پیش‌فرض ماهانه (تومان) — قابل تنظیم در جدول settings
 $goalCollected = 0.0;
 if ($pdo) { try {
@@ -119,7 +120,7 @@ if ($pdo) { try {
   $row = q($pdo, "SELECT value FROM settings WHERE name='monthly_goal_irt' LIMIT 1")->fetch();
   if ($row && is_numeric($row['value'])) $goalTarget = (float)$row['value'];
 } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); } }
-$ringPct = $goalTarget > 0 ? (int)min(100, round($goalCollected / $goalTarget * 100)) : 0;
+$goalPct = $goalTarget > 0 ? (int)min(100, round($goalCollected / $goalTarget * 100)) : 0;
 
 /* ---------- خیرین برتر (بیشترین مبلغ حمایت) ---------- */
 $donorsRaw = [];
@@ -265,7 +266,7 @@ function build_series(array $don, array $users, string $mode): array {
 $trends = [
   'donors'    => ($newThisWeek > 0 ? '+' : '').fa_digits((string)$newThisWeek).' این هفته',
   'active'    => ($totalDonors > 0 ? fa_digits((string)round($activeDonors / $totalDonors * 100)) : '۰').'٪',
-  'collected' => fa_digits((string)$ringPct).'٪ هدف',
+  'collected' => fa_digits((string)$goalPct).'٪ هدف',
   'campaigns' => fa_digits((string)$activeCampaigns).' فعال',
 ];
 
@@ -297,32 +298,17 @@ $isSuper = dash_is_super();
 
 // قابلیت‌های فعالِ شعبه‌ی فعلی
 $activeFeatures = [];
-foreach (DASH_FEATURES as $f) {
+$featureKeys = array_keys(DASH_FEATURE_LABELS);
+foreach ($featureKeys as $f) {
   if (dash_branch_feature_enabled($BRANCH_ID, $f)) $activeFeatures[] = $f;
 }
 // آیتم‌های منو فقط وقتی نمایش داده می‌شوند که هم برای شعبه فعال باشند و هم کاربر دسترسی داشته باشد
-$visible = static function (string $feature) use ($U, $BRANCH_ID): bool {
-  return in_array($feature, $U['permissions'], true) && dash_branch_feature_enabled($BRANCH_ID, $feature);
-};
-
 // فهرست شعبه‌ها برای dropdown (فقط سوپرادمین همه را می‌بیند)
 $branchList = $isSuper ? dash_all_branches() : [array_filter($ACTIVE_BRANCH_ROW ?? [], static fn($k)=>in_array($k,['id','name','slug','is_hq','status'],true), ARRAY_FILTER_USE_KEY)];
 
 $MENU = [
   'features'      => $activeFeatures,
-  'can'           => [
-    'hero'      => $visible('hero'),
-    'news'      => $visible('news'),
-    'events'    => $visible('events'),
-    'campaigns' => $visible('campaigns'),
-    'partners'  => $visible('partners'),
-    'courses'   => $visible('courses'),
-    'pages'     => $visible('pages'),
-    'financial' => $visible('financial'),
-    'feedback'  => $visible('feedback'),
-    'medical'   => $visible('medical'),
-    'stands'    => $visible('stands'),
-  ],
+  'can'           => array_combine($featureKeys, array_map('dash_can', $featureKeys)),
   'isSuper'       => $isSuper,
   'isBranchAdmin' => dash_is_branch_admin(),
   'isHqView'      => $IS_HQ_VIEW,
@@ -344,6 +330,7 @@ $MENU = [
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<link rel="stylesheet" href="/assets/macsa-loading.css?v=<?= filemtime(__DIR__.'/../assets/macsa-loading.css') ?>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>پنل مدیریت | خیریه مکسا</title>
@@ -355,17 +342,17 @@ $MENU = [
 <style>
 :root{
   --color-primary:#008f8a; --color-primary-dark:#00736f; --color-primary-light:#4fb2b0;
-  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#9d9d9d;
+  --color-secondary:#faa61a; --color-text:#2f3437; --color-muted:#60696d;
   --color-border:#e6e8ea; --color-bg:#f8f9fa; --color-surface:#ffffff;
   --violet:#8b5cf6;
   --success:#16a37a; --danger:#e0556b; --warning:#faa61a;
   --primary-08:rgba(0, 143, 138,.08); --primary-12:rgba(0, 143, 138,.12); --primary-16:rgba(0, 143, 138,.16);
   --secondary-12:rgba(250, 166, 26,.14); --violet-12:rgba(139,92,246,.14);
-  --radius-sm:12px; --radius:18px; --radius-lg:24px;
+  --radius-sm:8px; --radius:12px; --radius-lg:16px;
   --shadow-sm:0 1px 2px rgba(16,40,40,.04), 0 2px 5px rgba(16,40,40,.05);
   --shadow-md:0 4px 14px rgba(16,40,40,.06), 0 2px 6px rgba(16,40,40,.04);
   --shadow-lg:0 20px 44px -14px rgba(0,102,101,.20), 0 8px 20px -10px rgba(16,40,40,.12);
-  --sb-w:286px;
+  --sb-w:256px;
   --ease:cubic-bezier(.4,0,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -378,11 +365,6 @@ input{font-family:inherit}
 ::selection{background:var(--primary-16);color:var(--color-primary-dark)}
 svg.ic{display:block}
 
-*::-webkit-scrollbar{width:9px;height:9px}
-*::-webkit-scrollbar-thumb{background:rgba(0, 143, 138,.18);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:rgba(0, 143, 138,.34);background-clip:padding-box}
-*::-webkit-scrollbar-track{background:transparent}
-
 .app{min-height:100vh}
 
 /* ============ SIDEBAR ============ */
@@ -391,23 +373,19 @@ svg.ic{display:block}
 .app.collapsed .sidebar{transform:translateX(100%)}
 
 .sb-header{padding:22px 20px 16px;display:flex;align-items:center;gap:13px;position:relative;overflow:hidden;flex-shrink:0}
-.sb-header::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(120% 110% at 100% 0,rgba(0, 143, 138,.12),transparent 58%),
-  radial-gradient(90% 90% at 0 0,rgba(250, 166, 26,.10),transparent 60%);pointer-events:none}
-.brand-logo{width:48px;height:48px;border-radius:15px;object-fit:cover;box-shadow:0 6px 16px -6px rgba(0,102,101,.5);flex-shrink:0;position:relative;z-index:1}
+.brand-logo{width:48px;height:48px;border-radius:15px;object-fit:cover;box-shadow:none;flex-shrink:0;position:relative;z-index:1}
 .brand-text{position:relative;z-index:1}
-.brand-name{font-weight:800;font-size:19px;letter-spacing:-.01em;line-height:1.2}
+.brand-name{font-weight:600;font-size:19px;letter-spacing:-.01em;line-height:1.2}
 .brand-sub{font-size:11.5px;color:var(--color-muted);font-weight:500;margin-top:1px}
 
 .sb-nav{flex:1;overflow-y:auto;padding:6px 12px 14px}
-.nav-section-title{font-size:11px;color:var(--color-muted);font-weight:700;padding:16px 12px 7px;letter-spacing:.04em;display:flex;align-items:center;gap:9px}
+.nav-section-title{font-size:11px;color:var(--color-muted);font-weight:600;padding:16px 12px 7px;letter-spacing:.04em;display:flex;align-items:center;gap:9px}
 .nav-section-title::before{content:'';width:16px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--color-secondary),#e08e12);flex-shrink:0}
-.nav-list>*{animation:navIn .5s var(--ease) both}
 @keyframes navIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 
-.nav-item,.nav-group-header{width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-weight:600;font-size:13.5px;color:#5b6469;transition:background .22s,color .22s,box-shadow .22s;position:relative}
+.nav-item,.nav-group-header{width:100%;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;font-weight:600;font-size:13.5px;color:#5b6469;transition:background .22s,color .22s,box-shadow .22s;position:relative}
 .nav-item:hover,.nav-group-header:hover{background:var(--primary-08);color:var(--color-primary-dark)}
-.nav-item.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 20px -10px rgba(0, 143, 138,.75)}
+.nav-item.active{background:var(--color-primary-dark);color:#fff;box-shadow:none}
 .nav-item .ic,.nav-group-header .ic{width:20px;height:20px;flex-shrink:0;opacity:.92}
 .nav-item.active .ic{opacity:1}
 .nav-item>span,.nav-group-header>span{flex:1;text-align:start}
@@ -426,9 +404,9 @@ svg.ic{display:block}
 .sb-footer{padding:12px;border-top:1px solid var(--color-border);flex-shrink:0;display:flex;align-items:center;gap:8px}
 .user-card{order:1;flex:1;min-width:0;display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:14px;transition:background .2s}
 .user-card:hover{background:var(--primary-08)}
-.user-av{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.user-av{width:38px;height:38px;border-radius:12px;background:var(--color-primary-dark);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px;flex-shrink:0}
 .user-meta{flex:1;min-width:0}
-.user-name{font-weight:700;font-size:13px}
+.user-name{font-weight:600;font-size:13px}
 .user-role{font-size:11px;color:var(--color-muted)}
 .user-card .ic{width:17px;height:17px;color:var(--color-muted)}
 .logout-link{order:2;flex-shrink:0;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;color:var(--danger);transition:background .2s,transform .14s}
@@ -447,7 +425,7 @@ svg.ic{display:block}
 .icon-btn:active{transform:scale(.93)}
 .icon-btn .ic{width:21px;height:21px}
 .tb-title{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-.tb-title h1{font-size:17px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.tb-title h1{font-size:17px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
 .tb-title span{font-size:12px;color:var(--color-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-spacer{flex:1}
 .search{display:flex;align-items:center;gap:9px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:13px;padding:0 14px;height:42px;width:250px;transition:border-color .2s,box-shadow .2s,background .2s}
@@ -455,12 +433,12 @@ svg.ic{display:block}
 .search .ic{width:18px;height:18px;color:var(--color-muted);flex-shrink:0}
 .search input{border:none;background:none;outline:none;flex:1;font-size:13px;color:var(--color-text);width:100%}
 .search input::placeholder{color:var(--color-muted)}
-.bell-dot{position:absolute;top:8px;left:9px;width:9px;height:9px;border-radius:50%;background:var(--color-secondary);border:2px solid #fff;box-shadow:0 0 0 2px rgba(250, 166, 26,.25)}
+.bell-dot{position:absolute;top:8px;left:9px;width:9px;height:9px;border-radius:50%;background:var(--color-secondary);border:2px solid #fff;box-shadow:none}
 .profile{display:flex;align-items:center;gap:10px;padding:5px 8px 5px 5px;border-radius:14px;transition:background .2s}
 .profile:hover{background:var(--primary-08)}
-.profile .av{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-secondary),#e08e12);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.profile .av{width:38px;height:38px;border-radius:12px;background:var(--color-primary-dark);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px;flex-shrink:0}
 .profile .pm{line-height:1.25}
-.profile .pm b{font-size:13px;font-weight:700;display:block}
+.profile .pm b{font-size:13px;font-weight:600;display:block}
 .profile .pm span{font-size:11px;color:var(--color-muted)}
 .profile .ic{width:16px;height:16px;color:var(--color-muted)}
 
@@ -474,64 +452,50 @@ svg.ic{display:block}
 .cable-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible;opacity:0;transition:opacity .45s var(--ease)}
 .cable-svg.show{opacity:1}
 
-.welcome{position:relative;overflow:hidden;border-radius:var(--radius-lg);
-  background:linear-gradient(120deg,#008786 0%,var(--color-primary-dark) 58%,#004a49 100%);
-  color:#fff;padding:28px 30px;display:flex;align-items:center;justify-content:space-between;gap:22px;box-shadow:var(--shadow-lg)}
+.welcome{position:relative;overflow:hidden;border-radius:24px;
+  background:linear-gradient(120deg,#008786 0%,#00736f 58%,#004a49 100%);
+  color:#fff;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:var(--shadow-lg)}
 .welcome::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 130% at 88% -10%,rgba(255,255,255,.18),transparent 55%);pointer-events:none}
 .welcome::after{content:'';position:absolute;left:-26px;bottom:-72px;width:240px;height:240px;opacity:.10;transform:rotate(-14deg);pointer-events:none;transition:transform .7s var(--ease),opacity .7s ease;
   background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='%23ffffff'%3E%3Cellipse%20cx='50'%20cy='25'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='50'%20cy='75'%20rx='15'%20ry='22'/%3E%3Cellipse%20cx='25'%20cy='50'%20rx='22'%20ry='15'/%3E%3Cellipse%20cx='75'%20cy='50'%20rx='22'%20ry='15'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='14'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
-.welcome-text{position:relative;z-index:1;min-width:0}
 .welcome:hover::after{transform:rotate(3deg) scale(1.08);opacity:.15}
-.welcome-goal{position:relative;z-index:1;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:15px 18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-shrink:0}
-.ring{position:relative;width:100px;height:100px;flex-shrink:0}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:rgba(255,255,255,.22);stroke-width:9}
-.ring-fg{fill:none;stroke:url(#ringg);stroke-width:9;stroke-linecap:round;stroke-dasharray:314.159;stroke-dashoffset:314.159;transition:stroke-dashoffset 1.3s var(--ease)}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
-.ring-center b{font-size:21px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
-.ring-center span{font-size:10px;opacity:.85;margin-top:3px}
-.goal-meta{display:flex;flex-direction:column;gap:6px;min-width:165px}
-.goal-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:2px}
-.goal-fig{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;color:rgba(255,255,255,.82);font-weight:600}
-.goal-fig b{color:#fff;font-weight:800;font-variant-numeric:tabular-nums}
-.goal-meta .btn{margin-top:8px;justify-content:center}
+.welcome-text{position:relative;z-index:1;min-width:0}
 .grid-2>*{min-width:0}
 .chart-wrap{min-width:0}
 .chart-wrap canvas{max-width:100%!important}
-.welcome-text h2{font-size:23px;font-weight:800;margin-bottom:7px;letter-spacing:-.01em}
+.welcome-text h2{font-size:23px;font-weight:600;margin-bottom:7px;letter-spacing:-.01em}
 .welcome-text p{font-size:13.5px;opacity:.92;max-width:560px}
 .welcome-actions{position:relative;z-index:1;display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
 
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:13px;font-weight:700;font-size:13px;transition:transform .15s var(--ease),box-shadow .22s,background .2s,color .2s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:13px;font-weight:600;font-size:13px;transition:transform .15s var(--ease),box-shadow .22s,background .2s,color .2s;white-space:nowrap}
 .btn .ic{width:17px;height:17px}
 .btn:active{transform:scale(.96)}
 .btn-light{background:#fff;color:var(--color-primary-dark);box-shadow:0 8px 22px -10px rgba(0,0,0,.45)}
 .btn-light:hover{box-shadow:0 14px 28px -10px rgba(0,0,0,.5);transform:translateY(-2px)}
-.btn-gold{background:linear-gradient(135deg,#ffc24d,var(--color-secondary));color:#5c3d00;box-shadow:0 10px 24px -10px rgba(250, 166, 26,.75)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(250, 166, 26,.9)}
+.btn-gold{background:#00736f;color:#fff;box-shadow:none}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:none}
 .btn-ghost-light{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.30)}
 .btn-ghost-light:hover{background:rgba(255,255,255,.24)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
+.btn-primary{background:var(--color-primary-dark);color:#fff;box-shadow:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:none}
 
 /* stat cards */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
 .stat-card{position:relative;z-index:1;overflow:hidden;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s}
-.stat-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:transparent}
-.stat-card::after{content:'';position:absolute;left:-26px;top:-26px;width:98px;height:98px;border-radius:50%;background:var(--accent-bg);opacity:.55;transition:transform .45s var(--ease)}
-.stat-card:hover::after{transform:scale(1.35)}
+.stat-card::after{content:'';position:absolute;left:-24px;top:-24px;width:96px;height:96px;border-radius:50%;background:var(--accent-bg);opacity:.55;pointer-events:none;transition:transform .3s var(--ease)}
+.stat-card:hover::after{transform:scale(1.2)}
 .stat-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
-.stat-icon{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent)}
-.stat-icon .ic{width:23px;height:23px}
-.stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:800;padding:5px 9px;border-radius:99px}
+.stat-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent)}
+.stat-icon .ic{width:24px;height:24px}
+.stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:99px}
 .stat-trend.up{background:rgba(22,163,122,.12);color:var(--success)}
 .stat-trend.down{background:rgba(224,85,107,.12);color:var(--danger)}
 .stat-trend .ic{width:13px;height:13px}
-.stat-value{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-top:17px;position:relative;z-index:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:5px}
+.stat-value{font-size:28px;font-weight:600;letter-spacing:-.02em;margin-top:17px;position:relative;z-index:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:5px}
 .stat-unit{font-size:13px;font-weight:600;color:var(--color-muted)}
 .stat-label{font-size:12.5px;color:var(--color-muted);font-weight:600;margin-top:5px;position:relative;z-index:1}
 .stat-foot{text-align:left;margin-top:13px;position:relative;z-index:1}
-.stat-chart-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:11px;font-weight:700;font-size:11.5px;color:var(--accent);background:var(--accent-bg);transition:filter .2s,transform .14s,box-shadow .2s}
+.stat-chart-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:11px;font-weight:600;font-size:11.5px;color:var(--accent);background:var(--accent-bg);transition:filter .2s,transform .14s,box-shadow .2s}
 .stat-chart-btn:hover{filter:brightness(.96)}
 .stat-chart-btn:active{transform:scale(.95)}
 .stat-chart-btn .ic{width:14px;height:14px}
@@ -539,19 +503,19 @@ svg.ic{display:block}
 .stat-card.charting .stat-chart-btn{color:#fff;background:var(--accent)}
 
 /* generic cards */
-.grid-2{display:grid;grid-template-columns:1.85fr 1fr;gap:18px;margin-top:52px;align-items:stretch}
-.card{position:relative;z-index:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:20px 22px}
+.grid-2{display:grid;grid-template-columns:1.85fr 1fr;gap:16px;margin-top:24px;align-items:stretch}
+.card{position:relative;z-index:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:20px}
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.card-head h3{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+.card-head h3{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
 .card-head .sub{font-size:12px;color:var(--color-muted);margin-top:3px}
-.tag{font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:5px 11px;border-radius:99px}
-.link-more{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:var(--color-primary);padding:6px 10px;border-radius:10px;transition:background .2s;flex-shrink:0}
+.tag{font-size:11px;font-weight:600;color:var(--color-primary-dark);background:var(--primary-08);padding:5px 11px;border-radius:99px}
+.link-more{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--color-primary);padding:6px 10px;border-radius:10px;transition:background .2s;flex-shrink:0}
 .link-more:hover{background:var(--primary-08)}
 .link-more .ic{width:14px;height:14px}
 
 /* custom select */
 .select{position:relative;flex-shrink:0}
-.select-btn{display:flex;align-items:center;gap:8px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;padding:9px 13px;font-weight:700;font-size:12.5px;color:var(--color-text);transition:border-color .2s,box-shadow .2s,background .2s}
+.select-btn{display:flex;align-items:center;gap:8px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;padding:9px 13px;font-weight:600;font-size:12.5px;color:var(--color-text);transition:border-color .2s,box-shadow .2s,background .2s}
 .select-btn:hover{border-color:var(--color-primary-light)}
 .select-btn .ic{width:15px;height:15px;color:var(--color-muted);transition:transform .3s var(--ease)}
 .select.open .select-btn{border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:#fff}
@@ -575,7 +539,7 @@ svg.ic{display:block}
 .chip.on .check{background:var(--c);border-color:var(--c)}
 .chip.on .check .ic{opacity:1;transform:scale(1)}
 .chip.on .dot{opacity:1}
-.chip-total{font-size:11px;color:var(--color-muted);font-weight:800;font-variant-numeric:tabular-nums}
+.chip-total{font-size:11px;color:var(--color-muted);font-weight:600;font-variant-numeric:tabular-nums}
 .chip.on .chip-total{color:var(--c)}
 
 .chart-wrap{position:relative;height:300px;margin-top:8px}
@@ -585,14 +549,20 @@ svg.ic{display:block}
 .donor-list{display:flex;flex-direction:column;gap:2px;margin-top:10px;flex:1}
 .donor{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:14px;transition:background .2s}
 .donor:hover{background:var(--color-bg)}
-.rank-badge{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:800;flex-shrink:0;background:var(--color-bg);color:var(--color-muted)}
-.donor-av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13.5px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.rank-badge{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:600;flex-shrink:0;background:var(--color-bg);color:var(--color-muted)}
+.donor-av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:600;font-size:13.5px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.donor:nth-child(3n+1) .donor-av{background:linear-gradient(135deg,#008f8a,#00736f)}
+.donor:nth-child(3n+2) .donor-av{background:linear-gradient(135deg,#ffc24d,#faa61a);color:#5c3d00}
+.donor:nth-child(3n) .donor-av{background:linear-gradient(135deg,#8b5cf6,#6d3fd1)}
+.donor:nth-child(1) .rank-badge{background:linear-gradient(135deg,#f6c453,#e0a528);color:#5c3d00}
+.donor:nth-child(2) .rank-badge{background:linear-gradient(135deg,#cdd5dd,#a9b3bc);color:#263238}
+.donor:nth-child(3) .rank-badge{background:linear-gradient(135deg,#e7b182,#cf8a4f);color:#4f2c13}
 .donor-info{flex:1;min-width:0}
-.donor-name{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donor-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .donor-bar{height:5px;border-radius:99px;background:#eef1f3;margin-top:7px;overflow:hidden}
-.donor-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--color-primary-light),var(--color-primary));width:0;transition:width 1.1s var(--ease)}
+.donor-bar i{display:block;height:100%;border-radius:99px;background:var(--color-primary-dark);width:0}
 .donor-amt-wrap{text-align:left;flex-shrink:0}
-.donor-amt{font-weight:800;font-size:13px;color:var(--color-primary-dark);font-variant-numeric:tabular-nums;white-space:nowrap}
+.donor-amt{font-weight:600;font-size:13px;color:var(--color-primary-dark);font-variant-numeric:tabular-nums;white-space:nowrap}
 .donor-amt small{font-size:10px;color:var(--color-muted);font-weight:600}
 .donor-sub{font-size:11px;color:var(--color-muted);font-weight:600;margin-top:2px}
 
@@ -600,19 +570,19 @@ svg.ic{display:block}
 .table-card{margin-top:18px;padding-bottom:14px}
 .table-scroll{overflow-x:auto;margin:14px -22px 0;padding:0 22px}
 .dtable{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
-.dtable th{text-align:right;font-size:11.5px;font-weight:700;color:var(--color-muted);padding:0 14px 13px;border-bottom:1px solid var(--color-border);white-space:nowrap}
+.dtable th{text-align:right;font-size:11.5px;font-weight:600;color:var(--color-muted);padding:0 14px 13px;border-bottom:1px solid var(--color-border);white-space:nowrap}
 .dtable th:last-child,.dtable td:last-child{text-align:left}
 .dtable td{padding:12px 14px;border-bottom:1px solid var(--color-border);vertical-align:middle}
 .dtable tbody tr{transition:background .18s}
 .dtable tbody tr:hover{background:var(--color-bg)}
 .dtable tbody tr:last-child td{border-bottom:none}
 .cell-user{display:flex;align-items:center;gap:11px}
-.cell-av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12.5px;flex-shrink:0}
-.cell-name{font-weight:700;font-size:13px}
+.cell-av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:600;font-size:12.5px;flex-shrink:0}
+.cell-name{font-weight:600;font-size:13px}
 .cell-ref{font-size:11px;color:var(--color-muted);font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
-.amt{font-weight:800;color:var(--color-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.amt{font-weight:600;color:var(--color-text);font-variant-numeric:tabular-nums;white-space:nowrap}
 .amt small{font-weight:600;color:var(--color-muted);font-size:10px}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:600;white-space:nowrap}
 .badge .bd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .badge.type-campaign{background:var(--primary-08);color:var(--color-primary-dark)} .type-campaign .bd{background:var(--color-primary)}
 .badge.type-period{background:var(--secondary-12);color:#b9760a} .type-period .bd{background:var(--color-secondary)}
@@ -625,23 +595,22 @@ svg.ic{display:block}
 .tbtn:hover{background:var(--primary-08);color:var(--color-primary-dark)}
 .tbtn .ic{width:18px;height:18px}
 @keyframes rowIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-.dtable tbody tr.enter{animation:rowIn .42s var(--ease) both}
+
 
 /* pager */
 .pager{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;flex-wrap:wrap}
 .pager-info{font-size:12px;color:var(--color-muted);font-weight:500}
 .pager-controls{display:flex;align-items:center;gap:6px}
-.page-btn{min-width:36px;height:36px;padding:0 11px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-weight:700;font-size:13px;color:#5b6469;transition:background .2s,color .2s,box-shadow .2s,opacity .2s}
+.page-btn{min-width:36px;height:36px;padding:0 11px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-weight:600;font-size:13px;color:#5b6469;transition:background .2s,color .2s,box-shadow .2s,opacity .2s}
 .page-btn:hover:not(:disabled):not(.active){background:var(--primary-08);color:var(--color-primary-dark)}
-.page-btn.active{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;box-shadow:0 8px 16px -8px rgba(0, 143, 138,.65)}
+.page-btn.active{background:var(--color-primary-dark);color:#fff;box-shadow:none}
 .page-btn:disabled{opacity:.38;cursor:not-allowed}
 .page-btn .ic{width:16px;height:16px}
 .page-nav{border:1px solid var(--color-border);background:#fff;font-size:12px}
 
 /* reveal */
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-.reveal{opacity:0;animation:fadeUp .6s var(--ease) forwards}
-.sidebar{animation:sbIn .5s ease both}
+.welcome.reveal{animation:fadeUp .24s var(--ease) both}
 @keyframes sbIn{from{opacity:0}to{opacity:1}}
 
 /* responsive */
@@ -653,11 +622,10 @@ svg.ic{display:block}
   .welcome{flex-direction:column;align-items:flex-start;padding:24px}
   .welcome-actions{width:100%}
   .welcome-actions .btn{flex:1;justify-content:center}
-  .welcome-goal{width:100%;justify-content:center}
   .content{padding:16px}
   .profile .pm{display:none}
   .chart-wrap{height:260px}
-  .grid-2{margin-top:42px}
+  .grid-2{margin-top:24px}
 }
 @media (max-width:480px){ .stats{grid-template-columns:1fr} }
 
@@ -669,18 +637,23 @@ svg.ic{display:block}
 .spa-frame{display:none;width:100%;height:calc(100vh - 70px);border:0;background:var(--color-bg);transition:opacity .25s var(--ease)}
 body.spa-active .spa-frame{display:block;animation:fadeUp .35s var(--ease)}
 body.spa-active .content{display:none}
-body.spa-loading .spa-frame{opacity:.6}
+.spa-region{position:relative;display:none}
+body.spa-active .spa-region{display:block}
+body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
+.spa-pending{position:absolute;inset:0;overflow:auto;padding:32px;background:var(--color-bg)}
+.spa-pending[hidden]{display:none}
+@media(max-width:760px){.spa-pending{padding:20px 16px}}
 
 /* نوار پیشرفت مدل یوتیوب (YouTube-style Top Loading Bar) */
 .spa-bar-wrap{position:fixed;top:0;right:0;left:0;height:3.5px;z-index:999999;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
 .spa-bar-wrap.show{opacity:1}
 .spa-bar{position:absolute;top:0;right:0;width:100%;height:100%;
-  background:linear-gradient(to left, #008f8a, #0ab2c5, #faa61a, #ff9500);
+  background:var(--color-primary-dark);
   background-size:200% 100%;
-  box-shadow:0 0 10px rgba(10,178,197,.8), 0 0 5px rgba(250, 166, 26,.9);
+  box-shadow:none;
   transform:translate3d(100%,0,0);
   transition:transform .28s cubic-bezier(.1,.6,.1,1);
-  animation:spaBarShimmer 2s linear infinite}
+  animation:none}
 .spa-bar-peg{position:absolute;left:0;top:0;bottom:0;width:100px;height:100%;
   box-shadow:0 0 14px 3px #faa61a,0 0 8px 1px #0ab2c5;
   border-radius:99px;opacity:1;pointer-events:none}
@@ -689,21 +662,20 @@ body.spa-loading .spa-frame{opacity:.6}
   100%{background-position:-100% 0}
 }
 /* حالت فعال برای زیرلینک‌های منو هنگام باز بودن یک صفحه */
-.nav-sub-link.active{background:var(--primary-08);color:var(--color-primary-dark);font-weight:700}
+.nav-sub-link.active{background:var(--primary-08);color:var(--color-primary-dark);font-weight:600}
 .nav-sub-link.active .ic{opacity:1}
 
 /* ============ دکمه‌ی «داشبورد مدیریت» (زیر لوگو) ============ */
-.dash-btn{display:flex;align-items:center;gap:11px;margin:10px 12px 4px;padding:13px 14px;border-radius:16px;font-family:inherit;font-weight:800;font-size:13.5px;color:#fff;cursor:pointer;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
-  box-shadow:0 12px 24px -12px rgba(0,102,101,.85);position:relative;overflow:hidden;
+.dash-btn{display:flex;align-items:center;gap:11px;margin:10px 12px 4px;padding:13px 14px;border-radius:16px;font-family:inherit;font-weight:600;font-size:13.5px;color:#fff;cursor:pointer;
+  background:var(--color-primary-dark);
+  box-shadow:none;position:relative;overflow:hidden;
   transition:transform .16s var(--ease),box-shadow .25s var(--ease),filter .2s}
-.dash-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 100% 0,rgba(255,255,255,.22),transparent 55%);pointer-events:none}
-.dash-btn:hover{transform:translateY(-2px);box-shadow:0 18px 30px -12px rgba(0,102,101,.95)}
+.dash-btn:hover{transform:translateY(-2px);box-shadow:none}
 .dash-btn:active{transform:scale(.97)}
 .dash-btn .dash-ic{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.20);flex-shrink:0;position:relative;z-index:1}
 .dash-btn .dash-ic .ic{width:18px;height:18px}
 .dash-btn>span:last-child{flex:1;text-align:start;position:relative;z-index:1}
-.dash-btn.active{box-shadow:0 0 0 2px var(--color-surface),0 0 0 4px var(--color-primary-light),0 12px 24px -12px rgba(0,102,101,.85)}
+.dash-btn.active{outline:2px solid var(--color-primary-light);outline-offset:2px}
 
 /* ============ Box 1: انتخابگر شعبه ============ */
 .branch-pick{position:relative;margin:8px 12px 2px}
@@ -717,7 +689,7 @@ body.spa-loading .spa-frame{opacity:.6}
 .branch-ic .ic{width:18px;height:18px}
 .branch-meta{flex:1;min-width:0;text-align:start}
 .branch-label{display:block;font-size:10.5px;color:var(--color-muted);font-weight:600}
-.branch-name{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.branch-name{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .branch-btn .chev{width:16px;height:16px;color:var(--color-muted);transition:transform .3s var(--ease);flex-shrink:0}
 .branch-pick.open .branch-btn .chev{transform:rotate(180deg)}
 .branch-pick.open .branch-btn{border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:#fff}
@@ -731,7 +703,7 @@ body.spa-loading .spa-frame{opacity:.6}
 .branch-menu li.sel{background:var(--primary-08);color:var(--color-primary-dark)}
 .branch-menu li .bdot{width:7px;height:7px;border-radius:50%;background:var(--color-primary);flex-shrink:0;margin-inline-start:auto}
 .branch-menu li.disabled{opacity:.5}
-.branch-menu li .hq-tag{font-size:9.5px;font-weight:800;color:#b9760a;background:var(--secondary-12);padding:2px 7px;border-radius:99px}
+.branch-menu li .hq-tag{font-size:9.5px;font-weight:600;color:#b9760a;background:var(--secondary-12);padding:2px 7px;border-radius:99px}
 [data-theme="dark"] .branch-pick.open .branch-btn,[data-theme="dark"] .branch-menu{background:var(--color-surface)}
 
 /* ============ دکمه‌ی تغییر تم (روشن/تاریک) ============ */
@@ -741,30 +713,6 @@ body.spa-loading .spa-frame{opacity:.6}
 .theme-toggle .ic-moon{transform:rotate(-90deg) scale(.4);opacity:0}
 [data-theme="dark"] .theme-toggle .ic-sun{transform:rotate(90deg) scale(.4);opacity:0}
 [data-theme="dark"] .theme-toggle .ic-moon{transform:rotate(0) scale(1);opacity:1}
-
-/* ============ پنل اعلان‌ها ============ */
-.notif-overlay{position:fixed;inset:0;background:rgba(16,40,40,.42);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;z-index:70}
-.notif-overlay.show{opacity:1;visibility:visible}
-.notif-panel{position:fixed;top:0;left:0;height:100vh;height:100dvh;width:390px;max-width:92vw;background:var(--color-surface);border-right:1px solid var(--color-border);box-shadow:var(--shadow-lg);transform:translateX(-100%);transition:transform .42s var(--ease);z-index:75;display:flex;flex-direction:column}
-.notif-panel.show{transform:translateX(0)}
-.notif-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 18px 16px;border-bottom:1px solid var(--color-border);flex-shrink:0}
-.notif-head-title{display:flex;align-items:center;gap:12px;min-width:0}
-.notif-head-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));color:#fff;flex-shrink:0}
-.notif-head-ic .ic{width:21px;height:21px}
-.notif-head h3{font-size:16px;font-weight:800}
-.notif-head span{font-size:12px;color:var(--color-muted)}
-.notif-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
-.notif-item{display:flex;gap:12px;padding:13px 12px;border-radius:15px;transition:background .2s;position:relative}
-.notif-item:hover{background:var(--primary-08)}
-.notif-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
-.notif-ic .ic{width:20px;height:20px}
-.notif-body{flex:1;min-width:0}
-.notif-title{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:7px}
-.notif-item.unread .notif-title::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--color-secondary);flex-shrink:0;box-shadow:0 0 0 3px var(--secondary-12)}
-.notif-text{font-size:12.5px;color:var(--color-muted);margin-top:3px;line-height:1.6}
-.notif-time{font-size:11px;color:var(--color-muted);font-weight:600;margin-top:6px;opacity:.85}
-.notif-foot{padding:14px;border-top:1px solid var(--color-border);flex-shrink:0}
-.notif-foot .btn{width:100%;justify-content:center}
 
 /* ============ تم تاریک ============ */
 :root[data-theme="dark"]{
@@ -777,13 +725,7 @@ body.spa-loading .spa-frame{opacity:.6}
   --shadow-lg:0 24px 48px -16px rgba(0,0,0,.62),0 10px 24px -12px rgba(0,0,0,.5);
   color-scheme:dark;
   background-color:var(--color-bg);                   /* ناودانِ اسکرول‌بار/کانواسِ html در دارک‌مود تیره شود */
-  scrollbar-color:rgba(255,255,255,.22) transparent;  /* اسکرول‌بار فایرفاکس */
 }
-/* اسکرول‌بارِ وب‌کیت (کروم/اج/سافاری) در دارک‌مود — هم خودِ html و هم عناصر داخلی */
-[data-theme="dark"]::-webkit-scrollbar-thumb,
-[data-theme="dark"] *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
-[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
-[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.32);background-clip:padding-box}
 [data-theme="dark"] .topbar{background:rgba(16,23,27,.82)}
 [data-theme="dark"] .search:focus-within,
 [data-theme="dark"] .select.open .select-btn,
@@ -805,7 +747,29 @@ body.spa-loading .spa-frame{opacity:.6}
   .tb-title h1{overflow:hidden;text-overflow:ellipsis;max-width:46vw}
   .notif-panel{width:100vw;max-width:100vw}
 }
+
+/* Ledger treatment adapted from unslop by Damir Sokolovsky (@heydamir), CC BY 4.0. */
+.welcome-text p{color:rgba(255,255,255,.86)}
+.nav-item.active,[data-theme="dark"] .nav-item.active{background:var(--primary-08);color:var(--color-text)}
+.brand-logo,.card,.stat-card{box-shadow:none}
+.stat-trend{border-radius:4px;padding:2px 4px}
+.stat-value{margin-top:8px;flex-wrap:wrap;gap:4px}
+.stat-label,.stat-foot{margin-top:8px}
+.stat-chart-btn{border-radius:8px}
+.stat-card.charting{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.stat-card:not(.charting) .stat-chart-btn{color:color-mix(in srgb,var(--accent) 70%,#163331)}
+[data-theme="dark"] .stat-card:not(.charting) .stat-chart-btn{color:color-mix(in srgb,var(--accent) 70%,#fff)}
+.stat-card.charting:not([data-metric="amount"]) .stat-chart-btn{color:#11181b}
+.chart-card{border-inline-start:4px solid var(--color-primary)}
+@media (max-width:420px){
+  .welcome{padding:16px;gap:16px}
+}
+.chip{border-radius:8px}
+.dash-btn:hover,.nav-sub-link:hover{transform:none;box-shadow:none}
+:where(button,a):focus-visible{outline:2px solid var(--color-primary-light);outline-offset:2px}
 </style>
+<link rel="stylesheet" href="assets/css/dashboard-responsive.css?v=<?= filemtime(__DIR__.'/assets/css/dashboard-responsive.css') ?>">
+<link rel="stylesheet" href="assets/css/dashboard-tools.css?v=<?= filemtime(__DIR__.'/assets/css/dashboard-tools.css') ?>">
 </head>
 <body>
 <div class="app" id="app">
@@ -842,6 +806,7 @@ body.spa-loading .spa-frame{opacity:.6}
       <?php endif; ?>
     </div>
     <nav class="sb-nav"><div class="nav-list" id="navList"></div></nav>
+    <button class="sidebar-help" id="helpBtn" type="button" aria-haspopup="dialog" aria-controls="helpPanel"><span aria-hidden="true">?</span><span>راهنمای این بخش</span></button>
     <div class="sb-footer">
       <a href="logout.php" id="logoutLink" class="logout-link" target="_top" title="خروج از حساب" aria-label="خروج از حساب">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -860,21 +825,23 @@ body.spa-loading .spa-frame{opacity:.6}
   <!-- ============ MAIN ============ -->
   <div class="main">
     <header class="topbar">
-      <button class="icon-btn" id="toggleBtn" aria-label="باز و بسته کردن منو">
+      <button class="icon-btn" id="toggleBtn" aria-label="باز و بسته کردن منو" aria-controls="sidebar">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="tb-title">
         <h1 id="pageTitle">داشبورد</h1>
         <span id="topDate">—</span>
       </div>
+      <div class="tb-branch" title="شعبهٔ فعال"><span>شعبهٔ فعال: <?= e($ACTIVE_BRANCH_ROW['name'] ?? '') ?></span></div>
       <div class="tb-spacer"></div>
+      <button class="command-trigger" id="commandBtn" type="button" aria-label="جست‌وجو و فرمان" aria-haspopup="dialog" aria-controls="commandDialog"><?= iconoir('search') ?><span>جست‌وجو و فرمان…</span><kbd>Ctrl K</kbd></button>
       <button class="icon-btn theme-toggle" id="themeBtn" type="button" aria-label="تغییر تم روشن و تاریک" title="روشن / تاریک" aria-pressed="false">
         <svg class="ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.93 4.93l1.84 1.84M17.23 17.23l1.84 1.84M19.07 4.93l-1.84 1.84M6.77 17.23l-1.84 1.84"/></svg>
         <svg class="ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"/></svg>
       </button>
-      <button class="icon-btn" id="notifBtn" type="button" aria-label="اعلان‌ها">
+      <button class="icon-btn" id="notifBtn" type="button" aria-label="اعلان‌ها" aria-haspopup="dialog" aria-controls="notifPanel">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        <span class="bell-dot"></span>
+        <span class="notif-count" id="notifCount" hidden></span>
       </button>
       <!-- حساب کاربریِ هدر طبق درخواست مخفی شد (کد حفظ شده، فقط کامنت است)
       <a href="maxa-link.php" class="profile">
@@ -891,29 +858,13 @@ body.spa-loading .spa-frame{opacity:.6}
       <section class="welcome reveal" style="animation-delay:.05s">
         <div class="welcome-text">
           <h2>سلام، خوش آمدید <span style="display:inline-block;vertical-align:middle;color:var(--color-secondary);"><?= iconoir('sparks', '', 22) ?></span></h2>
-          <p id="welcomeDate">نگاهی سریع به وضعیت کمک‌ها، خیرین و فعالیت‌های اخیر خیریه مکسا.</p>
+          <p id="welcomeDate">خلاصه کمک‌ها، خیرین و تراکنش‌های مکسا</p>
         </div>
-        <div class="welcome-goal">
-          <div class="ring" data-pct="<?= $ringPct ?>">
-            <svg viewBox="0 0 120 120">
-              <defs><linearGradient id="ringg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#faa61a"/>
-              </linearGradient></defs>
-              <circle class="ring-bg" cx="60" cy="60" r="50"/>
-              <circle class="ring-fg" cx="60" cy="60" r="50"/>
-            </svg>
-            <div class="ring-center"><b data-pctlabel>۰٪</b><span>تحقق هدف</span></div>
-          </div>
-          <div class="goal-meta">
-            <div class="goal-title">هدف ماهانه خیریه</div>
-            <div class="goal-fig"><span>جمع‌آوری‌شده</span><b><?= money_compact($goalCollected) ?> تومان</b></div>
-            <div class="goal-fig"><span>هدف این ماه</span><b><?= money_compact($goalTarget) ?> تومان</b></div>
-            <a href="maxa-link.php" class="btn btn-gold">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              گزارش‌گیری
-            </a>
-          </div>
-        </div>
+        <section class="attention-section" aria-labelledby="attentionTitle">
+          <div class="attention-head"><div><h2 id="attentionTitle">نیازمند رسیدگی</h2><p>کارهای منتظر اقدام در شعبهٔ فعال؛ مطابق دسترسی شما</p></div><div class="attention-controls"><span class="attention-time" id="attentionTime"></span><button type="button" id="attentionRefresh">به‌روزرسانی</button></div></div>
+          <div class="attention-grid" id="attentionGrid" aria-busy="true"></div>
+          <p class="tool-status" id="attentionStatus" role="status">در حال دریافت کارهای منتظر رسیدگی…</p>
+        </section>
       </section>
 
       <!-- stats -->
@@ -970,7 +921,7 @@ body.spa-loading .spa-frame{opacity:.6}
       <section class="card table-card reveal" style="animation-delay:.55s">
         <div class="card-head">
           <div><h3>حمایت‌های اخیر</h3><div class="sub">آخرین تراکنش‌های ثبت‌شده در سامانه</div></div>
-          <a href="maxa-link.php" class="link-more">مشاهده همه
+          <a href="financial-management.php" class="link-more" <?= empty($MENU['can']['financial']) ? 'hidden' : '' ?>>مشاهده همه
             <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           </a>
         </div>
@@ -990,25 +941,14 @@ body.spa-loading .spa-frame{opacity:.6}
     </main>
 
     <!-- ناحیه‌ی محتوای SPA: صفحات دیگر این‌جا (داخل آی‌فریم) بارگذاری می‌شوند -->
-    <iframe class="spa-frame" id="spaFrame" title="محتوای صفحه" frameborder="0"></iframe>
+    <div class="spa-region">
+      <div class="spa-pending" id="spaPending" hidden><?php macsa_dashboard_skeleton(); ?></div>
+      <iframe class="spa-frame" id="spaFrame" title="محتوای صفحه" frameborder="0" aria-busy="false"></iframe>
+    </div>
   </div>
 </div>
 
-<!-- ============ پنل اعلان‌ها ============ -->
-<div class="notif-overlay" id="notifOverlay"></div>
-<aside class="notif-panel" id="notifPanel" aria-hidden="true" aria-label="اعلان‌ها">
-  <div class="notif-head">
-    <div class="notif-head-title">
-      <div class="notif-head-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
-      <div><h3>اعلان‌ها</h3><span>آخرین رویدادهای سامانه</span></div>
-    </div>
-    <button class="icon-btn" id="notifClose" type="button" aria-label="بستن">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="notif-list" id="notifList"></div>
-  <div class="notif-foot"><button class="btn btn-primary" id="notifMark" type="button">علامت‌گذاری همه به‌عنوان خوانده‌شده</button></div>
-</aside>
+<?php require __DIR__ . '/_dashboard_tools.php'; ?>
 
 <script>
 (function(){
@@ -1019,6 +959,7 @@ body.spa-loading .spa-frame{opacity:.6}
 
   /* ---------- helpers ---------- */
   const toFa = s => String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]).replace(/\./g,'٫');
+  const escapeText = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const sep  = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'٬');
   const faNum= n => toFa(sep(n));
   function compact(v){
@@ -1028,10 +969,6 @@ body.spa-loading .spa-frame{opacity:.6}
     return faNum(v);
   }
   const fullToman = v => faNum(v)+' تومان';
-  function shade(hex,p){ p=p||-20; const h=hex.replace('#','');
-    let r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
-    r=Math.max(0,Math.min(255,r+p));g=Math.max(0,Math.min(255,g+p));b=Math.max(0,Math.min(255,b+p));
-    return 'rgb('+r+','+g+','+b+')'; }
   function hexA(hex,a){ const h=hex.replace('#','');
     return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
   function initials(name){ const p=name.trim().split(/\s+/); return (p[0][0]||'')+(p[1]?p[1][0]:''); }
@@ -1074,7 +1011,7 @@ body.spa-loading .spa-frame{opacity:.6}
   try{
     const d=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
     document.getElementById('topDate').textContent=d;
-    document.getElementById('welcomeDate').textContent='امروز '+d+' — نگاهی سریع به وضعیت کمک‌ها، خیرین و فعالیت‌های اخیر خیریه مکسا.';
+    document.getElementById('welcomeDate').textContent='امروز '+d+' — خلاصه کمک‌ها، خیرین و تراکنش‌های مکسا';
   }catch(e){}
 
   /* ---------- sidebar nav (سرور-محور: محدود به شعبه و دسترسی‌ها) ---------- */
@@ -1116,9 +1053,9 @@ body.spa-loading .spa-frame{opacity:.6}
   // مکساپدیا فقط از «ستاد مرکزی» و فقط برای مدیر مرکزی (یا کاربرِ دارای دسترسیِ صریح)
   if (MENU.canMaxapedia) content.push({single:true,label:'مکساپدیا',icon:'pedia',href:'maxapedia.php'});
   // روایات امید مکسا (فقط دفتر مرکزی / ستاد — و هرگز برای مدیر مالی)
-  if (MENU.isHqView && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
+  if (CAN.macsa_stories && !MENU.isFinanceOnly && !MENU.isFinanceUser) content.push({single:true,label:'روایات امید مکسا',icon:'quote',href:'macsa-stories.php'});
   // صفحه معرفی شعبه (فقط برای شعب — غیر از ستاد مرکزی)
-  if (!MENU.isHqView) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
+  if (CAN.branch_intro) content.push({single:true,label:'صفحه معرفی شعبه',icon:'building',href:'branch-intro.php'});
   if (CAN.pages)     content.push({label:'کامپوننت‌ها و صفحات',icon:'box',children:[
                        {label:'ویرایش و ساخت کامپوننت‌ها',icon:'plus',href:'component-create.php'},
                        {label:'ساخت صفحه جدید',icon:'plus',href:'template-create.php'},
@@ -1133,12 +1070,11 @@ body.spa-loading .spa-frame{opacity:.6}
   const people=[];
   if (CAN.feedback) people.push({single:true,label:'انتقادات و پیشنهادات',icon:'chat',href:'feedback.php'});
   if (CAN.medical)  people.push({single:true,label:'پرونده‌های پزشکی',icon:'medical',href:'medical-records.php'});
-  // سیستم تیکتینگ — برای همه‌ی کاربرانِ پنل به جز مدیر مالی
-  if (!MENU.isFinanceOnly && !MENU.isFinanceUser) {
+  if (CAN.tickets && !MENU.isFinanceOnly && !MENU.isFinanceUser) {
     people.push({single:true,label:'تیکت‌ها',icon:'ticket',href:'tickets.php'});
   }
   // اثرات کمک (Impact of Donations)
-  people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
+  if (CAN.donation_impacts) people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
   // --- استندها و سفارشات ---
@@ -1171,6 +1107,7 @@ body.spa-loading .spa-frame{opacity:.6}
   }
 
   const navEl=document.getElementById('navList');
+  window.MACSA_DASHBOARD={menu:MENU,nav:NAV};
   let delay=0;
   NAV.forEach(item=>{
     if(item.title){ navEl.insertAdjacentHTML('beforeend','<div class="nav-section-title" style="animation-delay:'+(delay+=0.04)+'s">'+item.title+'</div>'); return; }
@@ -1186,11 +1123,14 @@ body.spa-loading .spa-frame{opacity:.6}
       '</div>');
   });
   navEl.querySelectorAll('.nav-group-header').forEach(btn=>{
+    btn.setAttribute('aria-expanded','false');
+    btn.closest('.nav-group').querySelector('.nav-sub').inert=true;
     btn.addEventListener('click',()=>{
       const group=btn.closest('.nav-group');
       const sub=group.querySelector('.nav-sub');
       const open=group.classList.contains('open');
-      navEl.querySelectorAll('.nav-group.open').forEach(g=>{ if(g!==group){ g.classList.remove('open'); g.querySelector('.nav-sub').style.maxHeight='0px'; }});
+      navEl.querySelectorAll('.nav-group.open').forEach(g=>{ if(g!==group){ g.classList.remove('open'); g.querySelector('.nav-sub').style.maxHeight='0px'; g.querySelector('.nav-sub').inert=true; g.querySelector('.nav-group-header').setAttribute('aria-expanded','false'); }});
+      sub.inert=open; btn.setAttribute('aria-expanded',String(!open));
       if(open){ group.classList.remove('open'); sub.style.maxHeight='0px'; }
       else { group.classList.add('open'); sub.style.maxHeight=(sub.scrollHeight+8)+'px'; }
     });
@@ -1231,7 +1171,13 @@ body.spa-loading .spa-frame{opacity:.6}
   /* ---------- sidebar toggle ---------- */
   const app=document.getElementById('app');
   const mq=()=>window.innerWidth<=1024;
-  function setOverlay(){ if(mq() && !app.classList.contains('collapsed')) app.classList.add('show-overlay'); else app.classList.remove('show-overlay'); }
+  function setOverlay(){
+    const collapsed=app.classList.contains('collapsed');
+    app.classList.toggle('show-overlay',mq() && !collapsed);
+    document.getElementById('sidebar').inert=collapsed;
+    document.getElementById('sidebar').setAttribute('aria-hidden',String(collapsed));
+    document.getElementById('toggleBtn').setAttribute('aria-expanded',String(!collapsed));
+  }
   function toggle(){ app.classList.toggle('collapsed'); setOverlay(); }
   document.getElementById('toggleBtn').addEventListener('click',toggle);
   document.getElementById('overlay').addEventListener('click',()=>{ app.classList.add('collapsed'); setOverlay(); });
@@ -1248,6 +1194,7 @@ body.spa-loading .spa-frame{opacity:.6}
   /* ---------- ناوبری SPA: محتوا داخل آی‌فریم؛ پنل و هدر ثابت می‌مانند ---------- */
   (function(){
     const frame=document.getElementById('spaFrame');
+    const pending=document.getElementById('spaPending');
     const barWrap=document.getElementById('spaBarWrap');
     const bar=document.getElementById('spaBar');
     const dashBtn=document.getElementById('dashHomeBtn');
@@ -1299,9 +1246,10 @@ body.spa-loading .spa-frame{opacity:.6}
         a.classList.add('active');
         const g=a.closest('.nav-group');
         if(g && !g.classList.contains('open')){
-          navEl.querySelectorAll('.nav-group.open').forEach(o=>{ if(o!==g){ o.classList.remove('open'); const s=o.querySelector('.nav-sub'); if(s) s.style.maxHeight='0px'; }});
+          navEl.querySelectorAll('.nav-group.open').forEach(o=>{ if(o!==g){ o.classList.remove('open'); const s=o.querySelector('.nav-sub'); if(s){s.style.maxHeight='0px';s.inert=true;} o.querySelector('.nav-group-header').setAttribute('aria-expanded','false'); }});
           g.classList.add('open');
-          const sub=g.querySelector('.nav-sub'); if(sub) sub.style.maxHeight=(sub.scrollHeight+8)+'px';
+          const sub=g.querySelector('.nav-sub'); if(sub){sub.style.maxHeight=(sub.scrollHeight+8)+'px';sub.inert=false;}
+          g.querySelector('.nav-group-header').setAttribute('aria-expanded','true');
         }
       });
     }
@@ -1317,7 +1265,6 @@ body.spa-loading .spa-frame{opacity:.6}
     /* ---------- نوار پیشرفت مدل یوتیوب (YouTube Progress Bar Engine) ---------- */
     let curProgress = 0;
     let trickleTimer = null;
-    let pollTimer = null;
     let safetyTimer = null;
     let isBarActive = false;
 
@@ -1333,7 +1280,6 @@ body.spa-loading .spa-frame{opacity:.6}
 
     function clearBarTimers() {
       if (trickleTimer) { clearInterval(trickleTimer); trickleTimer = null; }
-      if (pollTimer)    { clearInterval(pollTimer); pollTimer = null; }
       if (safetyTimer)  { clearTimeout(safetyTimer); safetyTimer = null; }
     }
 
@@ -1342,6 +1288,10 @@ body.spa-loading .spa-frame{opacity:.6}
       clearBarTimers();
       isBarActive = true;
       document.body.classList.add('spa-loading');
+      pending.hidden=false;
+      frame.inert=true;
+      frame.setAttribute('aria-hidden','true');
+      frame.setAttribute('aria-busy','true');
 
       // نقطه شروع: فورا از ۰ (پنهان در سمت راست) بدون انیمیشن
       bar.style.transition = 'none';
@@ -1375,18 +1325,6 @@ body.spa-loading .spa-frame{opacity:.6}
         }
       }, 250);
 
-      // پایش آماده‌سازی سند آی‌فریم
-      pollTimer = setInterval(function() {
-        if (!isBarActive) return;
-        var d = null;
-        try { d = frame.contentDocument; } catch(e) {}
-        try {
-          if (d && fileOf(d.location.href) === current && /interactive|complete/.test(d.readyState)) {
-            finishBar();
-          }
-        } catch(e) {}
-      }, 70);
-
       // تایم‌اوت ایمنی ۲۰ ثانیه‌ای برای شبکه‌های کند
       safetyTimer = setTimeout(finishBar, 20000);
     }
@@ -1396,6 +1334,10 @@ body.spa-loading .spa-frame{opacity:.6}
       isBarActive = false;
       clearBarTimers();
       document.body.classList.remove('spa-loading');
+      pending.hidden=true;
+      frame.inert=false;
+      frame.removeAttribute('aria-hidden');
+      frame.setAttribute('aria-busy','false');
 
       // پرتاب نهایی به ۱۰۰٪ (کل صفحه)
       setBarProgress(1, 160);
@@ -1439,11 +1381,13 @@ body.spa-loading .spa-frame{opacity:.6}
       // (رفعِ باگِ «دوبار زدنِ back/forward»: قبلاً تغییرِ src یک ورودی می‌ساخت و hash هم یکی)
       try{ frame.contentWindow.location.replace(href); }catch(e){ frame.setAttribute('src',href); }
       if(push){ syncing=true; location.hash='page='+encodeURIComponent(href); setTimeout(()=>{ syncing=false; },0); }
-      app.classList.add('collapsed'); setOverlay();   // پس از ناوبری، پنل بسته می‌شود (در همه‌ی اندازه‌ها) — با دکمه‌ی هدر دوباره باز می‌شود
+      if(mq()) app.classList.add('collapsed');
+      setOverlay();
     }
 
     // پس از بارگذاری صفحه‌ی داخلی: پنل و هدرِ خودِ آن صفحه را مخفی کن و عنوان را همگام کن
     frame.addEventListener('load',function(){
+      try { if(current && frame.contentWindow.location.href==='about:blank') return; } catch(e) {}
       finishBar();
       // اگر به داشبورد برگشته‌ایم، رویدادِ load مربوط به about:blank نباید تیترِ خانه را خراب کند
       if(!document.body.classList.contains('spa-active')) return;
@@ -1453,6 +1397,18 @@ body.spa-loading .spa-frame{opacity:.6}
         const st=doc.createElement('style');
         st.textContent='.sidebar,.topbar,.overlay{display:none!important}.main{margin:0!important}.app.collapsed .main{margin:0!important}';
         (doc.head||doc.documentElement).appendChild(st);
+        doc.body.classList.add('dashboard-embedded');
+        if(document.documentElement.getAttribute('data-theme')==='dark') doc.documentElement.setAttribute('data-theme','dark');
+        else doc.documentElement.removeAttribute('data-theme');
+        const responsive=doc.createElement('link');
+        responsive.rel='stylesheet'; responsive.href='/dashboard/assets/css/dashboard-responsive.css';
+        (doc.head||doc.documentElement).appendChild(responsive);
+        doc.querySelectorAll('table').forEach(table=>{
+          if(table.closest('.table-wrap,.table-scroll,.table-responsive,.tbl-wrap,.dash-table-scroll,[contenteditable="true"],.editor')) return;
+          const wrap=doc.createElement('div'); wrap.className='dash-table-scroll';
+          wrap.tabIndex=0; wrap.setAttribute('role','region'); wrap.setAttribute('aria-label','جدول؛ برای دیدن ستون‌های بیشتر پیمایش کنید');
+          table.before(wrap); wrap.appendChild(table);
+        });
       }catch(e){}
       try{
         const p=fileOf(doc.location.href)||current;
@@ -1464,26 +1420,14 @@ body.spa-loading .spa-frame{opacity:.6}
           setTimeout(()=>{ syncing=false; },0);
         }
         setTitle(p,docTitle);
+        window.dispatchEvent(new CustomEvent('macsa:page-change',{detail:{file:p}}));
       }catch(e){}
 
-      // رهگیری کلیک‌ها، تب‌ها و ارسال فرم‌ها در داخل آی‌فریم برای فعال‌سازی بلافاصله لودینگ مدل یوتیوب
+      // Start only for real navigation, not downloads or forms handled with AJAX.
       try{
-        doc.addEventListener('click',function(e){
-          const a=e.target.closest?e.target.closest('a[href]'):null;
-          if(!a) return;
-          const href=a.getAttribute('href')||'';
-          if(!href || href.charAt(0)==='#' || /^(javascript:|mailto:|tel:)/i.test(href)) return;
-          if(a.target && a.target!=='_self') return;
-          startBar();
-        }, true);
-
-        doc.addEventListener('submit',function(){
-          startBar();
-        }, true);
-
         if(doc.defaultView){
           doc.defaultView.addEventListener('beforeunload',function(){
-            startBar();
+            if(document.body.classList.contains('spa-active')) startBar();
           });
         }
       }catch(e){}
@@ -1537,54 +1481,13 @@ body.spa-loading .spa-frame{opacity:.6}
       apply(cur);
       try{ localStorage.setItem('maxa-theme',cur); }catch(e){}
       try {
-        const iframe = document.getElementById('frame');
+        const iframe = document.getElementById('spaFrame');
         if (iframe && iframe.contentDocument && iframe.contentDocument.documentElement) {
           if (cur === 'dark') iframe.contentDocument.documentElement.setAttribute('data-theme', 'dark');
           else iframe.contentDocument.documentElement.removeAttribute('data-theme');
         }
       } catch(e) {}
     });
-  })();
-
-  /* ---------- پنل اعلان‌ها ---------- */
-  (function(){
-    const btn=document.getElementById('notifBtn');
-    const panel=document.getElementById('notifPanel');
-    const ov=document.getElementById('notifOverlay');
-    const closeBtn=document.getElementById('notifClose');
-    const markBtn=document.getElementById('notifMark');
-    const listEl=document.getElementById('notifList');
-    if(!btn||!panel) return;
-
-    // اعلان‌های نمونه (بعداً می‌توان از سرور پر کرد)
-    const NOTIFS=[
-      {ic:'wallet',accent:'#008f8a',bg:'rgba(0, 143, 138,.12)',title:'کمک جدید ثبت شد',text:'یک حمایت موفق ۲٬۵۰۰٬۰۰۰ تومانی دریافت شد.',time:'چند لحظه پیش',unread:true},
-      {ic:'users', accent:'#dd8d0c',bg:'rgba(250, 166, 26,.16)',title:'همکار جدید',text:'پروفایل یک همکار جدید در انتظار تأیید است.',time:'۲۰ دقیقه پیش',unread:true},
-      {ic:'flag',  accent:'#7c4ddb',bg:'rgba(139,92,246,.16)',title:'کمپین به هدف رسید',text:'کمپین «مهر تحصیلی» به ۱۰۰٪ هدف رسید.',time:'۳ ساعت پیش',unread:false},
-      {ic:'news',  accent:'#2f9e9c',bg:'rgba(79,178,176,.18)',title:'خبر منتشر شد',text:'خبر تازه با موفقیت روی سایت منتشر شد.',time:'دیروز',unread:false}
-    ];
-    if(listEl){
-      listEl.innerHTML = NOTIFS.length ? NOTIFS.map(n=>(
-        '<div class="notif-item'+(n.unread?' unread':'')+'">'+
-          '<div class="notif-ic" style="background:'+n.bg+';color:'+n.accent+'">'+icon(n.ic)+'</div>'+
-          '<div class="notif-body">'+
-            '<div class="notif-title">'+n.title+'</div>'+
-            '<div class="notif-text">'+n.text+'</div>'+
-            '<div class="notif-time">'+n.time+'</div>'+
-          '</div>'+
-        '</div>')).join('') :
-        '<div style="display:grid;place-items:center;flex:1;min-height:200px;color:var(--color-muted);font-size:13px;font-weight:600">اعلان جدیدی وجود ندارد</div>';
-    }
-    function open(){ panel.classList.add('show'); ov.classList.add('show'); panel.setAttribute('aria-hidden','false'); }
-    function close(){ panel.classList.remove('show'); ov.classList.remove('show'); panel.setAttribute('aria-hidden','true'); }
-    btn.addEventListener('click',open);
-    if(closeBtn) closeBtn.addEventListener('click',close);
-    if(ov) ov.addEventListener('click',close);
-    if(markBtn) markBtn.addEventListener('click',function(){
-      listEl.querySelectorAll('.notif-item.unread').forEach(x=>x.classList.remove('unread'));
-      const dot=btn.querySelector('.bell-dot'); if(dot) dot.style.display='none';
-    });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
   })();
 
   /* ---------- stat cards ---------- */
@@ -1596,61 +1499,35 @@ body.spa-loading .spa-frame{opacity:.6}
     {label:'کمپین‌های فعال',icon:'target',target:+SS.activeCampaigns||0,dec:0,unit:'کمپین',trend:TR.campaigns||'',up:true,accent:'#2f9e9c',bg:'rgba(79,178,176,.18)'}
   ];
   const statsEl=document.getElementById('statsGrid');
-  STATS.forEach((s,i)=>{
+  STATS.forEach(s=>{
     statsEl.insertAdjacentHTML('beforeend',
-      '<div class="stat-card reveal" data-metric="'+(s.metric||'')+'" style="--accent:'+s.accent+';--accent-bg:'+s.bg+';animation-delay:'+(0.08+i*0.08)+'s">'+
+      '<div class="stat-card reveal" data-metric="'+(s.metric||'')+'" style="--accent:'+s.accent+';--accent-bg:'+s.bg+'">'+
         '<div class="stat-top"><div class="stat-icon">'+icon(s.icon)+'</div>'+
         (s.trend?'<span class="stat-trend '+(s.up?'up':'down')+'">'+icon(s.up?'up':'down')+s.trend+'</span>':'')+'</div>'+
-        '<div class="stat-value"><span data-count>۰</span><span class="stat-unit">'+s.unit+'</span></div>'+
+        '<div class="stat-value"><span>'+fmtStat(s.target,s.dec)+'</span><span class="stat-unit">'+s.unit+'</span></div>'+
         '<div class="stat-label">'+s.label+'</div>'+
         (s.metric?'<div class="stat-foot"><button class="stat-chart-btn" type="button" data-metric="'+s.metric+'">'+icon('activity')+'نمایش روی نمودار</button></div>':'')+
       '</div>');
   });
   function fmtStat(v,d){ return d>0 ? toFa(v.toFixed(d)) : faNum(v); }
-  function countUp(el,target,dec){
-    const dur=1300,start=performance.now();
-    function tick(now){
-      let p=Math.min((now-start)/dur,1); p=1-Math.pow(1-p,3);
-      el.textContent=fmtStat(target*p,dec);
-      if(p<1) requestAnimationFrame(tick); else el.textContent=fmtStat(target,dec);
-    }
-    requestAnimationFrame(tick);
-  }
-  setTimeout(()=>{ statsEl.querySelectorAll('[data-count]').forEach((el,i)=>countUp(el,STATS[i].target,STATS[i].dec)); },250);
 
   /* ---------- donors ---------- */
-  const AVC=['#008f8a','#faa61a','#8b5cf6','#4fb2b0','#e0556b','#2f9e9c','#dd8d0c','#5b8def'];
   const DONORS=((SERVER&&SERVER.donors)||[]);
-  const RANKBG=['linear-gradient(135deg,#f6c453,#e0a528)','linear-gradient(135deg,#cdd5dd,#a9b3bc)','linear-gradient(135deg,#e7b182,#cf8a4f)'];
   const donorsEl=document.getElementById('donorsList');
   const maxAmt=DONORS.length?Math.max.apply(null,DONORS.map(d=>d.amt))||1:1;
   if(!DONORS.length){ donorsEl.innerHTML='<div style="display:grid;place-items:center;flex:1;min-height:160px;color:#9d9d9d;font-size:13px;font-weight:600">هنوز حمایتی ثبت نشده است</div>'; }
   DONORS.forEach((d,i)=>{
-    const rb = i<3 ? ' style="background:'+RANKBG[i]+';color:#fff"' : '';
-    const c=AVC[i%AVC.length];
     donorsEl.insertAdjacentHTML('beforeend',
       '<div class="donor">'+
-        '<div class="rank-badge"'+rb+'>'+toFa(i+1)+'</div>'+
-        '<div class="donor-av" style="background:linear-gradient(135deg,'+c+','+shade(c,-22)+')">'+initials(d.name)+'</div>'+
+        '<div class="rank-badge">'+toFa(i+1)+'</div>'+
+        '<div class="donor-av">'+initials(d.name)+'</div>'+
         '<div class="donor-info"><div class="donor-name">'+d.name+'</div>'+
           '<div class="donor-bar"><i data-w="'+Math.round(d.amt/maxAmt*100)+'"></i></div></div>'+
         '<div class="donor-amt-wrap"><div class="donor-amt">'+faNum(d.amt)+' <small>تومان</small></div>'+
           '<div class="donor-sub">'+toFa(d.count)+' کمک</div></div>'+
       '</div>');
   });
-  setTimeout(()=>{ donorsEl.querySelectorAll('.donor-bar i').forEach(i=>i.style.width=i.dataset.w+'%'); },500);
-
-  /* ---------- monthly goal ring ---------- */
-  (function(){
-    const ring=document.querySelector('.ring'); if(!ring) return;
-    const pct=+ring.dataset.pct, circ=2*Math.PI*50;
-    const fg=ring.querySelector('.ring-fg'), lbl=ring.querySelector('[data-pctlabel]');
-    setTimeout(()=>{ fg.style.strokeDashoffset=circ*(1-pct/100); },420);
-    const s=performance.now()+420, dur=1300;
-    function t(now){ let p=Math.min(Math.max((now-s)/dur,0),1); p=1-Math.pow(1-p,3);
-      lbl.textContent=toFa(Math.round(pct*p))+'٪'; if(p<1) requestAnimationFrame(t); else lbl.textContent=toFa(pct)+'٪'; }
-    requestAnimationFrame(t);
-  })();
+  donorsEl.querySelectorAll('.donor-bar i').forEach(i=>i.style.width=i.dataset.w+'%');
 
   /* ---------- chart ---------- */
   const EMPTY={labels:[],campaigns:[],periods:[],free:[],totalDonors:[],activeDonors:[]};
@@ -1743,7 +1620,7 @@ body.spa-loading .spa-frame{opacity:.6}
              ticks:{padding:10,maxTicksLimit:5,precision:isMoney?undefined:0,font:{family:'Vazirmatn',size:11.5},
                callback:v=> isMoney ? compact(v) : faNum(Math.round(v))}}
         },
-        animation:{duration:850,easing:'easeInOutQuart'}
+        animation:false
       }
     });
   }
@@ -1934,7 +1811,7 @@ body.spa-loading .spa-frame{opacity:.6}
   }
 
   /* ---------- recent transactions table ---------- */
-  const TX=((SERVER&&SERVER.tx)||[]).map((t,i)=>({
+  const TX=((SERVER&&SERVER.tx)||[]).map(t=>({
     name:t.name||'خیر ناشناس',
     amt:+t.amt||0,
     typeKey:t.typeKey||'free',
@@ -1942,8 +1819,7 @@ body.spa-loading .spa-frame{opacity:.6}
     stKey:t.stKey||'wait',
     stLabel:t.stLabel||'',
     date:t.date||'—',
-    ref:t.ref||'',
-    color:AVC[i%AVC.length]
+    ref:t.ref||''
   }));
 
   const PER=8;
@@ -1959,13 +1835,13 @@ body.spa-loading .spa-frame{opacity:.6}
     }
     bodyEl.innerHTML=rows.map((t,idx)=>(
       '<tr class="enter" style="animation-delay:'+(idx*0.04)+'s">'+
-        '<td><div class="cell-user"><div class="cell-av" style="background:linear-gradient(135deg,'+t.color+','+shade(t.color,-22)+')">'+initials(t.name)+'</div>'+
+        '<td><div class="cell-user"><div class="cell-av" style="background:var(--color-bg);color:var(--color-text)">'+initials(t.name)+'</div>'+
           '<div><div class="cell-name">'+t.name+'</div><div class="cell-ref">'+(t.ref?'#'+t.ref:'')+'</div></div></div></td>'+
         '<td><span class="amt">'+faNum(t.amt)+' <small>تومان</small></span></td>'+
         '<td><span class="badge type-'+t.typeKey+'"><span class="bd"></span>'+t.typeLabel+'</span></td>'+
         '<td><span class="date-cell">'+t.date+'</span></td>'+
         '<td><span class="badge st-'+t.stKey+'"><span class="bd"></span>'+t.stLabel+'</span></td>'+
-        '<td><button class="tbtn" type="button" aria-label="عملیات">'+icon('more')+'</button></td>'+
+        '<td><button class="tbtn" type="button" data-copy-ref="'+escapeText(t.ref)+'" aria-label="کپی کد پیگیری" title="کپی کد پیگیری">کپی</button></td>'+
       '</tr>')).join('');
     renderPager();
   }
@@ -1989,5 +1865,7 @@ body.spa-loading .spa-frame{opacity:.6}
 
 })();
 </script>
+<script src="assets/js/dashboard-catalog.js?v=<?= filemtime(__DIR__.'/assets/js/dashboard-catalog.js') ?>"></script>
+<script src="assets/js/dashboard-tools.js?v=<?= filemtime(__DIR__.'/assets/js/dashboard-tools.js') ?>"></script>
 </body>
 </html>

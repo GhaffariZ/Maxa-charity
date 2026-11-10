@@ -169,7 +169,7 @@ if (!function_exists('iconoir_icon')) {
 
     .panel-title {
         margin: 0;
-        font-weight: 800;
+        font-weight:600;
         font-size: 1.25rem;
         display: flex;
         align-items: center;
@@ -313,7 +313,7 @@ if (!function_exists('iconoir_icon')) {
         border: none;
         border-radius: 12px;
         cursor: pointer;
-        font-weight: 700;
+        font-weight:600;
         font-size: 14.5px;
         transition: transform var(--anim-fast), box-shadow var(--anim-fast), opacity var(--anim-fast);
         font-family: inherit;
@@ -332,7 +332,7 @@ if (!function_exists('iconoir_icon')) {
     }
 
     .btn-save {
-        background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 55%, var(--color-primary-light) 100%);
+        background: var(--color-primary-dark);
         color: #ffffff;
         box-shadow: 0 4px 14px var(--color-primary-glow);
     }
@@ -441,7 +441,7 @@ if (!function_exists('iconoir_icon')) {
     .employee-name {
         margin: 0 0 16px 0;
         font-size: 1.15rem;
-        font-weight: 800;
+        font-weight:600;
         color: var(--text-main-preview);
     }
     .badges-stack {
@@ -457,7 +457,7 @@ if (!function_exists('iconoir_icon')) {
         padding: 9px 14px;
         border-radius: 14px;
         font-size: 13px;
-        font-weight: 700;
+        font-weight:600;
         border: 1px solid transparent;
     }
     .pill-branch { background: var(--bg-global-preview); color: var(--text-main-preview); border-color: var(--border-color-preview); }
@@ -484,7 +484,7 @@ if (!function_exists('iconoir_icon')) {
     [data-theme="dark"] .action-drawer, body[data-theme="dark"] .action-drawer { background: rgba(255, 255, 255, 0.02); }
     .btn-more-info {
         width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-        padding: 12px 14px; border-radius: 14px; font-size: 14px; font-weight: 700;
+        padding: 12px 14px; border-radius: 14px; font-size: 14px; font-weight:600;
         font-family: 'Vazirmatn', sans-serif; border: none; cursor: pointer;
         background: var(--brand-teal); color: #ffffff;
     }
@@ -545,6 +545,7 @@ if (!function_exists('iconoir_icon')) {
     @keyframes pageRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fieldFadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
     </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

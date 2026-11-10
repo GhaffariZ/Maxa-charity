@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useSearchParams } from "react-router";
-import { CheckCircle2, XCircle, Loader2, LogIn, MailCheck } from "lucide-react";
+import { CheckCircle2, XCircle, LogIn, MailCheck } from "lucide-react";
+import { Loader } from "../components/ui/loader";
 import { AuthShell } from "../components/AuthShell";
 import { Brandbar, IconBadge } from "./Forgot";
 import { api, ApiRequestError } from "../../api/client";
@@ -44,7 +45,7 @@ export function Verify() {
         {status === "loading" && (
           <>
             <IconBadge center>
-              <Loader2 size={32} className="text-primary animate-spin" />
+              <Loader size={32} label="در حال تأیید ایمیل" />
             </IconBadge>
             <h1 className="text-[1.55rem] font-extrabold tracking-tight mb-2">در حال تأیید ایمیل…</h1>
             <p className="text-sm text-muted-foreground leading-7">لطفاً چند لحظه صبر کنید.</p>

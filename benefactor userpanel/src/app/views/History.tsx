@@ -1,4 +1,5 @@
 import React from "react";
+import { Loader } from "../components/ui/loader";
 import { useSearchParams } from "react-router";
 import {
   Search,
@@ -125,7 +126,7 @@ export function History() {
               {loading && (
                 <tr>
                   <td colSpan={6} className="px-8 py-16 text-center text-muted-foreground">
-                    <Loader2 className="animate-spin inline" size={24} />
+                    <Loader variant="pulse" label="در حال دریافت تاریخچه پرداخت‌ها" />
                   </td>
                 </tr>
               )}

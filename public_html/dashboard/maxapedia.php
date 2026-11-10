@@ -390,14 +390,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .mx-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
 .mx-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;font-size:26px;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
-.mx-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+  background:var(--color-primary-dark);box-shadow:none}
+.mx-head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .mx-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 
 /* تب‌های بخش (کارت‌های مکساپدیا) */
 .mx-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
 @media(max-width:880px){.mx-tabs{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:520px){.mx-tabs{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.mx-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mx-tab{font-family:inherit;text-align:center;cursor:pointer;text-decoration:none;color:inherit;background:var(--color-surface);
   border:1.5px solid var(--color-border);border-radius:16px;padding:14px 10px;box-shadow:var(--shadow-sm);
   display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .2s,box-shadow .25s,transform .15s var(--ease)}
@@ -405,29 +405,29 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-tab.active{border-color:var(--color-primary);background:var(--primary-08)}
 .mx-tab .em{font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center}
 .mx-tab .em .iconoir-icon{width:26px;height:26px;stroke-width:1.6;color:var(--color-primary)}
-.mx-tab .lb{font-size:12.5px;font-weight:700}
+.mx-tab .lb{font-size:12.5px;font-weight:600}
 .mx-tab .cnt{font-size:11px;color:var(--color-muted)}
 
 .mx-grid{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
-@media(max-width:860px){.mx-grid{grid-template-columns:1fr}}
+@media(max-width:860px){.mx-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* فرم افزودن */
 .mx-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:18px;box-shadow:var(--shadow-sm);padding:22px}
-.mx-card h2{font-size:15px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.mx-card h2{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .mx-field{margin-bottom:14px}
-.mx-field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:6px;color:var(--color-text)}
+.mx-field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--color-text)}
 .mx-field input,.mx-field textarea,.mx-field select{width:100%;font-family:inherit;font-size:13.5px;color:var(--color-text);
   background:var(--color-bg);border:1.5px solid var(--color-border);border-radius:12px;padding:10px 12px;transition:border-color .2s}
 .mx-field input:focus,.mx-field textarea:focus,.mx-field select:focus{outline:none;border-color:var(--color-primary)}
 .mx-field textarea{resize:vertical;min-height:80px}
-.mx-btn{width:100%;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:none;border-radius:12px;padding:12px;
-  color:#fff;background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 10px 20px -10px rgba(0, 143, 138,.6);transition:transform .15s,box-shadow .2s}
+.mx-btn{width:100%;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:12px;padding:12px;
+  color:#fff;background:var(--color-primary-dark);box-shadow:none;transition:transform .15s,box-shadow .2s}
 .mx-btn:hover{transform:translateY(-2px)}
 
 /* لیست محتوا */
 .mx-list-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.mx-list-head h2{font-size:15px;font-weight:800}
-.mx-count-pill{font-size:11.5px;font-weight:700;color:var(--color-primary);background:var(--primary-12);padding:3px 10px;border-radius:99px}
+.mx-list-head h2{font-size:15px;font-weight:600}
+.mx-count-pill{font-size:11.5px;font-weight:600;color:var(--color-primary);background:var(--primary-12);padding:3px 10px;border-radius:99px}
 .mx-empty{background:var(--color-surface);border:1px dashed var(--color-border);border-radius:18px;padding:48px 24px;text-align:center;color:var(--color-muted)}
 
 /* نوار ابزار جستجو/فیلتر */
@@ -437,9 +437,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-toolbar select{font-family:inherit;font-size:13px;color:var(--color-text);
   background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:10px;padding:9px 12px;cursor:pointer}
 .mx-toolbar input:focus,.mx-toolbar select:focus{outline:none;border-color:var(--color-primary)}
-.mx-toolbar-btn{font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:none;border-radius:10px;padding:9px 16px;
+.mx-toolbar-btn{font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;border-radius:10px;padding:9px 16px;
   color:#fff;background:var(--color-primary)}
-.mx-toolbar-clear{font-size:12.5px;font-weight:700;color:var(--danger);text-decoration:none;padding:0 6px}
+.mx-toolbar-clear{font-size:12.5px;font-weight:600;color:var(--danger);text-decoration:none;padding:0 6px}
 .mx-toolbar-clear:hover{text-decoration:underline}
 
 /* ردیف‌های فشرده‌ی فهرست (به‌جای کارت‌های بزرگ) */
@@ -450,9 +450,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-row-thumb{width:72px;height:42px;border-radius:8px;flex-shrink:0;object-fit:cover;background:var(--primary-08)}
 .mx-row-thumb--icon{display:grid;place-items:center;font-size:20px}
 .mx-row-main{flex:1;min-width:0}
-.mx-row-title{font-size:13.5px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx-row-title{font-size:13.5px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mx-row-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11px}
-.mx-chip{padding:2px 8px;border-radius:99px;font-weight:700;background:var(--color-bg);border:1px solid var(--color-border);color:var(--color-text)}
+.mx-chip{padding:2px 8px;border-radius:99px;font-weight:600;background:var(--color-bg);border:1px solid var(--color-border);color:var(--color-text)}
 .mx-row-date{color:var(--color-muted)}
 .mx-row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .mx-row-actions .mx-item-link{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--primary-08);font-size:15px}
@@ -460,20 +460,20 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   padding:16px 18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
 .mx-item-thumb{width:64px;height:64px;border-radius:12px;flex-shrink:0;object-fit:cover;background:var(--primary-08);display:grid;place-items:center;font-size:26px}
 .mx-item-body{flex:1;min-width:0}
-.mx-item-title{font-size:14.5px;font-weight:800;margin-bottom:4px}
+.mx-item-title{font-size:14.5px;font-weight:600;margin-bottom:4px}
 .mx-item-desc{font-size:12.5px;color:var(--color-muted);line-height:1.8;margin-bottom:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .mx-item-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11.5px}
-.mx-badge{padding:3px 9px;border-radius:99px;font-weight:700}
+.mx-badge{padding:3px 9px;border-radius:99px;font-weight:600}
 .mx-badge.pub{background:var(--success-12);color:var(--success)}
 .mx-badge.draft{background:var(--primary-12);color:var(--color-primary)}
-.mx-item-link{color:var(--color-primary);text-decoration:none;font-weight:700}
+.mx-item-link{color:var(--color-primary);text-decoration:none;font-weight:600}
 .mx-item-link:hover{text-decoration:underline}
-.mx-del{font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--color-border);background:transparent;
+.mx-del{font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--color-border);background:transparent;
   color:var(--danger);border-radius:10px;padding:7px 12px;transition:background .2s,border-color .2s}
 .mx-del:hover{background:var(--danger-12);border-color:var(--danger)}
 
 .mx-hint{font-size:11.5px;color:var(--color-muted);margin-top:6px;line-height:1.7}
-.mx-embed-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-weight:700;background:var(--primary-12);color:var(--color-primary)}
+.mx-embed-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-weight:600;background:var(--primary-12);color:var(--color-primary)}
 
 /* پیش‌نمایش امبد در داشبورد (هم‌کلاس با صفحه‌ی عمومی) */
 .mx-embed{margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--color-border)}
@@ -484,7 +484,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mxp-embed--audio>audio{width:100%;display:block}
 .mxp-embed--audio>iframe{width:100%;height:160px;border:0;display:block}
 
-.mx-notice{border-radius:12px;padding:11px 16px;margin-bottom:18px;font-size:13px;font-weight:700}
+.mx-notice{border-radius:12px;padding:11px 16px;margin-bottom:18px;font-size:13px;font-weight:600}
 .mx-notice.ok{background:var(--success-12);color:var(--success)}
 .mx-notice.err{background:var(--danger-12);color:var(--danger)}
 .mx-err{background:var(--danger-12);color:var(--danger);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px}
@@ -514,7 +514,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
 }
 .mx-dropzone-icon { font-size: 32px; margin-bottom: 6px; }
-.mx-dropzone-title { font-size: 13px; font-weight: 700; color: var(--color-text); }
+.mx-dropzone-title { font-size: 13px; font-weight:600; color: var(--color-text); }
 .mx-dropzone-hint { font-size: 11.5px; color: var(--color-muted); margin-top: 4px; }
 .mx-file-info {
   display: none; align-items: center; justify-content: space-between; gap: 10px;
@@ -522,11 +522,11 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   border: 1px solid var(--color-primary-light); border-radius: 10px; font-size: 12.5px;
 }
 .mx-file-info.active { display: flex; }
-.mx-file-name { font-weight: 700; color: var(--color-primary-dark); word-break: break-all; }
+.mx-file-name { font-weight:600; color: var(--color-primary-dark); word-break: break-all; }
 .mx-file-size { font-size: 11.5px; color: var(--color-muted); margin-right: 6px; }
 .mx-file-clear {
   background: transparent; border: none; color: var(--danger); font-size: 18px;
-  font-weight: 700; cursor: pointer; padding: 0 6px; line-height: 1;
+  font-weight:600; cursor: pointer; padding: 0 6px; line-height: 1;
 }
 
 /* جلد کتاب (آپلود عکس یا لینک) */
@@ -540,20 +540,20 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   background: var(--primary-08); border: 1px solid var(--primary-12);
   padding: 8px 12px; border-radius: 10px; margin-top: 8px; color: var(--color-primary);
 }
-.mx-current-file a { color: inherit; font-weight: 700; text-decoration: underline; }
+.mx-current-file a { color: inherit; font-weight:600; text-decoration: underline; }
 
 /* دکمه‌های فرم در حالت ویرایش */
 .mx-btn-group { display: flex; gap: 10px; align-items: center; }
 .mx-btn-cancel {
   display: inline-flex; align-items: center; justify-content: center;
-  font-family: inherit; font-size: 13px; font-weight: 700; text-decoration: none;
+  font-family: inherit; font-size: 13px; font-weight:600; text-decoration: none;
   padding: 12px 18px; border-radius: 12px; color: var(--color-text);
   background: var(--color-bg); border: 1.5px solid var(--color-border);
   transition: background .2s, border-color .2s;
 }
 .mx-btn-cancel:hover { background: var(--color-border); }
 .mx-badge-format {
-  font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px;
+  font-size: 10.5px; font-weight:600; padding: 2px 7px; border-radius: 6px;
   background: rgba(0, 143, 138, 0.15); color: var(--color-primary-dark);
 }
 .mx-action-edit {
@@ -599,9 +599,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   border: 1.5px solid var(--color-border);
   color: var(--color-text);
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   text-decoration: none;
-  transition: all .2s;
+  transition:background-color .2s;
 }
 .mx-album-back-btn:hover {
   background: var(--primary-08);
@@ -610,7 +610,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 }
 .mx-album-header-info h2 {
   font-size: 19px;
-  font-weight: 900;
+  font-weight:600;
   color: var(--color-text);
   margin: 0 0 6px;
 }
@@ -628,7 +628,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 }
 .mx-site-view-btn {
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--color-primary);
   text-decoration: none;
   display: inline-flex;
@@ -674,7 +674,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 }
 .mx-multi-dropzone-title {
   font-size: 15px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--color-text);
   margin-bottom: 6px;
 }
@@ -693,14 +693,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   border: 1px solid var(--color-border);
 }
 .mx-selected-files-bar.active { display: flex; }
-.mx-selected-summary { font-size: 13.5px; font-weight: 700; color: var(--color-text); }
+.mx-selected-summary { font-size: 13.5px; font-weight:600; color: var(--color-text); }
 .mx-btn-upload-submit {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-family: inherit;
   font-size: 13.5px;
-  font-weight: 800;
+  font-weight:600;
   color: #fff;
   background: var(--color-primary);
   border: none;
@@ -779,7 +779,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 }
 .mx-photo-field label {
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--color-muted);
   margin-bottom: 4px;
   display: block;
@@ -813,14 +813,14 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-photo-del-btn {
   font-family: inherit;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--danger);
   background: transparent;
   border: 1px solid var(--danger-12);
   border-radius: 8px;
   padding: 5px 10px;
   cursor: pointer;
-  transition: all .2s;
+  transition:background-color .2s;
 }
 .mx-photo-del-btn:hover {
   background: var(--danger-12);
@@ -836,9 +836,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   border: 1px solid var(--color-primary-light);
   color: var(--color-primary-dark);
   font-size: 12px;
-  font-weight: 800;
+  font-weight:600;
   text-decoration: none;
-  transition: all .2s;
+  transition:background-color .2s;
 }
 .mx-manage-album-btn:hover {
   background: var(--color-primary);
@@ -851,7 +851,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   background: var(--cta-orange, #faa61a);
   color: #fff;
   font-size: 10.5px;
-  font-weight: 800;
+  font-weight:600;
   padding: 3px 8px;
   border-radius: 6px;
   z-index: 4;
@@ -909,7 +909,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .mx-btn-bulk-del {
   font-family: inherit;
   font-size: 12.5px;
-  font-weight: 800;
+  font-weight:600;
   color: #fff;
   background: var(--danger);
   border: none;
@@ -940,7 +940,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   align-items: center;
   justify-content: space-between;
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--color-primary-dark);
 }
 .mx-comp-progress {
@@ -957,6 +957,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   transition: width .2s ease;
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 <div class="mx-wrap">

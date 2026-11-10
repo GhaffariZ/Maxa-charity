@@ -66,10 +66,10 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .hm-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
 .hm-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
+  background:var(--color-primary-dark);box-shadow:none}
 .hm-head-ic svg{width:27px;height:27px}
 .hm-head-txt{flex:1;min-width:0}
-.hm-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.hm-head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .hm-head p{font-size:13px;color:var(--color-muted);margin-top:3px;max-width:640px}
 
 /* کارتِ آماری */
@@ -78,12 +78,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   padding:15px 18px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:13px}
 .hm-stat-ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
 .hm-stat-ic svg{width:22px;height:22px}
-.hm-stat b{font-size:22px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block;color:var(--color-text)}
+.hm-stat b{font-size:22px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block;color:var(--color-text)}
 .hm-stat span{font-size:12px;color:var(--color-muted);font-weight:600;margin-top:4px;display:block}
 .ic-active{background:rgba(22,163,122,.12);color:var(--success)}
 
 /* عنوان ستونِ ترتیب */
-.hm-list-head{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--color-muted);padding:2px 16px 10px}
+.hm-list-head{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--color-muted);padding:2px 16px 10px}
 .hm-list-head svg{width:15px;height:15px}
 
 /* آکاردئونِ اسلایدها */
@@ -101,15 +101,15 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 .hm-drag:hover{background:var(--primary-08);color:var(--color-primary-dark)}
 .hm-drag:active{cursor:grabbing}
 .hm-drag svg{width:18px;height:18px;pointer-events:none}
-.hm-order{min-width:28px;height:28px;padding:0 6px;border-radius:9px;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));font-variant-numeric:tabular-nums}
+.hm-order{min-width:28px;height:28px;padding:0 6px;border-radius:9px;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff;
+  background:var(--color-primary-dark);font-variant-numeric:tabular-nums}
 
 .hm-item-toggle{flex:1;min-width:0;display:flex;align-items:center;gap:12px;background:none;border:none;cursor:pointer;font-family:inherit;
   color:var(--color-text);padding:15px 18px;text-align:start;transition:background .2s}
 .hm-item-toggle:hover{background:var(--primary-08)}
-.hm-item-title{flex:1;min-width:0;font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:start}
+.hm-item-title{flex:1;min-width:0;font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:start}
 .hm-item-title.empty{color:var(--color-muted);font-weight:600}
-.hm-pic-flag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--color-primary-dark);background:var(--primary-08);padding:5px 10px;border-radius:99px;flex-shrink:0}
+.hm-pic-flag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--color-primary-dark);background:var(--primary-08);padding:5px 10px;border-radius:99px;flex-shrink:0}
 .hm-pic-flag svg{width:13px;height:13px}
 .hm-chev{width:20px;height:20px;color:var(--color-muted);transition:transform .38s var(--ease);flex-shrink:0}
 .hm-item.open .hm-chev{transform:rotate(180deg)}
@@ -125,14 +125,14 @@ body.hm-dragging .hm-drag{cursor:grabbing}
 .hm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
 .hm-col-2{grid-column:1 / -1}
 .hm-field{display:flex;flex-direction:column;gap:7px;min-width:0}
-.hm-field label{font-size:12.5px;font-weight:700;color:var(--color-text)}
+.hm-field label{font-size:12.5px;font-weight:600;color:var(--color-text)}
 .hm-field input,.hm-field textarea{font-family:inherit;font-size:13.5px;color:var(--color-text);background:var(--color-bg);
   border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
 .hm-field textarea{min-height:90px;resize:vertical;line-height:1.8}
 .hm-field input:focus,.hm-field textarea:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
 .hm-field input[type="number"]{direction:ltr;text-align:right}
 .hm-field input[type="file"]{padding:9px 12px;cursor:pointer}
-.hm-field input[type="file"]::file-selector-button{font-family:inherit;font-weight:700;font-size:12.5px;color:var(--color-primary-dark);
+.hm-field input[type="file"]::file-selector-button{font-family:inherit;font-weight:600;font-size:12.5px;color:var(--color-primary-dark);
   background:var(--primary-08);border:none;border-radius:9px;padding:8px 14px;margin-inline-end:12px;cursor:pointer;transition:filter .2s}
 .hm-field input[type="file"]::file-selector-button:hover{filter:brightness(.96)}
 
@@ -140,23 +140,23 @@ body.hm-dragging .hm-drag{cursor:grabbing}
   border:1.5px dashed var(--color-border);border-radius:var(--radius)}
 
 .hm-actions{position:sticky;bottom:14px;display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:18px}
-.hm-msg{font-size:13px;font-weight:700}
+.hm-msg{font-size:13px;font-weight:600}
 .hm-msg.ok{color:var(--success)}
 .hm-msg.err{color:var(--danger)}
-.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:pointer;text-decoration:none;
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:600;font-size:14px;border:none;cursor:pointer;text-decoration:none;
   padding:13px 28px;border-radius:14px;transition:transform .15s var(--ease),box-shadow .25s,filter .2s}
 .btn svg{width:18px;height:18px}
 .btn:active{transform:scale(.97)}
-.btn-primary{color:#fff;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 12px 26px -10px rgba(0, 143, 138,.7)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 32px -10px rgba(0, 143, 138,.8)}
+.btn-primary{color:#fff;background:var(--color-primary-dark);box-shadow:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:none}
 /* دکمه‌ی «ساخت هیرو جدید» در هدر */
 .btn-new{flex-shrink:0;color:#fff;padding:11px 20px;font-size:13.5px;border-radius:12px;
-  background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7)}
-.btn-new:hover{transform:translateY(-2px);box-shadow:0 16px 28px -10px rgba(0, 143, 138,.8)}
+  background:var(--color-primary-dark);box-shadow:none}
+.btn-new:hover{transform:translateY(-2px);box-shadow:none}
 
 /* دکمه‌ی حذفِ هر اسلاید (داخل آکاردئون) */
 .hm-row-actions{display:flex;justify-content:flex-end;margin-top:16px}
-.hm-del{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;
+.hm-del{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
   color:var(--danger);background:var(--danger-12);border:1px solid transparent;border-radius:11px;padding:9px 16px;transition:filter .2s,border-color .2s}
 .hm-del:hover{border-color:var(--danger);filter:brightness(.98)}
 .hm-del svg{width:15px;height:15px}
@@ -172,6 +172,7 @@ body.hm-dragging .hm-drag{cursor:grabbing}
   .hm-stat b{font-size:20px}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

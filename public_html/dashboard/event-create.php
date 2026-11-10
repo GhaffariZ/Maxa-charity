@@ -333,7 +333,7 @@ body {
 }
 .hq-header-title {
   font-size: 24px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   margin: 0;
   line-height: 1.3;
@@ -356,7 +356,7 @@ body {
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   line-height: 1;
   white-space: nowrap;
 }
@@ -420,11 +420,11 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  font-weight: 800;
+  font-weight:600;
   background: var(--hq-input-bg);
   border: 2px solid var(--hq-border);
   color: var(--hq-text-muted);
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
 }
 .hq-wizard-step.is-active .hq-wizard-circle {
   background: var(--hq-primary);
@@ -438,7 +438,7 @@ body {
 }
 .hq-wizard-title {
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--hq-text-muted);
 }
 .hq-wizard-step.is-active .hq-wizard-title {
@@ -485,7 +485,7 @@ body {
 }
 .hq-sidebar-title {
   font-size: 13px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   padding-bottom: 8px;
   border-bottom: 1px solid var(--hq-border);
@@ -508,7 +508,7 @@ body {
   font-weight: 600;
   color: var(--hq-text-muted);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   gap: 8px;
 }
 .hq-sidebar-link:hover {
@@ -518,7 +518,7 @@ body {
 .hq-sidebar-link.is-active {
   background: var(--hq-sidebar-active-bg);
   color: var(--hq-primary);
-  font-weight: 700;
+  font-weight:600;
 }
 .hq-sidebar-link-label {
   display: inline-flex;
@@ -569,7 +569,7 @@ body {
 .hq-sidebar-btn {
   flex: 1;
   font-size: 11px;
-  font-weight: 700;
+  font-weight:600;
   padding: 7px 8px;
   border-radius: 6px;
   border: 1px solid var(--hq-border);
@@ -580,7 +580,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
 }
 .hq-sidebar-btn:hover {
   background: var(--hq-surface);
@@ -629,7 +629,7 @@ body {
 }
 .hq-intro-title {
   font-size: 18px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   margin: 0;
 }
@@ -677,7 +677,7 @@ body {
 }
 .hq-card-title {
   font-size: 18px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   margin: 0;
 }
@@ -705,7 +705,7 @@ body {
 }
 .hq-field-label {
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--hq-text-muted);
 }
 .hq-input, .hq-select, .hq-textarea {
@@ -745,10 +745,10 @@ body {
   padding: 8px 16px;
   border-radius: 10px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   text-decoration: none;
   line-height: 1;
 }
@@ -799,7 +799,7 @@ body {
 }
 .hq-state-box-title {
   font-size: 14px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   display: flex;
   align-items: center;
@@ -816,7 +816,7 @@ body {
   align-items: center;
   gap: 8px;
   background: var(--hq-input-bg);
-  transition: all 0.2s;
+  transition:background-color 0.2s;
 }
 .hq-dropzone:hover {
   border-color: var(--hq-primary);
@@ -828,7 +828,7 @@ body {
 }
 .hq-dropzone-text {
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--hq-text-main);
 }
 .hq-dropzone-sub {
@@ -894,7 +894,7 @@ body {
 }
 .hq-repeat-pill-number {
   font-size: 11px;
-  font-weight: 700;
+  font-weight:600;
   padding: 4px 10px;
   background: var(--hq-surface);
   border: 1px solid var(--hq-border);
@@ -903,7 +903,7 @@ body {
 }
 .hq-repeat-pill-status {
   font-size: 11px;
-  font-weight: 700;
+  font-weight:600;
   padding: 4px 10px;
   background: var(--hq-surface);
   border: 1px solid #10b981;
@@ -927,7 +927,7 @@ body {
 }
 .hq-repeat-media:hover {
   border-color: var(--hq-primary);
-  box-shadow: 0 4px 14px rgba(0, 143, 138, 0.16);
+  box-shadow:none;
 }
 .hq-repeat-media img {
   width: 100%;
@@ -954,7 +954,7 @@ body {
   pointer-events: none;
   transition: opacity 0.2s ease;
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   z-index: 2;
 }
 .hq-repeat-media:hover .hq-repeat-media-overlay {
@@ -974,7 +974,7 @@ body {
   background: var(--hq-surface-muted);
   border: 1.5px dashed var(--hq-border);
   border-radius: 9px;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
 }
 .hq-repeat-media:hover .hq-repeat-media-empty {
   border-color: var(--hq-primary);
@@ -983,7 +983,7 @@ body {
 }
 .hq-repeat-title {
   font-size: 15px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   margin: 0;
 }
@@ -1028,7 +1028,7 @@ body {
   align-items: center;
   color: #ffffff;
   background-color: #008f8a;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -1043,7 +1043,7 @@ body {
   padding: 6px 14px;
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   letter-spacing: 0.5px;
 }
 
@@ -1092,12 +1092,12 @@ body {
   padding: 9px 16px;
   border-radius: 10px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   cursor: pointer;
   border: 1px solid var(--hq-border);
   background: var(--hq-surface);
   color: var(--hq-text-main);
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   white-space: nowrap;
 }
 .hq-step-nav-btn:hover {
@@ -1179,7 +1179,7 @@ body {
   height: 7px;
   border-radius: 50%;
   background: #10b981;
-  transition: all 0.3s ease;
+  transition:background-color 0.3s ease;
   flex-shrink: 0;
 }
 .hq-autosave-dot.is-saving {
@@ -1315,7 +1315,7 @@ body {
     min-height: 46px !important;
     justify-content: center !important;
     font-size: 14px !important;
-    font-weight: 800 !important;
+    font-weight:600 !important;
     border-radius: 12px !important;
     padding: 10px 16px !important;
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
@@ -1367,7 +1367,7 @@ body {
     text-align: center !important;
     padding: 9px 12px !important;
     font-size: 12.5px !important;
-    font-weight: 700 !important;
+    font-weight:600 !important;
   }
 }
 
@@ -1446,7 +1446,7 @@ body {
   color: #FFFFFF;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
 }
 .figma-badge-lock {
   display: inline-flex;
@@ -1457,7 +1457,7 @@ body {
   color: var(--hq-text-muted);
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
 }
 .figma-badge-branch {
   display: inline-flex;
@@ -1468,7 +1468,7 @@ body {
   color: #DC2626;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
 }
 [data-theme="dark"] .figma-badge-branch {
   background: rgba(220, 38, 38, 0.18);
@@ -1510,7 +1510,7 @@ body {
 }
 .figma-card-inner-title {
   font-size: 16px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
   padding-bottom: 12px;
   border-bottom: 1px solid var(--hq-border);
@@ -1553,7 +1553,7 @@ body {
 }
 .figma-badge-pill {
   font-size: 11px;
-  font-weight: 700;
+  font-weight:600;
   background: var(--hq-primary-light);
   color: var(--hq-primary);
   border-radius: 6px;
@@ -1572,7 +1572,7 @@ body {
   border-radius: 8px;
   cursor: pointer;
   min-height: 44px;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   user-select: none;
 }
 .figma-switch-wrap.is-active {
@@ -1611,7 +1611,7 @@ body {
 }
 .figma-switch-label {
   font-size: 13px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--hq-text-muted);
 }
 .figma-switch-wrap.is-active .figma-switch-label {
@@ -1683,7 +1683,7 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   color: var(--hq-text-muted);
 }
 .figma-color-chip input[type="color"] {
@@ -1745,7 +1745,7 @@ body {
 }
 .figma-specimen-title {
   font-size: 15px;
-  font-weight: 800;
+  font-weight:600;
   color: var(--hq-text-main);
 }
 .figma-live-status-pill {
@@ -1755,8 +1755,8 @@ body {
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 700;
-  transition: all 0.2s ease;
+  font-weight:600;
+  transition:background-color 0.2s ease;
 }
 .figma-live-status-pill.is-active {
   background: rgba(16, 185, 129, 0.12);
@@ -1798,13 +1798,13 @@ body {
   padding: 5px 12px;
   border-radius: 7px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   cursor: pointer;
   color: var(--hq-text-muted);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition:background-color 0.2s ease;
   font-family: inherit;
 }
 .figma-specimen-tab:hover {
@@ -1813,7 +1813,7 @@ body {
 .figma-specimen-tab.is-active {
   background: var(--hq-surface);
   color: var(--hq-primary);
-  font-weight: 800;
+  font-weight:600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -1841,7 +1841,7 @@ body {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 .figma-specimen-frame-wrap.is-mobile-view {
@@ -1862,7 +1862,7 @@ body {
   padding: 2px 12px 6px;
   color: #94a3b8;
   font-size: 10.5px;
-  font-weight: 700;
+  font-weight:600;
   direction: ltr;
 }
 .figma-phone-camera {
@@ -1923,7 +1923,7 @@ body {
   padding: 7px 18px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight:600;
   text-decoration: none !important;
   white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
@@ -1936,7 +1936,7 @@ body {
   transform: translateY(-1px);
 }
 .figma-specimen-countdown-val {
-  font-weight: 900;
+  font-weight:600;
   font-size: 13px;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -1946,13 +1946,13 @@ body {
   border-radius: 999px;
   padding: 4px 12px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight:600;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .figma-specimen-event-title {
   font-size: 14.5px;
-  font-weight: 800;
+  font-weight:600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2028,7 +2028,7 @@ body {
 }
 .figma-system-rule-head {
   font-size: 14.5px;
-  font-weight: 800;
+  font-weight:600;
   color: #B45309;
 }
 [data-theme="dark"] .figma-system-rule-head {

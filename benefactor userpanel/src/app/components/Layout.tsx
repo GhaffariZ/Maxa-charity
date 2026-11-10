@@ -14,9 +14,8 @@ import {
   LogOut,
   Package
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "../../contexts/AuthContext";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   { id: "dashboard", label: "داشبورد", icon: LayoutDashboard, path: "/" },
@@ -46,55 +45,59 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
+    <div className="donor-shell min-h-screen bg-background text-foreground flex flex-col md:flex-row" dir="rtl">
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between p-4 bg-surface border-b border-border sticky top-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-            <HeartHandshake size={24} />
+          <div className="donor-brand-icon w-8 h-8 rounded-lg flex items-center justify-center">
+            <HeartHandshake size={18} strokeWidth={1.5} />
           </div>
-          <span className="font-bold text-lg">مکسا</span>
+          <span className="font-semibold text-lg">مکسا</span>
         </div>
-        <button 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 hover:bg-muted rounded-lg"
-        >
-          {isSidebarOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            aria-label="منوی پیشخوان"
+            aria-expanded={isSidebarOpen}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-muted rounded-lg"
+          >
+            {isSidebarOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </header>
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-16 bottom-0 right-0 z-45 w-72 bg-surface border-l border-border transition-transform duration-300 ease-in-out md:translate-x-0 md:static
+        donor-sidebar fixed top-16 bottom-0 right-0 z-45 w-64 shrink-0 overflow-y-auto motion-reduce:transition-none bg-surface border-l border-border transition-transform duration-300 ease-in-out md:translate-x-0 md:static
         ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
       `}>
-        <div className="h-full flex flex-col p-6">
-          <div className="hidden md:flex items-center gap-3 mb-10 p-2">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-              <HeartHandshake size={28} />
+        <div className="h-full flex flex-col p-4">
+          <div className="donor-brand hidden md:flex items-center gap-3 mb-6 p-2">
+            <div className="donor-brand-icon w-10 h-10 rounded-xl flex items-center justify-center">
+              <HeartHandshake size={18} strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="font-extrabold text-xl leading-tight">مکسا</h1>
+              <h1 className="font-semibold text-xl leading-tight">مکسا</h1>
               <p className="text-xs text-muted-foreground">پنل اختصاصی حامیان</p>
             </div>
           </div>
 
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 space-y-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link
                   key={item.id}
                   to={item.path}
+                  aria-current={isActive ? "page" : undefined}
                   onClick={() => setIsSidebarOpen(false)}
                   className={`
-                    flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group
-                    ${isActive 
-                      ? "bg-primary text-white shadow-md shadow-primary/20" 
-                      : "hover:bg-primary-light/10 text-muted-foreground hover:text-primary"}
+                    donor-nav-link donor-nav-${item.id} flex items-center gap-3 min-h-11 px-3 py-2 rounded-xl text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary
+                    ${isActive ? "is-active" : "text-muted-foreground"}
                   `}
                 >
-                  <item.icon size={22} />
+                  <span className="donor-nav-icon"><item.icon size={18} strokeWidth={1.75} aria-hidden="true" /></span>
                   <span className="font-medium">{item.label}</span>
                 </Link>
               );
@@ -102,8 +105,8 @@ export function Layout() {
           </nav>
 
           <div className="mt-auto pt-6 border-t border-border space-y-3">
-            <div className="bg-muted/50 rounded-2xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold overflow-hidden">
+            <div className="donor-profile rounded-xl p-4 flex items-center gap-3">
+              <div className="donor-avatar w-10 h-10 shrink-0 rounded-xl flex items-center justify-center font-semibold overflow-hidden">
                 {user?.avatar_url ? (
                   <img src={user.avatar_url} alt={fullName} className="w-full h-full object-cover" />
                 ) : (
@@ -111,9 +114,9 @@ export function Layout() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold truncate">{fullName}</p>
+                <p className="text-sm font-semibold truncate">{fullName}</p>
                 {tierName && (
-                  <div className="flex items-center gap-1 text-[10px] text-secondary font-bold">
+                  <div className="donor-profile-tier flex items-center gap-1 text-xs font-semibold">
                     <Award size={12} />
                     <span>{tierName}</span>
                   </div>
@@ -134,33 +137,34 @@ export function Layout() {
       {/* Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/30 z-40 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-surface/80 backdrop-blur-md border-b border-border sticky top-0 z-20">
+      <main className="flex-1 flex flex-col min-w-0 md:h-dvh md:overflow-y-auto">
+        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-surface border-b border-border sticky top-0 z-20">
           <div className="flex items-center gap-4">
-            <h2 className="text-lg font-bold">
+            <h2 className="text-lg font-semibold">
               {navItems.find(i => i.path === location.pathname)?.label || "داشبورد"}
             </h2>
           </div>
           <div className="flex items-center gap-4">
-            <button className="p-2.5 bg-muted/50 hover:bg-muted text-muted-foreground rounded-xl transition-colors relative">
+            <ThemeToggle />
+            <button aria-label="اعلان‌ها" className="donor-notification p-2 rounded-xl transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-surface"></span>
             </button>
             <div className="h-8 w-[1px] bg-border mx-2"></div>
             <div className="text-left">
-              <p className="text-xs text-muted-foreground">خوش آمدید،</p>
-              <p className="text-sm font-bold">{fullName}</p>
+              <p className="text-xs text-muted-foreground">حساب کاربری</p>
+              <p className="text-sm font-semibold">{fullName}</p>
             </div>
           </div>
         </header>
 
-        <div className="flex-1 p-4 md:p-8">
+        <div className="flex-1 w-full max-w-[1520px] mx-auto p-4 md:p-6">
           <Outlet />
         </div>
       </main>

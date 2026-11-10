@@ -169,18 +169,18 @@ $treatment_roles = [
     .brand-section { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
     .brand-dot {
         width: 11px; height: 11px;
-        background: linear-gradient(135deg, var(--brand-teal), #2dd4bf);
+        background: var(--brand-teal);
         border-radius: 50%;
         box-shadow: 0 0 10px var(--brand-teal);
     }
-    .header-title { margin: 0; font-size: 1.1rem; font-weight: 800; }
+    .header-title { margin: 0; font-size: 1.1rem; font-weight:600; }
 
     /* Admin badge */
     .admin-badge {
         display: inline-flex; align-items: center; gap: 6px;
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         color: #cbd5e1; padding: 5px 12px; border-radius: 20px;
-        font-size: 11.5px; font-weight: 700; letter-spacing: 0.3px;
+        font-size: 11.5px; font-weight:600; letter-spacing: 0.3px;
         border: 1px solid rgba(255,255,255,0.06);
     }
     [data-theme="dark"] .admin-badge { background: linear-gradient(135deg, #334155, #475569); }
@@ -191,7 +191,7 @@ $treatment_roles = [
         display: inline-flex; align-items: center; gap: 7px;
         background: var(--brand-teal); color: #fff;
         border: none; padding: 9px 18px; border-radius: 12px;
-        font-family: 'Vazirmatn', sans-serif; font-size: 13px; font-weight: 700;
+        font-family: 'Vazirmatn', sans-serif; font-size: 13px; font-weight:600;
         cursor: pointer; text-decoration: none;
         transition: background 0.25s, transform 0.3s var(--ease-premium), box-shadow 0.3s;
     }
@@ -233,7 +233,7 @@ $treatment_roles = [
     .stat-chip.total   .stat-dot { background: var(--brand-teal); }
     .stat-chip.active  .stat-dot { background: var(--success); }
     .stat-chip.inactive .stat-dot { background: var(--danger); }
-    .stat-num   { font-weight: 900; font-size: 15px; color: var(--text-main); }
+    .stat-num   { font-weight:600; font-size: 15px; color: var(--text-main); }
     .stat-label { color: var(--text-muted); }
 
     /* ===================================================
@@ -260,7 +260,7 @@ $treatment_roles = [
         display: flex; align-items: center; gap: 8px;
         background: var(--bg-surface); border: 1px solid var(--border-color);
         padding: 10px 20px; border-radius: 14px;
-        font-family: 'Vazirmatn', sans-serif; font-size: 13.5px; font-weight: 700;
+        font-family: 'Vazirmatn', sans-serif; font-size: 13.5px; font-weight:600;
         color: var(--text-main); cursor: pointer; box-shadow: var(--card-shadow);
         transition: border-color 0.3s var(--ease-premium), color 0.3s, transform 0.3s var(--ease-premium);
     }
@@ -274,7 +274,7 @@ $treatment_roles = [
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 28px;
-        transition: all 0.4s var(--ease-premium);
+        transition:background-color 0.4s var(--ease-premium);
     }
 
     /* ===================================================
@@ -338,7 +338,7 @@ $treatment_roles = [
     .inactive-badge {
         position: absolute; top: 10px; left: 10px; z-index: 3;
         background: rgba(239, 68, 68, 0.88); color: #fff;
-        font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 20px;
+        font-size: 9.5px; font-weight:600; padding: 3px 8px; border-radius: 20px;
         letter-spacing: 0.3px; backdrop-filter: blur(4px);
     }
 
@@ -351,10 +351,10 @@ $treatment_roles = [
 
     /* Card info */
     .card-info-box { padding: 22px 18px 14px; display: flex; flex-direction: column; flex-grow: 1; text-align: center; }
-    .employee-name { margin: 0 0 14px; font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+    .employee-name { margin: 0 0 14px; font-size: 1.1rem; font-weight:600; color: var(--text-main); }
     .badges-stack { display: flex; flex-direction: column; gap: 8px; }
 
-    .pill-badge { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; border: 1px solid transparent; }
+    .pill-badge { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight:600; border: 1px solid transparent; }
     .pill-branch { background: var(--bg-global); color: var(--text-main); border-color: var(--border-color); }
     .pill-branch .dot { background: var(--brand-teal); }
     .pill-role   { background: var(--brand-gold-glow); color: var(--brand-gold); }
@@ -389,7 +389,7 @@ $treatment_roles = [
     .btn-admin {
         flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
         padding: 11px 8px; border-radius: 12px;
-        font-size: 13px; font-weight: 700;
+        font-size: 13px; font-weight:600;
         font-family: 'Vazirmatn', sans-serif;
         border: 1px solid transparent; cursor: pointer;
         transition: background 0.25s var(--ease-premium), color 0.25s, transform 0.3s var(--ease-premium), box-shadow 0.3s;
@@ -431,13 +431,13 @@ $treatment_roles = [
     .filter-sidebar.is-open { right: 0; }
 
     .drawer-header { padding: 22px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-    .drawer-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; }
+    .drawer-header h3 { margin: 0; font-size: 1.1rem; font-weight:600; }
     .close-drawer-btn { background: none; border: none; font-size: 22px; line-height: 1; color: var(--text-muted); cursor: pointer; padding: 4px; transition: color 0.2s; }
     .close-drawer-btn:hover { color: var(--danger); }
 
     .drawer-body { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; gap: 22px; overflow-y: auto; }
     .filter-group { display: flex; flex-direction: column; gap: 9px; }
-    .filter-group > label { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+    .filter-group > label { font-size: 12.5px; font-weight:600; color: var(--text-muted); }
 
     .filter-select {
         width: 100%; padding: 11px 12px 11px 34px; border-radius: 12px;
@@ -458,9 +458,9 @@ $treatment_roles = [
         flex: 1; padding: 9px 8px; border-radius: 10px;
         border: 1px solid var(--border-color); background: var(--bg-global);
         color: var(--text-muted); font-family: 'Vazirmatn', sans-serif;
-        font-size: 12px; font-weight: 700; cursor: pointer;
+        font-size: 12px; font-weight:600; cursor: pointer;
         display: flex; align-items: center; justify-content: center; gap: 6px;
-        transition: all 0.25s var(--ease-premium);
+        transition:background-color 0.25s var(--ease-premium);
     }
     .status-filter-btn .s-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .status-filter-btn.sf-all.sel  { background: var(--brand-teal); color: #fff; border-color: var(--brand-teal); }
@@ -470,9 +470,9 @@ $treatment_roles = [
     .status-filter-btn.sf-inactive.sel { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
 
     .drawer-footer { padding: 20px 24px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
-    .btn-apply { flex: 2; background: var(--brand-teal); color: #fff; border: none; padding: 13px; border-radius: 12px; font-family: 'Vazirmatn', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-apply { flex: 2; background: var(--brand-teal); color: #fff; border: none; padding: 13px; border-radius: 12px; font-family: 'Vazirmatn', sans-serif; font-size: 14px; font-weight:600; cursor: pointer; transition: background 0.2s; }
     .btn-apply:hover { background: #0f766e; }
-    .btn-reset { flex: 1; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 13px; border-radius: 12px; font-family: 'Vazirmatn', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-reset { flex: 1; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 13px; border-radius: 12px; font-family: 'Vazirmatn', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition:background-color 0.2s; }
     .btn-reset:hover { background: var(--danger-bg); color: var(--danger); border-color: rgba(239,68,68,0.2); }
 
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.22); backdrop-filter: blur(4px); z-index: 199; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease-premium); }
@@ -506,21 +506,21 @@ $treatment_roles = [
     .modal-icon-wrap.danger  { background: var(--danger-bg); }
     .modal-icon-wrap.success { background: var(--success-bg); }
 
-    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight: 800; text-align: center; }
+    .modal-title { margin: 0 0 8px; font-size: 1.1rem; font-weight:600; text-align: center; }
     .modal-desc  { margin: 0 0 26px; font-size: 13.5px; color: var(--text-muted); text-align: center; line-height: 1.75; }
-    .modal-name  { color: var(--text-main); font-weight: 800; }
+    .modal-name  { color: var(--text-main); font-weight:600; }
 
     .modal-actions { display: flex; gap: 10px; }
     .btn-modal-cancel {
         flex: 1; padding: 12px; border-radius: 14px;
         background: var(--bg-global); border: 1px solid var(--border-color);
         color: var(--text-muted); font-family: 'Vazirmatn', sans-serif;
-        font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+        font-size: 14px; font-weight:600; cursor: pointer; transition:background-color 0.2s;
     }
     .btn-modal-cancel:hover { border-color: var(--text-muted); color: var(--text-main); }
     .btn-modal-confirm {
         flex: 1; padding: 12px; border-radius: 14px; border: none;
-        font-family: 'Vazirmatn', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer;
+        font-family: 'Vazirmatn', sans-serif; font-size: 14px; font-weight:600; cursor: pointer;
         transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
     }
     .btn-modal-confirm.danger  { background: var(--danger); color: #fff; }
@@ -541,7 +541,7 @@ $treatment_roles = [
     =================================================== */
     .no-results-msg {
         display: none; grid-column: 1/-1; text-align: center;
-        padding: 60px 20px; color: var(--text-muted); font-weight: 700; font-size: 15px;
+        padding: 60px 20px; color: var(--text-muted); font-weight:600; font-size: 15px;
     }
 
     /* ===================================================
@@ -568,11 +568,11 @@ $treatment_roles = [
         .image-wrapper  { height: 112px; }
         .avatar-placeholder .icon { font-size: 30px; }
         .card-info-box  { padding: 8px 4px 6px; }
-        .employee-name  { font-size: 0.78rem; font-weight: 800; margin: 0 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .employee-name  { font-size: 0.78rem; font-weight:600; margin: 0 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .badges-stack   { gap: 3px; }
         .pill-branch    { padding: 3px 4px; border-radius: 6px; font-size: 8.5px; gap: 4px; }
         .pill-role      { padding: 3px 4px; border-radius: 6px; }
-        .pill-role .value-text { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; text-align: center; }
+        .pill-role .value-text { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight:600; text-align: center; }
         .status-dot     { width: 7px; height: 7px; top: 6px; right: 6px; }
         .inactive-badge { font-size: 7.5px; padding: 2px 5px; top: 6px; left: 6px; }
 
@@ -587,6 +587,7 @@ $treatment_roles = [
         .modal-title    { font-size: 1rem; }
     }
     </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

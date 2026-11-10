@@ -86,20 +86,20 @@ body{
     gap:12px;
     flex-wrap:wrap;
 }
-.topbar h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.topbar h2{font-size:19px;font-weight:600;letter-spacing:-.01em}
 .new-btn{
     display:inline-flex;align-items:center;gap:6px;
-    background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
+    background:var(--color-primary-dark);
     color:#fff;
     text-decoration:none;
     padding:11px 18px;
     border-radius:13px;
     font-size:13.5px;
-    font-weight:800;
-    box-shadow:0 10px 22px -10px rgba(0, 143, 138,.7);
+    font-weight:600;
+    box-shadow:none;
     transition:transform .15s var(--ease),box-shadow .25s;
 }
-.new-btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(0, 143, 138,.8)}
+.new-btn:hover{transform:translateY(-2px);box-shadow:none}
 table{
     width:100%;
     border-collapse:collapse;
@@ -114,7 +114,7 @@ th,td{
 th{
     background:transparent;
     font-size:11.5px;
-    font-weight:700;
+    font-weight:600;
     color:var(--color-muted);
     white-space:nowrap;
 }
@@ -123,7 +123,7 @@ tr:hover td{background:var(--color-bg)}
     padding:6px 14px;
     border-radius:99px;
     font-size:11.5px;
-    font-weight:700;
+    font-weight:600;
     display:inline-block;
 }
 .draft{ background:rgba(250, 166, 26,.16); color:#b9760a; }
@@ -148,7 +148,7 @@ tr:hover td{background:var(--color-bg)}
 .actions a{
     margin:0 6px;
     text-decoration:none;
-    font-weight:700;
+    font-weight:600;
     font-size:12.5px;
     transition:opacity .2s;
 }
@@ -159,7 +159,7 @@ tr:hover td{background:var(--color-bg)}
 .delete{ color:var(--danger); }
 
 td button{
-    font-family:inherit;font-weight:700;font-size:12.5px;
+    font-family:inherit;font-weight:600;font-size:12.5px;
     color:var(--color-primary-dark);background:var(--primary-08);
     border:none;padding:8px 14px;border-radius:10px;cursor:pointer;
     transition:filter .2s,transform .14s;
@@ -207,11 +207,11 @@ td button:active{transform:scale(.95)}
     width:520px!important;
     max-width:92vw;
 }
-#historyModal h3{font-size:16px;font-weight:800;margin:0 0 14px}
+#historyModal h3{font-size:16px;font-weight:600;margin:0 0 14px}
 #historyContent{font-size:13px;line-height:1.9;color:var(--color-text)}
 #historyModal button{
-    font-family:inherit;font-weight:700;font-size:13px;color:#fff;
-    background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));
+    font-family:inherit;font-weight:600;font-size:13px;color:#fff;
+    background:var(--color-primary-dark);
     border:none;padding:10px 20px;border-radius:11px;cursor:pointer;margin-top:16px;
 }
 
@@ -223,6 +223,7 @@ td button:active{transform:scale(.95)}
 }
 
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

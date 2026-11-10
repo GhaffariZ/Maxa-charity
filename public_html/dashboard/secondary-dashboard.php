@@ -20,7 +20,8 @@ session_start();
   <link href="assets/css/bootstrap.css" id="bootstrap-css" rel="stylesheet" type="text/css"/>
   <link href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" type="text/css"/>
   <link href="assets/css/conca.css" rel="stylesheet" type="text/css"/>
- </head>
+ <link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
+</head>
  <body>
   <div class="app-main">
    <!-- app wrapper start -->

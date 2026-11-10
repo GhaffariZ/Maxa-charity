@@ -75,9 +75,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .fb-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .fb-head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
+  background:var(--color-primary-dark);box-shadow:none}
 .fb-head-ic svg{width:27px;height:27px}
-.fb-head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.fb-head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .fb-head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 
 /* تب‌های فیلتر */
@@ -88,7 +88,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .fb-tab.active{border-color:var(--color-primary)}
 .fb-tab-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
 .fb-tab-ic svg{width:21px;height:21px}
-.fb-tab b{font-size:21px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
+.fb-tab b{font-size:21px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block}
 .fb-tab span{font-size:11.5px;color:var(--color-muted);font-weight:600;margin-top:4px;display:block;line-height:1.5}
 .ic-all{background:var(--primary-08);color:var(--color-primary)}
 .ic-site{background:var(--secondary-12);color:var(--color-secondary-dark)}
@@ -101,12 +101,12 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   box-shadow:var(--shadow-sm);padding:18px 20px;transition:box-shadow .25s var(--ease),border-color .2s;position:relative}
 .fb-card:hover{box-shadow:var(--shadow-md)}
 .fb-card.unread{border-inline-start:4px solid var(--color-secondary)}
-.fb-av{width:46px;height:46px;border-radius:14px;flex-shrink:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm)}
+.fb-av{width:46px;height:46px;border-radius:14px;flex-shrink:0;display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;box-shadow:var(--shadow-sm)}
 .fb-body{flex:1;min-width:0}
 .fb-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .fb-meta{display:flex;align-items:center;gap:10px;min-width:0}
-.fb-name{font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fb-badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px;white-space:nowrap}
+.fb-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fb-badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:99px;white-space:nowrap}
 .fb-badge .dot{width:6px;height:6px;border-radius:50%}
 .fb-badge.type-suggestion{background:var(--primary-08);color:var(--color-primary-dark)} .type-suggestion .dot{background:var(--color-primary)}
 .fb-badge.type-criticism{background:var(--secondary-12);color:var(--color-secondary-dark)} .type-criticism .dot{background:var(--color-secondary)}
@@ -115,21 +115,21 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .fb-replies{display:flex;flex-direction:column;gap:9px;margin-top:12px}
 .fb-replies:empty{display:none}
 .fb-reply-bubble{background:var(--primary-08);border:1px solid var(--color-border);border-inline-start:3px solid var(--color-primary);border-radius:12px;padding:11px 14px}
-.fb-reply-bubble .h{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--color-primary-dark);margin-bottom:5px}
+.fb-reply-bubble .h{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--color-primary-dark);margin-bottom:5px}
 .fb-reply-bubble .h svg{width:13px;height:13px}
 .fb-reply-bubble p{font-size:13px;line-height:1.85;color:var(--color-text);word-break:break-word}
 
 .fb-foot{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap}
-.fb-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700}
+.fb-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600}
 .fb-status .d{width:8px;height:8px;border-radius:50%}
 .fb-status.is-unread{color:var(--color-secondary-dark)} .fb-status.is-unread .d{background:var(--color-secondary)}
 .fb-status.is-read{color:var(--color-muted)} .fb-status.is-read .d{background:var(--color-muted)}
-.fb-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px}
+.fb-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px}
 .fb-chip svg{width:13px;height:13px}
 .fb-chip.on-site{background:var(--success-12);color:var(--success)}
 .fb-chip.replied{background:var(--violet-12);color:var(--violet)}
 .fb-spacer{flex:1;min-width:8px}
-.fb-btn{font-family:inherit;font-weight:700;font-size:12px;border:none;cursor:pointer;padding:7px 13px;border-radius:10px;
+.fb-btn{font-family:inherit;font-weight:600;font-size:12px;border:none;cursor:pointer;padding:7px 13px;border-radius:10px;
   display:inline-flex;align-items:center;gap:6px;transition:filter .2s,transform .14s}
 .fb-btn svg{width:14px;height:14px}
 .fb-btn:active{transform:scale(.96)}
@@ -145,7 +145,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   transition:border-color .2s,box-shadow .2s,background .2s}
 .fb-reply-input:focus{outline:none;border-color:var(--color-primary-light);box-shadow:0 0 0 4px var(--primary-08);background:var(--color-surface)}
 .fb-reply-actions{display:flex;gap:9px;margin-top:10px;justify-content:flex-end}
-.fb-btn-send{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff}
+.fb-btn-send{background:var(--color-primary-dark);color:#fff}
 .fb-btn-cancel{background:var(--color-bg);color:var(--color-muted);border:1px solid var(--color-border)}
 
 .fb-empty{text-align:center;padding:50px 20px;color:var(--color-muted);font-weight:600;background:var(--color-surface);
@@ -157,6 +157,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   .fb-head h1{font-size:19px}
 }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 
@@ -199,7 +200,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
              data-read="<?= $isUnread ? '0' : '1' ?>"
              data-approved="<?= !empty($it['approved']) ? '1' : '0' ?>"
              data-replied="<?= !empty($it['replied']) ? '1' : '0' ?>">
-      <div class="fb-av" style="background:linear-gradient(135deg,<?= htmlspecialchars($it['color']) ?>,<?= htmlspecialchars($it['color']) ?>cc)"><?= htmlspecialchars(fb_initials($it['name'])) ?></div>
+      <div class="fb-av" style="background:<?= htmlspecialchars($it['color']) ?>"><?= htmlspecialchars(fb_initials($it['name'])) ?></div>
       <div class="fb-body">
         <div class="fb-top">
           <div class="fb-meta">

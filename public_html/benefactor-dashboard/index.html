@@ -4,7 +4,15 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>benefactor userpanel</title>
-      <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
+      <script>
+        try {
+          if (localStorage.getItem('macsa-donor-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          }
+        } catch {}
+      </script>
+      <style>html, body { height: 100%; margin: 0; } html { background: #f6f8f8; } html.dark { background: #0f171b; } #root { height: 100%; }</style>
       <script>
         // Synchronize benefactor user data to localStorage for auto-prefilling other site forms
         (function() {
@@ -41,8 +49,8 @@
           };
         })();
       </script>
-      <script type="module" crossorigin src="/benefactor-dashboard/assets/index-DuvrQAlr.js"></script>
-      <link rel="stylesheet" crossorigin href="/benefactor-dashboard/assets/index-wyQonH6q.css">
+      <script type="module" crossorigin src="/benefactor-dashboard/assets/index-Cg0CdxS7.js"></script>
+      <link rel="stylesheet" crossorigin href="/benefactor-dashboard/assets/index-CzKD2T8G.css">
     </head>
     <body>
       <div id="root"></div>

@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router";
-import { Package, Search, Calendar, MapPin, Loader2, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
+import { Package, Search, Calendar, MapPin, ArrowRight, Clock, CheckCircle2 } from "lucide-react";
 import { api, type OrderDto } from "../../api/client";
+import { Loader } from "../components/ui/loader";
 
 export function Orders() {
   const [orders, setOrders] = React.useState<OrderDto[]>([]);
@@ -50,8 +51,8 @@ export function Orders() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <Loader2 className="w-9 h-9 animate-spin text-primary mb-3" />
-          <p className="font-medium text-sm">در حال دریافت سفارشات...</p>
+          <Loader label="در حال دریافت سفارش‌ها" className="mb-4" />
+          <p className="font-medium text-sm" aria-hidden="true">در حال دریافت سفارش‌ها</p>
         </div>
       ) : orders.length === 0 ? (
         <div className="bg-card border rounded-2xl p-12 text-center shadow-sm">

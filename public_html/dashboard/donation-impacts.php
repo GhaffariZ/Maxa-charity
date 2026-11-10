@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+dash_require('donation_impacts');
 require_once __DIR__ . '/../core/image-optimizer.php';
 
 // Create table if it doesn't exist
@@ -89,22 +90,22 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
 .head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .head-ic{width:54px;height:54px;border-radius:16px;flex-shrink:0;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--color-primary-light),var(--color-primary));box-shadow:0 12px 24px -10px rgba(0, 143, 138,.6)}
+  background:var(--color-primary-dark);box-shadow:none}
 .head-ic svg{width:27px;height:27px}
-.head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.head h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
 .head p{font-size:13px;color:var(--color-muted);margin-top:3px}
 .head .spacer{flex:1}
 
-.btn{font-family:inherit;font-weight:700;border:none;cursor:pointer;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
+.btn{font-family:inherit;font-weight:600;border:none;cursor:pointer;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
   transition:filter .2s,transform .14s,box-shadow .22s,border-color .2s; text-decoration:none;}
 .btn svg{width:16px;height:16px}
 .btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;padding:11px 18px;font-size:13px;box-shadow:0 12px 22px -12px rgba(0, 143, 138,.8)}
+.btn-primary{background:var(--color-primary-dark);color:#fff;padding:11px 18px;font-size:13px;box-shadow:none}
 .btn-primary:hover{transform:translateY(-1px); color:#fff;}
 .btn-ghost{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border);padding:10px 15px;font-size:12.5px}
 .btn-ghost:hover{border-color:var(--color-primary-light)}
 
-.flash{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:18px;line-height:1.8;display:flex;align-items:center;gap:9px}
+.flash{border-radius:13px;padding:12px 16px;font-size:13px;font-weight:600;margin-bottom:18px;line-height:1.8;display:flex;align-items:center;gap:9px}
 .flash.ok{background:var(--success-12);color:var(--success);border:1px solid rgba(22,163,122,.25)}
 .flash.err{background:var(--danger-12);color:var(--danger);border:1px solid rgba(224,85,107,.25)}
 
@@ -113,25 +114,26 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--color-border); }
 .card-icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 16px; object-fit: cover; align-self: flex-start; background: #008f8a; display: flex; align-items: center; justify-content: center; }
 .card-icon img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
-.card-title { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 16px; text-align: right; flex-grow: 1; }
+.card-title { font-size: 18px; font-weight:600; color: var(--color-text); margin-bottom: 16px; text-align: right; flex-grow: 1; }
 .card-divider { height: 1px; background: var(--color-border); margin: 0 0 16px 0; border: none; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; }
-.card-qty { font-size: 16px; font-weight: 800; color: var(--color-primary); }
+.card-qty { font-size: 16px; font-weight:600; color: var(--color-primary); }
 .card-ach { font-size: 13px; color: var(--color-muted); font-weight: 600; }
 .card-total { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 12px; border-top: 1px dashed var(--color-border); padding-top: 12px; }
-.card-total-amount { font-size: 18px; font-weight: 800; color: var(--color-primary-light); }
+.card-total-amount { font-size: 18px; font-weight:600; color: var(--color-primary-light); }
 .card-total-label { font-size: 13px; color: var(--color-muted); font-weight: 600; }
 
 /* Form Elements */
 .panel{background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;}
 .field{margin-bottom:18px}
-.field label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:var(--color-text)}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:8px;color:var(--color-text)}
 .field input[type=text], .field input[type=number], .field input[type=file], .field select, .field textarea{width:100%;font-family:inherit;font-size:13.5px;color:var(--color-text);background:var(--color-bg);border:1.5px solid var(--color-border);border-radius:var(--radius-sm);padding:11px 13px;line-height:1.9;transition:border-color .2s}
 .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--color-primary-light);background:var(--color-surface)}
 .field textarea{resize:vertical;min-height:100px}
 .form-row { display: flex; gap: 16px; }
 .form-row .field { flex: 1; }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

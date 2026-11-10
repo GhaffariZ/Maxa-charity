@@ -112,25 +112,18 @@ if ($__doctorsOnly) {
     $__doctorsCategory = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' LIMIT 1")->fetchColumn() ?: -1;
 }
 
-if ($__isEditor) {
-    // سردبیر: همه‌ی شعب، با نامِ شعبه؛ اخبارِ «در حال بررسی» در ابتدا (اولویتِ نمایش).
-    $where = $__reviewOnly ? "WHERE n.status = 'review'" : ($__doctorsOnly ? "WHERE n.category_id = ?" : "");
-    $stmt = $pdo->prepare(
-        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
-           $where
-          ORDER BY (n.status = 'review') DESC, n.id DESC"
-    );
-    $stmt->execute($__doctorsOnly && !$__reviewOnly ? [$__doctorsCategory] : []);
-} else {
-    // ایزولاسیون چندمستأجری: فقط اخبارِ شعبه‌ی فعال
-    $stmt = $pdo->prepare(
-        "SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
-           FROM news n LEFT JOIN branches b ON b.id = n.branch_id
-          WHERE n.branch_id = ?" . ($__doctorsOnly ? " AND n.category_id = ?" : "") . " ORDER BY n.id DESC"
-    );
-    $stmt->execute($__doctorsOnly ? [$__branch, $__doctorsCategory] : [$__branch]);
+$where = []; $params = [];
+if (!$__isEditor || ($_GET['scope'] ?? '') === 'active') {
+    $where[] = 'n.branch_id = ?'; $params[] = $__branch;
 }
+if ($__doctorsOnly) { $where[] = 'n.category_id = ?'; $params[] = $__doctorsCategory; }
+if ($__reviewOnly) $where[] = "n.status = 'review'";
+if ((int)($_GET['id'] ?? 0) > 0) { $where[] = 'n.id = ?'; $params[] = (int)$_GET['id']; }
+$whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+$stmt = $pdo->prepare("SELECT n.*, b.name AS branch_name, b.slug AS branch_slug
+    FROM news n LEFT JOIN branches b ON b.id = n.branch_id $whereSql
+    ORDER BY (n.status = 'review') DESC, n.id DESC");
+$stmt->execute($params);
 $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -225,18 +218,18 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .ph-ic {
       width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
       display: flex; align-items: center; justify-content: center; color: #fff;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background:#00736f;
       box-shadow: var(--shadow-sm);
   }
   .ph-ic svg { width: 22px; height: 22px; }
-  .ph-title h1 { margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--primary-color); }
+  .ph-title h1 { margin: 0; font-size: 1.3rem; font-weight:600; color: var(--primary-color); }
   .ph-title p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
   .ph-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
   /* ===== دکمه‌ها (هم‌سبکِ ساخت خبر) ===== */
   .btn {
       padding: 10px 18px; border: none; border-radius: 999px; cursor: pointer;
-      font-weight: 700; font-size: 14px; font-family: inherit;
+      font-weight:600; font-size: 14px; font-family: inherit;
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
       transition: transform var(--anim-fast), box-shadow var(--anim-fast), background var(--anim-fast), opacity var(--anim-fast);
       text-decoration: none;
@@ -244,7 +237,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .btn svg { width: 17px; height: 17px; }
   .btn:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-  .btn-new { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; box-shadow: var(--shadow-sm); }
+  .btn-new { background: #00736f; color: #fff; box-shadow: var(--shadow-sm); }
   .btn-new:hover { box-shadow: var(--shadow-md); }
   .btn-ghost { background: transparent; color: var(--primary-color); border: 1px solid var(--primary-color); }
   .btn-ghost:hover { background: rgba(0,125,117,0.06); }
@@ -252,15 +245,15 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   /* ===== کارت جدول ===== */
   .table-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; transition: background 0.3s; }
   .news-table { width: 100%; border-collapse: collapse; }
-  .news-table th { background: var(--header-bg); padding: 15px 18px; text-align: right; color: var(--primary-color); font-weight: 700; border-bottom: 1px solid var(--border-color); font-size: 13px; white-space: nowrap; }
+  .news-table th { background: var(--header-bg); padding: 15px 18px; text-align: right; color: var(--primary-color); font-weight:600; border-bottom: 1px solid var(--border-color); font-size: 13px; white-space: nowrap; }
   .main-row td { padding: 15px 18px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; font-size: 14px; vertical-align: middle; }
   .main-row:last-child td { border-bottom: none; }
   .main-row:hover { background: var(--row-hover); }
-  .news-title-text { font-weight: 700; }
-  .branch-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--primary-color); background: rgba(0,125,117,.10); padding: 3px 9px; border-radius: 999px; margin-inline-start: 6px; white-space: nowrap; }
+  .news-title-text { font-weight:600; }
+  .branch-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight:600; color: var(--primary-color); background: rgba(0,125,117,.10); padding: 3px 9px; border-radius: 999px; margin-inline-start: 6px; white-space: nowrap; }
 
   /* ===== چیپ وضعیت ===== */
-  .st-badge { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-align: center; }
+  .st-badge { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight:600; display: inline-flex; align-items: center; gap: 5px; text-align: center; }
   .st-badge svg { width: 13px; height: 13px; }
   .st-draft { background: var(--st-draft-bg); color: var(--st-draft-text); }
   .st-review { background: var(--st-review-bg); color: var(--st-review-text); border: 1px solid var(--st-review-border); }
@@ -284,13 +277,13 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .step-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
   .step.completed .step-circle { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
   .status-review .step.active .step-circle { border-color: var(--secondary-color); background: var(--secondary-color); color: #fff; box-shadow: 0 0 0 4px rgba(248,162,39,0.2); }
-  .status-review .step.active .step-label { color: var(--secondary-color); font-weight: 800; }
+  .status-review .step.active .step-label { color: var(--secondary-color); font-weight:600; }
   .status-rejected .step.active .step-circle { border-color: var(--danger); background: var(--danger); color: #fff; box-shadow: 0 0 0 4px rgba(231,74,59,0.2); }
-  .status-rejected .step.active .step-label { color: var(--danger); font-weight: 800; }
+  .status-rejected .step.active .step-label { color: var(--danger); font-weight:600; }
   .status-published .step.active .step-circle { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
-  .status-published .step.active .step-label { color: var(--primary-color); font-weight: 800; }
+  .status-published .step.active .step-label { color: var(--primary-color); font-weight:600; }
   .status-scheduled .step.active .step-circle { border-color: var(--primary-color); background: var(--primary-color); color: #fff; box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.2); }
-  .status-scheduled .step.active .step-label { color: var(--primary-color); font-weight: 800; }
+  .status-scheduled .step.active .step-label { color: var(--primary-color); font-weight:600; }
 
   /* ===== دکمه‌های اکشن ردیف ===== */
   .minimal-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -313,7 +306,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .modal-overlay.show .modal-box { transform: translateY(0); }
   .modal-box h3 { margin-top: 0; color: var(--primary-color); font-size: 18px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
-  .modal-btn { padding: 10px 20px; border-radius: 999px; border: none; cursor: pointer; font-weight: 700; font-size: 14px; font-family: inherit; }
+  .modal-btn { padding: 10px 20px; border-radius: 999px; border: none; cursor: pointer; font-weight:600; font-size: 14px; font-family: inherit; }
   .modal-input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none; margin-top: 15px; font-size: 14px; background: var(--surface-2); color: var(--text-main); font-family: inherit; }
   .modal-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,125,117,0.14); }
 
@@ -325,10 +318,10 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   .bulk-actions-bar { background: var(--card-bg); border: 1px solid var(--border-color); border-right: 5px solid var(--primary-color); border-radius: var(--radius); padding: 14px 18px; display: none; align-items: center; justify-content: space-between; gap: 15px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
   .bulk-actions-bar.show { display: flex; }
-  .bulk-info { color: var(--text-main); font-size: 14px; font-weight: 700; }
+  .bulk-info { color: var(--text-main); font-size: 14px; font-weight:600; }
   .bulk-info #selectedCount { color: var(--primary-color); font-size: 18px; margin-left: 5px; }
   .bulk-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn-bulk { border: none; padding: 10px 16px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.2s; color: #fff; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+  .btn-bulk { border: none; padding: 10px 16px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight:600; transition: 0.2s; color: #fff; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
   .btn-bulk svg { width: 15px; height: 15px; }
   .btn-bulk:hover { transform: translateY(-1px); opacity: 0.92; }
   .btn-bulk-publish { background: var(--primary-color); }
@@ -360,7 +353,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
       .main-row:last-child td { border-bottom: 1px solid var(--border-color); }
       .main-row td { border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; text-align: left; }
       .main-row td:last-child { border-bottom: none; }
-      .main-row td::before { content: attr(data-label); font-weight: 700; color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
+      .main-row td::before { content: attr(data-label); font-weight:600; color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
       .main-row td.cell-title { flex-direction: column; align-items: flex-start; }
       .main-row td.cell-title::before { margin-bottom: 4px; }
       .main-row td.cell-date { direction: ltr; justify-content: flex-start; }
@@ -378,6 +371,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
       .minimal-actions .btn-min { flex: 1; justify-content: center; }
   }
 </style>
+<link rel="stylesheet" href="/dashboard/assets/css/admin-ledger.css">
 </head>
 <body>
 

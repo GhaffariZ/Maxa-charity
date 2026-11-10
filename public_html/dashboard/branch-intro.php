@@ -10,6 +10,7 @@
  * ========================================================================== */
 
 require_once __DIR__ . '/_guard.php';
+dash_require('branch_intro');
 
 $pdo = dash_pdo();
 $branchId = dash_active_branch_id();
@@ -191,7 +192,7 @@ require_once __DIR__ . '/_panel_head.php';
   }
   .intro-card h2 {
     font-size: 16px;
-    font-weight: 800;
+    font-weight:600;
     margin-bottom: 6px;
     color: var(--color-text);
     display: flex;
@@ -210,7 +211,7 @@ require_once __DIR__ . '/_panel_head.php';
   .field-group label {
     display: block;
     font-size: 13px;
-    font-weight: 700;
+    font-weight:600;
     margin-bottom: 8px;
     color: var(--color-text);
   }
@@ -247,7 +248,7 @@ require_once __DIR__ . '/_panel_head.php';
     text-align: center;
     background: var(--color-bg);
     cursor: pointer;
-    transition: all .2s ease;
+    transition:background-color .2s ease;
     position: relative;
     overflow: hidden;
   }
@@ -276,7 +277,7 @@ require_once __DIR__ . '/_panel_head.php';
   }
   .uploader-title {
     font-size: 14px;
-    font-weight: 800;
+    font-weight:600;
     color: var(--color-text);
     margin-bottom: 4px;
   }
@@ -332,7 +333,7 @@ require_once __DIR__ . '/_panel_head.php';
     padding: 8px 14px;
     font-family: inherit;
     font-size: 12px;
-    font-weight: 700;
+    font-weight:600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -356,7 +357,7 @@ require_once __DIR__ . '/_panel_head.php';
     margin-bottom: 22px;
   }
   .preview-bar a {
-    font-weight: 800;
+    font-weight:600;
     color: var(--color-primary);
     font-size: 13px;
     display: inline-flex;

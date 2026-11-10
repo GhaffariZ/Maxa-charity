@@ -35,19 +35,29 @@ if (!dash_is_authenticated()) {
 }
 
 /* انقضای نشست */
-dash_enforce_timeouts();
+dash_enforce_timeouts(!defined('DASH_PASSIVE_REQUEST') || !DASH_PASSIVE_REQUEST);
 
 /* بررسی زنده‌ی وضعیت کاربر در هر درخواست (مثلاً غیرفعال‌شدن توسط ادمین) */
 try {
-    $st = dash_pdo()->prepare('SELECT status, branch_id FROM dashboard_users WHERE id = ? LIMIT 1');
+    $st = dash_pdo()->prepare('SELECT status, branch_id, is_super, is_branch_admin, direct_permissions FROM dashboard_users WHERE id = ? LIMIT 1');
     $st->execute([(int)$_SESSION['dash_user']['id']]);
     $live = $st->fetch();
     if (!$live || $live['status'] === 'disabled') {
         dash_logout();
         dash_redirect_login('disabled');
     }
+    if (isset($live['direct_permissions']) && !$live['is_super'] && !$live['is_branch_admin']) {
+        $_SESSION['dash_user']['permissions'] = dash_resolve_permissions($live);
+        $_SESSION['dash_user']['has_direct_permissions'] = true;
+        $_SESSION['dash_user']['role_id'] = null;
+        $_SESSION['dash_user']['role_name'] = '';
+    }
 } catch (Throwable $ex) {
     // اگر دیتابیس در دسترس نبود، به ورود برنگردانیم تا حلقه نشود؛ خطا را نشان نده.
+    if (!empty($_SESSION['dash_user']['has_direct_permissions'])) {
+        http_response_code(503);
+        exit('دسترسی‌های کاربر موقتاً قابل بررسی نیست.');
+    }
 }
 
 /* در دسترسِ صفحات: اتصال آماده + کاربر + شعبه‌ی فعال */
