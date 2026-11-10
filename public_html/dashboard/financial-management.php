@@ -57,6 +57,16 @@ if (isset($_GET['campaign_finance'])) {
     $from = isset($bounds['start_date']) ? (new DateTimeImmutable($bounds['start_date'] . ' 00:00:00', $zone))->setTimezone($utc)->format('Y-m-d\TH:i:s.u\Z') : null;
     $to = isset($bounds['end_date']) ? (new DateTimeImmutable($bounds['end_date'] . ' 23:59:59.999999', $zone))->setTimezone($utc)->format('Y-m-d\TH:i:s.u\Z') : null;
     $client = new CampaignServiceClient($slug);
+    if (!$client->hasManagementCredentials()) {
+      $emptyResult = ($mode === 'payments') ? ['payments' => []] : ['campaigns' => []];
+      echo json_encode([
+        'status' => 'success',
+        'configured' => false,
+        'data' => $emptyResult,
+        'message' => 'اعتبارنامه مدیریتی برای این مرکز تنظیم نشده است.'
+      ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+      exit;
+    }
     $client->prepareManagement();
     if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
     if ($mode === 'report') {
@@ -90,8 +100,11 @@ if (isset($_GET['campaign_finance'])) {
     @file_put_contents($cachePath, $json);
     echo $json;
   } catch (Throwable $e) {
-    if (http_response_code() < 400) http_response_code(502);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode([
+      'status' => 'error',
+      'message' => $e->getMessage(),
+      'data' => ($mode === 'payments' ? ['payments' => []] : ['campaigns' => []])
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
   }
   exit;
 }
@@ -468,11 +481,12 @@ function build_dynamic_trend_series(string $mode, ?string $startDate, ?string $e
 }
 $monthChartData = build_dynamic_trend_series($trendMode, $startDate, $endDate, $diffDays, $directTrendSums);
 
+require_once __DIR__ . '/../core/campaign-service.php';
 $activeFinanceBranch = dash_load_branch(dash_active_branch_id());
 $financeBranches = ($activeFinanceBranch && dash_is_super() && dash_is_hq_view()) ? dash_all_branches() : array_filter([$activeFinanceBranch]);
 $financeSources = array_values(array_map(static fn(array $branch): array => [
   'name' => (string)$branch['name'], 'slug' => (string)$branch['slug'],
-], array_filter($financeBranches, static fn(array $branch): bool => ($branch['status'] ?? 'active') === 'active')));
+], array_filter($financeBranches, static fn(array $branch): bool => ($branch['status'] ?? 'active') === 'active' && campaign_service_has_management_credentials((string)$branch['slug']))));
 
 $SERVER = [
   'distribution' => [
@@ -1747,7 +1761,10 @@ window.showToast = function(message, type = 'success') {
     });
     const result = await response.json().catch(() => null);
     if (!response.ok || !result || result.status !== 'success') {
-      throw new Error(result && result.message ? result.message : 'خطای HTTP ' + response.status);
+      if (result && result.configured === false) {
+        return {campaigns: [], payments: [], configured: false};
+      }
+      throw new Error(result && result.message ? result.message : 'خطای ارتباط با سرور');
     }
     try {
       sessionStorage.setItem(cKey, JSON.stringify({ts: Date.now(), data: result.data}));
@@ -1934,10 +1951,15 @@ window.showToast = function(message, type = 'success') {
   }
 
   async function load() {
-    if (!sources.length) errors.push('مرکز فعالی برای گزارش مالی پیدا نشد.');
+    if (!sources.length) {
+      renderAmountsAndCampaigns();
+      renderPayments();
+      return true;
+    }
     const result = await Promise.all(sources.map(async source => {
       try {
         const data = await request('report', source);
+        if (!data || data.configured === false) return null;
         return {source, campaigns: Array.isArray(data.campaigns) ? data.campaigns : []};
       } catch (error) {
         errors.push(source.name + ': ' + error.message);
@@ -1956,14 +1978,16 @@ window.showToast = function(message, type = 'success') {
         const task = tasks[next++];
         try {
           const data = await request('payments', task.source, task.campaign.id);
-          paymentsByCampaign.set(task.source.slug + ':' + task.campaign.id, Array.isArray(data.payments) ? data.payments : []);
+          if (data && data.configured !== false) {
+            paymentsByCampaign.set(task.source.slug + ':' + task.campaign.id, Array.isArray(data.payments) ? data.payments : []);
+          }
         } catch (error) {
           errors.push(task.source.name + ' / ' + task.campaign.title + ': ' + error.message);
         }
       }
     }));
     renderPayments();
-    if (errors.length && window.showToast) window.showToast('دریافت دادهٔ برخی مراکز ناموفق بود: ' + errors[0], 'error');
+    if (errors.length && window.showToast) window.showToast('دریافت دادهٔ برخی مراکز ناموفق بود: ' + errors[0], 'warning');
     return errors.length === 0;
   }
   window.campaignFinanceReady = load();

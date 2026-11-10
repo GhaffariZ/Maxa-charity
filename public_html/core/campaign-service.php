@@ -45,6 +45,20 @@ final class CampaignServiceClient
         $this->publicKey = campaign_service_env($prefix . 'PUBLIC_KEY');
     }
 
+    public function hasManagementCredentials(): bool
+    {
+        return $this->clientId !== ''
+            && $this->clientSecret !== ''
+            && $this->clientId !== 'replace_on_server'
+            && $this->clientSecret !== 'replace_on_server';
+    }
+
+    public function hasPublicCredentials(): bool
+    {
+        return $this->publicKey !== ''
+            && $this->publicKey !== 'replace_on_server';
+    }
+
     /** @return array<string,mixed> */
     public function publicCampaigns(bool $includeInactive = false): array
     {
@@ -372,6 +386,23 @@ function campaign_service_normalize_slug(string $slug): string
 function campaign_service_center_prefix(string $slug): string
 {
     return 'CAMPAIGN_CENTER_' . strtoupper(str_replace('-', '_', $slug)) . '_';
+}
+
+function campaign_service_has_management_credentials(string $slug): bool
+{
+    campaign_service_load_env();
+    $prefix = campaign_service_center_prefix(campaign_service_normalize_slug($slug));
+    $id = campaign_service_env($prefix . 'CLIENT_ID');
+    $secret = campaign_service_env($prefix . 'CLIENT_SECRET');
+    return $id !== '' && $secret !== '' && $id !== 'replace_on_server' && $secret !== 'replace_on_server';
+}
+
+function campaign_service_has_public_credentials(string $slug): bool
+{
+    campaign_service_load_env();
+    $prefix = campaign_service_center_prefix(campaign_service_normalize_slug($slug));
+    $key = campaign_service_env($prefix . 'PUBLIC_KEY');
+    return $key !== '' && $key !== 'replace_on_server';
 }
 
 function campaign_service_is_uuid(string $value): bool
