@@ -1082,7 +1082,8 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
     NAV.push({title:'استندها و سفارشات'});
     NAV.push({label:'استندها و سفارشات',icon:'cart',children:[
       {label:'سفارشات استند',icon:'list',href:'orders.php'},
-      {label:'مدیریت استندها',icon:'award',href:'stands.php'}]});
+      {label:'مدیریت استندها',icon:'award',href:'stands.php'},
+      {label:'محصولات فروشگاه',icon:'box',href:'products.php'}]});
   }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
