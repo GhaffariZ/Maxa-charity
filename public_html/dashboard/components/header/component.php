@@ -1209,6 +1209,7 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               <li class="events-nav-link"><a href="/events.php"><?= site_e(site_locale() === 'en' ? 'رویدادها' : 'رویدادها و همایش‌ها') ?></a></li>
               <li><a href="/macsapedia.php"><?= site_e('مکساپدیا') ?></a></li>
               <li><a href="/courses"><?= site_e('دوره‌ها') ?></a></li>
+              <li><a href="/shop.php"><?= site_e('فروشگاه خیریه') ?></a></li>
               <li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
             </ul>
           </nav>
