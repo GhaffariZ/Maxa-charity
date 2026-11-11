@@ -26,7 +26,10 @@ try {
     if (isset($pdo) && ($pdo instanceof PDO)) {
         shop_ensure_schema($pdo);
         $allActive = shop_get_products($pdo);
-        $featuredProducts = array_slice($allActive, 0, 4);
+        $activeInStock = array_filter($allActive, function ($item) {
+            return (($item['status'] ?? '') === 'active') && ((int)($item['stock'] ?? 0) > 0);
+        });
+        $featuredProducts = array_slice(array_values($activeInStock), 0, 4);
     }
 } catch (Throwable $e) {
     $featuredProducts = [];

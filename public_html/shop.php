@@ -1245,6 +1245,13 @@ render_dashboard_component('header', get_defined_vars());
             </div>
           </article>
         <?php endforeach; ?>
+        <div id="shopFilterEmptyState" class="shop-no-results" style="display: none; grid-column: 1 / -1;">
+          <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <p style="font-size: 16px; font-weight: 700; margin: 0;"><?= site_e('هیچ محصولی با این مشخصات یافت نشد') ?></p>
+        </div>
       <?php else: ?>
         <div class="shop-no-results">
           <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1361,7 +1368,7 @@ render_dashboard_component('header', get_defined_vars());
 
 <!-- Embedded JSON Catalog for Snappy Client-Side Modal & Filtering -->
 <script type="application/json" id="shop-catalog-data">
-<?= json_encode($products, JSON_UNESCAPED_UNICODE) ?>
+<?= json_encode($products, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?>
 </script>
 
 <script>
@@ -1369,6 +1376,16 @@ render_dashboard_component('header', get_defined_vars());
   'use strict';
 
   // --- Utility functions ---
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function toPersianDigits(num) {
     var str = String(num);
     var p = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
@@ -1428,7 +1445,9 @@ render_dashboard_component('header', get_defined_vars());
       if (qty <= 0) return;
 
       var pId = parseInt(product.id, 10);
-      var maxStock = parseInt(product.stock, 10) || 999;
+      var maxStock = (product.stock !== undefined && product.stock !== null && !isNaN(parseInt(product.stock, 10))) ? parseInt(product.stock, 10) : 999;
+      if (maxStock <= 0) return;
+
       var existing = this.items.find(function(it) { return it.id === pId; });
 
       if (existing) {
@@ -1437,14 +1456,16 @@ render_dashboard_component('header', get_defined_vars());
         existing.quantity = newQty;
       } else {
         var initialQty = qty > maxStock ? maxStock : qty;
-        this.items.push({
-          id: pId,
-          title: product.title || '',
-          price: parseFloat(product.price) || 0,
-          image_url: product.image_url || '',
-          quantity: initialQty,
-          stock: maxStock
-        });
+        if (initialQty > 0) {
+          this.items.push({
+            id: pId,
+            title: product.title || '',
+            price: parseFloat(product.price) || 0,
+            image_url: product.image_url || '',
+            quantity: initialQty,
+            stock: maxStock
+          });
+        }
       }
 
       this.save();
@@ -1463,13 +1484,19 @@ render_dashboard_component('header', get_defined_vars());
       var item = this.items.find(function(it) { return it.id === pId; });
       if (!item) return;
 
+      var maxStock = (item.stock !== undefined && item.stock !== null && !isNaN(parseInt(item.stock, 10))) ? parseInt(item.stock, 10) : 999;
+      if (maxStock <= 0) {
+        this.remove(productId);
+        return;
+      }
+
       var newQty = isDelta ? item.quantity + deltaOrQty : parseInt(deltaOrQty, 10);
       if (newQty <= 0) {
         this.remove(productId);
         return;
       }
-      if (item.stock && newQty > item.stock) {
-        newQty = item.stock;
+      if (newQty > maxStock) {
+        newQty = maxStock;
       }
       item.quantity = newQty;
       this.save();
@@ -1557,8 +1584,8 @@ render_dashboard_component('header', get_defined_vars());
             '<line x1="3" y1="6" x2="21" y2="6"></line>' +
             '<path d="M16 10a4 4 0 0 1-8 0"></path>' +
           '</svg>' +
-          '<h3 class="shop-cart-empty-title"><?= site_e("سبد خرید شما خالی است") ?></h3>' +
-          '<p class="shop-cart-empty-desc"><?= site_e("می‌توانید محصولات نیکوکاری را به سبد خرید اضافه کنید.") ?></p>' +
+          '<h3 class="shop-cart-empty-title"><?= site_e('سبد خرید شما خالی است') ?></h3>' +
+          '<p class="shop-cart-empty-desc"><?= site_e('می‌توانید محصولات نیکوکاری را به سبد خرید اضافه کنید.') ?></p>' +
         '</div>';
         return;
       }
@@ -1566,11 +1593,13 @@ render_dashboard_component('header', get_defined_vars());
       var html = '';
       this.items.forEach(function(item) {
         var itemTotal = (parseFloat(item.price) || 0) * (item.quantity || 1);
-        var imgSrc = item.image_url || '/dashboard/assets/img/product/product-1.jpg';
+        var safeTitle = escapeHtml(item.title);
+        var rawImg = item.image_url ? String(item.image_url).trim() : '';
+        var safeImg = rawImg && !/^\s*javascript:/i.test(rawImg) ? escapeHtml(rawImg) : '/dashboard/assets/img/product/product-1.jpg';
         html += '<div class="shop-cart-item" data-id="' + item.id + '">' +
-          '<img src="' + imgSrc + '" alt="' + item.title + '" class="shop-cart-item-img">' +
+          '<img src="' + safeImg + '" alt="' + safeTitle + '" class="shop-cart-item-img">' +
           '<div class="shop-cart-item-info">' +
-            '<h4 class="shop-cart-item-title">' + item.title + '</h4>' +
+            '<h4 class="shop-cart-item-title">' + safeTitle + '</h4>' +
             '<div class="shop-cart-item-price">' + formatToman(item.price) + ' تومان</div>' +
             '<div class="shop-cart-item-controls">' +
               '<div class="shop-cart-stepper">' +
@@ -1578,7 +1607,7 @@ render_dashboard_component('header', get_defined_vars());
                 '<span>' + toPersianDigits(item.quantity) + '</span>' +
                 '<button type="button" class="js-cart-plus" data-id="' + item.id + '">+</button>' +
               '</div>' +
-              '<button type="button" class="shop-cart-item-remove js-cart-remove" data-id="' + item.id + '" title="<?= site_e("حذف از سبد") ?>">' +
+              '<button type="button" class="shop-cart-item-remove js-cart-remove" data-id="' + item.id + '" title="<?= site_e('حذف از سبد') ?>">' +
                 '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                   '<polyline points="3 6 5 6 21 6"></polyline>' +
                   '<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>' +
@@ -1709,7 +1738,7 @@ render_dashboard_component('header', get_defined_vars());
     if (modalPlus && modalQtyInput) {
       modalPlus.addEventListener('click', function() {
         var cur = parseInt(modalQtyInput.value, 10) || 1;
-        var max = (activeModalProduct && activeModalProduct.stock) ? parseInt(activeModalProduct.stock, 10) : 99;
+        var max = (activeModalProduct && activeModalProduct.stock !== undefined && activeModalProduct.stock !== null && !isNaN(parseInt(activeModalProduct.stock, 10))) ? parseInt(activeModalProduct.stock, 10) : 99;
         if (cur < max) modalQtyInput.value = cur + 1;
       });
     }
@@ -1724,9 +1753,10 @@ render_dashboard_component('header', get_defined_vars());
     if (modalAddBtn) {
       modalAddBtn.addEventListener('click', function() {
         if (!activeModalProduct) return;
+        var prodToAdd = activeModalProduct;
         var qty = parseInt(modalQtyInput.value, 10) || 1;
-        Cart.add(activeModalProduct, qty);
         closeModal();
+        Cart.add(prodToAdd, qty);
       });
     }
 
@@ -1767,6 +1797,11 @@ render_dashboard_component('header', get_defined_vars());
 
       if (summaryEl) {
         summaryEl.textContent = 'نمایش ' + toPersianDigits(visibleCount) + ' محصول';
+      }
+
+      var emptyState = document.getElementById('shopFilterEmptyState');
+      if (emptyState) {
+        emptyState.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
       }
     }
 

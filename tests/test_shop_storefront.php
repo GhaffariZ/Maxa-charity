@@ -68,6 +68,7 @@ $requiredJs = [
     'openDrawer:',
     'closeDrawer:',
     'render:',
+    'escapeHtml',
 ];
 foreach ($requiredJs as $token) {
     if (!str_contains($shopContent, $token)) {
@@ -88,6 +89,7 @@ $requiredHtml = [
     'shopQuickViewModal',
     'shopSearchInput',
     'shopCatPills',
+    'shopFilterEmptyState',
 ];
 foreach ($requiredHtml as $token) {
     if (!str_contains($shopContent, $token)) {
