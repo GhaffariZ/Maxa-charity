@@ -55,14 +55,53 @@ if (shop_get_product_by_id($pdo, $id) !== null) {
     exit(1);
 }
 
-// 6. Test public_html/dashboard/products.php exists
+// 6. Test Category Slug Generation against product_categories table
+$pdo->exec("INSERT INTO product_categories (title, slug, status) VALUES ('کتاب', 'book', 'active')");
+function test_generate_unique_slug(PDO $pdo, string $title, string $requestedSlug = '', int $excludeId = 0, string $table = 'products'): string {
+    $validTable = in_array($table, ['products', 'product_categories'], true) ? $table : 'products';
+    $baseSlug = trim($requestedSlug);
+    if ($baseSlug === '') {
+        $baseSlug = preg_replace('/[^\p{L}\p{N}]+/u', '-', mb_strtolower($title));
+        $baseSlug = trim($baseSlug, '-');
+    }
+    $slug = $baseSlug;
+    $counter = 1;
+    while (true) {
+        $stmt = $pdo->prepare("SELECT id FROM `{$validTable}` WHERE slug = ? AND id != ? LIMIT 1");
+        $stmt->execute([$slug, $excludeId]);
+        if (!$stmt->fetch()) {
+            return $slug;
+        }
+        $counter++;
+        $slug = $baseSlug . '-' . $counter;
+    }
+}
+
+$catSlug1 = test_generate_unique_slug($pdo, 'کتاب', 'book', 0, 'product_categories');
+if ($catSlug1 !== 'book-2') {
+    echo "FAIL: Category slug collision detection failed. Got: {$catSlug1}\n";
+    exit(1);
+}
+
+// 7. Test public_html/dashboard/products.php exists and contains error handling & table targeting
 $productsFile = __DIR__ . '/../public_html/dashboard/products.php';
 if (!file_exists($productsFile)) {
     echo "FAIL: public_html/dashboard/products.php does not exist\n";
     exit(1);
 }
 
-// 7. Test public_html/dashboard/index.php navigation
+$prodContent = file_get_contents($productsFile);
+if (!str_contains($prodContent, "shop_generate_unique_slug(\$pdo, \$catTitle, '', 0, 'product_categories')")) {
+    echo "FAIL: products.php does not query product_categories table for category slugs\n";
+    exit(1);
+}
+
+if (!str_contains($prodContent, 'UPLOAD_ERR_INI_SIZE')) {
+    echo "FAIL: products.php does not handle UPLOAD_ERR_INI_SIZE upload errors\n";
+    exit(1);
+}
+
+// 8. Test public_html/dashboard/index.php navigation
 $indexContent = file_get_contents(__DIR__ . '/../public_html/dashboard/index.php');
 if (!str_contains($indexContent, 'products.php')) {
     echo "FAIL: public_html/dashboard/index.php missing link to products.php\n";

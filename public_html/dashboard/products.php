@@ -26,7 +26,8 @@ if (!function_exists('fa_digits')) {
 }
 
 // Unique slug generator
-function shop_generate_unique_slug(PDO $pdo, string $title, string $requestedSlug = '', int $excludeId = 0): string {
+function shop_generate_unique_slug(PDO $pdo, string $title, string $requestedSlug = '', int $excludeId = 0, string $table = 'products'): string {
+    $validTable = in_array($table, ['products', 'product_categories'], true) ? $table : 'products';
     $baseSlug = trim($requestedSlug);
     if ($baseSlug === '') {
         $baseSlug = preg_replace('/[^\p{L}\p{N}]+/u', '-', mb_strtolower($title));
@@ -36,13 +37,13 @@ function shop_generate_unique_slug(PDO $pdo, string $title, string $requestedSlu
         $baseSlug = trim($baseSlug, '-');
     }
     if ($baseSlug === '') {
-        $baseSlug = 'product-' . time();
+        $baseSlug = ($validTable === 'product_categories' ? 'cat-' : 'product-') . time();
     }
 
     $slug = $baseSlug;
     $counter = 1;
     while (true) {
-        $stmt = $pdo->prepare("SELECT id FROM products WHERE slug = ? AND id != ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id FROM `{$validTable}` WHERE slug = ? AND id != ? LIMIT 1");
         $stmt->execute([$slug, $excludeId]);
         if (!$stmt->fetch()) {
             return $slug;
@@ -53,8 +54,8 @@ function shop_generate_unique_slug(PDO $pdo, string $title, string $requestedSlu
 }
 
 // Auto-seed default categories if empty
-$categories = shop_get_categories($pdo);
-if (empty($categories)) {
+$catCount = (int)$pdo->query("SELECT COUNT(*) FROM product_categories")->fetchColumn();
+if ($catCount === 0) {
     $defaultCategories = [
         ['title' => 'پوشاک و منسوجات', 'slug' => 'apparel', 'sort_order' => 1],
         ['title' => 'صنایع دستی و یادبود', 'slug' => 'handicrafts', 'sort_order' => 2],
@@ -68,8 +69,8 @@ if (empty($categories)) {
             $catStmt->execute([$dc['title'], $dc['slug'], $dc['sort_order']]);
         } catch (Throwable $e) {}
     }
-    $categories = shop_get_categories($pdo);
 }
+$categories = shop_get_categories($pdo);
 
 // Ensure upload directory exists
 $uploadDir = __DIR__ . '/../uploads/products';
@@ -109,11 +110,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 // Handle Image Upload
-                if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                    try {
-                        $imageUrl = maxa_upload_and_optimize($_FILES['image'], 'products', 'prod_', 82, 1920);
-                    } catch (Throwable $e) {
-                        $msg = 'خطا در بهینه‌سازی و آپلود تصویر: ' . $e->getMessage();
+                if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                        try {
+                            $imageUrl = maxa_upload_and_optimize($_FILES['image'], 'products', 'prod_', 82, 1920);
+                        } catch (Throwable $e) {
+                            $msg = 'خطا در بهینه‌سازی و آپلود تصویر: ' . $e->getMessage();
+                            $msgType = 'danger';
+                        }
+                    } else {
+                        $errCode = (int)$_FILES['image']['error'];
+                        switch ($errCode) {
+                            case UPLOAD_ERR_INI_SIZE:
+                            case UPLOAD_ERR_FORM_SIZE:
+                                $msg = 'حجم فایل تصویر بیش از حد مجاز سرور است.';
+                                break;
+                            case UPLOAD_ERR_PARTIAL:
+                                $msg = 'آپلود تصویر به صورت ناقص انجام شد، لطفاً مجدداً تلاش کنید.';
+                                break;
+                            default:
+                                $msg = 'خطا در ارسال فایل تصویر (کد: ' . $errCode . ').';
+                                break;
+                        }
                         $msgType = 'danger';
                     }
                 } elseif (!empty($_POST['image_url'])) {
@@ -168,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $msg = 'لطفاً نام دسته‌بندی را وارد کنید.';
                 $msgType = 'danger';
             } else {
-                $catSlug = shop_generate_unique_slug($pdo, $catTitle);
+                $catSlug = shop_generate_unique_slug($pdo, $catTitle, '', 0, 'product_categories');
                 $st = $pdo->prepare("INSERT INTO product_categories (title, slug, status) VALUES (?, ?, 'active')");
                 $st->execute([$catTitle, $catSlug]);
                 $categories = shop_get_categories($pdo);
@@ -841,6 +859,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   // Edit Product Buttons
   document.querySelectorAll('.btn-edit-product').forEach(function(btn) {
     btn.addEventListener('click', function() {
+      productForm.reset();
       modalTitle.textContent = 'ویرایش محصول: ' + btn.dataset.title;
       prodId.value = btn.dataset.id;
       prodTitle.value = btn.dataset.title || '';
