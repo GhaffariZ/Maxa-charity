@@ -7138,5 +7138,201 @@
     "هیچ محصولی با این مشخصات یافت نشد": {
         "en": "No products found matching your search",
         "ar": "لم يتم العثور على منتجات مطابقة للبحث"
+    },
+    "تسویه‌حساب و ثبت سفارش | فروشگاه مکسا": {
+        "en": "Checkout and Order Placement | MACSA Charity Shop",
+        "ar": "إتمام الشراء وتأكيد الطلب | متجر مكسا الخيري"
+    },
+    "تسویه‌حساب و ثبت سفارش": {
+        "en": "Checkout and Order Placement",
+        "ar": "إتمام الشراء وتأكيد الطلب"
+    },
+    "ورود به حساب کاربری برای ثبت نهایی سفارش": {
+        "en": "Log in to your account to complete your order",
+        "ar": "تسجيل الدخول إلى الحساب لتأكيد الطلب النهائي"
+    },
+    "برای تکمیل فرایند سفارش و صدور فاکتور و کد پیگیری رسمی، لطفاً شماره همراه خود را وارد نمایید. اقلام سبد خرید شما محفوظ خواهند ماند.": {
+        "en": "To complete your order and receive an official invoice and tracking code, please enter your mobile number. Your cart items will be preserved.",
+        "ar": "لإتمام عملية الطلب وإصدار الفاتورة ورمز التتبع الرسمي، يرجى إدخال رقم هاتفك المحمول. سيتم الاحتفاظ بعناصر سلة التسوق الخاصة بك."
+    },
+    "مثال: ۰۹۱۲۳۴۵۶۷۸۹": {
+        "en": "Example: 09123456789",
+        "ar": "مثال: ۰۹۱۲۳۴۵۶۷۸۹"
+    },
+    "ارسال کد تأیید": {
+        "en": "Send Verification Code",
+        "ar": "إرسال رمز التحقق"
+    },
+    "کد تأیید پیامک‌شده": {
+        "en": "SMS Verification Code",
+        "ar": "رمز التحقق المرسل عبر الرسائل القصيرة"
+    },
+    "کد ۵ رقمی": {
+        "en": "5-digit code",
+        "ar": "رمز مكون من 5 أرقام"
+    },
+    "ورود و ادامه ثبت سفارش": {
+        "en": "Login and Continue Order",
+        "ar": "تسجيل الدخول ومتابعة الطلب"
+    },
+    "تغییر شماره موبایل": {
+        "en": "Change mobile number",
+        "ar": "تغيير رقم الهاتف المحمول"
+    },
+    "ارسال مجدد کد": {
+        "en": "Resend Code",
+        "ar": "إعادة إرسال الرمز"
+    },
+    "مشخصات تحویل‌گیرنده و آدرس ارسال": {
+        "en": "Recipient Details and Shipping Address",
+        "ar": "بيانات المستلم وعنوان الشحن"
+    },
+    "نام و نام خانوادگی تحویل‌گیرنده": {
+        "en": "Recipient Full Name",
+        "ar": "الاسم الكامل للمستلم"
+    },
+    "شماره تماس تحویل‌گیرنده": {
+        "en": "Recipient Phone Number",
+        "ar": "رقم هاتف المستلم"
+    },
+    "شهر": {
+        "en": "City",
+        "ar": "المدينة"
+    },
+    "کد پستی ۱۰ رقمی": {
+        "en": "10-digit Postal Code",
+        "ar": "الرمز البريدي المكون من 10 أرقام"
+    },
+    "آدرس دقیق پستی": {
+        "en": "Detailed Postal Address",
+        "ar": "العنوان البريدي المفصل"
+    },
+    "یادداشت یا توضیحات سفارش": {
+        "en": "Order Notes or Instructions",
+        "ar": "ملاحظات أو تعليمات الطلب"
+    },
+    "اختیاری: زمان مناسب تحویل، پلاک، زنگ یا هماهنگی بیشتر": {
+        "en": "Optional: preferred delivery time, unit, buzzer or special instructions",
+        "ar": "اختياري: وقت التسليم المفضل، رقم الشقة، الجرس أو تعليمات خاصة"
+    },
+    "روش ارسال: پست پیشتاز / تیپاکس (پس‌کرایه - پرداخت درب منزل)": {
+        "en": "Shipping Method: Express Post / Tipax (Paid upon delivery)",
+        "ar": "طريقة الشحن: البريد السريع / تيباكس (الدفع عند الاستلام)"
+    },
+    "مبلغ قابل پرداخت:": {
+        "en": "Payable Amount:",
+        "ar": "المبلغ المستحق للدفع:"
+    },
+    "تکمیل سفارش و پرداخت اینترنتی": {
+        "en": "Complete Order and Online Payment",
+        "ar": "إتمام الطلب والدفع الإلكتروني"
+    },
+    "بازگشت به فروشگاه": {
+        "en": "Return to Shop",
+        "ar": "العودة إلى المتجر"
+    },
+    "رسید و نتیجه پرداخت | فروشگاه مکسا": {
+        "en": "Payment Receipt & Result | MACSA Charity Shop",
+        "ar": "إيصال ونتيجة الدفع | متجر مكسا الخيري"
+    },
+    "سفارش شما با موفقیت ثبت شد": {
+        "en": "Your order has been registered successfully",
+        "ar": "تم تسجيل طلبك بنجاح"
+    },
+    "سفارش شما با موفقیت ثبت شد و به زودی جهت ارسال آماده خواهد شد. هزینه ارسال به صورت پس‌کرایه زمان تحویل مرسوله دریافت می‌شود.": {
+        "en": "Your order has been registered successfully and will be prepared for shipment soon. The shipping cost will be collected upon delivery.",
+        "ar": "تم تسجيل طلبك بنجاح وسيتم تجهيزه للشحن قريبًا. سيتم تحصيل تكلفة الشحن عند الاستلام."
+    },
+    "کد پیگیری سفارش شما:": {
+        "en": "Your Order Tracking Code:",
+        "ar": "رمز تتبع طلبك:"
+    },
+    "مشاهده و پیگیری سفارش در پنل کاربری": {
+        "en": "View and Track Order in User Panel",
+        "ar": "عرض وتتبع الطلب في لوحة المستخدم"
+    },
+    "پرداخت ناموفق": {
+        "en": "Payment Failed",
+        "ar": "الدفع غير ناجح"
+    },
+    "پرداخت انجام نشد": {
+        "en": "Payment Not Completed",
+        "ar": "لم تكتمل عملية الدفع"
+    },
+    "تراکنش لغو شد یا از سوی درگاه بانکی مورد تأیید قرار نگرفت. مبلغی از حساب شما کسر نشده است.": {
+        "en": "The transaction was canceled or was not approved by the payment gateway. No amount has been deducted from your account.",
+        "ar": "تم إلغاء المعاملة أو لم تتم الموافقة عليها من قبل بوابة الدفع. لم يتم خصم أي مبلغ من حسابك."
+    },
+    "تلاش مجدد برای پرداخت": {
+        "en": "Retry Payment",
+        "ar": "إعادة محاولة الدفع"
+    },
+    "سفارش مورد نظر یافت نشد.": {
+        "en": "Requested order was not found.",
+        "ar": "لم يتم العثور على الطلب المطلوب."
+    },
+    "مشخصات ارسال مرسوله": {
+        "en": "Shipping and Delivery Details",
+        "ar": "تفاصيل الشحن والتسليم"
+    },
+    "اقلام سفارش": {
+        "en": "Order Items",
+        "ar": "عناصر الطلب"
+    },
+    "قیمت واحد": {
+        "en": "Unit Price",
+        "ar": "سعر الوحدة"
+    },
+    "تعداد": {
+        "en": "Quantity",
+        "ar": "الكمية"
+    },
+    "مبلغ کل": {
+        "en": "Total Amount",
+        "ar": "المبلغ الإجمالي"
+    },
+    "در حال انتقال به درگاه پرداخت...": {
+        "en": "Redirecting to payment gateway...",
+        "ar": "جارٍ التحويل إلى بوابة الدفع..."
+    },
+    "لطفاً فیلدهای الزامی را تکمیل کنید.": {
+        "en": "Please complete required fields.",
+        "ar": "يرجى إكمال الحقول المطلوبة."
+    },
+    "مجموع اقلام:": {
+        "en": "Items Subtotal:",
+        "ar": "المجموع الفرعي للعناصر:"
+    },
+    "پرداخت امن بانکی": {
+        "en": "Secure Banking Payment",
+        "ar": "دفع بنكي آمن"
+    },
+    "تضمین اصالت و کیفیت کالا": {
+        "en": "Authenticity & Quality Guaranteed",
+        "ar": "ضمان الأصالة والجودة"
+    },
+    "۱۰۰٪ سود صرف بیماران مبتلا به سرطان": {
+        "en": "100% Proceeds Support Cancer Patients",
+        "ar": "100% من الأرباح لصالح مرضى السرطان"
+    },
+    "لطفاً ابتدا وارد حساب کاربری خود شوید.": {
+        "en": "Please log in to your account first.",
+        "ar": "يرجى تسجيل الدخول إلى حسابك أولاً."
+    },
+    "کد پستی نامعتبر است (۱۰ رقم وارد کنید).": {
+        "en": "Invalid postal code (enter 10 digits).",
+        "ar": "الرمز البريدي غير صالح (أدخل 10 أرقام)."
+    },
+    "در حال حاضر سبد خرید شما خالی است.": {
+        "en": "Your shopping cart is currently empty.",
+        "ar": "سلة التسوق الخاصة بك فارغة حاليًا."
+    },
+    "پرداخت موفق و ثبت سفارش": {
+        "en": "Payment Successful & Order Placed",
+        "ar": "تم الدفع بنجاح وتسجيل الطلب"
+    },
+    "کد پیگیری رسمی مکسا": {
+        "en": "Official MACSA Tracking Code",
+        "ar": "رمز التتبع الرسمي لمكسا"
     }
 }
