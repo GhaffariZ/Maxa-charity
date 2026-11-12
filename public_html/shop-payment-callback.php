@@ -62,22 +62,24 @@ if ($trackingCode !== '' && isset($pdo) && ($pdo instanceof PDO)) {
                 $pdo->beginTransaction();
                 try {
                     $nowStr = date('Y-m-d H:i:s');
-                    $updOrder = $pdo->prepare("UPDATE orders SET payment_status = 'paid', paid_at = ? WHERE id = ?");
+                    $updOrder = $pdo->prepare("UPDATE orders SET payment_status = 'paid', paid_at = ? WHERE id = ? AND payment_status != 'paid'");
                     $updOrder->execute([$nowStr, $orderId]);
 
-                    $itemsStmt = $pdo->prepare("SELECT product_id, quantity FROM order_items WHERE order_id = ?");
-                    $itemsStmt->execute([$orderId]);
-                    $rawItems = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($updOrder->rowCount() === 1) {
+                        $itemsStmt = $pdo->prepare("SELECT product_id, quantity FROM order_items WHERE order_id = ?");
+                        $itemsStmt->execute([$orderId]);
+                        $rawItems = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    $stockStmt = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
-                    $outStmt = $pdo->prepare("UPDATE products SET status = 'out_of_stock' WHERE id = ? AND stock <= 0");
+                        $stockStmt = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
+                        $outStmt = $pdo->prepare("UPDATE products SET status = 'out_of_stock' WHERE id = ? AND stock <= 0");
 
-                    foreach ($rawItems as $it) {
-                        $pId = (int)$it['product_id'];
-                        $qty = (int)$it['quantity'];
-                        if ($pId > 0 && $qty > 0) {
-                            $stockStmt->execute([$qty, $pId, $qty]);
-                            $outStmt->execute([$pId]);
+                        foreach ($rawItems as $it) {
+                            $pId = (int)$it['product_id'];
+                            $qty = (int)$it['quantity'];
+                            if ($pId > 0 && $qty > 0) {
+                                $stockStmt->execute([$qty, $pId, $qty]);
+                                $outStmt->execute([$pId]);
+                            }
                         }
                     }
 
@@ -86,6 +88,7 @@ if ($trackingCode !== '' && isset($pdo) && ($pdo instanceof PDO)) {
                     $order['paid_at'] = $nowStr;
                 } catch (Throwable $e) {
                     $pdo->rollBack();
+                    error_log('[shop-payment-callback] Payment processing error: ' . $e->getMessage());
                 }
             }
 
@@ -397,7 +400,7 @@ render_dashboard_component('header', get_defined_vars());
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </div>
         <h1 class="receipt-title"><?= site_e('سفارش مورد نظر یافت نشد.') ?></h1>
-        <p class="receipt-subtitle">کد پیگیری معتبری ارسال نشده است یا این سفارش در سیستم موجود نمی‌باشد.</p>
+        <p class="receipt-subtitle"><?= site_e('کد پیگیری معتبری ارسال نشده است یا این سفارش در سیستم موجود نمی‌باشد.') ?></p>
         <div class="receipt-actions">
           <a href="/shop.php" class="btn-action btn-action-primary">
             <?= site_e('بازگشت به فروشگاه') ?>

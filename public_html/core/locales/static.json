@@ -7334,5 +7334,13 @@
     "کد پیگیری رسمی مکسا": {
         "en": "Official MACSA Tracking Code",
         "ar": "رمز التتبع الرسمي لمكسا"
+    },
+    "کد پیگیری معتبری ارسال نشده است یا این سفارش در سیستم موجود نمی‌باشد.": {
+        "en": "No valid tracking code was provided, or this order does not exist in the system.",
+        "ar": "لم يتم تقديم رمز تتبع صالح، أو أن هذا الطلب غير موجود في النظام."
+    },
+    "اعتبارسنجی امنیتی (CSRF) ناموفق بود. لطفاً صفحه را تازه‌سازی کرده و مجدداً تلاش کنید.": {
+        "en": "Security validation (CSRF) failed. Please refresh the page and try again.",
+        "ar": "فشل التحقق الأمني (CSRF). يرجى تحديث الصفحة والمحاولة مرة أخرى."
     }
 }

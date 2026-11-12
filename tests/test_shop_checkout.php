@@ -12,29 +12,43 @@ shop_ensure_schema($pdo);
 $pdo->exec("INSERT INTO products (id, title, slug, price, stock, status) VALUES (1, 'کیف سوزن‌دوزی', 'bag-1', 250000, 5, 'active')");
 $pdo->exec("INSERT INTO products (id, title, slug, price, stock, status) VALUES (2, 'دستبند دستباف', 'bracelet-1', 100000, 1, 'active')");
 
-// Test order placement with server-side pricing
-$items = [
-    ['product_id' => 1, 'quantity' => 2],
+// Test order placement with server-side pricing and item aggregation
+$rawItems = [
+    ['product_id' => 1, 'quantity' => 1],
+    ['product_id' => 1, 'quantity' => 1], // Duplicate product_id -> aggregated to 2
     ['product_id' => 2, 'quantity' => 1]
 ];
+
+// Aggregate items by product ID
+$aggregated = [];
+foreach ($rawItems as $it) {
+    $pId = (int)$it['product_id'];
+    $qty = (int)$it['quantity'];
+    $aggregated[$pId] = ($aggregated[$pId] ?? 0) + $qty;
+}
+
+if ($aggregated[1] !== 2) {
+    echo "FAIL: Expected aggregated quantity for product 1 to be 2\n";
+    exit(1);
+}
 
 $pdo->beginTransaction();
 $totalPrice = 0;
 $orderItemsToInsert = [];
 
-foreach ($items as $item) {
-    $prod = shop_get_product_by_id($pdo, (int)$item['product_id']);
-    if (!$prod || (int)$prod['stock'] < (int)$item['quantity']) {
+foreach ($aggregated as $pId => $qty) {
+    $prod = shop_get_product_by_id($pdo, $pId);
+    if (!$prod || (int)$prod['stock'] < $qty) {
         $pdo->rollBack();
         echo "FAIL: Stock validation error\n";
         exit(1);
     }
-    $lineTotal = (float)$prod['price'] * (int)$item['quantity'];
+    $lineTotal = (float)$prod['price'] * $qty;
     $totalPrice += $lineTotal;
     $orderItemsToInsert[] = [
         'product_id' => $prod['id'],
         'title' => $prod['title'],
-        'qty' => $item['quantity'],
+        'qty' => $qty,
         'unit_price' => $prod['price'],
         'line_total' => $lineTotal
     ];
@@ -51,16 +65,29 @@ foreach ($orderItemsToInsert as $ins) {
 }
 $pdo->commit();
 
-// Simulate Payment Callback & Stock decrement
+// Simulate Payment Callback & Atomic Stock Decrement with Concurrency Guard
 $pdo->beginTransaction();
-$stockStmt = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
-$outOfStockStmt = $pdo->prepare("UPDATE products SET status = 'out_of_stock' WHERE id = ? AND stock <= 0");
-foreach ($orderItemsToInsert as $ins) {
-    $stockStmt->execute([$ins['qty'], $ins['product_id'], $ins['qty']]);
-    $outOfStockStmt->execute([$ins['product_id']]);
-}
-$updOrder = $pdo->prepare("UPDATE orders SET payment_status = 'paid' WHERE id = ?");
+$updOrder = $pdo->prepare("UPDATE orders SET payment_status = 'paid' WHERE id = ? AND payment_status != 'paid'");
 $updOrder->execute([$orderId]);
+
+if ($updOrder->rowCount() === 1) {
+    $stockStmt = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
+    $outOfStockStmt = $pdo->prepare("UPDATE products SET status = 'out_of_stock' WHERE id = ? AND stock <= 0");
+    foreach ($orderItemsToInsert as $ins) {
+        $stockStmt->execute([$ins['qty'], $ins['product_id'], $ins['qty']]);
+        $outOfStockStmt->execute([$ins['product_id']]);
+    }
+}
+$pdo->commit();
+
+// Simulate a duplicate concurrent callback hitting the same paid order:
+$pdo->beginTransaction();
+$updOrderDuplicate = $pdo->prepare("UPDATE orders SET payment_status = 'paid' WHERE id = ? AND payment_status != 'paid'");
+$updOrderDuplicate->execute([$orderId]);
+if ($updOrderDuplicate->rowCount() === 1) {
+    echo "FAIL: Concurrent/duplicate callback incorrectly matched rowCount === 1\n";
+    exit(1);
+}
 $pdo->commit();
 
 // Check updated product stock for product 1 (5 - 2 = 3)
@@ -81,22 +108,43 @@ if ($updatedProd2['status'] !== 'out_of_stock') {
     exit(1);
 }
 
-// Test stock validation rejection when ordering more than available
+// Test stock validation rejection when duplicate aggregated items exceed available stock
 try {
     $pdo->beginTransaction();
-    $excessItems = [['product_id' => 1, 'quantity' => 10]];
-    foreach ($excessItems as $item) {
-        $prod = shop_get_product_by_id($pdo, (int)$item['product_id']);
-        if (!$prod || (int)$prod['stock'] < (int)$item['quantity']) {
-            throw new RuntimeException("Insufficient stock");
+    $excessRawItems = [
+        ['product_id' => 1, 'quantity' => 2],
+        ['product_id' => 1, 'quantity' => 2] // Sum = 4, but stock is 3
+    ];
+    $excessAggregated = [];
+    foreach ($excessRawItems as $it) {
+        $pId = (int)$it['product_id'];
+        $excessAggregated[$pId] = ($excessAggregated[$pId] ?? 0) + (int)$it['quantity'];
+    }
+    foreach ($excessAggregated as $pId => $qty) {
+        $prod = shop_get_product_by_id($pdo, $pId);
+        if (!$prod || (int)$prod['stock'] < $qty) {
+            throw new RuntimeException("Insufficient stock for product " . $pId);
         }
     }
     $pdo->commit();
-    echo "FAIL: Expected insufficient stock exception\n";
+    echo "FAIL: Expected insufficient stock exception for aggregated excess items\n";
     exit(1);
 } catch (RuntimeException $e) {
     $pdo->rollBack();
     // expected
+}
+
+// Test CSRF token validation logic
+$sessionCsrf = bin2hex(random_bytes(16));
+$validCsrf = $sessionCsrf;
+$invalidCsrf = bin2hex(random_bytes(16));
+if (!hash_equals($sessionCsrf, $validCsrf)) {
+    echo "FAIL: Valid CSRF hash_equals failed\n";
+    exit(1);
+}
+if (hash_equals($sessionCsrf, $invalidCsrf)) {
+    echo "FAIL: Invalid CSRF hash_equals should not match\n";
+    exit(1);
 }
 
 // Test file existence

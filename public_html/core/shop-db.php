@@ -59,6 +59,7 @@ function shop_ensure_schema(PDO $pdo): void {
             "customer_note TEXT NULL",
             "paid_at DATETIME NULL",
             "shipped_at DATETIME NULL",
+            "created_at DATETIME NULL",
         ];
         foreach ($cols as $colDef) {
             try {

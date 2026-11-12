@@ -47,9 +47,6 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
 if (isset($pdo) && ($pdo instanceof PDO)) {
     try {
         shop_ensure_schema($pdo);
-        try {
-            $pdo->exec("ALTER TABLE orders ADD COLUMN created_at DATETIME NULL");
-        } catch (Throwable $e) {}
     } catch (Throwable $e) {}
 }
 
@@ -112,11 +109,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isJson = is_array($json);
     $data = $isJson ? $json : $_POST;
 
+    // CSRF verification for session/cookie authenticated sessions
+    $providedCsrf = trim((string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? $data['csrf_token'] ?? ''));
+    $sessionCsrf = (string)($_SESSION['maxa_shop_csrf'] ?? '');
+
+    $isSessionOrCookieAuth = !empty($_SESSION['user']['id']) 
+        || !empty($_SESSION['benefactor_user']['id']) 
+        || !empty($_SESSION['user_id']) 
+        || !empty($_COOKIE['maksa_rt']) 
+        || !empty($_COOKIE['maxa_refresh_token']) 
+        || !empty($_COOKIE['maksa_access_token']);
+
+    if ($sessionCsrf !== '' && ($isSessionOrCookieAuth || $providedCsrf !== '')) {
+        if (!hash_equals($sessionCsrf, $providedCsrf)) {
+            $msg = site_text('اعتبارسنجی امنیتی (CSRF) ناموفق بود. لطفاً صفحه را تازه‌سازی کرده و مجدداً تلاش کنید.');
+            if ($isJson) {
+                header('Content-Type: application/json; charset=utf-8');
+                http_response_code(403);
+                echo json_encode(['success' => false, 'message' => $msg], JSON_UNESCAPED_UNICODE);
+                exit;
+            } else {
+                $_SESSION['checkout_error'] = $msg;
+                header('Location: /shop-checkout.php');
+                exit;
+            }
+        }
+    }
+
     $authToken = !empty($data['auth_token']) ? trim((string)$data['auth_token']) : null;
     $userId = shop_resolve_user_id($pdo ?? null, $authToken);
 
     if (!$userId) {
-        $msg = 'لطفاً ابتدا وارد حساب کاربری خود شوید.';
+        $msg = site_text('لطفاً ابتدا وارد حساب کاربری خود شوید.');
         if ($isJson) {
             header('Content-Type: application/json; charset=utf-8');
             http_response_code(401);
@@ -134,7 +158,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $items = json_decode($items, true) ?: [];
     }
     if (empty($items) || !is_array($items)) {
-        $msg = 'سبد خرید شما خالی است';
+        $msg = site_text('سبد خرید شما خالی است');
+        if ($isJson) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => $msg], JSON_UNESCAPED_UNICODE);
+            exit;
+        } else {
+            $_SESSION['checkout_error'] = $msg;
+            header('Location: /shop-checkout.php');
+            exit;
+        }
+    }
+
+    // ── Aggregate Items by Product ID ──
+    $aggregatedItems = [];
+    foreach ($items as $item) {
+        $pId = (int)($item['product_id'] ?? $item['id'] ?? 0);
+        $qty = (int)($item['quantity'] ?? $item['qty'] ?? 1);
+        if ($pId <= 0 || $qty <= 0) {
+            continue;
+        }
+        if (!isset($aggregatedItems[$pId])) {
+            $aggregatedItems[$pId] = 0;
+        }
+        $aggregatedItems[$pId] += $qty;
+    }
+
+    if (empty($aggregatedItems)) {
+        $msg = site_text('سبد خرید شما خالی است');
         if ($isJson) {
             header('Content-Type: application/json; charset=utf-8');
             http_response_code(400);
@@ -156,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customerNote   = trim((string)($data['customer_note'] ?? ''));
 
     if ($recipientName === '' || $recipientPhone === '' || $province === '' || $city === '' || $address === '') {
-        $msg = 'لطفاً فیلدهای الزامی را تکمیل کنید.';
+        $msg = site_text('لطفاً فیلدهای الزامی را تکمیل کنید.');
         if ($isJson) {
             header('Content-Type: application/json; charset=utf-8');
             http_response_code(422);
@@ -186,13 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totalPrice = 0;
     $orderItemsToInsert = [];
 
-    foreach ($items as $item) {
-        $pId = (int)($item['product_id'] ?? $item['id'] ?? 0);
-        $qty = (int)($item['quantity'] ?? $item['qty'] ?? 1);
-        if ($pId <= 0 || $qty <= 0) {
-            continue;
-        }
-
+    foreach ($aggregatedItems as $pId => $qty) {
         $prod = shop_get_product_by_id($pdo, $pId);
         if (!$prod || $prod['status'] !== 'active' || (int)$prod['stock'] < $qty) {
             $pdo->rollBack();
@@ -221,21 +267,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'unit_price' => $unitPrice,
             'line_total' => $lineTotal,
         ];
-    }
-
-    if (empty($orderItemsToInsert)) {
-        $pdo->rollBack();
-        $msg = 'سبد خرید شما خالی است';
-        if ($isJson) {
-            header('Content-Type: application/json; charset=utf-8');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => $msg], JSON_UNESCAPED_UNICODE);
-            exit;
-        } else {
-            $_SESSION['checkout_error'] = $msg;
-            header('Location: /shop-checkout.php');
-            exit;
-        }
     }
 
     $trackingCode = 'ORD-' . time() . '-' . rand(1000, 9999);
@@ -317,6 +348,7 @@ $iranProvinces = [
     'کهگیلویه و بویراحمد', 'ایلام', 'خراسان جنوبی', 'خراسان شمالی'
 ];
 ?>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
 
 <div class="shop-checkout-page">
   <style>
@@ -879,6 +911,8 @@ $iranProvinces = [
 </div>
 
 <script>
+window.MAXA_CSRF_TOKEN = <?= json_encode($csrfToken, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+
 (function() {
   'use strict';
 
@@ -897,6 +931,27 @@ $iranProvinces = [
   function formatToman(price) {
     var formatted = (parseInt(price, 10) || 0).toLocaleString('en-US');
     return toFaDigits(formatted) + ' تومان';
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sanitizeImageUrl(url) {
+    if (!url || typeof url !== 'string') {
+      return '/dashboard/assets/img/product/product-1.jpg';
+    }
+    var trimmed = url.trim();
+    if (/^(https?:\/\/|\/)/i.test(trimmed) && !/^\s*javascript:/i.test(trimmed)) {
+      return escapeHtml(trimmed);
+    }
+    return '/dashboard/assets/img/product/product-1.jpg';
   }
 
   function getCart() {
@@ -984,12 +1039,15 @@ $iranProvinces = [
         var lineTotal = price * qty;
         subtotal += lineTotal;
 
+        var safeTitle = escapeHtml(item.title || '');
+        var safeImg = sanitizeImageUrl(item.image_url);
+
         var row = document.createElement('div');
         row.className = 'summary-item';
         row.innerHTML = 
-          '<img class="summary-item-img" src="' + (item.image_url || '/dashboard/assets/img/product/product-1.jpg') + '" alt="' + (item.title || '') + '">' +
+          '<img class="summary-item-img" src="' + safeImg + '" alt="' + safeTitle + '">' +
           '<div class="summary-item-info">' +
-            '<div class="summary-item-title">' + (item.title || '') + '</div>' +
+            '<div class="summary-item-title">' + safeTitle + '</div>' +
             '<div class="summary-item-meta">' + toFaDigits(qty) + ' × ' + formatToman(price) + '</div>' +
           '</div>' +
           '<div class="summary-item-price">' + formatToman(lineTotal) + '</div>';
@@ -1207,6 +1265,8 @@ $iranProvinces = [
           };
         });
 
+        var csrfVal = window.MAXA_CSRF_TOKEN || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
         var payload = {
           recipient_name: recipientName,
           recipient_phone: recipientPhone,
@@ -1216,14 +1276,16 @@ $iranProvinces = [
           address: address,
           customer_note: customerNote,
           items: orderItems,
-          auth_token: curToken
+          auth_token: curToken,
+          csrf_token: csrfVal
         };
 
         btnSubmitOrder.disabled = true;
         if (btnSubmitText) btnSubmitText.textContent = 'در حال ثبت سفارش و انتقال به درگاه...';
 
         var headers = {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfVal
         };
         if (curToken) {
           headers['Authorization'] = 'Bearer ' + curToken;
