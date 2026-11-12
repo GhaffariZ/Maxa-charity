@@ -275,20 +275,46 @@ export const api = {
   orders: () => apiRequest<{ orders: OrderDto[] }>("/user/orders"),
 };
 
+export interface OrderItemDto {
+  id: number;
+  order_id?: number;
+  product_id?: number | null;
+  product_title: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
 export interface OrderDto {
   id: number;
   user_id?: number | null;
   tracking_code: string | null;
-  image: string;
-  order_date: string;
-  quantity: number;
-  unit_price: number;
+  order_type?: "stand" | "product" | string;
+  payment_status?: "pending" | "paid" | "failed" | string;
+  fulfillment_status?: "pending" | "processing" | "shipped" | "delivered" | "cancelled" | string;
+  carrier?: string | null;
+  postal_tracking_code?: string | null;
+  image?: string | null;
+  order_date?: string;
+  quantity?: number;
+  unit_price?: number;
   total_price: number;
-  from_user: string;
-  to_user: string;
-  message: string;
-  address: string;
+  from_user?: string;
+  to_user?: string;
+  message?: string;
+  recipient_name?: string | null;
+  recipient_phone?: string | null;
+  province?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
+  address?: string;
+  customer_note?: string | null;
   created_at: string;
+  paid_at?: string | null;
+  shipped_at?: string | null;
+  items?: OrderItemDto[];
+  branch_name?: string | null;
+  stand_title?: string | null;
 }
 
 export interface CampaignDto {
