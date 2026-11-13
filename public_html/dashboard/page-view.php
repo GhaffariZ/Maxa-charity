@@ -313,8 +313,12 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
 {
     global $pdo;
     foreach ($components as $component) {
-        if (!render_dashboard_component((string)$component, get_defined_vars())) {
-            echo '<!-- Component not found -->';
+        try {
+            if (!render_dashboard_component((string)$component, get_defined_vars())) {
+                echo '<!-- Component not found -->';
+            }
+        } catch (Throwable $e) {
+            echo '<!-- Component render error: ' . htmlspecialchars($e->getMessage()) . ' -->';
         }
     }
 }

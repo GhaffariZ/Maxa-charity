@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/core/site-locale.php';
-require_once dirname(__DIR__, 2) . '/course-db.php';
+require_once dirname(__DIR__, 3) . '/core/site-locale.php';
+require_once dirname(__DIR__, 3) . '/course-db.php';
 
 // Safe database connection
 $coursesList = [];
 try {
     if (!isset($pdo) || !($pdo instanceof PDO)) {
-        $cfgPath = dirname(__DIR__, 2) . '/core/db-config.php';
+        $cfgPath = dirname(__DIR__, 3) . '/core/db-config.php';
         if (file_exists($cfgPath)) {
             $DB = require $cfgPath;
             $host = $DB['host'] ?? 'localhost';
