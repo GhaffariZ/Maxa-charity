@@ -94,7 +94,8 @@ function site_language_picker(): string
     $labels = ['fa'=>'فارسی','en'=>'English','ar'=>'العربية'];
     $html = '<details class="site-language"><summary aria-label="'.site_e('انتخاب زبان').': '.$labels[site_locale()].'">'
         . '<span class="site-language-icon" aria-hidden="true">'.iconoir('globe').'</span>'
-        . '<span aria-hidden="true">'.strtoupper(site_locale()).'</span><span class="site-language-caret" aria-hidden="true">⌄</span></summary>'
+        . '<span class="site-language-label" aria-hidden="true">'.strtoupper(site_locale()).'</span>'
+        . '<span class="site-language-caret" aria-hidden="true"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>'
         . '<nav class="site-language-options" aria-label="'.site_e('انتخاب زبان').'">';
     foreach ($labels as $code=>$label) {
         $html .= '<a href="'.htmlspecialchars(site_url($current, $code), ENT_QUOTES, 'UTF-8').'" lang="'.$code.'" dir="'.($code==='en'?'ltr':'rtl').'" hreflang="'.$code.'"'
