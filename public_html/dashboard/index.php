@@ -1077,13 +1077,20 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   if (CAN.donation_impacts) people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
-  // --- استندها و سفارشات ---
+  // --- فروشگاه ---
+  if (CAN.pages || CAN.stands || MENU.isSuper){
+    NAV.push({title:'فروشگاه'});
+    NAV.push({label:'فروشگاه',icon:'cart',children:[
+      {label:'محصولات فروشگاه',icon:'box',href:'products.php'},
+      {label:'سفارشات فروشگاه',icon:'list',href:'orders.php?order_type=product'}]});
+  }
+
+  // --- استندها ---
   if (CAN.stands || MENU.isSuper){
-    NAV.push({title:'استندها و سفارشات'});
-    NAV.push({label:'استندها و سفارشات',icon:'cart',children:[
-      {label:'سفارشات استند',icon:'list',href:'orders.php'},
+    NAV.push({title:'استندها'});
+    NAV.push({label:'استندها',icon:'award',children:[
       {label:'مدیریت استندها',icon:'award',href:'stands.php'},
-      {label:'محصولات فروشگاه',icon:'box',href:'products.php'}]});
+      {label:'سفارشات استند',icon:'list',href:'orders.php?order_type=stand'}]});
   }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
