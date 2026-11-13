@@ -20,6 +20,7 @@
   const collapse = group => {
     group.classList.remove('open');
     group.querySelector('.site-nav-submenu')?.setAttribute('aria-expanded', 'false');
+    group.querySelector('.mega-toggle')?.setAttribute('aria-expanded', 'false');
   };
   const closeSubmenus = () => document.querySelectorAll('[data-site-nav] .mega-menu.open,[data-site-drawer] .mega-menu.open').forEach(collapse);
   const closeAccount = () => root.querySelectorAll('.cta-account.open').forEach(account => {
@@ -33,9 +34,10 @@
     group.classList.add('open');
     group.dataset.openedBy = source;
     group.querySelector('.site-nav-submenu')?.setAttribute('aria-expanded', 'true');
+    group.querySelector('.mega-toggle')?.setAttribute('aria-expanded', 'true');
   };
 
-  // One real link and a separate disclosure button: touch never loses the parent page.
+  // Disclosure button next to parent label; clicking either the label or button toggles submenu
   list.querySelectorAll('.mega-menu').forEach((group, index) => {
     const link = group.querySelector('.mega-toggle');
     const panel = group.querySelector('.mega-menu-content');
@@ -45,6 +47,8 @@
     button.className = 'site-nav-submenu';
     button.setAttribute('aria-label', `${link.textContent.trim()} – ${root.dataset.submenuLabel}`);
     button.setAttribute('aria-expanded', 'false');
+    link.setAttribute('aria-haspopup', 'true');
+    link.setAttribute('aria-expanded', 'false');
     panel.id = `site-nav-section-${index}`;
     button.setAttribute('aria-controls', panel.id);
     button.innerHTML = '<span class="site-nav-chevron" aria-hidden="true"></span>';
@@ -62,19 +66,31 @@
   [list, mobileList].forEach(menu => {
     menu.querySelectorAll('.mega-menu').forEach(group => {
       const button = group.querySelector('.site-nav-submenu');
+      const link = group.querySelector('.mega-toggle');
       let timer;
-      button?.addEventListener('click', () => {
+
+      const toggleAction = event => {
+        if (event) event.preventDefault();
         clearTimeout(timer);
-        if (group.classList.contains('open') && group.dataset.openedBy === 'button') collapse(group);
-        else openSubmenu(group);
-      });
+        if (group.classList.contains('open') && group.dataset.openedBy === 'button') {
+          collapse(group);
+        } else {
+          openSubmenu(group, 'button');
+        }
+      };
+
+      button?.addEventListener('click', toggleAction);
+      link?.addEventListener('click', toggleAction);
+
       group.addEventListener('pointerenter', event => {
         if (menu !== list || root.dataset.navMode !== 'desktop' || event.pointerType !== 'mouse') return;
         clearTimeout(timer);
         if (!group.classList.contains('open')) openSubmenu(group, 'hover');
       });
       group.addEventListener('pointerleave', event => {
-        if (menu === list && event.pointerType === 'mouse' && group.dataset.openedBy !== 'button') timer = setTimeout(() => collapse(group), 160);
+        if (menu === list && event.pointerType === 'mouse' && group.dataset.openedBy !== 'button') {
+          timer = setTimeout(() => collapse(group), 160);
+        }
       });
       group.addEventListener('focusout', () => {
         requestAnimationFrame(() => { if (!group.contains(document.activeElement)) collapse(group); });
