@@ -5,11 +5,22 @@ require_once __DIR__.'/../../../core/content-locales.php';
 $initialProvinces = [];
 
 try {
-    $dbPath = dirname(__DIR__, 3) . '/core/database.php';
-    if (file_exists($dbPath)) {
-        require_once $dbPath;
+    if (!isset($pdo) || !($pdo instanceof PDO)) {
+        $cfgPath = dirname(__DIR__, 3) . '/core/db-config.php';
+        if (file_exists($cfgPath)) {
+            $DB = require $cfgPath;
+            $host = $DB['host'] ?? 'localhost';
+            $name = $DB['name'] ?? '';
+            $user = $DB['user'] ?? '';
+            $pass = $DB['pass'] ?? '';
+            $charset = $DB['charset'] ?? 'utf8mb4';
+            $pdo = new PDO("mysql:host={$host};dbname={$name};charset={$charset}", $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        }
     }
-    if (isset($pdo)) {
+    if (isset($pdo) && ($pdo instanceof PDO)) {
         $standScope=content_where($pdo,'stands','s.id');
         $st = $pdo->query("
             SELECT DISTINCT b.id AS branch_id, b.name AS branch_name, 
@@ -1104,6 +1115,39 @@ $initialProvincesList = array_values($initialProvinces);
                 <input type="hidden" name="stand_id" id="inputStandId" value="">
                 <input type="hidden" name="branch_id" id="inputBranchId" value="">
 
+                <!-- تفکیک فیلدهای آدرس: استان و شهر و آدرس دقیق -->
+                <div class="so-section-title"><?= site_e('انتخاب شعبه و محل استقرار استند') ?></div>
+                <div class="so-field-row">
+                    <div class="so-field">
+                        <label><?= site_e('استان / شعبه ارائه‌دهنده استند') ?> <span class="req">*</span></label>
+                        <select name="province" id="provinceSelect" required>
+                            <option value=""><?= site_e('-- لطفاً ابتدا استان و شعبه را انتخاب کنید --') ?></option>
+                            <?php foreach ($initialProvincesList as $p): ?>
+                                <option value="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>">
+                                    <?= site_e('شعبه') ?> <?= htmlspecialchars($p['branch_name']) ?> (<?= htmlspecialchars($p['province']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="so-field">
+                        <label><?= site_e('شهر محل برگزاری مراسم') ?> <span class="req">*</span></label>
+                        <select name="city" id="citySelect" required>
+                            <option value=""><?= site_e('-- ابتدا استان را انتخاب کنید --') ?></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- باکس یادآوری محدوده شهری (Notice) -->
+                <div class="so-notice-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده وجود ندارد.') ?>
+                    </div>
+                </div>
+
                 <!-- مشخصات سفارش‌دهنده -->
                 <div class="so-field-row">
                     <div class="so-field">
@@ -1139,39 +1183,6 @@ $initialProvincesList = array_values($initialProvinces);
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                    </div>
-                </div>
-
-                <!-- تفکیک فیلدهای آدرس: استان و شهر و آدرس دقیق -->
-                <div class="so-section-title"><?= site_e('انتخاب شعبه و محل استقرار استند') ?></div>
-                <div class="so-field-row">
-                    <div class="so-field">
-                        <label><?= site_e('استان / شعبه ارائه‌دهنده استند') ?> <span class="req">*</span></label>
-                        <select name="province" id="provinceSelect" required>
-                            <option value=""><?= site_e('-- لطفاً ابتدا استان و شعبه را انتخاب کنید --') ?></option>
-                            <?php foreach ($initialProvincesList as $p): ?>
-                                <option value="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>">
-                                    <?= site_e('شعبه') ?> <?= htmlspecialchars($p['branch_name']) ?> (<?= htmlspecialchars($p['province']) ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="so-field">
-                        <label><?= site_e('شهر محل برگزاری مراسم') ?> <span class="req">*</span></label>
-                        <select name="city" id="citySelect" required>
-                            <option value=""><?= site_e('-- ابتدا استان را انتخاب کنید --') ?></option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- باکس یادآوری محدوده شهری (Notice) -->
-                <div class="so-notice-box">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    <div>
-                        <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده وجود ندارد.') ?>
                     </div>
                 </div>
 
@@ -1251,8 +1262,7 @@ $initialProvincesList = array_values($initialProvinces);
 
                 <!-- تب‌های فیلتر دسته‌بندی استندها -->
                 <div class="so-tabs">
-                    <button type="button" class="so-tab-btn active" data-type="all"><?= site_e('همه طرح‌ها') ?></button>
-                    <button type="button" class="so-tab-btn" data-type="congrats"><?= site_e('تبریک و شادباش') ?></button>
+                    <button type="button" class="so-tab-btn active" data-type="congrats"><?= site_e('تبریک و شادباش') ?></button>
                     <button type="button" class="so-tab-btn" data-type="condolence"><?= site_e('ابراز همدردی و تسلیت') ?></button>
                 </div>
 
@@ -1363,7 +1373,7 @@ const state = {
     stands: [],
     selectedStand: null,
     selectedBranchId: null,
-    filterType: 'all'
+    filterType: 'congrats'
 };
 
 // عناصر DOM

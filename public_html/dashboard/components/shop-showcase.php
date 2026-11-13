@@ -15,16 +15,15 @@ if (!function_exists('shop_format_toman')) {
 }
 
 // Ensure database connection
+// Ensure database connection safely
 $featuredProducts = [];
 try {
     if (!isset($pdo) || !($pdo instanceof PDO)) {
-        $dbPath = dirname(__DIR__, 2) . '/core/database.php';
-        if (file_exists($dbPath)) {
-            require_once $dbPath;
-        }
+        $pdo = shop_get_pdo();
     }
     if (isset($pdo) && ($pdo instanceof PDO)) {
         shop_ensure_schema($pdo);
+        shop_seed_default_catalog($pdo);
         $allActive = shop_get_products($pdo);
         $activeInStock = array_filter($allActive, function ($item) {
             return (($item['status'] ?? '') === 'active') && ((int)($item['stock'] ?? 0) > 0);
@@ -33,6 +32,10 @@ try {
     }
 } catch (Throwable $e) {
     $featuredProducts = [];
+}
+
+if (empty($featuredProducts)) {
+    $featuredProducts = array_slice(shop_get_demo_products(), 0, 4);
 }
 ?>
 

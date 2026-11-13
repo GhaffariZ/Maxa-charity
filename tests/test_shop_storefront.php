@@ -43,14 +43,19 @@ if (!file_exists($showcaseFile)) {
     exit(1);
 }
 
-// 3. Header Link Test
-$headerContent = file_get_contents($headerFile);
-if (!str_contains($headerContent, 'shop.php')) {
-    echo "FAIL: header component missing link to shop.php\n";
+// 3. Showcase & Clean Navigation Test
+$showcaseContent = file_get_contents($showcaseFile);
+if (!str_contains($showcaseContent, 'shop')) {
+    echo "FAIL: showcase component missing link to /shop\n";
     exit(1);
 }
-if (!str_contains($headerContent, 'فروشگاه خیریه')) {
-    echo "FAIL: header component missing link text 'فروشگاه خیریه'\n";
+if (!str_contains($showcaseContent, 'فروشگاه خیریه')) {
+    echo "FAIL: showcase component missing title 'فروشگاه خیریه'\n";
+    exit(1);
+}
+$coursesShowcaseFile = __DIR__ . '/../public_html/dashboard/components/courses-showcase/component.php';
+if (!file_exists($coursesShowcaseFile)) {
+    echo "FAIL: courses-showcase component missing\n";
     exit(1);
 }
 

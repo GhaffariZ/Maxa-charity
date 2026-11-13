@@ -11,9 +11,10 @@ if (!$isSuper && !dash_can('stands') && !dash_can('pages')) {
     dash_require('pages');
 }
 
-// Self-healing schema migration
+// Self-healing schema migration & default catalog seeding
 if ($pdo instanceof PDO) {
     shop_ensure_schema($pdo);
+    shop_seed_default_catalog($pdo);
 }
 
 // Persian digits converter helper

@@ -140,6 +140,25 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
 
+    // Ensure dedicated showcase sections for Charity Shop and Academy Courses on Home page
+    if (($slug === 'home' || $slug === '' || ($branchSlug === '' && in_array('heroindex', $components, true))) && !in_array('shop-showcase', $components, true)) {
+        $enhancedComponents = [];
+        $showcaseInserted = false;
+        foreach ($components as $cmp) {
+            if (($cmp === 'footer' || $cmp === 'ourexcellence' || $cmp === 'recent-news-hero-v2') && !$showcaseInserted) {
+                if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+                if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+                $showcaseInserted = true;
+            }
+            $enhancedComponents[] = $cmp;
+        }
+        if (!$showcaseInserted) {
+            if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+            if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+        }
+        $components = $enhancedComponents;
+    }
+
     $configuredContent=false;
     if(content_ready($pdo)){
         $configured=$pdo->prepare("SELECT 1 FROM public_content_locales WHERE content_type='pages' AND content_id=? LIMIT 1");$configured->execute([(string)$page['id']]);

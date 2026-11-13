@@ -31,7 +31,7 @@ require __DIR__ . '/../../public_html/core/component-renderer.php';
 </head>
 <body><main id="main-content">
 <?php
-foreach (['heroindex', 'hamrah', 'aboutus', 'macsa_stories', 'recent-news-hero-v2', 'ourexcellence', 'footer'] as $component) {
+foreach (['heroindex', 'hamrah', 'aboutus', 'macsa_stories', 'recent-news-hero-v2', 'shop-showcase', 'courses-showcase', 'ourexcellence', 'footer'] as $component) {
     render_dashboard_component($component, ['pdo' => $pdo]);
 }
 ?>

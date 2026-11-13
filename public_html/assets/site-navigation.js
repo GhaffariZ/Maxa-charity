@@ -141,7 +141,7 @@
       ? root.querySelector('.cta-donate').getBoundingClientRect().width - toggle.getBoundingClientRect().width : 0);
     const available = header.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight)
       - brand.getBoundingClientRect().width - desktopControls - 2 * parseFloat(styles.columnGap);
-    const compact = innerWidth < 1120 || list.scrollWidth + 12 > available;
+    const compact = innerWidth <= 1024 || list.scrollWidth + 12 > available;
     const mode = compact ? 'compact' : 'desktop';
     if (root.dataset.navMode !== mode) {
       const drawerWasOpen = drawer.classList.contains('open');

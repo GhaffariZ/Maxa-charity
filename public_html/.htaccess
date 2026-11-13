@@ -109,6 +109,33 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^courses/([0-9]+)/?$ course-details.php?id=$1 [L,QSA]
 
+# ---------------------------------------------------------
+# 0.8) فروشگاه خیریه (Charity Shop) clean URLs
+#      باید پیش از قواعد عمومیِ شعبه/صفحه (3b و 4) بیاید تا
+#      /shop به‌جای page-view.php به shop.php هدایت شود.
+#      /shop                    -> shop.php (ویترین فروشگاه)
+#      /shop/checkout           -> shop-checkout.php (تسویه حساب)
+#      /shop-checkout           -> shop-checkout.php
+#      /shop/callback           -> shop-payment-callback.php (بازگشت از درگاه)
+#      /shop-payment-callback   -> shop-payment-callback.php
+#      /shop/{id}               -> /shop#prod-{id} (مشاهده مستقیم محصول)
+# ---------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^shop/?$ shop.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(?:shop/checkout|shop-checkout)/?$ shop-checkout.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(?:shop/callback|shop-payment-callback)/?$ shop-payment-callback.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^shop/(?:product/)?([0-9]+)/?$ /shop#prod-$1 [R=302,NE,L]
+
 
 
 # ---------------------------------------------------------

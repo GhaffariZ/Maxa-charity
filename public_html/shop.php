@@ -25,14 +25,9 @@ if (!function_exists('fa_digits')) {
     }
 }
 
-// Establish database connection if not provided
+// Establish database connection safely if not provided
 if (!isset($pdo) || !($pdo instanceof PDO)) {
-    try {
-        $dbPath = __DIR__ . '/core/database.php';
-        if (file_exists($dbPath)) {
-            require_once $dbPath;
-        }
-    } catch (Throwable $e) {}
+    $pdo = shop_get_pdo();
 }
 
 $categories = [];
@@ -41,12 +36,18 @@ $products = [];
 if (isset($pdo) && ($pdo instanceof PDO)) {
     try {
         shop_ensure_schema($pdo);
+        shop_seed_default_catalog($pdo);
         $categories = shop_get_categories($pdo);
         $products = shop_get_products($pdo);
     } catch (Throwable $e) {
         $categories = [];
         $products = [];
     }
+}
+
+if (empty($products)) {
+    $categories = shop_get_demo_categories();
+    $products = shop_get_demo_products();
 }
 
 $pageTitle = site_text('فروشگاه خیریه | مکسا');

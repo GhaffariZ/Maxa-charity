@@ -18,6 +18,8 @@ if ($__isStandaloneHeader) {
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="preload" href="/webfont/Vazirmatn[wght].woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site-navigation.css">
+  <script src="/assets/site-navigation.js" defer></script>
 <?php endif; ?>
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */
@@ -1208,8 +1210,6 @@ echo event_global_banner(isset($pdo) && $pdo instanceof PDO ? $pdo : null);
               <li><a href="/news.php"><?= site_e('اخبار') ?></a></li>
               <li class="events-nav-link"><a href="/events.php"><?= site_e(site_locale() === 'en' ? 'رویدادها' : 'رویدادها و همایش‌ها') ?></a></li>
               <li><a href="/macsapedia.php"><?= site_e('مکساپدیا') ?></a></li>
-              <li><a href="/courses"><?= site_e('دوره‌ها') ?></a></li>
-              <li><a href="/shop.php"><?= site_e('فروشگاه خیریه') ?></a></li>
               <li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
             </ul>
           </nav>
