@@ -1453,7 +1453,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
-                <form method="post" action="maxapedia.php?section=<?= e($section) ?><?= csrf_field() ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
+                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="section" value="<?= e($section) ?>">
                   <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
