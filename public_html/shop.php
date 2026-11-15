@@ -95,103 +95,90 @@ render_dashboard_component('header', get_defined_vars());
       box-sizing: border-box;
     }
 
-    /* ===== HERO BANNER ===== */
-    .shop-hero {
-      position: relative;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
-      border-radius: var(--shop-radius-lg);
-      padding: 56px 40px;
-      margin-top: 24px;
-      margin-bottom: 40px;
-      overflow: hidden;
-      color: #ffffff;
-      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.25);
-    }
-
-    .shop-hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -20%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(250, 166, 26, 0.18) 0%, rgba(250, 166, 26, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .shop-hero::after {
-      content: '';
-      position: absolute;
-      bottom: -60%;
-      right: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(250, 166, 26, 0.12) 0%, rgba(250, 166, 26, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .shop-hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 820px;
-    }
-
-    .shop-hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(250, 166, 26, 0.2);
-      border: 1px solid rgba(250, 166, 26, 0.4);
-      color: #fbbf24;
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 13.5px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      backdrop-filter: blur(8px);
-    }
-
-    .shop-hero-title {
-      font-size: clamp(26px, 4vw, 42px);
-      font-weight: 900;
-      line-height: 1.35;
-      margin: 0 0 16px;
-      color: #ffffff;
-    }
-
-    .shop-hero-title span {
-      color: var(--shop-primary);
-    }
-
-    .shop-hero-text {
-      font-size: clamp(15px, 1.8vw, 17px);
-      line-height: 1.85;
-      color: #cbd5e1;
-      margin: 0 0 28px;
-    }
-
-    .shop-hero-features {
+    /* ===== COMPACT SHOP HEADER ===== */
+    .shop-compact-header {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
       gap: 16px;
+      padding: 18px 24px;
+      margin-top: 16px;
+      margin-bottom: 22px;
+      background: #ffffff;
+      border: 1px solid var(--shop-slate-200);
+      border-radius: var(--shop-radius-lg);
+      box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
     }
 
-    .shop-hero-feat-item {
+    .shop-compact-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .shop-compact-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .shop-compact-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--shop-slate-900);
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .shop-compact-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 8px 16px;
-      font-size: 13.5px;
-      color: #f1f5f9;
-      backdrop-filter: blur(4px);
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(250, 166, 26, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(250, 166, 26, 0.3);
     }
 
-    .shop-hero-feat-item svg {
+    .shop-compact-badge svg {
+      color: #d97706;
+      flex-shrink: 0;
+    }
+
+    .shop-compact-desc {
+      font-size: 13px;
+      color: var(--shop-slate-600);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .shop-compact-badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .shop-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 13px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--shop-slate-200);
+      color: var(--shop-slate-700);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .shop-pill-badge svg {
       color: var(--shop-primary);
       flex-shrink: 0;
     }
@@ -1103,32 +1090,29 @@ render_dashboard_component('header', get_defined_vars());
   </style>
 
   <div class="shop-container">
-    <!-- HERO BANNER -->
-    <header class="shop-hero">
-      <div class="shop-hero-content">
-        <div class="shop-hero-badge">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-          <span><?= site_e('فروشگاه خیریه مکسا') ?></span>
+    <!-- COMPACT SHOP HEADER -->
+    <header class="shop-hero shop-compact-header">
+      <div class="shop-compact-meta">
+        <div class="shop-compact-title-row">
+          <h1 class="shop-compact-title"><?= site_e('فروشگاه خیریه مکسا') ?></h1>
+          <span class="shop-compact-badge">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <?= site_e('۱۰۰٪ عواید وقف درمان رایگان بیماران مبتلا به سرطان') ?>
+          </span>
         </div>
-        <h1 class="shop-hero-title"><?= site_e('محصولات مهربانی؛') ?> <span><?= site_e('خرید در خدمت درمان بیماران مبتلا به سرطان') ?></span></h1>
-        <p class="shop-hero-text">
-          <?= site_e('با خرید هر محصول از این فروشگاه، تمامی عواید آن به صورت صددرصدی صرف تأمین هزینه‌های دارو، درمان و ارائه مراقبت‌های تسکینی رایگان به بیماران مبتلا به سرطان و خانواده‌های آنان می‌شود.') ?>
+        <p class="shop-compact-desc">
+          <?= site_e('با خرید محصولات این فروشگاه، تمامی عواید آن مستقیماً صرف تأمین هزینه‌های دارو، درمان و مراقبت‌های تسکینی رایگان بیماران مبتلا به سرطان می‌شود.') ?>
         </p>
-        <div class="shop-hero-features">
-          <div class="shop-hero-feat-item">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span><?= site_e('۱۰۰٪ عواید وقف درمان رایگان بیماران') ?></span>
-          </div>
-          <div class="shop-hero-feat-item">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            <span><?= site_e('ارسال به سراسر کشور (پس‌کرایه)') ?></span>
-          </div>
-          <div class="shop-hero-feat-item">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span><?= site_e('صنایع دستی کارگاه‌های توانمندسازی') ?></span>
-          </div>
+      </div>
+
+      <div class="shop-compact-badges">
+        <div class="shop-pill-badge">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <span><?= site_e('ارسال سراسری (پس‌کرایه)') ?></span>
+        </div>
+        <div class="shop-pill-badge">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span><?= site_e('صنایع دستی توانمندسازی') ?></span>
         </div>
       </div>
     </header>

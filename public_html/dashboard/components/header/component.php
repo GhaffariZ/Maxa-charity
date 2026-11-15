@@ -7,6 +7,9 @@ $__isStandaloneHeader = !defined('MAXA_PAGE_VIEW_ACTIVE') && !defined('MAXA_HTML
 if ($__isStandaloneHeader) {
     define('MAXA_HTML_SHELL_OPENED', true);
 }
+if (!defined('MAXA_HEADER_COMPONENT_RENDERED')) {
+    define('MAXA_HEADER_COMPONENT_RENDERED', true);
+}
 ?>
 <?php if ($__isStandaloneHeader): ?>
 <!DOCTYPE html>
@@ -18,8 +21,6 @@ if ($__isStandaloneHeader) {
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="preload" href="/webfont/Vazirmatn[wght].woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/site-navigation.css">
-  <script src="/assets/site-navigation.js" defer></script>
 <?php endif; ?>
   <style>
   /* Self-hosted Vazirmatn variable font (reliable on the Iran network, no external CDN) */

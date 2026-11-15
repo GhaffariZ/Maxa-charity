@@ -2,6 +2,8 @@
   const root = document.querySelector('[data-site-nav]');
   const drawer = document.querySelector('[data-site-drawer]');
   if (!root || !drawer) return;
+  if (root.dataset.siteNavBound === 'true') return;
+  root.dataset.siteNavBound = 'true';
   const header = root.querySelector('.cta-header');
   const list = root.querySelector('.cta-menu');
   const controls = root.querySelector('.cta-left');
@@ -42,6 +44,7 @@
     const link = group.querySelector('.mega-toggle');
     const panel = group.querySelector('.mega-menu-content');
     if (!link || !panel) return;
+    if (group.querySelector('.site-nav-submenu')) return;
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'site-nav-submenu';
