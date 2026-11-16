@@ -119,49 +119,9 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       z-index: 5;
     }
 
-    /* صفحه شیشه‌ای مات (Frosted Glass) با امتداد تا لبه راست صفحه و برش مورب در محل ورود */
+    /* صفحه شیشه‌ای مات برند */
     .cta-glass-underlay {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: -100vw;
-      background: rgba(255, 255, 255, 0.76);
-      -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%);
-      backdrop-filter: blur(28px) saturate(190%) contrast(105%);
-      clip-path: polygon(26px 0, 100% 0, 100% 100%, 0 100%);
-      pointer-events: none;
-      z-index: -1;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-      box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
-    }
-
-    /* سایه نرم و عمق‌دار لایه زرد رنگ روی صفحه شیشه زیرین (حس دقیق لایه رو و لایه زیر) */
-    .cta-glass-underlay::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 38px;
-      background: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.28) 100%);
-      clip-path: polygon(26px 0, 38px 0, 12px 100%, 0 100%);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    /* لبه نوری براق (Bevel Highlight) روی مرز برش مورب زرد */
-    .cta-glass-underlay::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 100%);
-      clip-path: polygon(24.5px 0, 26px 0, 1.5px 100%, 0 100%);
-      z-index: 3;
-      pointer-events: none;
+      display: none !important;
     }
 
     .cta-brand{
@@ -170,16 +130,25 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       justify-content:center;
       position: relative;
       z-index: 4;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       text-decoration:none;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .cta-brand:hover{
-      transform: scale(1.04);
+      background: #ffffff;
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 6px 18px rgba(0, 60, 58, 0.12), inset 0 1px 0 #ffffff;
     }
 
     .cta-brand:active{
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     .cta-brand img{
@@ -187,7 +156,6 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
     }
 
     /* وسط: منو */
@@ -380,18 +348,21 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
   width: calc(100% - 32px);
   max-width: var(--cta-container);
   margin-inline: auto;
-  background: rgba(0, 143, 138, 0.88); /* Translucent premium teal glass */
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 28px 20px;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.18), transparent 36%),
+    radial-gradient(circle at 86% 88%, rgba(255, 255, 255, 0.10), transparent 40%),
+    linear-gradient(155deg, #05a8a2 0%, #008f8a 52%, #005a57 100%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 28px 24px;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 24px 56px rgba(0, 48, 46, 0.45), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   z-index: 9999;
   direction: var(--site-direction, rtl);
   text-align: start;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -1072,40 +1043,80 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       border-color: transparent;
     }
 
-    /* ===== ORANGE BAND ===== */
+    /* ===== CTA BAND (BRAND TEAL GRADIENT - FOOTER STYLE) ===== */
     .cta-band{
-      position:relative;
-      background: linear-gradient(180deg, var(--cta-orange) 0%, var(--cta-orange-2) 100%);
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,255,255,0.24), transparent 34%),
+        radial-gradient(circle at 88% 88%, rgba(255,255,255,0.14), transparent 38%),
+        linear-gradient(155deg, #05a8a2 0%, #008f8a 54%, #00605d 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.20),
+        0 -18px 44px rgba(0, 143, 138, 0.16);
       padding: 34px 0 80px 0;
     }
 
+    .cta-band::before {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      left: -95px;
+      bottom: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.09);
+      pointer-events: none;
+    }
+
+    .cta-band::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -70px;
+      top: -60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.10);
+      pointer-events: none;
+    }
+
     .cta-band .cta-container{
-      display:grid;
+      position: relative;
+      z-index: 1;
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
-      align-items:center;
-      gap:24px;
-      color:#fff;
+      align-items: center;
+      gap: 24px;
+      color: #ffffff;
     }
 
     .cta-band-text{
-      text-align:center;
+      text-align: center;
       grid-column: 2;
     }
 
     .cta-band h3{
-      margin:0;
-      font-size:20px;
-      font-weight:900;
-      text-align:center;
+      margin: 0;
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1.4;
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(0, 60, 58, 0.25);
+      letter-spacing: -0.01em;
+      text-align: center;
     }
 
     .cta-band p{
-      margin:6px auto 0 auto;
-      opacity:.92;
-      font-size:13px;
-      line-height:1.7;
+      margin: 6px auto 0 auto;
+      color: #ffffff;
+      opacity: 0.95;
+      font-size: 13.5px;
+      line-height: 1.75;
+      font-weight: 400;
       max-width: 58ch;
-      text-align:center;
+      text-shadow: 0 1px 4px rgba(0, 60, 58, 0.18);
+      text-align: center;
     }
 
     .cta-band-cta {
@@ -1113,28 +1124,58 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: linear-gradient(135deg, #e53935, #c62828); /* Red gradient matching brand tone */
-      color: #fff !important;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 16px;
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 13px 28px;
+      border-radius: 9999px;
+      font-weight: 800;
+      font-size: 15.5px;
+      letter-spacing: -0.01em;
       text-decoration: none;
       white-space: nowrap;
       cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
-      width: 100%;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow:
+        0 4px 16px rgba(229, 57, 53, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.26);
+      width: fit-content;
+      max-width: 100%;
+      justify-self: start;
       grid-column: 1;
     }
-    .cta-band-cta:hover {
-      background: linear-gradient(135deg, #c62828, #b71c1c);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(198, 40, 40, 0.5);
+
+    .cta-band-cta .cta-heart-ic {
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
     }
+
+    .cta-band-cta:hover {
+      background: linear-gradient(135deg, #ef4444 0%, #b71c1c 100%);
+      transform: translateY(-2px);
+      box-shadow:
+        0 8px 24px rgba(229, 57, 53, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #ffffff !important;
+    }
+
+    .cta-band-cta:hover .cta-heart-ic {
+      transform: scale(1.15);
+    }
+
     .cta-band-cta:active {
       transform: translateY(1px);
+      box-shadow:
+        0 2px 8px rgba(229, 57, 53, 0.35),
+        inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-band-cta:focus-visible {
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.6),
+        0 4px 16px rgba(229, 57, 53, 0.45);
     }
 
     /* ===== Cards (همون قبلی) ===== */

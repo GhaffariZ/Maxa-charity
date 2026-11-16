@@ -292,7 +292,23 @@ function maxapedia_items(PDO $pdo, string $section, bool $onlyPublished = false,
   }
 
   $sql .= " ORDER BY sort_order ASC, created_at DESC, id DESC";
-  $rows=q($pdo,$sql,$p)->fetchAll();return $onlyPublished?content_rows($pdo,'maxapedia_items',$rows):$rows;
+  $rows=q($pdo,$sql,$p)->fetchAll();
+  $res = $onlyPublished ? content_rows($pdo,'maxapedia_items',$rows) : $rows;
+
+  if ($onlyPublished && empty($res) && content_public() && content_language() !== 'fa') {
+    $fbSql = "SELECT * FROM maxapedia_items WHERE section = ? AND status = 'published'";
+    $fbP = [$section];
+    if ($category !== '') { $fbSql .= " AND category = ?"; $fbP[] = $category; }
+    if ($qstr !== '') {
+      $fbSql .= " AND (title LIKE ? OR description LIKE ? OR category LIKE ?)";
+      $fbLike = '%' . $qstr . '%';
+      array_push($fbP, $fbLike, $fbLike, $fbLike);
+    }
+    $fbSql .= " ORDER BY sort_order ASC, created_at DESC, id DESC";
+    return q($pdo, $fbSql, $fbP)->fetchAll();
+  }
+
+  return $res;
 }
 
 /* فهرست دسته‌بندی‌های موجود در یک بخش (برای انتخاب/فیلتر) */
@@ -312,13 +328,22 @@ function maxapedia_counts(PDO $pdo): array {
   $rows = q($pdo, "SELECT section, COUNT(*) AS c FROM maxapedia_items $scope GROUP BY section")->fetchAll();
   $map = [];
   foreach ($rows as $r) { $map[$r['section']] = (int)$r['c']; }
+  if (content_public() && content_language() !== 'fa' && array_sum($map) === 0) {
+    $fallbackRows = q($pdo, "SELECT section, COUNT(*) AS c FROM maxapedia_items WHERE status='published' GROUP BY section")->fetchAll();
+    foreach ($fallbackRows as $r) { $map[$r['section']] = (int)$r['c']; }
+  }
   return $map;
 }
 
 function maxapedia_find(PDO $pdo, int $id): ?array {
   $row = q($pdo, "SELECT * FROM maxapedia_items WHERE id = ?", [$id])->fetch();
-  if(content_public())return $row&&$row['status']==='published'?content_row($pdo,'maxapedia_items',$row):null;
-  return $row ?: null;
+  if (!$row) return null;
+  if (content_public()) {
+    if ($row['status'] !== 'published') return null;
+    $localized = content_row($pdo, 'maxapedia_items', $row);
+    return $localized ?: $row;
+  }
+  return $row;
 }
 
 function maxapedia_create(PDO $pdo, array $d): int {
@@ -379,26 +404,37 @@ function maxapedia_delete(PDO $pdo, int $id): bool {
 
 /** دریافت تمام عکس‌های یک آلبوم */
 function maxapedia_gallery_photos(PDO $pdo, int $itemId): array {
-  if(content_public()&&content_language()!=='fa'){return maxapedia_find($pdo,$itemId)['photos']??[];}
+  if (content_public() && content_language() !== 'fa') {
+    $album = maxapedia_find($pdo, $itemId);
+    if (!empty($album['photos']) && is_array($album['photos'])) {
+      return $album['photos'];
+    }
+  }
   return q($pdo, "SELECT * FROM maxapedia_gallery_photos WHERE item_id = ? ORDER BY sort_order ASC, id ASC", [$itemId])->fetchAll();
 }
 
 /** دریافت تعداد عکس‌های یک آلبوم */
 function maxapedia_gallery_photo_count(PDO $pdo, int $itemId): int {
-  if(content_public()&&content_language()!=='fa')return count(maxapedia_gallery_photos($pdo,$itemId));
+  if (content_public() && content_language() !== 'fa') {
+    return count(maxapedia_gallery_photos($pdo, $itemId));
+  }
   $row = q($pdo, "SELECT COUNT(*) AS c FROM maxapedia_gallery_photos WHERE item_id = ?", [$itemId])->fetch();
   return (int)($row['c'] ?? 0);
 }
 
 /** نقشه تعداد عکس‌ها برای تمام آلبوم‌ها [itemId => count] */
 function maxapedia_gallery_counts_map(PDO $pdo): array {
-  if(content_public()&&content_language()!=='fa'){
-    $map=[];foreach(maxapedia_items($pdo,'gallery',true) as $item)$map[(int)$item['id']]=count($item['photos']);return $map;
-  }
   $rows = q($pdo, "SELECT item_id, COUNT(*) AS c FROM maxapedia_gallery_photos GROUP BY item_id")->fetchAll();
   $map = [];
   foreach ($rows as $r) {
     $map[(int)$r['item_id']] = (int)$r['c'];
+  }
+  if (content_public() && content_language() !== 'fa') {
+    foreach (maxapedia_items($pdo, 'gallery', true) as $item) {
+      if (!empty($item['photos']) && is_array($item['photos'])) {
+        $map[(int)$item['id']] = count($item['photos']);
+      }
+    }
   }
   return $map;
 }

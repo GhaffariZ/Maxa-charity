@@ -864,7 +864,7 @@
     "ar": "دليل علم النفس السريري"
   },
   "کتاب‌های آموزشی": {
-    "en": "Educational books",
+    "en": "Educational Books",
     "ar": "الكتب التعليمية"
   },
   "آخرین مطالعات و مقالات علمی درباره سرطان پستان.": {
@@ -7006,5 +7006,73 @@
   "مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.": {
     "en": "No articles have been published here yet. New articles will appear soon.",
     "ar": "لم تُنشر مقالات هنا بعد. ستظهر مقالات جديدة قريباً."
+  },
+  "ویدیوهای آموزشی": {
+    "en": "Educational Videos",
+    "ar": "مقاطع الفيديو التعليمية"
+  },
+  "بروشورها": {
+    "en": "Brochures",
+    "ar": "الكتيبات"
+  },
+  "پادکست‌ها": {
+    "en": "Podcasts",
+    "ar": "البودكاست"
+  },
+  "کلیپ‌های مکسا": {
+    "en": "MACSA Clips",
+    "ar": "مقاطع مكسا"
+  },
+  "گالری مکسا": {
+    "en": "MACSA Gallery",
+    "ar": "معرض مكسا"
+  },
+  "مجموعه ویدیوهای آموزشی مکسا برای آشنایی با بیماری‌های نادر و مراقبت از بیماران.": {
+    "en": "MACSA's educational videos for learning about rare diseases and patient care.",
+    "ar": "مجموعة مقاطع الفيديو التعليمية لمكسا للتعريف بالأمراض النادرة ورعاية المرضى."
+  },
+  "بروشورهای اطلاع‌رسانی و آموزشی قابل دانلود و چاپ.": {
+    "en": "Informational and educational brochures available for download and printing.",
+    "ar": "كتيبات إعلامية وتعليمية قابلة للتنزيل والطباعة."
+  },
+  "کتاب‌ها و جستارهای تخصصی در حوزه بیماری‌های نادر.": {
+    "en": "Specialist books and essays in the field of rare diseases.",
+    "ar": "كتب ومقالات متخصصة في مجال الأمراض النادرة."
+  },
+  "گفت‌وگوها و برنامه‌های صوتی مکسا.": {
+    "en": "MACSA podcasts and audio conversations.",
+    "ar": "حوارات وبرامج مكسا الصوتية."
+  },
+  "کلیپ‌های کوتاه و انگیزشی مکسی.": {
+    "en": "Short and motivational clips from MACSA.",
+    "ar": "مقاطع فيديو قصيرة وتحفيزية من مكسا."
+  },
+  "کلیپ‌های کوتاه و انگیزشی مکسا.": {
+    "en": "Short and motivational clips from MACSA.",
+    "ar": "مقاطع فيديو قصيرة وتحفيزية من مكسا."
+  },
+  "تصاویر و خاطرات تصویری از فعالیت‌های مکسا.": {
+    "en": "Photographs and visual memories of MACSA's activities.",
+    "ar": "صور وذكريات مرئية من أنشطة مكسا."
+  },
+  "گالری مکساپدیا": {
+    "en": "MACSApedia Gallery",
+    "ar": "معرض مكسابيديا"
+  },
+  "تغذیه": {
+    "en": "Nutrition",
+    "ar": "التغذية"
+  },
+  "مراقبت": {
+    "en": "Care",
+    "ar": "الرعاية"
+  },
+  "روتین": {
+    "en": "Routine",
+    "ar": "الروتين"
+  },
+  "۲۴": {
+    "en": "24",
+    "ar": "٢٤"
   }
 }
