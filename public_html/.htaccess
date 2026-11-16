@@ -23,6 +23,10 @@ RewriteRule ^branches/?$ branches.php [END,QSA]
 # ---- Redirect root to /home -----------------------------------------------------
 RewriteRule ^$ /home [R=301,L]
 
+# ---- Redirect legacy .html article URLs to clean URLs ---------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-zA-Z0-9-_]+)\.html$ /$1 [R=301,L,NC]
+
 # ---- Return 404 for non-existing .html files ------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule \.html$ /404.html [L,NC]

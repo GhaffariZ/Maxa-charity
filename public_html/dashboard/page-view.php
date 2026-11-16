@@ -119,6 +119,18 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
                 'organizationalchart' => 'چارت سازمانی',
                 'annual-reports'      => 'گزارش‌های سالانه | مکسا',
                 'financial-reports'   => 'صورت‌های مالی و گزارش‌های حسابرسی | مکسا',
+                'cancer1'             => 'تعریف سرطان | خیریه مکسا',
+                'cancer2'             => 'تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی | خیریه مکسا',
+                'understandingcancer' => 'درک سرطان | خیریه مکسا',
+                'tissuealterations'   => 'تغییرات بافتی که سرطان نیستند | خیریه مکسا',
+                'carcinogenesis'      => 'نحوه ایجاد سرطان | خیریه مکسا',
+                'cancergenes'         => 'ژن‌های دخیل در سرطان | خیریه مکسا',
+                'riskfactors'         => 'عوامل خطر در بروز سرطان | خیریه مکسا',
+                'ayacancer'           => 'نوجوانان و جوانان مبتلا به سرطان | خیریه مکسا',
+                'diagnosis'           => 'تشخیص و مرحله‌بندی سرطان | خیریه مکسا',
+                'metastasis'          => 'متاستاز سرطان | خیریه مکسا',
+                'cancerspread'        => 'محل و نحوه گسترش سرطان | خیریه مکسا',
+                'cancertypes'         => 'انواع سرطان | خیریه مکسا',
             ];
             $autoTitle = $titles[$slug] ?? 'مکسا';
             render_branch_components($pdo, ['topbar', 'header', $slug, 'footer'], '', '', $autoTitle);

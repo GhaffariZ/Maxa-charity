@@ -17,10 +17,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('شناخت و درک سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="cancer1.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تعریف سرطان') ?></a>
-          <a href="cancer2.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی') ?></a>
-          <a href="understandingcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('درک سرطان') ?></a>
-          <a href="tissuealterations.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تغییرات بافتی که سرطان نیستند') ?></a>
+          <a href="/cancer1" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تعریف سرطان') ?></a>
+          <a href="/cancer2" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی') ?></a>
+          <a href="/understandingcancer" class="po-link-item"><span class="po-link-dot"></span><?= site_e('درک سرطان') ?></a>
+          <a href="/tissuealterations" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تغییرات بافتی که سرطان نیستند') ?></a>
         </div>
       </div>
 
@@ -30,10 +30,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('علل، عوامل و فرآیند ایجاد سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="carcinogenesis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نحوه ایجاد سرطان') ?></a>
-          <a href="cancergenes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('ژن‌های دخیل در سرطان') ?></a>
-          <a href="riskfactors.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('عوامل خطر در بروز سرطان') ?></a>
-          <a href="AYAcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نوجوانان و جوانان مبتلا به سرطان') ?></a>
+          <a href="/carcinogenesis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نحوه ایجاد سرطان') ?></a>
+          <a href="/cancergenes" class="po-link-item"><span class="po-link-dot"></span><?= site_e('ژن‌های دخیل در سرطان') ?></a>
+          <a href="/riskfactors" class="po-link-item"><span class="po-link-dot"></span><?= site_e('عوامل خطر در بروز سرطان') ?></a>
+          <a href="/ayacancer" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نوجوانان و جوانان مبتلا به سرطان') ?></a>
         </div>
       </div>
 
@@ -43,10 +43,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('تشخیص، پیشرفت و گسترش سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="diagnosis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تشخیص و مرحله‌بندی') ?></a>
-          <a href="metastasis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('متاستاز سرطان') ?></a>
-          <a href="cancerspread.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('محل و نحوه گسترش سرطان') ?></a>
-          <a href="cancertypes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('انواع سرطان') ?></a>
+          <a href="/diagnosis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تشخیص و مرحله‌بندی') ?></a>
+          <a href="/metastasis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('متاستاز سرطان') ?></a>
+          <a href="/cancerspread" class="po-link-item"><span class="po-link-dot"></span><?= site_e('محل و نحوه گسترش سرطان') ?></a>
+          <a href="/cancertypes" class="po-link-item"><span class="po-link-dot"></span><?= site_e('انواع سرطان') ?></a>
         </div>
       </div>
     </div>
