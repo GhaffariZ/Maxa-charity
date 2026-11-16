@@ -1193,26 +1193,26 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
 
     .cta-card{
       background:#fff;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: var(--cta-shadow);
       padding:26px 24px 22px;
-      border:1px solid rgba(0,0,0,.06);
+      border: 1.5px solid var(--cta-orange);
       text-align:center;
       cursor:pointer;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      transition: transform .22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .22s ease, border-color .22s ease;
       position:relative;
       outline:none;
     }
 
     .cta-card:hover{
-      transform: translateY(-3px);
-      box-shadow: 0 14px 30px rgba(0,0,0,.16);
-      border-color: rgba(250, 166, 26,.30);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(250, 166, 26, 0.22), 0 4px 12px rgba(0,0,0,0.06);
+      border-color: var(--cta-orange-2);
     }
 
     .cta-card.is-active{
-      border-color: rgba(250, 166, 26,.55);
-      box-shadow: 0 14px 30px rgba(250, 166, 26,.16), 0 0 0 3px rgba(250, 166, 26,.12);
+      border-color: var(--cta-orange-2);
+      box-shadow: 0 14px 30px rgba(250, 166, 26,.24), 0 0 0 3px rgba(250, 166, 26,.20);
       transform: translateY(-3px);
     }
 
