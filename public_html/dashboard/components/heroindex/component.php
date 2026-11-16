@@ -45,7 +45,7 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     .cta-hero{
       position:relative;
       width:100%;
-      min-height: 640px;
+      min-height: 420px;
       isolation:isolate;
       overflow:hidden;
       background:#111;
@@ -932,9 +932,9 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     .cta-content{
       position:relative;
       z-index:6;
-      padding-top: calc(var(--cta-nav-h) + 30px);
-      padding-bottom: 72px;
-      min-height: 640px;
+      padding-top: calc(var(--cta-nav-h) + 16px);
+      padding-bottom: 34px;
+      min-height: 420px;
       display:flex;
       align-items:center;
     }
@@ -953,22 +953,22 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     }
 
     .cta-kicker{
-      font-size:13px;
+      font-size:12px;
       color: rgba(255,255,255,.7);
-      margin-bottom:10px;
+      margin-bottom:8px;
     }
     .cta-title{
-      font-size:52px;
-      line-height:1.4;
-      margin:0 0 14px 0;
+      font-size:38px;
+      line-height:1.35;
+      margin:0 0 10px 0;
       font-weight:800;
       text-shadow: 0 10px 18px rgba(0,0,0,.20);
     }
     .cta-desc{
-      margin:0 0 18px 0;
+      margin:0 0 16px 0;
       color: var(--cta-muted);
-      font-size:15px;
-      line-height:1.9;
+      font-size:14.5px;
+      line-height:1.75;
       max-width: 58ch;
     }
 
@@ -981,7 +981,8 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       background: var(--cta-orange);
       color:#111;
       font-weight:800;
-      padding:11px 16px;
+      font-size:14px;
+      padding:10px 18px;
       border-radius:10px;
       box-shadow: 0 10px 20px rgba(250, 166, 26,.22);
       transition:.2s ease;
@@ -999,7 +1000,7 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       top:50%;
       transform: translateY(-50%);
       z-index:7;
-      width:44px; height:44px;
+      width:40px; height:40px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.22);
       background: rgba(0,0,0,.26);
@@ -1021,7 +1022,7 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     /* dots */
     .cta-dots{
       position:absolute;
-      bottom: 18px;
+      bottom: 12px;
       left:50%;
       transform: translateX(-50%);
       z-index:7;
@@ -1054,30 +1055,30 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.20),
         0 -18px 44px rgba(0, 143, 138, 0.16);
-      padding: 34px 0 80px 0;
+      padding: 22px 0 60px 0;
     }
 
     .cta-band::before {
       content: "";
       position: absolute;
-      width: 260px;
-      height: 260px;
-      left: -95px;
-      bottom: 20px;
+      width: 220px;
+      height: 220px;
+      left: -80px;
+      bottom: 10px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.08);
       pointer-events: none;
     }
 
     .cta-band::after {
       content: "";
       position: absolute;
-      width: 190px;
-      height: 190px;
-      right: -70px;
-      top: -60px;
+      width: 160px;
+      height: 160px;
+      right: -60px;
+      top: -50px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.09);
       pointer-events: none;
     }
 
@@ -1098,9 +1099,9 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
 
     .cta-band h3{
       margin: 0;
-      font-size: 21px;
+      font-size: 19px;
       font-weight: 900;
-      line-height: 1.4;
+      line-height: 1.35;
       color: #ffffff;
       text-shadow: 0 2px 8px rgba(0, 60, 58, 0.25);
       letter-spacing: -0.01em;
@@ -1108,11 +1109,11 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     }
 
     .cta-band p{
-      margin: 6px auto 0 auto;
+      margin: 4px auto 0 auto;
       color: #ffffff;
       opacity: 0.95;
-      font-size: 13.5px;
-      line-height: 1.75;
+      font-size: 13px;
+      line-height: 1.6;
       font-weight: 400;
       max-width: 58ch;
       text-shadow: 0 1px 4px rgba(0, 60, 58, 0.18);
@@ -1127,10 +1128,10 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
       color: #ffffff !important;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      padding: 13px 28px;
+      padding: 10px 24px;
       border-radius: 9999px;
       font-weight: 800;
-      font-size: 15.5px;
+      font-size: 14.5px;
       letter-spacing: -0.01em;
       text-decoration: none;
       white-space: nowrap;
@@ -1181,21 +1182,21 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     /* ===== Cards (همون قبلی) ===== */
     .cta-cards-wrap{
       position:relative;
-      margin-top: -52px;
-      padding-bottom: 40px;
+      margin-top: -46px;
+      padding-bottom: 24px;
     }
 
     .cta-cards{
       display:grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap:24px;
+      gap:20px;
     }
 
     .cta-card{
       background:#fff;
       border-radius: 12px;
       box-shadow: var(--cta-shadow);
-      padding:26px 24px 22px;
+      padding:18px 18px 16px;
       border: 1.5px solid var(--cta-orange);
       text-align:center;
       cursor:pointer;
@@ -1217,9 +1218,9 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     }
 
     .cta-icon{
-      width:44px; height:44px;
-      margin:0 auto 10px;
-      border-radius: 12px;
+      width:38px; height:38px;
+      margin:0 auto 8px;
+      border-radius: 10px;
       display:grid;
       place-items:center;
       background: rgba(250, 166, 26,.15);
@@ -1236,24 +1237,24 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     }
 
     .cta-card h4{
-      margin:6px 0 6px 0;
-      font-size:15px;
+      margin:4px 0 4px 0;
+      font-size:14.5px;
       font-weight:900;
       color:#1a1a1a;
     }
 
     .cta-card p{
-      margin:0 auto 10px;
+      margin:0 auto 6px;
       color:#666;
-      font-size:12.8px;
-      line-height:1.75;
+      font-size:12px;
+      line-height:1.55;
       max-width: 42ch;
     }
 
     .cta-card a{
       color: var(--cta-orange-2);
       font-weight:800;
-      font-size:13px;
+      font-size:12.5px;
     }
 
 
@@ -1386,8 +1387,13 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
 
     /* تبلت‌ها و صفحات متوسط */
     @media (max-width: 960px) {
+      .cta-hero,
+      .cta-content {
+        min-height: 400px;
+      }
+
       .cta-title {
-        font-size: 40px;
+        font-size: 32px;
       }
 
       .cta-band .cta-container {
@@ -1395,7 +1401,7 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 20px;
+        gap: 16px;
       }
 
       .cta-band-text {
@@ -1420,13 +1426,13 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
     /* موبایل‌ها و صفحات بسیار کوچک */
     @media (max-width: 768px) {
       .cta-hero {
-        min-height: 480px;
+        min-height: 380px;
       }
 
       .cta-content {
-        min-height: 480px;
-        padding-top: 48px;
-        padding-bottom: 88px;
+        min-height: 380px;
+        padding-top: 36px;
+        padding-bottom: 56px;
       }
 
       .cta-content .cta-container {
@@ -1442,20 +1448,20 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       }
 
       .cta-title {
-        font-size: 32px;
+        font-size: 25px;
         line-height: 1.35;
       }
 
       .cta-desc {
-        font-size: 14px;
-        line-height: 1.8;
+        font-size: 13.5px;
+        line-height: 1.7;
       }
 
       .cta-arrow {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         top:auto;
-        bottom:18px;
+        bottom:14px;
         transform:none;
       }
 
@@ -1468,14 +1474,18 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
       }
 
       .cta-dots {
-        bottom:30px;
+        bottom:18px;
+      }
+
+      .cta-cards-wrap {
+        margin-top: -36px;
       }
     }
 
     /* گوشی‌های بسیار باریک */
     @media (max-width: 420px) {
       .cta-title {
-        font-size: 26px;
+        font-size: 22px;
       }
 
       .cta-desc {
