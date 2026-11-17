@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-dash_require('news');
+if (!dash_can('news') && !dash_can('articles')) {
+    dash_abort_forbidden();
+}
 // news-save.php
 header('Content-Type: application/json; charset=utf-8');
 require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";

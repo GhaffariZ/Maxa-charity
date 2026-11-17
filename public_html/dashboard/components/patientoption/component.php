@@ -10,7 +10,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         FROM news n JOIN news_categories c ON c.id = n.category_id
         WHERE c.slug = 'patients-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
-        ORDER BY n.publish_date DESC, n.id DESC LIMIT 4");
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 9");
     $articleStmt->execute();
     $patientArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
 }
@@ -71,8 +71,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 <!-- ========================= -->
-<!-- Section 2 — Image Cards (square-ish with images) -->
-<section class="po-section po-section--alt">
+<!-- Section 2 — Image Cards (up to 9 articles) -->
+<section class="po-section po-section--alt" id="patient-articles">
   <div class="po-container">
 
     <div class="po-header wow fadeInUp">
@@ -82,44 +82,70 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <div class="po-grid">
-      <a href="fear.html" class="po-card-link">
-        <div class="po-card wow fadeInUp">
-          <div class="po-card-img">
-            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
-            <span class="po-badge"><?= site_e('ترس') ?></span>
+      <?php if (!empty($patientArticles)): ?>
+        <?php foreach ($patientArticles as $i => $article):
+            $articleImage = !empty($article['featured_image'])
+                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
+                    ? (string)$article['featured_image']
+                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
+                : '/dashboard/components/psychologicalcare/images/1.png';
+            $articleBadge = !empty($article['author']) ? $article['author'] : site_text('آموزش');
+            $articleUrl = '/' . (int)$article['id'] . '/';
+            $delay = sprintf('%.1fs', ($i % 3) * 0.2);
+        ?>
+        <a href="<?= htmlspecialchars($articleUrl, ENT_QUOTES, 'UTF-8') ?>" class="po-card-link">
+          <div class="po-card wow fadeInUp" data-wow-delay="<?= $delay ?>">
+            <div class="po-card-img">
+              <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+              <span class="po-badge"><?= htmlspecialchars((string)$articleBadge, ENT_QUOTES, 'UTF-8') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <a href="fear.html" class="po-card-link">
+          <div class="po-card wow fadeInUp">
+            <div class="po-card-img">
+              <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
+              <span class="po-badge"><?= site_e('ترس') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="stress.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
-            <span class="po-badge"><?= site_e('استرس') ?></span>
+        <a href="stress.html" class="po-card-link">
+          <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
+            <div class="po-card-img">
+              <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
+              <span class="po-badge"><?= site_e('استرس') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
+        </a>
 
-      <a href="anger.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
-            <span class="po-badge"><?= site_e('خشم') ?></span>
+        <a href="anger.html" class="po-card-link">
+          <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
+            <div class="po-card-img">
+              <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
+              <span class="po-badge"><?= site_e('خشم') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
+        </a>
+      <?php endif; ?>
     </div>
 
   </div>
@@ -151,60 +177,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="<?= site_e('مراقبت حمایتی و تسکینی') ?>">
       </div>
     </div>
-
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- Section 4 — Patient Articles -->
-<section id="patient-articles" class="po-section po-section--alt po-section--articles" aria-labelledby="patient-articles-title">
-  <div class="po-container">
-
-    <div class="po-articles-heading wow fadeInUp">
-      <div>
-        <span class="po-header-accent"></span>
-        <span class="po-articles-kicker"><?= site_e('آموزش و خودمراقبتی') ?></span>
-        <h2 id="patient-articles-title" class="po-heading"><?= site_e('مقالات بیماران و مراقبین') ?></h2>
-        <p class="po-desc"><?= site_e('یادداشت‌ها، راهنماها و مطالب آموزشی کاربردی برای بیماران و خانواده‌ها') ?></p>
-      </div>
-      <?php if ($patientArticles): ?>
-        <a href="/news.php?category=<?= (int)$patientArticles[0]['category_id'] ?>" class="po-all-link">
-          <?= site_e('همه مقالات') ?> <span aria-hidden="true">←</span>
-        </a>
-      <?php endif; ?>
-    </div>
-
-    <?php if ($patientArticles): ?>
-      <div class="po-articles-grid wow fadeInUp" data-wow-delay="0.2s">
-        <?php foreach ($patientArticles as $index => $article):
-            $articleImage = !empty($article['featured_image'])
-                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
-                    ? (string)$article['featured_image']
-                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
-                : '';
-            $articleExcerpt = trim(strip_tags((string)($article['subtitle'] ?: $article['content'])));
-        ?>
-        <a class="po-article-card<?= $index === 0 ? ' po-article-featured' : '' ?>" href="/<?= (int)$article['id'] ?>/">
-          <div class="po-article-image">
-            <?php if ($articleImage): ?>
-              <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
-            <?php else: ?>
-              <span aria-hidden="true"><?= iconoir('book', '', 34) ?></span>
-            <?php endif; ?>
-          </div>
-          <div class="po-article-body">
-            <span class="po-article-label"><?= site_e('آموزش بیمار') ?></span>
-            <h3 class="po-article-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
-            <p class="po-article-excerpt"><?= htmlspecialchars(mb_substr($articleExcerpt, 0, $index === 0 ? 165 : 105, 'UTF-8'), ENT_QUOTES, 'UTF-8') ?><?= mb_strlen($articleExcerpt, 'UTF-8') > ($index === 0 ? 165 : 105) ? '…' : '' ?></p>
-            <span class="po-article-meta"><?= htmlspecialchars((string)($article['author'] ?: site_text('مکسا')), ENT_QUOTES, 'UTF-8') ?> · <?= max(1, (int)$article['read_time']) ?> <?= site_e('دقیقه مطالعه') ?></span>
-            <span class="po-article-read"><?= site_e('مطالعه مقاله') ?> <span aria-hidden="true">←</span></span>
-          </div>
-        </a>
-        <?php endforeach; ?>
-      </div>
-    <?php else: ?>
-      <div class="po-articles-empty wow fadeInUp"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
-    <?php endif; ?>
 
   </div>
 </section>
@@ -627,183 +599,5 @@ if (isset($pdo) && $pdo instanceof PDO) {
   .po-heading {
     font-size: 21px;
   }
-}
-
-/* ── 4. patient articles ── */
-.po-section--articles {
-  padding-top: 50px;
-  padding-bottom: 70px;
-}
-.po-articles-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
-}
-.po-articles-kicker {
-  display: block;
-  color: var(--po-teal);
-  font-size: 13px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-.po-articles-heading .po-heading {
-  margin: 0 0 8px;
-}
-.po-articles-heading .po-desc {
-  margin: 0;
-  max-width: 550px;
-  text-align: start;
-}
-.po-all-link {
-  color: var(--po-teal);
-  font-size: 14px;
-  font-weight: 800;
-  text-decoration: none;
-  white-space: nowrap;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: var(--po-teal-light);
-  transition: all 0.22s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.po-all-link:hover {
-  background: var(--po-teal);
-  color: #fff;
-  text-decoration: none;
-}
-.po-articles-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: 20px;
-}
-.po-article-card {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  gap: 18px;
-  padding: 16px;
-  color: inherit;
-  text-decoration: none;
-  background: var(--po-bg);
-  border: 1px solid var(--po-border);
-  border-radius: var(--po-radius);
-  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
-              box-shadow 0.3s cubic-bezier(0.16,1,0.3,1),
-              border-color 0.3s ease;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-}
-.po-article-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(0,0,0,0.08);
-  border-color: rgba(15,159,170,0.22);
-  text-decoration: none;
-  color: inherit;
-}
-.po-article-featured {
-  grid-row: span 3;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow: hidden;
-}
-.po-article-image {
-  min-height: 130px;
-  background: #e6f7f7;
-  color: var(--po-teal);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 14px;
-}
-.po-article-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.po-article-featured .po-article-image {
-  height: 270px;
-  border-radius: 0;
-}
-.po-article-body {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-grow: 1;
-}
-.po-article-featured .po-article-body {
-  padding: 24px 26px 26px;
-  flex: 1;
-}
-.po-article-label {
-  display: inline-block;
-  background: var(--po-teal-light);
-  color: var(--po-teal-dark);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-bottom: 8px;
-}
-.po-article-title {
-  margin: 4px 0 8px;
-  color: var(--po-text);
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.6;
-}
-.po-article-featured .po-article-title {
-  font-size: 21px;
-  line-height: 1.5;
-}
-.po-article-excerpt {
-  margin: 0 0 12px;
-  color: var(--po-muted);
-  font-size: 13.5px;
-  line-height: 1.8;
-  text-align: start;
-}
-.po-article-featured .po-article-excerpt {
-  font-size: 14.5px;
-}
-.po-article-meta {
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: auto;
-}
-.po-article-read {
-  color: var(--po-teal);
-  font-size: 13px;
-  font-weight: 800;
-  margin-top: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.po-articles-empty {
-  background: #f1f8f7;
-  color: #476662;
-  border: 1px dashed #b2ded7;
-  border-radius: var(--po-radius);
-  padding: 48px 24px;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
-}
-@media (max-width: 900px) {
-  .po-articles-grid { grid-template-columns: 1fr; }
-  .po-article-featured { grid-row: auto; }
-  .po-article-featured .po-article-image { height: 220px; }
-}
-@media (max-width: 540px) {
-  .po-article-card { grid-template-columns: 1fr; }
-  .po-article-image { height: 160px; }
 }
 </style>

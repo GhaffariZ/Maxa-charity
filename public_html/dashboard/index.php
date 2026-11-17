@@ -1035,7 +1035,9 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
     // سردبیر (ستاد مرکزی): صفِ بررسیِ اخبارِ ارسال‌شده
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
+  }
 
+  if (CAN.articles || CAN.news){
     content.push({label:'مقاله ها',icon:'book',children:[
       {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'},
       {label:'مقالات بیماران',icon:'book',href:'news-list.php?section=patients'}]});

@@ -9,7 +9,9 @@
  *  امنیت: CSRF + اعتبارسنجیِ وضعیت + بررسیِ مالکیتِ شعبه (IDOR).
  * ========================================================================== */
 require_once __DIR__ . '/_guard.php';
-dash_require('news');
+if (!dash_can('news') && !dash_can('articles')) {
+    dash_abort_forbidden();
+}
 
 header('Content-Type: application/json; charset=utf-8');
 

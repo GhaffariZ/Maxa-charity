@@ -1,11 +1,17 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 $event_mode = isset($_GET['event_id']) || isset($_GET['event_news_id']);
+$is_article_mode = in_array($_GET['section'] ?? '', ['doctors', 'patients'], true);
 if ($event_mode) {
     dash_require('events');
     dash_require_hq();
     require_once __DIR__ . '/../event-lib.php';
     $pdo = dash_pdo();
+} elseif ($is_article_mode) {
+    if (!dash_can('articles') && !dash_can('news')) {
+        dash_abort_forbidden();
+    }
+    require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 } else {
     dash_require('news');
     require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";

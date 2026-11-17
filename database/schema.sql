@@ -785,7 +785,7 @@ CREATE TABLE `pages` (
 INSERT INTO `pages` (`id`, `title`, `slug`, `components`, `status`, `created_at`, `updated_at`) VALUES
 (7, 'hamrah', 'hamrah', '[\"topbar\",\"header\",\"hamrah\",\"footer\"]', 'published', '2026-05-01 22:58:34', '2026-05-01 22:58:46'),
 (8, 'macsa_stories', 'macsastories', '[\"topbar\",\"header\",\"macsa_stories\",\"footer\"]', 'published', '2026-05-01 23:06:09', '2026-06-07 15:57:47'),
-(9, 'patientoption', 'patientoption', '[\"header\",\"patientoption\",\"hamrah\",\"footer\"]', 'published', '2026-05-02 08:08:08', '2026-05-02 09:01:57'),
+(9, 'patientoption', 'patientoption', '[\"header\",\"patientoption\",\"footer\"]', 'published', '2026-05-02 08:08:08', '2026-05-02 09:01:57'),
 (12, 'csr', 'csr', '[\"topbar\",\"header\",\"csrfaqs\",\"footer\"]', 'published', '2026-05-02 10:37:21', '2026-05-02 10:37:32'),
 (13, 'support_projects', 'supportprojects', '[\"topbar\",\"header\",\"support_projects\",\"footer\"]', 'published', '2026-05-03 20:35:17', '2026-05-03 20:35:22'),
 (14, 'userpanel', 'userpanel', '[\"UserPanel\"]', 'published', '2026-05-04 08:51:42', '2026-05-04 08:59:04'),
@@ -2024,7 +2024,7 @@ CREATE TABLE IF NOT EXISTS `branch_features` (
 
 -- دفتر مرکزی همه‌ی قابلیت‌ها را دارد
 INSERT IGNORE INTO `branch_features` (`branch_id`, `feature`, `enabled`) VALUES
-  (1, 'hero', 1), (1, 'news', 1), (1, 'campaigns', 1), (1, 'partners', 1),
+  (1, 'hero', 1), (1, 'news', 1), (1, 'articles', 1), (1, 'campaigns', 1), (1, 'partners', 1),
   (1, 'courses', 1), (1, 'pages', 1), (1, 'financial', 1), (1, 'feedback', 1), (1, 'medical', 1);
 
 -- ----------------------------------------------------------------------------

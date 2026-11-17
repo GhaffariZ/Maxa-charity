@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-dash_require('news');
+if (!empty($_GET['section']) && in_array($_GET['section'], ['doctors', 'patients'], true)) {
+    if (!dash_can('articles') && !dash_can('news')) {
+        dash_abort_forbidden();
+    }
+} else {
+    dash_require('news');
+}
 function slugify($text) {
 
     $text = trim($text);
