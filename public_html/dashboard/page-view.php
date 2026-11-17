@@ -131,6 +131,7 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
                 'metastasis'          => 'متاستاز سرطان | خیریه مکسا',
                 'cancerspread'        => 'محل و نحوه گسترش سرطان | خیریه مکسا',
                 'cancertypes'         => 'انواع سرطان | خیریه مکسا',
+                'patientoption'       => 'بیماران و مراقبین | خیریه مکسا',
             ];
             $autoTitle = $titles[$slug] ?? 'مکسا';
             render_branch_components($pdo, ['topbar', 'header', $slug, 'footer'], '', '', $autoTitle);
@@ -151,6 +152,9 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
 
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
+    if ($slug === 'patientoption') {
+        $components = array_values(array_filter($components, static fn($c) => $c !== 'hamrah'));
+    }
 
     $configuredContent=false;
     if(content_ready($pdo)){

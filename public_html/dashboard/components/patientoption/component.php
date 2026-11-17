@@ -109,36 +109,6 @@
   </div>
 </section>
 
-<!-- ========================= -->
-<!-- Section 3 — Image + Text Feature -->
-<section class="po-section">
-  <div class="po-container">
-
-    <div class="po-header wow fadeInUp">
-      <span class="po-header-accent"></span>
-      <h2 class="po-heading"><?= site_e('مراقبت جامع و همه‌جانبه') ?></h2>
-      <p class="po-desc"><?= site_e('بیماری سرطان فقط یک بیماری جسمی نیست، مراقبت واقعی شامل ذهن، روح و زندگی روزمره بیمار و خانواده‌اش است') ?></p>
-    </div>
-
-    <div class="po-feature wow fadeInUp" data-wow-delay="0.2s">
-      <div class="po-feature-text">
-        <h3 class="po-feature-title"><?= site_e('چرا مراقبت‌های حمایتی و تسکینی مهم هستند؟') ?></h3>
-        <p>
-          <?= site_e('مراقبت‌های حمایتی و تسکینی بر بهبود کیفیت زندگی بیماران مبتلا به سرطان و خانواده‌هایشان تمرکز دارد. این مراقبت‌ها شامل مدیریت درد و علائم فیزیکی، حمایت روانی، مشاوره اجتماعی و کمک در تصمیم‌گیری‌های درمانی است.') ?>
-        </p>
-        <a href="socialcare.html" class="po-feature-btn">
-          <?= site_e('آشنایی با خدمات') ?>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-      <div class="po-feature-img">
-        <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="<?= site_e('مراقبت حمایتی و تسکینی') ?>">
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <style>
 /* ── design tokens ── */
 .po-section {
@@ -400,89 +370,6 @@
   transform: translateX(-4px);
 }
 
-/* ── 3. feature box ── */
-.po-feature {
-  display: flex;
-  gap: 0;
-  background: var(--po-bg);
-  border: 1px solid var(--po-border);
-  border-radius: var(--po-radius);
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-}
-
-.po-feature-text {
-  flex: 1;
-  padding: 40px 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.po-feature-title {
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--po-text);
-  margin: 0 0 18px;
-  line-height: 1.5;
-  border-right: 4px solid var(--po-teal);
-  padding-right: 14px;
-}
-
-.po-feature-text p {
-  font-size: 15px;
-  color: var(--po-muted);
-  line-height: 2;
-  text-align: justify;
-  margin: 0 0 26px;
-}
-
-.po-feature-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(180deg, var(--po-teal) 0%, var(--po-teal-dark) 100%);
-  color: #fff;
-  padding: 13px 30px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 800;
-  text-decoration: none;
-  width: fit-content;
-  box-shadow: 0 10px 22px rgba(15,159,170,0.22);
-  transition: all 0.22s ease;
-}
-
-.po-feature-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(15,159,170,0.30);
-  color: #fff;
-  text-decoration: none;
-}
-
-.po-feature-btn svg {
-  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-  color: #faa61a;
-}
-
-.po-feature-btn:hover svg {
-  transform: translateX(-4px);
-  color: #fff;
-}
-
-.po-feature-img {
-  flex: 1;
-  min-height: 320px;
-  overflow: hidden;
-}
-
-.po-feature-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 /* ── entrance animations (CSS-only) ── */
 @keyframes poFadeInUp {
   from { opacity: 0; transform: translateY(24px); }
@@ -508,14 +395,6 @@
   .po-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .po-feature {
-    flex-direction: column-reverse;
-  }
-
-  .po-feature-img {
-    min-height: 260px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -538,14 +417,6 @@
 
   .po-link-card {
     padding: 24px 20px;
-  }
-
-  .po-feature-text {
-    padding: 28px 22px;
-  }
-
-  .po-feature-title {
-    font-size: 18px;
   }
 }
 
