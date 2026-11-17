@@ -10,7 +10,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         FROM news n JOIN news_categories c ON c.id = n.category_id
         WHERE c.slug = 'doctors-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
-        ORDER BY n.publish_date DESC, n.id DESC LIMIT 4");
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 9");
     $articleStmt->execute();
     $doctorArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
 }
@@ -854,28 +854,124 @@ if (isset($pdo) && $pdo instanceof PDO) {
         .doctors-section-heading h2 { border: 0; padding: 0; margin: 8px 0; color: #193f3d; font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
         .doctors-section-heading p { margin: 0; color: #627673; font-size: 1rem; }
         .doctors-all-link { color: #137a70; font-weight: 700; text-decoration: none; white-space: nowrap; padding: 8px 0; }
-        .doctors-articles-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
-        .doctors-article-card { min-width: 0; display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 18px; padding: 14px; color: inherit; text-decoration: none; background: #fff; border-radius: 14px; transition: transform .2s, box-shadow .2s; }
-        .doctors-article-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(20,72,66,.09); }
-        .doctors-article-featured { grid-row: span 3; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-        .doctors-article-image { min-height: 132px; background: #dcece6; color: #147d72; display: grid; place-items: center; overflow: hidden; border-radius: 8px; }
-        .doctors-article-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .doctors-article-featured .doctors-article-image { height: 280px; border-radius: 0; }
-        .doctors-article-body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
-        .doctors-article-featured .doctors-article-body { padding: 22px 28px 28px; flex: 1; }
-        .doctors-article-label { color: #148174; font-size: .78rem; font-weight: 700; }
-        .doctors-article-body h3 { margin: 6px 0 9px; color: #183c39; font-size: 1.12rem; line-height: 1.65; text-wrap: pretty; }
-        .doctors-article-featured h3 { font-size: 1.6rem; }
-        .doctors-article-body p { margin: 0 0 12px; color: #637572; font-size: .87rem; line-height: 1.8; text-align: start; }
-        .doctors-article-featured p { font-size: .98rem; }
-        .doctors-article-meta { color: #82918c; font-size: .76rem; margin-top: auto; }
-        .doctors-article-read { color: #127b70; font-size: .86rem; font-weight: 700; margin-top: 12px; }
-        .doctors-articles-empty { background: #eaf3ef; color: #526b65; border-radius: 14px; padding: 48px 24px; text-align: center; }
+        .doctors-articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .doctors-article-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .doctors-article-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 22px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+                        box-shadow 0.3s cubic-bezier(0.16,1,0.3,1),
+                        border-color 0.3s ease;
+        }
+        .doctors-article-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.08);
+            border-color: rgba(15,159,170,0.22);
+            text-decoration: none;
+        }
+        .doctors-article-img {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+        .doctors-article-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+        .doctors-article-card:hover .doctors-article-img img {
+            transform: scale(1.06);
+        }
+        .doctors-article-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #008f8a;
+            padding: 4px 13px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .doctors-article-card:hover .doctors-article-badge {
+            background: #008f8a;
+            color: #fff;
+        }
+        .doctors-article-body {
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .doctors-article-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 16px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        .doctors-article-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #008f8a;
+            font-size: 13px;
+            font-weight: 800;
+            margin-top: auto;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+            transition: color 0.22s ease;
+        }
+        .doctors-article-cta svg {
+            transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+            color: #faa61a;
+        }
+        .doctors-article-card:hover .doctors-article-cta {
+            color: #00736f;
+        }
+        .doctors-article-card:hover .doctors-article-cta svg {
+            transform: translateX(-4px);
+        }
+        .doctors-articles-empty {
+            grid-column: 1 / -1;
+            background: #eaf3ef;
+            color: #526b65;
+            border-radius: 14px;
+            padding: 48px 24px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+        }
         a:focus-visible { outline: 3px solid #f0ad44; outline-offset: 4px; }
         @media (max-width: 900px) {
+            .doctors-articles-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        @media (max-width: 600px) {
             .doctors-articles-grid { grid-template-columns: 1fr; }
-            .doctors-article-featured { grid-row: auto; }
-            .doctors-article-featured .doctors-article-image { height: 230px; }
         }
         @media (max-width: 650px) {
             .page-container { padding: 12px 14px 70px; }
@@ -950,19 +1046,21 @@ if (isset($pdo) && $pdo instanceof PDO) {
                                 ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
                                     ? (string)$article['featured_image']
                                     : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
-                                : '';
-                            $articleExcerpt = trim(strip_tags((string)($article['subtitle'] ?: $article['content'])));
+                                : '/dashboard/components/doctorspage/images/2.webp';
+                            $articleBadge = !empty($article['author']) ? $article['author'] : site_text('کادر درمان');
+                            $articleUrl = '/' . (int)$article['id'] . '/';
+                            $delay = sprintf('%.1fs', ($index % 3) * 0.2);
                         ?>
-                        <a class="doctors-article-card<?= $index === 0 ? ' doctors-article-featured' : '' ?>" href="/<?= (int)$article['id'] ?>/">
-                            <div class="doctors-article-image">
-                                <?php if ($articleImage): ?><img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy"><?php else: ?><span aria-hidden="true"><?= iconoir('book', '', 34) ?></span><?php endif; ?>
-                            </div>
-                            <div class="doctors-article-body">
-                                <span class="doctors-article-label"><?= site_e('مقاله تخصصی') ?></span>
-                                <h3><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
-                                <p><?= htmlspecialchars(mb_substr($articleExcerpt, 0, $index === 0 ? 165 : 105, 'UTF-8'), ENT_QUOTES, 'UTF-8') ?><?= mb_strlen($articleExcerpt, 'UTF-8') > ($index === 0 ? 165 : 105) ? '…' : '' ?></p>
-                                <span class="doctors-article-meta"><?= htmlspecialchars((string)($article['author'] ?: site_text('مکسا')), ENT_QUOTES, 'UTF-8') ?> · <?= max(1, (int)$article['read_time']) ?> <?= site_e('دقیقه مطالعه') ?></span>
-                                <span class="doctors-article-read"><?= site_e('مطالعه مقاله') ?> <span aria-hidden="true">←</span></span>
+                        <a href="<?= htmlspecialchars($articleUrl, ENT_QUOTES, 'UTF-8') ?>" class="doctors-article-card-link">
+                            <div class="doctors-article-card wow fadeInUp" data-wow-delay="<?= $delay ?>">
+                                <div class="doctors-article-img">
+                                    <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                                    <span class="doctors-article-badge"><?= htmlspecialchars((string)$articleBadge, ENT_QUOTES, 'UTF-8') ?></span>
+                                </div>
+                                <div class="doctors-article-body">
+                                    <h3 class="doctors-article-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                                    <span class="doctors-article-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                </div>
                             </div>
                         </a>
                         <?php endforeach; ?>

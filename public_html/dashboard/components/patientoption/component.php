@@ -107,44 +107,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </a>
         <?php endforeach; ?>
       <?php else: ?>
-        <a href="fear.html" class="po-card-link">
-          <div class="po-card wow fadeInUp">
-            <div class="po-card-img">
-              <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
-              <span class="po-badge"><?= site_e('ترس') ?></span>
-            </div>
-            <div class="po-card-body">
-              <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
-              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            </div>
-          </div>
-        </a>
-
-        <a href="stress.html" class="po-card-link">
-          <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
-            <div class="po-card-img">
-              <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
-              <span class="po-badge"><?= site_e('استرس') ?></span>
-            </div>
-            <div class="po-card-body">
-              <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
-              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            </div>
-          </div>
-        </a>
-
-        <a href="anger.html" class="po-card-link">
-          <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
-            <div class="po-card-img">
-              <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
-              <span class="po-badge"><?= site_e('خشم') ?></span>
-            </div>
-            <div class="po-card-body">
-              <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
-              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            </div>
-          </div>
-        </a>
+        <div class="po-articles-empty wow fadeInUp"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
       <?php endif; ?>
     </div>
 
@@ -440,6 +403,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 .po-card:hover .po-card-cta svg {
   transform: translateX(-4px);
+}
+
+.po-articles-empty {
+  grid-column: 1 / -1;
+  background: var(--po-bg);
+  border: 1px dashed var(--po-border);
+  color: var(--po-muted);
+  border-radius: var(--po-radius);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 /* ── 3. feature box ── */
