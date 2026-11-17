@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-dash_require('news');
+if (!empty($_GET['section']) && in_array($_GET['section'], ['doctors', 'patients'], true)) {
+    if (!dash_can('articles') && !dash_can('news')) {
+        dash_abort_forbidden();
+    }
+} else {
+    dash_require('news');
+}
 function slugify($text) {
 
     $text = trim($text);
@@ -106,10 +112,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/../config/database.php";
 $__branch    = dash_active_branch_id();
 $__isEditor  = dash_is_news_editor();
 $__reviewOnly = !empty($_GET['review']);  // صفِ بررسیِ سردبیری
-$__doctorsOnly = ($_GET['section'] ?? '') === 'doctors';
+$__section = $_GET['section'] ?? '';
+$__doctorsOnly = $__section === 'doctors';
+$__patientsOnly = $__section === 'patients';
 $__doctorsCategory = null;
+$__patientsCategory = null;
 if ($__doctorsOnly) {
     $__doctorsCategory = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' LIMIT 1")->fetchColumn() ?: -1;
+} elseif ($__patientsOnly) {
+    $__patientsCategory = $pdo->query("SELECT id FROM news_categories WHERE slug = 'patients-articles' LIMIT 1")->fetchColumn() ?: -1;
 }
 
 $where = []; $params = [];
@@ -117,6 +128,7 @@ if (!$__isEditor || ($_GET['scope'] ?? '') === 'active') {
     $where[] = 'n.branch_id = ?'; $params[] = $__branch;
 }
 if ($__doctorsOnly) { $where[] = 'n.category_id = ?'; $params[] = $__doctorsCategory; }
+if ($__patientsOnly) { $where[] = 'n.category_id = ?'; $params[] = $__patientsCategory; }
 if ($__reviewOnly) $where[] = "n.status = 'review'";
 if ((int)($_GET['id'] ?? 0) > 0) { $where[] = 'n.id = ?'; $params[] = (int)$_GET['id']; }
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -385,8 +397,8 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </span>
         <div>
-            <h1><?= $__reviewOnly ? 'بررسی سردبیری' : ($__doctorsOnly ? 'مقالات کادر درمان' : 'مدیریت اخبار') ?></h1>
-            <p><?= $__reviewOnly ? 'اخبار ارسال‌شده در صف بررسی' : ($__doctorsOnly ? 'مقاله‌های صفحه کادر درمان' : 'فهرست و وضعیت اخبار') ?></p>
+            <h1><?= $__reviewOnly ? 'بررسی سردبیری' : ($__doctorsOnly ? 'مقالات کادر درمان' : ($__patientsOnly ? 'مقالات بیماران' : 'مدیریت اخبار')) ?></h1>
+            <p><?= $__reviewOnly ? 'اخبار ارسال‌شده در صف بررسی' : ($__doctorsOnly ? 'مقاله‌های صفحه کادر درمان' : ($__patientsOnly ? 'مقاله‌های صفحه بیماران و مراقبین' : 'فهرست و وضعیت اخبار')) ?></p>
         </div>
     </div>
 
@@ -395,9 +407,9 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             انتخاب اخبار
         </button>
-        <a href="news-create.php<?= $__doctorsOnly ? '?section=doctors' : '' ?>" class="btn btn-new">
+        <a href="news-create.php<?= $__doctorsOnly ? '?section=doctors' : ($__patientsOnly ? '?section=patients' : '') ?>" class="btn btn-new">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <?= $__doctorsOnly ? 'ساخت مقاله جدید' : 'ساخت خبر جدید' ?>
+            <?= ($__doctorsOnly || $__patientsOnly) ? 'ساخت مقاله جدید' : 'ساخت خبر جدید' ?>
         </a>
     </div>
 </div>
@@ -539,7 +551,7 @@ $news_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   مشاهده
                 </a>
-                <a href="news-create.php?id=<?= $news['id'] ?><?= $__doctorsOnly ? '&section=doctors' : '' ?>" class="btn-min">
+                <a href="news-create.php?id=<?= $news['id'] ?><?= $__doctorsOnly ? '&section=doctors' : ($__patientsOnly ? '&section=patients' : '') ?>" class="btn-min">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   ویرایش
                 </a>

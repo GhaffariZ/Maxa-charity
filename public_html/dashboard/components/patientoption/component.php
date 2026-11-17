@@ -1,4 +1,20 @@
-<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<?php
+require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__ . '/../../../core/content-locales.php';
+if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; }
+
+$patientArticles = [];
+if (isset($pdo) && $pdo instanceof PDO) {
+    $articleScope = content_where($pdo, 'news', 'n.id');
+    $articleStmt = $pdo->prepare("SELECT n.id, n.title, n.subtitle, n.content, n.author, n.category_id, n.publish_date, n.news_code, n.featured_image, n.read_time
+        FROM news n JOIN news_categories c ON c.id = n.category_id
+        WHERE c.slug = 'patients-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
+          AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 9");
+    $articleStmt->execute();
+    $patientArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
+}
+?>
 <!-- ========================= -->
 <!-- Section 1 — Link Cards (no images, links stacked) -->
 <section class="po-section">
@@ -55,8 +71,8 @@
 </section>
 
 <!-- ========================= -->
-<!-- Section 2 — Image Cards (square-ish with images) -->
-<section class="po-section po-section--alt">
+<!-- Section 2 — Image Cards (up to 9 articles) -->
+<section class="po-section po-section--alt" id="patient-articles">
   <div class="po-container">
 
     <div class="po-header wow fadeInUp">
@@ -66,44 +82,33 @@
     </div>
 
     <div class="po-grid">
-      <a href="fear.html" class="po-card-link">
-        <div class="po-card wow fadeInUp">
-          <div class="po-card-img">
-            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
-            <span class="po-badge"><?= site_e('ترس') ?></span>
+      <?php if (!empty($patientArticles)): ?>
+        <?php foreach ($patientArticles as $i => $article):
+            $articleImage = !empty($article['featured_image'])
+                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
+                    ? (string)$article['featured_image']
+                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
+                : '/dashboard/components/psychologicalcare/images/1.png';
+            $articleBadge = !empty($article['author']) ? $article['author'] : site_text('آموزش');
+            $articleUrl = '/' . (int)$article['id'] . '/';
+            $delay = sprintf('%.1fs', ($i % 3) * 0.2);
+        ?>
+        <a href="<?= htmlspecialchars($articleUrl, ENT_QUOTES, 'UTF-8') ?>" class="po-card-link">
+          <div class="po-card wow fadeInUp" data-wow-delay="<?= $delay ?>">
+            <div class="po-card-img">
+              <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+              <span class="po-badge"><?= htmlspecialchars((string)$articleBadge, ENT_QUOTES, 'UTF-8') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a href="stress.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
-            <span class="po-badge"><?= site_e('استرس') ?></span>
-          </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a href="anger.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
-            <span class="po-badge"><?= site_e('خشم') ?></span>
-          </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
+        </a>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="po-articles-empty wow fadeInUp"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
+      <?php endif; ?>
     </div>
 
   </div>
@@ -368,6 +373,18 @@
 
 .po-card:hover .po-card-cta svg {
   transform: translateX(-4px);
+}
+
+.po-articles-empty {
+  grid-column: 1 / -1;
+  background: var(--po-bg);
+  border: 1px dashed var(--po-border);
+  color: var(--po-muted);
+  border-radius: var(--po-radius);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 /* ── entrance animations (CSS-only) ── */

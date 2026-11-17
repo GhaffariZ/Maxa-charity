@@ -1031,11 +1031,16 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   if (CAN.news){
     var newsChildren=[
       {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
-      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'},
-      {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'}];
+      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}];
     // سردبیر (ستاد مرکزی): صفِ بررسیِ اخبارِ ارسال‌شده
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
+  }
+
+  if (CAN.articles || CAN.news){
+    content.push({label:'مقاله ها',icon:'book',children:[
+      {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'},
+      {label:'مقالات بیماران',icon:'book',href:'news-list.php?section=patients'}]});
   }
   if (CAN.events && MENU.isHqView) content.push({label:'رویدادها',icon:'calendar',children:[
                        {label:'ساخت رویداد جدید',icon:'plus',href:'event-create.php'},
@@ -1217,6 +1222,8 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       else if(it.href) MAP[it.href]={label:it.label,group:''};
     });
     MAP['campaign-edit.php']={label:'ویرایش کمپین',group:'کمپین‌ها'};
+    MAP['news-create.php?section=doctors']={label:'ساخت مقاله کادر درمان',group:'مقاله ها'};
+    MAP['news-create.php?section=patients']={label:'ساخت مقاله بیماران',group:'مقاله ها'};
 
     let current=null;     // نام فایلِ بازشده (null یعنی داشبورد/خانه)
     let syncing=false;    // محافظ در برابر حلقه‌ی hashchange
@@ -1248,7 +1255,13 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       if(!matches.length){
         let base=baseOf(file);
         if(base==='campaign-edit.php') base='campaign-status.php';
-        matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
+        if(file.includes('section=doctors')) {
+          matches=links.filter(a=>fileOf(a.getAttribute('href'))==='news-list.php?section=doctors');
+        } else if(file.includes('section=patients')) {
+          matches=links.filter(a=>fileOf(a.getAttribute('href'))==='news-list.php?section=patients');
+        } else {
+          matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
+        }
       }
       matches.forEach(a=>{
         a.classList.add('active');
