@@ -76,9 +76,15 @@ if ($event_mode && !empty($news_data['image'])) {
 
 $tags = [];
 $selectedCategoryId = (int)($news_data['category_id'] ?? 0);
-if (!$event_mode && $id === 0 && ($_GET['section'] ?? '') === 'doctors') {
-    $category = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' AND is_active = 1 LIMIT 1")->fetchColumn();
-    $selectedCategoryId = (int)$category;
+if (!$event_mode && $id === 0) {
+    $sec = $_GET['section'] ?? '';
+    if ($sec === 'doctors') {
+        $category = $pdo->query("SELECT id FROM news_categories WHERE slug = 'doctors-articles' AND is_active = 1 LIMIT 1")->fetchColumn();
+        $selectedCategoryId = (int)$category;
+    } elseif ($sec === 'patients') {
+        $category = $pdo->query("SELECT id FROM news_categories WHERE slug = 'patients-articles' AND is_active = 1 LIMIT 1")->fetchColumn();
+        $selectedCategoryId = (int)$category;
+    }
 }
 
 // آماده‌سازی زمان برای فرمت datetime-local مرورگر
@@ -3750,7 +3756,8 @@ async function saveNews() {
         setUploadProgress(100, "با موفقیت ذخیره شد");
         showStatus(`${data.message} در حال انتقال...`, true);
         setTimeout(() => {
-            window.location.href = EVENT_MODE ? "event-news-list.php?event_id=" + encodeURIComponent(EVENT_ID) : (new URLSearchParams(location.search).get('section') === 'doctors' ? 'news-list.php?section=doctors' : 'news-list.php');
+            const sec = new URLSearchParams(location.search).get('section');
+            window.location.href = EVENT_MODE ? "event-news-list.php?event_id=" + encodeURIComponent(EVENT_ID) : (sec ? 'news-list.php?section=' + encodeURIComponent(sec) : 'news-list.php');
         }, 1000);
 
     } catch (err) {
