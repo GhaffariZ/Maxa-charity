@@ -156,6 +156,25 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
         $components = array_values(array_filter($components, static fn($c) => $c !== 'hamrah'));
     }
 
+    // Ensure dedicated showcase sections for Charity Shop and Academy Courses on Home page
+    if (($slug === 'home' || $slug === '' || ($branchSlug === '' && in_array('heroindex', $components, true))) && !in_array('shop-showcase', $components, true)) {
+        $enhancedComponents = [];
+        $showcaseInserted = false;
+        foreach ($components as $cmp) {
+            if (($cmp === 'footer' || $cmp === 'ourexcellence' || $cmp === 'recent-news-hero-v2') && !$showcaseInserted) {
+                if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+                if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+                $showcaseInserted = true;
+            }
+            $enhancedComponents[] = $cmp;
+        }
+        if (!$showcaseInserted) {
+            if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+            if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+        }
+        $components = $enhancedComponents;
+    }
+
     $configuredContent=false;
     if(content_ready($pdo)){
         $configured=$pdo->prepare("SELECT 1 FROM public_content_locales WHERE content_type='pages' AND content_id=? LIMIT 1");$configured->execute([(string)$page['id']]);
@@ -310,8 +329,12 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
 {
     global $pdo;
     foreach ($components as $component) {
-        if (!render_dashboard_component((string)$component, get_defined_vars())) {
-            echo '<!-- Component not found -->';
+        try {
+            if (!render_dashboard_component((string)$component, get_defined_vars())) {
+                echo '<!-- Component not found -->';
+            }
+        } catch (Throwable $e) {
+            echo '<!-- Component render error: ' . htmlspecialchars($e->getMessage()) . ' -->';
         }
     }
 }

@@ -232,8 +232,8 @@
     "ar": "مدرّس مكسا"
   },
   "افزودن به سبد خرید": {
-    "en": "Add to cart",
-    "ar": "إضافة إلى السلة"
+    "en": "Add to shopping cart",
+    "ar": "إضافة إلى سلة التسوق"
   },
   "این دوره شامل:": {
     "en": "This course includes:",
@@ -412,7 +412,7 @@
     "ar": "فاتح / داكن"
   },
   "سبد خرید": {
-    "en": "Cart",
+    "en": "Shopping cart",
     "ar": "سلة التسوق"
   },
   "بدون عنوان": {
@@ -6955,10 +6955,6 @@
     "en": "MACSA team",
     "ar": "فريق مكسا"
   },
-  "مکسا": {
-    "en": "MACSA",
-    "ar": "مكسا"
-  },
   "مسیر صفحه": {
     "en": "Breadcrumb",
     "ar": "مسار الصفحة"
@@ -7071,8 +7067,368 @@
     "en": "Routine",
     "ar": "الروتين"
   },
-  "۲۴": {
-    "en": "24",
-    "ar": "٢٤"
+  "فروشگاه خیریه | مکسا": {
+    "en": "Charity Shop | MACSA",
+    "ar": "المتجر الخيري | مكسا"
+  },
+  "فروشگاه خیریه مکسا": {
+    "en": "MACSA Charity Shop",
+    "ar": "متجر مكسا الخيري"
+  },
+  "فروشگاه خیریه": {
+    "en": "Charity Shop",
+    "ar": "المتجر الخيري"
+  },
+  "محصولات مهربانی؛": {
+    "en": "Products of Kindness;",
+    "ar": "منتجات الإحسان؛"
+  },
+  "خرید در خدمت درمان بیماران مبتلا به سرطان": {
+    "en": "Shopping in support of cancer patients treatment",
+    "ar": "الشراء لدعم علاج مرضى السرطان"
+  },
+  "با خرید هر محصول از این فروشگاه، تمامی عواید آن به صورت صددرصدی صرف تأمین هزینه‌های دارو، درمان و ارائه مراقبت‌های تسکینی رایگان به بیماران مبتلا به سرطان و خانواده‌های آنان می‌شود.": {
+    "en": "With the purchase of each product from this store, 100% of the proceeds are dedicated to providing free palliative care, medicine, and treatment for cancer patients and their families.",
+    "ar": "مع شراء كل منتج من هذا المتجر، تذهب جميع العائدات بنسبة 100% لتوفير الرعاية التلطيفية والأدوية والعلاج مجانًا لمرضى السرطان وأسرهم."
+  },
+  "۱۰۰٪ عواید وقف درمان رایگان بیماران": {
+    "en": "100% of proceeds dedicated to free patient care",
+    "ar": "100% من العائدات مخصصة لعلاج المرضى مجانًا"
+  },
+  "ارسال به سراسر کشور (پس‌کرایه)": {
+    "en": "Nationwide shipping (Pay on delivery)",
+    "ar": "الشحن لجميع أنحاء البلاد (الدفع عند الاستلام)"
+  },
+  "صنایع دستی کارگاه‌های توانمندسازی": {
+    "en": "Handicrafts from empowerment workshops",
+    "ar": "الحرف اليدوية من ورش التمكين"
+  },
+  "دسته‌بندی‌های محصولات": {
+    "en": "Product categories",
+    "ar": "تصنيفات المنتجات"
+  },
+  "همه محصولات": {
+    "en": "All products",
+    "ar": "جميع المنتجات"
+  },
+  "جستجوی محصولات...": {
+    "en": "Search products...",
+    "ar": "البحث عن المنتجات..."
+  },
+  "جستجوی محصولات": {
+    "en": "Search products",
+    "ar": "البحث عن المنتجات"
+  },
+  "محصول": {
+    "en": "Product",
+    "ar": "منتج"
+  },
+  "موجود": {
+    "en": "In stock",
+    "ar": "متوفر"
+  },
+  "ناموجود": {
+    "en": "Out of stock",
+    "ar": "غير متوفر"
+  },
+  "بدون توضیحات اضافی.": {
+    "en": "No additional description.",
+    "ar": "لا يوجد وصف إضافي."
+  },
+  "قیمت:": {
+    "en": "Price:",
+    "ar": "السعر:"
+  },
+  "افزودن به سبد": {
+    "en": "Add to cart",
+    "ar": "أضف إلى السلة"
+  },
+  "محصولی برای نمایش در دسترس نیست.": {
+    "en": "No products available to display.",
+    "ar": "لا توجد منتجات متاحة للعرض."
+  },
+  "مشاهده سبد خرید": {
+    "en": "View shopping cart",
+    "ar": "عرض سلة التسوق"
+  },
+  "سبد خرید شما": {
+    "en": "Your shopping cart",
+    "ar": "سلة التسوق الخاصة بك"
+  },
+  "بستن سبد خرید": {
+    "en": "Close shopping cart",
+    "ar": "إغلاق سلة التسوق"
+  },
+  "مجموع سبد خرید:": {
+    "en": "Cart total:",
+    "ar": "إجمالي سلة التسوق:"
+  },
+  "هزینه ارسال به صورت پس‌کرایه است و زمان تحویل توسط مامور پست دریافت می‌شود": {
+    "en": "Shipping fee is payable upon delivery by the postal carrier",
+    "ar": "تكلفة الشحن تُدفع عند الاستلام وتُحصَّل من قبل موظف البريد"
+  },
+  "تکمیل خرید و پرداخت": {
+    "en": "Complete purchase and payment",
+    "ar": "إتمام الشراء والدفع"
+  },
+  "خرید هدفمند برای حمایت از بیماران مبتلا به سرطان": {
+    "en": "Purposeful shopping to support cancer patients",
+    "ar": "شراء هادف لدعم مرضى السرطان"
+  },
+  "تمام عواید حاصل از فروش محصولات این بخش، مستقیماً صرف ارائه خدمات رایگان مراقبت‌های حمایتی و تسکینی برای بیماران مبتلا به سرطان و خانواده‌های آنان می‌شود.": {
+    "en": "All proceeds from the sale of products in this section directly support free palliative care services for cancer patients and their families.",
+    "ar": "تذهب جميع العائدات من بيع منتجات هذا القسم مباشرة لتقديم خدمات الرعاية التلطيفية المجانية لمرضى السرطان وأسرهم."
+  },
+  "محصولات فروشگاه خیریه مکسا به زودی بارگذاری خواهند شد.": {
+    "en": "MACSA charity shop products will be available soon.",
+    "ar": "سيتم توفير منتجات متجر مكسا الخيري قريبًا."
+  },
+  "ورود به فروشگاه خیریه": {
+    "en": "Enter charity shop",
+    "ar": "الدخول إلى المتجر الخيري"
+  },
+  "مشاهده همه محصولات فروشگاه خیریه": {
+    "en": "View all charity shop products",
+    "ar": "عرض جميع منتجات المتجر الخيري"
+  },
+  "می‌توانید محصولات نیکوکاری را به سبد خرید اضافه کنید.": {
+    "en": "You can add charity products to your shopping cart.",
+    "ar": "يمكنك إضافة منتجات خيرية إلى سلة التسوق."
+  },
+  "حذف از سبد": {
+    "en": "Remove from cart",
+    "ar": "إزالة من السلة"
+  },
+  "هیچ محصولی با این مشخصات یافت نشد": {
+    "en": "No products found matching your search",
+    "ar": "لم يتم العثور على منتجات مطابقة للبحث"
+  },
+  "تسویه‌حساب و ثبت سفارش | فروشگاه مکسا": {
+    "en": "Checkout and Order Placement | MACSA Charity Shop",
+    "ar": "إتمام الشراء وتأكيد الطلب | متجر مكسا الخيري"
+  },
+  "تسویه‌حساب و ثبت سفارش": {
+    "en": "Checkout and Order Placement",
+    "ar": "إتمام الشراء وتأكيد الطلب"
+  },
+  "ورود به حساب کاربری برای ثبت نهایی سفارش": {
+    "en": "Log in to your account to complete your order",
+    "ar": "تسجيل الدخول إلى الحساب لتأكيد الطلب النهائي"
+  },
+  "برای تکمیل فرایند سفارش و صدور فاکتور و کد پیگیری رسمی، لطفاً شماره همراه خود را وارد نمایید. اقلام سبد خرید شما محفوظ خواهند ماند.": {
+    "en": "To complete your order and receive an official invoice and tracking code, please enter your mobile number. Your cart items will be preserved.",
+    "ar": "لإتمام عملية الطلب وإصدار الفاتورة ورمز التتبع الرسمي، يرجى إدخال رقم هاتفك المحمول. سيتم الاحتفاظ بعناصر سلة التسوق الخاصة بك."
+  },
+  "مثال: ۰۹۱۲۳۴۵۶۷۸۹": {
+    "en": "Example: 09123456789",
+    "ar": "مثال: ۰۹۱۲۳۴۵۶۷۸۹"
+  },
+  "ارسال کد تأیید": {
+    "en": "Send Verification Code",
+    "ar": "إرسال رمز التحقق"
+  },
+  "کد تأیید پیامک‌شده": {
+    "en": "SMS Verification Code",
+    "ar": "رمز التحقق المرسل عبر الرسائل القصيرة"
+  },
+  "کد ۵ رقمی": {
+    "en": "5-digit code",
+    "ar": "رمز مكون من 5 أرقام"
+  },
+  "ورود و ادامه ثبت سفارش": {
+    "en": "Login and Continue Order",
+    "ar": "تسجيل الدخول ومتابعة الطلب"
+  },
+  "تغییر شماره موبایل": {
+    "en": "Change mobile number",
+    "ar": "تغيير رقم الهاتف المحمول"
+  },
+  "ارسال مجدد کد": {
+    "en": "Resend Code",
+    "ar": "إعادة إرسال الرمز"
+  },
+  "مشخصات تحویل‌گیرنده و آدرس ارسال": {
+    "en": "Recipient Details and Shipping Address",
+    "ar": "بيانات المستلم وعنوان الشحن"
+  },
+  "نام و نام خانوادگی تحویل‌گیرنده": {
+    "en": "Recipient Full Name",
+    "ar": "الاسم الكامل للمستلم"
+  },
+  "شماره تماس تحویل‌گیرنده": {
+    "en": "Recipient Phone Number",
+    "ar": "رقم هاتف المستلم"
+  },
+  "شهر": {
+    "en": "City",
+    "ar": "المدينة"
+  },
+  "کد پستی ۱۰ رقمی": {
+    "en": "10-digit Postal Code",
+    "ar": "الرمز البريدي المكون من 10 أرقام"
+  },
+  "آدرس دقیق پستی": {
+    "en": "Detailed Postal Address",
+    "ar": "العنوان البريدي المفصل"
+  },
+  "یادداشت یا توضیحات سفارش": {
+    "en": "Order Notes or Instructions",
+    "ar": "ملاحظات أو تعليمات الطلب"
+  },
+  "اختیاری: زمان مناسب تحویل، پلاک، زنگ یا هماهنگی بیشتر": {
+    "en": "Optional: preferred delivery time, unit, buzzer or special instructions",
+    "ar": "اختياري: وقت التسليم المفضل، رقم الشقة، الجرس أو تعليمات خاصة"
+  },
+  "روش ارسال: پست پیشتاز / تیپاکس (پس‌کرایه - پرداخت درب منزل)": {
+    "en": "Shipping Method: Express Post / Tipax (Paid upon delivery)",
+    "ar": "طريقة الشحن: البريد السريع / تيباكس (الدفع عند الاستلام)"
+  },
+  "مبلغ قابل پرداخت:": {
+    "en": "Payable Amount:",
+    "ar": "المبلغ المستحق للدفع:"
+  },
+  "تکمیل سفارش و پرداخت اینترنتی": {
+    "en": "Complete Order and Online Payment",
+    "ar": "إتمام الطلب والدفع الإلكتروني"
+  },
+  "بازگشت به فروشگاه": {
+    "en": "Return to Shop",
+    "ar": "العودة إلى المتجر"
+  },
+  "رسید و نتیجه پرداخت | فروشگاه مکسا": {
+    "en": "Payment Receipt & Result | MACSA Charity Shop",
+    "ar": "إيصال ونتيجة الدفع | متجر مكسا الخيري"
+  },
+  "سفارش شما با موفقیت ثبت شد": {
+    "en": "Your order has been registered successfully",
+    "ar": "تم تسجيل طلبك بنجاح"
+  },
+  "سفارش شما با موفقیت ثبت شد و به زودی جهت ارسال آماده خواهد شد. هزینه ارسال به صورت پس‌کرایه زمان تحویل مرسوله دریافت می‌شود.": {
+    "en": "Your order has been registered successfully and will be prepared for shipment soon. The shipping cost will be collected upon delivery.",
+    "ar": "تم تسجيل طلبك بنجاح وسيتم تجهيزه للشحن قريبًا. سيتم تحصيل تكلفة الشحن عند الاستلام."
+  },
+  "کد پیگیری سفارش شما:": {
+    "en": "Your Order Tracking Code:",
+    "ar": "رمز تتبع طلبك:"
+  },
+  "مشاهده و پیگیری سفارش در پنل کاربری": {
+    "en": "View and Track Order in User Panel",
+    "ar": "عرض وتتبع الطلب في لوحة المستخدم"
+  },
+  "پرداخت ناموفق": {
+    "en": "Payment Failed",
+    "ar": "الدفع غير ناجح"
+  },
+  "پرداخت انجام نشد": {
+    "en": "Payment Not Completed",
+    "ar": "لم تكتمل عملية الدفع"
+  },
+  "تراکنش لغو شد یا از سوی درگاه بانکی مورد تأیید قرار نگرفت. مبلغی از حساب شما کسر نشده است.": {
+    "en": "The transaction was canceled or was not approved by the payment gateway. No amount has been deducted from your account.",
+    "ar": "تم إلغاء المعاملة أو لم تتم الموافقة عليها من قبل بوابة الدفع. لم يتم خصم أي مبلغ من حسابك."
+  },
+  "تلاش مجدد برای پرداخت": {
+    "en": "Retry Payment",
+    "ar": "إعادة محاولة الدفع"
+  },
+  "سفارش مورد نظر یافت نشد.": {
+    "en": "Requested order was not found.",
+    "ar": "لم يتم العثور على الطلب المطلوب."
+  },
+  "مشخصات ارسال مرسوله": {
+    "en": "Shipping and Delivery Details",
+    "ar": "تفاصيل الشحن والتسليم"
+  },
+  "اقلام سفارش": {
+    "en": "Order Items",
+    "ar": "عناصر الطلب"
+  },
+  "قیمت واحد": {
+    "en": "Unit Price",
+    "ar": "سعر الوحدة"
+  },
+  "تعداد": {
+    "en": "Quantity",
+    "ar": "الكمية"
+  },
+  "مبلغ کل": {
+    "en": "Total Amount",
+    "ar": "المبلغ الإجمالي"
+  },
+  "در حال انتقال به درگاه پرداخت...": {
+    "en": "Redirecting to payment gateway...",
+    "ar": "جارٍ التحويل إلى بوابة الدفع..."
+  },
+  "لطفاً فیلدهای الزامی را تکمیل کنید.": {
+    "en": "Please complete required fields.",
+    "ar": "يرجى إكمال الحقول المطلوبة."
+  },
+  "مجموع اقلام:": {
+    "en": "Items Subtotal:",
+    "ar": "المجموع الفرعي للعناصر:"
+  },
+  "پرداخت امن بانکی": {
+    "en": "Secure Banking Payment",
+    "ar": "دفع بنكي آمن"
+  },
+  "تضمین اصالت و کیفیت کالا": {
+    "en": "Authenticity & Quality Guaranteed",
+    "ar": "ضمان الأصالة والجودة"
+  },
+  "۱۰۰٪ سود صرف بیماران مبتلا به سرطان": {
+    "en": "100% Proceeds Support Cancer Patients",
+    "ar": "100% من الأرباح لصالح مرضى السرطان"
+  },
+  "لطفاً ابتدا وارد حساب کاربری خود شوید.": {
+    "en": "Please log in to your account first.",
+    "ar": "يرجى تسجيل الدخول إلى حسابك أولاً."
+  },
+  "کد پستی نامعتبر است (۱۰ رقم وارد کنید).": {
+    "en": "Invalid postal code (enter 10 digits).",
+    "ar": "الرمز البريدي غير صالح (أدخل 10 أرقام)."
+  },
+  "در حال حاضر سبد خرید شما خالی است.": {
+    "en": "Your shopping cart is currently empty.",
+    "ar": "سلة التسوق الخاصة بك فارغة حاليًا."
+  },
+  "پرداخت موفق و ثبت سفارش": {
+    "en": "Payment Successful & Order Placed",
+    "ar": "تم الدفع بنجاح وتسجيل الطلب"
+  },
+  "کد پیگیری رسمی مکسا": {
+    "en": "Official MACSA Tracking Code",
+    "ar": "رمز التتبع الرسمي لمكسا"
+  },
+  "کد پیگیری معتبری ارسال نشده است یا این سفارش در سیستم موجود نمی‌باشد.": {
+    "en": "No valid tracking code was provided, or this order does not exist in the system.",
+    "ar": "لم يتم تقديم رمز تتبع صالح، أو أن هذا الطلب غير موجود في النظام."
+  },
+  "اعتبارسنجی امنیتی (CSRF) ناموفق بود. لطفاً صفحه را تازه‌سازی کرده و مجدداً تلاش کنید.": {
+    "en": "Security validation (CSRF) failed. Please refresh the page and try again.",
+    "ar": "فشل التحقق الأمني (CSRF). يرجى تحديث الصفحة والمحاولة مرة أخرى."
+  },
+  "آکادمی آموزش‌های تخصصی و عمومی مکسا": {
+    "en": "MACSA Specialised and General Academy",
+    "ar": "أكاديمية مكسا للتدريب التخصصي والعام"
+  },
+  "دوره‌های آموزشی و توانمندسازی سلامت و نیکوکاری": {
+    "en": "Health and Charity Empowerment Courses",
+    "ar": "دورات تدريبية وتمكينية في الصحة والعمل الخيري"
+  },
+  "آموزش مهارت‌های مراقبت تسکینی، سلامت روان، پیشگیری و ارتقای کیفیت زندگی بیماران و خانواده‌ها": {
+    "en": "Training in palliative care, mental health, prevention, and quality of life for patients and families",
+    "ar": "التدريب على مهارات الرعاية التلطيفية، الصحة النفسية، الوقاية وتحسين جودة حياة المرضى وعائلاتهم"
+  },
+  "مشاهده همه دوره‌ها": {
+    "en": "View all courses",
+    "ar": "مشاهدة جميع الدورات"
+  },
+  "استاد مکسا": {
+    "en": "MACSA Instructor",
+    "ar": "أستاذ مكسا"
+  },
+  "دوره آموزشی تخصصی آکادمی مکسا برای یادگیری مهارت‌های کاربردی.": {
+    "en": "Specialised MACSA Academy course for acquiring practical skills.",
+    "ar": "دورة تدريبية تخصصية من أكاديمية مكسا لاكتساب المهارات التطبيقية."
   }
 }

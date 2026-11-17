@@ -5,7 +5,7 @@ require_once __DIR__ . '/core/site-locale.php';
  *  از الگوی استاندارد کامپوننت‌های سایت پیروی می‌کند: هدر، کامپوننت استند، فوتر
  * ========================================================================== */
 
-$pageTitle = site_text('سفارش استند و کارت دیجیتال | خیریه مکسا');
+$pageTitle = site_text('استندها و کارت‌های تبریک و تسلیت | خیریه مکسا');
 
 require_once __DIR__ . '/core/component-renderer.php';
 render_dashboard_component('header', get_defined_vars());

@@ -14,7 +14,7 @@
 
             <a href="/stand-order.php" class="support-card">
                 <div class="card-icon flower"><i class="fa-solid fa-seedling"></i></div>
-                <h3><?= site_e('استند تبریک و تسلیت') ?></h3>
+                <h3><?= site_e('استندها و کارت‌های تبریک و تسلیت') ?></h3>
                 <p><?= site_e('هم‌قدم با شما در جشن زندگی و آرامش در لحظه‌های فقدان') ?></p>
             </a>
 

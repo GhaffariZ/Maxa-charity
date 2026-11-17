@@ -1,16 +1,28 @@
 <?php
 require_once __DIR__ . '/../../../core/site-locale.php';
-require_once __DIR__.'/../../../core/content-locales.php';
+require_once __DIR__ . '/../../../core/content-locales.php';
+
 // دریافت اولیه لیست استان‌ها و شعب فعال غیرستادی
 $initialProvinces = [];
 
 try {
-    $dbPath = dirname(__DIR__, 3) . '/core/database.php';
-    if (file_exists($dbPath)) {
-        require_once $dbPath;
+    if (!isset($pdo) || !($pdo instanceof PDO)) {
+        $cfgPath = dirname(__DIR__, 3) . '/core/db-config.php';
+        if (file_exists($cfgPath)) {
+            $DB = require $cfgPath;
+            $host = $DB['host'] ?? 'localhost';
+            $name = $DB['name'] ?? '';
+            $user = $DB['user'] ?? '';
+            $pass = $DB['pass'] ?? '';
+            $charset = $DB['charset'] ?? 'utf8mb4';
+            $pdo = new PDO("mysql:host={$host};dbname={$name};charset={$charset}", $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        }
     }
-    if (isset($pdo)) {
-        $standScope=content_where($pdo,'stands','s.id');
+    if (isset($pdo) && ($pdo instanceof PDO)) {
+        $standScope = content_where($pdo, 'stands', 's.id');
         $st = $pdo->query("
             SELECT DISTINCT b.id AS branch_id, b.name AS branch_name, 
                    COALESCE(b.province, b.name) AS province, 
@@ -20,7 +32,7 @@ try {
             WHERE EXISTS(SELECT 1 FROM stands s WHERE s.branch_id=b.id AND s.is_active=1 AND $standScope) AND b.is_hq = 0 AND b.status = 'active' AND (bf.enabled = 1 OR bf.enabled IS NULL)
             ORDER BY province ASC
         ");
-        $rows = content_branch_labels($pdo,$st->fetchAll(PDO::FETCH_ASSOC));
+        $rows = content_branch_labels($pdo, $st->fetchAll(PDO::FETCH_ASSOC));
         foreach ($rows as $r) {
             $p = trim((string)$r['province']);
             if ($p === '' || str_contains($p, 'ستاد')) continue;
@@ -40,85 +52,995 @@ try {
 } catch (Throwable $e) {}
 
 $initialProvincesList = array_values($initialProvinces);
+
+// در صورت عدم اتصال به دیتابیس یا خالی بودن اولیه، شعب پیش‌فرض استاندارد مکسا بارگذاری می‌شوند
+if (empty($initialProvincesList)) {
+    $initialProvincesList = [
+        ['province' => 'تهران', 'branch_id' => 1, 'branch_name' => 'مرکزی تهران', 'cities' => ['تهران', 'ری', 'شمیرانات', 'اسلامشهر']],
+        ['province' => 'اصفهان', 'branch_id' => 2, 'branch_name' => 'اصفهان', 'cities' => ['اصفهان', 'کاشان', 'نجف‌آباد', 'خمینی‌شهر']],
+        ['province' => 'خراسان رضوی', 'branch_id' => 3, 'branch_name' => 'مشهد مقدس', 'cities' => ['مشهد', 'نیشابور', 'سبزوار']],
+        ['province' => 'فارس', 'branch_id' => 4, 'branch_name' => 'شیراز', 'cities' => ['شیراز', 'مرودشت', 'جهرم']],
+        ['province' => 'قم', 'branch_id' => 5, 'branch_name' => 'قم', 'cities' => ['قم']],
+        ['province' => 'کرمان', 'branch_id' => 6, 'branch_name' => 'کرمان', 'cities' => ['کرمان', 'رفسنجان']],
+        ['province' => 'آذربایجان شرقی', 'branch_id' => 7, 'branch_name' => 'تبریز', 'cities' => ['تبریز', 'مراغه']]
+    ];
+}
 ?>
 
 <!-- Persian Datepicker CSS -->
 <link rel="stylesheet" href="/dashboard/assets/css/persian-datepicker.min.css">
 
 <style>
+/* ================== استایل‌های پایه فرم ۳ مرحله‌ای ================== */
 .so-wrap {
-    max-width: var(--cta-container, 1360px);
+    max-width: var(--cta-container, 1280px);
     margin: 0 auto;
-    padding: 32px 20px 48px;
+    padding: 32px 20px 60px;
     font-family: 'Vazirmatn', Tahoma, sans-serif;
     direction: var(--site-direction, rtl);
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.so-wrap * {
+    box-sizing: border-box;
 }
 
 .so-head {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
 }
 .so-head h1 {
-    font-size: clamp(24px, 3.8vw, 32px);
+    font-size: clamp(24px, 3.8vw, 34px);
     font-weight: 900;
-    color: #1f2937;
+    color: #0f172a;
     margin: 0 0 10px;
+    line-height: 1.35;
 }
 .so-head p {
-    color: #4b5563;
-    font-size: 15px;
-    line-height: 1.8;
-    max-width: 680px;
+    color: #475569;
+    font-size: 15.5px;
+    line-height: 1.85;
+    max-width: 720px;
     margin: 0 auto;
 }
 
-/* دو ستون اصلی: راست (فرم سفارش) و چپ (استندها و پیش‌نمایش بنر) */
-.so-grid {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 36px;
-    align-items: start;
-}
-@media (max-width: 992px) {
-    .so-grid {
-        grid-template-columns: 1fr;
-    }
-    .so-left-col {
-        order: 2;
-    }
-    .so-form-col {
-        order: 1;
-    }
-}
-
-/* ================== ستون فرم سمت راست ================== */
-.so-form-col {
+/* ================== نوار استپر ۳ مرحله‌ای مشابه روند ثبت‌نام ================== */
+.so-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
-    padding: 32px 28px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
+    padding: 18px 32px;
+    margin-bottom: 34px;
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+    position: relative;
 }
 
-.so-form-col h2 {
+.so-step-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.so-step-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 17px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    color: #64748b;
+    position: relative;
+}
+
+.so-step-circle svg {
+    display: none;
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.8;
+}
+
+.so-step-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.so-step-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #64748b;
+    transition: color 0.25s;
+}
+
+.so-step-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* خط اتصال بین مراحل */
+.so-step-line {
+    flex: 1;
+    height: 3px;
+    background: #e2e8f0;
+    margin: 0 16px;
+    border-radius: 2px;
+    transition: background 0.35s ease;
+}
+
+/* حالت مرحله فعال (Active Step) */
+.so-step-item.active .so-step-circle {
+    background: #008f8a;
+    border-color: #008f8a;
+    color: #ffffff;
+    box-shadow: 0 0 0 5px rgba(0, 143, 138, 0.18);
+}
+.so-step-item.active .so-step-title {
+    color: #008f8a;
+}
+.so-step-item.active .so-step-desc {
+    color: #0f172a;
+}
+
+/* حالت مرحله تکمیل‌شده (Completed Step) — تغییر رنگ به سبز مطابق درخواست کاربر */
+.so-step-item.completed .so-step-circle {
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.16);
+}
+.so-step-item.completed .so-step-circle .so-step-num {
+    display: none;
+}
+.so-step-item.completed .so-step-circle svg {
+    display: block;
+    color: #ffffff;
+}
+.so-step-item.completed .so-step-title {
+    color: #059669;
+}
+.so-step-item.completed .so-step-desc {
+    color: #10b981;
+}
+
+/* خط تکمیل‌شده تبدیل به سبز می‌شود */
+.so-step-line.filled {
+    background: #10b981 !important;
+}
+
+@media (max-width: 860px) {
+    .so-stepper {
+        padding: 14px 18px;
+        margin-bottom: 24px;
+    }
+    .so-step-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    .so-step-circle svg {
+        width: 18px;
+        height: 18px;
+    }
+    .so-step-title {
+        font-size: 13px;
+    }
+    .so-step-desc {
+        display: none;
+    }
+    .so-step-line {
+        margin: 0 8px;
+    }
+}
+
+@media (max-width: 520px) {
+    .so-step-title {
+        display: none;
+    }
+    .so-stepper {
+        justify-content: space-around;
+        padding: 12px 14px;
+    }
+    .so-step-line {
+        margin: 0 6px;
+    }
+}
+
+/* ================== کانتینر پنل‌های مراحل ================== */
+.so-step-pane {
+    display: none;
+    animation: soFadeIn 0.3s ease;
+}
+.so-step-pane.active {
+    display: block;
+}
+
+@keyframes soFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================== مرحله ۱: انتخاب استان و شهر (بزرگتر و قشنگ‌تر) ================== */
+.so-step1-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 36px 32px;
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06);
+}
+
+.so-step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.so-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(0, 143, 138, 0.1);
+    color: #008f8a;
+    font-weight: 800;
     font-size: 18px;
+    flex-shrink: 0;
+}
+.so-step-badge svg {
+    width: 22px;
+    height: 22px;
+}
+.so-step-header-text h2 {
+    font-size: 20px;
     font-weight: 900;
-    color: #1f2937;
-    margin: 0 0 20px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #f3f4f6;
+    color: #0f172a;
+    margin: 0 0 4px;
+}
+.so-step-header-text p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* شبکه کارت‌های استان‌ها (بزرگ، شفاف و جذاب) */
+.so-prov-grid-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #334155;
+    margin: 0 0 14px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.so-form-col h2 svg {
-    width: 22px;
-    height: 22px;
+.so-prov-grid-title svg {
+    width: 18px;
+    height: 18px;
     color: #008f8a;
 }
 
-.so-section-title {
+.so-province-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.so-prov-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    user-select: none;
+}
+.so-prov-card:hover {
+    border-color: #94a3b8;
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.08);
+}
+.so-prov-card.selected {
+    background: #f0fdfa;
+    border-color: #008f8a;
+    box-shadow: 0 0 0 3px rgba(0, 143, 138, 0.15);
+}
+
+.so-prov-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.so-prov-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.so-prov-card.selected .so-prov-name {
+    color: #008f8a;
+}
+.so-prov-branch {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.so-prov-radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+.so-prov-card.selected .so-prov-radio {
+    border-color: #008f8a;
+    background: #008f8a;
+}
+.so-prov-radio svg {
+    display: none;
+    width: 14px;
+    height: 14px;
+    color: #ffffff;
+    stroke-width: 3;
+}
+.so-prov-card.selected .so-prov-radio svg {
+    display: block;
+}
+
+/* بخش انتخاب شهر (پویا و واضح) */
+.so-city-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.so-city-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.so-city-title svg {
+    width: 18px;
+    height: 18px;
+    color: #008f8a;
+}
+
+.so-city-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.so-city-chip {
+    padding: 10px 18px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
     font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+.so-city-chip:hover {
+    border-color: #008f8a;
+    color: #008f8a;
+}
+.so-city-chip.selected {
+    background: #008f8a;
+    border-color: #008f8a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 143, 138, 0.25);
+}
+
+.so-city-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.so-city-select-wrap select {
+    width: 100%;
+    max-width: 360px;
+    padding: 12px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    background: #ffffff;
+    color: #1f2937;
+    outline: none;
+}
+.so-city-select-wrap select:focus {
+    border-color: #008f8a;
+    box-shadow: 0 0 0 3px rgba(0, 143, 138, 0.12);
+}
+
+/* یادآوری محدوده شهری */
+.so-notice-box {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-right: 4px solid #f59e0b;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13.5px;
+    color: #92400e;
+    line-height: 1.75;
+}
+.so-notice-box svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: #d97706;
+}
+
+/* دکمه‌های ناوبری مراحل */
+.so-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.so-btn-next,
+.so-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #008f8a;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: 0 6px 18px rgba(0, 143, 138, 0.25);
+    text-decoration: none;
+}
+.so-btn-next:hover,
+.so-submit:hover {
+    background: #007672;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 143, 138, 0.35);
+}
+.so-btn-next svg,
+.so-submit svg {
+    width: 20px;
+    height: 20px;
+}
+
+.so-btn-prev {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 22px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+.so-btn-prev:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+.so-btn-prev svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ================== مرحله ۲: انتخاب طرح استند ================== */
+.so-step2-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 32px 28px;
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06);
+}
+
+.so-selected-badge-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    border-radius: 14px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.so-sbb-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f766e;
+}
+.so-sbb-info svg {
+    width: 18px;
+    height: 18px;
+    color: #008f8a;
+}
+.so-sbb-change {
+    background: none;
+    border: none;
+    color: #008f8a;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+/* تب‌های دسته‌بندی استندها */
+.so-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+.so-tab-btn {
+    padding: 9px 18px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.so-tab-btn:hover {
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+.so-tab-btn.active {
+    background: #008f8a;
+    color: #ffffff;
+    border-color: #008f8a;
+    box-shadow: 0 4px 12px rgba(0, 143, 138, 0.2);
+}
+
+/* شبکه استندها و پیش‌نمایش در مرحله ۲ */
+.so-step2-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 28px;
+    align-items: start;
+}
+@media (max-width: 960px) {
+    .so-step2-grid {
+        grid-template-columns: 1fr;
+    }
+    .so-preview-col {
+        order: -1;
+    }
+}
+
+/* شبکه کارت‌های استند در مرحله ۲ */
+.so-stands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    max-height: 640px;
+    overflow-y: auto;
+    padding-left: 6px;
+}
+
+.so-stand-card {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    user-select: none;
+    position: relative;
+}
+.so-stand-card:hover {
+    border-color: #94a3b8;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+}
+.so-stand-card.selected {
+    border-color: #10b981;
+    background: #f0fdf4;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.so-stand-card-img-wrap {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+.so-stand-card-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.25s;
+}
+.so-stand-card:hover .so-stand-card-img-wrap img {
+    transform: scale(1.04);
+}
+
+.so-stand-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+.so-stand-card-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.4;
+    margin: 0;
+}
+.so-stand-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: auto;
+}
+.so-stand-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+.so-stand-tag.congrats {
+    background: #fef3c7;
+    color: #b45309;
+}
+.so-stand-tag.condolence {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.so-stand-card-price {
+    font-size: 15px;
+    font-weight: 900;
+    color: #008f8a;
+}
+.so-stand-card-price span {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.so-stand-card-btn {
+    width: 100%;
+    padding: 9px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+.so-stand-card.selected .so-stand-card-btn {
+    background: #10b981;
+    color: #ffffff;
+}
+
+/* پنل پیش‌نمایش ۳ بعدی استند در مرحله ۲ */
+.so-preview-col {
+    position: sticky;
+    top: 90px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 22px;
+}
+
+.so-preview-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.so-preview-title svg {
+    width: 16px;
+    height: 16px;
+    color: #008f8a;
+}
+
+.so-scene {
+    width: 100%;
+    height: 270px;
+    perspective: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    user-select: none;
+    cursor: grab;
+}
+.so-scene:active {
+    cursor: grabbing;
+}
+
+.so-stand-3d {
+    width: 170px;
+    height: 250px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+
+.so-stand-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    backface-visibility: hidden;
+}
+.so-stand-face.front {
+    transform: rotateY(0deg) translateZ(6px);
+}
+.so-stand-face.back {
+    transform: rotateY(180deg) translateZ(6px);
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.so-stand-face.back svg {
+    width: 38px;
+    height: 38px;
+    color: #008f8a;
+    margin-bottom: 8px;
+}
+
+.so-stand-img-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+.so-stand-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.so-360-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 12px;
+}
+.so-360-hint svg {
+    width: 14px;
+    height: 14px;
+    color: #008f8a;
+}
+
+.so-selected-meta {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.so-meta-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.so-meta-price {
+    font-size: 17px;
+    font-weight: 900;
+    color: #008f8a;
+}
+.so-meta-price span {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* پیام عدم وجود استند */
+.empty-stands-msg {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    color: #64748b;
+    font-size: 14px;
+    grid-column: 1 / -1;
+}
+
+/* ================== مرحله ۳: ثبت اطلاعات و تایید نهایی ================== */
+.so-step3-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    padding: 36px 32px;
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06);
+}
+
+/* کارت خلاصه سفارش انتخابی در بالای مرحله ۳ */
+.so-order-summary-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0fdfa;
+    border: 1.5px solid #99f6e4;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.so-os-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.so-os-thumb {
+    width: 60px;
+    height: 70px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.so-os-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.so-os-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.so-os-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.so-os-loc {
+    font-size: 13px;
+    color: #0f766e;
+    font-weight: 600;
+}
+
+.so-os-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.so-os-price {
+    font-size: 19px;
+    font-weight: 900;
+    color: #008f8a;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.so-os-price span {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+.so-os-change-btn {
+    padding: 8px 14px;
+    background: #ffffff;
+    border: 1.5px solid #008f8a;
+    border-radius: 10px;
+    color: #008f8a;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.so-os-change-btn:hover {
+    background: #008f8a;
+    color: #ffffff;
+}
+
+/* گروه‌های فیلدها */
+.so-section-title {
+    font-size: 15px;
     font-weight: 800;
     color: #008f8a;
     margin: 24px 0 14px;
@@ -140,7 +1062,9 @@ $initialProvincesList = array_values($initialProvinces);
     gap: 16px;
 }
 @media (max-width: 640px) {
-    .so-field-row { grid-template-columns: 1fr; }
+    .so-field-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .so-field {
@@ -148,34 +1072,35 @@ $initialProvincesList = array_values($initialProvinces);
 }
 .so-field label {
     display: block;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
-    color: #374151;
+    color: #334155;
     margin-bottom: 6px;
 }
-.so-field label .req { color: #ef4444; }
+.so-field label .req {
+    color: #ef4444;
+}
 
 .so-field input,
 .so-field select,
 .so-field textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1.5px solid #e5e7eb;
+    border: 1.5px solid #cbd5e1;
     border-radius: 12px;
     font-family: inherit;
     font-size: 13.5px;
     color: #1f2937;
-    background: #f9fafb;
+    background: #f8fafc;
     outline: none;
     transition: all 0.2s;
-    box-sizing: border-box;
 }
 .so-field input:focus,
 .so-field select:focus,
 .so-field textarea:focus {
     border-color: #008f8a;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(0, 143, 138,0.1);
+    box-shadow: 0 0 0 3px rgba(0, 143, 138, 0.12);
 }
 .so-field textarea {
     resize: vertical;
@@ -183,59 +1108,47 @@ $initialProvincesList = array_values($initialProvinces);
     line-height: 1.7;
 }
 
-/* باکس هشدار محدوده شهری در فرم سفارش */
-.so-notice-box {
-    background: #fffbeb;
-    border: 1px solid #fef3c7;
-    border-right: 4px solid #f59e0b;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 18px;
+.so-input-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.so-field-icon {
+    position: absolute;
+    left: 14px;
+    width: 18px;
+    height: 18px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+/* باکس ارزش نیکوکاری و وقف */
+.so-charity-box {
+    background: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin: 20px 0;
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 13px;
-    color: #92400e;
+    font-size: 13.5px;
+    color: #065f46;
     line-height: 1.7;
 }
-.so-notice-box svg {
-    width: 20px;
-    height: 20px;
+.so-charity-box svg {
+    width: 22px;
+    height: 22px;
+    color: #10b981;
     flex-shrink: 0;
-    color: #d97706;
 }
 
-.so-submit {
-    width: 100%;
-    padding: 15px;
-    background: #008f8a;
-    color: #ffffff;
-    border: none;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.25s;
-    box-shadow: 0 6px 18px rgba(0, 143, 138,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-.so-submit:hover {
-    background: #00736f;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 143, 138,0.4);
-}
-.so-submit svg { width: 20px; height: 20px; }
-
+/* یادداشت نهایی */
 .so-note {
     text-align: center;
     font-size: 13px;
-    color: #6b7280;
-    margin-top: 16px;
+    color: #64748b;
+    margin-top: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -247,705 +1160,130 @@ $initialProvincesList = array_values($initialProvinces);
     height: 15px;
 }
 
-/* ================== ستون چپ (استندها و پیش‌نمایش بنر) ================== */
-.so-left-col {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 28px 24px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
-    position: sticky;
-    top: 90px;
-}
-
-/* حالت پیش‌فرض قبل از انتخاب شعبه: خالی با متن راهنما */
-.so-empty-guide {
-    text-align: center;
-    padding: 60px 20px;
-    color: #6b7280;
-}
-.so-empty-guide-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 20px;
-    background: rgba(0, 143, 138,0.08);
-    color: #008f8a;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 20px;
-}
-.so-empty-guide-icon svg {
-    width: 36px;
-    height: 36px;
-}
-.so-empty-guide h3 {
-    font-size: 17px;
-    font-weight: 800;
-    color: #1f2937;
-    margin-bottom: 10px;
-}
-.so-empty-guide p {
-    font-size: 14px;
-    line-height: 1.8;
-    max-width: 380px;
-    margin: 0 auto;
-    color: #6b7280;
-}
-
-/* حالت فعال پس از انتخاب شعبه */
-.so-stands-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.so-branch-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(0, 143, 138, 0.08);
-    color: #008f8a;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    align-self: flex-start;
-}
-.so-branch-badge svg { width: 15px; height: 15px; }
-
-/* بنر و مدل ۳ بعدی استند انتخابی */
-.so-preview-banner {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.so-scene {
-    width: 100%;
-    height: 280px;
-    perspective: 1000px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    user-select: none;
-    cursor: grab;
-}
-.so-scene:active {
-    cursor: grabbing;
-}
-
-.so-stand-3d {
-    width: 180px;
-    height: 260px;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.1s ease-out;
-}
-
-.so-stand-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    backface-visibility: hidden;
-}
-
-.so-stand-face.front {
-    transform: rotateY(0deg) translateZ(6px);
-}
-.so-stand-face.back {
-    transform: rotateY(180deg) translateZ(6px);
-    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.so-stand-face.back svg {
-    width: 40px;
-    height: 40px;
-    color: #008f8a;
-    margin-bottom: 8px;
-}
-
-.so-stand-img-wrap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-}
-.so-stand-img-wrap img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.1));
-}
-
-.so-360-hint {
-    font-size: 11.5px;
-    color: #9ca3af;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 12px;
-}
-.so-360-hint svg { width: 14px; height: 14px; color: #008f8a; }
-
-/* قیمت و عنوان متناسب با بنر انتخابی */
-.so-selected-meta {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 12px 16px;
-    border: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.so-meta-title {
-    font-size: 14.5px;
-    font-weight: 800;
-    color: #1f2937;
-}
-.so-meta-price {
-    font-size: 18px;
-    font-weight: 900;
-    color: #008f8a;
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-}
-.so-meta-price span {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-}
-
-/* تب‌های دسته‌بندی استندها */
-.so-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-}
-.so-tab-btn {
-    flex: 1;
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    color: #4b5563;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.so-tab-btn.active {
-    background: #008f8a;
-    color: #ffffff;
-    border-color: #008f8a;
-}
-
-/* ================== ساختار لیست‌گونه استندها (Stands List View) ================== */
-.so-stands-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 380px;
-    overflow-y: auto;
-    padding-left: 4px;
-}
-
-.so-stand-list-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 14px;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 14px;
-    background: #ffffff;
-    cursor: pointer;
-    transition: all 0.22s ease;
-    user-select: none;
-}
-.so-stand-list-item:hover {
-    border-color: #4fb2b0;
-    background: #fcfdfd;
-    transform: translateX(-3px);
-}
-.so-stand-list-item.active {
-    border-color: #008f8a;
-    background: rgba(0, 143, 138, 0.04);
-    box-shadow: 0 4px 14px rgba(0, 143, 138, 0.12);
-}
-
-.so-list-thumb {
-    width: 54px;
-    height: 72px;
-    border-radius: 8px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    overflow: hidden;
-}
-.so-list-thumb img {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-}
-
-.so-list-info {
-    flex: 1;
-    min-width: 0;
-}
-.so-list-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-.so-list-title {
-    font-size: 13.5px;
-    font-weight: 800;
-    color: #1f2937;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.so-list-tag {
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 10px;
-    flex-shrink: 0;
-}
-.so-list-tag.congrats {
-    background: rgba(22, 163, 122, 0.12);
-    color: #16a37a;
-}
-.so-list-tag.condolence {
-    background: rgba(71, 85, 105, 0.12);
-    color: #475569;
-}
-
-.so-list-price {
-    font-size: 13px;
-    font-weight: 800;
-    color: #008f8a;
-}
-
-.so-list-check {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid #d1d5db;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s;
-}
-.so-stand-list-item.active .so-list-check {
-    border-color: #008f8a;
-    background: #008f8a;
-}
-.so-stand-list-item.active .so-list-check::after {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #ffffff;
-}
-
-/* ================== آیکون فیلدهای تاریخ و ساعت ================== */
-.so-input-icon-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-.so-input-icon-wrap input {
-    padding-left: 42px !important;
-}
-.so-field-icon {
-    position: absolute;
-    left: 14px;
-    width: 20px;
-    height: 20px;
-    color: #008f8a;
-    pointer-events: none;
-    transition: color 0.2s;
-}
-.so-input-icon-wrap input:focus + .so-field-icon {
-    color: #00736f;
-}
-
-/* ================== استایل اختصاصی و مدرن تقویم و ساعت شمسی ================== */
-.datepicker-container {
-    z-index: 999999 !important;
-    font-family: 'Vazirmatn', sans-serif !important;
-    direction: rtl !important;
-}
-.datepicker-plot-area {
-    border-radius: 20px !important;
-    box-shadow: 0 20px 45px -10px rgba(0, 143, 138, 0.28), 0 8px 24px rgba(0,0,0,0.08) !important;
-    border: 1.5px solid rgba(0, 143, 138, 0.22) !important;
-    background: #ffffff !important;
-    padding: 16px !important;
-    min-width: 290px !important;
-    width: 290px !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    animation: dpZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-@keyframes dpZoomIn {
-    from { opacity: 0; transform: scale(0.95) translateY(-6px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.datepicker-navigator {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding-bottom: 12px !important;
-    margin-bottom: 12px !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-}
-.datepicker-navigator .pwt-btn {
-    width: 32px !important;
-    height: 32px !important;
-    line-height: 32px !important;
-    border-radius: 10px !important;
-    background: #f0fdfa !important;
-    color: #008f8a !important;
-    font-size: 16px !important;
-    font-weight: 900 !important;
-    display: grid !important;
-    place-items: center !important;
-    transition: all 0.2s !important;
-    cursor: pointer !important;
-}
-.datepicker-navigator .pwt-btn:hover {
-    background: #008f8a !important;
-    color: #ffffff !important;
-}
-.datepicker-navigator .pwt-btn-switch {
-    width: auto !important;
-    flex: 1 !important;
-    margin: 0 10px !important;
-    padding: 0 14px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #1e293b !important;
-    font-size: 13.5px !important;
-    font-weight: 800 !important;
-    border-radius: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-.datepicker-navigator .pwt-btn-switch:hover {
-    border-color: #008f8a !important;
-    color: #008f8a !important;
-}
-.datepicker-day-view .month-grid-box {
-    margin: 0 !important;
-    width: 100% !important;
-}
-.datepicker-day-view .month-grid-box .header {
-    padding-bottom: 8px !important;
-}
-.datepicker-day-view .month-grid-box .header .header-row-cell {
-    font-size: 11.5px !important;
-    font-weight: 800 !important;
-    color: #008f8a !important;
-    height: 28px !important;
-    line-height: 28px !important;
-}
-.table-days {
-    width: 100% !important;
-    direction: rtl !important;
-}
-.table-days td {
-    height: 34px !important;
-    padding: 2px !important;
-}
-.table-days td span {
-    width: 100% !important;
-    height: 30px !important;
-    line-height: 30px !important;
-    border-radius: 10px !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    color: #334155 !important;
-    background: transparent !important;
-    transition: all 0.18s ease !important;
-    display: block !important;
-}
-.table-days td:hover span {
-    background: #f0fdfa !important;
-    color: #008f8a !important;
-}
-.table-days td.selected span {
-    background: #008f8a !important;
-    color: #ffffff !important;
-    font-weight: 900 !important;
-    box-shadow: 0 4px 12px rgba(0, 143, 138, 0.35) !important;
-}
-.table-days td.today span {
-    border: 1.5px solid #008f8a !important;
-    color: #008f8a !important;
-    font-weight: 900 !important;
-}
-.table-days td.disabled span {
-    color: #cbd5e1 !important;
-    background: transparent !important;
-    cursor: not-allowed !important;
-}
-.table-days td.other-month span {
-    color: #cbd5e1 !important;
-    opacity: 0.5 !important;
-}
-
-/* حالت انتخاب ساعت */
-.datepicker-plot-area.datepicker-state-only-time {
-    width: 250px !important;
-    min-width: 250px !important;
-    padding: 20px !important;
-    text-align: center !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .datepicker-time-view {
-    background: #f8fafc !important;
-    border-radius: 16px !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 16px 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    margin: 0 !important;
-    float: none !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .time-segment {
-    width: 76px !important;
-    background: #ffffff !important;
-    border: 1.5px solid #cbd5e1 !important;
-    border-radius: 12px !important;
-    padding: 6px 4px !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .time-segment input {
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    color: #008f8a !important;
-    font-family: 'Vazirmatn', sans-serif !important;
-    height: 36px !important;
-    line-height: 36px !important;
-    text-align: center !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .up-btn,
-.datepicker-plot-area.datepicker-state-only-time .down-btn {
-    height: 24px !important;
-    line-height: 24px !important;
-    color: #64748b !important;
-    font-size: 14px !important;
-    font-weight: 900 !important;
-    cursor: pointer !important;
-    border-radius: 6px !important;
-    transition: all 0.15s !important;
-    width: 100% !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .up-btn:hover,
-.datepicker-plot-area.datepicker-state-only-time .down-btn:hover {
-    color: #008f8a !important;
-    background: #f0fdfa !important;
-}
-.datepicker-plot-area.datepicker-state-only-time .divider {
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    color: #008f8a !important;
-    height: auto !important;
-    line-height: normal !important;
-}
-.datepicker-plot-area.datepicker-state-no-second .second.time-segment,
-.datepicker-plot-area.datepicker-state-no-second .second-divider {
-    display: none !important;
-}
-.datepicker-plot-area.datepicker-state-no-meridian .meridian.time-segment,
-.datepicker-plot-area.datepicker-state-no-meridian .meridian-divider {
-    display: none !important;
-}
-@keyframes soSpin { 100% { transform: rotate(360deg); } }
-.datepicker-plot-area .toolbox {
-    margin-top: 14px !important;
-    display: flex !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    float: none !important;
-}
-.datepicker-plot-area .toolbox .pwt-btn-today,
-.datepicker-plot-area .toolbox .pwt-btn-submit {
-    background: #008f8a !important;
-    color: #ffffff !important;
-    border-radius: 10px !important;
-    padding: 8px 18px !important;
-    font-size: 12.5px !important;
-    font-weight: 800 !important;
-    border: none !important;
-    cursor: pointer !important;
-    transition: all 0.2s !important;
-    box-shadow: 0 4px 10px rgba(0, 143, 138, 0.25) !important;
-    float: none !important;
-    width: 100% !important;
-}
-.datepicker-plot-area .toolbox .pwt-btn-today:hover,
-.datepicker-plot-area .toolbox .pwt-btn-submit:hover {
-    background: #00736f !important;
-    transform: translateY(-1px) !important;
-}
-
-/* ================== مدال سفارشی خیرین (جایگزین آلرت پیش‌فرض) ================== */
+/* ================== مدال‌ها و نوتیفیکیشن‌ها ================== */
 .so-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 1000000;
     background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 99999;
     padding: 20px;
-    animation: soFadeIn 0.25s ease-out;
 }
-@keyframes soFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
 .so-modal-card {
     background: #ffffff;
     border-radius: 24px;
-    width: 100%;
     max-width: 480px;
-    padding: 34px 30px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    position: relative;
+    width: 100%;
+    padding: 32px 28px;
     text-align: center;
-    animation: soModalZoom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid rgba(0, 143, 138, 0.12);
-    box-sizing: border-box;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    animation: soFadeIn 0.25s ease;
 }
-@keyframes soModalZoom {
-    from { opacity: 0; transform: scale(0.92) translateY(12px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
 .so-modal-close {
     position: absolute;
-    top: 18px;
-    left: 18px;
-    background: #f3f4f6;
+    top: 16px;
+    left: 16px;
+    background: none;
     border: none;
-    width: 32px;
-    height: 32px;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 6px;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    color: #6b7280;
-    cursor: pointer;
     transition: all 0.2s;
 }
 .so-modal-close:hover {
-    background: #e5e7eb;
-    color: #1f2937;
-    transform: rotate(90deg);
+    background: #f1f5f9;
+    color: #0f172a;
 }
-.so-modal-close svg { width: 18px; height: 18px; }
-
 .so-modal-icon-wrap {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
+    margin-bottom: 18px;
 }
 .so-modal-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     display: grid;
     place-items: center;
-    position: relative;
+    margin: 0 auto;
 }
 .so-modal-icon.auth {
-    background: linear-gradient(135deg, rgba(0, 143, 138,0.12), rgba(79,178,176,0.22));
+    background: rgba(0, 143, 138, 0.1);
     color: #008f8a;
-    box-shadow: 0 10px 24px -6px rgba(0, 143, 138,0.3);
 }
 .so-modal-icon.success {
-    background: linear-gradient(135deg, rgba(22,163,122,0.14), rgba(34,197,94,0.22));
-    color: #16a37a;
-    box-shadow: 0 10px 24px -6px rgba(22,163,122,0.3);
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
 }
-.so-modal-icon svg { width: 36px; height: 36px; }
-
+.so-modal-icon svg {
+    width: 32px;
+    height: 32px;
+}
 .so-modal-title {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 900;
-    color: #1f2937;
+    color: #0f172a;
     margin: 0 0 10px;
 }
 .so-modal-desc {
     font-size: 14px;
-    color: #4b5563;
-    line-height: 1.8;
+    color: #64748b;
+    line-height: 1.75;
     margin: 0 0 20px;
 }
 
-.so-modal-features {
+.so-tracking-card {
     background: #f8fafc;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    padding: 14px 16px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 16px;
     margin-bottom: 24px;
-    text-align: start;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
-.so-m-feat {
+.so-tr-lbl {
+    display: block;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+.so-tr-val-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: #334155;
-    font-weight: 600;
+    justify-content: center;
+    gap: 12px;
 }
-.so-m-feat svg {
-    width: 16px;
-    height: 16px;
+.so-tr-val-row strong {
+    font-size: 21px;
+    font-weight: 900;
     color: #008f8a;
-    flex-shrink: 0;
+    letter-spacing: 1px;
+}
+.so-btn-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.so-btn-copy:hover {
+    border-color: #008f8a;
+    color: #008f8a;
+}
+.so-btn-copy svg {
+    width: 14px;
+    height: 14px;
 }
 
 .so-modal-actions {
@@ -954,168 +1292,336 @@ $initialProvincesList = array_values($initialProvinces);
     gap: 10px;
 }
 .so-btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: #008f8a;
-    color: #ffffff !important;
-    border: none;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.25s;
-    box-shadow: 0 6px 18px rgba(0, 143, 138,0.3);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    text-decoration: none;
-    box-sizing: border-box;
-}
-.so-btn-primary:hover {
-    background: #00736f;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 143, 138,0.4);
-    color: #ffffff !important;
-}
-.so-btn-primary svg { width: 18px; height: 18px; }
-
-.so-btn-ghost {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    color: #64748b;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-sizing: border-box;
-}
-.so-btn-ghost:hover {
-    background: #f8fafc;
-    color: #1f2937;
-    border-color: #cbd5e1;
-}
-
-/* کارت کد رهگیری سفارش موفق */
-.so-tracking-card {
-    background: #f0fdfa;
-    border: 1.5px dashed #008f8a;
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 24px;
-}
-.so-tr-lbl {
-    display: block;
-    font-size: 12.5px;
-    color: #00736f;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-.so-tr-val-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-.so-tr-val-row strong {
-    font-size: 24px;
-    font-weight: 900;
-    color: #008f8a;
-    letter-spacing: 1.5px;
-    font-family: inherit;
-}
-.so-btn-copy {
-    background: #ffffff;
-    border: 1px solid #99f6e4;
-    color: #008f8a;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.2s;
-}
-.so-btn-copy:hover {
+    padding: 13px;
     background: #008f8a;
     color: #ffffff;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 14.5px;
+    text-decoration: none;
+    transition: all 0.2s;
 }
-.so-btn-copy svg { width: 14px; height: 14px; }
-.so-tr-hint {
-    font-size: 12px;
-    color: #64748b;
-    line-height: 1.6;
+.so-btn-primary:hover {
+    background: #007672;
+}
+.so-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.so-btn-ghost:hover {
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
-/* Toast */
 .so-toast {
     position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #1f2937;
+    bottom: 24px;
+    right: 24px;
+    padding: 14px 20px;
+    border-radius: 12px;
     color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 14px;
     font-size: 14px;
     font-weight: 700;
-    z-index: 10000000;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none;
+    z-index: 999999;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: none;
+    animation: soFadeIn 0.2s ease;
 }
-.so-toast.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-}
-.so-toast.warning { background: #b45309; }
-.so-toast.error { background: #b91c1c; }
-.so-toast.success { background: #047857; }
+.so-toast.info { background: #0284c7; }
+.so-toast.warning { background: #d97706; }
+.so-toast.error { background: #dc2626; }
+.so-toast.success { background: #059669; }
 </style>
 
 <div class="so-wrap">
+    <!-- عنوان و توضیح صفحه -->
     <div class="so-head">
-        <h1><?= site_e('ثبت سفارش استند و کارت خیریه') ?></h1>
-        <p><?= site_e('با سفارش استند و کارت‌های مکسا، پیام پرمحبت خود را ماندگار سازید و تمام عواید آن را نذر دارو و درمان رایگان بیماران مبتلا به سرطان نمایید.') ?></p>
+        <h1><?= site_e('استندها و کارت‌های تبریک و تسلیت') ?></h1>
+        <p><?= site_e('با سفارش استندها و کارت‌های مکسا، پیام پرمحبت خود را ماندگار سازید و تمام عواید آن را نذر دارو و درمان رایگان بیماران مبتلا به سرطان نمایید.') ?></p>
     </div>
 
-    <div class="so-grid">
-        <!-- ستون فرم سمت راست -->
-        <div class="so-form-col">
-            <h2>
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                <?= site_e('اطلاعات سفارش و محل برگزاری مراسم') ?>
-            </h2>
+    <!-- ================== استپر ۳ مرحله‌ای مشابه روند ثبت‌نام ================== -->
+    <div class="so-stepper" id="soStepper" role="navigation" aria-label="<?= site_e('مراحل سفارش استند') ?>">
+        
+        <!-- مرحله ۱: انتخاب استان و شهر -->
+        <div class="so-step-item active" data-step="1" id="stepIndicator1" onclick="goToStep(1)">
+            <div class="so-step-circle">
+                <span class="so-step-num">۱</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="so-step-text">
+                <span class="so-step-title"><?= site_e('انتخاب استان و شهر') ?></span>
+                <span class="so-step-desc"><?= site_e('تعیین شعبه و محل برگزاری') ?></span>
+            </div>
+        </div>
 
-            <form id="standOrderForm">
-                <input type="hidden" name="stand_id" id="inputStandId" value="">
-                <input type="hidden" name="branch_id" id="inputBranchId" value="">
+        <div class="so-step-line" id="stepLine1"></div>
 
-                <!-- مشخصات سفارش‌دهنده -->
+        <!-- مرحله ۲: انتخاب طرح استند -->
+        <div class="so-step-item" data-step="2" id="stepIndicator2" onclick="goToStep(2)">
+            <div class="so-step-circle">
+                <span class="so-step-num">۲</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="so-step-text">
+                <span class="so-step-title"><?= site_e('انتخاب طرح استند') ?></span>
+                <span class="so-step-desc"><?= site_e('تبریک یا ابراز همدردی') ?></span>
+            </div>
+        </div>
+
+        <div class="so-step-line" id="stepLine2"></div>
+
+        <!-- مرحله ۳: ثبت اطلاعات و تایید نهایی -->
+        <div class="so-step-item" data-step="3" id="stepIndicator3" onclick="goToStep(3)">
+            <div class="so-step-circle">
+                <span class="so-step-num">۳</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="so-step-text">
+                <span class="so-step-title"><?= site_e('ثبت اطلاعات و تایید نهایی') ?></span>
+                <span class="so-step-desc"><?= site_e('مشخصات، زمان و محل مراسم') ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- فرم جامع سفارش استند شامل هر ۳ مرحله -->
+    <form id="standOrderForm">
+        <input type="hidden" name="stand_id" id="inputStandId" value="">
+        <input type="hidden" name="branch_id" id="inputBranchId" value="">
+        <input type="hidden" name="province" id="inputProvince" value="">
+        <input type="hidden" name="city" id="inputCity" value="">
+
+        <!-- ================== مرحله ۱: انتخاب استان و شهر ================== -->
+        <div class="so-step-pane active" id="paneStep1">
+            <div class="so-step1-card">
+                <div class="so-step-header">
+                    <div class="so-step-badge">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <div class="so-step-header-text">
+                        <h2><?= site_e('مرحله اول: انتخاب استان و شهر محل برگزاری مراسم') ?></h2>
+                        <p><?= site_e('لطفاً ابتدا استان و شهر مورد نظر را مشخص کنید تا طرح‌ها و استندهای فعال در محدوده شعبه مربوطه بارگذاری شوند.') ?></p>
+                    </div>
+                </div>
+
+                <!-- شبکه کارت‌های استان‌ها -->
+                <div class="so-prov-grid-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <span><?= site_e('استان / شعبه ارائه‌دهنده استند را انتخاب کنید:') ?></span>
+                </div>
+
+                <div class="so-province-cards" id="provinceCards">
+                    <?php foreach ($initialProvincesList as $idx => $p): ?>
+                        <div class="so-prov-card" data-province="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>" onclick="selectProvinceCard(this)">
+                            <div class="so-prov-card-info">
+                                <span class="so-prov-name"><?= htmlspecialchars($p['province']) ?></span>
+                                <span class="so-prov-branch"><?= site_e('شعبه') ?> <?= htmlspecialchars($p['branch_name']) ?></span>
+                            </div>
+                            <div class="so-prov-radio">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- دراپ‌داون استان جهت سازگاری و انتخاب سایر استان‌ها -->
+                <div style="display:none;">
+                    <select id="provinceSelect">
+                        <option value=""><?= site_e('-- انتخاب استان --') ?></option>
+                        <?php foreach ($initialProvincesList as $p): ?>
+                            <option value="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>">
+                                <?= htmlspecialchars($p['province']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- بخش انتخاب شهر -->
+                <div class="so-city-box" id="citySelectionBox">
+                    <div class="so-city-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span><?= site_e('شهر محل برگزاری مراسم را مشخص نمایید:') ?></span>
+                    </div>
+
+                    <div class="so-city-chips" id="cityChips">
+                        <!-- دکمه‌های شهر به صورت پویا ساخته می‌شوند -->
+                    </div>
+
+                    <div class="so-city-select-wrap">
+                        <select id="citySelect" aria-label="<?= site_e('انتخاب شهر') ?>">
+                            <option value=""><?= site_e('-- ابتدا استان را انتخاب فرمایید --') ?></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- هشدار محدوده شهری شعبه -->
+                <div class="so-notice-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <div>
+                        <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل، استقرار و جمع‌آوری استندهای خیریه مکسا منحصراً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و پذیرش سفارش برای خارج از محدوده شهری مقدور نیست.') ?>
+                    </div>
+                </div>
+
+                <!-- اکشن رفتن به مرحله ۲ -->
+                <div class="so-actions-row" style="justify-content:flex-end;">
+                    <button type="button" class="so-btn-next" onclick="validateStep1AndProceed()">
+                        <span><?= site_e('مرحله بعد: انتخاب طرح استند') ?></span>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== مرحله ۲: انتخاب طرح استند ================== -->
+        <div class="so-step-pane" id="paneStep2">
+            <div class="so-step2-card">
+                <div class="so-step-header">
+                    <div class="so-step-badge">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="so-step-header-text">
+                        <h2><?= site_e('مرحله دوم: انتخاب طرح استند') ?></h2>
+                        <p><?= site_e('از میان طرح‌های تبریک یا تسلیت فعال در شعبه انتخابی، طرح مدنظر خود را انتخاب فرمایید.') ?></p>
+                    </div>
+                </div>
+
+                <!-- بار مشخصات شهر انتخابی -->
+                <div class="so-selected-badge-bar">
+                    <div class="so-sbb-info">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span><?= site_e('استان و شهر انتخابی:') ?> <strong id="step2LocLabel">...</strong></span>
+                    </div>
+                    <button type="button" class="so-sbb-change" onclick="goToStep(1)">
+                        <?= site_e('تغییر استان یا شهر') ?>
+                    </button>
+                </div>
+
+                <!-- تب‌های فیلتر دسته‌بندی استند -->
+                <div class="so-tabs">
+                    <button type="button" class="so-tab-btn active" data-type="congrats"><?= site_e('تبریک و شادباش') ?></button>
+                    <button type="button" class="so-tab-btn" data-type="condolence"><?= site_e('ابراز همدردی و تسلیت') ?></button>
+                    <button type="button" class="so-tab-btn" data-type="all"><?= site_e('همه طرح‌ها') ?></button>
+                </div>
+
+                <!-- شبکه استندها و پیش‌نمایش ۳ بعدی -->
+                <div class="so-step2-grid">
+                    <div class="so-stands-grid" id="standsCatalog">
+                        <!-- کارت‌های استند به صورت پویا با جاوااسکریپت لود می‌شوند -->
+                    </div>
+
+                    <!-- ستون پیش‌نمایش زنده ۳ بعدی -->
+                    <div class="so-preview-col" id="soPreviewCol">
+                        <div class="so-preview-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <span><?= site_e('پیش‌نمایش طرح انتخابی') ?></span>
+                        </div>
+
+                        <div class="so-scene" id="standScene" title="<?= site_e('برای چرخاندن استند، ماوس یا انگشت خود را بکشید') ?>">
+                            <div class="so-stand-3d" id="stand3D">
+                                <div class="so-stand-face front">
+                                    <div class="so-stand-img-wrap">
+                                        <img src="" alt="<?= site_e('طرح استند') ?>" id="standImageFront" onerror="this.src='/uploads/stand/happy/1.jpg'">
+                                    </div>
+                                </div>
+                                <div class="so-stand-face back">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    <h4 style="font-size:13px; font-weight:800; color:#1f2937; margin:0 0 4px;"><?= site_e('مؤسسه خیریه مکسا') ?></h4>
+                                    <p style="font-size:11px; color:#6b7280; line-height:1.5; margin:0;"><?= site_e('مراقبت‌های جامع حمایتی و تسکینی بیماران مبتلا به سرطان') ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="so-360-hint">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span><?= site_e('چرخش ۳۶۰ درجه استند (کلیک و کشیدن)') ?></span>
+                        </div>
+
+                        <div class="so-selected-meta">
+                            <div class="so-meta-title" id="selectedStandTitle"><?= site_e('عنوان استند') ?></div>
+                            <div class="so-meta-price" id="selectedStandPrice"><?= site_e('۰') ?> <span><?= site_e('تومان') ?></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اکشن‌های مرحله ۲ -->
+                <div class="so-actions-row">
+                    <button type="button" class="so-btn-prev" onclick="goToStep(1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        <span><?= site_e('بازگشت به انتخاب استان و شهر') ?></span>
+                    </button>
+                    <button type="button" class="so-btn-next" onclick="validateStep2AndProceed()">
+                        <span><?= site_e('مرحله بعد: ثبت اطلاعات و تایید نهایی') ?></span>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== مرحله ۳: ثبت اطلاعات و تایید نهایی ================== -->
+        <div class="so-step-pane" id="paneStep3">
+            <div class="so-step3-card">
+                <div class="so-step-header">
+                    <div class="so-step-badge">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div class="so-step-header-text">
+                        <h2><?= site_e('مرحله سوم: ثبت اطلاعات و تایید نهایی سفارش') ?></h2>
+                        <p><?= site_e('لطفاً مشخصات سفارش‌دهنده، زمان و نشانی دقیق محل برگزاری مراسم را وارد فرمایید.') ?></p>
+                    </div>
+                </div>
+
+                <!-- باکس خلاصه استند و شهر انتخابی -->
+                <div class="so-order-summary-box">
+                    <div class="so-os-right">
+                        <div class="so-os-thumb">
+                            <img src="" id="step3Thumb" alt="<?= site_e('طرح استند') ?>">
+                        </div>
+                        <div class="so-os-title-wrap">
+                            <span class="so-os-title" id="step3StandTitle">...</span>
+                            <span class="so-os-loc" id="step3Loc">...</span>
+                        </div>
+                    </div>
+                    <div class="so-os-left">
+                        <div class="so-os-price">
+                            <strong id="step3Price">۰</strong>
+                            <span><?= site_e('تومان') ?></span>
+                        </div>
+                        <button type="button" class="so-os-change-btn" onclick="goToStep(2)">
+                            <?= site_e('تغییر طرح استند') ?>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- بخش ۱: مشخصات سفارش‌دهنده -->
+                <div class="so-section-title"><?= site_e('۱. مشخصات فرد سفارش‌دهنده') ?></div>
                 <div class="so-field-row">
                     <div class="so-field">
                         <label><?= site_e('نام و نام خانوادگی شما') ?> <span class="req">*</span></label>
-                        <input type="text" name="sender_name" required placeholder="<?= site_e('مثال: علی احمدی') ?>">
+                        <input type="text" name="sender_name" required placeholder="<?= site_e('مثال: علیرضا محمدی') ?>">
                     </div>
                     <div class="so-field">
-                        <label><?= site_e('شماره موبایل جهت هماهنگی') ?> <span class="req">*</span></label>
+                        <label><?= site_e('شماره موبایل جهت هماهنگی تحویل') ?> <span class="req">*</span></label>
                         <input type="tel" name="sender_phone" required placeholder="09123456789" dir="ltr" pattern="09[0-9]{9}">
                     </div>
                 </div>
 
+                <!-- بخش ۲: مشخصات مراسم و دریافت‌کننده -->
+                <div class="so-section-title"><?= site_e('۲. مشخصات مراسم و دریافت‌کننده') ?></div>
                 <div class="so-field">
                     <label><?= site_e('نام دریافت‌کننده / صاحب مجلس / مرحوم یا مرحومه') ?> <span class="req">*</span></label>
                     <input type="text" name="receiver_name" required placeholder="<?= site_e('نام شخص یا خانواده‌ای که استند برای ایشان ارسال می‌شود') ?>">
@@ -1142,131 +1648,48 @@ $initialProvincesList = array_values($initialProvinces);
                     </div>
                 </div>
 
-                <!-- تفکیک فیلدهای آدرس: استان و شهر و آدرس دقیق -->
-                <div class="so-section-title"><?= site_e('انتخاب شعبه و محل استقرار استند') ?></div>
-                <div class="so-field-row">
-                    <div class="so-field">
-                        <label><?= site_e('استان / شعبه ارائه‌دهنده استند') ?> <span class="req">*</span></label>
-                        <select name="province" id="provinceSelect" required>
-                            <option value=""><?= site_e('-- لطفاً ابتدا استان و شعبه را انتخاب کنید --') ?></option>
-                            <?php foreach ($initialProvincesList as $p): ?>
-                                <option value="<?= htmlspecialchars($p['province']) ?>" data-branch="<?= (int)$p['branch_id'] ?>">
-                                    <?= site_e('شعبه') ?> <?= htmlspecialchars($p['branch_name']) ?> (<?= htmlspecialchars($p['province']) ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="so-field">
-                        <label><?= site_e('شهر محل برگزاری مراسم') ?> <span class="req">*</span></label>
-                        <select name="city" id="citySelect" required>
-                            <option value=""><?= site_e('-- ابتدا استان را انتخاب کنید --') ?></option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- باکس یادآوری محدوده شهری (Notice) -->
-                <div class="so-notice-box">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    <div>
-                        <strong><?= site_e('نکته مهم:') ?></strong> <?= site_e('ارسال، تحویل و استقرار استندهای خیریه مکسا صرفاً در محدوده شهری شعبه انتخابی انجام می‌پذیرد و امکان پذیرش سفارش برای مناطق خارج از محدوده وجود ندارد.') ?>
-                    </div>
-                </div>
-
                 <div class="so-field">
                     <label><?= site_e('نشانی دقیق محل برگزاری (مسجد، تالار یا منزل)') ?> <span class="req">*</span></label>
                     <textarea name="event_address" required placeholder="<?= site_e('خیابان، کوچه، پلاک، نام مسجد، حسینیه یا تالار پذیرایی...') ?>"></textarea>
                 </div>
 
+                <!-- بخش ۳: متن پیام اختصاصی -->
+                <div class="so-section-title"><?= site_e('۳. پیام اختصاصی روی استند (اختیاری)') ?></div>
                 <div class="so-field">
-                    <label><?= site_e('متن پیام اختصاصی روی استند (اختیاری)') ?></label>
-                    <textarea name="message" placeholder="<?= site_e('در صورت تمایل، متن دلخواه خود را جهت درج روی استند وارد نمایید...') ?>"></textarea>
+                    <label><?= site_e('متن دلخواه جهت درج روی پلاک یا بنر استند') ?></label>
+                    <textarea name="message" placeholder="<?= site_e('در صورت تمایل، متن دلخواه و نام اهداکنندگان را وارد نمایید...') ?>"></textarea>
                 </div>
 
-                <button type="submit" class="so-submit" id="submitOrderBtn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    <?= site_e('ثبت نهایی سفارش استند') ?>
-                </button>
+                <!-- باکس اثرگذاری و وقف صددرصدی -->
+                <div class="so-charity-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <div>
+                        <strong><?= site_e('شفافیت و ارزش معنوی:') ?></strong> <?= site_e('تمامی عواید حاصل از سفارش این استند به صورت ۱۰۰٪ صرف تأمین هزینه‌های دارو، درمان و مراقبت‌های تسکینی رایگان به بیماران مبتلا به سرطان می‌شود.') ?>
+                    </div>
+                </div>
+
+                <!-- اکشن‌های مرحله ۳ -->
+                <div class="so-actions-row">
+                    <button type="button" class="so-btn-prev" onclick="goToStep(2)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        <span><?= site_e('بازگشت به انتخاب طرح') ?></span>
+                    </button>
+                    <button type="submit" class="so-submit" id="submitOrderBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <span><?= site_e('تایید نهایی و ثبت سفارش استند') ?></span>
+                    </button>
+                </div>
 
                 <div class="so-note">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <?= site_e('پس از ثبت سفارش، کارشناسان مکسا جهت هماهنگی ارسال با شما تماس خواهند گرفت.') ?>
-                </div>
-            </form>
-        </div>
-
-        <!-- ستون چپ: استندهای اختصاصی شعبه به صورت لیست‌گونه و پیش‌نمایش بنر -->
-        <div class="so-left-col" id="soLeftCol">
-
-            <!-- حالت ۱: قبل از انتخاب شعبه (خالی همراه با پیام راهنما) -->
-            <div class="so-empty-guide" id="soEmptyGuide">
-                <div class="so-empty-guide-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                </div>
-                <h3><?= site_e('طرح‌های اختصاصی هر شعبه') ?></h3>
-                <p>
-                    <?= site_e('با انتخاب استان و شهر مورد نظر از فرم سمت راست، تمامی طرح‌ها، بنرهای سه‌بعدی و مبالغ استندهای اختصاصی آن شعبه به صورت لیست در این بخش نمایش داده خواهند شد.') ?>
-                </p>
-            </div>
-
-            <!-- حالت ۲: پس از انتخاب شعبه (نمایش پیش‌نمایش بنر و لیست استندها) -->
-            <div class="so-stands-content" id="soStandsContent" style="display:none">
-                <div class="so-branch-badge" id="branchBadge">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-                    <?= site_e('استندهای اختصاصی شعبه') ?> <span id="currentBranchName">...</span>
-                </div>
-
-                <!-- پیش‌نمایش بنر و ۳ بعدی استند انتخابی -->
-                <div class="so-preview-banner">
-                    <div class="so-scene" id="standScene" title="<?= site_e('برای چرخاندن استند، ماوس را بکشید') ?>">
-                        <div class="so-stand-3d" id="stand3D">
-                            <div class="so-stand-face front">
-                                <div class="so-stand-img-wrap">
-                                    <img src="" alt="<?= site_e('طرح استند') ?>" id="standImageFront" onerror="this.src='/uploads/stand/happy/1.jpg'">
-                                </div>
-                            </div>
-                            <div class="so-stand-face back">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                <h4 style="font-size:13px; font-weight:800; color:#1f2937; margin-bottom:4px"><?= site_e('مؤسسه خیریه مکسا') ?></h4>
-                                <p style="font-size:11px; color:#6b7280; line-height:1.5"><?= site_e('مراقبت‌های جامع حمایتی و تسکینی برای بیماران مبتلا به سرطان') ?></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="so-360-hint">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        <?= site_e('پیش‌نمایش سه‌بعدی بنر (برای چرخش ماوس را بکشید)') ?>
-                    </div>
-
-                    <!-- قیمت و عنوان هماهنگ با استند انتخابی -->
-                    <div class="so-selected-meta">
-                        <div class="so-meta-title" id="selectedStandTitle"><?= site_e('عنوان استند') ?></div>
-                        <div class="so-meta-price" id="selectedStandPrice"><?= site_e('۰') ?> <span><?= site_e('تومان') ?></span></div>
-                    </div>
-                </div>
-
-                <!-- تب‌های فیلتر دسته‌بندی استندها -->
-                <div class="so-tabs">
-                    <button type="button" class="so-tab-btn active" data-type="all"><?= site_e('همه طرح‌ها') ?></button>
-                    <button type="button" class="so-tab-btn" data-type="congrats"><?= site_e('تبریک و شادباش') ?></button>
-                    <button type="button" class="so-tab-btn" data-type="condolence"><?= site_e('ابراز همدردی و تسلیت') ?></button>
-                </div>
-
-                <!-- لیست‌گونه استندهای شعبه (Stands List View) -->
-                <div class="so-stands-list" id="standsCatalog">
-                    <!-- آیتم‌های استند به صورت لیست‌گونه لود می‌شوند -->
+                    <span><?= site_e('پس از ثبت سفارش، کارشناسان شعبه جهت هماهنگی ساعت تحویل و استقرار استند با شما تماس خواهند گرفت.') ?></span>
                 </div>
             </div>
-
         </div>
-    </div>
+    </form>
 </div>
 
-<!-- مدال اختصاصی ورود نیکوکاران -->
+<!-- ================== مدال ورود نیکوکاران ================== -->
 <div class="so-modal-overlay" id="soAuthModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="soAuthTitle">
     <div class="so-modal-card">
         <button type="button" class="so-modal-close" id="soAuthClose" aria-label="<?= site_e('بستن') ?>">
@@ -1281,22 +1704,8 @@ $initialProvincesList = array_values($initialProvinces);
         </div>
         <h3 class="so-modal-title" id="soAuthTitle"><?= site_e('ورود به حساب کاربری نیکوکاران') ?></h3>
         <p class="so-modal-desc">
-            <?= site_e('برای ثبت نهایی سفارش استند و صدور کد پیگیری رسمی، لطفاً ابتدا وارد حساب کاربری خود شوید یا ثبت‌نام فرمایید. اطلاعات فرم شما محفوظ بوده و پس از ورود باقی خواهد ماند.') ?>
+            <?= site_e('جهت ثبت نهایی سفارش استند و صدور کد پیگیری رسمی، لطفاً وارد حساب خود شوید یا ثبت‌نام فرمایید. اطلاعات فرم شما کاملاً محفوظ مانده و حفظ خواهد شد.') ?>
         </p>
-        <div class="so-modal-features">
-            <div class="so-m-feat">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span><?= site_e('صدور رسید و کد پیگیری آنلاین سفارش') ?></span>
-            </div>
-            <div class="so-m-feat">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span><?= site_e('پیگیری لحظه‌ای وضعیت ارسال و استقرار استند توسط شعبه') ?></span>
-            </div>
-            <div class="so-m-feat">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span><?= site_e('ثبت در پرونده نیکوکاری و مشاهده سوابق نذورات در مکسا') ?></span>
-            </div>
-        </div>
         <div class="so-modal-actions">
             <a href="/benefactor-dashboard/login" class="so-btn-primary" id="soLoginBtn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
@@ -1309,7 +1718,7 @@ $initialProvincesList = array_values($initialProvinces);
     </div>
 </div>
 
-<!-- مدال ثبت موفق سفارش استند -->
+<!-- ================== مدال ثبت موفق سفارش ================== -->
 <div class="so-modal-overlay" id="soSuccessModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="soSuccessTitle">
     <div class="so-modal-card">
         <button type="button" class="so-modal-close" id="soSuccessClose" aria-label="<?= site_e('بستن') ?>">
@@ -1324,25 +1733,24 @@ $initialProvincesList = array_values($initialProvinces);
         </div>
         <h3 class="so-modal-title" id="soSuccessTitle"><?= site_e('سفارش استند با موفقیت ثبت شد') ?></h3>
         <p class="so-modal-desc">
-            <?= site_e('از حسن اعتماد و همدلی شما با بیماران مبتلا به سرطان صمیمانه سپاسگزاریم. سفارش شما با مشخصات زیر جهت هماهنگی و ارسال به شعبه مربوطه تحویل گردید.') ?>
+            <?= site_e('از همراهی و همدلی صمیمانه شما با بیماران مبتلا به سرطان سپاسگزاریم. سفارش شما با مشخصات زیر جهت هماهنگی و ارسال به شعبه مربوطه تحویل گردید.') ?>
         </p>
         <div class="so-tracking-card">
-            <span class="so-tr-lbl"><?= site_e('شماره و کد پیگیری سفارش شما:') ?></span>
+            <span class="so-tr-lbl"><?= site_e('کد پیگیری رسمی سفارش:') ?></span>
             <div class="so-tr-val-row">
                 <strong id="soTrackingCodeVal">---</strong>
                 <button type="button" class="so-btn-copy" id="soCopyTrackingBtn" title="<?= site_e('کپی کد پیگیری') ?>">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                    <span><?= site_e('کپی کد') ?></span>
+                    <span><?= site_e('کپی') ?></span>
                 </button>
             </div>
-            <div class="so-tr-hint"><?= site_e('کارشناسان شعبه به زودی جهت هماهنگی نهایی با شماره تماس ثبت‌شده ارتباط برقرار خواهند کرد.') ?></div>
         </div>
         <div class="so-modal-actions">
             <a href="/benefactor-dashboard/stands" class="so-btn-primary">
                 <?= site_e('پیگیری سفارش در پنل کاربری') ?>
             </a>
             <button type="button" class="so-btn-ghost" id="soNewOrderBtn">
-                <?= site_e('ثبت سفارش جدید') ?>
+                <?= site_e('ثبت یک سفارش دیگر') ?>
             </button>
         </div>
     </div>
@@ -1357,53 +1765,341 @@ $initialProvincesList = array_values($initialProvinces);
 <script src="/dashboard/assets/js/datepicker/persian-datepicker.min.js"></script>
 
 <script>
-// مدل داده‌ای وضعیت صفحه
+// مدل وضعیت صفحه
 const state = {
+    currentStep: 1,
+    step1Completed: false,
+    step2Completed: false,
+    step3Completed: false,
     provinces: <?= json_encode($initialProvincesList, JSON_UNESCAPED_UNICODE) ?>,
+    selectedProvince: '',
+    selectedCity: '',
+    selectedBranchId: null,
+    selectedBranchName: '',
     stands: [],
     selectedStand: null,
-    selectedBranchId: null,
-    filterType: 'all'
+    filterType: 'congrats'
 };
 
 // عناصر DOM
+const inputStandId = document.getElementById('inputStandId');
+const inputBranchId = document.getElementById('inputBranchId');
+const inputProvince = document.getElementById('inputProvince');
+const inputCity = document.getElementById('inputCity');
 const provinceSelect = document.getElementById('provinceSelect');
 const citySelect = document.getElementById('citySelect');
+const cityChips = document.getElementById('cityChips');
 const standsCatalog = document.getElementById('standsCatalog');
-const soEmptyGuide = document.getElementById('soEmptyGuide');
-const soStandsContent = document.getElementById('soStandsContent');
 const standImageFront = document.getElementById('standImageFront');
 const selectedStandTitle = document.getElementById('selectedStandTitle');
 const selectedStandPrice = document.getElementById('selectedStandPrice');
-const currentBranchName = document.getElementById('currentBranchName');
-const inputStandId = document.getElementById('inputStandId');
-const inputBranchId = document.getElementById('inputBranchId');
 const standScene = document.getElementById('standScene');
 const stand3D = document.getElementById('stand3D');
 
-// راه‌اندازی تقویم و ساعت شمسی با دقت دقیقه
-function initDatePickers() {
-    if (!window.jQuery || !jQuery.fn.persianDatepicker) {
-        setTimeout(initDatePickers, 60);
+// تبدیل اعداد به فارسی
+function toFa(n) {
+    return (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬")
+        .replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+}
+
+// نمایش نوتیفیکیشن
+function showToast(msg, type = 'info') {
+    const t = document.getElementById('soToast');
+    if (!t) return;
+    t.className = 'so-toast ' + type;
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 4200);
+}
+
+// تغییر مرحله در ویزارد
+function updateStepperUI() {
+    // مرحله ۱
+    const s1 = document.getElementById('stepIndicator1');
+    const l1 = document.getElementById('stepLine1');
+    const s2 = document.getElementById('stepIndicator2');
+    const l2 = document.getElementById('stepLine2');
+    const s3 = document.getElementById('stepIndicator3');
+
+    // ریست کلاس‌ها
+    [s1, s2, s3].forEach(el => el.classList.remove('active', 'completed'));
+    [l1, l2].forEach(el => el.classList.remove('filled'));
+
+    // مرحله ۱ تکمیل شده؟ (سبز)
+    if (state.step1Completed) {
+        s1.classList.add('completed');
+        l1.classList.add('filled');
+    }
+    // مرحله ۲ تکمیل شده؟ (سبز)
+    if (state.step2Completed) {
+        s2.classList.add('completed');
+        l2.classList.add('filled');
+    }
+    // مرحله ۳ تکمیل شده؟ (سبز)
+    if (state.step3Completed) {
+        s3.classList.add('completed');
+    }
+
+    // هایلایت مرحله جاری
+    if (state.currentStep === 1) {
+        s1.classList.add('active');
+    } else if (state.currentStep === 2) {
+        s2.classList.add('active');
+    } else if (state.currentStep === 3) {
+        s3.classList.add('active');
+    }
+
+    // جابجایی پنل‌های محتوا
+    document.getElementById('paneStep1').classList.toggle('active', state.currentStep === 1);
+    document.getElementById('paneStep2').classList.toggle('active', state.currentStep === 2);
+    document.getElementById('paneStep3').classList.toggle('active', state.currentStep === 3);
+
+    // اسکرول نرم به بالای بخش
+    document.getElementById('soStepper')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function goToStep(step) {
+    if (step === 2 && !state.step1Completed && !state.selectedProvince) {
+        showToast(<?= site_js_text('لطفاً ابتدا استان و شهر مورد نظر را انتخاب فرمایید.') ?>, 'warning');
+        return;
+    }
+    if (step === 3 && !state.selectedStand) {
+        showToast(<?= site_js_text('لطفاً یک طرح استند را انتخاب فرمایید.') ?>, 'warning');
+        return;
+    }
+    state.currentStep = step;
+    updateStepperUI();
+}
+
+// انتخاب کارت استان
+function selectProvinceCard(cardEl) {
+    const prov = cardEl.dataset.province;
+    const branchId = parseInt(cardEl.dataset.branch || '1', 10);
+
+    document.querySelectorAll('.so-prov-card').forEach(c => c.classList.remove('selected'));
+    cardEl.classList.add('selected');
+
+    state.selectedProvince = prov;
+    state.selectedBranchId = branchId;
+    inputProvince.value = prov;
+    inputBranchId.value = branchId;
+
+    if (provinceSelect) {
+        provinceSelect.value = prov;
+    }
+
+    // بارگذاری شهرهای این استان
+    const provData = state.provinces.find(p => p.province === prov || parseInt(p.branch_id, 10) === branchId);
+    state.selectedBranchName = provData ? (provData.branch_name || prov) : prov;
+
+    cityChips.innerHTML = '';
+    citySelect.innerHTML = '';
+
+    const cities = (provData && Array.isArray(provData.cities) && provData.cities.length > 0)
+        ? provData.cities
+        : [prov];
+
+    cities.forEach((c, idx) => {
+        // ایجاد چیپ
+        const chip = document.createElement('div');
+        chip.className = 'so-city-chip' + (idx === 0 ? ' selected' : '');
+        chip.textContent = c;
+        chip.onclick = function() {
+            document.querySelectorAll('.so-city-chip').forEach(x => x.classList.remove('selected'));
+            chip.classList.add('selected');
+            state.selectedCity = c;
+            inputCity.value = c;
+            citySelect.value = c;
+        };
+        cityChips.appendChild(chip);
+
+        // ایجاد گزینه در سلکت
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        if (idx === 0) opt.selected = true;
+        citySelect.appendChild(opt);
+    });
+
+    state.selectedCity = cities[0] || prov;
+    inputCity.value = state.selectedCity;
+
+    // بارگذاری استندهای اختصاصی این شعبه
+    loadStands(prov, branchId);
+}
+
+citySelect.addEventListener('change', function() {
+    const val = this.value;
+    state.selectedCity = val;
+    inputCity.value = val;
+    document.querySelectorAll('.so-city-chip').forEach(ch => {
+        ch.classList.toggle('selected', ch.textContent.trim() === val);
+    });
+});
+
+// اعتبارسنجی مرحله ۱ و رفتن به مرحله ۲
+function validateStep1AndProceed() {
+    if (!state.selectedProvince) {
+        showToast(<?= site_js_text('لطفاً ابتدا استان و شعبه مورد نظر را انتخاب فرمایید.') ?>, 'warning');
+        return;
+    }
+    if (!state.selectedCity) {
+        state.selectedCity = state.selectedProvince;
+        inputCity.value = state.selectedCity;
+    }
+
+    state.step1Completed = true; // تبدیل مرحله ۱ به سبز!
+    state.currentStep = 2;
+
+    // به‌روزرسانی برچسب شهر در مرحله ۲
+    document.getElementById('step2LocLabel').textContent = state.selectedProvince + ' - ' + state.selectedCity + ' (' + <?= site_js_text('شعبه ') ?> + state.selectedBranchName + ')';
+
+    updateStepperUI();
+}
+
+// بارگذاری استندهای اختصاصی شعبه
+async function loadStands(province, branchId) {
+    standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">در حال بارگذاری طرح‌های اختصاصی شعبه...</div>') ?>;
+    try {
+        const query = new URLSearchParams({ province });
+        if (branchId) query.set('branch_id', String(branchId));
+        const res = await fetch(`/api/stands?${query.toString()}`);
+        const data = await res.json();
+        const list = Array.isArray(data.data) ? data.data : (data.data?.stands || []);
+        if (data.success && list.length > 0) {
+            state.stands = list;
+            renderStandsCatalog();
+        } else {
+            // در صورتی که دیتابیس لوکال آفلاین باشد، استندهای پیش‌فرض شیک نمایش داده می‌شوند
+            state.stands = getFallbackStands();
+            renderStandsCatalog();
+        }
+    } catch (e) {
+        state.stands = getFallbackStands();
+        renderStandsCatalog();
+    }
+}
+
+function getFallbackStands() {
+    return [
+        { id: 101, title: 'طرح ترنم بهار (تبریک)', unit_price: 1500000, stand_type: 'congrats', image: '/uploads/stand/happy/1.jpg' },
+        { id: 102, title: 'طرح شکوفه مهر (تبریک)', unit_price: 1800000, stand_type: 'congrats', image: '/uploads/stand/happy/2.jpg' },
+        { id: 103, title: 'طرح یاس سپید (تسلیت)', unit_price: 1500000, stand_type: 'condolence', image: '/uploads/stand/sad/1.jpg' },
+        { id: 104, title: 'طرح غروب آرامش (تسلیت)', unit_price: 2000000, stand_type: 'condolence', image: '/uploads/stand/sad/2.jpg' },
+        { id: 105, title: 'طرح آوای جاودان (تسلیت)', unit_price: 2200000, stand_type: 'condolence', image: '/uploads/stand/sad/3.jpg' }
+    ];
+}
+
+// رندر کاتالوگ استندها
+function renderStandsCatalog() {
+    const filtered = state.filterType === 'all'
+        ? state.stands
+        : state.stands.filter(s => s.stand_type === state.filterType);
+
+    if (filtered.length === 0) {
+        standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">طرحی در این دسته‌بندی برای این شعبه یافت نشد.</div>') ?>;
         return;
     }
 
-    // تقویم شمسی برای تاریخ مراسم
+    standsCatalog.innerHTML = filtered.map(s => {
+        const isSelected = state.selectedStand && state.selectedStand.id === s.id;
+        const tagLabel = s.stand_type === 'congrats' ? <?= site_js_text('تبریک') ?> : <?= site_js_text('تسلیت') ?>;
+        const btnText = isSelected ? <?= site_js_text('طرح انتخابی ✓') ?> : <?= site_js_text('انتخاب این طرح') ?>;
+
+        return `
+            <div class="so-stand-card ${isSelected ? 'selected' : ''}" data-id="${s.id}" onclick="selectStand(${s.id})">
+                <div class="so-stand-card-img-wrap">
+                    <img src="${s.image}" alt="${s.title}" onerror="this.src='/uploads/stand/happy/1.jpg'">
+                </div>
+                <div class="so-stand-card-info">
+                    <h4 class="so-stand-card-title">${s.title}</h4>
+                    <div class="so-stand-card-meta">
+                        <span class="so-stand-tag ${s.stand_type}">${tagLabel}</span>
+                        <div class="so-stand-card-price">${toFa(s.unit_price)} <span>تومان</span></div>
+                    </div>
+                </div>
+                <button type="button" class="so-stand-card-btn">${btnText}</button>
+            </div>
+        `;
+    }).join('');
+
+    // انتخاب پیش‌فرض اگر چیزی انتخاب نشده است
+    if (!state.selectedStand || !filtered.some(s => s.id === state.selectedStand.id)) {
+        if (filtered[0]) selectStand(filtered[0].id);
+    } else {
+        selectStand(state.selectedStand.id);
+    }
+}
+
+// انتخاب استند و به‌روزرسانی پیش‌نمایش ۳ بعدی
+function selectStand(standId) {
+    const stand = state.stands.find(s => s.id === standId);
+    if (!stand) return;
+
+    state.selectedStand = stand;
+    inputStandId.value = stand.id;
+
+    // به‌روزرسانی هایلایت کارت‌ها
+    document.querySelectorAll('.so-stand-card').forEach(card => {
+        const isCurrent = parseInt(card.dataset.id, 10) === stand.id;
+        card.classList.toggle('selected', isCurrent);
+        const btn = card.querySelector('.so-stand-card-btn');
+        if (btn) btn.textContent = isCurrent ? <?= site_js_text('طرح انتخابی ✓') ?> : <?= site_js_text('انتخاب این طرح') ?>;
+    });
+
+    // پیش‌نمایش ۳ بعدی
+    standImageFront.src = stand.image;
+    selectedStandTitle.textContent = stand.title;
+    selectedStandPrice.innerHTML = `${toFa(stand.unit_price)} <span>تومان</span>`;
+
+    // مقادیر مرحله ۳
+    document.getElementById('step3Thumb').src = stand.image;
+    document.getElementById('step3StandTitle').textContent = stand.title;
+    document.getElementById('step3Price').textContent = toFa(stand.unit_price);
+}
+
+// تب‌های دسته‌بندی استند در مرحله ۲
+document.querySelectorAll('.so-tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.so-tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        state.filterType = this.dataset.type;
+        renderStandsCatalog();
+    });
+});
+
+// اعتبارسنجی مرحله ۲ و رفتن به مرحله ۳
+function validateStep2AndProceed() {
+    if (!state.selectedStand) {
+        showToast(<?= site_js_text('لطفاً یک طرح استند را انتخاب فرمایید.') ?>, 'warning');
+        return;
+    }
+
+    state.step2Completed = true; // تبدیل مرحله ۲ به سبز!
+    state.currentStep = 3;
+
+    // تنظیم لوکیشن در خلاصه مرحله ۳
+    document.getElementById('step3Loc').textContent = state.selectedProvince + ' - ' + state.selectedCity;
+
+    updateStepperUI();
+}
+
+// راه‌اندازی تقویم و ساعت شمسی
+function initDatePickers() {
+    if (!window.jQuery || !jQuery.fn.persianDatepicker) {
+        setTimeout(initDatePickers, 80);
+        return;
+    }
+
     $('.pdate').persianDatepicker({
         format: 'YYYY/MM/DD',
         autoClose: true,
         initialValue: false,
         minDate: new persianDate().valueOf(),
-        navigator: {
-            scroll: { enabled: false }
-        },
-        toolbox: {
-            calendarSwitch: { enabled: false },
-            todayButton: { enabled: true }
-        }
+        navigator: { scroll: { enabled: false } },
+        toolbox: { calendarSwitch: { enabled: false }, todayButton: { enabled: true } }
     });
 
-    // ساعت مراسم با دقت دقیقه و بدون ثانیه
     $('.ptime').persianDatepicker({
         format: 'HH:mm',
         onlyTimePicker: true,
@@ -1418,16 +2114,13 @@ function initDatePickers() {
             meridian: { enabled: false }
         },
         toolbox: {
-            submitButton: {
-                enabled: true,
-                text: { fa: 'تأیید ساعت', en: 'Confirm' }
-            }
+            submitButton: { enabled: true, text: { fa: 'تأیید ساعت', en: 'Confirm' } }
         }
     });
 }
 initDatePickers();
 
-// تعامل چرخش سه‌بعدی با موس و لمس
+// درگ و چرخش ۳۶۰ درجه استند
 let isDragging = false;
 let startX = 0;
 let currentRotationY = 0;
@@ -1458,285 +2151,32 @@ window.addEventListener('touchmove', (e) => {
 });
 window.addEventListener('touchend', () => { isDragging = false; });
 
-function toFa(n) {
-    return (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬")
-        .replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
-}
-
-// بارگذاری استان‌های مجاز از API
-async function loadProvinces() {
-    try {
-        const res = await fetch('/api/stands/provinces');
-        const data = await res.json();
-        const provList = Array.isArray(data.data) ? data.data : (data.data?.provinces || []);
-        if (data.success && provList.length > 0) {
-            state.provinces = provList;
-            populateProvinces();
-        }
-    } catch (e) {
-        console.warn('Using pre-rendered provinces.');
-    }
-}
-
-function populateProvinces() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const targetProvince = urlParams.get('province');
-
-    // حفظ اولین گزینه خالی به عنوان راهنما
-    provinceSelect.innerHTML = <?= site_js_text('<option value="">-- لطفاً ابتدا استان و شعبه را انتخاب کنید --</option>') ?>;
-    state.provinces.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.province;
-        opt.textContent = 'شعبه ' + (p.branch_name || p.province) + ' (' + p.province + ')';
-        opt.dataset.branch = p.branch_id;
-        if (targetProvince && p.province === targetProvince) {
-            opt.selected = true;
-        }
-        provinceSelect.appendChild(opt);
-    });
-
-    if (provinceSelect.value) {
-        onProvinceSelected();
-    } else {
-        showEmptyGuide();
-    }
-}
-
-function showEmptyGuide() {
-    soEmptyGuide.style.display = 'block';
-    soStandsContent.style.display = 'none';
-    citySelect.innerHTML = <?= site_js_text('<option value="">-- ابتدا استان را انتخاب کنید --</option>') ?>;
-    state.selectedStand = null;
-    inputStandId.value = '';
-    inputBranchId.value = '';
-}
-
-function onProvinceSelected() {
-    const selectedProv = provinceSelect.value;
-    if (!selectedProv) {
-        showEmptyGuide();
-        return;
-    }
-
-    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
-    const selectedBranchId = parseInt(selectedOption?.dataset.branch || '0', 10);
-    const provData = state.provinces.find(p => parseInt(p.branch_id, 10) === selectedBranchId)
-        || state.provinces.find(p => p.province === selectedProv);
-    citySelect.innerHTML = '';
-
-    if (provData && Array.isArray(provData.cities) && provData.cities.length > 0) {
-        provData.cities.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c;
-            opt.textContent = c;
-            citySelect.appendChild(opt);
-        });
-    } else {
-        const opt = document.createElement('option');
-        opt.value = selectedProv;
-        opt.textContent = selectedProv;
-        citySelect.appendChild(opt);
-    }
-
-    const bId = selectedOption ? selectedOption.dataset.branch : (provData ? provData.branch_id : 1);
-    state.selectedBranchId = parseInt(bId);
-    inputBranchId.value = state.selectedBranchId;
-    currentBranchName.textContent = selectedProv;
-
-    // نمایش محتوای استندها در ستون چپ
-    soEmptyGuide.style.display = 'none';
-    soStandsContent.style.display = 'block';
-
-    loadStands(selectedProv, state.selectedBranchId);
-}
-
-provinceSelect.addEventListener('change', onProvinceSelected);
-
-// بارگذاری استندهای اختصاصی شعبه
-async function loadStands(province, branchId) {
-    standsCatalog.innerHTML = <?= site_js_text('<div style="text-align:center;padding:30px;color:#9ca3af">در حال بارگذاری طرح‌های اختصاصی شعبه...</div>') ?>;
-    try {
-        const query = new URLSearchParams({ province });
-        if (branchId) query.set('branch_id', String(branchId));
-        const res = await fetch(`/api/stands?${query.toString()}`);
-        const data = await res.json();
-        const standsList = Array.isArray(data.data) ? data.data : (data.data?.stands || []);
-        if (data.success && standsList.length > 0) {
-            state.stands = standsList;
-            renderStandsCatalog();
-        } else {
-            standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">هیچ طرح استندی برای این شعبه ثبت نشده است.</div>') ?>;
-        }
-    } catch (e) {
-        standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg" style="color:#ef4444">خطا در بارگذاری استندها. لطفاً دوباره تلاش کنید.</div>') ?>;
-    }
-}
-
-// رندر لیست‌گونه استندها در ستون چپ
-function renderStandsCatalog() {
-    const filtered = state.filterType === 'all' 
-        ? state.stands 
-        : state.stands.filter(s => s.stand_type === state.filterType);
-
-    if (filtered.length === 0) {
-        standsCatalog.innerHTML = <?= site_js_text('<div class="empty-stands-msg">طرحی در این دسته‌بندی برای این شعبه یافت نشد.</div>') ?>;
-        return;
-    }
-
-    // تولید لیست با ساختار مرتب و شیک
-    standsCatalog.innerHTML = filtered.map(s => {
-        const isSelected = state.selectedStand && state.selectedStand.id === s.id;
-        const tagLabel = s.stand_type === 'congrats' ? <?= site_js_text('تبریک') ?> : <?= site_js_text('تسلیت') ?>;
-        return `
-            <div class="so-stand-list-item ${isSelected ? 'active' : ''}" data-id="${s.id}">
-                <div class="so-list-thumb">
-                    <img src="${s.image}" alt="${s.title}" onerror="this.src='/uploads/stand/happy/1.jpg'">
-                </div>
-                <div class="so-list-info">
-                    <div class="so-list-title-row">
-                        <h4 class="so-list-title">${s.title}</h4>
-                        <span class="so-list-tag ${s.stand_type}">${tagLabel}</span>
-                    </div>
-                    <div class="so-list-price">${toFa(s.unit_price)}<?= site_js_fragment(' تومان</div>
-                </div>
-                <div class="so-list-check"></div>
-            </div>
-        ') ?>`;
-    }).join('');
-
-    // بررسی استند انتخابی بر اساس URL یا اولین آیتم لیست
-    const urlParams = new URLSearchParams(window.location.search);
-    const targetStandId = parseInt(urlParams.get('stand_id'));
-
-    if (targetStandId && filtered.some(s => s.id === targetStandId)) {
-        selectStand(targetStandId);
-    } else if (!state.selectedStand || !filtered.some(s => s.id === state.selectedStand.id)) {
-        selectStand(filtered[0].id);
-    } else {
-        selectStand(state.selectedStand.id);
-    }
-
-    // اضافه کردن رویداد کلیک برای هر استند در لیست
-    standsCatalog.querySelectorAll('.so-stand-list-item').forEach(item => {
-        item.addEventListener('click', () => {
-            selectStand(parseInt(item.dataset.id));
-        });
-    });
-}
-
-// انتخاب استند و تغییر لحظه‌ای عکس بنر، قیمت و عنوان
-function selectStand(standId) {
-    const stand = state.stands.find(s => s.id === standId);
-    if (!stand) return;
-
-    state.selectedStand = stand;
-    inputStandId.value = stand.id;
-
-    // هایلایت آیتم فعال در لیست‌گونه
-    standsCatalog.querySelectorAll('.so-stand-list-item').forEach(item => {
-        item.classList.toggle('active', parseInt(item.dataset.id) === stand.id);
-    });
-
-    // تغییر عکس بنر در پیش‌نمایش ۳ بعدی
-    standImageFront.src = stand.image;
-
-    // تغییر عنوان بنر
-    selectedStandTitle.textContent = stand.title;
-
-    // تغییر قیمت متناسب با استند انتخابی
-    selectedStandPrice.innerHTML = `${toFa(stand.unit_price)}<?= site_js_fragment(' <span>تومان</span>') ?>`;
-
-    // ریست چرخش بنر
-    currentRotationY = 0;
-    stand3D.style.transform = `rotateY(0deg)`;
-}
-
-// تب‌های دسته‌بندی (همه / تبریک / تسلیت)
-document.querySelectorAll('.so-tab-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.so-tab-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        state.filterType = this.dataset.type;
-        renderStandsCatalog();
-    });
-});
-
-// حفظ اطلاعات فرم در صورت عدم لاگین
-function checkSavedOrder() {
-    const saved = localStorage.getItem('pendingStandOrder');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            const form = document.getElementById('standOrderForm');
-            Object.keys(data).forEach(k => {
-                if (form.elements[k]) form.elements[k].value = data[k];
-            });
-            if (data.province) {
-                provinceSelect.value = data.province;
-                onProvinceSelected();
-                if (data.stand_id) {
-                    setTimeout(() => selectStand(parseInt(data.stand_id)), 400);
-                }
-            }
-        } catch(e) {}
-    }
-}
-
-// دریافت توکن احراز هویت خیرین (بررسی حافظه، استوریج و کوکی رفرش)
+// احراز هویت خیرین
 async function fetchAccessToken() {
     if (window.__maxa_access_token) return window.__maxa_access_token;
-
     try {
         const s = sessionStorage.getItem('maxa_access_token');
         if (s) { window.__maxa_access_token = s; return s; }
-    } catch (e) {}
-
-    try {
-        const l = localStorage.getItem('access_token') || localStorage.getItem('token') || localStorage.getItem('maxa_access_token');
+        const l = localStorage.getItem('maxa_access_token');
         if (l) { window.__maxa_access_token = l; return l; }
-    } catch (e) {}
-
-    try {
-        const res = await fetch('/api/auth/refresh', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Accept': 'application/json' }
-        });
+        const res = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
         if (res.ok) {
             const data = await res.json();
-            const token = data?.data?.access_token;
-            if (token) {
-                window.__maxa_access_token = token;
-                try {
-                    sessionStorage.setItem('maxa_access_token', token);
-                    localStorage.setItem('maxa_access_token', token);
-                } catch (e) {}
-                return token;
+            const tok = data.data?.access_token || data.access_token;
+            if (tok) {
+                window.__maxa_access_token = tok;
+                try { sessionStorage.setItem('maxa_access_token', tok); } catch(e) {}
+                return tok;
             }
         }
-    } catch (e) {}
-
+    } catch(e) {}
     return null;
 }
 
-// پیام‌های توست
-function showToast(message, type = 'info') {
-    const toast = document.getElementById('soToast');
-    if (!toast) return;
-    toast.textContent = message;
-    toast.className = 'so-toast ' + type;
-    toast.classList.add('show');
-    clearTimeout(window.__soToastTimer);
-    window.__soToastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3800);
-}
-
-// کنترل مدال‌ها
 function openAuthModal() {
     const modal = document.getElementById('soAuthModal');
     if (!modal) return;
-    const currentUrl = window.location.href;
+    const currentUrl = window.location.pathname + window.location.search;
     const loginBtn = document.getElementById('soLoginBtn');
     const regBtn = document.getElementById('soRegisterBtn');
     if (loginBtn) loginBtn.href = '/benefactor-dashboard/login?returnUrl=' + encodeURIComponent(currentUrl);
@@ -1760,6 +2200,10 @@ function openSuccessModal(trackingCode) {
     if (valEl) valEl.textContent = trackingCode || '---';
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+
+    // تبدیل مرحله ۳ به سبز نهایی
+    state.step3Completed = true;
+    updateStepperUI();
 }
 
 function closeSuccessModal() {
@@ -1770,10 +2214,12 @@ function closeSuccessModal() {
     }
 }
 
-// رویدادهای بستن و کپی مدال
 document.getElementById('soAuthClose')?.addEventListener('click', closeAuthModal);
 document.getElementById('soSuccessClose')?.addEventListener('click', closeSuccessModal);
-document.getElementById('soNewOrderBtn')?.addEventListener('click', closeSuccessModal);
+document.getElementById('soNewOrderBtn')?.addEventListener('click', () => {
+    closeSuccessModal();
+    window.location.reload();
+});
 
 document.querySelectorAll('.so-modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
@@ -1782,13 +2228,6 @@ document.querySelectorAll('.so-modal-overlay').forEach(overlay => {
             document.body.style.overflow = '';
         }
     });
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeAuthModal();
-        closeSuccessModal();
-    }
 });
 
 document.getElementById('soCopyTrackingBtn')?.addEventListener('click', function() {
@@ -1802,18 +2241,19 @@ document.getElementById('soCopyTrackingBtn')?.addEventListener('click', function
     }
 });
 
-// ثبت فرم سفارش استند
+// ثبت نهایی فرم در مرحله ۳
 document.getElementById('standOrderForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    if (!provinceSelect.value) {
-        showToast(<?= site_js_text('لطفاً ابتدا استان و شعبه مورد نظر را انتخاب فرمایید.') ?>, 'warning');
-        provinceSelect.focus();
+    if (!state.selectedProvince) {
+        showToast(<?= site_js_text('لطفاً استان و شهر را انتخاب فرمایید.') ?>, 'warning');
+        goToStep(1);
         return;
     }
 
     if (!state.selectedStand) {
-        showToast(<?= site_js_text('لطفاً یک طرح استند را از لیست سمت چپ انتخاب فرمایید.') ?>, 'warning');
+        showToast(<?= site_js_text('لطفاً طرح استند را انتخاب فرمایید.') ?>, 'warning');
+        goToStep(2);
         return;
     }
 
@@ -1835,8 +2275,11 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     const payload = Object.fromEntries(formData.entries());
     payload.quantity = 1;
     payload.branch_id = state.selectedBranchId;
+    payload.stand_id = state.selectedStand.id;
+    payload.province = state.selectedProvince;
+    payload.city = state.selectedCity;
 
-    // بررسی وضعیت ورود کاربر
+    // بررسی ورود کاربر
     const token = await fetchAccessToken();
     if (!token) {
         try {
@@ -1846,13 +2289,13 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
         return;
     }
 
-    // ارسال سفارش با توکن معتبر
+    // ارسال سفارش
     const btn = document.getElementById('submitOrderBtn');
     const originalContent = btn.innerHTML;
-    btn.innerHTML = `<?= site_js_fragment('
+    btn.innerHTML = `
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:20px;height:20px;animation:soSpin 1s linear infinite"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
-        در حال ثبت سفارش...
-    ') ?>`;
+        ${<?= site_js_text('در حال ثبت سفارش...') ?>}
+    `;
     btn.disabled = true;
 
     try {
@@ -1885,19 +2328,18 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
             try { localStorage.removeItem('pendingStandOrder'); } catch(e) {}
             const tracking = result.data?.tracking_code || '';
             openSuccessModal(tracking);
-            this.reset();
-            showEmptyGuide();
         } else {
-            showToast(result.error?.message || <?= site_js_text('خطا در ثبت سفارش. لطفاً اطلاعات را بررسی نمایید.') ?>, 'error');
+            showToast(result.error?.message || <?= site_js_text('خطا در ثبت سفارش. لطفاً اطلاعات را بررسی فرمایید.') ?>, 'error');
         }
     } catch (err) {
-        showToast(<?= site_js_text('خطای اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.') ?>, 'error');
+        showToast(<?= site_js_text('خطای ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.') ?>, 'error');
     } finally {
         btn.innerHTML = originalContent;
         btn.disabled = false;
     }
 });
 
+// پر کردن خودکار اطلاعات نیکوکار
 function applyStandOrderAutofill() {
     function fill(u) {
         if (!u) return;
@@ -1941,9 +2383,72 @@ function applyStandOrderAutofill() {
     } catch (e) {}
 }
 
+// بررسی پارامترهای آدرس URL یا سفارش ذخیره‌شده قبلی
+function initFromUrlOrStorage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetProv = urlParams.get('province');
+    const targetType = urlParams.get('type');
+    const targetStandId = parseInt(urlParams.get('stand_id'), 10);
+
+    if (targetType) {
+        state.filterType = targetType;
+        document.querySelectorAll('.so-tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.type === targetType);
+        });
+    }
+
+    // انتخاب کارت استان
+    const cards = document.querySelectorAll('.so-prov-card');
+    let matchedCard = null;
+
+    if (targetProv) {
+        matchedCard = Array.from(cards).find(c => c.dataset.province === targetProv);
+    }
+    if (!matchedCard && cards.length > 0) {
+        matchedCard = cards[0]; // اولین کارت پیش‌فرض انتخاب می‌شود
+    }
+
+    if (matchedCard) {
+        selectProvinceCard(matchedCard);
+    }
+
+    // اگر از صفحه اصلی آمده باشند و استان مشخص باشد، به مرحله دوم هدایت می‌شوند
+    if (targetProv && targetStandId) {
+        setTimeout(() => {
+            state.step1Completed = true;
+            if (targetStandId) selectStand(targetStandId);
+            goToStep(2);
+        }, 300);
+    }
+
+    // بررسی pending order در localStorage
+    const saved = localStorage.getItem('pendingStandOrder');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            const form = document.getElementById('standOrderForm');
+            Object.keys(data).forEach(k => {
+                if (form.elements[k]) form.elements[k].value = data[k];
+            });
+            if (data.province) {
+                const c = Array.from(cards).find(x => x.dataset.province === data.province);
+                if (c) selectProvinceCard(c);
+            }
+            if (data.stand_id) {
+                setTimeout(() => {
+                    selectStand(parseInt(data.stand_id));
+                    state.step1Completed = true;
+                    state.step2Completed = true;
+                    goToStep(3);
+                }, 400);
+            }
+        } catch(e) {}
+    }
+}
+
 // راه‌اندازی اولیه
-loadProvinces().then(() => {
-    checkSavedOrder();
+window.addEventListener('DOMContentLoaded', () => {
+    initFromUrlOrStorage();
     applyStandOrderAutofill();
 });
 </script>
