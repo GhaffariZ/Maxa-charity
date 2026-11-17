@@ -124,7 +124,8 @@ final class CampaignServiceClient
 
     public function ensureCategory(string $name): string
     {
-        $categories = $this->collectPages('/api/v1/campaign-categories', ['limit' => 100], true);
+        $response = $this->request('GET', '/api/v1/campaign-categories', null, true);
+        $categories = $response['data'] ?? [];
         foreach ($categories as $category) {
             if (isset($category['id'], $category['name']) && trim((string)$category['name']) === $name) {
                 return (string)$category['id'];

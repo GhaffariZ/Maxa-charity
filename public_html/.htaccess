@@ -1,6 +1,9 @@
 RewriteEngine On
 RewriteBase /
 
+RewriteRule ^(?:en|ar)(?:/.*)?$ localized.php [END,QSA]
+
+
 Options -Indexes
 
 # ----------------------------------
