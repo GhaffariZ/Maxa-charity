@@ -1031,11 +1031,16 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   if (CAN.news){
     var newsChildren=[
       {label:'ساخت خبر جدید',icon:'plus',href:'news-create.php'},
-      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'},
-      {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'}];
+      {label:'مدیریت اخبار',icon:'list',href:'news-list.php'}];
     // سردبیر (ستاد مرکزی): صفِ بررسیِ اخبارِ ارسال‌شده
     if (MENU.isNewsEditor) newsChildren.push({label:'بررسی سردبیری',icon:'eye',href:'news-list.php?review=1'});
     content.push({label:'خبرها',icon:'news',children:newsChildren});
+  }
+
+  if (CAN.articles || CAN.news){
+    content.push({label:'مقاله ها',icon:'book',children:[
+      {label:'مقالات کادر درمان',icon:'book',href:'news-list.php?section=doctors'},
+      {label:'مقالات بیماران',icon:'book',href:'news-list.php?section=patients'}]});
   }
   if (CAN.events && MENU.isHqView) content.push({label:'رویدادها',icon:'calendar',children:[
                        {label:'ساخت رویداد جدید',icon:'plus',href:'event-create.php'},
@@ -1077,12 +1082,20 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
   if (CAN.donation_impacts) people.push({single:true,label:'اثرات کمک',icon:'award',href:'donation-impacts.php'});
   if (people.length){ NAV.push({title:'روابط عمومی'}); people.forEach(p=>NAV.push(p)); }
 
-  // --- استندها و سفارشات ---
+  // --- فروشگاه ---
+  if (CAN.pages || CAN.stands || MENU.isSuper){
+    NAV.push({title:'فروشگاه'});
+    NAV.push({label:'فروشگاه',icon:'cart',children:[
+      {label:'محصولات فروشگاه',icon:'box',href:'products.php'},
+      {label:'سفارشات فروشگاه',icon:'list',href:'orders.php?order_type=product'}]});
+  }
+
+  // --- استندها ---
   if (CAN.stands || MENU.isSuper){
-    NAV.push({title:'استندها و سفارشات'});
-    NAV.push({label:'استندها و سفارشات',icon:'cart',children:[
-      {label:'سفارشات استند',icon:'list',href:'orders.php'},
-      {label:'مدیریت استندها',icon:'award',href:'stands.php'}]});
+    NAV.push({title:'استندها'});
+    NAV.push({label:'استندها',icon:'award',children:[
+      {label:'مدیریت استندها',icon:'award',href:'stands.php'},
+      {label:'سفارشات استند',icon:'list',href:'orders.php?order_type=stand'}]});
   }
 
   // --- مدیریت کاربران (ادمین شعبه و سوپرادمین) ---
@@ -1209,6 +1222,8 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       else if(it.href) MAP[it.href]={label:it.label,group:''};
     });
     MAP['campaign-edit.php']={label:'ویرایش کمپین',group:'کمپین‌ها'};
+    MAP['news-create.php?section=doctors']={label:'ساخت مقاله کادر درمان',group:'مقاله ها'};
+    MAP['news-create.php?section=patients']={label:'ساخت مقاله بیماران',group:'مقاله ها'};
 
     let current=null;     // نام فایلِ بازشده (null یعنی داشبورد/خانه)
     let syncing=false;    // محافظ در برابر حلقه‌ی hashchange
@@ -1240,7 +1255,13 @@ body.spa-loading .spa-frame{visibility:hidden;pointer-events:none}
       if(!matches.length){
         let base=baseOf(file);
         if(base==='campaign-edit.php') base='campaign-status.php';
-        matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
+        if(file.includes('section=doctors')) {
+          matches=links.filter(a=>fileOf(a.getAttribute('href'))==='news-list.php?section=doctors');
+        } else if(file.includes('section=patients')) {
+          matches=links.filter(a=>fileOf(a.getAttribute('href'))==='news-list.php?section=patients');
+        } else {
+          matches=links.filter(a=>{ const k=fileOf(a.getAttribute('href')); return baseOf(k)===base && k.indexOf('?')===-1; });
+        }
       }
       matches.forEach(a=>{
         a.classList.add('active');

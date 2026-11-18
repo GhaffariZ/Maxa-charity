@@ -17,13 +17,14 @@ namespace {
     $db->sqliteCreateFunction('NOW',static fn()=>date('Y-m-d H:i:s'));
     $db->exec("CREATE TABLE branches(id INTEGER PRIMARY KEY,name TEXT,slug TEXT,province TEXT,city TEXT,is_hq INTEGER,status TEXT);
         INSERT INTO branches VALUES(2,'Tehran','tehran-branch','Tehran','Tehran',0,'active');
-        CREATE TABLE stands(id INTEGER PRIMARY KEY,branch_id INTEGER,unit_price INTEGER,image TEXT,is_active INTEGER);
-        INSERT INTO stands VALUES(9,2,300000,'/stand.jpg',1);
+        CREATE TABLE stands(id INTEGER PRIMARY KEY,branch_id INTEGER,unit_price INTEGER,image TEXT,is_active INTEGER,title TEXT);
+        INSERT INTO stands VALUES(9,2,300000,'/stand.jpg',1,'Stand');
         CREATE TABLE branch_features(branch_id INTEGER,feature TEXT,enabled INTEGER);
         INSERT INTO branch_features VALUES(2,'stands',1);
         CREATE TABLE orders(id INTEGER PRIMARY KEY AUTOINCREMENT,user_id INTEGER,tracking_code TEXT,branch_id INTEGER,stand_id INTEGER,
             province TEXT,city TEXT,image TEXT,order_date TEXT,quantity INTEGER,unit_price INTEGER,total_price INTEGER,
-            from_user TEXT,to_user TEXT,message TEXT,address TEXT,checkout_key TEXT UNIQUE,created_at TEXT);");
+            from_user TEXT,to_user TEXT,message TEXT,address TEXT,checkout_key TEXT UNIQUE,created_at TEXT);
+        CREATE TABLE stand_payments(order_id INTEGER PRIMARY KEY,status TEXT,paid_at TEXT);");
     (new ReflectionProperty(Maksa\Core\Database::class,'pdo'))->setValue(null,$db);
     function create_order(array $body,int $userId=7): array {
         $r=(new ReflectionClass(Maksa\Core\Request::class))->newInstanceWithoutConstructor();
@@ -49,5 +50,21 @@ namespace {
     $db->exec('UPDATE branch_features SET enabled=0');
     try { create_order($input); throw new LogicException('Disabled branch feature accepted'); }
     catch (Maksa\Core\Exceptions\ApiException $e) { check($e->getErrorCode()==='stands_disabled','Disabled branch must reject new orders.'); }
+    $db->exec("INSERT INTO orders (user_id,order_type,payment_status,paid_at) VALUES (7,'product','paid','2026-11-17')");
+    $db->exec("INSERT INTO order_items (order_id,product_title,quantity,unit_price,total_price) VALUES (3,'Shop item',1,10000,10000)");
+    $db->exec("INSERT INTO stand_payments VALUES (1,'success','2026-11-18')");
+    $request = (new ReflectionClass(Maksa\Core\Request::class))->newInstanceWithoutConstructor();
+    $request->authUserId = 7;
+    try {
+        (new Maksa\Controllers\OrderController())->getMyOrders($request);
+        throw new LogicException('No response');
+    } catch (StandResponse $result) {
+        [$product, $stand] = $result->data['orders'];
+        check(count($result->data['orders']) === 2, 'Only orders belonging to the signed-in user are returned.');
+        check($product['payment_status'] === 'paid' && $product['paid_at'] === '2026-11-17' &&
+            $product['items'][0]['product_title'] === 'Shop item', 'Product payment and item data must be preserved.');
+        check($stand['payment_status'] === 'success' && $stand['paid_at'] === '2026-11-18' &&
+            $stand['items'] === [], 'Stand payment status and date must come from its receipt.');
+    }
     echo "PASS actual order controller: authoritative pricing/branch, duplicate and cross-user checkout, quantity and disabled-feature validation\n";
 }

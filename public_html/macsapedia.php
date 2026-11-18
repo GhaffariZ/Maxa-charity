@@ -2,7 +2,7 @@
 require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی اصلیِ مکساپدیا — شش کارت که به بخش‌های محتوایی لینک می‌دهند.
    تعریف بخش‌ها و شمارش محتوا از لایه‌ی داده‌ی مشترک می‌آید. */
-require __DIR__ . '/dashboard/maxapedia-db.php';
+require_once __DIR__ . '/dashboard/maxapedia-db.php';
 $mpCounts = ($pdo) ? maxapedia_counts($pdo) : [];
 
 $pageTitle = site_text('مکساپدیا');
@@ -103,11 +103,11 @@ render_dashboard_component('header', get_defined_vars());
 
   <div class="mp-grid">
     <?php foreach (MAXAPEDIA_SECTIONS as $slug => $s): ?>
-      <a class="mp-card" href="/macsapedia/<?= htmlspecialchars($slug, ENT_QUOTES, 'UTF-8') ?>">
+      <a class="mp-card" href="<?= htmlspecialchars(site_url('/macsapedia/' . $slug), ENT_QUOTES, 'UTF-8') ?>">
         <div class="mp-icon"><?= $s['icon'] ?></div>
-        <h3><?= htmlspecialchars($s['title'], ENT_QUOTES, 'UTF-8') ?></h3>
-        <p><?= htmlspecialchars($s['desc'], ENT_QUOTES, 'UTF-8') ?></p>
-        <div class="mp-count"><?= fa_digits($mpCounts[$slug] ?? 0) ?> <?= site_e('مورد') ?></div>
+        <h3><?= site_e($s['title']) ?></h3>
+        <p><?= site_e($s['desc']) ?></p>
+        <div class="mp-count"><?= (site_locale() === 'en' ? ($mpCounts[$slug] ?? 0) : fa_digits($mpCounts[$slug] ?? 0)) ?> <?= site_e('مورد') ?></div>
         <span class="mp-cta"><?= site_e('مشاهده ←') ?></span>
       </a>
     <?php endforeach; ?>

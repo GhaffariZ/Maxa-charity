@@ -15,8 +15,9 @@ INSERT INTO branches VALUES(2,'Tehran','tehran-branch','active'),(3,'Qom','qom-b
 CREATE TABLE branch_features(branch_id INTEGER,feature TEXT,enabled INTEGER);INSERT INTO branch_features VALUES(2,'stands',1),(3,'stands',1);
 CREATE TABLE stands(id INTEGER PRIMARY KEY,title TEXT);INSERT INTO stands VALUES(1,'Stand');
 CREATE TABLE orders(id INTEGER PRIMARY KEY,user_id INTEGER,tracking_code TEXT,branch_id INTEGER,stand_id INTEGER,total_price INTEGER,from_user TEXT,to_user TEXT,created_at TEXT);
+ALTER TABLE orders ADD COLUMN order_type TEXT NOT NULL DEFAULT 'stand';
 CREATE TABLE stand_payments(id INTEGER PRIMARY KEY AUTOINCREMENT,order_id INTEGER UNIQUE,branch_id INTEGER,source TEXT DEFAULT 'stands',receipt_token TEXT UNIQUE,center_slug TEXT,amount INTEGER,status TEXT DEFAULT 'pending',remote_payment_id TEXT UNIQUE,gateway_ref_id TEXT UNIQUE,redirect_data TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,paid_at TEXT);");
-for($i=1;$i<=5;$i++) $db->prepare('INSERT INTO orders VALUES(?,7,?,?,1,300000,?,?,?)')->execute([$i,'ORD-'.$i,$i===5?3:2,'Sender','Receiver','2025-01-01']);
+for($i=1;$i<=5;$i++) $db->prepare('INSERT INTO orders (id,user_id,tracking_code,branch_id,stand_id,total_price,from_user,to_user,created_at) VALUES(?,7,?,?,1,300000,?,?,?)')->execute([$i,'ORD-'.$i,$i===5?3:2,'Sender','Receiver','2025-01-01']);
 \Maksa\Core\Config::set('STAND_VANDAR_API_KEY','test-only-secret');
 $calls=[];$tokens=[];$failSend=false;
 $transport=function($method,$payload)use(&$calls,&$tokens,&$failSend){
@@ -35,6 +36,8 @@ $factory=fn($slug)=>new StandVandarGateway($slug,$transport);
 $ledger=new StandPayments($db,$factory);
 $order=$ledger->orderForUser('ORD-1',7);
 rejected(fn()=>$ledger->orderForUser('ORD-1',8));
+$db->exec("UPDATE orders SET order_type='product' WHERE id=5");
+rejected(fn()=>$ledger->orderForUser('ORD-5',7));
 rejected(fn()=>$ledger->orderForUser("' OR 1=1 --",7));
 check(stand_finance_rows($db,2)===[],'Unpaid legacy orders cannot become revenue');
 $first=$ledger->start($order,'macsa.ir','۰۹۱۲۱۲۳۴۵۶۷','Sender');

@@ -10,1244 +10,1055 @@ if (isset($pdo) && $pdo instanceof PDO) {
         FROM news n JOIN news_categories c ON c.id = n.category_id
         WHERE c.slug = 'doctors-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
           AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
-        ORDER BY n.publish_date DESC, n.id DESC LIMIT 4");
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 9");
     $articleStmt->execute();
     $doctorArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
 }
 ?>
-<!DOCTYPE html>
-<html lang="fa" dir="<?= site_direction() ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= site_e('کادر درمان و متخصصان | مکسا') ?></title>
-    <style>
-        /* Self-hosted Vazirmatn variable font */
-        @font-face {
-            font-family: 'Vazirmatn';
-            src: url('/webfont/Vazirmatn[wght].woff2') format('woff2-variations'),
-                 url('/webfont/Vazirmatn[wght].woff2') format('woff2');
-            font-weight: 100 900;
-            font-style: normal;
-            font-display: swap;
-        }
-    </style>
 
-    <style>
-        :root {
-            --primary-teal: #008f8a;
-            --primary-dark: #00736f;
-            --primary-light: #e6f7f7;
-            --accent-gold: #faa61a;
-            --accent-gold-dark: #d97706;
-            --header-bg: #eef3f6;
-            --text-dark: #1e293b;
-            --text-muted: #475569;
-            --card-border: #e2e8f0;
-            --main-width: 1400px;
-        }
-
-        body {
-            font-family: 'Vazirmatn', sans-serif;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 0;
-            color: var(--text-dark);
-            line-height: 1.8;
-        }
-
-        .page-container {
-            max-width: var(--main-width);
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .header-capsule {
-            background: linear-gradient(180deg, #f8f9fa 0%, #eef3f6 100%);
-            border-radius: 50px;
-            padding: 50px 30px;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .header-capsule h1 {
-            font-size: 2.5rem;
-            margin: 0 0 15px 0;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .breadcrumb-pill {
-            background-color: var(--primary-teal);
-            color: white;
-            padding: 6px 20px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            display: inline-block;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .hero-image-container {
-            width: 100%;
-            height: 450px;
-            margin: 0 auto 40px auto;
-            overflow: hidden;
-            border-radius: 40px;
-            box-shadow: 0 12px 36px rgba(0, 102, 101, 0.12);
-        }
-
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-        }
-
-        .article-content {
-            padding: 0 10px;
-        }
-
-        .article-content h2 {
-            font-size: 1.8rem;
-            margin-top: 45px;
-            margin-bottom: 22px;
-            color: var(--primary-teal);
-            border-right: 4px solid var(--primary-teal);
-            padding-right: 15px;
-            font-weight: 700;
-        }
-
-        .article-content p {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            text-align: justify;
-        }
-
-        /* ---------------- بخش تازه‌های علم (Image + Text Box) ---------------- */
-        .science-highlight-box {
-            display: flex;
-            align-items: center;
-            gap: 36px;
-            background: linear-gradient(135deg, #f8fafc 0%, #eef7f7 100%);
-            border: 1px solid var(--card-border);
-            border-radius: 28px;
-            padding: 32px;
-            margin: 35px 0 50px;
-            box-shadow: 0 10px 30px -10px rgba(0, 102, 101, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .science-highlight-box:hover {
-            box-shadow: 0 16px 40px -10px rgba(0, 102, 101, 0.14);
-        }
-
-        .science-text {
-            flex: 1.2;
-        }
-
-        .science-text h3 {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            margin: 0 0 16px 0;
-            font-weight: 800;
-        }
-
-        .science-text p {
-            font-size: 1.08rem;
-            color: var(--text-muted);
-            line-height: 1.85;
-            margin-bottom: 18px;
-        }
-
-        .science-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--primary-teal);
-            color: #ffffff;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-        }
-
-        .science-image-wrap {
-            flex: 0.9;
-            height: 280px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-
-        .science-image-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* ---------------- شبکه کارت‌های خدمات کادر درمان (6 Cards Grid) ---------------- */
-        .doctor-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 26px;
-            margin: 35px 0 50px;
-        }
-
-        .doctor-card-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .doctor-card {
-            background: #ffffff;
-            border: 1px solid var(--card-border);
-            border-radius: 22px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px -8px rgba(0, 102, 101, 0.08);
-            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-        }
-
-        .doctor-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-teal), var(--accent-gold));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 2;
-        }
-
-        .doctor-card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 20px 40px -12px rgba(0, 102, 101, 0.22);
-            border-color: var(--primary-teal);
-        }
-
-        .doctor-card:hover::before {
-            opacity: 1;
-        }
-
-        .doctor-card-img-wrap {
-            width: 100%;
-            height: 190px;
-            overflow: hidden;
-            background: #eef2f5;
-            position: relative;
-        }
-
-        .doctor-card-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .doctor-card:hover .doctor-card-img-wrap img {
-            transform: scale(1.06);
-        }
-
-        .doctor-card-body {
-            padding: 22px 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: space-between;
-        }
-
-        .doctor-card-body h3 {
-            font-size: 1.2rem;
-            color: var(--text-dark);
-            margin: 0 0 10px 0;
-            font-weight: 700;
-            transition: color 0.3s ease;
-        }
-
-        .doctor-card:hover .doctor-card-body h3 {
-            color: var(--primary-teal);
-        }
-
-        .doctor-card-body p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin: 0 0 16px 0;
-            line-height: 1.6;
-            text-align: start;
-        }
-
-        .doctor-card-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--primary-teal);
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-top: auto;
-        }
-
-        /* ---------------- دپارتمان‌های چندرشته‌ای (MDT Badges & Grid) ---------------- */
-        .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 30px 0 45px;
-        }
-
-        .team-pill-card {
-            background: #ffffff;
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            padding: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
-        }
-
-        .team-pill-card:hover {
-            border-color: var(--primary-teal);
-            box-shadow: 0 10px 26px -6px rgba(0, 102, 101, 0.12);
-            transform: translateY(-3px);
-        }
-
-        .team-icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .team-info h4 {
-            font-size: 1.1rem;
-            margin: 0 0 6px 0;
-            color: var(--text-dark);
-            font-weight: 700;
-        }
-
-        .team-info p {
-            font-size: 0.9rem;
-            margin: 0;
-            color: var(--text-muted);
-            line-height: 1.55;
-            text-align: start;
-        }
-
-        /* ---------------- کپسول نقل قول و همکاری ---------------- */
-        .quote-capsule {
-            background: linear-gradient(135deg, rgba(0, 143, 138, 0.06) 0%, rgba(250, 166, 26, 0.08) 100%);
-            border-right: 4px solid var(--accent-gold);
-            border-radius: 20px;
-            padding: 26px 30px;
-            margin: 35px 0;
-            font-size: 1.15rem;
-            color: var(--text-dark);
-            font-weight: 500;
-            line-height: 1.9;
-        }
-
-        /* ---------------- دکمه‌های اقدام سریع ---------------- */
-        .cta-banner {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-teal) 100%);
-            color: #ffffff;
-            border-radius: 26px;
-            padding: 36px 30px;
-            text-align: center;
-            margin: 45px 0 20px;
-            box-shadow: 0 16px 36px -10px rgba(0, 102, 101, 0.35);
-        }
-
-        .cta-banner h3 {
-            font-size: 1.6rem;
-            margin: 0 0 14px 0;
-            font-weight: 800;
-        }
-
-        .cta-banner p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 750px;
-            margin: 0 auto 24px;
-            line-height: 1.8;
-            text-align: center;
-        }
-
-        .cta-buttons-wrap {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .cta-btn-primary {
-            background: var(--accent-gold);
-            color: #1e293b;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 12px 28px;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(250, 166, 26, 0.3);
-        }
-
-        .cta-btn-primary:hover {
-            background: #ffffff;
-            color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .cta-btn-outline {
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 12px 28px;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(8px);
-        }
-
-        .cta-btn-outline:hover {
-            background: #ffffff;
-            color: var(--primary-dark);
-            border-color: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        /* ---------------- بخش معرفی و رزومه کادر درمان (Resume Showcase Section) ---------------- */
-        .resume-showcase-box {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefce8 100%);
-            border: 1.5px solid #ccfbf1;
-            border-radius: 28px;
-            padding: 38px 36px;
-            margin: 45px 0 50px;
-            box-shadow: 0 16px 36px -12px rgba(13, 148, 136, 0.12);
-            display: flex;
-            align-items: center;
-            gap: 36px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.35s ease;
-        }
-
-        .resume-showcase-box::before {
-            content: '';
-            position: absolute;
-            top: -60px;
-            left: -60px;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(0, 143, 138, 0.15) 0%, rgba(0, 143, 138, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .resume-showcase-box:hover {
-            box-shadow: 0 22px 48px -12px rgba(13, 148, 136, 0.20);
-            border-color: var(--primary-teal);
-            transform: translateY(-2px);
-        }
-
-        .resume-showcase-content {
-            flex: 1.35;
-        }
-
-        .resume-badge-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-
-        .resume-badge-main {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-teal));
-            color: #ffffff;
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 5px 14px;
-            border-radius: 20px;
-            box-shadow: 0 3px 10px rgba(0, 143, 138, 0.25);
-        }
-
-        .resume-badge-tag {
-            display: inline-block;
-            background: rgba(250, 166, 26, 0.15);
-            color: var(--accent-gold-dark);
-            border: 1px solid rgba(250, 166, 26, 0.35);
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .resume-title {
-            font-size: 1.65rem;
-            color: var(--primary-dark);
-            margin: 0 0 14px 0;
-            font-weight: 800;
-            line-height: 1.4;
-        }
-
-        .resume-desc {
-            font-size: 1.05rem;
-            color: var(--text-muted);
-            line-height: 1.85;
-            margin: 0 0 22px 0;
-            text-align: justify;
-        }
-
-        .resume-features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin-bottom: 26px;
-        }
-
-        .resume-feature-card {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(6px);
-            transition: all 0.25s ease;
-        }
-
-        .resume-feature-card:hover {
-            border-color: var(--primary-teal);
-            background: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        .resume-feature-icon {
-            font-size: 1.35rem;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-
-        .resume-feature-text strong {
-            display: block;
-            font-size: 0.88rem;
-            color: var(--text-dark);
-            font-weight: 700;
-        }
-
-        .resume-feature-text small {
-            display: block;
-            font-size: 0.76rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .resume-action-area {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .btn-resume-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-dark) 100%);
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 700;
-            padding: 13px 26px;
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: 0 8px 20px -4px rgba(0, 143, 138, 0.4);
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .btn-resume-cta:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #004d4c 100%);
-            color: #ffffff;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 26px -4px rgba(0, 102, 101, 0.45);
-        }
-
-        .btn-resume-cta svg {
-            transition: transform 0.3s ease;
-        }
-
-        .btn-resume-cta:hover svg {
-            transform: translateX(-4px);
-        }
-
-        .resume-action-note {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .resume-showcase-visual {
-            flex: 0.95;
-            display: flex;
-            justify-content: center;
-        }
-
-        .resume-preview-widget {
-            width: 100%;
-            max-width: 380px;
-            background: #ffffff;
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.07);
-            position: relative;
-        }
-
-        .rpw-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 16px;
-            margin-bottom: 16px;
-        }
-
-        .rpw-avatars {
-            display: flex;
-            align-items: center;
-        }
-
-        .rpw-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            border: 2px solid #ffffff;
-            margin-right: -10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .rpw-avatar:first-child {
-            margin-right: 0;
-        }
-
-        .rpw-av1 { background: #e0f2fe; }
-        .rpw-av2 { background: #fef3c7; }
-        .rpw-av3 { background: #dcfce7; }
-        .rpw-av4 { background: var(--primary-teal); color: #fff; font-size: 14px; font-weight: 800; }
-
-        .rpw-stat-pill {
-            text-align: left;
-        }
-
-        .rpw-stat-pill strong {
-            display: block;
-            font-size: 1.1rem;
-            color: var(--primary-dark);
-            font-weight: 800;
-            line-height: 1.1;
-        }
-
-        .rpw-stat-pill span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .rpw-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 0;
-        }
-
-        .rpw-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .rpw-item:hover {
-            border-color: var(--card-border);
-            background: #f1f5f9;
-        }
-
-        .rpw-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--primary-teal);
-            flex-shrink: 0;
-        }
-
-        .rpw-item-title {
-            font-weight: 700;
-            color: var(--text-dark);
-            flex-grow: 1;
-        }
-
-        .rpw-item-tag {
-            font-size: 0.72rem;
-            background: #ffffff;
-            color: var(--text-muted);
-            padding: 2px 8px;
-            border-radius: 8px;
-            border: 1px solid var(--card-border);
-        }
-
-        .rpw-footer-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-            padding: 10px;
-            border-radius: 12px;
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            font-size: 0.88rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-
-        .rpw-footer-link:hover {
-            background: var(--primary-teal);
-            color: #ffffff;
-        }
-
-        /* ---------------- انیمیشن‌های ورودی ---------------- */
-        @keyframes maxaFadeInUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .wow, .fadeInUp {
-            opacity: 0;
-            animation: maxaFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        [data-wow-delay="0.2s"] { animation-delay: 0.2s; }
-        [data-wow-delay="0.4s"] { animation-delay: 0.4s; }
-        [data-wow-delay="0.6s"] { animation-delay: 0.6s; }
-        [data-wow-delay="0.65s"] { animation-delay: 0.65s; }
-        [data-wow-delay="0.7s"] { animation-delay: 0.7s; }
-        [data-wow-delay="0.8s"] { animation-delay: 0.8s; }
-        [data-wow-delay="1.0s"] { animation-delay: 1.0s; }
-
-        @media (prefers-reduced-motion: reduce) {
-            .wow, .fadeInUp { opacity: 1 !important; animation: none !important; }
-        }
-
-        /* ---------------- ریسپانسیو ---------------- */
-        @media (max-width: 992px) {
-            .header-capsule h1 { font-size: 2rem; }
-            .hero-image-container { height: 360px; }
-            .doctor-cards-grid { grid-template-columns: repeat(2, 1fr); }
-            .science-highlight-box { flex-direction: column-reverse; padding: 24px; }
-            .science-image-wrap { width: 100%; height: 220px; }
-            .resume-showcase-box { flex-direction: column; padding: 28px 24px; }
-            .resume-showcase-visual { width: 100%; }
-            .resume-preview-widget { max-width: 100%; }
-            .resume-features-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 768px) {
-            .page-container { margin: 20px auto; }
-            .hero-image-container { height: 250px; border-radius: 20px; }
-            .header-capsule { border-radius: 30px; padding: 30px 15px; }
-            .header-capsule h1 { font-size: 1.6rem; }
-            .article-content h2 { font-size: 1.4rem; }
-            .article-content p { font-size: 1rem; }
-            .doctor-cards-grid { grid-template-columns: 1fr; gap: 20px; }
-            .teams-grid { grid-template-columns: 1fr; }
-            .resume-showcase-box { padding: 22px 18px; border-radius: 20px; }
-            .resume-title { font-size: 1.35rem; }
-            .btn-resume-cta { width: 100%; justify-content: center; }
-            .resume-action-area { flex-direction: column; align-items: stretch; }
-        }
-
-        @media (max-width: 380px) {
-            .header-capsule h1 { font-size: 1.35rem; }
-            .hero-image-container { height: 200px; border-radius: 16px; }
-        }
-
-        body { background: #f7f9f7; }
-        .page-container { max-width: 1240px; margin: 0 auto; padding: 24px 24px 100px; }
-        .doctors-hero { min-height: 500px; position: relative; overflow: hidden; display: flex; align-items: flex-end; isolation: isolate; border-radius: 30px; background: #163c3a; color: #fff; }
-        .doctors-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(8,42,40,.25), rgba(8,42,40,.88) 78%); }
-        [dir="ltr"] .doctors-hero::after { background: linear-gradient(270deg, rgba(8,42,40,.25), rgba(8,42,40,.88) 78%); }
-        .doctors-hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
-        .doctors-hero-content { width: min(760px, 100%); padding: clamp(28px, 5vw, 68px); }
-        .doctors-breadcrumb { display: flex; align-items: center; gap: 12px; color: #d0e8e3; font-size: .84rem; margin-bottom: 44px; }
-        .doctors-breadcrumb a { color: inherit; text-decoration: none; }
-        .doctors-breadcrumb a:hover { color: #fff; }
-        .doctors-eyebrow, .doctors-section-kicker { display: inline-block; font-size: .86rem; font-weight: 700; letter-spacing: .01em; color: #91d9cc; }
-        .doctors-hero h1 { margin: 10px 0 16px; max-width: 670px; font-size: clamp(2.25rem, 5vw, 4.4rem); line-height: 1.3; font-weight: 800; text-wrap: balance; }
-        .doctors-hero p { max-width: 590px; color: #e3eeeb; line-height: 2; font-size: 1.07rem; margin: 0 0 28px; }
-        .doctors-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
-        .doctors-primary-link, .doctors-secondary-link { display: inline-flex; align-items: center; gap: 16px; min-height: 48px; text-decoration: none; font-weight: 700; transition: transform .2s, background .2s; }
-        .doctors-primary-link { color: #174943; background: #f9ffff; padding: 9px 22px; border-radius: 8px; }
-        .doctors-secondary-link { color: #fff; }
-        .doctors-primary-link:hover, .doctors-secondary-link:hover { transform: translateY(-2px); }
-        .doctors-primary-link:active, .doctors-secondary-link:active { transform: translateY(1px); }
-        .article-content { padding: 0; }
-        .article-content > h2 { margin: 90px 0 18px; max-width: 760px; border: 0; padding: 0; color: #193f3d; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.45; text-wrap: balance; }
-        .article-content > p { max-width: 900px; margin-bottom: 32px; text-align: start; line-height: 2.05; color: #506562; }
-        .science-highlight-box { margin: 50px 0 90px; padding: 28px; background: #eaf2ef; border: 0; box-shadow: none; border-radius: 20px; }
-        .science-highlight-box:hover { box-shadow: none; }
-        .science-image-wrap { box-shadow: none; border-radius: 12px; }
-        .science-text h3 { color: #173f3b; }
-        .science-badge { background: transparent; color: #127e74; padding: 0; }
-        .doctor-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 32px 0 80px; }
-        .doctor-card { border: 0; box-shadow: none; border-radius: 18px; background: #fff; }
-        .doctor-card::before { display: none; }
-        .doctor-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(18,73,67,.09); border: 0; }
-        .doctor-card-img-wrap { height: 200px; background: #e7efec; }
-        .doctor-card-body { padding: 26px; }
-        .doctor-card-body h3 { font-size: 1.3rem; }
-        .doctor-card-body p { line-height: 1.9; }
-        .teams-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 84px; }
-        .team-pill-card { background: transparent; border: 0; border-top: 1px solid #d9e4df; box-shadow: none; padding: 23px 8px; border-radius: 0; }
-        .team-pill-card:hover { border-color: #85b8ad; box-shadow: none; transform: none; }
-        .team-icon-box { background: #e3f0eb; border-radius: 10px; }
-        .quote-capsule { background: #e9f1ed; border-right-color: #187f73; border-radius: 12px; }
-        .resume-showcase-box { background: #eaf3ef; border: 0; box-shadow: none; margin-top: 60px; }
-        .resume-showcase-box:hover { box-shadow: none; border: 0; transform: none; }
-        .resume-showcase-box::before { display: none; }
-        .resume-badge-main { background: #117d72; box-shadow: none; }
-        .resume-badge-tag { background: #fff; border-color: #d9e7e1; color: #396660; }
-        .doctors-articles { margin: 0 0 95px; scroll-margin-top: 30px; }
-        .doctors-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
-        .doctors-section-kicker { color: #147d72; }
-        .doctors-section-heading h2 { border: 0; padding: 0; margin: 8px 0; color: #193f3d; font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
-        .doctors-section-heading p { margin: 0; color: #627673; font-size: 1rem; }
-        .doctors-all-link { color: #137a70; font-weight: 700; text-decoration: none; white-space: nowrap; padding: 8px 0; }
-        .doctors-articles-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
-        .doctors-article-card { min-width: 0; display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 18px; padding: 14px; color: inherit; text-decoration: none; background: #fff; border-radius: 14px; transition: transform .2s, box-shadow .2s; }
-        .doctors-article-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(20,72,66,.09); }
-        .doctors-article-featured { grid-row: span 3; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-        .doctors-article-image { min-height: 132px; background: #dcece6; color: #147d72; display: grid; place-items: center; overflow: hidden; border-radius: 8px; }
-        .doctors-article-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .doctors-article-featured .doctors-article-image { height: 280px; border-radius: 0; }
-        .doctors-article-body { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
-        .doctors-article-featured .doctors-article-body { padding: 22px 28px 28px; flex: 1; }
-        .doctors-article-label { color: #148174; font-size: .78rem; font-weight: 700; }
-        .doctors-article-body h3 { margin: 6px 0 9px; color: #183c39; font-size: 1.12rem; line-height: 1.65; text-wrap: pretty; }
-        .doctors-article-featured h3 { font-size: 1.6rem; }
-        .doctors-article-body p { margin: 0 0 12px; color: #637572; font-size: .87rem; line-height: 1.8; text-align: start; }
-        .doctors-article-featured p { font-size: .98rem; }
-        .doctors-article-meta { color: #82918c; font-size: .76rem; margin-top: auto; }
-        .doctors-article-read { color: #127b70; font-size: .86rem; font-weight: 700; margin-top: 12px; }
-        .doctors-articles-empty { background: #eaf3ef; color: #526b65; border-radius: 14px; padding: 48px 24px; text-align: center; }
-        a:focus-visible { outline: 3px solid #f0ad44; outline-offset: 4px; }
-        @media (max-width: 900px) {
-            .doctors-articles-grid { grid-template-columns: 1fr; }
-            .doctors-article-featured { grid-row: auto; }
-            .doctors-article-featured .doctors-article-image { height: 230px; }
-        }
-        @media (max-width: 650px) {
-            .page-container { padding: 12px 14px 70px; }
-            .doctors-hero { min-height: 540px; border-radius: 18px; }
-            .doctors-hero::after { background: linear-gradient(0deg, rgba(8,42,40,.96), rgba(8,42,40,.20)); }
-            .doctors-hero-content { padding: 28px; }
-            .doctors-breadcrumb { margin-bottom: 28px; }
-            .article-content > h2 { margin-top: 68px; }
-            .science-highlight-box { margin-bottom: 65px; }
-            .doctor-cards-grid, .teams-grid { grid-template-columns: 1fr; }
-            .doctors-section-heading { align-items: start; flex-direction: column; }
-            .doctors-article-card { grid-template-columns: 110px minmax(0,1fr); gap: 12px; }
-            .doctors-article-image { min-height: 110px; }
-            .doctors-article-featured { display: flex; }
-            .doctors-article-featured .doctors-article-body { padding: 18px; }
-        }
-    </style>
-</head>
-<body>
-
-    <main class="page-container">
-        
-        <header class="doctors-hero">
-            <img src="{{image1}}" alt="<?= site_e('کادر درمان و متخصصان مکسا') ?>" class="doctors-hero-image">
-            <div class="doctors-hero-content">
-                <nav class="doctors-breadcrumb" aria-label="<?= site_e('مسیر صفحه') ?>"><a href="/"><?= site_e('صفحه اصلی') ?></a><span aria-hidden="true">/</span><?= site_e('کادر درمان و متخصصان مکسا') ?></nav>
-                <span class="doctors-eyebrow"><?= site_e('تخصص در کنار همدلی') ?></span>
-                <h1><?= site_e('همراه با متخصصان و کادر درمان') ?></h1>
-                <p><?= site_e('تیمی چندرشته‌ای برای مراقبت از بیماران مبتلا به سرطان و خانواده‌های آنان؛ از ارزیابی پزشکی تا حمایت روانی و مراقبت در منزل.') ?></p>
-                <div class="doctors-hero-actions">
-                    <a href="#doctor-articles" class="doctors-primary-link"><?= site_e('مطالعه مقالات تخصصی') ?> <span aria-hidden="true">←</span></a>
-                    <a href="/network.php?role=treatment" class="doctors-secondary-link"><?= site_e('آشنایی با تیم درمان') ?> <span aria-hidden="true">↙</span></a>
-                </div>
+<div class="dp-page">
+
+  <!-- ========================= -->
+  <!-- 1. Hero Section -->
+  <!-- ========================= -->
+  <section class="dp-hero">
+    <div class="dp-container">
+      <div class="dp-hero-grid">
+        <div class="dp-hero-text wow fadeInUp">
+          <nav class="dp-breadcrumb" aria-label="<?= site_e('مسیر صفحه') ?>">
+            <a href="/"><?= site_e('صفحه اصلی') ?></a>
+            <span class="dp-breadcrumb-sep">/</span>
+            <span><?= site_e('کادر درمان و متخصصان مکسا') ?></span>
+          </nav>
+          <div class="dp-tag">
+            <span class="dp-tag-icon"><?= iconoir('stethoscope', '', 16) ?></span>
+            <span><?= site_e('تخصص در کنار همدلی') ?></span>
+          </div>
+          <h1 class="dp-hero-title"><?= site_e('همراه با متخصصان و کادر درمان') ?></h1>
+          <p class="dp-hero-lead">
+            <?= site_e('تیمی چندرشته‌ای و متعهد از پزشکان، پرستاران بالینی، روانشناسان و مددکاران سلامت؛ همگام با استانداردهای روز جهان برای مراقبت همه‌جانبه از بیماران مبتلا به سرطان و خانواده‌های آنان.') ?>
+          </p>
+          <div class="dp-hero-actions">
+            <a href="/network.php?role=treatment" class="dp-btn dp-btn--primary">
+              <span><?= site_e('مشاهده رزومه متخصصان') ?></span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#doctor-articles" class="dp-btn dp-btn--secondary">
+              <span><?= site_e('مطالعه مقالات تخصصی') ?></span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="dp-hero-visual wow fadeInUp" data-wow-delay="0.2s">
+          <div class="dp-hero-card">
+            <img src="{{image1}}" alt="<?= site_e('کادر درمان و متخصصان مکسا') ?>" class="dp-hero-img" loading="eager">
+            <div class="dp-hero-stat">
+              <div class="dp-hero-stat-icon"><?= iconoir('healthcare', '', 20) ?></div>
+              <div>
+                <strong><?= site_e('+۱۰۰ متخصص') ?></strong>
+                <small><?= site_e('در شعب سراسر کشور') ?></small>
+              </div>
             </div>
-        </header>
-        
-        <article class="article-content">
-            <h2 class="wow fadeInUp" data-wow-delay="0.2s"><?= site_e('جایگاه کادر درمان در منظومه مراقبت‌های تسکینی مکسا') ?></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            <p class="wow fadeInUp" data-wow-delay="0.3s">
-                <?= site_e('ارائه مراقبت‌های جامع حمایتی و تسکینی به بیماران مبتلا به سرطان و خانواده‌های آنان، نیازمند هم‌افزایی همه‌جانبه یک تیم چندرشته‌ای (Multidisciplinary Team) متخصص و متعهد است. کادر درمان مکسا شامل پزشکان متخصص، پرستاران بالینی، روانشناسان، مددکاران اجتماعی، متخصصان تغذیه و توانبخشی و مشاوران ژنتیک است که در کنار هم، با اتکا به دانش روز جهانی و مهرورزی انسانی، کیفیت زندگی بیماران را از بدو تشخیص تا مراحل مختلف درمان ارتقا می‌بخشند.') ?>
-            </p>
+  <!-- ========================= -->
+  <!-- 2. بسترهای همکاری و خدمات کادر درمان -->
+  <!-- ========================= -->
+  <section class="dp-section">
+    <div class="dp-container">
+      <div class="dp-header wow fadeInUp">
+        <span class="dp-header-accent"></span>
+        <h2 class="dp-heading"><?= site_e('خدمات و بسترهای همراهی کادر درمان') ?></h2>
+        <p class="dp-desc"><?= site_e('فرآیندهای ارتباطی، ارجاع بیمار، بازآموزی مهارتی و دسترسی آزاد به پروتکل‌ها و منابع علمی طب تسکینی') ?></p>
+      </div>
 
-            <!-- بخش تازه‌های علم و پژوهش -->
-            <div class="science-highlight-box wow fadeInUp" data-wow-delay="0.4s">
-                <div class="science-text">
-                    <span class="science-badge"><?= iconoir('microscope', '', 18) ?> <?= site_e('پژوهش و دانش بالینی') ?></span>
-                    <h3><?= site_e('تازه‌های علم طب تسکینی و انکولوژی') ?></h3>
-                    <p>
-                        <?= site_e('مکسا به عنوان متولی ملی و علمی مراقبت‌های حمایتی و تسکینی در ایران، با همکاری انستیتو کوری فرانسه و دانشگاه‌های علوم پزشکی برتر کشور، جدیدترین گایدلاین‌های مدیریت درد، تسکین علائم، کنترل عوارض درمان و مداخلات روانشناختی انکولوژی را در قالب پروتکل‌های بالینی کاربردی در اختیار کادر درمان قرار می‌دهد.') ?>
-                    </p>
-                    <a href="/macsapedia" class="doctor-card-action"><?= site_e('مشاهده منابع علمی در مکساپدیا ←') ?></a>
-                </div>
-                <div class="science-image-wrap">
-                    <img src="{{image2}}" alt="<?= site_e('پژوهش و دانش بالینی مکسا') ?>">
-                </div>
+      <div class="dp-grid dp-grid--3">
+        <!-- Card 1 -->
+        <a href="/patientintake" class="dp-card-link">
+          <div class="dp-card wow fadeInUp">
+            <div class="dp-card-img">
+              <img src="{{image3}}" alt="<?= site_e('ارجاع بیمار به مکسا') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('ارجاع بالینی') ?></span>
             </div>
-
-            <section id="doctor-articles" class="doctors-articles" aria-labelledby="doctor-articles-title">
-                <div class="doctors-section-heading">
-                    <div>
-                        <span class="doctors-section-kicker"><?= site_e('دانش برای مراقبت بهتر') ?></span>
-                        <h2 id="doctor-articles-title"><?= site_e('مقالات کادر درمان') ?></h2>
-                        <p><?= site_e('یادداشت‌ها و مطالب تخصصی منتشرشده توسط تیم مکسا') ?></p>
-                    </div>
-                    <?php if ($doctorArticles): ?><a href="/news.php?category=<?= (int)$doctorArticles[0]['category_id'] ?>" class="doctors-all-link"><?= site_e('همه مقالات') ?> <span aria-hidden="true">←</span></a><?php endif; ?>
-                </div>
-                <?php if ($doctorArticles): ?>
-                    <div class="doctors-articles-grid">
-                        <?php foreach ($doctorArticles as $index => $article):
-                            $articleImage = !empty($article['featured_image'])
-                                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
-                                    ? (string)$article['featured_image']
-                                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
-                                : '';
-                            $articleExcerpt = trim(strip_tags((string)($article['subtitle'] ?: $article['content'])));
-                        ?>
-                        <a class="doctors-article-card<?= $index === 0 ? ' doctors-article-featured' : '' ?>" href="/<?= (int)$article['id'] ?>/">
-                            <div class="doctors-article-image">
-                                <?php if ($articleImage): ?><img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy"><?php else: ?><span aria-hidden="true"><?= iconoir('book', '', 34) ?></span><?php endif; ?>
-                            </div>
-                            <div class="doctors-article-body">
-                                <span class="doctors-article-label"><?= site_e('مقاله تخصصی') ?></span>
-                                <h3><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
-                                <p><?= htmlspecialchars(mb_substr($articleExcerpt, 0, $index === 0 ? 165 : 105, 'UTF-8'), ENT_QUOTES, 'UTF-8') ?><?= mb_strlen($articleExcerpt, 'UTF-8') > ($index === 0 ? 165 : 105) ? '…' : '' ?></p>
-                                <span class="doctors-article-meta"><?= htmlspecialchars((string)($article['author'] ?: site_text('مکسا')), ENT_QUOTES, 'UTF-8') ?> · <?= max(1, (int)$article['read_time']) ?> <?= site_e('دقیقه مطالعه') ?></span>
-                                <span class="doctors-article-read"><?= site_e('مطالعه مقاله') ?> <span aria-hidden="true">←</span></span>
-                            </div>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="doctors-articles-empty"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
-                <?php endif; ?>
-            </section>
-
-            <h2 class="wow fadeInUp" data-wow-delay="0.5s"><?= site_e('خدمات و بسترهای همراهی ویژه همکاران کادر درمان') ?></h2>
-
-            <p class="wow fadeInUp" data-wow-delay="0.5s">
-                <?= site_e('پزشکان، بیمارستان‌ها، کلینیک‌ها و کادر درمان در سراسر کشور می‌توانند از طریق بسترهای زیر با شبکه گسترده خدمات حمایتی و تسکینی مکسا در ارتباط باشند:') ?>
-            </p>
-
-            <!-- شبکه ۶ کارت خدمات و همکاری با کادر درمان -->
-            <div class="doctor-cards-grid wow fadeInUp" data-wow-delay="0.6s">
-                
-                <a href="/patientintake" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image3}}" alt="<?= site_e('ارجاع بیمار به مکسا') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('ارجاع بیمار به مکسا') ?></h3>
-                            <p><?= site_e('پزشکان و مراکز درمانی می‌توانند بیماران نیازمند مراقبت در منزل، تجهیزات پزشکی و خدمات حمایتی را مستقیماً به مکسا معرفی نمایند.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('فرآیند ارجاع بیمار ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/contactus" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image4}}" alt="<?= site_e('همکاری علمی و درمانی با مکسا') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('همکاری بالینی و علمی') ?></h3>
-                            <p><?= site_e('پیوستن به شبکه داوطلبانه و تخصصی پزشکان، درمانگران و مشاوران مکسا برای ارائه خدمات در درمانگاه‌ها و شبکه مراقبت در منزل.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('همکاری با مکسا ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/courses" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image5}}" alt="<?= site_e('آموزش و دوره‌های تخصصی طب تسکینی') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('آموزش‌های مهارتی و دوره‌ها') ?></h3>
-                            <p><?= site_e('شرکت در دوره‌های مهارتی و بازآموزی مراقبت‌های حمایتی و تسکینی سرطان ویژه پزشکان، پرستاران و کادر توانبخشی سلامت.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('مشاهده دوره‌ها ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/branches.php" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image6}}" alt="<?= site_e('راه‌اندازی مراکز جدید با مکسا') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('راه‌اندازی مراکز جدید') ?></h3>
-                            <p><?= site_e('مشاوره، انتقال پروتکل‌های استاندارد و همکاری مشترک با دانشگاه‌های علوم پزشکی جهت تأسیس بخش‌های طب تسکینی بیمارستانی.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('شعب و مراکز همکار ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/macsapedia" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image2}}" alt="<?= site_e('منابع علمی مراقبت های حمایتی و تسکینی') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('منابع علمی و پروتکل‌ها') ?></h3>
-                            <p><?= site_e('دسترسی به کتاب‌ها، گایدلاین‌های ترجمه‌شده، مقالات روز و درس‌نامه‌های کاربردی طب حمایتی و تسکینی سرطان.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('کتابخانه و مقالات ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/iran-situation-in-palliative" class="doctor-card-link">
-                    <div class="doctor-card">
-                        <div class="doctor-card-img-wrap">
-                            <img src="{{image1}}" alt="<?= site_e('وضعیت مراقبت های حمایتی و تسکینی') ?>">
-                        </div>
-                        <div class="doctor-card-body">
-                            <h3><?= site_e('طب تسکینی در ایران و جهان') ?></h3>
-                            <p><?= site_e('بررسی آماری، شاخص‌های ملی و مقایسه تطبیقی جایگاه مراقبت‌های تسکینی ایران با استانداردهای نظام جهانی بهداشت.') ?></p>
-                            <span class="doctor-card-action"><?= site_e('مطالعه گزارش تحلیلی ←') ?></span>
-                        </div>
-                    </div>
-                </a>
-
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('ارجاع بیمار به مکسا') ?></h3>
+              <p class="dp-card-desc"><?= site_e('معرفی مستقیم بیماران نیازمند مراقبت در منزل، تجهیزات پزشکی و خدمات حمایتی توسط پزشکان و مراکز درمانی.') ?></p>
+              <span class="dp-card-cta"><?= site_e('فرآیند ارجاع بیمار') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </div>
+          </div>
+        </a>
 
-            <h2 class="wow fadeInUp" data-wow-delay="0.6s"><?= site_e('دپارتمان‌های تخصصی تیم سلامت مکسا (MDT)') ?></h2>
-
-            <p class="wow fadeInUp" data-wow-delay="0.6s">
-                <?= site_e('کادر درمان مکسا در قالب گروه‌های تخصصی به‌هم‌پیوسته، خدمات رایگان پزشکی و حمایتی را ارائه می‌دهند:') ?>
-            </p>
-
-            <div class="teams-grid wow fadeInUp" data-wow-delay="0.7s">
-                
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('stethoscope', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('پزشکان طب تسکینی و انکولوژی') ?></h4>
-                        <p><?= site_e('ارزیابی بالینی جامع، پروتکل‌های تسکین درد، کنترل علائم گوارشی و تنفسی، و نظارت بر سیر بیماری.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('healthcare', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></h4>
-                        <p><?= site_e('مراقبت تخصصی از زخم و استومی، کنترل علائم حیاتی، پورت‌گذاری، شیمی‌درمانی حمایتی و آموزش مراقبت به خانواده.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('brain', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('روانشناسان سلامت و مشاوره') ?></h4>
-                        <p><?= site_e('روان‌درمانی حمایتی، مداخلات مدیریت اضطراب و افسردگی بیماری، مشاوره سوگ و جلسات حمایتی خانوادگی.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('handshake', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('مددکاران اجتماعی بالینی') ?></h4>
-                        <p><?= site_e('ارزیابی نیازهای اقتصادی و معیشتی، پیگیری امور بیمه و درمان، و اتصال بیمار به زنجیره خدمات خیریه.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-info-box team-icon-box"><?= iconoir('apple', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('متخصصان تغذیه و رژیم‌درمانی') ?></h4>
-                        <p><?= site_e('تنظیم رژیم‌های اختصاصی در دوران درمان، مدیریت بی‌اشتهایی و کاشکسی، و تغذیه بالینی انترال/پارنترال.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('activity', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('فیزیوتراپی و مدیریت لنف‌ادم') ?></h4>
-                        <p><?= site_e('بازتوانی حرکتی، ماساژ تخصصی تخلیه لنفاوی (CDT)، بانداژ فشاری و پیشگیری از ناتوانی‌های اسکلتی عضلانی.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('dna', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('مشاوره ژنتیک و غربالگری') ?></h4>
-                        <p><?= site_e('بررسی سندروم‌های توارثی سرطان، ارزیابی شجره‌نامه ژنتیکی و راهنمایی آزمایش‌های تشخیصی زودهنگام خانواده.') ?></p>
-                    </div>
-                </div>
-
-                <div class="team-pill-card">
-                    <div class="team-icon-box"><?= iconoir('heart', '', 24) ?></div>
-                    <div class="team-info">
-                        <h4><?= site_e('مشاوران مراقبت معنوی') ?></h4>
-                        <p><?= site_e('پاسخ به چالش‌های وجودی، بازیابی آرامش قلبی، امیدبخشی و تقویت تاب‌آوری معنوی بیمار و همراهان.') ?></p>
-                    </div>
-                </div>
-
+        <!-- Card 2 -->
+        <a href="/contactus" class="dp-card-link">
+          <div class="dp-card wow fadeInUp" data-wow-delay="0.15s">
+            <div class="dp-card-img">
+              <img src="{{image4}}" alt="<?= site_e('همکاری بالینی و علمی') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('عضویت در شبکه') ?></span>
             </div>
-
-            <!-- ========================================================= -->
-            <!-- بخش اختصاصی معرفی و دسترسی به رزومه کادر درمان مکسا -->
-            <!-- ========================================================= -->
-            <section class="resume-showcase-box wow fadeInUp" data-wow-delay="0.65s" aria-label="<?= site_e('سامانه رزومه کادر درمان مکسا') ?>">
-                <div class="resume-showcase-content">
-                    <div class="resume-badge-group">
-                        <span class="resume-badge-main">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            <?= site_e('سامانه معرفی و رزومه') ?>
-                        </span>
-                        <span class="resume-badge-tag"><?= site_e('پزشکان و درمانگران مکسا') ?></span>
-                    </div>
-
-                    <h2 class="resume-title"><?= site_e('آشنایی با پزشکان، درمانگران و کادر تخصصی مکسا') ?></h2>
-
-                    <p class="resume-desc">
-                        <?= site_e('تیم درمان مکسا متشکل از برجسته‌ترین متخصصان انکولوژی، طب تسکینی، پرستاران بالینی، روانشناسان سلامت، مددکاران، متخصصان تغذیه و توانبخشی است. با مراجعه به سامانه رزومه کادر درمان، می‌توانید سوابق علمی، مدارک دانشگاهی، تجارب بالینی، حوزه‌های تخصصی و شعب محل خدمت هر یک از اعضای کادر درمان را مشاهده فرمایید.') ?>
-                    </p>
-
-                    <div class="resume-features-grid">
-                        <div class="resume-feature-card">
-                            <span class="resume-feature-icon"><?= iconoir('graduation-cap', '', 22) ?></span>
-                            <div class="resume-feature-text">
-                                <strong><?= site_e('سوابق علمی و دانشگاهی') ?></strong>
-                                <small><?= site_e('مدارک تخصصی و فلوشیپ‌ها') ?></small>
-                            </div>
-                        </div>
-                        <div class="resume-feature-card">
-                            <span class="resume-feature-icon"><?= iconoir('hospital', '', 22) ?></span>
-                            <div class="resume-feature-text">
-                                <strong><?= site_e('شعب و دپارتمان‌های خدمت') ?></strong>
-                                <small><?= site_e('درمانگاه‌ها و مراقبت در منزل') ?></small>
-                            </div>
-                        </div>
-                        <div class="resume-feature-card">
-                            <span class="resume-feature-icon"><?= iconoir('stethoscope', '', 22) ?></span>
-                            <div class="resume-feature-text">
-                                <strong><?= site_e('حوزه‌های تخصصی و بالینی') ?></strong>
-                                <small><?= site_e('طب تسکینی، درد و انکولوژی') ?></small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="resume-action-area">
-                        <a href="/network.php?role=treatment" class="btn-resume-cta" id="btn-view-doctor-resumes">
-                            <span><?= site_e('مشاهده رزومه و سوابق کادر درمان مکسا') ?></span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="19" y1="12" x2="5" y2="12"></line>
-                                <polyline points="12 19 5 12 12 5"></polyline>
-                            </svg>
-                        </a>
-                        <span class="resume-action-note">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            <?= site_e('امکان فیلتر بر اساس شعبه، تخصص و رشته درمانی') ?>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="resume-showcase-visual">
-                    <div class="resume-preview-widget">
-                        <div class="rpw-top">
-                            <div class="rpw-avatars">
-                                <div class="rpw-avatar rpw-av1" title="<?= site_e('پزشک متخصص') ?>"><?= iconoir('stethoscope', '', 18) ?></div>
-                                <div class="rpw-avatar rpw-av2" title="<?= site_e('پرستار بالینی') ?>"><?= iconoir('healthcare', '', 18) ?></div>
-                                <div class="rpw-avatar rpw-av3" title="<?= site_e('روانشناس سلامت') ?>"><?= iconoir('brain', '', 18) ?></div>
-                                <div class="rpw-avatar rpw-av4">+</div>
-                            </div>
-                            <div class="rpw-stat-pill">
-                                <strong><?= site_e('۱۰۰+ همکار') ?></strong>
-                                <span><?= site_e('کادر درمان و سلامت') ?></span>
-                            </div>
-                        </div>
-
-                        <div class="rpw-list">
-                            <div class="rpw-item">
-                                <div class="rpw-dot"></div>
-                                <span class="rpw-item-title"><?= site_e('پزشکان متخصص و فلوشیپ طب تسکینی') ?></span>
-                                <span class="rpw-item-tag"><?= site_e('درمانگاه و ستاد') ?></span>
-                            </div>
-                            <div class="rpw-item">
-                                <div class="rpw-dot"></div>
-                                <span class="rpw-item-title"><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></span>
-                                <span class="rpw-item-tag"><?= site_e('شبکه هوم‌کر') ?></span>
-                            </div>
-                            <div class="rpw-item">
-                                <div class="rpw-dot"></div>
-                                <span class="rpw-item-title"><?= site_e('روانشناسان، مددکاران و مشاوران سلامت') ?></span>
-                                <span class="rpw-item-tag"><?= site_e('تیم جامع MDT') ?></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="quote-capsule wow fadeInUp" data-wow-delay="0.7s">
-                <?= site_e('«مکسا پلی استوار میان جامعه پزشکی و بیماران نیازمند؛ جایی که تخصص بالینی با ایثار و محبت درمی‌آمیزد تا هیچ بیماری در مواجهه با سرطان احساس تنهایی و درماندگی نکند.»') ?>
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('همکاری بالینی و علمی') ?></h3>
+              <p class="dp-card-desc"><?= site_e('پیوستن به شبکه داوطلبانه و تخصصی پزشکان، درمانگران و مشاوران مکسا در درمانگاه‌ها و شبکه هوم‌کر.') ?></p>
+              <span class="dp-card-cta"><?= site_e('همکاری با مکسا') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </div>
+          </div>
+        </a>
 
+        <!-- Card 3 -->
+        <a href="/courses" class="dp-card-link">
+          <div class="dp-card wow fadeInUp" data-wow-delay="0.3s">
+            <div class="dp-card-img">
+              <img src="{{image5}}" alt="<?= site_e('آموزش‌های مهارتی و دوره‌ها') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('آموزش مداوم') ?></span>
+            </div>
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('آموزش‌های مهارتی و دوره‌ها') ?></h3>
+              <p class="dp-card-desc"><?= site_e('دوره‌های مهارتی و بازآموزی مراقبت‌های تسکینی سرطان ویژه پزشکان، پرستاران و کادر توانبخشی سلامت.') ?></p>
+              <span class="dp-card-cta"><?= site_e('مشاهده دوره‌ها') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </a>
 
+        <!-- Card 4 -->
+        <a href="/macsapedia" class="dp-card-link">
+          <div class="dp-card wow fadeInUp">
+            <div class="dp-card-img">
+              <img src="{{image2}}" alt="<?= site_e('منابع علمی و پروتکل‌ها') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('مکساپدیا') ?></span>
+            </div>
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('منابع علمی و پروتکل‌ها') ?></h3>
+              <p class="dp-card-desc"><?= site_e('دسترسی آزاد به کتاب‌ها، گایدلاین‌های بالینی بین‌المللی، مقالات روز و پروتکل‌های مراقبت تسکینی سرطان.') ?></p>
+              <span class="dp-card-cta"><?= site_e('کتابخانه و مقالات') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </a>
 
-        </article>
+        <!-- Card 5 -->
+        <a href="/branches.php" class="dp-card-link">
+          <div class="dp-card wow fadeInUp" data-wow-delay="0.15s">
+            <div class="dp-card-img">
+              <img src="{{image6}}" alt="<?= site_e('راه‌اندازی مراکز جدید') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('توسعه و شعب') ?></span>
+            </div>
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('راه‌اندازی مراکز جدید') ?></h3>
+              <p class="dp-card-desc"><?= site_e('مشاوره تخصصی، انتقال پروتکل‌ها و همکاری با دانشگاه‌های علوم پزشکی در تأسیس بخش‌های طب تسکینی.') ?></p>
+              <span class="dp-card-cta"><?= site_e('شعب و مراکز همکار') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </a>
 
-    </main>
+        <!-- Card 6 -->
+        <a href="/iran-situation-in-palliative" class="dp-card-link">
+          <div class="dp-card wow fadeInUp" data-wow-delay="0.3s">
+            <div class="dp-card-img">
+              <img src="{{image1}}" alt="<?= site_e('طب تسکینی در ایران و جهان') ?>" loading="lazy">
+              <span class="dp-badge"><?= site_e('گزارش تحلیلی') ?></span>
+            </div>
+            <div class="dp-card-body">
+              <h3 class="dp-card-title"><?= site_e('طب تسکینی در ایران و جهان') ?></h3>
+              <p class="dp-card-desc"><?= site_e('بررسی شاخص‌های کشوری، وضعیت مراقبت‌های تسکینی در ایران و تحلیل تطبیقی با استانداردهای بهداشت جهانی.') ?></p>
+              <span class="dp-card-cta"><?= site_e('مطالعه گزارش تحلیلی') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
 
-</body>
-</html>
+  <!-- ========================= -->
+  <!-- 3. مقالات تخصصی کادر درمان -->
+  <!-- ========================= -->
+  <section class="dp-section dp-section--alt" id="doctor-articles">
+    <div class="dp-container">
+      <div class="dp-header-split wow fadeInUp">
+        <div>
+          <span class="dp-header-accent"></span>
+          <h2 class="dp-heading"><?= site_e('مقالات تخصصی کادر درمان') ?></h2>
+          <p class="dp-desc"><?= site_e('یادداشت‌ها، پژوهش‌ها و یافته‌های بالینی منتشرشده توسط متخصصان مکسا') ?></p>
+        </div>
+        <?php if (!empty($doctorArticles)): ?>
+          <a href="/news.php?category=<?= (int)$doctorArticles[0]['category_id'] ?>" class="dp-more-link">
+            <span><?= site_e('همه مقالات') ?></span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        <?php endif; ?>
+      </div>
+
+      <div class="dp-grid dp-grid--3">
+        <?php if (!empty($doctorArticles)): ?>
+          <?php foreach ($doctorArticles as $index => $article):
+              $articleImage = !empty($article['featured_image'])
+                  ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
+                      ? (string)$article['featured_image']
+                      : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
+                  : '{{image2}}';
+              $articleBadge = !empty($article['author']) ? $article['author'] : site_text('کادر درمان');
+              $articleUrl = '/' . (int)$article['id'] . '/';
+              $delay = sprintf('%.1fs', ($index % 3) * 0.15);
+          ?>
+          <a href="<?= htmlspecialchars($articleUrl, ENT_QUOTES, 'UTF-8') ?>" class="dp-card-link">
+            <div class="dp-card wow fadeInUp" data-wow-delay="<?= $delay ?>">
+              <div class="dp-card-img">
+                <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                <span class="dp-badge"><?= htmlspecialchars((string)$articleBadge, ENT_QUOTES, 'UTF-8') ?></span>
+              </div>
+              <div class="dp-card-body">
+                <h3 class="dp-card-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                <span class="dp-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+          </a>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="dp-empty wow fadeInUp"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= -->
+  <!-- 4. دپارتمان‌های تیم سلامت مکسا (MDT) -->
+  <!-- ========================= -->
+  <section class="dp-section">
+    <div class="dp-container">
+      <div class="dp-header wow fadeInUp">
+        <span class="dp-header-accent"></span>
+        <h2 class="dp-heading"><?= site_e('دپارتمان‌های تخصصی تیم سلامت مکسا (MDT)') ?></h2>
+        <p class="dp-desc"><?= site_e('کادر درمان مکسا در قالب گروه‌های تخصصی به‌هم‌پیوسته، خدمات جامع و رایگان پزشکی و حمایتی را ارائه می‌دهند') ?></p>
+      </div>
+
+      <div class="dp-grid dp-grid--4">
+        <div class="dp-team-card wow fadeInUp">
+          <div class="dp-team-icon"><?= iconoir('stethoscope', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('پزشکان طب تسکینی و انکولوژی') ?></h4>
+          <p class="dp-team-desc"><?= site_e('ارزیابی بالینی جامع، پروتکل‌های تسکین درد، کنترل علائم گوارشی و تنفسی، و نظارت بر سیر درمان.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.1s">
+          <div class="dp-team-icon"><?= iconoir('healthcare', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></h4>
+          <p class="dp-team-desc"><?= site_e('مراقبت تخصصی از زخم و استومی، کنترل علائم حیاتی، پورت‌گذاری، و آموزش مراقبت به خانواده.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.2s">
+          <div class="dp-team-icon"><?= iconoir('brain', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('روانشناسان سلامت و مشاوره') ?></h4>
+          <p class="dp-team-desc"><?= site_e('روان‌درمانی حمایتی، مداخلات مدیریت اضطراب و افسردگی بیماری، مشاوره سوگ و جلسات خانواده.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.3s">
+          <div class="dp-team-icon"><?= iconoir('handshake', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('مددکاران اجتماعی بالینی') ?></h4>
+          <p class="dp-team-desc"><?= site_e('ارزیابی نیازهای معیشتی، پیگیری امور بیمه و درمان، و اتصال بیمار به زنجیره خدمات حمایتی.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp">
+          <div class="dp-team-icon"><?= iconoir('apple', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('متخصصان تغذیه و رژیم‌درمانی') ?></h4>
+          <p class="dp-team-desc"><?= site_e('تنظیم رژیم‌های اختصاصی در دوران درمان، مدیریت بی‌اشتهایی و کاشکسی، و تغذیه بالینی.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.1s">
+          <div class="dp-team-icon"><?= iconoir('activity', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('فیزیوتراپی و مدیریت لنف‌ادم') ?></h4>
+          <p class="dp-team-desc"><?= site_e('بازتوانی حرکتی، ماساژ تخصصی تخلیه لنفاوی (CDT)، بانداژ فشاری و پیشگیری از ناتوانی‌ها.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.2s">
+          <div class="dp-team-icon"><?= iconoir('dna', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('مشاوره ژنتیک و غربالگری') ?></h4>
+          <p class="dp-team-desc"><?= site_e('بررسی سندروم‌های توارثی سرطان، ارزیابی شجره‌نامه ژنتیکی و راهنمایی آزمایش‌های تشخیصی زودهنگام.') ?></p>
+        </div>
+
+        <div class="dp-team-card wow fadeInUp" data-wow-delay="0.3s">
+          <div class="dp-team-icon"><?= iconoir('heart', '', 24) ?></div>
+          <h4 class="dp-team-title"><?= site_e('مشاوران مراقبت معنوی') ?></h4>
+          <p class="dp-team-desc"><?= site_e('پاسخ به چالش‌های وجودی، بازیابی آرامش قلبی، امیدبخشی و تقویت تاب‌آوری معنوی بیمار و همراهان.') ?></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= -->
+  <!-- 5. سامانه معرفی و رزومه کادر درمان -->
+  <!-- ========================= -->
+  <section class="dp-section dp-section--alt">
+    <div class="dp-container">
+      <div class="dp-resume-banner wow fadeInUp">
+        <div class="dp-resume-content">
+          <div class="dp-tag dp-tag--teal">
+            <span class="dp-tag-icon"><?= iconoir('user', '', 15) ?></span>
+            <span><?= site_e('سامانه معرفی و رزومه') ?></span>
+          </div>
+          <h2 class="dp-resume-title"><?= site_e('آشنایی با پزشکان، درمانگران و کادر تخصصی مکسا') ?></h2>
+          <p class="dp-resume-desc">
+            <?= site_e('تیم درمان مکسا متشکل از برجسته‌ترین متخصصان انکولوژی، طب تسکینی، پرستاران بالینی، روانشناسان سلامت، مددکاران و مشاوران است. با ورود به سامانه رزومه، می‌توانید سوابق علمی، مدارک دانشگاهی و حوزه‌های خدمت همکاران را مشاهده نمایید.') ?>
+          </p>
+
+          <div class="dp-resume-features">
+            <div class="dp-resume-feature">
+              <span class="dp-resume-feature-icon"><?= iconoir('graduation-cap', '', 18) ?></span>
+              <span><?= site_e('سوابق علمی و مدارک تخصصی دانشگاهی') ?></span>
+            </div>
+            <div class="dp-resume-feature">
+              <span class="dp-resume-feature-icon"><?= iconoir('hospital', '', 18) ?></span>
+              <span><?= site_e('شعب بیمارستانی و شبکه مراقبت در منزل سراسر کشور') ?></span>
+            </div>
+            <div class="dp-resume-feature">
+              <span class="dp-resume-feature-icon"><?= iconoir('stethoscope', '', 18) ?></span>
+              <span><?= site_e('امکان جستجو و فیلتر بر اساس تخصص بالینی') ?></span>
+            </div>
+          </div>
+
+          <div class="dp-resume-actions">
+            <a href="/network.php?role=treatment" class="dp-btn dp-btn--primary">
+              <span><?= site_e('مشاهده رزومه و سوابق کادر درمان') ?></span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="dp-resume-visual">
+          <div class="dp-resume-card">
+            <div class="dp-resume-card-head">
+              <div class="dp-avatars">
+                <span class="dp-avatar"><?= iconoir('stethoscope', '', 16) ?></span>
+                <span class="dp-avatar"><?= iconoir('healthcare', '', 16) ?></span>
+                <span class="dp-avatar"><?= iconoir('brain', '', 16) ?></span>
+                <span class="dp-avatar dp-avatar--plus">+</span>
+              </div>
+              <div class="dp-resume-card-badge">
+                <strong><?= site_e('۱۰۰+ همکار') ?></strong>
+                <small><?= site_e('کادر سلامت') ?></small>
+              </div>
+            </div>
+            <div class="dp-resume-card-list">
+              <div class="dp-resume-card-item">
+                <span class="dp-dot"></span>
+                <span><?= site_e('پزشکان متخصص و فلوشیپ طب تسکینی') ?></span>
+              </div>
+              <div class="dp-resume-card-item">
+                <span class="dp-dot"></span>
+                <span><?= site_e('پرستاران بالینی و مراقبت در منزل') ?></span>
+              </div>
+              <div class="dp-resume-card-item">
+                <span class="dp-dot"></span>
+                <span><?= site_e('روانشناسان، مددکاران و مشاوران سلامت') ?></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= -->
+  <!-- 6. نقل‌قول و مأموریت -->
+  <!-- ========================= -->
+  <section class="dp-section">
+    <div class="dp-container">
+      <div class="dp-quote wow fadeInUp">
+        <div class="dp-quote-mark"><?= iconoir('quote-message', '', 32) ?></div>
+        <blockquote class="dp-quote-text">
+          <?= site_e('«مکسا پلی استوار میان جامعه پزشکی و بیماران نیازمند؛ جایی که تخصص بالینی با ایثار و محبت درمی‌آمیزد تا هیچ بیماری در مواجهه با سرطان احساس تنهایی و درماندگی نکند.»') ?>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<style>
+/* ── design tokens ── */
+.dp-page {
+  --dp-teal: #008f8a;
+  --dp-teal-dark: #00736f;
+  --dp-teal-light: rgba(0, 143, 138, 0.08);
+  --dp-gold: #faa61a;
+  --dp-text: #1e293b;
+  --dp-muted: #475569;
+  --dp-border: #e2e8f0;
+  --dp-bg: #ffffff;
+  --dp-bg-alt: #f8fafc;
+  --dp-radius: 22px;
+  --dp-radius-sm: 14px;
+
+  direction: var(--site-direction, rtl);
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  color: var(--dp-text);
+  line-height: 1.7;
+}
+
+.dp-section {
+  padding: 60px 20px;
+  background: var(--dp-bg);
+}
+
+.dp-section--alt {
+  background: var(--dp-bg-alt);
+}
+
+.dp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── header ── */
+.dp-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.dp-header-accent {
+  display: inline-block;
+  width: 48px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--dp-teal);
+  margin-bottom: 16px;
+}
+
+.dp-heading {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--dp-text);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.dp-desc {
+  font-size: 15px;
+  color: var(--dp-muted);
+  margin: 0 auto;
+  max-width: 640px;
+  line-height: 1.8;
+}
+
+.dp-header-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 44px;
+  flex-wrap: wrap;
+}
+
+.dp-header-split .dp-desc {
+  margin: 0;
+}
+
+.dp-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dp-teal);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 18px;
+  background: var(--dp-teal-light);
+  border-radius: 99px;
+  transition: all 0.2s ease;
+}
+
+.dp-more-link:hover {
+  background: var(--dp-teal);
+  color: #fff;
+}
+
+/* ── hero ── */
+.dp-hero {
+  padding: 40px 20px 60px;
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--dp-border);
+}
+
+.dp-hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.dp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--dp-muted);
+  margin-bottom: 20px;
+}
+
+.dp-breadcrumb a {
+  color: var(--dp-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.dp-breadcrumb a:hover {
+  color: var(--dp-teal);
+}
+
+.dp-breadcrumb-sep {
+  opacity: 0.5;
+}
+
+.dp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid var(--dp-border);
+  color: var(--dp-teal);
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.dp-tag-icon {
+  display: flex;
+  align-items: center;
+}
+
+.dp-tag--teal {
+  background: var(--dp-teal-light);
+  border-color: rgba(0, 143, 138, 0.2);
+}
+
+.dp-hero-title {
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 900;
+  color: var(--dp-text);
+  line-height: 1.35;
+  margin: 0 0 16px;
+}
+
+.dp-hero-lead {
+  font-size: 16px;
+  color: var(--dp-muted);
+  line-height: 1.85;
+  margin: 0 0 28px;
+  max-width: 580px;
+}
+
+.dp-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.dp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  box-sizing: border-box;
+}
+
+.dp-btn--primary {
+  background: var(--dp-teal);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 143, 138, 0.25);
+}
+
+.dp-btn--primary:hover {
+  background: var(--dp-teal-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 143, 138, 0.35);
+  color: #fff;
+}
+
+.dp-btn--secondary {
+  background: #ffffff;
+  color: var(--dp-text);
+  border: 1px solid var(--dp-border);
+}
+
+.dp-btn--secondary:hover {
+  border-color: var(--dp-teal);
+  color: var(--dp-teal);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.dp-hero-card {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 143, 138, 0.12);
+  border: 1px solid rgba(0, 143, 138, 0.15);
+  background: #ffffff;
+}
+
+.dp-hero-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.dp-hero-stat {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.8);
+}
+
+.dp-hero-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--dp-teal-light);
+  color: var(--dp-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dp-hero-stat strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--dp-text);
+}
+
+.dp-hero-stat small {
+  display: block;
+  font-size: 11px;
+  color: var(--dp-muted);
+}
+
+/* ── grids ── */
+.dp-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.dp-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.dp-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* ── cards ── */
+.dp-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.dp-card {
+  background: var(--dp-bg);
+  border: 1px solid var(--dp-border);
+  border-radius: var(--dp-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.3s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.3s ease;
+}
+
+.dp-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.08);
+  border-color: rgba(0, 143, 138, 0.25);
+  text-decoration: none;
+}
+
+.dp-card-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.dp-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+
+.dp-card:hover .dp-card-img img {
+  transform: scale(1.06);
+}
+
+.dp-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--dp-teal);
+  padding: 4px 13px;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.dp-card:hover .dp-badge {
+  background: var(--dp-teal);
+  color: #fff;
+}
+
+.dp-card-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.dp-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--dp-text);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.dp-card-desc {
+  font-size: 13.5px;
+  color: var(--dp-muted);
+  line-height: 1.75;
+  margin: 0 0 16px;
+  flex-grow: 1;
+}
+
+.dp-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dp-teal);
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--dp-border);
+  transition: color 0.22s ease;
+}
+
+.dp-card-cta svg {
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  color: var(--dp-gold);
+}
+
+.dp-card:hover .dp-card-cta {
+  color: var(--dp-teal-dark);
+}
+
+.dp-card:hover .dp-card-cta svg {
+  transform: translateX(-4px);
+}
+
+/* ── team cards (MDT) ── */
+.dp-team-card {
+  background: var(--dp-bg);
+  border: 1px solid var(--dp-border);
+  border-radius: var(--dp-radius);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.dp-team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+  border-color: rgba(0, 143, 138, 0.25);
+}
+
+.dp-team-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--dp-teal-light);
+  color: var(--dp-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.dp-team-card:hover .dp-team-icon {
+  background: var(--dp-teal);
+  color: #fff;
+}
+
+.dp-team-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--dp-text);
+  margin: 0 0 8px;
+  line-height: 1.45;
+}
+
+.dp-team-desc {
+  font-size: 12.5px;
+  color: var(--dp-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── resume banner ── */
+.dp-resume-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+  border: 1px solid rgba(0, 143, 138, 0.2);
+  border-radius: 26px;
+  padding: 44px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 143, 138, 0.06);
+}
+
+.dp-resume-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--dp-text);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.dp-resume-desc {
+  font-size: 14.5px;
+  color: var(--dp-muted);
+  line-height: 1.8;
+  margin: 0 0 24px;
+}
+
+.dp-resume-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.dp-resume-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dp-text);
+}
+
+.dp-resume-feature-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--dp-teal-light);
+  color: var(--dp-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dp-resume-card {
+  background: #ffffff;
+  border: 1px solid var(--dp-border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+
+.dp-resume-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--dp-border);
+  margin-bottom: 18px;
+}
+
+.dp-avatars {
+  display: flex;
+  align-items: center;
+}
+
+.dp-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #ffffff;
+  margin-left: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dp-teal);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dp-avatar:last-child {
+  margin-left: 0;
+}
+
+.dp-avatar--plus {
+  background: var(--dp-teal);
+  color: #fff;
+}
+
+.dp-resume-card-badge {
+  text-align: left;
+}
+
+.dp-resume-card-badge strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--dp-text);
+}
+
+.dp-resume-card-badge small {
+  display: block;
+  font-size: 11px;
+  color: var(--dp-muted);
+}
+
+.dp-resume-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dp-resume-card-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--dp-text);
+}
+
+.dp-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dp-teal);
+  flex-shrink: 0;
+}
+
+/* ── empty state ── */
+.dp-empty {
+  grid-column: 1 / -1;
+  background: var(--dp-bg);
+  border: 1px dashed var(--dp-border);
+  color: var(--dp-muted);
+  border-radius: var(--dp-radius);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── quote ── */
+.dp-quote {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+  border-right: 4px solid var(--dp-teal);
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+}
+
+.dp-quote-mark {
+  color: var(--dp-teal);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.dp-quote-text {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--dp-text);
+  line-height: 1.85;
+}
+
+/* ── responsive ── */
+@media (max-width: 992px) {
+  .dp-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .dp-hero-visual {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .dp-grid--3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dp-grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dp-resume-banner {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dp-section {
+    padding: 40px 16px;
+  }
+  .dp-hero {
+    padding: 28px 16px 44px;
+  }
+  .dp-grid--3,
+  .dp-grid--4 {
+    grid-template-columns: 1fr;
+  }
+  .dp-heading {
+    font-size: 24px;
+  }
+  .dp-hero-title {
+    font-size: 24px;
+  }
+  .dp-quote {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+  }
+}
+</style>

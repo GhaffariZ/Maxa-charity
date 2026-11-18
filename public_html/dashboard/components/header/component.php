@@ -7,6 +7,9 @@ $__isStandaloneHeader = !defined('MAXA_PAGE_VIEW_ACTIVE') && !defined('MAXA_HTML
 if ($__isStandaloneHeader) {
     define('MAXA_HTML_SHELL_OPENED', true);
 }
+if (!defined('MAXA_HEADER_COMPONENT_RENDERED')) {
+    define('MAXA_HEADER_COMPONENT_RENDERED', true);
+}
 ?>
 <?php if ($__isStandaloneHeader): ?>
 <!DOCTYPE html>
@@ -133,49 +136,9 @@ if ($__isStandaloneHeader) {
       z-index: 5;
     }
 
-    /* صفحه شیشه‌ای مات (Frosted Glass) با امتداد تا لبه راست صفحه و برش مورب در محل ورود */
+    /* صفحه شیشه‌ای مات برند */
     .cta-glass-underlay {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: -100vw;
-      background: rgba(255, 255, 255, 0.76);
-      -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%);
-      backdrop-filter: blur(28px) saturate(190%) contrast(105%);
-      clip-path: polygon(26px 0, 100% 0, 100% 100%, 0 100%);
-      pointer-events: none;
-      z-index: -1;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-      box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
-    }
-
-    /* سایه نرم و عمق‌دار لایه زرد رنگ روی صفحه شیشه زیرین (حس دقیق لایه رو و لایه زیر) */
-    .cta-glass-underlay::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 38px;
-      background: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.28) 100%);
-      clip-path: polygon(26px 0, 38px 0, 12px 100%, 0 100%);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    /* لبه نوری براق (Bevel Highlight) روی مرز برش مورب زرد */
-    .cta-glass-underlay::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 100%);
-      clip-path: polygon(24.5px 0, 26px 0, 1.5px 100%, 0 100%);
-      z-index: 3;
-      pointer-events: none;
+      display: none !important;
     }
 
     .cta-brand{
@@ -184,16 +147,25 @@ if ($__isStandaloneHeader) {
       justify-content:center;
       position: relative;
       z-index: 4;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       text-decoration:none;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .cta-brand:hover{
-      transform: scale(1.04);
+      background: #ffffff;
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 6px 18px rgba(0, 60, 58, 0.12), inset 0 1px 0 #ffffff;
     }
 
     .cta-brand:active{
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     .cta-brand img{
@@ -201,7 +173,6 @@ if ($__isStandaloneHeader) {
       width: auto;
       display:block;
       object-fit: contain;
-      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
     }
 
     /* وسط: منو */
@@ -361,18 +332,21 @@ if ($__isStandaloneHeader) {
       left: 16px;
       max-width: var(--cta-container);
       margin-inline: auto;
-      background: rgba(0, 143, 138, 0.88); /* Translucent premium teal glass */
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 28px 20px;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.18), transparent 36%),
+        radial-gradient(circle at 86% 88%, rgba(255, 255, 255, 0.10), transparent 40%),
+        linear-gradient(155deg, #05a8a2 0%, #008f8a 52%, #005a57 100%);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 28px 24px;
       box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        0 24px 56px rgba(0, 48, 46, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
       z-index: 9999;
       direction: var(--site-direction, rtl);
       text-align: start;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -1204,7 +1178,6 @@ if ($__isStandaloneHeader) {
               <li><a href="/news.php"><?= site_e('اخبار') ?></a></li>
               <li class="events-nav-link"><a href="/events.php"><?= site_e(site_locale() === 'en' ? 'رویدادها' : 'رویدادها و همایش‌ها') ?></a></li>
               <li><a href="/macsapedia.php"><?= site_e('مکساپدیا') ?></a></li>
-              <li><a href="/courses"><?= site_e('دوره‌ها') ?></a></li>
               <li><a href="/contactus"><?= site_e('تماس با ما') ?></a></li>
             </ul>
           </nav>

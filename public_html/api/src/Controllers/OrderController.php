@@ -17,6 +17,12 @@ final class OrderController
     public function __construct(private ?\StandPayments $standPayments = null) {}
     private static function ensureOrdersSchema(PDO $pdo): void
     {
+        if (file_exists(dirname(__DIR__, 3) . '/core/shop-db.php')) {
+            require_once dirname(__DIR__, 3) . '/core/shop-db.php';
+            if (function_exists('shop_ensure_schema')) {
+                shop_ensure_schema($pdo);
+            }
+        }
         try {
             $pdo->exec("ALTER TABLE `orders` ADD COLUMN `user_id` BIGINT(20) UNSIGNED NULL AFTER `id`");
         } catch (Throwable $e) {}
@@ -192,8 +198,8 @@ final class OrderController
 
         $stmt = $pdo->prepare("
             INSERT INTO `orders`
-            (`user_id`, `tracking_code`, `branch_id`, `stand_id`, `province`, `city`, `image`, `order_date`, `quantity`, `unit_price`, `total_price`, `from_user`, `to_user`, `message`, `address`, `checkout_key`, `created_at`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            (`user_id`, `tracking_code`, `order_type`, `branch_id`, `stand_id`, `province`, `city`, `image`, `order_date`, `quantity`, `unit_price`, `total_price`, `from_user`, `to_user`, `message`, `address`, `checkout_key`, `created_at`)
+            VALUES (?, ?, 'stand', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
 
         try { $stmt->execute([
@@ -279,7 +285,8 @@ final class OrderController
 
         $stmt = $pdo->prepare("
             SELECT o.*, b.name AS branch_name, s.title AS stand_title,
-                   COALESCE(sp.status, 'unpaid') AS payment_status, sp.paid_at
+                   CASE WHEN o.order_type = 'product' THEN o.payment_status ELSE COALESCE(sp.status, 'unpaid') END AS payment_status,
+                   CASE WHEN o.order_type = 'product' THEN o.paid_at ELSE sp.paid_at END AS paid_at
             FROM `orders` o
             LEFT JOIN `branches` b ON o.branch_id = b.id
             LEFT JOIN `stands` s ON o.stand_id = s.id
@@ -289,6 +296,34 @@ final class OrderController
         ");
         $stmt->execute([$userId]);
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $productOrderIds = [];
+        foreach ($orders as &$ord) {
+            if (empty($ord['order_type'])) {
+                $ord['order_type'] = (!empty($ord['stand_id']) || !empty($ord['from_user'])) ? 'stand' : 'product';
+            }
+            if ($ord['order_type'] === 'product') {
+                $productOrderIds[] = (int)$ord['id'];
+            }
+            $ord['items'] = [];
+        }
+        unset($ord);
+
+        if (!empty($productOrderIds)) {
+            $inClause = implode(',', array_fill(0, count($productOrderIds), '?'));
+            $itemStmt = $pdo->prepare("SELECT * FROM `order_items` WHERE `order_id` IN ($inClause) ORDER BY `id` ASC");
+            $itemStmt->execute($productOrderIds);
+            $itemsMap = [];
+            while ($row = $itemStmt->fetch(PDO::FETCH_ASSOC)) {
+                $itemsMap[(int)$row['order_id']][] = $row;
+            }
+            foreach ($orders as &$ord) {
+                if (($ord['order_type'] ?? '') === 'product') {
+                    $ord['items'] = $itemsMap[(int)$ord['id']] ?? [];
+                }
+            }
+            unset($ord);
+        }
 
         Response::success(['orders' => $orders]);
     }

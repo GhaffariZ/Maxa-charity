@@ -94,7 +94,8 @@ function site_language_picker(): string
     $labels = ['fa'=>'فارسی','en'=>'English','ar'=>'العربية'];
     $html = '<details class="site-language"><summary aria-label="'.site_e('انتخاب زبان').': '.$labels[site_locale()].'">'
         . '<span class="site-language-icon" aria-hidden="true">'.iconoir('globe').'</span>'
-        . '<span aria-hidden="true">'.strtoupper(site_locale()).'</span><span class="site-language-caret" aria-hidden="true">⌄</span></summary>'
+        . '<span class="site-language-label" aria-hidden="true">'.strtoupper(site_locale()).'</span>'
+        . '<span class="site-language-caret" aria-hidden="true"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>'
         . '<nav class="site-language-options" aria-label="'.site_e('انتخاب زبان').'">';
     foreach ($labels as $code=>$label) {
         $html .= '<a href="'.htmlspecialchars(site_url($current, $code), ENT_QUOTES, 'UTF-8').'" lang="'.$code.'" dir="'.($code==='en'?'ltr':'rtl').'" hreflang="'.$code.'"'
@@ -124,13 +125,29 @@ function site_document(string $html): string
         },$tag[0]);
     }, $html);
     $assetRoot=dirname(__DIR__).'/assets/';
-    $assets = '<link rel="stylesheet" href="/assets/site-locale.css?v='.filemtime($assetRoot.'site-locale.css').'">'
-        . '<link rel="stylesheet" href="/assets/macsa-loading.css?v='.filemtime($assetRoot.'macsa-loading.css').'">'
-        . '<script src="/assets/site-loading.js?v='.filemtime($assetRoot.'site-loading.js').'"></script>'
-        . '<script src="/assets/public-content.js?v='.filemtime($assetRoot.'public-content.js').'"></script>'
-        . '<link rel="stylesheet" href="/assets/site-navigation.css?v='.filemtime($assetRoot.'site-navigation.css').'">'
-        . '<script src="/assets/site-locale.js?v='.filemtime($assetRoot.'site-locale.js').'" defer></script>'
-        . '<script src="/assets/site-navigation.js?v='.filemtime($assetRoot.'site-navigation.js').'" defer></script>';
+    $assetTags = [];
+    if (strpos($html, 'site-locale.css') === false) {
+        $assetTags[] = '<link rel="stylesheet" href="/assets/site-locale.css?v='.filemtime($assetRoot.'site-locale.css').'">';
+    }
+    if (strpos($html, 'macsa-loading.css') === false) {
+        $assetTags[] = '<link rel="stylesheet" href="/assets/macsa-loading.css?v='.filemtime($assetRoot.'macsa-loading.css').'">';
+    }
+    if (strpos($html, 'site-loading.js') === false) {
+        $assetTags[] = '<script src="/assets/site-loading.js?v='.filemtime($assetRoot.'site-loading.js').'"></script>';
+    }
+    if (strpos($html, 'public-content.js') === false) {
+        $assetTags[] = '<script src="/assets/public-content.js?v='.filemtime($assetRoot.'public-content.js').'"></script>';
+    }
+    if (strpos($html, 'site-navigation.css') === false) {
+        $assetTags[] = '<link rel="stylesheet" href="/assets/site-navigation.css?v='.filemtime($assetRoot.'site-navigation.css').'">';
+    }
+    if (strpos($html, 'site-locale.js') === false) {
+        $assetTags[] = '<script src="/assets/site-locale.js?v='.filemtime($assetRoot.'site-locale.js').'" defer></script>';
+    }
+    if (strpos($html, 'site-navigation.js') === false) {
+        $assetTags[] = '<script src="/assets/site-navigation.js?v='.filemtime($assetRoot.'site-navigation.js').'" defer></script>';
+    }
+    $assets = implode('', $assetTags);
     if ($locale !== 'fa') {
         $html = preg_replace_callback('~(<link\s+rel=["\']canonical["\']\s+href=["\'])([^"\']+)(["\'][^>]*>)~i', static fn($m) => $m[1].site_url($m[2]).$m[3],$html);
         $html = preg_replace_callback('~(<meta\s+property=["\']og:url["\']\s+content=["\'])([^"\']+)(["\'][^>]*>)~i', static fn($m) => $m[1].site_url($m[2]).$m[3],$html);

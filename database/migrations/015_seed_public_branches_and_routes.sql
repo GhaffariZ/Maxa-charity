@@ -78,7 +78,7 @@ AND NOT EXISTS (
 -- Only create it when missing; never overwrite content edited in the dashboard.
 INSERT INTO `pages` (`branch_id`, `title`, `slug`, `components`, `status`)
 SELECT b.`id`, 'راهنمای بیمار', 'patientoption',
-       '["header","patientoption","hamrah","footer"]', 'published'
+       '["header","patientoption","footer"]', 'published'
 FROM `branches` b
 WHERE b.`is_hq` = 1
   AND NOT EXISTS (

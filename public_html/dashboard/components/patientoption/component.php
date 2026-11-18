@@ -1,4 +1,20 @@
-<?php require_once __DIR__ . '/../../../core/site-locale.php'; ?>
+<?php
+require_once __DIR__ . '/../../../core/site-locale.php';
+require_once __DIR__ . '/../../../core/content-locales.php';
+if (!function_exists('iconoir')) { require_once __DIR__ . '/../../../core/icons.php'; }
+
+$patientArticles = [];
+if (isset($pdo) && $pdo instanceof PDO) {
+    $articleScope = content_where($pdo, 'news', 'n.id');
+    $articleStmt = $pdo->prepare("SELECT n.id, n.title, n.subtitle, n.content, n.author, n.category_id, n.publish_date, n.news_code, n.featured_image, n.read_time
+        FROM news n JOIN news_categories c ON c.id = n.category_id
+        WHERE c.slug = 'patients-articles' AND c.is_active = 1 AND n.status = 'published' AND n.publish_date <= NOW()
+          AND (n.reject_reason IS NULL OR TRIM(n.reject_reason) = '') AND $articleScope
+        ORDER BY n.publish_date DESC, n.id DESC LIMIT 9");
+    $articleStmt->execute();
+    $patientArticles = content_rows($pdo, 'news', $articleStmt->fetchAll(PDO::FETCH_ASSOC));
+}
+?>
 <!-- ========================= -->
 <!-- Section 1 — Link Cards (no images, links stacked) -->
 <section class="po-section">
@@ -17,10 +33,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('شناخت و درک سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="cancer1.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تعریف سرطان') ?></a>
-          <a href="cancer2.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی') ?></a>
-          <a href="understandingcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('درک سرطان') ?></a>
-          <a href="tissuealterations.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تغییرات بافتی که سرطان نیستند') ?></a>
+          <a href="/cancer1" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تعریف سرطان') ?></a>
+          <a href="/cancer2" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی') ?></a>
+          <a href="/understandingcancer" class="po-link-item"><span class="po-link-dot"></span><?= site_e('درک سرطان') ?></a>
+          <a href="/tissuealterations" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تغییرات بافتی که سرطان نیستند') ?></a>
         </div>
       </div>
 
@@ -30,10 +46,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('علل، عوامل و فرآیند ایجاد سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="carcinogenesis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نحوه ایجاد سرطان') ?></a>
-          <a href="cancergenes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('ژن‌های دخیل در سرطان') ?></a>
-          <a href="riskfactors.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('عوامل خطر در بروز سرطان') ?></a>
-          <a href="AYAcancer.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نوجوانان و جوانان مبتلا به سرطان') ?></a>
+          <a href="/carcinogenesis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نحوه ایجاد سرطان') ?></a>
+          <a href="/cancergenes" class="po-link-item"><span class="po-link-dot"></span><?= site_e('ژن‌های دخیل در سرطان') ?></a>
+          <a href="/riskfactors" class="po-link-item"><span class="po-link-dot"></span><?= site_e('عوامل خطر در بروز سرطان') ?></a>
+          <a href="/ayacancer" class="po-link-item"><span class="po-link-dot"></span><?= site_e('نوجوانان و جوانان مبتلا به سرطان') ?></a>
         </div>
       </div>
 
@@ -43,10 +59,10 @@
         </div>
         <h3 class="po-link-title"><?= site_e('تشخیص، پیشرفت و گسترش سرطان') ?></h3>
         <div class="po-link-list">
-          <a href="diagnosis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تشخیص و مرحله‌بندی') ?></a>
-          <a href="metastasis.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('متاستاز سرطان') ?></a>
-          <a href="cancerspread.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('محل و نحوه گسترش سرطان') ?></a>
-          <a href="cancertypes.html" class="po-link-item"><span class="po-link-dot"></span><?= site_e('انواع سرطان') ?></a>
+          <a href="/diagnosis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('تشخیص و مرحله‌بندی') ?></a>
+          <a href="/metastasis" class="po-link-item"><span class="po-link-dot"></span><?= site_e('متاستاز سرطان') ?></a>
+          <a href="/cancerspread" class="po-link-item"><span class="po-link-dot"></span><?= site_e('محل و نحوه گسترش سرطان') ?></a>
+          <a href="/cancertypes" class="po-link-item"><span class="po-link-dot"></span><?= site_e('انواع سرطان') ?></a>
         </div>
       </div>
     </div>
@@ -55,8 +71,8 @@
 </section>
 
 <!-- ========================= -->
-<!-- Section 2 — Image Cards (square-ish with images) -->
-<section class="po-section po-section--alt">
+<!-- Section 2 — Image Cards (up to 9 articles) -->
+<section class="po-section po-section--alt" id="patient-articles">
   <div class="po-container">
 
     <div class="po-header wow fadeInUp">
@@ -66,74 +82,33 @@
     </div>
 
     <div class="po-grid">
-      <a href="fear.html" class="po-card-link">
-        <div class="po-card wow fadeInUp">
-          <div class="po-card-img">
-            <img src="/dashboard/components/psychologicalcare/images/1.png" alt="<?= site_e('مدیریت ترس از عوارض جانبی') ?>">
-            <span class="po-badge"><?= site_e('ترس') ?></span>
+      <?php if (!empty($patientArticles)): ?>
+        <?php foreach ($patientArticles as $i => $article):
+            $articleImage = !empty($article['featured_image'])
+                ? (preg_match('~^(?:/|https?://)~', (string)$article['featured_image'])
+                    ? (string)$article['featured_image']
+                    : (!empty($article['news_code']) ? '/uploads/news/' . rawurlencode((string)$article['news_code']) . '/' . rawurlencode((string)$article['featured_image']) : ''))
+                : '/dashboard/components/psychologicalcare/images/1.png';
+            $articleBadge = !empty($article['author']) ? $article['author'] : site_text('آموزش');
+            $articleUrl = '/' . (int)$article['id'] . '/';
+            $delay = sprintf('%.1fs', ($i % 3) * 0.2);
+        ?>
+        <a href="<?= htmlspecialchars($articleUrl, ENT_QUOTES, 'UTF-8') ?>" class="po-card-link">
+          <div class="po-card wow fadeInUp" data-wow-delay="<?= $delay ?>">
+            <div class="po-card-img">
+              <img src="<?= htmlspecialchars($articleImage, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+              <span class="po-badge"><?= htmlspecialchars((string)$articleBadge, ENT_QUOTES, 'UTF-8') ?></span>
+            </div>
+            <div class="po-card-body">
+              <h3 class="po-card-title"><?= htmlspecialchars((string)$article['title'], ENT_QUOTES, 'UTF-8') ?></h3>
+              <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
           </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت ترس از عوارض جانبی ناشی از درمان سرطان') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a href="stress.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.2s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/socialworkcare/images/1.png" alt="<?= site_e('مدیریت استرس') ?>">
-            <span class="po-badge"><?= site_e('استرس') ?></span>
-          </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت استرس ناشی از روند بیماری') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a href="anger.html" class="po-card-link">
-        <div class="po-card wow fadeInUp" data-wow-delay="0.4s">
-          <div class="po-card-img">
-            <img src="/dashboard/components/spritualcare/images/1.png" alt="<?= site_e('مدیریت خشم') ?>">
-            <span class="po-badge"><?= site_e('خشم') ?></span>
-          </div>
-          <div class="po-card-body">
-            <h3 class="po-card-title"><?= site_e('مدیریت و مدارا با خشم') ?></h3>
-            <span class="po-card-cta"><?= site_e('مطالعه بیشتر') ?> <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </div>
-        </div>
-      </a>
-    </div>
-
-  </div>
-</section>
-
-<!-- ========================= -->
-<!-- Section 3 — Image + Text Feature -->
-<section class="po-section">
-  <div class="po-container">
-
-    <div class="po-header wow fadeInUp">
-      <span class="po-header-accent"></span>
-      <h2 class="po-heading"><?= site_e('مراقبت جامع و همه‌جانبه') ?></h2>
-      <p class="po-desc"><?= site_e('بیماری سرطان فقط یک بیماری جسمی نیست، مراقبت واقعی شامل ذهن، روح و زندگی روزمره بیمار و خانواده‌اش است') ?></p>
-    </div>
-
-    <div class="po-feature wow fadeInUp" data-wow-delay="0.2s">
-      <div class="po-feature-text">
-        <h3 class="po-feature-title"><?= site_e('چرا مراقبت‌های حمایتی و تسکینی مهم هستند؟') ?></h3>
-        <p>
-          <?= site_e('مراقبت‌های حمایتی و تسکینی بر بهبود کیفیت زندگی بیماران مبتلا به سرطان و خانواده‌هایشان تمرکز دارد. این مراقبت‌ها شامل مدیریت درد و علائم فیزیکی، حمایت روانی، مشاوره اجتماعی و کمک در تصمیم‌گیری‌های درمانی است.') ?>
-        </p>
-        <a href="socialcare.html" class="po-feature-btn">
-          <?= site_e('آشنایی با خدمات') ?>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-      </div>
-      <div class="po-feature-img">
-        <img src="/dashboard/components/supportive_and_palliative_care/images/1.png" alt="<?= site_e('مراقبت حمایتی و تسکینی') ?>">
-      </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="po-articles-empty wow fadeInUp"><?= site_e('مقاله‌ای در این بخش منتشر نشده است. به‌زودی مطالب تازه را اینجا می‌خوانید.') ?></div>
+      <?php endif; ?>
     </div>
 
   </div>
@@ -400,87 +375,16 @@
   transform: translateX(-4px);
 }
 
-/* ── 3. feature box ── */
-.po-feature {
-  display: flex;
-  gap: 0;
+.po-articles-empty {
+  grid-column: 1 / -1;
   background: var(--po-bg);
-  border: 1px solid var(--po-border);
-  border-radius: var(--po-radius);
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-}
-
-.po-feature-text {
-  flex: 1;
-  padding: 40px 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.po-feature-title {
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--po-text);
-  margin: 0 0 18px;
-  line-height: 1.5;
-  border-right: 4px solid var(--po-teal);
-  padding-right: 14px;
-}
-
-.po-feature-text p {
-  font-size: 15px;
+  border: 1px dashed var(--po-border);
   color: var(--po-muted);
-  line-height: 2;
-  text-align: justify;
-  margin: 0 0 26px;
-}
-
-.po-feature-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(180deg, var(--po-teal) 0%, var(--po-teal-dark) 100%);
-  color: #fff;
-  padding: 13px 30px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 800;
-  text-decoration: none;
-  width: fit-content;
-  box-shadow: 0 10px 22px rgba(15,159,170,0.22);
-  transition: all 0.22s ease;
-}
-
-.po-feature-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(15,159,170,0.30);
-  color: #fff;
-  text-decoration: none;
-}
-
-.po-feature-btn svg {
-  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
-  color: #faa61a;
-}
-
-.po-feature-btn:hover svg {
-  transform: translateX(-4px);
-  color: #fff;
-}
-
-.po-feature-img {
-  flex: 1;
-  min-height: 320px;
-  overflow: hidden;
-}
-
-.po-feature-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  border-radius: var(--po-radius);
+  padding: 48px 24px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 /* ── entrance animations (CSS-only) ── */
@@ -508,14 +412,6 @@
   .po-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .po-feature {
-    flex-direction: column-reverse;
-  }
-
-  .po-feature-img {
-    min-height: 260px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -538,14 +434,6 @@
 
   .po-link-card {
     padding: 24px 20px;
-  }
-
-  .po-feature-text {
-    padding: 28px 22px;
-  }
-
-  .po-feature-title {
-    font-size: 18px;
   }
 }
 

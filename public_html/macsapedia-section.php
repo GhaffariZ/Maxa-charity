@@ -2,7 +2,7 @@
 require_once __DIR__ . '/core/site-locale.php';
 /* صفحه‌ی عمومیِ یک بخش از مکساپدیا — محتوای منتشرشده‌ی همان بخش را نمایش می‌دهد. */
 require_once __DIR__ . '/core/icons.php';
-require __DIR__ . '/dashboard/maxapedia-db.php';
+require_once __DIR__ . '/dashboard/maxapedia-db.php';
 
 $mpSlug = $_GET['section'] ?? '';
 
@@ -21,7 +21,7 @@ $mpCat = trim((string)($_GET['cat'] ?? ''));
 $mpCats  = ($pdo) ? maxapedia_categories($pdo, $mpSlug, true) : [];
 $mpItems = ($pdo) ? maxapedia_items($pdo, $mpSlug, true, ['category' => $mpCat, 'q' => $mpQ]) : [];
 
-$mpBase = '/macsapedia/' . rawurlencode($mpSlug);
+$mpBase = site_url('/macsapedia/' . rawurlencode($mpSlug));
 /* ساخت آدرسِ چیپ دسته‌بندی با حفظ عبارت جستجو */
 $mpChipUrl = static function (string $cat) use ($mpBase, $mpQ): string {
     $params = [];
@@ -52,9 +52,9 @@ $galleryPhotos = ($galleryAlbum && $pdo) ? maxapedia_gallery_photos($pdo, $galle
 $galleryCounts = ($mpSlug === 'gallery' && $pdo) ? maxapedia_gallery_counts_map($pdo) : [];
 
 if ($galleryAlbum) {
-  $pageTitle = $galleryAlbum['title'] . ' — گالری مکساپدیا';
+  $pageTitle = e($galleryAlbum['title']) . ' ' . site_text('— گالری مکساپدیا');
 } else {
-  $pageTitle = $mpSection['title'] . ' — مکساپدیا';
+  $pageTitle = site_text($mpSection['title']) . ' ' . site_text('— مکساپدیا');
 }
 require_once __DIR__ . '/core/component-renderer.php';
 render_dashboard_component('header', get_defined_vars());
@@ -659,22 +659,22 @@ render_dashboard_component('header', get_defined_vars());
 <?php if ($galleryAlbum): ?>
   <!-- نمای اختصاصی آلبوم گالری مکسا -->
   <div class="mp-breadcrumb">
-    <a href="/macsapedia"><?= site_e('مکساپدیا') ?></a> / <a href="<?= e($mpBase) ?>"><?= e($mpSection['title']) ?></a> / <?= e($galleryAlbum['title']) ?>
+    <a href="<?= htmlspecialchars(site_url('/macsapedia'), ENT_QUOTES, 'UTF-8') ?>"><?= site_e('مکساپدیا') ?></a> / <a href="<?= e($mpBase) ?>"><?= site_e($mpSection['title']) ?></a> / <?= e($galleryAlbum['title']) ?>
   </div>
 
   <div class="mp-album-view-header">
     <a href="<?= e($mpBase) ?>" class="mp-album-back-link">
-      <?= iconoir('arrow-right', '', 16) ?> <?= site_e('بازگشت به همه آلبوم‌های گالری') ?>
+      <?= iconoir(site_direction() === 'ltr' ? 'arrow-left' : 'arrow-right', '', 16) ?> <?= site_e('بازگشت به همه آلبوم‌های گالری') ?>
     </a>
     <div class="mp-album-view-meta">
       <?php if (!empty($galleryAlbum['category'])): ?>
-        <span class="mp-album-badge-cat"><?= e($galleryAlbum['category']) ?></span>
+        <span class="mp-album-badge-cat"><?= site_e($galleryAlbum['category']) ?></span>
       <?php endif; ?>
       <span class="mp-album-badge-count">
-        <?= iconoir('media-image', '', 14) ?> <?= fa_digits(count($galleryPhotos)) ?> <?= site_e('تصویر') ?>
+        <?= iconoir('media-image', '', 14) ?> <?= (site_locale() === 'en' ? count($galleryPhotos) : fa_digits(count($galleryPhotos))) ?> <?= site_e('تصویر') ?>
       </span>
       <?php if (!empty($galleryAlbum['created_at'])): ?>
-        <span class="mp-album-date"><?= fa_digits(date('Y/m/d', strtotime($galleryAlbum['created_at']))) ?></span>
+        <span class="mp-album-date"><?= (site_locale() === 'en' ? date('Y/m/d', strtotime($galleryAlbum['created_at'])) : fa_digits(date('Y/m/d', strtotime($galleryAlbum['created_at'])))) ?></span>
       <?php endif; ?>
     </div>
     <h1 class="mp-album-view-title"><?= e($galleryAlbum['title']) ?></h1>
@@ -704,7 +704,7 @@ render_dashboard_component('header', get_defined_vars());
         <figure class="mp-mosaic-item <?= $spanClass ?><?= $isHidden ? ' mp-item-hidden' : '' ?>"
                 onclick="openPhotoLightbox(<?= $idx ?>)"
                 role="button" tabindex="0"
-                aria-label="مشاهده تصویر <?= $idx + 1 ?>"
+                aria-label="<?= site_e('مشاهده تصویر') ?> <?= (site_locale() === 'en' ? ($idx + 1) : fa_digits($idx + 1)) ?>"
                 <?= $isHidden ? 'style="display:none;"' : '' ?>>
           <div class="mp-mosaic-thumb">
             <img src="<?= e($p['image_url']) ?>" alt="<?= e($p['caption'] ?: $galleryAlbum['title']) ?>" loading="lazy">
@@ -724,7 +724,7 @@ render_dashboard_component('header', get_defined_vars());
     <?php if (count($galleryPhotos) > 24): ?>
       <div class="mp-load-more-wrap" id="mpLoadMoreWrap">
         <div class="mp-load-more-info">
-          <?= site_e('نمایش') ?> <span id="mpLoadedCount"><?= site_e('۲۴') ?></span> <?= site_e('از') ?> <span id="mpTotalCount"><?= fa_digits(count($galleryPhotos)) ?></span> <?= site_e('تصویر') ?>
+          <?= site_e('نمایش') ?> <span id="mpLoadedCount"><?= (site_locale() === 'en' ? '24' : '۲۴') ?></span> <?= site_e('از') ?> <span id="mpTotalCount"><?= (site_locale() === 'en' ? count($galleryPhotos) : fa_digits(count($galleryPhotos))) ?></span> <?= site_e('تصویر') ?>
         </div>
         <div class="mp-load-progress">
           <div class="mp-load-bar" id="mpLoadBar" style="width: <?= round((24 / count($galleryPhotos)) * 100) ?>%;"></div>
@@ -763,13 +763,13 @@ render_dashboard_component('header', get_defined_vars());
 <?php else: ?>
   <!-- نمای عمومی بخش‌های مکساپدیا (شامل هاب گالری مکسا و سایر بخش‌ها) -->
   <div class="mp-breadcrumb">
-    <a href="/macsapedia"><?= site_e('مکساپدیا') ?></a> / <?= e($mpSection['title']) ?>
+    <a href="<?= htmlspecialchars(site_url('/macsapedia'), ENT_QUOTES, 'UTF-8') ?>"><?= site_e('مکساپدیا') ?></a> / <?= site_e($mpSection['title']) ?>
   </div>
 
   <div class="mp-header">
     <div class="mp-icon"><?= $mpSection['icon'] ?></div>
-    <h1><?= e($mpSection['title']) ?></h1>
-    <p><?= e($mpSection['desc']) ?></p>
+    <h1><?= site_e($mpSection['title']) ?></h1>
+    <p><?= site_e($mpSection['desc']) ?></p>
   </div>
 
   <!-- نوار فیلتر: جستجو + دسته‌بندی‌ها -->
@@ -778,7 +778,7 @@ render_dashboard_component('header', get_defined_vars());
       <?php if ($mpCat !== ''): ?>
         <input type="hidden" name="cat" value="<?= e($mpCat) ?>">
       <?php endif; ?>
-      <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="<?= $mpSlug === 'gallery' ? 'جستجو در آلبوم‌های تصاویر…' : 'جستجو در این بخش…' ?>" aria-label="<?= site_e('جستجو') ?>">
+      <input type="search" name="q" value="<?= e($mpQ) ?>" placeholder="<?= site_e($mpSlug === 'gallery' ? 'جستجو در آلبوم‌های تصاویر…' : 'جستجو در این بخش…') ?>" aria-label="<?= site_e('جستجو') ?>">
       <button type="submit" aria-label="<?= site_e('جستجو') ?>"><?= iconoir('search', '', 18) ?></button>
     </form>
 
@@ -786,7 +786,7 @@ render_dashboard_component('header', get_defined_vars());
       <div class="mp-chips">
         <a class="mp-chip<?= $mpCat === '' ? ' active' : '' ?>" href="<?= e($mpChipUrl('')) ?>"><?= site_e('همه') ?></a>
         <?php foreach ($mpCats as $c): ?>
-          <a class="mp-chip<?= $c === $mpCat ? ' active' : '' ?>" href="<?= e($mpChipUrl($c)) ?>"><?= e($c) ?></a>
+          <a class="mp-chip<?= $c === $mpCat ? ' active' : '' ?>" href="<?= e($mpChipUrl($c)) ?>"><?= site_e($c) ?></a>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
@@ -796,8 +796,8 @@ render_dashboard_component('header', get_defined_vars());
     <div class="mp-result-note">
       <?= site_e('نتایج') ?>
       <?php if ($mpQ !== ''): ?> <?= site_e('برای «') ?><?= e($mpQ) ?>»<?php endif; ?>
-      <?php if ($mpCat !== ''): ?> <?= site_e('در دسته‌ی «') ?><?= e($mpCat) ?>»<?php endif; ?>
-      — <?= fa_digits(count($mpItems)) ?> <?= $mpSlug === 'gallery' ? 'آلبوم' : 'مورد' ?>
+      <?php if ($mpCat !== ''): ?> <?= site_e('در دسته‌ی «') ?><?= site_e($mpCat) ?>»<?php endif; ?>
+      — <?= (site_locale() === 'en' ? count($mpItems) : fa_digits(count($mpItems))) ?> <?= site_e($mpSlug === 'gallery' ? 'آلبوم' : 'مورد') ?>
       <a class="mp-result-clear" href="<?= e($mpBase) ?>"><?= site_e('پاک کردن فیلتر') ?></a>
     </div>
   <?php endif; ?>
@@ -805,9 +805,9 @@ render_dashboard_component('header', get_defined_vars());
   <?php if (empty($mpItems)): ?>
     <div class="mp-empty">
       <?php if ($mpFiltered): ?>
-        <?= $mpSlug === 'gallery' ? 'آلبومی با این مشخصات یافت نشد.' : 'موردی با این جستجو/دسته‌بندی پیدا نشد.' ?>
+        <?= site_e($mpSlug === 'gallery' ? 'آلبومی با این مشخصات یافت نشد.' : 'موردی با این جستجو/دسته‌بندی پیدا نشد.') ?>
       <?php else: ?>
-        <?= $mpSlug === 'gallery' ? 'به‌زودی آلبوم‌های تصاویر اضافه خواهد شد.' : 'به‌زودی محتوای این بخش اضافه می‌شود.' ?>
+        <?= site_e($mpSlug === 'gallery' ? 'به‌زودی آلبوم‌های تصاویر اضافه خواهد شد.' : 'به‌زودی محتوای این بخش اضافه می‌شود.') ?>
       <?php endif; ?>
     </div>
   <?php elseif ($mpSlug === 'gallery'): ?>
@@ -828,14 +828,14 @@ render_dashboard_component('header', get_defined_vars());
             <?php endif; ?>
             <div class="mp-album-cover-overlay">
               <span class="mp-album-enter-btn">
-                <?= site_e('مشاهده آلبوم') ?> <?= iconoir('arrow-left', '', 14) ?>
+                <?= site_e('مشاهده آلبوم') ?> <?= iconoir(site_direction() === 'ltr' ? 'arrow-right' : 'arrow-left', '', 14) ?>
               </span>
             </div>
             <?php if (!empty($alb['category'])): ?>
-              <span class="mp-album-cat-badge"><?= e($alb['category']) ?></span>
+              <span class="mp-album-cat-badge"><?= site_e($alb['category']) ?></span>
             <?php endif; ?>
             <span class="mp-album-count-badge">
-              <?= iconoir('media-image', '', 13) ?> <?= fa_digits($pCount) ?> <?= site_e('عکس') ?>
+              <?= iconoir('media-image', '', 13) ?> <?= (site_locale() === 'en' ? $pCount : fa_digits($pCount)) ?> <?= site_e('عکس') ?>
             </span>
           </a>
           <div class="mp-album-body">
@@ -847,10 +847,10 @@ render_dashboard_component('header', get_defined_vars());
             <?php endif; ?>
             <div class="mp-album-footer">
               <span class="mp-album-date">
-                <?= !empty($alb['created_at']) ? fa_digits(date('Y/m/d', strtotime($alb['created_at']))) : '' ?>
+                <?= !empty($alb['created_at']) ? (site_locale() === 'en' ? date('Y/m/d', strtotime($alb['created_at'])) : fa_digits(date('Y/m/d', strtotime($alb['created_at'])))) : '' ?>
               </span>
               <a class="mp-album-cta" href="<?= $albumLink ?>">
-                <?= site_e('ورود به آلبوم') ?> <?= iconoir('arrow-left', '', 14) ?>
+                <?= site_e('ورود به آلبوم') ?> <?= iconoir(site_direction() === 'ltr' ? 'arrow-right' : 'arrow-left', '', 14) ?>
               </a>
             </div>
           </div>
@@ -872,7 +872,7 @@ render_dashboard_component('header', get_defined_vars());
                     data-title="<?= e($first['title']) ?>"
                     data-desc="<?= e($first['description'] ?? '') ?>"
                     data-source="<?= e($first['url'] ?? '') ?>"
-                    aria-label="پخش: <?= e($first['title']) ?>">
+                    aria-label="<?= site_e('پخش:') ?> <?= e($first['title']) ?>">
               <?php if (!empty($fem['poster'])): ?>
                 <img src="<?= e($fem['poster']) ?>" alt="" loading="lazy">
               <?php elseif (!empty($first['thumbnail'])): ?>
@@ -893,7 +893,7 @@ render_dashboard_component('header', get_defined_vars());
 
         <!-- فهرست ویدیوها -->
         <aside class="mp-watch-list">
-          <h3><?= fa_digits(count($mpVideos)) ?> <?= site_e('ویدیو') ?></h3>
+          <h3><?= (site_locale() === 'en' ? count($mpVideos) : fa_digits(count($mpVideos))) ?> <?= site_e('ویدیو') ?></h3>
           <div class="mp-watch-scroller">
             <?php foreach ($mpVideos as $i => $v): $vem = $v['_em']; ?>
               <button type="button" class="mp-pl-item<?= $i === 0 ? ' active' : '' ?>"
@@ -945,7 +945,7 @@ render_dashboard_component('header', get_defined_vars());
                   <h3 class="mp-pod-title"><?= e($it['title']) ?></h3>
                   <div class="mp-pod-tags">
                     <?php if ($em): ?><span class="mp-pod-provider"><?= iconoir('headset', '', 14) ?> <?= e($em['provider']) ?></span><?php endif; ?>
-                    <?php if (!empty($it['category'])): ?><span class="mp-pod-cat"><?= e($it['category']) ?></span><?php endif; ?>
+                    <?php if (!empty($it['category'])): ?><span class="mp-pod-cat"><?= site_e($it['category']) ?></span><?php endif; ?>
                   </div>
                 </div>
               </div>
@@ -1100,7 +1100,8 @@ render_dashboard_component('header', get_defined_vars());
   var lbCounter = document.getElementById('mpLbCounter');
   var lbDownload = document.getElementById('mpLbDownload');
 
-  function faDigits(str) {
+  function formatDigits(str) {
+    if (document.documentElement.lang === 'en') return String(str);
     var d = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
     return String(str).replace(/[0-9]/g, function(w) { return d[+w]; });
   }
@@ -1122,7 +1123,11 @@ render_dashboard_component('header', get_defined_vars());
       lbCaption.style.display = cur.caption ? '' : 'none';
     }
     if (lbCounter) {
-      lbCounter.textContent = 'تصویر ' + faDigits(currentIndex + 1) + ' از ' + faDigits(photos.length);
+      var isEn = document.documentElement.lang === 'en';
+      var isAr = document.documentElement.lang === 'ar';
+      var wordImg = isEn ? 'Image' : (isAr ? 'صورة' : 'تصویر');
+      var wordOf  = isEn ? 'of' : (isAr ? 'من' : 'از');
+      lbCounter.textContent = wordImg + ' ' + formatDigits(currentIndex + 1) + ' ' + wordOf + ' ' + formatDigits(photos.length);
     }
     if (lbDownload) {
       lbDownload.href = cur.src;
@@ -1182,7 +1187,7 @@ render_dashboard_component('header', get_defined_vars());
     currentVisibleCount += nextBatch.length;
     var loadedCountEl = document.getElementById('mpLoadedCount');
     var loadBarEl = document.getElementById('mpLoadBar');
-    if (loadedCountEl) loadedCountEl.textContent = faDigits(currentVisibleCount);
+    if (loadedCountEl) loadedCountEl.textContent = formatDigits(currentVisibleCount);
     if (loadBarEl) loadBarEl.style.width = Math.min(100, Math.round((currentVisibleCount / totalPhotos) * 100)) + '%';
 
     if (currentVisibleCount >= totalPhotos) {

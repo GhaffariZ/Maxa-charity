@@ -11,8 +11,9 @@ final class StandPayments
     }
     public function orderForUser(string $tracking, int $userId): array
     {
-        $st = $this->db->prepare('SELECT o.*, b.slug AS center_slug, b.status AS branch_status
-            FROM orders o JOIN branches b ON b.id = o.branch_id WHERE o.tracking_code = ? AND o.user_id = ? LIMIT 1');
+        $st = $this->db->prepare("SELECT o.*, b.slug AS center_slug, b.status AS branch_status
+            FROM orders o JOIN branches b ON b.id = o.branch_id
+            WHERE o.tracking_code = ? AND o.user_id = ? AND o.order_type = 'stand' LIMIT 1");
         $st->execute([$tracking,$userId]);
         $row = $st->fetch(PDO::FETCH_ASSOC);
         if (!$row) throw new StandPaymentException('سفارش یافت نشد.');

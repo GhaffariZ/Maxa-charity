@@ -39,8 +39,9 @@ if ($hq) $_GET['branch_id']='all';
 if ($mode==='view' || $mode==='all-view') {
     if ($mode==='all-view') unset($_GET['source']);
     $dbError=null;
-    $source=file_get_contents(__DIR__.'/../../public_html/dashboard/financial-management.php');
-    eval(substr($source,strpos($source,'function q(PDO')));
+    $page = __DIR__ . '/../../public_html/dashboard/financial-management.php';
+    $source = file_get_contents($page);
+    eval(str_replace('__DIR__', var_export(dirname($page), true), substr($source, strpos($source, 'function q(PDO'))));
 } else {
     $_GET['format']=$mode;
     $source=file_get_contents(__DIR__.'/../../public_html/dashboard/financial-export.php');

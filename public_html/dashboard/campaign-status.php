@@ -39,6 +39,10 @@ if (isset($_GET['ajax'])) {
         }
 
         $client = new CampaignServiceClient((string)$branch['slug']);
+        if (!$client->hasManagementCredentials()) {
+            echo json_encode(['status' => 'success', 'data' => [], 'configured' => false], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            exit;
+        }
         $client->prepareManagement();
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
@@ -89,7 +93,7 @@ $branchesToLoad = ($__row && (int)$__row['is_hq'] === 1 && dash_is_super()) ? da
 $campaignSources = array_values(array_map(static fn(array $branch): array => [
     'name' => (string)$branch['name'],
     'slug' => (string)$branch['slug'],
-], $branchesToLoad));
+], array_filter($branchesToLoad, static fn(array $branch): bool => campaign_service_has_management_credentials((string)$branch['slug']))));
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -548,6 +552,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
         const response = await fetch(url, {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
         const payload = await response.json().catch(function(){ return null; });
         if (!response.ok || !payload || payload.status !== 'success') {
+            if (payload && payload.configured === false) return [];
             throw new Error(payload && payload.message ? payload.message : 'پاسخ نامعتبر از سرور');
         }
         return Array.isArray(payload.data) ? payload.data : [];
@@ -556,7 +561,7 @@ $campaignSources = array_values(array_map(static fn(array $branch): array => [
     async function loadCampaigns() {
         if (!sources.length) {
             loading.hidden = true;
-            grid.innerHTML = '<div class="campaign-empty">مرکز فعالی برای دریافت کمپین‌ها پیدا نشد.</div>';
+            grid.innerHTML = '<div class="campaign-empty">کمپینی برای نمایش پیدا نشد.</div>';
             return;
         }
 

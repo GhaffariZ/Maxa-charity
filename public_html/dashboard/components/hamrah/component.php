@@ -23,7 +23,7 @@
     <span class="macsa-btn"><?= site_e('شعب مکسا') ?></span>
   </a>
 
-  <a href="/contact-center" class="gallery-item">
+  <a href="https://mymacsa.ir/contact-center" class="gallery-item">
     <div class="card card-md">
       <img src="/dashboard/components/hamrah/images/2.webp" alt="<?= site_e('مرکز تماس کشوری') ?>" width="600" height="600" loading="lazy" decoding="async">
     </div>

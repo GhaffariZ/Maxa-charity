@@ -119,6 +119,19 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
                 'organizationalchart' => 'چارت سازمانی',
                 'annual-reports'      => 'گزارش‌های سالانه | مکسا',
                 'financial-reports'   => 'صورت‌های مالی و گزارش‌های حسابرسی | مکسا',
+                'cancer1'             => 'تعریف سرطان | خیریه مکسا',
+                'cancer2'             => 'تفاوت‌های سلول‌های سرطانی و سلول‌های طبیعی | خیریه مکسا',
+                'understandingcancer' => 'درک سرطان | خیریه مکسا',
+                'tissuealterations'   => 'تغییرات بافتی که سرطان نیستند | خیریه مکسا',
+                'carcinogenesis'      => 'نحوه ایجاد سرطان | خیریه مکسا',
+                'cancergenes'         => 'ژن‌های دخیل در سرطان | خیریه مکسا',
+                'riskfactors'         => 'عوامل خطر در بروز سرطان | خیریه مکسا',
+                'ayacancer'           => 'نوجوانان و جوانان مبتلا به سرطان | خیریه مکسا',
+                'diagnosis'           => 'تشخیص و مرحله‌بندی سرطان | خیریه مکسا',
+                'metastasis'          => 'متاستاز سرطان | خیریه مکسا',
+                'cancerspread'        => 'محل و نحوه گسترش سرطان | خیریه مکسا',
+                'cancertypes'         => 'انواع سرطان | خیریه مکسا',
+                'patientoption'       => 'بیماران و مراقبین | خیریه مکسا',
             ];
             $autoTitle = $titles[$slug] ?? 'مکسا';
             render_branch_components($pdo, ['topbar', 'header', $slug, 'footer'], '', '', $autoTitle);
@@ -139,6 +152,28 @@ function render_page_by_slug(PDO $pdo, int $branchId, string $slug, string $bran
 
     $components = json_decode((string)$page['components'], true);
     if (!is_array($components)) { $components = []; }
+    if ($slug === 'patientoption') {
+        $components = array_values(array_filter($components, static fn($c) => $c !== 'hamrah'));
+    }
+
+    // Ensure dedicated showcase sections for Charity Shop and Academy Courses on Home page
+    if (($slug === 'home' || $slug === '' || ($branchSlug === '' && in_array('heroindex', $components, true))) && !in_array('shop-showcase', $components, true)) {
+        $enhancedComponents = [];
+        $showcaseInserted = false;
+        foreach ($components as $cmp) {
+            if (($cmp === 'footer' || $cmp === 'ourexcellence' || $cmp === 'recent-news-hero-v2') && !$showcaseInserted) {
+                if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+                if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+                $showcaseInserted = true;
+            }
+            $enhancedComponents[] = $cmp;
+        }
+        if (!$showcaseInserted) {
+            if (!in_array('shop-showcase', $components, true)) $enhancedComponents[] = 'shop-showcase';
+            if (!in_array('courses-showcase', $components, true)) $enhancedComponents[] = 'courses-showcase';
+        }
+        $components = $enhancedComponents;
+    }
 
     $configuredContent=false;
     if(content_ready($pdo)){
@@ -294,8 +329,12 @@ function echo_components(array $components, string $pageTitle = 'مکسا'): voi
 {
     global $pdo;
     foreach ($components as $component) {
-        if (!render_dashboard_component((string)$component, get_defined_vars())) {
-            echo '<!-- Component not found -->';
+        try {
+            if (!render_dashboard_component((string)$component, get_defined_vars())) {
+                echo '<!-- Component not found -->';
+            }
+        } catch (Throwable $e) {
+            echo '<!-- Component render error: ' . htmlspecialchars($e->getMessage()) . ' -->';
         }
     }
 }
