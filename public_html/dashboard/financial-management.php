@@ -6,6 +6,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/_guard.php';
 dash_require('financial');
+require_once __DIR__ . '/../core/stand-finance.php';
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
 
@@ -22,15 +23,8 @@ if (isset($_GET['campaign_finance'])) {
     $rawEnd = (string)($_GET['end_date'] ?? '');
 
     // کش محلی پرسرعت روی سرور جهت جلوگیری از فراخوانی‌های مکرر API خارجی (مدت اعتبار: ۱۸۰ ثانیه)
-    $cacheKey = 'macsa_cf_' . md5($mode . '|' . $slug . '|' . $campId . '|' . $rawStart . '|' . $rawEnd);
+    $cacheKey = 'macsa_cf_stands_v1_' . md5($mode . '|' . $slug . '|' . $campId . '|' . $rawStart . '|' . $rawEnd);
     $cachePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $cacheKey . '.json';
-    if (!isset($_GET['fresh']) && is_file($cachePath) && (time() - filemtime($cachePath) < 180)) {
-      $cached = @file_get_contents($cachePath);
-      if ($cached !== false && $cached !== '') {
-        echo $cached;
-        exit;
-      }
-    }
 
     require_once __DIR__ . '/../core/campaign-service.php';
     $slug = campaign_service_normalize_slug($slug);
@@ -42,6 +36,10 @@ if (isset($_GET['campaign_finance'])) {
       }
     }
     if (!$allowed) { http_response_code(403); throw new RuntimeException('دسترسی به این مرکز مجاز نیست.'); }
+    if (!isset($_GET['fresh']) && is_file($cachePath) && (time() - filemtime($cachePath) < 180)) {
+      $cached = @file_get_contents($cachePath);
+      if ($cached !== false && $cached !== '') { echo $cached; exit; }
+    }
 
     $bounds = [];
     foreach (['start_date', 'end_date'] as $key) {
@@ -200,6 +198,7 @@ if ($endDate) {
  *  پس فیلترِ branch_id کافی است تا هر شعبه فقط درآمدِ خود را ببیند.
  */
 $BRANCH_ID = dash_active_branch_id();
+$standOnly = ($_GET['source'] ?? '') === 'stands';
 $ACTIVE_BRANCH_ROW = dash_load_branch($BRANCH_ID);
 $branchCond = " AND pd.branch_id = :branch_id";
 $params['branch_id'] = $BRANCH_ID;
@@ -209,22 +208,15 @@ $onlineHelpTotal = 0.0;
 $campaignHelpTotal = 0.0;
 $coursesTotal = 0.0; 
 $ordersTotal = 0.0;  
+$productsTotal = 0.0; // Other products have no verified receipt source yet; stand revenue is separate.
+$standRows = [];
 
 // محاسبه عواید سفارشات استندهای خیریه
 if ($pdo) {
   try {
-    $ordCond = " AND o.branch_id = :o_bid";
-    $ordParams = ['o_bid' => $BRANCH_ID];
-    if ($startDate) {
-      $ordCond .= " AND o.created_at >= :o_start";
-      $ordParams['o_start'] = $startDate . ' 00:00:00';
-    }
-    if ($endDate) {
-      $ordCond .= " AND o.created_at <= :o_end";
-      $ordParams['o_end'] = $endDate . ' 23:59:59';
-    }
-    $ordersTotal = (float)q($pdo, "SELECT COALESCE(SUM(o.total_price), 0) s FROM orders o WHERE 1=1" . $ordCond, $ordParams)->fetch()['s'];
-  } catch (Throwable $e) {}
+    $standRows = stand_finance_rows($pdo, dash_is_super() && dash_is_hq_view() ? null : $BRANCH_ID, $startDate, $endDate);
+    $ordersTotal = array_sum(array_column($standRows, 'amount'));
+  } catch (Throwable $e) { $dbError = 'اطلاعات پرداخت استند قابل دریافت نیست؛ مهاجرت 028 را بررسی کنید.'; }
 }
 
 if ($pdo) {
@@ -235,7 +227,8 @@ if ($pdo) {
     // local campaign donations must not be counted a second time.
   } catch (Throwable $e) { $dbError = $dbError ?? $e->getMessage(); }
 }
-$grandTotalCollected = $onlineHelpTotal + $campaignHelpTotal + $coursesTotal + $ordersTotal;
+if ($standOnly) { $onlineHelpTotal = 0; $campaignHelpTotal = 0; $coursesTotal = 0; }
+$grandTotalCollected = $onlineHelpTotal + $campaignHelpTotal + $coursesTotal + $productsTotal + $ordersTotal;
 
 /* ---------- ۱۰ کاربر برتر (بیشترین مبالغ موفق) ---------- */
 $donorsOut = [];
@@ -279,27 +272,10 @@ $coursesBreakdown = [
 ];
 
 $productsBreakdown = [];
-if ($pdo) {
-  try {
-    $ordCond = " AND o.branch_id = :o_bid";
-    $ordParams = ['o_bid' => $BRANCH_ID];
-    if ($startDate) {
-      $ordCond .= " AND o.created_at >= :o_start";
-      $ordParams['o_start'] = $startDate . ' 00:00:00';
-    }
-    if ($endDate) {
-      $ordCond .= " AND o.created_at <= :o_end";
-      $ordParams['o_end'] = $endDate . ' 23:59:59';
-    }
-    $productsBreakdown = q($pdo,
-      "SELECT COALESCE(s.title, 'استند خیریه') AS title, COALESCE(SUM(o.total_price), 0) AS total_collected
-         FROM orders o
-         LEFT JOIN stands s ON s.id = o.stand_id
-        WHERE 1=1" . $ordCond . "
-        GROUP BY s.id, s.title
-        ORDER BY total_collected DESC
-        LIMIT 10", $ordParams)->fetchAll();
-  } catch (Throwable $e) {}
+foreach ($standRows as $receipt) {
+    $title = ($receipt['stand_title'] ?: 'استند خیریه') . ' — ' . ($receipt['branch_name'] ?: 'شعبه');
+    if (!isset($productsBreakdown[$title])) $productsBreakdown[$title] = ['title'=>$title, 'total_collected'=>0];
+    $productsBreakdown[$title]['total_collected'] += (int)$receipt['amount'];
 }
 if (empty($productsBreakdown)) {
   $productsBreakdown = [
@@ -466,7 +442,18 @@ function build_dynamic_trend_series(string $mode, ?string $startDate, ?string $e
     'total' => $total
   ];
 }
+if ($standOnly) { $directTrendSums = []; $donorsOut = []; }
 $monthChartData = build_dynamic_trend_series($trendMode, $startDate, $endDate, $diffDays, $directTrendSums);
+$monthChartData['stands'] = array_fill(0, count($monthChartData['keys']), 0);
+foreach ($standRows as $receipt) {
+    $date = new DateTimeImmutable($receipt['paid_at'], new DateTimeZone('Asia/Tehran'));
+    $key = $trendMode === 'hourly' ? (string)intdiv((int)$date->format('G'), 3) : $date->format($trendMode === 'daily' ? 'Y-m-d' : 'Y-m');
+    $index = array_search($key, $monthChartData['keys'], true);
+    if ($index !== false) {
+        $monthChartData['stands'][$index] += (int)$receipt['amount'];
+        $monthChartData['total'][$index] += (int)$receipt['amount'];
+    }
+}
 
 $activeFinanceBranch = dash_load_branch(dash_active_branch_id());
 $financeBranches = ($activeFinanceBranch && dash_is_super() && dash_is_hq_view()) ? dash_all_branches() : array_filter([$activeFinanceBranch]);
@@ -476,11 +463,12 @@ $financeSources = array_values(array_map(static fn(array $branch): array => [
 
 $SERVER = [
   'distribution' => [
-    'labels' => ['کمک آنلاین مستقیم', 'کمپین‌ها', 'استندها و سفارشات', 'دوره‌های آموزشی'],
-    'data' => [$onlineHelpTotal, $campaignHelpTotal, $coursesTotal, $ordersTotal]
+    'labels' => ['کمک آنلاین مستقیم', 'کمپین‌ها', 'استندها و سفارشات', 'دوره‌های آموزشی', 'استند'],
+    'data' => [$onlineHelpTotal, $campaignHelpTotal, $productsTotal, $coursesTotal, $ordersTotal]
   ],
   'monthly' => $monthChartData,
-  'sources' => $financeSources,
+  'sources' => $standOnly ? [] : $financeSources,
+  'standOnly' => $standOnly,
   'directDonors' => $donorsOut,
   'dbError' => $dbError
 ];
@@ -543,9 +531,9 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 .tb-title h1{font-size:18px;font-weight:600;color:var(--color-primary-dark)}
 .content{max-width:1600px;width:100%;margin:0 auto;padding:0 24px;}
 
-/* ۵ باکس آماری تفکیکی */
+/* مجموع کل و پنج منبع درآمد مستقل */
 .stats-five-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-bottom: 24px;
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-bottom: 24px;
 }
 .stat-card {
   background: var(--color-surface); padding: 22px 18px; border-radius: var(--radius);
@@ -655,6 +643,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
 .stats-five-grid .stat-card:nth-child(3){animation-delay:.12s}
 .stats-five-grid .stat-card:nth-child(4){animation-delay:.18s}
 .stats-five-grid .stat-card:nth-child(5){animation-delay:.24s}
+.stats-five-grid .stat-card:nth-child(6){animation-delay:.30s}
 @media (prefers-reduced-motion:reduce){.stat-card{animation:none}}
 
 /* دکمه‌های اقدام در هدر */
@@ -1045,7 +1034,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5.5A1.5 1.5 0 0 0 17.5 4H6a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H6"/><circle cx="16.5" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>
     </div>
     <div class="fm-head-text">
-      <h1>مدیریت مالی و اعانات</h1>
+      <h1><?= $standOnly ? 'گزارش پرداخت‌های استند' : 'مدیریت مالی و اعانات' ?></h1>
       <?php if ($startDate || $endDate): ?>
         <p style="font-weight: 700; color: var(--color-primary-dark);">
           بازهٔ گزارش: 
@@ -1069,6 +1058,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     </div>
   </header>
 
+  <?php if ($dbError): ?><p role="alert">دریافت بخشی از اطلاعات مالی ممکن نشد؛ گزارش فعلی کامل نیست.</p><?php endif; ?>
   <section class="stats-five-grid">
     <div class="stat-card" style="--accent:var(--color-primary);--accent-bg:var(--primary-12)">
       <div class="sc-top"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5.5A1.5 1.5 0 0 0 17.5 4H6a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H6"/><circle cx="16.5" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></div></div>
@@ -1093,6 +1083,11 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     <div class="stat-card" style="--accent:var(--color-primary-light);--accent-bg:rgba(79,178,176,.14)">
       <div class="sc-top"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5 12 14l9-5.5Z"/><path d="M3 8.5v7L12 21l9-5.5v-7"/><line x1="12" y1="14" x2="12" y2="21"/></svg></div></div>
       <div class="sc-label">فروش محصولات/سفارشات</div>
+      <div class="sc-amount"><?= fa_digits(number_format($productsTotal)) ?> <small>تومان</small></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--color-primary);--accent-bg:var(--primary-12)">
+      <div class="sc-top"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v13H7zM4 21h16M12 16v5"/><path d="M10 7h4M10 11h4"/></svg></div></div>
+      <div class="sc-label">استند — پرداخت‌های تأییدشده</div>
       <div class="sc-amount"><?= fa_digits(number_format($ordersTotal)) ?> <small>تومان</small></div>
     </div>
   </section>
@@ -1151,6 +1146,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
             <th id="trendTableCol"><?= htmlspecialchars($trendTableCol) ?></th>
             <th>کمک مستقیم (تومان)</th>
             <th>کمپین‌ها (تومان)</th>
+            <th>استند (تومان)</th>
             <th>مجموع درآمد (تومان)</th>
           </tr>
         </thead>
@@ -1163,6 +1159,7 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
               <td><b><?= $monthChartData['labels'][$i] ?></b></td>
               <td><?= fa_digits(number_format($monthChartData['free'][$i])) ?></td>
               <td><?= fa_digits(number_format($monthChartData['campaigns'][$i])) ?></td>
+              <td><?= fa_digits(number_format($monthChartData['stands'][$i])) ?></td>
               <td style="font-weight:700; color:var(--color-primary-dark);"><?= fa_digits(number_format($monthChartData['total'][$i])) ?></td>
             </tr>
           <?php endfor; ?>
@@ -1235,6 +1232,25 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
     </div>
   </section>
 
+  <section class="card" style="margin-top:20px">
+    <div class="card-head"><h3>ریز پرداخت‌های تأییدشده استند</h3><span>۵۰ پرداخت اخیر در بازه انتخابی؛ خروجی اکسل شامل همه پرداخت‌هاست.</span></div>
+    <div style="overflow-x:auto">
+      <table class="dtable">
+        <thead><tr><th>کد سفارش</th><th>منبع</th><th>شعبه</th><th>تاریخ پرداخت</th><th>مبلغ (تومان)</th></tr></thead>
+        <tbody>
+        <?php foreach (array_slice($standRows, 0, 50) as $receipt): ?>
+          <tr>
+            <td><?= e($receipt['tracking_code']) ?></td><td><span class="badge">استند</span></td>
+            <td><?= e($receipt['branch_name'] ?? '') ?></td>
+            <td><?= e(format_gregorian_to_jalali_string(substr($receipt['paid_at'], 0, 10))) ?></td>
+            <td><?= fa_digits(number_format((int)$receipt['amount'])) ?></td>
+          </tr>
+        <?php endforeach; ?>
+        <?php if (!$standRows): ?><tr><td colspan="5">پرداخت تأییدشده‌ای برای استند در این بازه ثبت نشده است.</td></tr><?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </main>
 
   <!-- پنل گزارش‌گیری مالی -->
@@ -1283,8 +1299,9 @@ body{padding:26px 0 60px;-webkit-font-smoothing:antialiased;transition:backgroun
             <select id="reportType" name="reportType" class="modal-select">
               <option value="all">همه تراکنش‌های موفق</option>
               <option value="direct">کمک آنلاین مستقیم</option>
-              <option value="campaigns">کمپین‌های خیریه</option>
-              <option value="courses_products">دوره‌ها و محصولات</option>
+              <option value="campaign">کمپین‌های خیریه</option>
+              <option value="stands">استند — پرداخت‌های تأییدشده</option>
+              <option value="courses">دوره‌های آموزشی</option>
             </select>
           </div>
 
@@ -1385,7 +1402,7 @@ const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | 
     chDist = new Chart(document.getElementById('distributionChart').getContext('2d'), {
       type:'doughnut',
       data:{ labels:SERVER.distribution.labels, datasets:[{ data:SERVER.distribution.data,
-        backgroundColor:['#16a37a','#faa61a','#7c4ddb','#4fb2b0'], borderWidth:3, borderColor:c.surface, hoverOffset:8 }] },
+        backgroundColor:['#16a37a','#faa61a','#7c4ddb','#4fb2b0','#008f8a'], borderWidth:3, borderColor:c.surface, hoverOffset:8 }] },
       options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
         transitions:{ resize:{ animation:{ duration:400 } } },
         plugins:{ legend:legendOpts(c),
@@ -1396,7 +1413,8 @@ const SERVER = <?= json_encode($SERVER, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | 
       type:'bar',
       data:{ labels:SERVER.monthly.labels, datasets:[
         { label:'کمک آنلاین مستقیم', data:SERVER.monthly.free, backgroundColor:'#16a37a', borderRadius:6, maxBarThickness:30 },
-        { label:'کمک‌های کمپین‌ها', data:SERVER.monthly.campaigns, backgroundColor:'#faa61a', borderRadius:6, maxBarThickness:30 }
+        { label:'کمک‌های کمپین‌ها', data:SERVER.monthly.campaigns, backgroundColor:'#faa61a', borderRadius:6, maxBarThickness:30 },
+        { label:'استند', data:SERVER.monthly.stands, backgroundColor:'#4fb2b0', borderRadius:6, maxBarThickness:30 }
       ]},
       options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
         transitions:{ resize:{ animation:{ duration:400 } } },
@@ -1633,7 +1651,7 @@ window.handleGenerateReport = function(e) {
     showToast('در حال دانلود فایل خروجی ' + (format === 'excel' ? 'اکسل چند کاربرگی' : 'CSV') + '...', 'success');
     window.location.href = `financial-export.php?start_date=${finalStart}&end_date=${finalEnd}&source=${reportType}&format=${format}`;
   } else if (format === 'pdf') {
-    window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}&format=pdf`;
+    window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}&format=pdf&source=${reportType}`;
   } else {
     window.location.href = `financial-management.php?start_date=${finalStart}&end_date=${finalEnd}`;
   }
@@ -1653,9 +1671,10 @@ function triggerExcelDownload() {
   csvContent += "بخش,مبلغ دریافتی (تومان)\n";
   csvContent += "کمک مستقیم آنلاین," + SERVER.distribution.data[0] + "\n";
   csvContent += "کمپین‌ها," + SERVER.distribution.data[1] + "\n";
-  csvContent += "دوره‌ها (موقتاً صفر)," + SERVER.distribution.data[2] + "\n";
-  csvContent += "محصولات/سفارشات (موقتاً صفر)," + SERVER.distribution.data[3] + "\n";
-  csvContent += "مجموع کل," + (SERVER.distribution.data[0] + SERVER.distribution.data[1] + SERVER.distribution.data[2] + SERVER.distribution.data[3]) + "\n";
+  csvContent += "فروش محصولات/سفارشات," + SERVER.distribution.data[2] + "\n";
+  csvContent += "دوره‌ها (موقتاً صفر)," + SERVER.distribution.data[3] + "\n";
+  csvContent += "استند — پرداخت‌های تأییدشده," + SERVER.distribution.data[4] + "\n";
+  csvContent += "مجموع کل," + SERVER.distribution.data.reduce((sum, amount) => sum + amount, 0) + "\n";
   
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
@@ -1719,7 +1738,7 @@ window.showToast = function(message, type = 'success') {
   const sources = SERVER.sources || [];
   const reports = [];
   const paymentsByCampaign = new Map();
-  const errors = [];
+  const errors = SERVER.dbError ? ['اطلاعات مالی محلی کامل دریافت نشد.'] : [];
   const money = n => Math.round(n).toLocaleString('fa-IR');
   const rialToToman = n => Number(n || 0) / 10;
   const make = (tag, value) => { const node = document.createElement(tag); node.textContent = String(value); return node; };
@@ -1862,7 +1881,7 @@ window.showToast = function(message, type = 'success') {
         donors.set(key, donor);
       }
     }
-    monthly.total = monthly.free.map((value, index) => value + monthly.campaigns[index]);
+    monthly.total = monthly.free.map((value, index) => value + monthly.campaigns[index] + monthly.stands[index]);
 
     const monthTable = document.querySelectorAll('.grid-tables-2 .card .dtable tbody')[1];
     if (monthTable) {
@@ -1872,7 +1891,7 @@ window.showToast = function(message, type = 'success') {
         const row = document.createElement('tr');
         const name = document.createElement('td');
         name.appendChild(make('b', label));
-        row.append(name, make('td', money(monthly.free[index])), make('td', money(monthly.campaigns[index])));
+        row.append(name, make('td', money(monthly.free[index])), make('td', money(monthly.campaigns[index])), make('td', money(monthly.stands[index])));
         const total = make('td', money(monthly.total[index]));
         total.style.cssText = 'font-weight:700;color:var(--color-primary-dark);';
         row.appendChild(total);
@@ -1881,7 +1900,7 @@ window.showToast = function(message, type = 'success') {
       if (!monthly.labels.some((_, i) => monthly.total[i] > 0)) {
         const row = document.createElement('tr');
         const cell = make('td', 'تراکنشی در این بازه زمانی ثبت نشده است.');
-        cell.colSpan = 4;
+        cell.colSpan = 5;
         cell.style.cssText = 'text-align:center;color:var(--color-muted);';
         row.appendChild(cell);
         monthTable.appendChild(row);
@@ -1934,7 +1953,7 @@ window.showToast = function(message, type = 'success') {
   }
 
   async function load() {
-    if (!sources.length) errors.push('مرکز فعالی برای گزارش مالی پیدا نشد.');
+    if (!sources.length && !SERVER.standOnly) errors.push('مرکز فعالی برای گزارش مالی پیدا نشد.');
     const result = await Promise.all(sources.map(async source => {
       try {
         const data = await request('report', source);

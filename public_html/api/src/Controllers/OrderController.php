@@ -14,6 +14,7 @@ use Throwable;
 
 final class OrderController
 {
+    public function __construct(private ?\StandPayments $standPayments = null) {}
     private static function ensureOrdersSchema(PDO $pdo): void
     {
         try {
@@ -42,6 +43,17 @@ final class OrderController
         $body = is_array($request->body) ? $request->body : [];
         $pdo = Database::connection();
         self::ensureOrdersSchema($pdo);
+
+        $checkoutKey = trim((string)($body['checkout_key'] ?? ''));
+        if ($checkoutKey !== '' && !preg_match('/^[A-Za-z0-9_-]{16,80}$/D', $checkoutKey)) {
+            throw ApiException::badRequest('شناسه ثبت سفارش نامعتبر است.', 'invalid_checkout_key');
+        }
+        $checkoutKey = $checkoutKey !== '' ? hash('sha256', $userId . ':' . $checkoutKey) : null;
+        if ($checkoutKey !== null) {
+            $existing = $pdo->prepare('SELECT * FROM orders WHERE checkout_key = ? AND user_id = ? LIMIT 1');
+            $existing->execute([$checkoutKey, $userId]);
+            if ($order = $existing->fetch(PDO::FETCH_ASSOC)) $this->createdResponse($order);
+        }
 
         // ── ۱. استخراج اطلاعات هویتی و غیرمالی ────────────────────────────────
         $senderName = trim((string)($body['sender_name'] ?? $body['from_user'] ?? ''));
@@ -168,17 +180,23 @@ final class OrderController
 
         // محاسبه قطعی قیمت کل در سمت سرور
         $totalPrice = $unitPrice * $quantity;
+        if ($totalPrice < 1000 || $totalPrice > 500000000) {
+            throw ApiException::badRequest('مبلغ سفارش برای پرداخت معتبر نیست.', 'invalid_amount');
+        }
+        $enabled = $pdo->prepare("SELECT 1 FROM branch_features WHERE branch_id = ? AND feature = 'stands' AND enabled = 1");
+        $enabled->execute([$branchId]);
+        if (!$enabled->fetchColumn()) throw ApiException::badRequest('سفارش استند برای این شعبه فعال نیست.', 'stands_disabled');
 
         // ── ۵. ایجاد سفارش و ذخیره در دیتابیس ─────────────────────────────────
-        $trackingCode = 'ORD-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
+        $trackingCode = 'ORD-' . strtoupper(bin2hex(random_bytes(8)));
 
         $stmt = $pdo->prepare("
             INSERT INTO `orders`
-            (`user_id`, `tracking_code`, `branch_id`, `stand_id`, `province`, `city`, `image`, `order_date`, `quantity`, `unit_price`, `total_price`, `from_user`, `to_user`, `message`, `address`, `created_at`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            (`user_id`, `tracking_code`, `branch_id`, `stand_id`, `province`, `city`, `image`, `order_date`, `quantity`, `unit_price`, `total_price`, `from_user`, `to_user`, `message`, `address`, `checkout_key`, `created_at`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
 
-        $stmt->execute([
+        try { $stmt->execute([
             $userId,
             $trackingCode,
             $branchId,
@@ -193,11 +211,18 @@ final class OrderController
             $fromUser,
             $toUser,
             $message,
-            $address
-        ]);
+            $address,
+            $checkoutKey,
+        ]); } catch (\PDOException $e) {
+            if ($checkoutKey !== null && $e->getCode() === '23000') {
+                $existing->execute([$checkoutKey, $userId]);
+                if ($order = $existing->fetch(PDO::FETCH_ASSOC)) $this->createdResponse($order);
+            }
+            throw $e;
+        }
 
         Response::success([
-            'message'       => 'سفارش با موفقیت ثبت شد.',
+            'message'       => 'سفارش ثبت شد؛ برای نهایی‌شدن، پرداخت را انجام دهید.',
             'tracking_code' => $trackingCode,
             'branch_id'     => $branchId,
             'unit_price'    => $unitPrice,
@@ -207,6 +232,45 @@ final class OrderController
         ], 201);
     }
 
+    private function createdResponse(array $order): void
+    {
+        Response::success(array_intersect_key($order, array_flip([
+            'tracking_code', 'branch_id', 'unit_price', 'total_price', 'province', 'city'
+        ])), 201);
+    }
+
+    private function payments(): \StandPayments
+    {
+        require_once dirname(__DIR__, 3) . '/core/stand-payments.php';
+        return $this->standPayments ?? new \StandPayments(Database::connection());
+    }
+
+    public function startPayment(Request $request): void
+    {
+        $payments = $this->payments();
+        try { $order = $payments->orderForUser((string)$request->params['tracking'], $request->userId()); }
+        catch (\StandPaymentException $e) { throw ApiException::notFound('سفارش یافت نشد.'); }
+        $profile = (new \Maksa\Repositories\ProfileRepository())->fullProfile($request->userId());
+        try {
+            $result = $payments->start($order, (string)($_SERVER['HTTP_HOST'] ?? ''),
+                (string)($request->body['mobile'] ?? $profile['phone'] ?? ''), (string)$order['from_user']);
+        } catch (\StandPaymentException $e) {
+            throw ApiException::badRequest($e->getMessage(), 'stand_payment_unavailable');
+        }
+        Response::success($result);
+    }
+
+    public function paymentStatus(Request $request): void
+    {
+        $payments = $this->payments();
+        try { $order = $payments->orderForUser((string)$request->params['tracking'], $request->userId()); }
+        catch (\StandPaymentException $e) { throw ApiException::notFound('سفارش یافت نشد.'); }
+        $receipt = $payments->byOrder((int)$order['id']);
+        if ($receipt) $receipt = $payments->sync($receipt);
+        Response::success(['tracking_code'=>$order['tracking_code'], 'source'=>'stands',
+            'status'=>$receipt['status'] ?? 'unpaid', 'amount'=>(int)$order['total_price']]);
+    }
+
     public function getMyOrders(Request $request): void
     {
         $userId = $request->userId();
@@ -214,10 +278,12 @@ final class OrderController
         self::ensureOrdersSchema($pdo);
 
         $stmt = $pdo->prepare("
-            SELECT o.*, b.name AS branch_name, s.title AS stand_title
+            SELECT o.*, b.name AS branch_name, s.title AS stand_title,
+                   COALESCE(sp.status, 'unpaid') AS payment_status, sp.paid_at
             FROM `orders` o
             LEFT JOIN `branches` b ON o.branch_id = b.id
             LEFT JOIN `stands` s ON o.stand_id = s.id
+            LEFT JOIN stand_payments sp ON sp.order_id = o.id
             WHERE o.`user_id` = ? 
             ORDER BY o.`id` DESC
         ");

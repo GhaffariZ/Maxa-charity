@@ -25,4 +25,9 @@ const restricted = menuFor({can:{tickets:true},isSuper:false,isBranchAdmin:false
 const limited = catalog.buildCommands(restricted.nav,restricted.menu);
 assert.ok(!limited.some(command => /news-|medical|financial|branch-|user-manage/.test(command.href || '')), 'Unauthorized routes must not be searchable');
 assert.ok(!limited.some(command => command.label.includes('ارجاع تیکت')), 'Branch-only operation stays out of normal-user commands');
+const mixed = menuFor({can:{financial:true,medical:true,tickets:true},isSuper:false,isBranchAdmin:false,isHqView:false,isNewsEditor:false,canMaxapedia:false,isFinanceOnly:false,isFinanceUser:false});
+const mixedCommands = catalog.buildCommands(mixed.nav,mixed.menu);
+for (const href of ['financial-management.php','medical-records.php','tickets.php']) {
+  assert.ok(mixedCommands.some(command => command.href === href), `Mixed finance permissions keep the sidebar entry: ${href}`);
+}
 console.log(`PASS all ${commands.length} catalog entries, section help, command discovery, normalization and restricted access`);

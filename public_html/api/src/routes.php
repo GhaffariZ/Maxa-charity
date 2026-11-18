@@ -88,5 +88,7 @@ return static function (Router $r): void {
 
     // ---- Orders -------------------------------------------------------------
     $r->post('/orders',                   [OrderController::class, 'create'], $auth);
+    $r->post('/orders/{tracking}/payment', [OrderController::class, 'startPayment'], $auth);
+    $r->get('/orders/{tracking}/payment',  [OrderController::class, 'paymentStatus'], $auth);
     $r->get('/user/orders',               [OrderController::class, 'getMyOrders'], $auth);
 };

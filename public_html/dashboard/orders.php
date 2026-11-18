@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../core/stand-payments.php';
 
 // Safe self-healing schema migration for orders table
 try {
@@ -29,6 +30,24 @@ $activeBranchId = dash_active_branch_id();
 if (!$isSuper && !dash_can('stands')) {
     http_response_code(403);
     exit('۴۰۳ | دسترسی به کارتابل سفارشات برای این شعبه مجاز نمی‌باشد.');
+}
+
+$paymentNotice = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sync_payment') {
+    csrf_check();
+    try {
+        $ledger = new StandPayments($pdo);
+        $receipt = $ledger->byOrder((int)($_POST['order_id'] ?? 0));
+        if (!$receipt || ((!$isSuper || !$isHq) && (int)$receipt['branch_id'] !== $activeBranchId)) {
+            http_response_code(403);
+            exit('دسترسی به این پرداخت مجاز نیست.');
+        }
+        $receipt = $ledger->sync($receipt);
+        $paymentNotice = $receipt['status'] === 'success' ? 'پرداخت استند تأیید شد.' : ($receipt['status'] === 'failed' ? 'پرداخت درگاه ناموفق است.' : 'پرداخت هنوز در انتظار تأیید است.');
+    } catch (Throwable $e) {
+        error_log('[stand-payment-sync] ' . $e->getMessage());
+        $paymentNotice = 'استعلام پرداخت ممکن نشد؛ دوباره تلاش کنید.';
+    }
 }
 
 // Branches list for Super Admin dropdown filter (only in HQ view)
@@ -87,7 +106,7 @@ $statsTotalPrice = 0;
 
 try {
     $sql = "
-        SELECT o.*, 
+        SELECT o.*, COALESCE(sp.status, 'unpaid') AS payment_status, sp.paid_at, sp.amount AS paid_amount,
                b.name AS branch_name,
                b.province AS branch_province,
                b.city AS branch_city,
@@ -100,6 +119,7 @@ try {
         FROM orders o 
         LEFT JOIN branches b ON o.branch_id = b.id
         LEFT JOIN stands s ON o.stand_id = s.id
+        LEFT JOIN stand_payments sp ON sp.order_id = o.id
         LEFT JOIN panel_users u ON o.user_id = u.id 
         LEFT JOIN user_profiles p ON o.user_id = p.user_id 
         {$whereSql}
@@ -111,7 +131,7 @@ try {
 
     foreach ($orders as $ord) {
         $statsTotalCount++;
-        $statsTotalPrice += (int)($ord['total_price'] ?? 0);
+        if ($ord['payment_status'] === 'success') $statsTotalPrice += (int)($ord['paid_amount'] ?? 0);
     }
 } catch (Throwable $e) {
     $orders = [];
@@ -302,7 +322,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
       </div>
       <div>
         <div class="stat-val"><?= number_format($statsTotalPrice) ?> <span style="font-size:13px;font-weight:600">تومان</span></div>
-        <div class="stat-lbl">مجموع مبالغ اهدایی سفارشات</div>
+        <div class="stat-lbl">مجموع پرداخت‌های تأییدشده استند</div>
       </div>
     </div>
     <?php if ($isSuper && $isHq): ?>
@@ -319,6 +339,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   </div>
 
   <!-- Filters -->
+  <?php if ($paymentNotice): ?><p role="status"><?= e($paymentNotice) ?></p><?php endif; ?>
   <div class="filter-card">
     <form method="GET" action="orders.php" class="filter-form">
       <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="جستجو بر اساس کد رهگیری، فرستنده، گیرنده، استان یا شهر..." class="filter-input">
@@ -430,6 +451,15 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
 
             <div class="order-footer">
               <div class="order-price-box">
+                <div>وضعیت پرداخت: <strong><?= e(['success'=>'پرداخت‌شده — استند', 'failed'=>'پرداخت ناموفق', 'pending'=>'در انتظار پرداخت', 'unpaid'=>'پرداخت‌نشده'][$order['payment_status']] ?? 'پرداخت‌نشده') ?></strong></div>
+                <?php if ($order['payment_status'] === 'pending'): ?>
+                  <form method="POST">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="sync_payment">
+                    <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+                    <button type="submit" class="btn-filter">بررسی پرداخت</button>
+                  </form>
+                <?php endif; ?>
                 <span>مبلغ سفارش:</span>
                 <div class="order-price"><?= number_format((int)($order['total_price'] ?? 0)) ?> تومان</div>
                 <?php if (!empty($order['benefactor_name']) || !empty($order['benefactor_email'])): ?>

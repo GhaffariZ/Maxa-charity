@@ -973,7 +973,9 @@ render_dashboard_component('header', get_defined_vars());
               <?php if ($em && $em['kind'] === 'audio'): ?>
                 <?= maxapedia_embed_html((string)$it['url'], (string)$it['title']) ?>
               <?php elseif (!empty($it['thumbnail'])): ?>
+                <?php if ($mpSlug === 'brochures'): ?><a href="<?= e($it['thumbnail']) ?>" target="_blank" rel="noopener"><?php endif; ?>
                 <img class="mp-item-thumb <?= $isPortraitCard ? 'mp-item-thumb--book' : '' ?>" src="<?= e($it['thumbnail']) ?>" alt="<?= e($it['title']) ?>" loading="lazy">
+                <?php if ($mpSlug === 'brochures'): ?></a><?php endif; ?>
               <?php else: ?>
                 <div class="mp-item-thumb <?= $isPortraitCard ? 'mp-item-thumb--book' : '' ?>"><?= $mpSection['icon'] ?></div>
               <?php endif; ?>
@@ -992,6 +994,12 @@ render_dashboard_component('header', get_defined_vars());
                   <?php endif; ?>
                 <?php endif; ?>
                 <h3><?= e($it['title']) ?></h3>
+                <?php if ($mpSlug === 'brochures' && !empty($it['back_image'])): ?>
+                  <a href="<?= e($it['back_image']) ?>" target="_blank" rel="noopener">
+                    <img class="mp-item-thumb mp-item-thumb--book" src="<?= e($it['back_image']) ?>" alt="<?= e($it['title']) ?> — <?= site_e('پشت بروشور') ?>" loading="lazy">
+                    <?= site_e('مشاهده پشت بروشور') ?>
+                  </a>
+                <?php endif; ?>
                 <?php if (!empty($it['description'])): ?>
                   <p><?= nl2br(e($it['description'])) ?></p>
                 <?php endif; ?>

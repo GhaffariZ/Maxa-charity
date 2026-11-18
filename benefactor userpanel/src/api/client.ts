@@ -276,6 +276,8 @@ export const api = {
 };
 
 export interface OrderDto {
+  payment_status?: 'unpaid' | 'pending' | 'success' | 'failed';
+  paid_at?: string | null;
   id: number;
   user_id?: number | null;
   tracking_code: string | null;

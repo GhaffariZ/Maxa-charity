@@ -1784,8 +1784,8 @@ require_once __DIR__ . '/../../../core/site-locale.php'; if (!function_exists('i
           <div class="cta-text">
             <h1 class="cta-title" id="heroTitle"><?= site_e('مکسا؛ مؤسسه نیکوکاری کنترل سرطان ایرانیان') ?></h1>
             <p class="cta-desc" id="heroDesc"><?= site_e('مدیریت بهینه سرطان و ارائه رایگان خدمات تخصصی مراقبت‌های حمایتی و تسکینی') ?></p>
-            <a class="cta-btn" id="heroBtn" href="/single-fundraising-option" aria-label="<?= site_e('روش‌های حمایت از مکسا') ?>">
-              <span id="heroBtnText"><?= site_e('روش‌های حمایت') ?></span>
+            <a class="cta-btn" id="heroBtn" href="/single-fundraising-option">
+              <span id="heroBtnText"><?= site_e('اطلاعات بیشتر') ?></span>
               <span aria-hidden="true">←</span>
             </a>
           </div>

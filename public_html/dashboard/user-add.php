@@ -22,7 +22,8 @@ $FEATURE_LABELS = dash_feature_labels(dash_is_hq_view());
 if (!dash_is_hq_view()) {
     unset($FEATURE_LABELS['events']);
 }
-$GRANTABLE = array_keys($FEATURE_LABELS);
+$GRANTABLE = array_values(array_filter(array_keys($FEATURE_LABELS),
+    static fn(string $feature): bool => dash_branch_feature_enabled($BRANCH_ID, $feature)));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -110,13 +111,15 @@ require __DIR__ . '/_panel_head.php';
     <div class="card">
       <h2>دسترسی‌های کاربر</h2>
       <div class="hint">بخش‌هایی را که این کاربر به آن‌ها نیاز دارد انتخاب کنید</div>
+      <div class="hint">بخش‌های غیرفعال شعبه قابل واگذاری نیستند؛ مدیر مرکزی باید ابتدا آن‌ها را در «ویرایش شعبه» فعال کند. دسترسی تازه پس از بارگذاری مجدد پنل دیده می‌شود.</div>
       <input type="hidden" name="edit_permissions" value="1">
       <div class="checks">
         <?php foreach ($FEATURE_LABELS as $key => $label):
-          $checked = in_array($key, $old['permissions'], true); ?>
+          $checked = in_array($key, $old['permissions'], true);
+          $enabled = in_array($key, $GRANTABLE, true); ?>
           <label class="check <?= $checked ? 'on' : '' ?>">
-            <input type="checkbox" name="permissions[]" value="<?= e($key) ?>" <?= $checked ? 'checked' : '' ?>>
-            <span><?= e($label) ?></span>
+            <input type="checkbox" name="permissions[]" value="<?= e($key) ?>" <?= $checked ? 'checked' : '' ?> <?= $enabled ? '' : 'disabled' ?>>
+            <span><?= e($label) ?><?= $enabled ? '' : ' (غیرفعال در شعبه)' ?></span>
           </label>
         <?php endforeach; ?>
       </div>

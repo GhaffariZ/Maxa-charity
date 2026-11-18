@@ -253,16 +253,25 @@ function dash_attempt_login(string $username, string $password): array
 /* ---------- ساختِ نشست از روی ردیف کاربر ---------- */
 function dash_establish_session(array $u): void
 {
-    $branch = dash_load_branch((int)$u['branch_id']);
+    dash_refresh_session_user($u);
+    $_SESSION['dash_home_branch'] = (int)$u['branch_id'];
+    // شعبه‌ی فعال = شعبه‌ی خودِ کاربر در بدوِ ورود (سوپرادمین می‌تواند تغییر دهد)
+    $_SESSION['dash_active_branch'] = (int)$u['branch_id'];
+    $_SESSION['dash_login_at']  = time();
+    $_SESSION['dash_last_seen'] = time();
+    csrf_token();
+}
+
+/* تازه‌سازی هویت و دسترسی‌ها بدون تمدید عمر نشست یا تغییر شعبه‌ی انتخاب‌شده */
+function dash_refresh_session_user(array $u): void
+{
     $perms  = dash_resolve_permissions($u);
 
     $roleName = '';
     if (!empty($u['role_id'])) {
-        try {
-            $st = dash_pdo()->prepare('SELECT name FROM dashboard_roles WHERE id = ? LIMIT 1');
-            $st->execute([(int)$u['role_id']]);
-            $roleName = (string)($st->fetchColumn() ?: '');
-        } catch (Throwable $e) {}
+        $st = dash_pdo()->prepare('SELECT name FROM dashboard_roles WHERE id = ? LIMIT 1');
+        $st->execute([(int)$u['role_id']]);
+        $roleName = (string)($st->fetchColumn() ?: '');
     }
 
     $_SESSION['dash_user'] = [
@@ -277,12 +286,6 @@ function dash_establish_session(array $u): void
         'is_branch_admin' => (int)$u['is_branch_admin'] === 1,
         'permissions'     => $perms,
     ];
-    $_SESSION['dash_home_branch'] = (int)$u['branch_id'];
-    // شعبه‌ی فعال = شعبه‌ی خودِ کاربر در بدوِ ورود (سوپرادمین می‌تواند تغییر دهد)
-    $_SESSION['dash_active_branch'] = (int)$u['branch_id'];
-    $_SESSION['dash_login_at']  = time();
-    $_SESSION['dash_last_seen'] = time();
-    csrf_token();
 }
 
 /* ---------- محاسبه‌ی دسترسی‌ها ---------- */
@@ -411,7 +414,7 @@ function dash_user_role_name(): string
 
 /**
  * آیا کاربر جاری منحصراً «مسئول مالی» یا «مدیر مالی» است؟
- * یعنی سوپرادمین نیست، و عنوان نقش او یا تنها دسترسی او مالی است.
+ * یعنی مدیر نیست و تنها دسترسی او مالی است؛ عنوان نقش ملاک نیست.
  */
 function dash_is_finance_only(): bool
 {
@@ -422,10 +425,6 @@ function dash_is_finance_only(): bool
     if (!empty($u['is_super'])) {
         return false;
     }
-    $roleName = dash_user_role_name();
-    if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
-        return true;
-    }
     if (!empty($u['is_branch_admin'])) {
         return false;
     }
@@ -434,36 +433,13 @@ function dash_is_finance_only(): bool
 }
 
 /**
- * آیا کاربر جاری «مدیر مالی» یا کاربری با دسترسی مالی است؟
- * سوپرادمین مدیر کل است و در این دسته قرار نمی‌گیرد.
+ * آیا کاربر باید وارد پنل تخصصیِ فقط مالی شود؟
+ * داشتن دسترسی مالی در کنار بخش‌های دیگر، منوهای آن بخش‌ها را پنهان نمی‌کند.
  */
 function dash_is_finance_user(): bool
 {
-    $u = dash_user();
-    if (!$u) {
-        return false;
-    }
-    if (!empty($u['is_super'])) {
-        return false;
-    }
-    if (dash_is_finance_only()) {
-        return true;
-    }
-    if (!empty($u['has_direct_permissions'])) {
-        return false;
-    }
-    $roleName = dash_user_role_name();
-    if ($roleName !== '' && (mb_strpos($roleName, 'مالی') !== false || stripos($roleName, 'financ') !== false)) {
-        return true;
-    }
-    $perms = $u['permissions'] ?? [];
-    if (in_array('financial', $perms, true)) {
-        $generalPerms = ['hero', 'news', 'events', 'partners', 'campaigns', 'courses', 'pages', 'news_editor'];
-        if (empty(array_intersect($perms, $generalPerms))) {
-            return true;
-        }
-    }
-    return false;
+    // پنل تخصصیِ بدون سایدبار فقط برای کاربرِ منحصراً مالی است.
+    return dash_is_finance_only();
 }
 
 /**

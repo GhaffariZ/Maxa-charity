@@ -237,6 +237,7 @@ if ($pdo) {
       description MEDIUMTEXT,
       url         VARCHAR(1024) DEFAULT NULL,
       thumbnail   MEDIUMTEXT,
+      back_image  MEDIUMTEXT,
       status      VARCHAR(20) DEFAULT 'published',
       sort_order  INT DEFAULT 0,
       created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -248,6 +249,10 @@ if ($pdo) {
     $hasCat = $pdo->query("SHOW COLUMNS FROM maxapedia_items LIKE 'category'")->fetch();
     if (!$hasCat) {
       $pdo->exec("ALTER TABLE maxapedia_items ADD COLUMN category VARCHAR(120) DEFAULT NULL AFTER section, ADD INDEX(category)");
+    }
+
+    if (!$pdo->query("SHOW COLUMNS FROM maxapedia_items LIKE 'back_image'")->fetch()) {
+      $pdo->exec("ALTER TABLE maxapedia_items ADD COLUMN back_image MEDIUMTEXT AFTER thumbnail");
     }
 
     /* جدول اختصاصی تصاویر گالری مکسا (چند عکس با کپشن و استایل چیدمان زیر هر آلبوم) */
@@ -326,8 +331,8 @@ function maxapedia_create(PDO $pdo, array $d): int {
   if (!maxapedia_is_section($section)) { $section = 'videos'; }
   $status = in_array(($d['status'] ?? ''), ['published','draft'], true) ? $d['status'] : 'published';
   q($pdo,
-    "INSERT INTO maxapedia_items (section, category, title, description, url, thumbnail, status, sort_order)
-     VALUES (?,?,?,?,?,?,?,?)",
+    "INSERT INTO maxapedia_items (section, category, title, description, url, thumbnail, back_image, status, sort_order)
+     VALUES (?,?,?,?,?,?,?,?,?)",
     [
       $section,
       (string)($d['category'] ?? ''),
@@ -335,6 +340,7 @@ function maxapedia_create(PDO $pdo, array $d): int {
       (string)($d['description'] ?? ''),
       (string)($d['url'] ?? ''),
       (string)($d['thumbnail'] ?? ''),
+      (string)($d['back_image'] ?? ''),
       $status,
       (int)($d['sort_order'] ?? 0),
     ]
@@ -346,7 +352,7 @@ function maxapedia_update(PDO $pdo, int $id, array $d): bool {
   $status = in_array(($d['status'] ?? ''), ['published','draft'], true) ? $d['status'] : 'published';
   return q($pdo,
     "UPDATE maxapedia_items
-        SET category=?, title=?, description=?, url=?, thumbnail=?, status=?, sort_order=?
+        SET category=?, title=?, description=?, url=?, thumbnail=?, back_image=?, status=?, sort_order=?
       WHERE id=?",
     [
       (string)($d['category'] ?? ''),
@@ -354,6 +360,7 @@ function maxapedia_update(PDO $pdo, int $id, array $d): bool {
       (string)($d['description'] ?? ''),
       (string)($d['url'] ?? ''),
       (string)($d['thumbnail'] ?? ''),
+      (string)($d['back_image'] ?? ''),
       $status,
       (int)($d['sort_order'] ?? 0),
       $id,
@@ -362,15 +369,25 @@ function maxapedia_update(PDO $pdo, int $id, array $d): bool {
 }
 
 function maxapedia_delete(PDO $pdo, int $id): bool {
-  // پاک‌سازی تصاویر متصل در گالری در صورت وجود
-  $photoUrls = maxapedia_gallery_delete_all_photos($pdo, $id);
+  // رکورد اصلی، تصاویر وابسته و ترجمه‌ها باید با هم حذف شوند.
+  $pdo->beginTransaction();
+  try {
+    $item = q($pdo, "SELECT * FROM maxapedia_items WHERE id = ?", [$id])->fetch();
+    if (!$item) { $pdo->rollBack(); return false; }
+    $photoUrls = maxapedia_gallery_delete_all_photos($pdo, $id);
+    content_delete($pdo, 'maxapedia_items', (string)$id);
+    q($pdo, "DELETE FROM maxapedia_items WHERE id = ?", [$id]);
+    $pdo->commit();
+  } catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    throw $e;
+  }
   if (function_exists('maxapedia_delete_local_file')) {
-    foreach ($photoUrls as $url) {
+    foreach (array_unique(array_merge($photoUrls, [$item['url'], $item['thumbnail'], $item['back_image'] ?? ''])) as $url) {
       maxapedia_delete_local_file($url);
     }
   }
-  $deleted=q($pdo, "DELETE FROM maxapedia_items WHERE id = ?", [$id])->rowCount()>0;
-  if($deleted)content_delete($pdo,'maxapedia_items',(string)$id);return $deleted;
+  return true;
 }
 
 /* ============================================================================

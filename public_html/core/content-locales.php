@@ -57,6 +57,7 @@ function content_types(): array
         'maxapedia_items'=>['permission'=>'maxapedia','hq'=>true,'fields'=>[
             'title'=>$text('عنوان','title'),'category'=>$text('دسته‌بندی','category'),'description'=>$area('توضیحات','description'),
             'url'=>$media('فایل یا نشانی محتوا','url','application/pdf,application/epub+zip,application/x-mobipocket-ebook,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip,application/x-zip-compressed,application/vnd.rar,application/x-rar,application/x-7z-compressed,audio/*,video/*,image/*'),'thumbnail'=>$media('تصویر جلد','thumbnail'),
+            'back_image'=>$media('تصویر پشت بروشور','back_image'),
             'photos'=>$list('عکس‌های آلبوم',['image_url'=>$media('عکس'),'caption'=>$text('شرح تصویر'),'layout_span'=>['label'=>'اندازه','type'=>'select','options'=>['normal'=>'عادی','wide'=>'عریض','tall'=>'بلند','featured'=>'ویژه']]])]],
         'stands'=>['permission'=>'stands','branch'=>true,'fields'=>['title'=>$text('نام طرح','title'),'description'=>$area('توضیحات','description'),'image'=>$media('تصویر','image')]],
         'components'=>['permission'=>'pages','fields'=>['content'=>$html('محتوای کامپوننت','component_code'),'images'=>$list('تصاویر کامپوننت',['url'=>$media('تصویر')])]],

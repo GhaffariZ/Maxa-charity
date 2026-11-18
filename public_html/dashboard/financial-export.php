@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/_guard.php';
 dash_require('financial');
+require_once __DIR__ . '/../core/stand-finance.php';
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Tehran');
@@ -59,6 +60,8 @@ if ($endDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)) { $endDate = '';
 
 // دریافت فیلتر منبع
 $sourceFilter = trim((string)($_GET['source'] ?? 'all')); // all, direct, campaign, stands, courses
+if ($sourceFilter === 'campaigns') $sourceFilter = 'campaign';
+if (!in_array($sourceFilter, ['all','direct','campaign','stands','courses'], true)) $sourceFilter = 'all';
 $campaignFilter = (int)($_GET['campaign_id'] ?? 0);
 $statusFilter = trim((string)($_GET['status'] ?? 'success')); // success, all, pending, failed
 if (!in_array($statusFilter, ['success', 'all', 'pending', 'failed'], true)) {
@@ -118,27 +121,36 @@ $onlineHelpTotal = 0.0;
 $campaignHelpTotal = 0.0;
 $standsTotal = 0.0;
 $coursesTotal = 0.0;
+$summaryParams = $paramsDonations;
+unset($summaryParams['status']);
 
 // الف) کمک‌های آنلاین مستقیم (بدون کمپین)
 try {
     $st = $pdo->prepare("SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.campaign_id IS NULL AND pd.status='success' {$dateCondDonations} {$branchCondDonations}");
-    $st->execute($paramsDonations);
+    $st->execute($summaryParams);
     $onlineHelpTotal = (float)$st->fetch()['s'];
 } catch (Throwable $e) {}
 
 // ب) کمک‌های کمپین‌ها
 try {
     $st = $pdo->prepare("SELECT COALESCE(SUM(pd.amount), 0) s FROM panel_donations pd WHERE pd.campaign_id IS NOT NULL AND pd.status='success' {$dateCondDonations} {$branchCondDonations}");
-    $st->execute($paramsDonations);
+    $st->execute($summaryParams);
     $campaignHelpTotal = (float)$st->fetch()['s'];
 } catch (Throwable $e) {}
 
 // ج) استندها و سفارشات
+$standRows = [];
 try {
-    $st = $pdo->prepare("SELECT COALESCE(SUM(o.total_price), 0) s FROM orders o WHERE 1=1 {$dateCondOrders} {$branchCondOrders}");
-    $st->execute($paramsOrders);
-    $standsTotal = (float)$st->fetch()['s'];
-} catch (Throwable $e) {}
+    $standRows = stand_finance_rows($pdo, $isAllBranches ? null : $targetBranchId, $startDate ?: null, $endDate ?: null);
+    $standsTotal = array_sum(array_column($standRows, 'amount'));
+} catch (Throwable $e) {
+    error_log('[stand-finance-export] ' . $e->getMessage());
+    http_response_code(503);
+    exit('اطلاعات پرداخت استند قابل دریافت نیست؛ گزارش ناقص تولید نشد.');
+}
+
+if ($sourceFilter === 'stands') { $onlineHelpTotal = 0; $campaignHelpTotal = 0; }
+elseif ($sourceFilter !== 'all') $standsTotal = 0;
 
 $grandTotal = $onlineHelpTotal + $campaignHelpTotal + $standsTotal + $coursesTotal;
 
@@ -222,34 +234,24 @@ if (in_array($sourceFilter, ['all', 'direct', 'campaign'], true)) {
 }
 
 // استخراج از orders (استندها) (اگر فیلتر منبع روی all یا stands باشد)
-if (in_array($sourceFilter, ['all', 'stands'], true) && in_array($statusFilter, ['all', 'success'], true)) {
-    try {
-        $ordSql = "SELECT o.id, o.tracking_code, o.total_price, o.created_at,
-                          o.from_user, o.to_user, b.name AS branch_name, s.title AS stand_title
-                     FROM orders o
-                     LEFT JOIN branches b ON b.id = o.branch_id
-                     LEFT JOIN stands s   ON s.id = o.stand_id
-                    WHERE 1=1 {$dateCondOrders} {$branchCondOrders}
-                    ORDER BY o.created_at DESC
-                    LIMIT 2000";
-        $st = $pdo->prepare($ordSql);
-        $st->execute($paramsOrders);
-        while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+if (in_array($sourceFilter, ['all', 'stands'], true)) {
+        $detailStandRows = $statusFilter === 'success' ? $standRows
+            : stand_finance_rows($pdo, $isAllBranches ? null : $targetBranchId, $startDate ?: null, $endDate ?: null, $statusFilter);
+        foreach ($detailStandRows as $row) {
             $ref = $row['tracking_code'] ?: ('ORD-' . $row['id']);
             $transactions[] = [
                 'ref'         => $ref,
-                'date'        => format_jalali_datetime($row['created_at']),
+                'date'        => format_jalali_datetime($row['tx_date']),
                 'donor_name'  => $row['from_user'] ?: 'سفارش‌دهنده استند',
                 'contact'     => 'تحویل‌گیرنده: ' . ($row['to_user'] ?: '—'),
-                'source'      => 'استند خیریه',
+                'source'      => 'استند',
                 'detail'      => $row['stand_title'] ?: 'سفارش استند',
                 'branch'      => $row['branch_name'] ?: 'شعبه',
-                'amount'      => (float)$row['total_price'],
-                'status'      => 'موفق',
-                'raw_ts'      => strtotime((string)$row['created_at']),
+                'amount'      => (float)$row['amount'],
+                'status'      => ['success'=>'موفق', 'pending'=>'در انتظار', 'failed'=>'ناموفق'][$row['status']] ?? 'نامشخص',
+                'raw_ts'      => strtotime((string)$row['tx_date']),
             ];
         }
-    } catch (Throwable $e) {}
 }
 
 // مرتب‌سازی تجمیعی بر اساس زمان
@@ -274,9 +276,11 @@ try {
                 ORDER BY total_amount DESC
                 LIMIT 50";
     $st = $pdo->prepare($donSql);
-    $st->execute($paramsDonations);
+    $st->execute($summaryParams);
     $topDonors = $st->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {}
+
+if ($sourceFilter === 'stands') { $campaignsData = []; $topDonors = []; }
 
 /* ============================================================================
  * ۴. خروجی در فرمت انتخابی (CSV یا XML Spreadsheet Multi-sheet)
@@ -449,6 +453,7 @@ echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
    $sources = [
        ['title' => 'کمک مستقیم آنلاین خیرین (عمومی)', 'amount' => $onlineHelpTotal],
        ['title' => 'کمپین‌های هدفمند خیریه', 'amount' => $campaignHelpTotal],
+       ['title' => 'فروش محصولات/سفارشات', 'amount' => 0],
        ['title' => 'عواید استندها و تاج‌گل‌های خیریه', 'amount' => $standsTotal],
        ['title' => 'ثبت‌نام دوره‌ها و کارگاه‌های آموزشی', 'amount' => $coursesTotal],
    ];

@@ -1187,12 +1187,12 @@ $initialProvincesList = array_values($initialProvinces);
 
                 <button type="submit" class="so-submit" id="submitOrderBtn">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    <?= site_e('ثبت نهایی سفارش استند') ?>
+                    <?= site_e('ثبت سفارش و پرداخت') ?>
                 </button>
 
                 <div class="so-note">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <?= site_e('پس از ثبت سفارش، کارشناسان مکسا جهت هماهنگی ارسال با شما تماس خواهند گرفت.') ?>
+                    <?= site_e('سفارش پس از تأیید پرداخت نهایی می‌شود؛ سپس کارشناسان مکسا برای هماهنگی ارسال با شما تماس می‌گیرند.') ?>
                 </div>
             </form>
         </div>
@@ -1355,6 +1355,7 @@ $initialProvincesList = array_values($initialProvinces);
 <script src="/dashboard/assets/vendor/libs/jquery/jquery.js"></script>
 <script src="/dashboard/assets/js/datepicker/persian-date.min.js"></script>
 <script src="/dashboard/assets/js/datepicker/persian-datepicker.min.js"></script>
+<script src="/js/stand-checkout.js"></script>
 
 <script>
 // مدل داده‌ای وضعیت صفحه
@@ -1856,20 +1857,15 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
     btn.disabled = true;
 
     try {
-        const headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + token
-        };
-
-        const submitRes = await fetch('/api/orders', {
-            method: 'POST',
-            credentials: 'include',
-            headers: headers,
-            body: JSON.stringify(payload)
-        });
-
-        if (submitRes.status === 401) {
+        const payment = await window.MaksaStandCheckout.start(payload, token);
+        try { localStorage.removeItem('pendingStandOrder'); } catch(e) {}
+        if (payment.status === 'success') {
+            openSuccessModal(payment.tracking_code);
+            this.reset();
+            showEmptyGuide();
+        }
+    } catch (err) {
+        if (err.status === 401) {
             window.__maxa_access_token = null;
             try {
                 sessionStorage.removeItem('maxa_access_token');
@@ -1880,18 +1876,7 @@ document.getElementById('standOrderForm').addEventListener('submit', async funct
             return;
         }
 
-        const result = await submitRes.json();
-        if (submitRes.ok && result.success) {
-            try { localStorage.removeItem('pendingStandOrder'); } catch(e) {}
-            const tracking = result.data?.tracking_code || '';
-            openSuccessModal(tracking);
-            this.reset();
-            showEmptyGuide();
-        } else {
-            showToast(result.error?.message || <?= site_js_text('خطا در ثبت سفارش. لطفاً اطلاعات را بررسی نمایید.') ?>, 'error');
-        }
-    } catch (err) {
-        showToast(<?= site_js_text('خطای اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.') ?>, 'error');
+        showToast(err.message || <?= site_js_text('خطای اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی نمایید.') ?>, 'error');
     } finally {
         btn.innerHTML = originalContent;
         btn.disabled = false;

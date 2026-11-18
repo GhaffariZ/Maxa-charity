@@ -22,10 +22,19 @@ if (!maxapedia_is_section($section)) { $section = $sectionKeys[0]; }
 
 $notice      = $_GET['msg'] ?? '';
 $errorNotice = $_GET['err'] ?? '';
+$galleryUploadJson = $_SERVER['REQUEST_METHOD'] === 'POST'
+  && ($_GET['upload_response'] ?? '') === 'json';
+function maxapedia_upload_response(array $data, int $status = 200): void {
+  http_response_code($status);
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+  exit;
+}
 
 /* بررسی سرریز شدن حجم کل ارسالی از post_max_size */
 if (empty($_POST) && empty($_FILES) && isset($_SERVER['CONTENT_LENGTH']) && (int)$_SERVER['CONTENT_LENGTH'] > 0) {
   $post_max = ini_get('post_max_size');
+  if ($galleryUploadJson) maxapedia_upload_response(['ok'=>false,'error'=>"حجم درخواست از سقف سرور ($post_max) بیشتر است."], 413);
   header('Location: maxapedia.php?section=' . urlencode($section) . '&msg=error&err=' . urlencode("حجم کل فایل‌های ارسالی بیشتر از سقف مجاز سرور است (حداکثر $post_max)."));
   exit;
 }
@@ -36,7 +45,7 @@ if (!function_exists('maxapedia_delete_local_file')) {
     if (!$path || strpos($path, '/uploads/') !== 0) return;
     $baseDir = realpath(dirname(__DIR__) . '/uploads');
     $fullPath = realpath(dirname(__DIR__) . $path);
-    if ($fullPath && $baseDir && strpos($fullPath, $baseDir) === 0 && is_file($fullPath)) {
+    if ($fullPath && $baseDir && strpos($fullPath, $baseDir . DIRECTORY_SEPARATOR) === 0 && is_file($fullPath)) {
       @unlink($fullPath);
     }
   }
@@ -63,8 +72,8 @@ if (!function_exists('maxapedia_upload_brochure_file')) {
 
 if (!function_exists('maxapedia_upload_cover_file')) {
   function maxapedia_upload_cover_file(array $file, string $section = 'general'): string {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-      return '';
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK && !@getimagesize($file['tmp_name'])) {
+      throw new Exception('فایل تصویر معتبر نیست.');
     }
     $subDir = in_array($section, ['books', 'brochures', 'gallery'], true) ? ($section . '/covers') : 'maxapedia/covers';
     return maxa_upload_and_optimize($file, $subDir, 'cover_' . $section . '_', 82, 1920);
@@ -76,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
   $action   = $_POST['action'] ?? '';
   $errorMsg = null;
   $msg      = '';
+  $newFiles = [];
+  $replacedFiles = [];
 
   try {
     csrf_check();
@@ -83,11 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     if ($action === 'create') {
       $url       = trim((string)($_POST['url'] ?? ''));
       $thumbnail = trim((string)($_POST['thumbnail'] ?? ''));
+      $backImage = '';
+      if ($section === 'brochures' && ($_FILES['back_image_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+        $backImage = maxapedia_upload_cover_file($_FILES['back_image_file'], $section);
+        $newFiles[] = $backImage;
+      }
 
       // ۱. آپلود فایل محتوا (PDF، کتاب، بروشور یا سند ضمیمه)
       $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? $_FILES['brochure_file'] ?? null;
       if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
         $url = maxapedia_upload_file($uploadedFile, $section);
+        $newFiles[] = $url;
       } else {
         $url = maxapedia_extract_url($url);
       }
@@ -98,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         $uploadedCoverUrl = maxapedia_upload_cover_file($uploadedCover, $section);
         if ($uploadedCoverUrl !== '') {
           $thumbnail = $uploadedCoverUrl;
+          $newFiles[] = $thumbnail;
         }
       }
 
@@ -113,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'description' => trim((string)($_POST['description'] ?? '')),
         'url'         => $url,
         'thumbnail'   => $thumbnail,
+        'back_image'  => $backImage,
         'status'      => $_POST['status'] ?? 'published',
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
       ]);
@@ -133,12 +152,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
 
       $url       = $existing['url'];
       $thumbnail = $existing['thumbnail'];
+      $backImage = $existing['back_image'] ?? '';
+      if ($section === 'brochures' && ($_FILES['back_image_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+        $backImage = maxapedia_upload_cover_file($_FILES['back_image_file'], $section);
+        $newFiles[] = $backImage;
+        $replacedFiles[] = $existing['back_image'] ?? '';
+      }
 
       // آیا فایل جدیدی انتخاب شده؟
       $uploadedFile = $_FILES['file'] ?? $_FILES['book_file'] ?? $_FILES['brochure_file'] ?? null;
       if ($uploadedFile && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
         $newUrl = maxapedia_upload_file($uploadedFile, $section);
-        maxapedia_delete_local_file($existing['url']);
+        $newFiles[] = $newUrl;
+        $replacedFiles[] = $existing['url'];
         $url = $newUrl;
       } elseif (isset($_POST['url']) && trim($_POST['url']) !== '') {
         $url = maxapedia_extract_url((string)$_POST['url']);
@@ -149,7 +175,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       if ($uploadedCover && $uploadedCover['error'] !== UPLOAD_ERR_NO_FILE) {
         $newCoverUrl = maxapedia_upload_cover_file($uploadedCover, $section);
         if ($newCoverUrl !== '') {
-          maxapedia_delete_local_file($existing['thumbnail']);
+          $newFiles[] = $newCoverUrl;
+          $replacedFiles[] = $existing['thumbnail'];
           $thumbnail = $newCoverUrl;
         }
       } elseif (isset($_POST['thumbnail']) && trim($_POST['thumbnail']) !== '') {
@@ -167,20 +194,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         'description' => trim((string)($_POST['description'] ?? '')),
         'url'         => $url,
         'thumbnail'   => $thumbnail,
+        'back_image'  => $backImage,
         'status'      => $_POST['status'] ?? 'published',
         'sort_order'  => (int)($_POST['sort_order'] ?? 0),
       ]);
       content_save($pdo,'maxapedia_items',(string)$id);$pdo->commit();
+      foreach ($replacedFiles as $path) maxapedia_delete_local_file($path);
       $msg = 'updated';
 
     } elseif ($action === 'delete') {
       $delId = (int)($_POST['id'] ?? 0);
-      $existing = maxapedia_find($pdo, $delId);
-      if ($existing) {
-        maxapedia_delete_local_file($existing['url']);
-        maxapedia_delete_local_file($existing['thumbnail']);
+      if (!maxapedia_delete($pdo, $delId)) {
+        throw new Exception('محتوای مورد نظر برای حذف یافت نشد.');
       }
-      maxapedia_delete($pdo, $delId);
       $msg = 'deleted';
 
     } elseif ($action === 'gallery_upload_photos') {
@@ -196,6 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       }
 
       $uploadedCount = 0;
+      $uploadErrors = [];
       $firstPhotoUrl = null;
 
       // بررسی و آپلود تک‌تک تصاویر ارسالی
@@ -226,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
             $firstPhotoUrl = $photoUrl;
           }
         } catch (Throwable $e) {
-          // در صورت بروز خطا در یک تصویر، از بقیه عبور می‌کنیم
+          $uploadErrors[] = ['name'=>(string)$origName, 'error'=>$e->getMessage()];
         }
       }
 
@@ -247,6 +274,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
         ]);
       }
 
+      if ($galleryUploadJson) {
+        maxapedia_upload_response(['ok'=>empty($uploadErrors), 'uploaded'=>$uploadedCount, 'errors'=>$uploadErrors]);
+      }
+      if ($uploadErrors) throw new Exception('بعضی تصاویر ذخیره نشدند: ' . implode('، ', array_column($uploadErrors, 'name')));
       header('Location: maxapedia.php?section=gallery&album_id=' . $albumId . '&msg=photos_uploaded');
       exit;
 
@@ -302,8 +333,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     }
   } catch (Throwable $e) {
     if($pdo->inTransaction())$pdo->rollBack();
+    foreach ($newFiles as $path) maxapedia_delete_local_file($path);
     $errorMsg = $e->getMessage();
     $msg = 'error';
+    if ($galleryUploadJson) maxapedia_upload_response(['ok'=>false,'error'=>$errorMsg], 400);
   }
 
   // PRG: جلوگیری از ارسال مجدد فرم
@@ -1277,14 +1310,22 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
         </div>
 
         <div class="mx-field">
-          <label>تصویر جلد / پیش‌نمایش <?= $docLabel ?></label>
+          <label><?= $section === 'brochures' ? 'تصویر روی بروشور' : 'تصویر جلد / پیش‌نمایش کتاب' ?></label>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <input type="file" name="thumbnail_file" id="coverFileInput" accept="image/jpeg,image/png,image/webp,image/gif">
             <input type="url" name="thumbnail" id="coverUrlInput" value="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" placeholder="یا آدرس اینترنتی تصویر جلد (https://…)">
           </div>
           <img id="coverPreview" class="mx-cover-preview <?= ($isEditing && !empty($editItem['thumbnail'])) ? 'active' : '' ?>" src="<?= e($isEditing ? ($editItem['thumbnail'] ?? '') : '') ?>" alt="پیش‌نمایش جلد">
-          <p class="mx-hint">می‌توانید تصویر جلد را مستقیماً آپلود کنید یا آدرس اینترنتی آن را وارد کنید (پیشنهاد: پرتره عمودی با نسبت ۳:۴).</p>
+          <p class="mx-hint">می‌توانید تصویر را مستقیماً آپلود کنید یا آدرس اینترنتی آن را وارد کنید.</p>
         </div>
+        <?php if ($section === 'brochures'): ?>
+        <div class="mx-field">
+          <label for="backImageInput">تصویر پشت بروشور</label>
+          <input type="file" name="back_image_file" id="backImageInput" accept="image/jpeg,image/png,image/webp,image/gif">
+          <img id="backImagePreview" class="mx-cover-preview <?= !empty($editItem['back_image']) ? 'active' : '' ?>" src="<?= e($editItem['back_image'] ?? '') ?>" alt="پیش‌نمایش پشت بروشور">
+          <p class="mx-hint">تصویر پشت را جداگانه انتخاب کنید. هنگام ویرایش، اگر تصویری انتخاب نکنید تصویر قبلی حفظ می‌شود.</p>
+        </div>
+        <?php endif; ?>
 
       <?php else: ?>
         <!-- بخش‌های رسانه‌ای (ویدیو، پادکست، کلیپ، گالری) -->
@@ -1453,7 +1494,8 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
                     <?= $isDocLink ? iconoir('download', '', 15) : iconoir('arrow-up-right', '', 15) ?>
                   </a>
                 <?php endif; ?>
-                <form method="post" action="maxapedia.php?section=<?= e($section) ?><?= csrf_field() ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
+                <form method="post" action="maxapedia.php?section=<?= e($section) ?>" onsubmit="return confirm('<?= $section === 'gallery' ? 'این آلبوم و تمامی عکس‌های آن حذف شود؟' : 'این محتوا حذف شود؟' ?>');">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="section" value="<?= e($section) ?>">
                   <input type="hidden" name="id" value="<?= (int)$it['id'] ?>">
@@ -1470,6 +1512,7 @@ body{font-family:'Vazirmatn',sans-serif;background:var(--color-bg);color:var(--c
   <?php endif; ?>
 </div>
 
+<script src="assets/js/maxapedia-gallery-upload.js?v=2"></script>
 <script>
 /* همگام‌سازی تم تیره با بقیه‌ی پنل */
 window.addEventListener('storage',function(e){
@@ -1673,6 +1716,7 @@ window.submitBatchDelete = function() {
     });
 
     multiDropzone.addEventListener('drop', function(e) {
+      if (multiInput.disabled) return;
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
         multiInput.files = e.dataTransfer.files;
         handleMultiFiles();
@@ -1705,59 +1749,8 @@ window.submitBatchDelete = function() {
     }
   }
 
-  // پایپ‌لاین فشرده‌سازی هوشمند تصاویر در هنگام سابمیت فرم
-  var isCompressing = false;
   if (uploadForm && multiInput) {
-    uploadForm.addEventListener('submit', async function(e) {
-      if (isCompressing) return;
-      var files = multiInput.files;
-      if (!files || !files.length) return;
-
-      e.preventDefault();
-      isCompressing = true;
-
-      var compBox = document.getElementById('galleryCompBox');
-      var compBar = document.getElementById('galleryCompBar');
-      var compStatus = document.getElementById('galleryCompStatus');
-      var compPercent = document.getElementById('galleryCompPercent');
-      var submitBtn = document.getElementById('galleryUploadSubmitBtn');
-
-      if (compBox) compBox.style.display = 'flex';
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.6';
-      }
-
-      try {
-        var dt = new DataTransfer();
-        var total = files.length;
-        var origTotalSize = 0;
-        var optTotalSize = 0;
-
-        for (var i = 0; i < total; i++) {
-          origTotalSize += files[i].size;
-          var pct = Math.round(((i) / total) * 100);
-          if (compBar) compBar.style.width = pct + '%';
-          if (compPercent) compPercent.textContent = pct + '٪';
-          if (compStatus) compStatus.textContent = 'در حال فشرده‌سازی هوشمند عکس ' + (i + 1) + ' از ' + total + '...';
-
-          var optFile = await compressImageFile(files[i]);
-          optTotalSize += optFile.size;
-          dt.items.add(optFile);
-        }
-
-        if (compBar) compBar.style.width = '100%';
-        if (compPercent) compPercent.textContent = '۱۰۰٪';
-        var savedPct = origTotalSize > 0 ? Math.round(((origTotalSize - optTotalSize) / origTotalSize) * 100) : 0;
-        if (compStatus) compStatus.textContent = 'بهینه‌سازی انجام شد (' + savedPct + '٪ کاهش حجم)! در حال ارسال به سرور...';
-
-        multiInput.files = dt.files;
-      } catch (err) {
-        console.warn('Canvas compression error fallback:', err);
-      }
-
-      uploadForm.submit();
-    });
+    window.maxapediaGalleryUpload(uploadForm, multiInput, compressImageFile);
   }
 })();
 
@@ -1825,6 +1818,19 @@ window.submitBatchDelete = function() {
   }
 
   // پیش‌نمایش تصویر جلد / شاخص
+  var backInput = document.getElementById('backImageInput');
+  var backPreview = document.getElementById('backImagePreview');
+  if (backInput && backPreview) {
+    backInput.addEventListener('change', function() {
+      if (!backInput.files[0]) return;
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        backPreview.src = event.target.result;
+        backPreview.classList.add('active');
+      };
+      reader.readAsDataURL(backInput.files[0]);
+    });
+  }
   var coverInput = document.getElementById('coverFileInput');
   var coverUrl   = document.getElementById('coverUrlInput');
   var coverPrev  = document.getElementById('coverPreview');
@@ -1869,6 +1875,6 @@ window.submitBatchDelete = function() {
 </template>
 <script>window.ContentEditorRowTemplates={...(window.ContentEditorRowTemplates||{}),maxapedia_items:{photos:()=>document.getElementById('contentPhotoTemplate').innerHTML}};</script>
 <?php endif; ?>
-<?php content_editor('maxapedia_items',$isEditing?(string)$editItem['id']:'','#maxapediaContentForm',['section'=>$section]); ?>
+<?php content_editor('maxapedia_items',$isEditing?(string)$editItem['id']:'','#maxapediaContentForm',['section'=>$section,'sourceFields'=>['back_image'=>'#backImageInput']]); ?>
 </body>
 </html>

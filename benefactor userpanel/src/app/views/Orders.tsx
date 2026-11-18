@@ -117,13 +117,13 @@ export function Orders() {
 
               <div className="flex flex-row md:flex-col items-center md:items-end justify-between border-t md:border-t-0 md:border-r border-border pt-4 md:pt-0 md:pr-6 md:w-52 shrink-0 gap-4">
                 <div className="text-right w-full">
-                  <span className="block text-xs text-muted-foreground mb-1">مبلغ پرداختی:</span>
+                  <span className="block text-xs text-muted-foreground mb-1">مبلغ سفارش:</span>
                   <span className="text-lg font-black text-primary">
                     {order.total_price ? Number(order.total_price).toLocaleString("fa-IR") + " تومان" : "رایگان"}
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] text-emerald-600 mt-1 font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>سفارش تأیید شده</span>
+                  <div className={`flex items-center gap-1 text-[11px] mt-1 font-semibold ${order.payment_status === 'success' ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    {order.payment_status === 'success' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                    <span>{order.payment_status === 'success' ? 'پرداخت تأییدشده — استند' : order.payment_status === 'failed' ? 'پرداخت ناموفق' : order.payment_status === 'pending' ? 'در انتظار تأیید پرداخت' : 'پرداخت‌نشده'}</span>
                   </div>
                 </div>
 

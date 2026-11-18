@@ -140,7 +140,7 @@
     }
     function renderFields(parent,definitions,values,locale,path){
       for(const [key,originalDefinition]of Object.entries(definitions)){
-        if(!path&&config.type==='maxapedia_items'&&((key==='photos'&&config.section!=='gallery')||(key==='url'&&config.section==='gallery')))continue;
+        if(!path&&config.type==='maxapedia_items'&&((key==='photos'&&config.section!=='gallery')||(key==='url'&&config.section==='gallery')||(key==='back_image'&&config.section!=='brochures')))continue;
         let definition=originalDefinition;
         const native=path?'':window.ContentEditorLayout?.source(primary,config,key,definition);
         if(native?.tagName==='TEXTAREA'&&['html','text'].includes(definition.type))definition={...definition,type:'textarea'};
